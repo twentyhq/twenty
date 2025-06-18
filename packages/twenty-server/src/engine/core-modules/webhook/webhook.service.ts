@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { Webhook } from './webhook.entity';
 
@@ -14,12 +11,7 @@ export class WebhookService {
   constructor(
     @InjectRepository(Webhook, 'core')
     private readonly webhookRepository: Repository<Webhook>,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  private generateSecret(): string {
-    return uuidv4();
-  }
 
   private normalizeTargetUrl(targetUrl: string): string {
     if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
@@ -87,7 +79,7 @@ export class WebhookService {
     const webhook = this.webhookRepository.create({
       ...webhookData,
       targetUrl: normalizedTargetUrl,
-      secret: this.generateSecret(),
+      secret: webhookData.secret,
     });
 
     return this.webhookRepository.save(webhook);

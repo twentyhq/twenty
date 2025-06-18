@@ -32,11 +32,13 @@ export class WebhookResolver {
     @Args('targetUrl') targetUrl: string,
     @Args('operations', { type: () => [String] }) operations: string[],
     @Args('description', { nullable: true }) description?: string,
+    @Args('secret', { nullable: true }) secret?: string,
   ): Promise<Webhook> {
     return this.webhookService.create({
       targetUrl,
       operations,
       description,
+      secret,
       workspaceId: workspace.id,
     });
   }
@@ -49,12 +51,14 @@ export class WebhookResolver {
     @Args('operations', { type: () => [String], nullable: true })
     operations?: string[],
     @Args('description', { nullable: true }) description?: string,
+    @Args('secret', { nullable: true }) secret?: string,
   ): Promise<Webhook | null> {
     const updateData: Partial<Webhook> = {};
 
     if (targetUrl !== undefined) updateData.targetUrl = targetUrl;
     if (operations !== undefined) updateData.operations = operations;
     if (description !== undefined) updateData.description = description;
+    if (secret !== undefined) updateData.secret = secret;
 
     return this.webhookService.update(id, workspace.id, updateData);
   }
