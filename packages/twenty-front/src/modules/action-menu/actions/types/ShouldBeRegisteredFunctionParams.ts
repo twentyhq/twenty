@@ -20,4 +20,7 @@ export type ShouldBeRegisteredFunctionParams = {
   numberOfSelectedRecords?: number;
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
   viewType?: ActionViewType;
+  getTargetObjectReadPermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
 };
