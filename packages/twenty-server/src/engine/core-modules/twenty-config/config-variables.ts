@@ -81,7 +81,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_TWO_FACTOR_AUTHENTICATION_REQUIRED = false;
+  IS_TWO_FACTOR_AUTHENTICATION_GLOBALLY_ENFORCED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
