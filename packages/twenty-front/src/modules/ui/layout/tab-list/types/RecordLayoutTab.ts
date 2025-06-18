@@ -8,4 +8,5 @@ export type RecordLayoutTab = {
   Icon: IconComponent;
   hide: TabVisibilityConfig;
   cards: LayoutCard[];
+  targetObjectNameSingular?: string;
 };
