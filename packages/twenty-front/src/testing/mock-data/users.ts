@@ -128,6 +128,12 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    objectPermissions: [
+      {
+        objectMetadataId: '4a45f524-b8cb-40e8-8450-28e402b442cf',
+        canReadObjectRecords: true,
+      },
+    ],
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
