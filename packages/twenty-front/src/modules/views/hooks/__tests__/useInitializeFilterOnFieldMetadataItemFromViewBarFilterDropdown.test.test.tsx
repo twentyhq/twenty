@@ -15,6 +15,7 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -24,7 +25,9 @@ import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 const mockPushFocusItemToFocusStack = jest.fn();
 
 jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
-  usePushFocusItemToFocusStack: () => mockPushFocusItemToFocusStack,
+  usePushFocusItemToFocusStack: () => ({
+    pushFocusItemToFocusStack: mockPushFocusItemToFocusStack,
+  }),
 }));
 
 const peopleObjectMetadataItemMock = getMockPersonObjectMetadataItem();
@@ -167,6 +170,10 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         type: FocusComponentType.DROPDOWN,
         instanceId: personCompanyFieldMetadataItemMock.id,
       },
+      hotkeyScope: {
+        scope: DropdownHotkeyScope.Dropdown,
+      },
+      memoizeKey: personCompanyFieldMetadataItemMock.id,
     });
   });
 
