@@ -33,7 +33,6 @@ export const STANDARD_OBJECT_ICONS = {
   viewFilter: 'IconFilterBolt',
   viewSort: 'IconArrowsSort',
   view: 'IconLayoutCollage',
-  webhook: 'IconRobot',
   workflow: 'IconSettingsAutomation',
   workflowEventListener: 'IconSettingsAutomation',
   workflowRun: 'IconHistoryToggle',
