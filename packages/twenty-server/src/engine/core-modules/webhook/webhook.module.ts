@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WebhookEntity } from './webhook.entity';
+import { Webhook } from './webhook.entity';
 import { WebhookResolver } from './webhook.resolver';
 import { WebhookService } from './webhook.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WebhookEntity], 'core')],
+  imports: [TypeOrmModule.forFeature([Webhook], 'core')],
   providers: [WebhookService, WebhookResolver],
   exports: [WebhookService, TypeOrmModule],
 })

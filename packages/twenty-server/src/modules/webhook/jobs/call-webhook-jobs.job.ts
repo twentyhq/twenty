@@ -37,7 +37,6 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    // BUSINESS LOGIC UNCHANGED: Same exact query patterns as before
     const webhooks =
       await this.webhookService.findByWorkspaceIdAndOperationPatterns(
         workspaceEventBatch.workspaceId,

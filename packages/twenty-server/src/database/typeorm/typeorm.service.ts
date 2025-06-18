@@ -19,6 +19,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -48,6 +49,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         WorkspaceSSOIdentityProvider,
         ApprovedAccessDomain,
         TwoFactorMethod,
+        Webhook,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

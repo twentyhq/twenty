@@ -1,43 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ArrayContains, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
-import {
-    GraphqlQueryRunnerException,
-    GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-import { WebhookEntity } from './webhook.entity';
+import { Webhook } from './webhook.entity';
 
 @Injectable()
 export class WebhookService {
   constructor(
-    @InjectRepository(WebhookEntity, 'core')
-    private readonly webhookRepository: Repository<WebhookEntity>,
+    @InjectRepository(Webhook, 'core')
+    private readonly webhookRepository: Repository<Webhook>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  validateWebhookUrl(targetUrl: string): void {
-    let parsedUrl: URL;
+  private generateSecret(): string {
+    return uuidv4();
+  }
 
-    try {
-      parsedUrl = new URL(targetUrl);
-    } catch {
-      throw new GraphqlQueryRunnerException(
-        `Invalid URL: missing scheme. URLs must include http:// or https://. Received: ${targetUrl}`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
+  private normalizeTargetUrl(targetUrl: string): string {
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      return `https://${targetUrl}`;
     }
 
-    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-      throw new GraphqlQueryRunnerException(
-        `Invalid URL scheme. Only HTTP and HTTPS are allowed. Received: ${parsedUrl.protocol}`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
+    return targetUrl;
+  }
+
+  private validateTargetUrl(targetUrl: string): boolean {
+    try {
+      const url = new URL(targetUrl);
+
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
     }
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<WebhookEntity[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<Webhook[]> {
     return this.webhookRepository.find({
       where: { workspaceId },
     });
@@ -48,31 +50,45 @@ export class WebhookService {
     workspaceId: string,
     nameSingular: string,
     operation: string,
-  ): Promise<WebhookEntity[]> {
-    return this.webhookRepository.find({
-      where: [
-        {
-          workspaceId,
-          operations: ArrayContains([`${nameSingular}.${operation}`]),
-        },
-        {
-          workspaceId,
-          operations: ArrayContains([`*.${operation}`]),
-        },
-        {
-          workspaceId,
-          operations: ArrayContains([`${nameSingular}.*`]),
-        },
-        {
-          workspaceId,
-          operations: ArrayContains(['*.*']),
-        },
-      ],
+  ): Promise<Webhook[]> {
+    const webhooks = await this.webhookRepository.find({
+      where: { workspaceId },
     });
+
+    // Same exact filtering logic as the original ArrayContains queries
+    return webhooks.filter((webhook) =>
+      webhook.operations.some(
+        (op) =>
+          op === `${nameSingular}.${operation}` ||
+          op === `*.${operation}` ||
+          op === `${nameSingular}.*` ||
+          op === '*.*',
+      ),
+    );
   }
 
-  async create(webhookData: Partial<WebhookEntity>): Promise<WebhookEntity> {
-    const webhook = this.webhookRepository.create(webhookData);
+  async findById(id: string, workspaceId: string): Promise<Webhook | null> {
+    const webhook = await this.webhookRepository.findOne({
+      where: { id, workspaceId },
+    });
+
+    return webhook || null;
+  }
+
+  async create(webhookData: Partial<Webhook>): Promise<Webhook> {
+    const normalizedTargetUrl = this.normalizeTargetUrl(
+      webhookData.targetUrl || '',
+    );
+
+    if (!this.validateTargetUrl(normalizedTargetUrl)) {
+      throw new Error('Invalid target URL provided');
+    }
+
+    const webhook = this.webhookRepository.create({
+      ...webhookData,
+      targetUrl: normalizedTargetUrl,
+      secret: this.generateSecret(),
+    });
 
     return this.webhookRepository.save(webhook);
   }
@@ -80,25 +96,38 @@ export class WebhookService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<WebhookEntity>,
-  ): Promise<WebhookEntity | null> {
-    await this.webhookRepository.update({ id, workspaceId }, updateData);
+    updateData: Partial<Webhook>,
+  ): Promise<Webhook | null> {
+    const webhook = await this.findById(id, workspaceId);
+
+    if (!webhook) {
+      return null;
+    }
+
+    if (isDefined(updateData.targetUrl)) {
+      const normalizedTargetUrl = this.normalizeTargetUrl(updateData.targetUrl);
+
+      if (!this.validateTargetUrl(normalizedTargetUrl)) {
+        throw new Error('Invalid target URL provided');
+      }
+
+      updateData.targetUrl = normalizedTargetUrl;
+    }
+
+    await this.webhookRepository.update(id, updateData);
 
     return this.findById(id, workspaceId);
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<WebhookEntity | null> {
-    return this.webhookRepository.findOne({
-      where: { id, workspaceId },
-    });
-  }
+  async delete(id: string, workspaceId: string): Promise<Webhook | null> {
+    const webhook = await this.findById(id, workspaceId);
 
-  async delete(id: string, workspaceId: string): Promise<boolean> {
-    const result = await this.webhookRepository.softDelete({ id, workspaceId });
+    if (!webhook) {
+      return null;
+    }
 
-    return (result.affected ?? 0) > 0;
+    await this.webhookRepository.softDelete(id);
+
+    return webhook;
   }
 }

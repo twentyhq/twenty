@@ -5,75 +5,67 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-import { WebhookEntity } from './webhook.entity';
+import { Webhook } from './webhook.entity';
 import { WebhookService } from './webhook.service';
 
-@Resolver(() => WebhookEntity)
+@Resolver(() => Webhook)
 @UseGuards(WorkspaceAuthGuard)
 export class WebhookResolver {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Query(() => [WebhookEntity])
-  async webhooks(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<WebhookEntity[]> {
-    return this.webhookService.findByWorkspaceId(workspaceId);
+  @Query(() => [Webhook])
+  async webhooks(@AuthWorkspace() workspace: Workspace): Promise<Webhook[]> {
+    return this.webhookService.findByWorkspaceId(workspace.id);
   }
 
-  @Query(() => WebhookEntity, { nullable: true })
+  @Query(() => Webhook, { nullable: true })
   async webhook(
     @Args('id') id: string,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<WebhookEntity | null> {
-    return this.webhookService.findById(id, workspaceId);
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Webhook | null> {
+    return this.webhookService.findById(id, workspace.id);
   }
 
-  @Mutation(() => WebhookEntity)
+  @Mutation(() => Webhook)
   async createWebhook(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() workspace: Workspace,
     @Args('targetUrl') targetUrl: string,
     @Args('operations', { type: () => [String] }) operations: string[],
     @Args('description', { nullable: true }) description?: string,
-    @Args('secret', { nullable: true }) secret?: string,
-  ): Promise<WebhookEntity> {
-    this.webhookService.validateWebhookUrl(targetUrl);
-
+  ): Promise<Webhook> {
     return this.webhookService.create({
       targetUrl,
       operations,
       description,
-      workspaceId,
-      secret: secret || '',
+      workspaceId: workspace.id,
     });
   }
 
-  @Mutation(() => WebhookEntity, { nullable: true })
+  @Mutation(() => Webhook, { nullable: true })
   async updateWebhook(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() workspace: Workspace,
     @Args('id') id: string,
     @Args('targetUrl', { nullable: true }) targetUrl?: string,
     @Args('operations', { type: () => [String], nullable: true })
     operations?: string[],
     @Args('description', { nullable: true }) description?: string,
-    @Args('secret', { nullable: true }) secret?: string,
-  ): Promise<WebhookEntity | null> {
-    if (targetUrl) {
-      this.webhookService.validateWebhookUrl(targetUrl);
-    }
+  ): Promise<Webhook | null> {
+    const updateData: Partial<Webhook> = {};
 
-    return this.webhookService.update(id, workspaceId, {
-      ...(targetUrl && { targetUrl }),
-      ...(operations && { operations }),
-      ...(description !== undefined && { description }),
-      ...(secret !== undefined && { secret }),
-    });
+    if (targetUrl !== undefined) updateData.targetUrl = targetUrl;
+    if (operations !== undefined) updateData.operations = operations;
+    if (description !== undefined) updateData.description = description;
+
+    return this.webhookService.update(id, workspace.id, updateData);
   }
 
   @Mutation(() => Boolean)
   async deleteWebhook(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('id') id: string,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    return this.webhookService.delete(id, workspaceId);
+    const result = await this.webhookService.delete(id, workspace.id);
+
+    return result !== null;
   }
 }
