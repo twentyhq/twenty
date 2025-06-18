@@ -1,3 +1,4 @@
+import { useAuth } from '@/auth/hooks/useAuth';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
@@ -81,6 +82,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const settingsPersistedRole = useRecoilValue(
     settingsPersistedRoleFamilyState(roleId),
   );
+
+  const { loadCurrentUser } = useAuth();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -268,6 +271,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         });
       }
     }
+
+    await loadCurrentUser();
   };
 
   return (
