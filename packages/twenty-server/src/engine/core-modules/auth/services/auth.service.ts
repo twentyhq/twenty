@@ -224,7 +224,6 @@ export class AuthService {
     params: SignInUpBaseParams &
       ExistingUserOrNewUser &
       AuthProviderWithPasswordType,
-    host?: string,
   ) {
     await this.isAuthProviderEnabledOrThrow(
       params.userData,
@@ -239,28 +238,22 @@ export class AuthService {
           params.authParams,
         );
 
-      return await this.signInUpService.signInUp(
-        {
-          ...params,
-          userData: {
-            type: 'newUserWithPicture',
-            newUserWithPicture: partialUserWithPicture,
-          },
-        },
-        host,
-      );
-    }
-
-    return await this.signInUpService.signInUp(
-      {
+      return await this.signInUpService.signInUp({
         ...params,
         userData: {
-          type: 'existingUser',
-          existingUser: params.userData.existingUser,
+          type: 'newUserWithPicture',
+          newUserWithPicture: partialUserWithPicture,
         },
+      });
+    }
+
+    return await this.signInUpService.signInUp({
+      ...params,
+      userData: {
+        type: 'existingUser',
+        existingUser: params.userData.existingUser,
       },
-      host,
-    );
+    });
   }
 
   async verify(
@@ -689,7 +682,6 @@ export class AuthService {
       locale,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
-    host?: string,
   ): Promise<string> {
     const email = rawEmail.toLowerCase();
 
@@ -720,7 +712,6 @@ export class AuthService {
           {
             provider: authProvider,
           },
-          host,
         ));
 
       const url = this.domainManagerService.buildBaseUrl({
@@ -783,18 +774,15 @@ export class AuthService {
         workspace: currentWorkspace,
       });
 
-      const { user, workspace } = await this.signInUp(
-        {
-          invitation,
-          workspace: currentWorkspace,
-          userData,
-          authParams: {
-            provider: AuthProviderEnum.Google,
-          },
-          billingCheckoutSessionState,
+      const { user, workspace } = await this.signInUp({
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: AuthProviderEnum.Google,
         },
-        host,
-      );
+        billingCheckoutSessionState,
+      });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,

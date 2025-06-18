@@ -151,7 +151,6 @@ export class SSOAuthController {
       const { loginToken } = await this.generateLoginToken(
         req.user,
         currentWorkspace,
-        req,
       );
 
       return res.redirect(
@@ -177,7 +176,6 @@ export class SSOAuthController {
   private async generateLoginToken(
     payload: { email: string; workspaceInviteHash?: string },
     currentWorkspace: Workspace,
-    req: OIDCRequest | SAMLRequest,
   ) {
     const invitation = payload.email
       ? await this.authService.findInvitationForSignInUp({
@@ -204,18 +202,14 @@ export class SSOAuthController {
       workspace: currentWorkspace,
     });
 
-    const host = req.get('host');
-    const { workspace, user } = await this.authService.signInUp(
-      {
-        userData,
-        workspace: currentWorkspace,
-        invitation,
-        authParams: {
-          provider: AuthProviderEnum.SSO,
-        },
+    const { workspace, user } = await this.authService.signInUp({
+      userData,
+      workspace: currentWorkspace,
+      invitation,
+      authParams: {
+        provider: AuthProviderEnum.SSO,
       },
-      host,
-    );
+    });
 
     return {
       workspace,

@@ -55,7 +55,6 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { Host } from 'src/engine/decorators/host.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -257,7 +256,6 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
-    @Host() host: string,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
@@ -267,7 +265,6 @@ export class AuthResolver {
         provider: AuthProviderEnum.Password,
         password: signUpInput.password,
       },
-      host,
     );
 
     const availableWorkspaces =
@@ -304,7 +301,6 @@ export class AuthResolver {
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
-    @Host() host: string,
   ): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -342,18 +338,15 @@ export class AuthResolver {
       workspace: currentWorkspace,
     });
 
-    const { user, workspace } = await this.authService.signInUp(
-      {
-        userData,
-        workspace: currentWorkspace,
-        invitation,
-        authParams: {
-          provider: AuthProviderEnum.Password,
-          password: signUpInput.password,
-        },
+    const { user, workspace } = await this.authService.signInUp({
+      userData,
+      workspace: currentWorkspace,
+      invitation,
+      authParams: {
+        provider: AuthProviderEnum.Password,
+        password: signUpInput.password,
       },
-      host,
-    );
+    });
 
     await this.emailVerificationService.sendVerificationEmail(
       user.id,
@@ -383,11 +376,9 @@ export class AuthResolver {
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
-    @Host() host: string,
   ): Promise<SignUpOutput> {
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
-      host,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
