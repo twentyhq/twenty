@@ -5,13 +5,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import {
   AuthProviderWithPasswordType,
   ExistingUserOrPartialUserWithPicture,
@@ -27,9 +27,10 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -134,6 +135,12 @@ describe('SignInUpService', () => {
           provide: FeatureFlagService,
           useValue: {
             isFeatureEnabled: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceEventEmitter,
+          useValue: {
+            emitCustomBatchEvent: jest.fn(),
           },
         },
       ],
