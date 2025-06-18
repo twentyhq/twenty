@@ -70,9 +70,6 @@ export class RecordInputTransformerService {
     value: any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
-    console.log('_'.repeat(100));
-    console.log({fieldType, value})
-    console.log('_'.repeat(100));
     if (!isDefined(value)) {
       return value;
     }

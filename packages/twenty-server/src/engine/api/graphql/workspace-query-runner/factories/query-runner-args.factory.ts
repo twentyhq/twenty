@@ -52,9 +52,6 @@ export class QueryRunnerArgsFactory {
           field.type === FieldMetadataType.POSITION &&
           field.name === 'position',
       );
-    console.log('*'.repeat(100));
-    console.log(resolverArgsType);
-    console.log('*'.repeat(100));
 
     switch (resolverArgsType) {
       case ResolverArgsType.CreateOne:
@@ -172,12 +169,6 @@ export class QueryRunnerArgsFactory {
     fieldMetadataMapByNameByName: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
   ): Promise<Partial<ObjectRecord>> {
-    console.log({
-      data,
-      options,
-      fieldMetadataMapByNameByName,
-      argPositionBackfillInput,
-    });
     if (!isDefined(data)) {
       return Promise.resolve({});
     }

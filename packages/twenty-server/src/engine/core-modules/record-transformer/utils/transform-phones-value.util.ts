@@ -1,4 +1,8 @@
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseJson,
+  removeUndefinedFields,
+} from 'twenty-shared/utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -68,43 +72,46 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   }
 };
 
+const parsePhoneNumberExceptionWrapper = (phoneNumber: string) => {
+  try {
+    return parsePhoneNumber(phoneNumber);
+  } catch (error) {
+    throw new Error('TODO invalid phone number');
+  }
+};
+
 const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   callingCode,
   countryCode,
   number,
 }: PhoneMetadataWithNumber): Partial<AdditionalPhoneMetadata> => {
-  try {
-    const phone = parsePhoneNumber(number);
+  const phone = parsePhoneNumberExceptionWrapper(number);
 
-    if (
-      isDefined(phone.country) &&
-      isDefined(countryCode) &&
-      phone.country !== countryCode
-    ) {
-      throw new Error('TODO conflicting countryCode');
-    }
-
-    if (
-      isDefined(phone.countryCallingCode) &&
-      isDefined(callingCode) &&
-      phone.countryCallingCode !== callingCode
-    ) {
-      throw new Error('TODO conficting callingCode');
-    }
-
-    const finalPrimaryPhoneCallingCode =
-      (phone.countryCallingCode as undefined | CountryCallingCode) ??
-      callingCode;
-    const finalPrimaryPhoneCountryCode = phone.country ?? countryCode;
-
-    return {
-      countryCode: finalPrimaryPhoneCountryCode,
-      callingCode: finalPrimaryPhoneCallingCode,
-      number: phone.nationalNumber,
-    };
-  } catch (e) {
-    throw new Error('TODO invalid number format');
+  if (
+    isNonEmptyString(phone.country) &&
+    isNonEmptyString(countryCode) &&
+    phone.country !== countryCode
+  ) {
+    throw new Error('TODO conflicting countryCode');
   }
+
+  if (
+    isNonEmptyString(phone.countryCallingCode) &&
+    isNonEmptyString(callingCode) &&
+    phone.countryCallingCode !== callingCode.replace(/\+/g, '')
+  ) {
+    throw new Error('TODO conficting callingCode');
+  }
+
+  const finalPrimaryPhoneCallingCode =
+    callingCode ?? (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
+  const finalPrimaryPhoneCountryCode = countryCode ?? phone.country;
+
+  return {
+    countryCode: finalPrimaryPhoneCountryCode,
+    callingCode: finalPrimaryPhoneCallingCode,
+    number: phone.nationalNumber,
+  };
 };
 
 // TODO factorize types ?
@@ -118,7 +125,7 @@ const validateAndInferPhoneInput = ({
     countryCode,
   });
 
-  // Should we swallow only in case that's not a valid phonenumnber :thinking:
+  // Should we swallow only in case that's not a valid phone numnber :thinking:
   if (isDefined(number) && number.startsWith('+')) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
@@ -140,9 +147,6 @@ type TransformPhonesValueArgs = {
 export const transformPhonesValue = ({
   input,
 }: TransformPhonesValueArgs): PhonesFieldGraphQLInput => {
-  console.log('*'.repeat(100));
-  console.log(input);
-  console.log('*'.repeat(100));
 
   if (!isDefined(input)) {
     return input;
@@ -166,10 +170,11 @@ export const transformPhonesValue = ({
   const transformedAdditionalPhones = isDefined(parsedAdditionalPhones)
     ? JSON.stringify(parsedAdditionalPhones.map(validateAndInferPhoneInput))
     : parsedAdditionalPhones;
-  return {
+
+  return removeUndefinedFields({
     additionalPhones: transformedAdditionalPhones,
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,
-  };
+  });
 };
