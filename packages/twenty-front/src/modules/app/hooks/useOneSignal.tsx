@@ -35,6 +35,10 @@ export const useOneSignal = () => {
                 enable: true,
               },
               allowLocalhostAsSecureOrigin: true,
+              serviceWorker: {
+                path: '/OneSignalSDKWorker.js',
+                scope: '/',
+              },
             });
 
             console.log('[OneSignal] SDK inicializado com sucesso.');
