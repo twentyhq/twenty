@@ -43,6 +43,7 @@ const StyledTd = styled.td<{
 `;
 
 export const RecordTableTd = ({
+  className,
   children,
   isSelected,
   isDragging,
@@ -79,6 +80,7 @@ export const RecordTableTd = ({
 
   return (
     <StyledTd
+      className={`${className || ''} ${isSelected && 'td-selected'}`}
       isDragging={isDragging}
       backgroundColor={tdBackgroundColor}
       borderColor={borderColor}
