@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { COMPANY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
@@ -66,10 +68,9 @@ export class TimelineActivitySeederService {
 
     if (timelineActivities.length > 0) {
       const batchSize = 100;
+      const timelineActivityBatches = chunk(timelineActivities, batchSize);
 
-      for (let i = 0; i < timelineActivities.length; i += batchSize) {
-        const batch = timelineActivities.slice(i, i + batchSize);
-
+      for (const batch of timelineActivityBatches) {
         await entityManager
           .createQueryBuilder(undefined, undefined, undefined, {
             shouldBypassPermissionChecks: true,
@@ -231,123 +232,70 @@ export class TimelineActivitySeederService {
   ): {
     targetType: string;
     targetId: string;
-    targetName: string;
   } | null {
     if (entityType === 'note') {
-      return this.getNoteTargetInfo(entitySeed);
+      const noteTargetSeed = NOTE_TARGET_DATA_SEEDS.find(
+        (target) => target.noteId === entitySeed.id,
+      );
+
+      if (!noteTargetSeed) {
+        return null;
+      }
+
+      if (noteTargetSeed.personId) {
+        return {
+          targetType: 'person',
+          targetId: noteTargetSeed.personId,
+        };
+      }
+
+      if (noteTargetSeed.companyId) {
+        return {
+          targetType: 'company',
+          targetId: noteTargetSeed.companyId,
+        };
+      }
+
+      if (noteTargetSeed.opportunityId) {
+        return {
+          targetType: 'opportunity',
+          targetId: noteTargetSeed.opportunityId,
+        };
+      }
     }
 
     if (entityType === 'task') {
-      return this.getTaskTargetInfo(entitySeed);
+      const taskTargetSeed = TASK_TARGET_DATA_SEEDS.find(
+        (target) => target.taskId === entitySeed.id,
+      );
+
+      if (!taskTargetSeed) {
+        return null;
+      }
+
+      if (taskTargetSeed.personId) {
+        return {
+          targetType: 'person',
+          targetId: taskTargetSeed.personId,
+        };
+      }
+
+      if (taskTargetSeed.companyId) {
+        return {
+          targetType: 'company',
+          targetId: taskTargetSeed.companyId,
+        };
+      }
+
+      if (taskTargetSeed.opportunityId) {
+        return {
+          targetType: 'opportunity',
+          targetId: taskTargetSeed.opportunityId,
+        };
+      }
     }
 
     return null;
-  }
-
-  private getNoteTargetInfo(entitySeed: Record<string, unknown>): {
-    targetType: string;
-    targetId: string;
-    targetName: string;
-  } | null {
-    const noteTargetSeed = NOTE_TARGET_DATA_SEEDS.find(
-      (target) => target.noteId === entitySeed.id,
-    );
-
-    if (!noteTargetSeed) {
-      return null;
-    }
-
-    if (noteTargetSeed.personId) {
-      return this.getPersonTargetInfo(noteTargetSeed.personId);
-    }
-
-    if (noteTargetSeed.companyId) {
-      return this.getCompanyTargetInfo(noteTargetSeed.companyId);
-    }
-
-    if (noteTargetSeed.opportunityId) {
-      return this.getOpportunityTargetInfo(noteTargetSeed.opportunityId);
-    }
-
-    return null;
-  }
-
-  private getTaskTargetInfo(entitySeed: Record<string, unknown>): {
-    targetType: string;
-    targetId: string;
-    targetName: string;
-  } | null {
-    const taskTargetSeed = TASK_TARGET_DATA_SEEDS.find(
-      (target) => target.taskId === entitySeed.id,
-    );
-
-    if (!taskTargetSeed) {
-      return null;
-    }
-
-    if (taskTargetSeed.personId) {
-      return this.getPersonTargetInfo(taskTargetSeed.personId);
-    }
-
-    if (taskTargetSeed.companyId) {
-      return this.getCompanyTargetInfo(taskTargetSeed.companyId);
-    }
-
-    if (taskTargetSeed.opportunityId) {
-      return this.getOpportunityTargetInfo(taskTargetSeed.opportunityId);
-    }
-
-    return null;
-  }
-
-  private getPersonTargetInfo(personId: string): {
-    targetType: string;
-    targetId: string;
-    targetName: string;
-  } {
-    const personSeed = PERSON_DATA_SEEDS.find((p) => p.id === personId);
-    const targetName = personSeed
-      ? `${personSeed.nameFirstName || ''} ${personSeed.nameLastName || ''}`.trim()
-      : 'Unknown Person';
-
-    return {
-      targetType: 'person',
-      targetId: personId,
-      targetName,
-    };
-  }
-
-  private getCompanyTargetInfo(companyId: string): {
-    targetType: string;
-    targetId: string;
-    targetName: string;
-  } {
-    const companySeed = COMPANY_DATA_SEEDS.find((c) => c.id === companyId);
-    const targetName = (companySeed?.name as string) || 'Unknown Company';
-
-    return {
-      targetType: 'company',
-      targetId: companyId,
-      targetName,
-    };
-  }
-
-  private getOpportunityTargetInfo(opportunityId: string): {
-    targetType: string;
-    targetId: string;
-    targetName: string;
-  } {
-    const opportunitySeed = OPPORTUNITY_DATA_SEEDS.find(
-      (o) => o.id === opportunityId,
-    );
-    const targetName =
-      (opportunitySeed?.name as string) || 'Unknown Opportunity';
-
-    return {
-      targetType: 'opportunity',
-      targetId: opportunityId,
-      targetName,
-    };
   }
 
   private createLinkedActivity(
@@ -359,7 +307,6 @@ export class TimelineActivitySeederService {
     targetInfo: {
       targetType: string;
       targetId: string;
-      targetName: string;
     },
   ): Record<string, unknown> {
     const generateLinkedTimelineActivityId = (
