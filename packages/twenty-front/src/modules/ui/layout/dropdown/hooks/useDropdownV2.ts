@@ -71,7 +71,10 @@ export const useDropdownV2 = () => {
           });
         }
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [
+      setHotkeyScopeAndMemorizePreviousScope,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+    ],
   );
 
   const toggleDropdown = useRecoilCallback(
