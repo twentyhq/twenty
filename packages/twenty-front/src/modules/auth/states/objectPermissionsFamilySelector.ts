@@ -5,7 +5,6 @@ import { selectorFamily } from 'recoil';
 export const objectPermissionsFamilySelector = selectorFamily<
   {
     canRead: boolean;
-    canUpdate: boolean;
   },
   { objectNameSingular: string }
 >({
@@ -33,7 +32,6 @@ export const objectPermissionsFamilySelector = selectorFamily<
 
       return {
         canRead: objectPermissions?.canReadObjectRecords ?? false,
-        canUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
       };
     },
 });

@@ -11,33 +11,22 @@ export const getActionConfig = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
-}) => {
+}): Record<string, ActionConfig> => {
   if (!isDefined(objectMetadataItem)) {
     return {};
   }
 
-  let actionsConfig: Record<string, ActionConfig>;
-
   switch (objectMetadataItem.nameSingular) {
     case CoreObjectNameSingular.Workflow: {
-      actionsConfig = WORKFLOW_ACTIONS_CONFIG;
-      break;
+      return WORKFLOW_ACTIONS_CONFIG;
     }
     case CoreObjectNameSingular.WorkflowVersion: {
-      actionsConfig = WORKFLOW_VERSIONS_ACTIONS_CONFIG;
-      break;
+      return WORKFLOW_VERSIONS_ACTIONS_CONFIG;
     }
     case CoreObjectNameSingular.WorkflowRun: {
-      actionsConfig = WORKFLOW_RUNS_ACTIONS_CONFIG;
-      break;
+      return WORKFLOW_RUNS_ACTIONS_CONFIG;
     }
     default:
-      actionsConfig = DEFAULT_RECORD_ACTIONS_CONFIG;
+      return DEFAULT_RECORD_ACTIONS_CONFIG;
   }
-
-  const filteredActionsConfig = { ...actionsConfig };
-
-  actionsConfig = filteredActionsConfig;
-
-  return actionsConfig;
 };
