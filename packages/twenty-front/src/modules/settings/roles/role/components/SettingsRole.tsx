@@ -1,3 +1,4 @@
+import { useAuth } from '@/auth/hooks/useAuth';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
@@ -81,6 +82,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const settingsPersistedRole = useRecoilValue(
     settingsPersistedRoleFamilyState(roleId),
   );
+
+  const { loadCurrentUser } = useAuth();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -205,6 +208,21 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         },
       });
     } else {
+      if (isDefined(dirtyFields.settingPermissions)) {
+        await upsertSettingPermissions({
+          variables: {
+            upsertSettingPermissionsInput: {
+              roleId: roleId,
+              settingPermissionKeys:
+                settingsDraftRole.settingPermissions?.map(
+                  (settingPermission) => settingPermission.setting,
+                ) ?? [],
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+      }
+
       if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
         await updateRole({
           variables: {
@@ -226,21 +244,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               },
             },
           },
-        });
-      }
-
-      if (isDefined(dirtyFields.settingPermissions)) {
-        await upsertSettingPermissions({
-          variables: {
-            upsertSettingPermissionsInput: {
-              roleId: roleId,
-              settingPermissionKeys:
-                settingsDraftRole.settingPermissions?.map(
-                  (settingPermission) => settingPermission.setting,
-                ) ?? [],
-            },
-          },
-          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
         });
       }
 
@@ -268,6 +271,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         });
       }
     }
+
+    await loadCurrentUser();
   };
 
   return (
@@ -310,7 +315,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
-          <SettingsRoleSettings roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRoleSettings
+            roleId={roleId}
+            isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
+          />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

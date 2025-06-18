@@ -32,11 +32,12 @@ type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
   id?: string;
 };
 
-type useCreateManyRecordsProps = {
+export type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
+  shouldRefetchAggregateQueries?: boolean;
 };
 
 export const useCreateManyRecords = <
@@ -46,6 +47,7 @@ export const useCreateManyRecords = <
   recordGqlFields,
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
+  shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
 
@@ -76,10 +78,17 @@ export const useCreateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const createManyRecords = async (
-    recordsToCreate: Partial<CreatedObjectRecord>[],
-    upsert?: boolean,
-  ) => {
+  type createManyRecordsProps = {
+    recordsToCreate: Partial<CreatedObjectRecord>[];
+    upsert?: boolean;
+    abortController?: AbortController;
+  };
+
+  const createManyRecords = async ({
+    recordsToCreate,
+    upsert,
+    abortController,
+  }: createManyRecordsProps) => {
     const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
       [];
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
@@ -169,6 +178,11 @@ export const useCreateManyRecords = <
           data: sanitizedCreateManyRecordsInput,
           upsert: upsert,
         },
+        context: {
+          fetchOptions: {
+            signal: abortController?.signal,
+          },
+        },
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];
 
@@ -205,7 +219,8 @@ export const useCreateManyRecords = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    if (shouldRefetchAggregateQueries) await refetchAggregateQueries();
+
     return createdObjects.data?.[mutationResponseField] ?? [];
   };
 

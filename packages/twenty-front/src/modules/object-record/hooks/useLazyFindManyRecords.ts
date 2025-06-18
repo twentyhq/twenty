@@ -65,7 +65,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         limit,
         orderBy,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
     });
