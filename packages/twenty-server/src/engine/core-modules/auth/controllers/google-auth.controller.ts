@@ -34,10 +34,13 @@ export class GoogleAuthController {
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
+    const host = req.get('host');
+
     return res.redirect(
       await this.authService.signInUpWithSocialSSO(
         req.user,
         AuthProviderEnum.Google,
+        host,
       ),
     );
   }

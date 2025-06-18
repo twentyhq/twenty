@@ -25,16 +25,21 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
+import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
@@ -44,8 +49,10 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -54,19 +61,12 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
-import { UserCredentialsInput } from './dto/user-credentials.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
+import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistOutput } from './dto/user-exists.entity';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
@@ -256,7 +256,9 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
+    @Context() context: { req: { headers: { host?: string } } },
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
+    const host = context.req?.headers?.host;
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
         email: signUpInput.email,
@@ -265,6 +267,7 @@ export class AuthResolver {
         provider: AuthProviderEnum.Password,
         password: signUpInput.password,
       },
+      host,
     );
 
     const availableWorkspaces =
@@ -301,6 +304,7 @@ export class AuthResolver {
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @Context() context: { req: { headers: { host?: string } } },
   ): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -338,15 +342,19 @@ export class AuthResolver {
       workspace: currentWorkspace,
     });
 
-    const { user, workspace } = await this.authService.signInUp({
-      userData,
-      workspace: currentWorkspace,
-      invitation,
-      authParams: {
-        provider: AuthProviderEnum.Password,
-        password: signUpInput.password,
+    const host = context.req?.headers?.host;
+    const { user, workspace } = await this.authService.signInUp(
+      {
+        userData,
+        workspace: currentWorkspace,
+        invitation,
+        authParams: {
+          provider: AuthProviderEnum.Password,
+          password: signUpInput.password,
+        },
       },
-    });
+      host,
+    );
 
     await this.emailVerificationService.sendVerificationEmail(
       user.id,
@@ -376,9 +384,12 @@ export class AuthResolver {
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @Context() context: { req: { headers: { host?: string } } },
   ): Promise<SignUpOutput> {
+    const host = context.req?.headers?.host;
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
+      host,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

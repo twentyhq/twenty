@@ -81,27 +81,34 @@ export class SignInUpService {
     params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType,
+    host?: string,
   ) {
     if (params.workspace && params.invitation) {
       return {
         workspace: params.workspace,
-        user: await this.signInUpWithPersonalInvitation({
-          invitation: params.invitation,
-          userData: params.userData,
-        }),
+        user: await this.signInUpWithPersonalInvitation(
+          {
+            invitation: params.invitation,
+            userData: params.userData,
+          },
+          host,
+        ),
       };
     }
 
     if (params.workspace) {
-      const updatedUser = await this.signInUpOnExistingWorkspace({
-        workspace: params.workspace,
-        userData: params.userData,
-      });
+      const updatedUser = await this.signInUpOnExistingWorkspace(
+        {
+          workspace: params.workspace,
+          userData: params.userData,
+        },
+        host,
+      );
 
       return { user: updatedUser, workspace: params.workspace };
     }
 
-    return await this.signUpOnNewWorkspace(params.userData);
+    return await this.signUpOnNewWorkspace(params.userData, host);
   }
 
   async generateHash(password: string) {
@@ -136,6 +143,7 @@ export class SignInUpService {
 
   private async signInUpWithPersonalInvitation(
     params: { invitation: AppToken } & ExistingUserOrPartialUserWithPicture,
+    host?: string,
   ) {
     if (!params.invitation) {
       throw new AuthException(
@@ -169,10 +177,13 @@ export class SignInUpService {
       );
     }
 
-    const updatedUser = await this.signInUpOnExistingWorkspace({
-      workspace: invitationValidation.workspace,
-      userData: params.userData,
-    });
+    const updatedUser = await this.signInUpOnExistingWorkspace(
+      {
+        workspace: invitationValidation.workspace,
+        userData: params.userData,
+      },
+      host,
+    );
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       invitationValidation.workspace.id,
@@ -215,6 +226,7 @@ export class SignInUpService {
     params: {
       workspace: Workspace;
     } & ExistingUserOrPartialUserWithPicture,
+    host?: string,
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
@@ -226,10 +238,14 @@ export class SignInUpService {
         newUserWithPicture: PartialUserWithPicture;
       };
 
-      const user = await this.saveNewUser(userData.newUserWithPicture, {
-        canAccessFullAdminPanel: false,
-        canImpersonate: false,
-      });
+      const user = await this.saveNewUser(
+        userData.newUserWithPicture,
+        {
+          canAccessFullAdminPanel: false,
+          canImpersonate: false,
+        },
+        host,
+      );
 
       await this.activateOnboardingForUser(user, params.workspace);
 
@@ -281,6 +297,7 @@ export class SignInUpService {
       canImpersonate: boolean;
       canAccessFullAdminPanel: boolean;
     },
+    host?: string,
   ) {
     const userCreated = this.userRepository.create({
       ...newUserWithPicture,
@@ -298,6 +315,8 @@ export class SignInUpService {
           userEmail: newUserWithPicture.email,
           userFirstName: newUserWithPicture.firstName,
           userLastName: newUserWithPicture.lastName,
+          locale: newUserWithPicture.locale,
+          host,
         },
       ],
       undefined,
@@ -326,6 +345,7 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
+    host?: string,
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -373,10 +393,14 @@ export class SignInUpService {
     const isExistingUser = userData.type === 'existingUser';
     const user = isExistingUser
       ? userData.existingUser
-      : await this.saveNewUser(userData.newUserWithPicture, {
-          canImpersonate,
-          canAccessFullAdminPanel,
-        });
+      : await this.saveNewUser(
+          userData.newUserWithPicture,
+          {
+            canImpersonate,
+            canAccessFullAdminPanel,
+          },
+          host,
+        );
 
     await this.userWorkspaceService.create({
       userId: user.id,
@@ -400,10 +424,12 @@ export class SignInUpService {
   async signUpWithoutWorkspace(
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
+    host?: string,
   ) {
     return this.saveNewUser(
       await this.computeParamsForNewUser(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
+      host,
     );
   }
 }

@@ -36,10 +36,10 @@ import {
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -151,6 +151,7 @@ export class SSOAuthController {
       const { loginToken } = await this.generateLoginToken(
         req.user,
         currentWorkspace,
+        req,
       );
 
       return res.redirect(
@@ -176,6 +177,7 @@ export class SSOAuthController {
   private async generateLoginToken(
     payload: { email: string; workspaceInviteHash?: string },
     currentWorkspace: Workspace,
+    req: OIDCRequest | SAMLRequest,
   ) {
     const invitation = payload.email
       ? await this.authService.findInvitationForSignInUp({
@@ -202,14 +204,18 @@ export class SSOAuthController {
       workspace: currentWorkspace,
     });
 
-    const { workspace, user } = await this.authService.signInUp({
-      userData,
-      workspace: currentWorkspace,
-      invitation,
-      authParams: {
-        provider: AuthProviderEnum.SSO,
+    const host = req.get('host');
+    const { workspace, user } = await this.authService.signInUp(
+      {
+        userData,
+        workspace: currentWorkspace,
+        invitation,
+        authParams: {
+          provider: AuthProviderEnum.SSO,
+        },
       },
-    });
+      host,
+    );
 
     return {
       workspace,

@@ -43,10 +43,13 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
+    const host = req.get('host');
+
     return res.redirect(
       await this.authService.signInUpWithSocialSSO(
         req.user,
         AuthProviderEnum.Microsoft,
+        host,
       ),
     );
   }
