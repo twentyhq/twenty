@@ -8,12 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import {
-  countAvailableWorkspaces,
-  getAvailableWorkspacePathAndSearchParams,
-} from '@/auth/utils/availableWorkspacesUtils';
+import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const SignInUpGlobalScopeFormEffect = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
