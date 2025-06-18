@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -23,6 +24,9 @@ const renderHooks = ({
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,
       );
@@ -56,6 +60,7 @@ const renderHooks = ({
 
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
+        setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
       }
       return useDefaultHomePagePath();
     },
