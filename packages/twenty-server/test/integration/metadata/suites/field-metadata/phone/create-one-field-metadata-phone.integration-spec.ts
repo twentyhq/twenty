@@ -1,7 +1,10 @@
 import { faker } from '@faker-js/faker/.';
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+import {
+  AdditionalPhoneMetadata,
+  PhonesMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -10,9 +13,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 const FIELD_NAME = 'phonenumber';
 
+type TestCaseInputAndExpected =  Partial<Omit<PhonesMetadata, 'additionalPhones'>> & {
+    additionalPhones?: Array<Partial<AdditionalPhoneMetadata>> | null;
+  }
 type CreatePhoneFieldMetadataTestCase = {
-  input: Partial<PhonesMetadata>;
-  expected: Partial<PhonesMetadata>;
+  input: TestCaseInputAndExpected;
+  expected: TestCaseInputAndExpected;
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] =
@@ -26,6 +32,25 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
         },
         expected: {
           primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '',
+          primaryPhoneCountryCode: '' as any,
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with number and other information',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+33',
+          primaryPhoneCountryCode: 'FR',
+          additionalPhones: [],
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+33',
+          primaryPhoneCountryCode: 'FR',
           additionalPhones: [],
         },
       },
@@ -87,6 +112,100 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneCountryCode: '' as any,
           primaryPhoneCallingCode: '',
           additionalPhones: null,
+        },
+      },
+    },
+    {
+      title: 'create phone field with multiple additional phones',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '+33',
+              countryCode: 'FR',
+            },
+            {
+              number: '+44456789123',
+            },
+          ],
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '+33',
+              countryCode: 'FR',
+            },
+            {
+              number: '456789123',
+              callingCode: '+44',
+            },
+          ],
+        },
+      },
+    },
+    {
+      title:
+        'create phone field with additional phone having minimal information',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '',
+              countryCode: 'US',
+            },
+          ],
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '',
+              countryCode: 'US',
+            },
+          ],
+        },
+      },
+    },
+    {
+      title:
+        'create phone field with additional phone using international format',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '+61412345678',
+            },
+          ],
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+          additionalPhones: [
+            {
+              number: '412345678',
+              callingCode: '+61',
+              countryCode: 'AU',
+            },
+          ],
         },
       },
     },
@@ -162,7 +281,7 @@ describe('Phone field metadata tests suite', () => {
 
       expect(errors).toBeUndefined();
       const { id, ...rest } = createOneResponse;
-      expect(rest[FIELD_NAME]).toMatchObject({
+      expect(rest[FIELD_NAME]).toStrictEqual({
         ...expected,
         __typename: 'Phones',
       });
