@@ -8,9 +8,10 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 
 @Injectable()
 @Command({
@@ -22,7 +23,7 @@ export class TransferWebhookToCoreCommand extends ActiveOrSuspendedWorkspacesMig
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly webhookService: WebhookService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -31,7 +32,6 @@ export class TransferWebhookToCoreCommand extends ActiveOrSuspendedWorkspacesMig
     index,
     total,
     workspaceId,
-    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
@@ -40,120 +40,92 @@ export class TransferWebhookToCoreCommand extends ActiveOrSuspendedWorkspacesMig
 
     await this.transferWebhookData({
       workspaceId,
-      dataSource,
       dryRun: !!options.dryRun,
     });
   }
 
   private async transferWebhookData({
     workspaceId,
-    dataSource,
     dryRun,
   }: {
     workspaceId: string;
-    dataSource: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     dryRun: boolean;
   }) {
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    // Check if webhook table exists in workspace schema
-    const tableExists = await dataSource.query(
-      `SELECT EXISTS(
-        SELECT 1 FROM information_schema.tables 
-        WHERE table_schema = $1 AND table_name = 'webhook'
-      )`,
-      [schemaName],
-      undefined, // queryRunner
-      {
-        shouldBypassPermissionChecks: true,
-      },
-    );
-
-    if (!tableExists[0].exists) {
-      this.logger.log(`No webhook table found in workspace ${workspaceId}`);
-
-      return;
-    }
-
-    // Get webhook count for logging
-    const webhookCount = await dataSource.query(
-      `SELECT COUNT(*) as count FROM "${schemaName}"."webhook"`,
-      undefined, // parameters
-      undefined, // queryRunner
-      {
-        shouldBypassPermissionChecks: true,
-      },
-    );
-
-    this.logger.log(
-      `Found ${webhookCount[0].count} webhooks in workspace ${workspaceId}`,
-    );
-
-    if (webhookCount[0].count === 0) {
-      this.logger.log(`No webhooks to transfer for workspace ${workspaceId}`);
-
-      if (!dryRun) {
-        // Drop empty table
-        await dataSource.query(
-          `DROP TABLE "${schemaName}"."webhook"`,
-          undefined, // parameters
-          undefined, // queryRunner
-          {
-            shouldBypassPermissionChecks: true,
-          },
+    try {
+      // Get webhook repository for this workspace using Twenty ORM
+      const webhookRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
+          workspaceId,
+          'webhook',
         );
-        this.logger.log(
-          `Dropped empty webhook table for workspace ${workspaceId}`,
-        );
+
+      // Get all webhooks from workspace schema
+      const webhooks = await webhookRepository.find();
+
+      this.logger.log(
+        `Found ${webhooks.length} webhooks in workspace ${workspaceId}`,
+      );
+
+      if (webhooks.length === 0) {
+        this.logger.log(`No webhooks to transfer for workspace ${workspaceId}`);
+
+        return;
       }
 
-      return;
-    }
+      if (!dryRun) {
+        // Transfer webhooks to core schema using WebhookService
+        for (const webhook of webhooks) {
+          try {
+            // Check if webhook already exists in core schema
+            const existingWebhook = await this.webhookService.findById(
+              webhook.id,
+              workspaceId,
+            );
 
-    if (!dryRun) {
-      // Transfer data to core schema
-      await dataSource.query(
-        `
-        INSERT INTO "core"."webhook" 
-        ("id", "targetUrl", "operations", "description", "secret", "workspaceId", "createdAt", "updatedAt", "deletedAt")
-        SELECT 
-          "id", 
-          "targetUrl", 
-          "operations", 
-          "description", 
-          "secret", 
-          $1::uuid,
-          "createdAt", 
-          "updatedAt", 
-          "deletedAt"
-        FROM "${schemaName}"."webhook"
-        ON CONFLICT ("id") DO NOTHING
-      `,
-        [workspaceId],
-        undefined, // queryRunner
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+            if (!existingWebhook) {
+              // Create webhook in core schema using service
+              await this.webhookService.create({
+                id: webhook.id,
+                targetUrl: webhook.targetUrl,
+                operations: webhook.operations,
+                description: webhook.description,
+                secret: webhook.secret,
+                workspaceId,
+                createdAt: new Date(webhook.createdAt),
+                updatedAt: new Date(webhook.updatedAt),
+                deletedAt: webhook.deletedAt
+                  ? new Date(webhook.deletedAt)
+                  : undefined,
+              });
+            }
+          } catch (error) {
+            this.logger.error(
+              `Failed to transfer webhook ${webhook.id} for workspace ${workspaceId}: ${error.message}`,
+            );
+            throw error;
+          }
+        }
 
-      // Drop the workspace table
-      await dataSource.query(
-        `DROP TABLE "${schemaName}"."webhook"`,
-        undefined, // parameters
-        undefined, // queryRunner
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+        this.logger.log(
+          `Successfully transferred ${webhooks.length} webhooks from workspace ${workspaceId} to core schema`,
+        );
+      } else {
+        this.logger.log(
+          `[DRY RUN] Would transfer ${webhooks.length} webhooks from workspace ${workspaceId} to core schema`,
+        );
+      }
+    } catch (error) {
+      // If the workspace doesn't have webhook table or any other error, just log and continue
+      if (
+        error.message?.includes('relation') &&
+        error.message?.includes('does not exist')
+      ) {
+        this.logger.log(`No webhook table found in workspace ${workspaceId}`);
 
-      this.logger.log(
-        `Successfully transferred ${webhookCount[0].count} webhooks from workspace ${workspaceId} to core schema`,
-      );
-    } else {
-      this.logger.log(
-        `[DRY RUN] Would transfer ${webhookCount[0].count} webhooks from workspace ${workspaceId} to core schema`,
-      );
+        return;
+      }
+
+      throw error;
     }
   }
 }
