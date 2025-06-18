@@ -4,7 +4,7 @@ import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdo
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
+import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -12,7 +12,7 @@ import { useCallback } from 'react';
 
 export const useDropdown = (dropdownId?: string) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
+  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
 
   const { scopeId, isDropdownOpenState, dropdownPlacementState } =
     useDropdownStates({ dropdownScopeId: dropdownId });
@@ -34,7 +34,7 @@ export const useDropdown = (dropdownId?: string) => {
     if (isDropdownOpen) {
       setIsDropdownOpen(false);
       goBackToPreviousDropdownFocusId();
-      removeFocusIdFromFocusStack({
+      removeFocusItemFromFocusStack({
         focusId: dropdownId ?? scopeId,
         memoizeKey: 'global',
       });
@@ -43,7 +43,7 @@ export const useDropdown = (dropdownId?: string) => {
     isDropdownOpen,
     setIsDropdownOpen,
     goBackToPreviousDropdownFocusId,
-    removeFocusIdFromFocusStack,
+    removeFocusItemFromFocusStack,
     dropdownId,
     scopeId,
   ]);

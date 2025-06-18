@@ -2,10 +2,10 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
-export const useRemoveFocusIdFromFocusStack = () => {
+export const useRemoveFocusItemFromFocusStack = () => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  const removeFocusIdFromFocusStack = useRecoilCallback(
+  const removeFocusItemFromFocusStack = useRecoilCallback(
     ({ set }) =>
       ({ focusId, memoizeKey }: { focusId: string; memoizeKey: string }) => {
         set(focusStackState, (previousFocusStack) =>
@@ -20,5 +20,5 @@ export const useRemoveFocusIdFromFocusStack = () => {
     [goBackToPreviousHotkeyScope],
   );
 
-  return { removeFocusIdFromFocusStack };
+  return { removeFocusItemFromFocusStack };
 };

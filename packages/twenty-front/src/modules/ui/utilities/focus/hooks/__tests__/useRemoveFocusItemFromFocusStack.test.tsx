@@ -1,5 +1,5 @@
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
+import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -11,13 +11,14 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-      const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
+      const { removeFocusItemFromFocusStack } =
+        useRemoveFocusItemFromFocusStack();
       const focusStack = useRecoilValue(focusStackState);
       const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,
-        removeFocusIdFromFocusStack,
+        removeFocusItemFromFocusStack,
         focusStack,
         currentFocusId,
       };
@@ -30,8 +31,8 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useRemoveFocusIdFromFocusStack', () => {
-  it('should remove focus id from the stack', async () => {
+describe('useRemoveFocusItemFromFocusStack', () => {
+  it('should remove focus item from the stack', async () => {
     const { result } = renderHooks();
 
     const firstFocusItem = {
@@ -89,7 +90,7 @@ describe('useRemoveFocusIdFromFocusStack', () => {
     expect(result.current.currentFocusId).toEqual(secondFocusItem.focusId);
 
     await act(async () => {
-      result.current.removeFocusIdFromFocusStack({
+      result.current.removeFocusItemFromFocusStack({
         focusId: firstFocusItem.focusId,
         memoizeKey: 'global',
       });

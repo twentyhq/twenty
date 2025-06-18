@@ -9,7 +9,7 @@ import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuCl
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
-import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
+import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -18,7 +18,7 @@ export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
-  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
+  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -32,13 +32,13 @@ export const useCommandMenu = () => {
           set(isCommandMenuClosingState, true);
           set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
-          removeFocusIdFromFocusStack({
+          removeFocusItemFromFocusStack({
             focusId: SIDE_PANEL_FOCUS_ID,
             memoizeKey: COMMAND_MENU_COMPONENT_INSTANCE_ID,
           });
         }
       },
-    [closeAnyOpenDropdown, removeFocusIdFromFocusStack],
+    [closeAnyOpenDropdown, removeFocusItemFromFocusStack],
   );
 
   const openCommandMenu = useCallback(() => {

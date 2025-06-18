@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
+import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -14,7 +14,7 @@ export const useDropdownV2 = () => {
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
+  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
 
   const closeDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -26,7 +26,7 @@ export const useDropdownV2 = () => {
           .getValue();
 
         if (isDropdownOpen) {
-          removeFocusIdFromFocusStack({
+          removeFocusItemFromFocusStack({
             focusId: scopeId,
             memoizeKey: 'global',
           });
@@ -39,7 +39,7 @@ export const useDropdownV2 = () => {
           );
         }
       },
-    [removeFocusIdFromFocusStack, goBackToPreviousDropdownFocusId],
+    [removeFocusItemFromFocusStack, goBackToPreviousDropdownFocusId],
   );
 
   const openDropdown = useRecoilCallback(
