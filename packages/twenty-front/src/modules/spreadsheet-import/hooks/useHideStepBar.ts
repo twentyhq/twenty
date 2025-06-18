@@ -9,7 +9,7 @@ export const useHideStepBar = () => {
           .getLoadable(spreadsheetImportDialogState)
           .getValue().isStepBarVisible;
 
-        if (isStepBarVisible !== false) {
+        if (isStepBarVisible) {
           set(spreadsheetImportDialogState, (state) => ({
             ...state,
             isStepBarVisible: false,
