@@ -4,30 +4,28 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
 
-export const RecordTableBodyRowFocusKeyboardEffect = () => {
+export const useRecordTableRowArrowKeys = (focusId: string) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
 
   useHotkeysOnFocusedElement({
-    keys: [Key.ArrowUp, 'k'],
+    keys: [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
     callback: () => {
       moveFocusedRow('up');
     },
-    focusId: recordTableId,
+    focusId,
     scope: TableHotkeyScope.TableFocus,
     dependencies: [moveFocusedRow],
   });
 
   useHotkeysOnFocusedElement({
-    keys: [Key.ArrowDown, 'j'],
+    keys: [Key.ArrowDown],
     callback: () => {
       moveFocusedRow('down');
     },
-    focusId: recordTableId,
+    focusId,
     scope: TableHotkeyScope.TableFocus,
     dependencies: [moveFocusedRow],
   });
-
-  return <></>;
 };

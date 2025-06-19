@@ -9,7 +9,13 @@ export const useRemoveFocusItemFromFocusStack = () => {
 
   const removeFocusItemFromFocusStack = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({ focusId, memoizeKey }: { focusId: string; memoizeKey: string }) => {
+      ({
+        focusId,
+        memoizeKey = 'global',
+      }: {
+        focusId: string;
+        memoizeKey?: string;
+      }) => {
         const focusStack = snapshot.getLoadable(focusStackState).getValue();
 
         const newFocusStack = focusStack.filter(

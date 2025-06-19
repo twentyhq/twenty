@@ -5,7 +5,7 @@ import { useMapKeyboardToFocus } from '@/object-record/record-table/hooks/useMap
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Key } from 'ts-key-enum';
@@ -27,28 +27,26 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
 
   useMapKeyboardToFocus(recordTableId);
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      if (isRecordTableFocusActive) {
-        restoreRecordTableRowFocusFromCellPosition();
-        setIsFocusActiveForCurrentPosition(false);
-      } else {
-        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        });
-      }
-    },
-    TableHotkeyScope.TableFocus,
-    [
-      setIsFocusActiveForCurrentPosition,
-      restoreRecordTableRowFocusFromCellPosition,
-      setHotkeyScope,
-      isRecordTableFocusActive,
-    ],
-  );
+  const handleEscape = () => {
+    if (isRecordTableFocusActive) {
+      restoreRecordTableRowFocusFromCellPosition();
+      setIsFocusActiveForCurrentPosition(false);
+    } else {
+      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
+        goto: true,
+        keyboardShortcutMenu: true,
+        searchRecords: true,
+      });
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: recordTableId,
+    scope: TableHotkeyScope.TableFocus,
+    dependencies: [handleEscape],
+  });
 
   return <></>;
 };

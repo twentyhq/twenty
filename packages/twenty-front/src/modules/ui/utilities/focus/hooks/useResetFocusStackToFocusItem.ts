@@ -13,11 +13,11 @@ export const useResetFocusStackToFocusItem = () => {
       ({
         focusStackItem,
         hotkeyScope,
-        memoizeKey,
+        memoizeKey = 'global',
       }: {
         focusStackItem: FocusStackItem;
         hotkeyScope: HotkeyScope;
-        memoizeKey: string;
+        memoizeKey?: string;
       }) => {
         set(focusStackState, [focusStackItem]);
 

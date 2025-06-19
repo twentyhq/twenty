@@ -42,7 +42,7 @@ export const usePushFocusItemToFocusStack = () => {
         globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         hotkeyScope: HotkeyScope;
-        memoizeKey: string;
+        memoizeKey?: string;
       }) => {
         const focusStackItem: FocusStackItem = {
           focusId,

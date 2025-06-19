@@ -24,6 +24,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RECORD_INDEX_FOCUS_ID } from '@/object-record/record-index/constants/RecordIndexFocusId';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -32,6 +33,8 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +43,7 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
@@ -90,6 +94,8 @@ export const PageChangeEffect = () => {
     useExecuteTasksOnAnyLocationChange();
 
   const { closeCommandMenu } = useCommandMenu();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
     closeCommandMenu();
@@ -144,10 +150,20 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     switch (true) {
       case isMatchingLocation(location, AppPath.RecordIndexPage): {
-        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
+        pushFocusItemToFocusStack({
+          focusId: RECORD_INDEX_FOCUS_ID,
+          component: {
+            type: FocusComponentType.PAGE,
+            instanceId: RECORD_INDEX_FOCUS_ID,
+          },
+          hotkeyScope: {
+            scope: RecordIndexHotkeyScope.RecordIndex,
+            customScopes: {
+              goto: true,
+              keyboardShortcutMenu: true,
+              searchRecords: true,
+            },
+          },
         });
         break;
       }
@@ -198,7 +214,7 @@ export const PageChangeEffect = () => {
         break;
       }
     }
-  }, [location, setHotkeyScope]);
+  }, [location, setHotkeyScope, pushFocusItemToFocusStack]);
 
   useEffect(() => {
     setTimeout(() => {
