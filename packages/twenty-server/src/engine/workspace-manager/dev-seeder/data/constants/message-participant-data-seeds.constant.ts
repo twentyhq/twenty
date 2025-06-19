@@ -63,186 +63,226 @@ const FAKE_EMAIL_PARTICIPANTS = [
   { name: 'William Miller', email: 'william.miller@external.com' },
 ];
 
+type ParticipantData = {
+  workspaceMemberId: string;
+  personId: string;
+  displayName: string;
+};
+
+const GET_RANDOM_FAKE_PARTICIPANT = () => {
+  return FAKE_EMAIL_PARTICIPANTS[
+    Math.floor(Math.random() * FAKE_EMAIL_PARTICIPANTS.length)
+  ];
+};
+
+const FIND_UNUSED_PERSON_ID = (
+  personIds: string[],
+  usedPersonIds: Set<string>,
+): string | null => {
+  const AVAILABLE_IDS = personIds.filter((id) => !usedPersonIds.has(id));
+
+  if (AVAILABLE_IDS.length === 0) return null;
+
+  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+};
+
+const FIND_UNUSED_WORKSPACE_MEMBER_ID = (
+  workspaceMemberIds: string[],
+  usedWorkspaceMemberIds: Set<string>,
+): string | null => {
+  const AVAILABLE_IDS = workspaceMemberIds.filter(
+    (id) => !usedWorkspaceMemberIds.has(id),
+  );
+
+  if (AVAILABLE_IDS.length === 0) return null;
+
+  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+};
+
+const CREATE_PERSON_PARTICIPANT = (
+  personIds: string[],
+  usedPersonIds: Set<string>,
+  defaultWorkspaceMemberId: string,
+): ParticipantData | null => {
+  const PERSON_ID = FIND_UNUSED_PERSON_ID(personIds, usedPersonIds);
+
+  if (!PERSON_ID) return null;
+
+  usedPersonIds.add(PERSON_ID);
+  const PERSON_INDEX = personIds.indexOf(PERSON_ID) + 1;
+
+  return {
+    workspaceMemberId: defaultWorkspaceMemberId,
+    personId: PERSON_ID,
+    displayName: `Person ${PERSON_INDEX}`,
+  };
+};
+
+const CREATE_WORKSPACE_MEMBER_PARTICIPANT = (
+  workspaceMemberIds: string[],
+  personIds: string[],
+  usedWorkspaceMemberIds: Set<string>,
+): ParticipantData | null => {
+  const WORKSPACE_MEMBER_ID = FIND_UNUSED_WORKSPACE_MEMBER_ID(
+    workspaceMemberIds,
+    usedWorkspaceMemberIds,
+  );
+
+  if (!WORKSPACE_MEMBER_ID) return null;
+
+  usedWorkspaceMemberIds.add(WORKSPACE_MEMBER_ID);
+
+  switch (WORKSPACE_MEMBER_ID) {
+    case WORKSPACE_MEMBER_DATA_SEED_IDS.TIM:
+      return {
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        personId: personIds[0] || personIds[0],
+        displayName: 'Tim Apple',
+      };
+    case WORKSPACE_MEMBER_DATA_SEED_IDS.JONY:
+      return {
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        personId: personIds[1] || personIds[0],
+        displayName: 'Jony Ive',
+      };
+    case WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL:
+      return {
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        personId: personIds[2] || personIds[0],
+        displayName: 'Phil Schiller',
+      };
+    default:
+      return {
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        personId: personIds[0] || personIds[0],
+        displayName: 'Workspace Member',
+      };
+  }
+};
+
+const CREATE_FAKE_PARTICIPANT = (
+  workspaceMemberIds: string[],
+  personIds: string[],
+): ParticipantData => {
+  const FAKE = GET_RANDOM_FAKE_PARTICIPANT();
+
+  return {
+    workspaceMemberId: workspaceMemberIds[0],
+    personId:
+      personIds[Math.floor(Math.random() * Math.min(10, personIds.length))],
+    displayName: FAKE.name,
+  };
+};
+
+const CREATE_PARTICIPANT_DATA = (
+  personIds: string[],
+  workspaceMemberIds: string[],
+  usedPersonIds: Set<string>,
+  usedWorkspaceMemberIds: Set<string>,
+): ParticipantData => {
+  const PARTICIPANT_TYPE = Math.random();
+
+  // Try person participant (40% chance)
+  if (PARTICIPANT_TYPE < 0.4) {
+    const PERSON_PARTICIPANT = CREATE_PERSON_PARTICIPANT(
+      personIds,
+      usedPersonIds,
+      workspaceMemberIds[0],
+    );
+
+    if (PERSON_PARTICIPANT) return PERSON_PARTICIPANT;
+  }
+
+  // Try workspace member participant (30% chance, 0.4-0.7 range)
+  if (PARTICIPANT_TYPE >= 0.4 && PARTICIPANT_TYPE < 0.7) {
+    const WORKSPACE_PARTICIPANT = CREATE_WORKSPACE_MEMBER_PARTICIPANT(
+      workspaceMemberIds,
+      personIds,
+      usedWorkspaceMemberIds,
+    );
+
+    if (WORKSPACE_PARTICIPANT) return WORKSPACE_PARTICIPANT;
+  }
+
+  // Fallback to fake participant
+  return CREATE_FAKE_PARTICIPANT(workspaceMemberIds, personIds);
+};
+
+const CREATE_MESSAGE_PARTICIPANTS = (
+  messageId: string,
+  personIds: string[],
+  workspaceMemberIds: string[],
+  participantIndex: number,
+): { participants: MessageParticipantDataSeed[]; nextIndex: number } => {
+  const PARTICIPANTS: MessageParticipantDataSeed[] = [];
+  const RECIPIENT_COUNT = 1 + Math.floor(Math.random() * 3); // 1-3 recipients
+  const TOTAL_PARTICIPANTS = 1 + RECIPIENT_COUNT; // sender + recipients
+
+  const USED_PERSON_IDS = new Set<string>();
+  const USED_WORKSPACE_MEMBER_IDS = new Set<string>();
+
+  for (let I = 0; I < TOTAL_PARTICIPANTS; I++) {
+    const IS_SENDER = I === 0;
+    const ROLE = IS_SENDER ? 'from' : 'to';
+    const HANDLE = IS_SENDER ? 'outgoing' : 'incoming';
+
+    // Random date within the last 3 months
+    const NOW = new Date();
+    const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 90);
+    const PARTICIPANT_DATE = new Date(
+      NOW.getTime() - RANDOM_DAYS_OFFSET * 24 * 60 * 60 * 1000,
+    );
+
+    const PARTICIPANT_DATA = CREATE_PARTICIPANT_DATA(
+      personIds,
+      workspaceMemberIds,
+      USED_PERSON_IDS,
+      USED_WORKSPACE_MEMBER_IDS,
+    );
+
+    PARTICIPANTS.push({
+      id: MESSAGE_PARTICIPANT_DATA_SEED_IDS[`ID_${participantIndex}`],
+      createdAt: PARTICIPANT_DATE,
+      updatedAt: PARTICIPANT_DATE,
+      deletedAt: null,
+      workspaceMemberId: PARTICIPANT_DATA.workspaceMemberId,
+      personId: PARTICIPANT_DATA.personId,
+      displayName: PARTICIPANT_DATA.displayName,
+      handle: HANDLE,
+      role: ROLE,
+      messageId,
+    });
+
+    participantIndex++;
+  }
+
+  return { participants: PARTICIPANTS, nextIndex: participantIndex };
+};
+
 const GENERATE_MESSAGE_PARTICIPANT_SEEDS = (): MessageParticipantDataSeed[] => {
   const PARTICIPANT_SEEDS: MessageParticipantDataSeed[] = [];
   let PARTICIPANT_INDEX = 1;
 
-  // Get all message IDs
   const MESSAGE_IDS = Object.keys(MESSAGE_DATA_SEED_IDS).map(
     (key) => MESSAGE_DATA_SEED_IDS[key as keyof typeof MESSAGE_DATA_SEED_IDS],
   );
 
-  // Get person and workspace member IDs
   const PERSON_IDS = Object.keys(PERSON_DATA_SEED_IDS).map(
     (key) => PERSON_DATA_SEED_IDS[key as keyof typeof PERSON_DATA_SEED_IDS],
   );
   const WORKSPACE_MEMBER_IDS = Object.values(WORKSPACE_MEMBER_DATA_SEED_IDS);
 
-  // For each message, create participants (sender + 1-3 recipients)
-  MESSAGE_IDS.forEach((messageId) => {
-    // Random number of participants per message (2-4 total: 1 sender + 1-3 recipients)
-    const RECIPIENT_COUNT = 1 + Math.floor(Math.random() * 3); // 1-3 recipients
-    const TOTAL_PARTICIPANTS = 1 + RECIPIENT_COUNT; // sender + recipients
+  for (const MESSAGE_ID of MESSAGE_IDS) {
+    const RESULT = CREATE_MESSAGE_PARTICIPANTS(
+      MESSAGE_ID,
+      PERSON_IDS,
+      WORKSPACE_MEMBER_IDS,
+      PARTICIPANT_INDEX,
+    );
 
-    const USED_PERSON_IDS = new Set<string>();
-    const USED_WORKSPACE_MEMBER_IDS = new Set<string>();
-
-    for (let I = 0; I < TOTAL_PARTICIPANTS; I++) {
-      const IS_SENDER = I === 0;
-      const ROLE = IS_SENDER ? 'from' : 'to';
-      const HANDLE = IS_SENDER ? 'outgoing' : 'incoming';
-
-      // Random date within the last 3 months
-      const NOW = new Date();
-      const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 90);
-      const PARTICIPANT_DATE = new Date(
-        NOW.getTime() - RANDOM_DAYS_OFFSET * 24 * 60 * 60 * 1000,
-      );
-
-      const PARTICIPANT_TYPE = Math.random();
-
-      let PARTICIPANT_DATA = {
-        workspaceMemberId: WORKSPACE_MEMBER_IDS[0], // Default to TIM
-        personId: PERSON_IDS[0], // Default person
-        displayName: '',
-      };
-
-      // Try to use a person from database (40% chance)
-      if (PARTICIPANT_TYPE < 0.4 && PERSON_IDS.length > 0) {
-        let PERSON_ID: string;
-        let ATTEMPTS = 0;
-
-        do {
-          PERSON_ID = PERSON_IDS[Math.floor(Math.random() * PERSON_IDS.length)];
-          ATTEMPTS++;
-        } while (USED_PERSON_IDS.has(PERSON_ID) && ATTEMPTS < 10);
-
-        if (!USED_PERSON_IDS.has(PERSON_ID)) {
-          USED_PERSON_IDS.add(PERSON_ID);
-          const PERSON_INDEX = PERSON_IDS.indexOf(PERSON_ID) + 1;
-
-          PARTICIPANT_DATA = {
-            workspaceMemberId: WORKSPACE_MEMBER_IDS[0], // Default to TIM
-            personId: PERSON_ID,
-            displayName: `Person ${PERSON_INDEX}`,
-          };
-        } else {
-          // Fallback to fake participant
-          const FAKE =
-            FAKE_EMAIL_PARTICIPANTS[
-              Math.floor(Math.random() * FAKE_EMAIL_PARTICIPANTS.length)
-            ];
-
-          PARTICIPANT_DATA.displayName = FAKE.name;
-        }
-      }
-
-      // Try to use a workspace member (30% chance) if person type doesn't match
-      if (
-        PARTICIPANT_TYPE >= 0.4 &&
-        PARTICIPANT_TYPE < 0.7 &&
-        WORKSPACE_MEMBER_IDS.length > 0
-      ) {
-        let WORKSPACE_MEMBER_ID: string;
-        let ATTEMPTS = 0;
-
-        do {
-          WORKSPACE_MEMBER_ID =
-            WORKSPACE_MEMBER_IDS[
-              Math.floor(Math.random() * WORKSPACE_MEMBER_IDS.length)
-            ];
-          ATTEMPTS++;
-        } while (
-          USED_WORKSPACE_MEMBER_IDS.has(WORKSPACE_MEMBER_ID) &&
-          ATTEMPTS < 10
-        );
-
-        if (!USED_WORKSPACE_MEMBER_IDS.has(WORKSPACE_MEMBER_ID)) {
-          USED_WORKSPACE_MEMBER_IDS.add(WORKSPACE_MEMBER_ID);
-
-          if (WORKSPACE_MEMBER_ID === WORKSPACE_MEMBER_DATA_SEED_IDS.TIM) {
-            PARTICIPANT_DATA = {
-              workspaceMemberId: WORKSPACE_MEMBER_ID,
-              personId: PERSON_IDS[0], // Default person
-              displayName: 'Tim Apple',
-            };
-          } else if (
-            WORKSPACE_MEMBER_ID === WORKSPACE_MEMBER_DATA_SEED_IDS.JONY
-          ) {
-            PARTICIPANT_DATA = {
-              workspaceMemberId: WORKSPACE_MEMBER_ID,
-              personId: PERSON_IDS[1], // Second person
-              displayName: 'Jony Ive',
-            };
-          } else if (
-            WORKSPACE_MEMBER_ID === WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL
-          ) {
-            PARTICIPANT_DATA = {
-              workspaceMemberId: WORKSPACE_MEMBER_ID,
-              personId: PERSON_IDS[2], // Third person
-              displayName: 'Phil Schiller',
-            };
-          } else {
-            PARTICIPANT_DATA = {
-              workspaceMemberId: WORKSPACE_MEMBER_ID,
-              personId: PERSON_IDS[0], // Default person
-              displayName: 'Workspace Member',
-            };
-          }
-        } else {
-          // Fallback to fake participant
-          const FAKE =
-            FAKE_EMAIL_PARTICIPANTS[
-              Math.floor(Math.random() * FAKE_EMAIL_PARTICIPANTS.length)
-            ];
-
-          PARTICIPANT_DATA.displayName = FAKE.name;
-        }
-      }
-
-      // Use fake participant for remaining cases (30% chance)
-      if (PARTICIPANT_TYPE >= 0.7) {
-        const FAKE =
-          FAKE_EMAIL_PARTICIPANTS[
-            Math.floor(Math.random() * FAKE_EMAIL_PARTICIPANTS.length)
-          ];
-
-        PARTICIPANT_DATA = {
-          workspaceMemberId: WORKSPACE_MEMBER_IDS[0], // Default to TIM
-          personId:
-            PERSON_IDS[
-              Math.floor(Math.random() * Math.min(10, PERSON_IDS.length))
-            ], // Random person from first 10
-          displayName: FAKE.name,
-        };
-      }
-
-      // Ensure displayName is set if still empty
-      if (!PARTICIPANT_DATA.displayName) {
-        const FAKE =
-          FAKE_EMAIL_PARTICIPANTS[
-            Math.floor(Math.random() * FAKE_EMAIL_PARTICIPANTS.length)
-          ];
-
-        PARTICIPANT_DATA.displayName = FAKE.name;
-      }
-
-      PARTICIPANT_SEEDS.push({
-        id: MESSAGE_PARTICIPANT_DATA_SEED_IDS[`ID_${PARTICIPANT_INDEX}`],
-        createdAt: PARTICIPANT_DATE,
-        updatedAt: PARTICIPANT_DATE,
-        deletedAt: null,
-        workspaceMemberId: PARTICIPANT_DATA.workspaceMemberId,
-        personId: PARTICIPANT_DATA.personId,
-        displayName: PARTICIPANT_DATA.displayName,
-        handle: HANDLE,
-        role: ROLE,
-        messageId: messageId,
-      });
-
-      PARTICIPANT_INDEX++;
-    }
-  });
+    PARTICIPANT_SEEDS.push(...RESULT.participants);
+    PARTICIPANT_INDEX = RESULT.nextIndex;
+  }
 
   return PARTICIPANT_SEEDS;
 };
