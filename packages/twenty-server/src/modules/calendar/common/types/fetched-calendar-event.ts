@@ -1,9 +1,8 @@
 export type FetchedCalendarEventParticipant = {
-  id: string;
-  name: string;
-  email: string;
-  status: string;
+  displayName: string;
+  responseStatus: string;
   handle: string;
+  isOrganizer: boolean;
 };
 
 export type FetchedCalendarEvent = {

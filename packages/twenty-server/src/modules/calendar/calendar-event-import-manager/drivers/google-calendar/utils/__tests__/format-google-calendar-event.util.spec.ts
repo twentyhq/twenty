@@ -59,7 +59,7 @@ describe('formatGoogleCalendarEvents', () => {
     expect(formattedEvent.isFullDay).toBe(false);
     expect(formattedEvent.startsAt).toBe('2023-01-15T14:00:00Z');
     expect(formattedEvent.endsAt).toBe('2023-01-15T15:00:00Z');
-    expect(formattedEvent.externalId).toBe('event123');
+    expect(formattedEvent.id).toBe('event123');
     expect(formattedEvent.conferenceSolution).toBe('hangoutsMeet');
     expect(formattedEvent.conferenceLinkUrl).toBe(
       'https://meet.google.com/abc-defg-hij',
