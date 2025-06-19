@@ -149,10 +149,8 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const [
-    workflowDiagramFlowInitializationStatus,
-    setWorkflowDiagramFlowInitializationStatus,
-  ] = useState<'not-initialized' | 'initialized'>('not-initialized');
+  const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
+    useState<boolean>(false);
 
   const { nodes, edges } = useMemo(
     () =>
@@ -199,21 +197,19 @@ export const WorkflowDiagramCanvasBase = ({
       ({
         rightDrawerState,
         noAnimation,
-        workflowDiagramFlowInitializationStatus,
+        workflowDiagramFlowInitialized,
         isInRightDrawer,
         workflowDiagram,
       }: {
         rightDrawerState: CommandMenuAnimationVariant;
         noAnimation?: boolean;
-        workflowDiagramFlowInitializationStatus:
-          | 'not-initialized'
-          | 'initialized';
+        workflowDiagramFlowInitialized: boolean;
         isInRightDrawer: boolean;
         workflowDiagram: WorkflowDiagram | undefined;
       }) => {
         if (
           !isDefined(containerRef.current) ||
-          workflowDiagramFlowInitializationStatus !== 'initialized'
+          !workflowDiagramFlowInitialized
         ) {
           return;
         }
@@ -262,19 +258,17 @@ export const WorkflowDiagramCanvasBase = ({
     ({ snapshot }) =>
       ({
         rightDrawerState,
-        workflowDiagramFlowInitializationStatus,
+        workflowDiagramFlowInitialized,
         isInRightDrawer,
       }: {
         rightDrawerState: CommandMenuAnimationVariant;
-        workflowDiagramFlowInitializationStatus:
-          | 'not-initialized'
-          | 'initialized';
+        workflowDiagramFlowInitialized: boolean;
         isInRightDrawer: boolean;
       }) => {
         setFlowViewport({
           rightDrawerState,
           isInRightDrawer,
-          workflowDiagramFlowInitializationStatus,
+          workflowDiagramFlowInitialized,
           workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
         });
       },
@@ -284,14 +278,14 @@ export const WorkflowDiagramCanvasBase = ({
   useEffect(() => {
     handleSetFlowViewportOnChange({
       rightDrawerState,
-      workflowDiagramFlowInitializationStatus,
+      workflowDiagramFlowInitialized,
       isInRightDrawer,
     });
   }, [
     handleSetFlowViewportOnChange,
     isInRightDrawer,
     rightDrawerState,
-    workflowDiagramFlowInitializationStatus,
+    workflowDiagramFlowInitialized,
   ]);
 
   const handleNodesChanges = useRecoilCallback(
@@ -323,7 +317,7 @@ export const WorkflowDiagramCanvasBase = ({
           rightDrawerState,
           noAnimation: true,
           isInRightDrawer,
-          workflowDiagramFlowInitializationStatus,
+          workflowDiagramFlowInitialized,
           workflowDiagram: updatedWorkflowDiagram,
         });
       },
@@ -331,7 +325,7 @@ export const WorkflowDiagramCanvasBase = ({
       isInRightDrawer,
       rightDrawerState,
       setFlowViewport,
-      workflowDiagramFlowInitializationStatus,
+      workflowDiagramFlowInitialized,
       workflowDiagramState,
       workflowDiagramWaitingNodesDimensionsState,
     ],
@@ -348,11 +342,11 @@ export const WorkflowDiagramCanvasBase = ({
           rightDrawerState,
           noAnimation: true,
           isInRightDrawer,
-          workflowDiagramFlowInitializationStatus: 'initialized',
+          workflowDiagramFlowInitialized: true,
           workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
         });
 
-        setWorkflowDiagramFlowInitializationStatus('initialized');
+        setWorkflowDiagramFlowInitialized(true);
 
         onInit?.();
       },
