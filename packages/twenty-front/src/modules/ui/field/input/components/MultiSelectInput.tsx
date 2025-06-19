@@ -9,6 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -125,17 +126,25 @@ export const MultiSelectInput = ({
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.map((option) => {
             return (
-              <MenuItemMultiSelectTag
+              <SelectableListItem
                 key={option.value}
-                selected={values?.includes(option.value) || false}
-                text={option.label}
-                color={option.color ?? 'transparent'}
-                Icon={option.Icon ?? undefined}
-                onClick={() =>
-                  onOptionSelected(formatNewSelectedOptions(option.value))
-                }
-                isKeySelected={selectedItemId === option.value}
-              />
+                itemId={option.value}
+                onEnter={() => {
+                  onOptionSelected(formatNewSelectedOptions(option.value));
+                }}
+              >
+                <MenuItemMultiSelectTag
+                  key={option.value}
+                  selected={values?.includes(option.value) || false}
+                  text={option.label}
+                  color={option.color ?? 'transparent'}
+                  Icon={option.Icon ?? undefined}
+                  onClick={() =>
+                    onOptionSelected(formatNewSelectedOptions(option.value))
+                  }
+                  isKeySelected={selectedItemId === option.value}
+                />
+              </SelectableListItem>
             );
           })}
         </DropdownMenuItemsContainer>
