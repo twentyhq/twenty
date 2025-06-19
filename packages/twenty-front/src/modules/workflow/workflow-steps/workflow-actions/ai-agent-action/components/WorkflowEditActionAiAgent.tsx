@@ -12,8 +12,8 @@ import { useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import { ALL_MODELS } from '../constants/AIAgent';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
+import { useAiModelOptions } from '../hooks/useAiModelOptions';
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -79,6 +79,8 @@ export const WorkflowEditActionAiAgent = ({
     await handleSave({ ...formValues, [field]: value });
   };
 
+  const modelOptions = useAiModelOptions();
+
   return loading ? (
     <RightDrawerSkeletonLoader />
   ) : (
@@ -100,7 +102,7 @@ export const WorkflowEditActionAiAgent = ({
         <Select
           dropdownId="select-model"
           label="AI Model"
-          options={ALL_MODELS}
+          options={modelOptions}
           value={formValues.modelId}
           onChange={(value) => handleFieldChange('modelId', value)}
           disabled={actionOptions.readonly}
