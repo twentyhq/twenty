@@ -1,12 +1,14 @@
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { TagColor } from 'twenty-ui/components';
 import { SelectOption } from 'twenty-ui/input';
@@ -31,9 +33,18 @@ export const SelectInput = ({
   onCancel,
   defaultOption,
   onFilterChange,
-  focusId,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Get the SelectableList instance id from context
+  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
+    SelectableListComponentInstanceContext,
+  );
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    selectableListInstanceId,
+  );
 
   const [searchFilter, setSearchFilter] = useState('');
   const [selectedOption, setSelectedOption] = useState<
@@ -62,6 +73,11 @@ export const SelectInput = ({
     onOptionSelected(option);
   };
 
+  const handleClearOption = () => {
+    setSelectedOption(undefined);
+    onClear?.();
+  };
+
   useEffect(() => {
     onFilterChange?.(optionsInDropDown);
   }, [onFilterChange, optionsInDropDown]);
@@ -82,23 +98,6 @@ export const SelectInput = ({
     listenerId: 'select-input',
   });
 
-  const handleEnter = () => {
-    const selectedOption = optionsInDropDown.find((option) =>
-      option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-    );
-    if (isDefined(selectedOption)) {
-      handleOptionChange(selectedOption);
-    }
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: Key.Enter,
-    callback: handleEnter,
-    focusId,
-    scope: DEFAULT_CELL_SCOPE.scope,
-    dependencies: [handleEnter],
-  });
-
   return (
     <DropdownContent ref={containerRef} selectDisabled>
       <DropdownMenuSearchInput
@@ -109,27 +108,37 @@ export const SelectInput = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {onClear && clearLabel && (
-          <MenuItemSelectTag
-            key={`No ${clearLabel}`}
-            text={`No ${clearLabel}`}
-            color="transparent"
-            variant={'outline'}
-            onClick={() => {
-              setSelectedOption(undefined);
-              onClear();
-            }}
-          />
+          <SelectableListItem
+            itemId={`No ${clearLabel}`}
+            onEnter={handleClearOption}
+          >
+            <MenuItemSelectTag
+              key={`No ${clearLabel}`}
+              text={`No ${clearLabel}`}
+              color="transparent"
+              variant={'outline'}
+              onClick={handleClearOption}
+              isKeySelected={selectedItemId === `No ${clearLabel}`}
+            />
+          </SelectableListItem>
         )}
         {optionsInDropDown.map((option) => {
           return (
-            <MenuItemSelectTag
+            <SelectableListItem
               key={option.value}
-              focused={selectedOption?.value === option.value}
-              text={option.label}
-              color={(option.color as TagColor) ?? 'transparent'}
-              onClick={() => handleOptionChange(option)}
-              LeftIcon={option.Icon}
-            />
+              itemId={option.value}
+              onEnter={() => handleOptionChange(option)}
+            >
+              <MenuItemSelectTag
+                key={option.value}
+                selected={selectedOption?.value === option.value}
+                text={option.label}
+                color={(option.color as TagColor) ?? 'transparent'}
+                onClick={() => handleOptionChange(option)}
+                LeftIcon={option.Icon}
+                isKeySelected={selectedItemId === option.value}
+              />
+            </SelectableListItem>
           );
         })}
       </DropdownMenuItemsContainer>
