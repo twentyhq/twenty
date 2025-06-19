@@ -95,14 +95,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const tabs = [
     {
-      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
-      title: t`Assignment`,
-      Icon: IconUserPlus,
-    },
-    {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
       Icon: IconLockOpen,
+    },
+    {
+      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
+      title: t`Assignment`,
+      Icon: IconUserPlus,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS,

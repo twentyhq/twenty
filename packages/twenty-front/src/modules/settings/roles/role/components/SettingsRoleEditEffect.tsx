@@ -45,7 +45,7 @@ export const SettingsRoleEditEffect = ({
       return;
     }
 
-    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT);
+    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS);
     updateDraftRoleIfNeeded(role);
     setIsInitialized(true);
   }, [isInitialized, role, setActiveTabId, updateDraftRoleIfNeeded]);
