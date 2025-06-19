@@ -92,18 +92,17 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
 
       for (let I = 0; I < PARTICIPANT_COUNT; I++) {
         const IS_ORGANIZER = I === 0;
-        let PARTICIPANT_DATA: {
-          handle: string;
-          displayName: string;
-          personId: string | null;
-          workspaceMemberId: string | null;
-        };
-
-        // 40% person, 20% workspace member, 40% fake participant
         const PARTICIPANT_TYPE = Math.random();
 
+        let PARTICIPANT_DATA = {
+          handle: '',
+          displayName: '',
+          personId: null as string | null,
+          workspaceMemberId: null as string | null,
+        };
+
+        // Try to use a person from database (40% chance)
         if (PARTICIPANT_TYPE < 0.4 && PERSON_IDS.length > 0) {
-          // Use a person from database
           let PERSON_ID: string;
           let ATTEMPTS = 0;
 
@@ -123,22 +122,15 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
               personId: PERSON_ID,
               workspaceMemberId: null,
             };
-          } else {
-            // Fallback to fake participant
-            const FAKE =
-              FAKE_PARTICIPANTS[
-                Math.floor(Math.random() * FAKE_PARTICIPANTS.length)
-              ];
-
-            PARTICIPANT_DATA = {
-              handle: FAKE.email,
-              displayName: FAKE.name,
-              personId: null,
-              workspaceMemberId: null,
-            };
           }
-        } else if (PARTICIPANT_TYPE < 0.6 && WORKSPACE_MEMBER_IDS.length > 0) {
-          // Use a workspace member
+        }
+
+        // Try to use a workspace member (20% chance) if person wasn't used
+        if (
+          !PARTICIPANT_DATA.personId &&
+          PARTICIPANT_TYPE < 0.6 &&
+          WORKSPACE_MEMBER_IDS.length > 0
+        ) {
           let WORKSPACE_MEMBER_ID: string;
           let ATTEMPTS = 0;
 
@@ -156,7 +148,6 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
           if (!USED_WORKSPACE_MEMBER_IDS.has(WORKSPACE_MEMBER_ID)) {
             USED_WORKSPACE_MEMBER_IDS.add(WORKSPACE_MEMBER_ID);
 
-            // Map workspace member IDs to names
             if (WORKSPACE_MEMBER_ID === WORKSPACE_MEMBER_DATA_SEED_IDS.TIM) {
               PARTICIPANT_DATA = {
                 handle: 'tim@apple.com',
@@ -190,22 +181,11 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
                 workspaceMemberId: WORKSPACE_MEMBER_ID,
               };
             }
-          } else {
-            // Fallback to fake participant
-            const FAKE =
-              FAKE_PARTICIPANTS[
-                Math.floor(Math.random() * FAKE_PARTICIPANTS.length)
-              ];
-
-            PARTICIPANT_DATA = {
-              handle: FAKE.email,
-              displayName: FAKE.name,
-              personId: null,
-              workspaceMemberId: null,
-            };
           }
-        } else {
-          // Use fake participant
+        }
+
+        // Use fake participant if no person or workspace member was assigned
+        if (!PARTICIPANT_DATA.personId && !PARTICIPANT_DATA.workspaceMemberId) {
           const FAKE =
             FAKE_PARTICIPANTS[
               Math.floor(Math.random() * FAKE_PARTICIPANTS.length)
