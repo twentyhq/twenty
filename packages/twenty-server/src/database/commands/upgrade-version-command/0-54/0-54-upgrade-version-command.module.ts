@@ -6,7 +6,6 @@ import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-v
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
-import { TransferWebhookToCoreCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-transfer-webhook-to-core.command';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -41,7 +40,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CleanNotFoundFilesCommand,
     LowercaseUserAndInvitationEmailsCommand,
     MigrateDefaultAvatarUrlToUserWorkspaceCommand,
-    TransferWebhookToCoreCommand,
   ],
   exports: [
     FixStandardSelectFieldsPositionCommand,
@@ -49,7 +47,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CleanNotFoundFilesCommand,
     LowercaseUserAndInvitationEmailsCommand,
     MigrateDefaultAvatarUrlToUserWorkspaceCommand,
-    TransferWebhookToCoreCommand,
   ],
 })
 export class V0_54_UpgradeVersionCommandModule {}

@@ -1,7 +1,8 @@
 export type Webhook = {
   id: string;
   targetUrl: string;
-  description?: string | null;
+  description?: string;
   operations: string[];
   secret?: string;
+  __typename: 'Webhook';
 };

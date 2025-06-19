@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { ArrayContains } from 'typeorm';
 
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -8,12 +9,13 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/modules/webhook/jobs/call-webhook.job';
+import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.webhookQueue)
@@ -23,7 +25,7 @@ export class CallWebhookJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly webhookService: WebhookService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -35,14 +37,22 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
+    const webhookRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
+        workspaceEventBatch.workspaceId,
+        'webhook',
+      );
+
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const webhooks =
-      await this.webhookService.findByWorkspaceIdAndOperationPatterns(
-        workspaceEventBatch.workspaceId,
-        nameSingular,
-        operation,
-      );
+    const webhooks = await webhookRepository.find({
+      where: [
+        { operations: ArrayContains([`${nameSingular}.${operation}`]) },
+        { operations: ArrayContains([`*.${operation}`]) },
+        { operations: ArrayContains([`${nameSingular}.*`]) },
+        { operations: ArrayContains(['*.*']) },
+      ],
+    });
 
     for (const eventData of workspaceEventBatch.events) {
       const eventName = workspaceEventBatch.name;

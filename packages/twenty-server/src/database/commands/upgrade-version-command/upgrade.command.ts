@@ -20,7 +20,6 @@ import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-v
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
-import { TransferWebhookToCoreCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-transfer-webhook-to-core.command';
 import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -133,7 +132,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanNotFoundFilesCommand: CleanNotFoundFilesCommand,
     protected readonly lowercaseUserAndInvitationEmailsCommand: LowercaseUserAndInvitationEmailsCommand,
     protected readonly migrateDefaultAvatarUrlToUserWorkspaceCommand: MigrateDefaultAvatarUrlToUserWorkspaceCommand,
-    protected readonly transferWebhookToCoreCommand: TransferWebhookToCoreCommand,
 
     // 0.55 Commands
     protected readonly deduplicateIndexedFieldsCommand: DeduplicateIndexedFieldsCommand,
@@ -159,7 +157,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.cleanNotFoundFilesCommand,
         this.lowercaseUserAndInvitationEmailsCommand,
         this.migrateDefaultAvatarUrlToUserWorkspaceCommand,
-        this.transferWebhookToCoreCommand,
       ],
     };
 
