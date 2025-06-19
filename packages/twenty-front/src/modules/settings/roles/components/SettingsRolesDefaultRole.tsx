@@ -53,7 +53,7 @@ export const SettingsRoleDefaultRole = ({
 
   const { getIcon } = useIcons();
 
-  if (!currentWorkspace || !roles || !defaultRole) {
+  if (!currentWorkspace || !defaultRole) {
     return null;
   }
 
