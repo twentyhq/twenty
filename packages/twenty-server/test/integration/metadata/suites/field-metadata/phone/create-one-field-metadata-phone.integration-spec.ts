@@ -1,16 +1,16 @@
 import { faker } from '@faker-js/faker';
-import { EachTestingContext } from 'twenty-shared/testing';
-
 import { CountryCode } from 'libphonenumber-js';
-import {
-  AdditionalPhoneMetadata,
-  PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import {
+  AdditionalPhoneMetadata,
+  PhonesMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 const FIELD_NAME = 'phonenumber';
 
@@ -19,6 +19,7 @@ type TestCaseInputAndExpected = Partial<
 > & {
   additionalPhones?: Array<Partial<AdditionalPhoneMetadata>> | null;
 };
+
 type CreatePhoneFieldMetadataTestCase = {
   input: TestCaseInputAndExpected;
   expected?: TestCaseInputAndExpected;
@@ -371,7 +372,8 @@ describe('Phone field metadata tests suite', () => {
       });
 
       expect(errors).toBeUndefined();
-      const { id, ...rest } = createOneResponse;
+      const { id: _id, ...rest } = createOneResponse;
+
       expect(rest[FIELD_NAME]).toStrictEqual({
         ...expected,
         __typename: 'Phones',

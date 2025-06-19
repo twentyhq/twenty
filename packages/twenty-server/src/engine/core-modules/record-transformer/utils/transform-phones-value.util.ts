@@ -3,7 +3,6 @@ import {
   parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   CountryCallingCode,
@@ -12,6 +11,7 @@ import {
   getCountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
+
 import {
   RecordTransformerException,
   RecordTransformerExceptionCode,
@@ -31,6 +31,7 @@ export type PhonesFieldGraphQLInput =
     >
   | null
   | undefined;
+
 type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
 
@@ -47,6 +48,7 @@ const getCountryCodesForCallingCode = (callingCode: string) => {
 
   return ALL_COUNTRIES_CODE.filter((country) => {
     const countryCallingCode = getCountryCallingCode(country);
+
     return countryCallingCode === cleanCallingCode;
   });
 };
@@ -67,6 +69,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   }
 
   const expectedCountryCodes = getCountryCodesForCallingCode(callingCode);
+
   if (expectedCountryCodes.length === 0) {
     throw new RecordTransformerException(
       `Invalid calling code ${callingCode}`,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ObjectRecord,
@@ -24,7 +25,6 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { isDefined } from 'twenty-shared/utils';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;

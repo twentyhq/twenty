@@ -3,20 +3,20 @@ import { CommonResponseBody } from 'test/integration/metadata/types/common-respo
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { capitalize } from 'twenty-shared/utils';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 type UpdateOneOperationArgs<T> = PerformMetadataQueryParams<T> & {
   objectMetadataSingularName: string;
-  recordId: string
+  recordId: string;
 };
 export const updateOneOperation = async <T = object>({
   input,
   gqlFields = 'id',
   objectMetadataSingularName,
   expectToFail = false,
-  recordId
+  recordId,
 }: UpdateOneOperationArgs<T>): CommonResponseBody<{
   updateOneResponse: ObjectRecord;
 }> => {
@@ -24,7 +24,7 @@ export const updateOneOperation = async <T = object>({
     data: input as object, // TODO default generic does not work
     objectMetadataSingularName,
     gqlFields,
-    recordId
+    recordId,
   });
 
   const response = await makeGraphqlAPIRequest(graphqlOperation);
