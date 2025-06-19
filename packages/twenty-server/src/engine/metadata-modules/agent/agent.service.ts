@@ -81,7 +81,7 @@ export class AgentService {
   async deleteOneAgent(id: string, workspaceId: string) {
     const agent = await this.findOneAgent(id, workspaceId);
 
-    await this.agentRepository.softDelete({ id });
+    await this.agentRepository.softDelete({ id: agent.id });
 
     return agent;
   }
