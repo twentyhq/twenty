@@ -221,14 +221,15 @@ export const WorkflowDiagramCanvasBase = ({
         const currentViewport = reactflow.getViewport();
         const nodes = workflowDiagram?.nodes ?? [];
 
-        const canNotComputeNodesBounds = nodes.some(
-          (node) => !isDefined(node.measured),
+        const canComputeNodesBounds = nodes.every((node) =>
+          isDefined(node.measured),
         );
 
-        if (canNotComputeNodesBounds) {
+        if (!canComputeNodesBounds) {
           setWorkflowDiagramWaitingNodesDimensions(true);
           return;
         }
+
         setWorkflowDiagramWaitingNodesDimensions(false);
 
         let visibleRightDrawerWidth = 0;
@@ -257,9 +258,19 @@ export const WorkflowDiagramCanvasBase = ({
     [reactflow, setWorkflowDiagramWaitingNodesDimensions],
   );
 
-  const effect = useRecoilCallback(
+  const handleSetFlowViewportOnChange = useRecoilCallback(
     ({ snapshot }) =>
-      () => {
+      ({
+        rightDrawerState,
+        workflowDiagramFlowInitializationStatus,
+        isInRightDrawer,
+      }: {
+        rightDrawerState: CommandMenuAnimationVariant;
+        workflowDiagramFlowInitializationStatus:
+          | 'not-initialized'
+          | 'initialized';
+        isInRightDrawer: boolean;
+      }) => {
         setFlowViewport({
           rightDrawerState,
           isInRightDrawer,
@@ -267,16 +278,21 @@ export const WorkflowDiagramCanvasBase = ({
           workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
         });
       },
-    [
-      isInRightDrawer,
-      rightDrawerState,
-      setFlowViewport,
-      workflowDiagramFlowInitializationStatus,
-      workflowDiagramState,
-    ],
+    [setFlowViewport, workflowDiagramState],
   );
 
-  useEffect(effect, [effect]);
+  useEffect(() => {
+    handleSetFlowViewportOnChange({
+      rightDrawerState,
+      workflowDiagramFlowInitializationStatus,
+      isInRightDrawer,
+    });
+  }, [
+    handleSetFlowViewportOnChange,
+    isInRightDrawer,
+    rightDrawerState,
+    workflowDiagramFlowInitializationStatus,
+  ]);
 
   const handleNodesChanges = useRecoilCallback(
     ({ snapshot, set }) =>
