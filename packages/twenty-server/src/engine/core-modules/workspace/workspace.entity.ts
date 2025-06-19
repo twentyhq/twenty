@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -124,6 +125,9 @@ export class Workspace {
 
   @OneToMany(() => Webhook, (webhook) => webhook.workspace)
   webhooks: Relation<Webhook[]>;
+
+  @OneToMany(() => ApiKey, (apiKey) => apiKey.workspace)
+  apiKeys: Relation<ApiKey[]>;
 
   @Field()
   @Column({ default: 1 })

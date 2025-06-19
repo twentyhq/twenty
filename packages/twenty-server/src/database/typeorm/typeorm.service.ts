@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -36,6 +37,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         Workspace,
         UserWorkspace,
         AppToken,
+        ApiKey,
         KeyValuePair,
         FeatureFlag,
         BillingSubscription,
