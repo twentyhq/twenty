@@ -13,9 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ObjectPermission } from '~/generated-metadata/graphql';
 import type { Role } from '~/generated/graphql';
 
-const StyledTableRow = styled(TableRow)`
+const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
   align-items: center;
   display: flex;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
 `;
 
 const StyledPermissionCell = styled(TableCell)`
@@ -119,7 +120,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     };
 
     return (
-      <StyledTableRow>
+      <StyledTableRow onClick={handleCheckboxChange} isDisabled={!isEditable}>
         <StyledPermissionCell>
           <StyledPermissionContent>
             <PermissionIcon
@@ -137,7 +138,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
             ) : null}
           </StyledOverrideInfo>
         </StyledPermissionCell>
-        <StyledCheckboxCell>
+        <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
           <OverridableCheckbox
             onChange={handleCheckboxChange}
             disabled={!isEditable}
