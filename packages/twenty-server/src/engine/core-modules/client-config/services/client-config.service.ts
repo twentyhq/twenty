@@ -104,6 +104,7 @@ export class ClientConfigService {
       ),
       isIMAPMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_IMAP_ENABLED',
+      ),
       calendarBookingPageId: this.twentyConfigService.get(
         'CALENDAR_BOOKING_PAGE_ID',
       ),
