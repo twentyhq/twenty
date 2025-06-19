@@ -13,6 +13,10 @@ import {
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
+} from 'src/engine/core-modules/record-transformer/record-transformer.exception';
+import {
   AdditionalPhoneMetadata,
   PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
@@ -52,7 +56,10 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   countryCode,
 }: Partial<Omit<AdditionalPhoneMetadata, 'number'>>) => {
   if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
-    throw new Error('TOOD invalid country code');
+    throw new RecordTransformerException(
+      `Invalid country code ${countryCode}`,
+      RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE,
+    );
   }
 
   if (!isNonEmptyString(callingCode)) {
@@ -61,7 +68,10 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
 
   const expectedCountryCodes = getCountryCodesForCallingCode(callingCode);
   if (expectedCountryCodes.length === 0) {
-    throw new Error('TODO invalid country calling code');
+    throw new RecordTransformerException(
+      `Invalid calling code ${callingCode}`,
+      RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE,
+    );
   }
 
   if (
@@ -70,7 +80,10 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
       (expectedCountryCode) => expectedCountryCode !== countryCode,
     )
   ) {
-    throw new Error('TODO conflicting country code and calling code');
+    throw new RecordTransformerException(
+      `Provided country code and calling code are conflicting`,
+      RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE,
+    );
   }
 };
 
@@ -87,7 +100,10 @@ const parsePhoneNumberExceptionWrapper = ({
       defaultCountry: countryCode,
     });
   } catch (error) {
-    throw new Error('TODO invalid phone number');
+    throw new RecordTransformerException(
+      `Provided phone number is invalid ${number}`,
+      RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
+    );
   }
 };
 
@@ -107,7 +123,10 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     isNonEmptyString(countryCode) &&
     phone.country !== countryCode
   ) {
-    throw new Error('TODO conflicting countryCode');
+    throw new RecordTransformerException(
+      'Provided and inferred country code are conflicting',
+      RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE,
+    );
   }
 
   if (
@@ -115,7 +134,10 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     isNonEmptyString(callingCode) &&
     phone.countryCallingCode !== removePlusFromString(callingCode)
   ) {
-    throw new Error('TODO conficting callingCode');
+    throw new RecordTransformerException(
+      'Provided and inferred calling code are conflicting',
+      RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE,
+    );
   }
 
   const finalPrimaryPhoneCallingCode =

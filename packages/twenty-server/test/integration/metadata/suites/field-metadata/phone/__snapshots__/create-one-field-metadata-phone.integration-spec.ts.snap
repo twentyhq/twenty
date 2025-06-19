@@ -4,10 +4,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conflicting country code and calling code",
+    "message": "Provided country code and calling code are conflicting",
   },
 ]
 `;
@@ -16,10 +15,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conflicting country code and calling code",
+    "message": "Provided country code and calling code are conflicting",
   },
 ]
 `;
@@ -28,10 +26,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conficting callingCode",
+    "message": "Provided and inferred calling code are conflicting",
   },
 ]
 `;
@@ -40,10 +37,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conficting callingCode",
+    "message": "Provided and inferred calling code are conflicting",
   },
 ]
 `;
@@ -52,10 +48,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conflicting countryCode",
+    "message": "Provided and inferred country code are conflicting",
   },
 ]
 `;
@@ -64,10 +59,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO conflicting countryCode",
+    "message": "Provided and inferred country code are conflicting",
   },
 ]
 `;
@@ -76,10 +70,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid country calling code",
+    "message": "Invalid calling code +999",
   },
 ]
 `;
@@ -88,10 +81,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid country calling code",
+    "message": "Invalid calling code +999",
   },
 ]
 `;
@@ -100,10 +92,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TOOD invalid country code",
+    "message": "Invalid country code XX",
   },
 ]
 `;
@@ -112,10 +103,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TOOD invalid country code",
+    "message": "Invalid country code XX",
   },
 ]
 `;
@@ -124,10 +114,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid phone number",
+    "message": "Provided phone number is invalid not-a-number",
   },
 ]
 `;
@@ -136,10 +125,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid phone number",
+    "message": "Provided phone number is invalid not-a-number",
   },
 ]
 `;
@@ -148,10 +136,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid phone number",
+    "message": "Provided phone number is invalid 123456789",
   },
 ]
 `;
@@ -160,10 +147,9 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "TODO invalid phone number",
+    "message": "Provided phone number is invalid 123456789",
   },
 ]
 `;
