@@ -14,7 +14,6 @@ describe('ClientConfigService', () => {
   let service: ClientConfigService;
   let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
-  let aiModelService: AIModelService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,7 +44,6 @@ describe('ClientConfigService', () => {
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
-    aiModelService = module.get<AIModelService>(AIModelService);
   });
 
   it('should be defined', () => {
