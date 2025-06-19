@@ -75,7 +75,7 @@ export class AgentService {
       ...input,
     });
 
-    return this.findOneAgent(updatedAgent.id, workspaceId);
+    return updatedAgent;
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
