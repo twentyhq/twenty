@@ -7,19 +7,11 @@ type FeatureFlagMetadata = {
 };
 
 export type PublicFeatureFlag = {
-  key: Extract<FeatureFlagKey, FeatureFlagKey.IS_WORKFLOW_ENABLED>;
+  key: FeatureFlagKey;
   metadata: FeatureFlagMetadata;
 };
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
-  {
-    key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
-    metadata: {
-      label: 'Workflows',
-      description: 'Create custom workflows to automate your work.',
-      imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

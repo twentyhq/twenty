@@ -1,8 +1,8 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
 import { JobsOptions, MetricsTime, Queue, QueueOptions, Worker } from 'bullmq';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   QueueCronJobOptions,
