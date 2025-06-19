@@ -57,15 +57,6 @@ export const SettingsAccountsListEmptyStateCard = ({
     <Card>
       <StyledHeader>{label || t`No connected account`}</StyledHeader>
       <StyledBody>
-        {isImapEnabled && (
-          <Button
-            Icon={IconMail}
-            title={t`Connect with IMAP`}
-            variant="secondary"
-            to={getSettingsPath(SettingsPath.NewImapConnection)}
-          />
-        )}
-
         {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
           <Button
             Icon={IconGoogle}
@@ -81,6 +72,15 @@ export const SettingsAccountsListEmptyStateCard = ({
             title={t`Connect with Microsoft`}
             variant="secondary"
             onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
+          />
+        )}
+
+        {isImapEnabled && (
+          <Button
+            Icon={IconMail}
+            title={t`Connect with IMAP`}
+            variant="secondary"
+            to={getSettingsPath(SettingsPath.NewImapConnection)}
           />
         )}
       </StyledBody>
