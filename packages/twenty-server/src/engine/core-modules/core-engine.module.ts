@@ -50,7 +50,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
-import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -82,7 +81,6 @@ import { WebhookModule } from './webhook/webhook.module';
     RedisClientModule,
     WorkspaceQueryRunnerModule,
     SubscriptionsModule,
-    WebhookModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
