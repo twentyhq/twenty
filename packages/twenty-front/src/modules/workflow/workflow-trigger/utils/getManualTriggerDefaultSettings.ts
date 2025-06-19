@@ -4,6 +4,7 @@ import {
   WorkflowManualTriggerSettings,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const getManualTriggerDefaultSettings = ({
   availability,
@@ -17,12 +18,14 @@ export const getManualTriggerDefaultSettings = ({
       return {
         objectType: undefined,
         outputSchema: {},
+        icon: COMMAND_MENU_DEFAULT_ICON,
       };
     }
     case 'WHEN_RECORD_SELECTED': {
       return {
         objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         outputSchema: {},
+        icon: COMMAND_MENU_DEFAULT_ICON,
       };
     }
   }

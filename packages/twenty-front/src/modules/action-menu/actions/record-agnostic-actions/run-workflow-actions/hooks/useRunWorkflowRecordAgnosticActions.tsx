@@ -8,10 +8,13 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { IconSettingsAutomation } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
+  const { getIcon } = useIcons();
+
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
@@ -39,13 +42,19 @@ export const useRunWorkflowRecordAgnosticActions = () => {
 
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
+      const Icon =
+        activeWorkflowVersion.trigger?.type === 'MANUAL' &&
+        isDefined(activeWorkflowVersion.trigger?.settings?.icon)
+          ? getIcon(activeWorkflowVersion.trigger.settings.icon)
+          : COMMAND_MENU_DEFAULT_ICON;
+
       return {
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.Global,
         label: msg`${name}`,
         position: index,
-        Icon: IconSettingsAutomation,
+        Icon,
         shouldBeRegistered: () => true,
         component: (
           <Action

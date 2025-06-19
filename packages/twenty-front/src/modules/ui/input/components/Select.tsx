@@ -41,6 +41,7 @@ export type SelectProps<Value extends SelectValue> = {
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
+  description?: string;
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
@@ -64,6 +65,11 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
 export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
@@ -74,6 +80,7 @@ export const Select = <Value extends SelectValue>({
   emptyOption,
   fullWidth,
   label,
+  description,
   onChange,
   onBlur,
   options,
@@ -214,6 +221,7 @@ export const Select = <Value extends SelectValue>({
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
+      {!!description && <StyledDescription>{description}</StyledDescription>}
     </StyledContainer>
   );
 };

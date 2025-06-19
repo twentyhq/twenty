@@ -206,6 +206,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema.extend({
   settings: z.object({
     objectType: z.string().optional(),
     outputSchema: z.object({}).passthrough(),
+    icon: z.string().optional(),
   }),
 });
 

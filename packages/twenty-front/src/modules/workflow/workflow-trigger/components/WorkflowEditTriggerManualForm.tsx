@@ -16,6 +16,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
+import { COMMAND_MENU_ICON_OPTIONS } from '@/workflow/workflow-trigger/constants/CommandMenuIconOptions';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -35,6 +37,9 @@ export const WorkflowEditTriggerManualForm = ({
   triggerOptions,
 }: WorkflowEditTriggerManualFormProps) => {
   const theme = useTheme();
+
+  const { t } = useLingui();
+
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -79,7 +84,8 @@ export const WorkflowEditTriggerManualForm = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-manual-trigger-availability"
-          label="Available"
+          label={t`Available`}
+          description={t`Select record(s) then open the ⌘K to trigger this workflow`}
           fullWidth
           disabled={triggerOptions.readonly}
           value={manualTriggerAvailability}
@@ -104,7 +110,8 @@ export const WorkflowEditTriggerManualForm = ({
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
           <Select
             dropdownId="workflow-edit-manual-trigger-object"
-            label="Object"
+            label={t`Object`}
+            description={t`Will return one or several people to the next step of this workflow`}
             fullWidth
             value={trigger.settings.objectType}
             options={availableMetadata}
@@ -117,6 +124,7 @@ export const WorkflowEditTriggerManualForm = ({
               triggerOptions.onTriggerUpdate({
                 ...trigger,
                 settings: {
+                  ...trigger.settings,
                   objectType: updatedObject,
                   outputSchema: {},
                 },
@@ -126,6 +134,29 @@ export const WorkflowEditTriggerManualForm = ({
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
         ) : null}
+        <Select
+          dropdownId={'workflow-edit-manual-trigger-icon'}
+          label={t`Command Menu Icon`}
+          description={t`The icon your workflow trigger will display in the command menu`}
+          value={trigger.settings.icon}
+          options={COMMAND_MENU_ICON_OPTIONS}
+          withSearchInput
+          onChange={(icon) => {
+            if (triggerOptions.readonly === true) {
+              return;
+            }
+
+            triggerOptions.onTriggerUpdate({
+              ...trigger,
+              settings: {
+                ...trigger.settings,
+                icon,
+              },
+            });
+          }}
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
       </WorkflowStepBody>
     </>
   );
