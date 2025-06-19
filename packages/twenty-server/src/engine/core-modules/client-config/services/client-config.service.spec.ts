@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { AIModelService } from 'src/engine/core-modules/ai/services/ai-model.service';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -13,6 +14,7 @@ describe('ClientConfigService', () => {
   let service: ClientConfigService;
   let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
+  let aiModelService: AIModelService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +32,12 @@ describe('ClientConfigService', () => {
             getFrontUrl: jest.fn(),
           },
         },
+        {
+          provide: AIModelService,
+          useValue: {
+            findAll: jest.fn().mockResolvedValue([]),
+          },
+        },
       ],
     }).compile();
 
@@ -37,6 +45,7 @@ describe('ClientConfigService', () => {
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
+    aiModelService = module.get<AIModelService>(AIModelService);
   });
 
   it('should be defined', () => {
@@ -106,6 +115,7 @@ describe('ClientConfigService', () => {
             },
           ],
         },
+        aiModels: [],
         authProviders: {
           google: true,
           magicLink: false,
@@ -162,6 +172,7 @@ describe('ClientConfigService', () => {
 
       expect(result.debugMode).toBe(false);
       expect(result.canManageFeatureFlags).toBe(false);
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle missing captcha driver', async () => {
@@ -178,6 +189,7 @@ describe('ClientConfigService', () => {
 
       expect(result.captcha.provider).toBeUndefined();
       expect(result.captcha.siteKey).toBe('site-key');
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle missing support driver', async () => {
@@ -192,6 +204,7 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result.support.supportDriver).toBe(SupportDriver.NONE);
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle billing enabled with feature flags', async () => {
