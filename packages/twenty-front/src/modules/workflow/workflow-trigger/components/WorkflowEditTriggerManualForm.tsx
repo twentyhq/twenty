@@ -33,6 +33,7 @@ type WorkflowEditTriggerManualFormProps = {
         onTriggerUpdate: (trigger: WorkflowManualTrigger) => void;
       };
 };
+
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -82,6 +83,11 @@ export const WorkflowEditTriggerManualForm = ({
 
   const headerType = getTriggerHeaderType(trigger);
 
+  const availabilityDescriptions = {
+    WHEN_RECORD_SELECTED: t`Select a record then open the ⌘K to trigger this workflow`,
+    EVERYWHERE: t`Open the ⌘K to trigger this workflow`,
+  };
+
   return (
     <>
       <WorkflowStepHeader
@@ -105,10 +111,7 @@ export const WorkflowEditTriggerManualForm = ({
         <Select
           dropdownId={'workflow-edit-manual-trigger-availability'}
           label={t`Available`}
-          descriptions={{
-            WHEN_RECORD_SELECTED: t`Select a record then open the ⌘K to trigger this workflow`,
-            EVERYWHERE: t`Open the ⌘K to trigger this workflow`,
-          }}
+          description={availabilityDescriptions[manualTriggerAvailability]}
           fullWidth
           disabled={triggerOptions.readonly}
           value={manualTriggerAvailability}

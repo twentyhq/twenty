@@ -42,7 +42,6 @@ export type SelectProps<Value extends SelectValue> = {
   fullWidth?: boolean;
   label?: string;
   description?: string;
-  descriptions?: Record<string, string>;
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
@@ -82,7 +81,6 @@ export const Select = <Value extends SelectValue>({
   fullWidth,
   label,
   description,
-  descriptions,
   onChange,
   onBlur,
   options,
@@ -130,9 +128,6 @@ export const Select = <Value extends SelectValue>({
     selectedItemIdComponentState,
     dropdownId,
   );
-
-  const computedDescription =
-    description || descriptions?.[`${selectedOption.value}`];
 
   return (
     <StyledContainer
@@ -226,9 +221,7 @@ export const Select = <Value extends SelectValue>({
           }
         />
       )}
-      {!!computedDescription && (
-        <StyledDescription>{computedDescription}</StyledDescription>
-      )}
+      {!!description && <StyledDescription>{description}</StyledDescription>}
     </StyledContainer>
   );
 };
