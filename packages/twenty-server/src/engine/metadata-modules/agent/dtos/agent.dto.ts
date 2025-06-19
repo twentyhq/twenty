@@ -1,6 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AIModelDto } from 'src/engine/core-modules/ai/dtos/ai-model.dto';
@@ -31,7 +32,7 @@ export class AgentDTO {
   @Field(() => AIModelDto, { nullable: true })
   aiModel?: AIModelDto;
 
-  @Field(() => Object, { nullable: false })
+  @Field(() => GraphQLJSON)
   responseFormat: object;
 
   @HideField()

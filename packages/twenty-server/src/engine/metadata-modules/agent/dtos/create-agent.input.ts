@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 @InputType()
 export class CreateAgentInput {
@@ -26,6 +27,6 @@ export class CreateAgentInput {
 
   @IsObject()
   @IsNotEmpty()
-  @Field(() => Object)
+  @Field(() => GraphQLJSON)
   responseFormat: object;
 }
