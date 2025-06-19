@@ -25,33 +25,14 @@ export interface AgentExecutionResult {
 export class AgentExecutionService {
   constructor() {}
 
-  private getModelConfig(modelId: string): {
-    provider: 'openai' | 'anthropic';
-    modelId: string;
-  } {
-    if (modelId.startsWith('gpt-')) {
-      return { provider: 'openai', modelId: modelId };
-    }
-    if (modelId.startsWith('claude-')) {
-      return { provider: 'anthropic', modelId: modelId };
-    }
-
-    throw new AgentException(
-      `Unsupported model: ${modelId}`,
-      AgentExceptionCode.UNSUPPORTED_MODEL,
-    );
-  }
-
-  private getModel = (modelName: string) => {
-    const { provider, modelId } = this.getModelConfig(modelName);
-
+  private getModel = (modelId: string, provider: 'openai' | 'anthropic') => {
     switch (provider) {
       case 'openai':
         return openai(modelId);
       case 'anthropic':
         return anthropic(modelId);
       default:
-        throw new Error(`Unsupported model: ${modelName}`);
+        throw new Error(`Unsupported provider: ${provider}`);
     }
   };
 
@@ -76,7 +57,7 @@ export class AgentExecutionService {
     context: Record<string, unknown>,
   ): Promise<AgentExecutionResult> {
     try {
-      const { provider } = this.getModelConfig(agent.modelId);
+      const provider = agent.aiModel.provider;
 
       await this.validateApiKey(provider);
 
@@ -94,7 +75,7 @@ export class AgentExecutionService {
       }
 
       const output = await generateObject({
-        model: this.getModel(agent.modelId),
+        model: this.getModel(agent.modelId, provider),
         prompt: resolveInput(agent.prompt, context) as string,
         schema,
       });
