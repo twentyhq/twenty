@@ -125,6 +125,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               : undefined,
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
+          openRecordIn: sourceView.openRecordIn,
         });
 
         if (isUndefinedOrNull(newView)) {
