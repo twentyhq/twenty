@@ -171,39 +171,36 @@ export class CalendarSaveEventsService {
           transactionManager,
         );
 
-        const calendarChannelEventAssociationsToSave =
-          fetchedCalendarEventsWithExistingEvent.map(
-            ({
-              fetchedCalendarEvent,
-              existingCalendarEvent,
-              newlyCreatedCalendarEvent,
-            }) => {
-              const calendarEventId =
-                existingCalendarEvent?.id ?? newlyCreatedCalendarEvent?.id;
+        const calendarChannelEventAssociationsToSave: Pick<
+          CalendarChannelEventAssociationWorkspaceEntity,
+          | 'calendarEventId'
+          | 'eventExternalId'
+          | 'calendarChannelId'
+          | 'recurringEventExternalId'
+        >[] = fetchedCalendarEventsWithExistingEvent.map(
+          ({
+            fetchedCalendarEvent,
+            existingCalendarEvent,
+            newlyCreatedCalendarEvent,
+          }) => {
+            const calendarEventId =
+              existingCalendarEvent?.id ?? newlyCreatedCalendarEvent?.id;
 
-              if (!calendarEventId) {
-                throw new Error(
-                  `Calendar event id not found for event with iCalUID ${fetchedCalendarEvent.iCalUID} - should never happen`,
-                );
-              }
+            if (!calendarEventId) {
+              throw new Error(
+                `Calendar event id not found for event with iCalUID ${fetchedCalendarEvent.iCalUID} - should never happen`,
+              );
+            }
 
-              return {
-                calendarEventId,
-                eventExternalId: fetchedCalendarEvent.id,
-                calendarChannelId: calendarChannel.id,
-                recurringEventExternalId:
-                  fetchedCalendarEvent.recurringEventExternalId ?? '',
-              } satisfies Omit<
-                CalendarChannelEventAssociationWorkspaceEntity,
-                | 'id'
-                | 'createdAt'
-                | 'updatedAt'
-                | 'deletedAt'
-                | 'calendarEvent'
-                | 'calendarChannel'
-              >;
-            },
-          );
+            return {
+              calendarEventId,
+              eventExternalId: fetchedCalendarEvent.id,
+              calendarChannelId: calendarChannel.id,
+              recurringEventExternalId:
+                fetchedCalendarEvent.recurringEventExternalId ?? '',
+            };
+          },
+        );
 
         await calendarChannelEventAssociationRepository.save(
           calendarChannelEventAssociationsToSave,
