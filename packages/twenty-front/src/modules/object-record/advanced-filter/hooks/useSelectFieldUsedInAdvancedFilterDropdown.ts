@@ -13,10 +13,10 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +44,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     currentRecordFiltersComponentState,
   );
 
-  const setHotkeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
@@ -76,7 +76,17 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       fieldMetadataItem.type === 'RELATION' ||
       fieldMetadataItem.type === 'SELECT'
     ) {
-      setHotkeyScope(SingleRecordPickerHotkeyScope.SingleRecordPicker);
+      pushFocusItemToFocusStack({
+        focusId: fieldMetadataItem.id,
+        component: {
+          type: FocusComponentType.DROPDOWN,
+          instanceId: fieldMetadataItem.id,
+        },
+        hotkeyScope: {
+          scope: DropdownHotkeyScope.Dropdown,
+        },
+        memoizeKey: fieldMetadataItem.id,
+      });
     }
 
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);

@@ -9,7 +9,8 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
@@ -57,22 +58,23 @@ export const FavoriteFolderPicker = ({
     !favoriteFoldersSearchFilter ||
     'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       if (isFavoriteFolderCreating) {
         setIsFavoriteFolderCreating(false);
         return;
       }
       onSubmit?.();
     },
-    instanceId,
-    [onSubmit, isFavoriteFolderCreating],
-  );
+    focusId: dropdownId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [onSubmit, isFavoriteFolderCreating],
+  });
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       if (filteredFolders.length === 1 && !showNoFolderOption) {
         toggleFolderSelection(filteredFolders[0].id);
         onSubmit?.();
@@ -85,9 +87,15 @@ export const FavoriteFolderPicker = ({
         return;
       }
     },
-    instanceId,
-    [filteredFolders, showNoFolderOption, toggleFolderSelection, onSubmit],
-  );
+    focusId: instanceId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [
+      filteredFolders,
+      showNoFolderOption,
+      toggleFolderSelection,
+      onSubmit,
+    ],
+  });
 
   return (
     <DropdownContent>

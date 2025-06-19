@@ -5,7 +5,6 @@ import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigati
 import { MultiWorkspaceDropdownWorkspacesListComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -28,9 +27,6 @@ export const MultiWorkspaceDropdownButton = () => {
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
-      dropdownHotkeyScope={{
-        scope: NavigationDrawerHotKeyScope.MultiWorkspaceDropdownButton,
-      }}
       dropdownOffset={{ y: -35, x: -5 }}
       clickableComponent={<MultiWorkspaceDropdownClickableComponent />}
       dropdownComponents={<DropdownComponents />}
