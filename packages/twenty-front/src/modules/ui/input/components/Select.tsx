@@ -41,7 +41,7 @@ export type SelectProps<Value extends SelectValue> = {
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
-  description?: string;
+  description?: string | Record<string, string>;
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
@@ -128,6 +128,13 @@ export const Select = <Value extends SelectValue>({
     selectedItemIdComponentState,
     dropdownId,
   );
+
+  const computedDescription =
+    typeof description === 'string'
+      ? description
+      : typeof selectedOption.value === 'string'
+        ? description?.[selectedOption.value]
+        : undefined;
 
   return (
     <StyledContainer
@@ -221,7 +228,9 @@ export const Select = <Value extends SelectValue>({
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
-      {!!description && <StyledDescription>{description}</StyledDescription>}
+      {!!computedDescription && (
+        <StyledDescription>{computedDescription}</StyledDescription>
+      )}
     </StyledContainer>
   );
 };
