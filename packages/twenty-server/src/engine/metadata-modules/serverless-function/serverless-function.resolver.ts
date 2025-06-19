@@ -5,13 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
@@ -35,7 +31,6 @@ export class ServerlessFunctionResolver {
   ) {}
 
   @Query(() => ServerlessFunctionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async findOneServerlessFunction(
     @Args('input') { id }: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -53,7 +48,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Query(() => [ServerlessFunctionDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async findManyServerlessFunctions(
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
@@ -67,11 +61,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
-  async getAvailablePackages(
-    @Args('input') { id }: ServerlessFunctionIdInput,
-    @AuthWorkspace() { id: _workspaceId }: Workspace,
-  ) {
+  async getAvailablePackages(@Args('input') { id }: ServerlessFunctionIdInput) {
     try {
       return await this.serverlessFunctionService.getAvailablePackages(id);
     } catch (error) {
@@ -80,7 +70,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async getServerlessFunctionSourceCode(
     @Args('input') input: GetServerlessFunctionSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -97,7 +86,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async deleteOneServerlessFunction(
     @Args('input') input: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -113,7 +101,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async updateOneServerlessFunction(
     @Args('input')
     input: UpdateServerlessFunctionInput,
@@ -130,7 +117,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async createOneServerlessFunction(
     @Args('input')
     input: CreateServerlessFunctionInput,
@@ -147,7 +133,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async executeOneServerlessFunction(
     @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -167,7 +152,6 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_WORKFLOW_ENABLED)
   async publishServerlessFunction(
     @Args('input') input: PublishServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

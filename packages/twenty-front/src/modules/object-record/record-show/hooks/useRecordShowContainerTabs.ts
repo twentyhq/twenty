@@ -20,7 +20,6 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -155,7 +154,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
+              ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -178,7 +177,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
+              ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -200,7 +199,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
+              ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
