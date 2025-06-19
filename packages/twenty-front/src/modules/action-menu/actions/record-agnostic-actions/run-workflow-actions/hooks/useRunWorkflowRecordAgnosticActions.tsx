@@ -52,6 +52,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
             onClick={() => {
               runWorkflowVersion({
                 workflowVersionId: activeWorkflowVersion.id,
+                workflowId: activeWorkflowVersion.workflowId,
               });
             }}
             closeSidePanelOnCommandMenuListActionExecution={false}

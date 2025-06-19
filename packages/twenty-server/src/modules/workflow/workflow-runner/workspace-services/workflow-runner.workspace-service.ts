@@ -26,11 +26,13 @@ export class WorkflowRunnerWorkspaceService {
     workflowVersionId,
     payload,
     source,
+    workflowRunId: initialWorkflowRunId,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     payload: object;
     source: ActorMetadata;
+    workflowRunId?: string;
   }) {
     const canFeatureBeUsed =
       await this.billingUsageService.canFeatureBeUsed(workspaceId);
@@ -43,6 +45,7 @@ export class WorkflowRunnerWorkspaceService {
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
         workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
         createdBy: source,
       });
 

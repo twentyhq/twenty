@@ -56,7 +56,8 @@ export class WorkflowTriggerResolver {
   async runWorkflowVersion(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
-    @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
+    @Args('input')
+    { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
@@ -72,6 +73,7 @@ export class WorkflowTriggerResolver {
 
     return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
+      workflowRunId: workflowRunId ?? undefined,
       payload: payload ?? {},
       createdBy: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {

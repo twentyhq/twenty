@@ -3,6 +3,7 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
@@ -85,6 +86,10 @@ export const ClientConfigProviderEffect = () => {
 
   const setIsConfigVariablesInDbEnabled = useSetRecoilState(
     isConfigVariablesInDbEnabledState,
+  );
+
+  const setCalendarBookingPageId = useSetRecoilState(
+    calendarBookingPageIdState,
   );
 
   const { data, loading, error, fetchClientConfig } = useClientConfig();
@@ -176,6 +181,8 @@ export const ClientConfigProviderEffect = () => {
       ...currentStatus,
       isSaved: true,
     }));
+
+    setCalendarBookingPageId(data?.clientConfig?.calendarBookingPageId ?? null);
   }, [
     data,
     loading,
@@ -202,6 +209,7 @@ export const ClientConfigProviderEffect = () => {
     setGoogleCalendarEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
+    setCalendarBookingPageId,
   ]);
 
   return <></>;
