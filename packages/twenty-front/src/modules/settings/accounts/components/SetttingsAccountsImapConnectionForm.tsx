@@ -14,17 +14,17 @@ const StyledFormContainer = styled.form`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type ImapConnectionFormProps = {
+type SetttingsAccountsImapConnectionFormProps = {
   control: Control<ImapConnectionParams>;
   isEditing: boolean;
   defaultValues?: Partial<ImapConnectionParams>;
 };
 
-export const ImapConnectionForm = ({
+export const SetttingsAccountsImapConnectionForm = ({
   control,
   isEditing,
   defaultValues,
-}: ImapConnectionFormProps) => {
+}: SetttingsAccountsImapConnectionFormProps) => {
   const { t } = useLingui();
 
   return (

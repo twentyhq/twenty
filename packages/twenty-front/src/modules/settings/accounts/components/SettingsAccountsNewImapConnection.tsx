@@ -1,6 +1,6 @@
 import { FormProvider } from 'react-hook-form';
 
-import { ImapConnectionForm } from '@/settings/accounts/components/ImapConnectionForm';
+import { SetttingsAccountsImapConnectionForm } from '@/settings/accounts/components/SetttingsAccountsImapConnectionForm';
 import { useImapConnectionForm } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -45,7 +45,7 @@ export const SettingsAccountsNewImapConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <ImapConnectionForm control={control} isEditing={false} />
+          <SetttingsAccountsImapConnectionForm control={control} isEditing={false} />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

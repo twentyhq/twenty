@@ -1,7 +1,7 @@
 import { FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { ImapConnectionForm } from '@/settings/accounts/components/ImapConnectionForm';
+import { SetttingsAccountsImapConnectionForm } from '@/settings/accounts/components/SetttingsAccountsImapConnectionForm';
 import { useConnectedIMAPAccount } from '@/settings/accounts/hooks/useConnectedIMAPAccount';
 import { useImapConnectionForm } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -79,7 +79,7 @@ export const SettingsAccountsEditImapConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <ImapConnectionForm control={control} isEditing />
+          <SetttingsAccountsImapConnectionForm control={control} isEditing />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>
