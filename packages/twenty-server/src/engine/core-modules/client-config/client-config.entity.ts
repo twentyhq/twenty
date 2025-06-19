@@ -150,4 +150,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isIMAPMessagingEnabled: boolean;
+
+  @Field(() => String, { nullable: true })
+  calendarBookingPageId?: string;
 }

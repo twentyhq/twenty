@@ -28,4 +28,16 @@ export class OnboardingResolver {
 
     return { success: true };
   }
+
+  @Mutation(() => OnboardingStepSuccess)
+  async skipBookOnboardingStep(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<OnboardingStepSuccess> {
+    await this.onboardingService.setOnboardingBookOnboardingPending({
+      workspaceId: workspace.id,
+      value: false,
+    });
+
+    return { success: true };
+  }
 }

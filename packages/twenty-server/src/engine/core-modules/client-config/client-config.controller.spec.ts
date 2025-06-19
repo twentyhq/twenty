@@ -84,6 +84,7 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isIMAPMessagingEnabled: false,
+        calendarBookingPageId: undefined,
       };
 
       jest

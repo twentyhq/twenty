@@ -16,6 +16,7 @@ export const TestWorkflowSingleRecordAction = () => {
 
     runWorkflowVersion({
       workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+      workflowId: workflowWithCurrentVersion.id,
     });
   };
 
