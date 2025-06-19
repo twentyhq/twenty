@@ -118,9 +118,9 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
             accent="tertiary"
           />
         }
-        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownComponents={
           <SingleRecordPicker
+            focusId={dropdownId}
             componentInstanceId={dropdownId}
             EmptyIcon={IconForbid}
             onRecordSelected={handleRelationPickerEntitySelected}

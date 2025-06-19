@@ -132,9 +132,9 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
             accent="tertiary"
           />
         }
-        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownComponents={
           <MultipleRecordPicker
+            focusId={dropdownId}
             componentInstanceId={dropdownId}
             onCreate={handleCreateNew}
             onChange={updateRelation}
