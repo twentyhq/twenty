@@ -18,12 +18,14 @@ export class WebhookResolver {
   constructor(private readonly webhookService: WebhookService) {}
 
   @Query(() => [Webhook])
-  async webhooks(@AuthWorkspace() workspace: Workspace): Promise<Webhook[]> {
+  async coreWebhooks(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Webhook[]> {
     return this.webhookService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => Webhook, { nullable: true })
-  async webhook(
+  async coreWebhook(
     @Args('input') input: GetWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<Webhook | null> {
@@ -31,7 +33,7 @@ export class WebhookResolver {
   }
 
   @Mutation(() => Webhook)
-  async createWebhook(
+  async createCoreWebhook(
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: CreateWebhookDTO,
   ): Promise<Webhook> {
@@ -45,7 +47,7 @@ export class WebhookResolver {
   }
 
   @Mutation(() => Webhook, { nullable: true })
-  async updateWebhook(
+  async updateCoreWebhook(
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: UpdateWebhookDTO,
   ): Promise<Webhook | null> {
@@ -62,7 +64,7 @@ export class WebhookResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteWebhook(
+  async deleteCoreWebhook(
     @Args('input') input: DeleteWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {

@@ -19,7 +19,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'webhook', schema: 'core' })
-@ObjectType()
+@ObjectType('CoreWebhook')
 export class Webhook {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

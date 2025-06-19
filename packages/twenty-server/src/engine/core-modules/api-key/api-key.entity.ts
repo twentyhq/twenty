@@ -19,7 +19,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Index('IDX_API_KEY_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'apiKey', schema: 'core' })
-@ObjectType()
+@ObjectType('CoreApiKey')
 export class ApiKey {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

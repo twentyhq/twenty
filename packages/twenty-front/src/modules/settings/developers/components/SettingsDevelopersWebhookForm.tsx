@@ -82,7 +82,16 @@ export const SettingsDevelopersWebhookForm = ({
     deleteWebhook,
     isCreationMode,
     error,
-  } = useWebhookForm({ webhookId, mode });
+  } = useWebhookForm(
+    webhookId
+      ? {
+          id: webhookId,
+          targetUrl: '',
+          operations: [],
+        }
+      : undefined,
+    mode,
+  );
 
   const getTitle = () => {
     if (isCreationMode) {

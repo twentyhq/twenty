@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ArrayContains, Repository } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
 
@@ -14,11 +14,13 @@ export class WebhookService {
   ) {}
 
   private normalizeTargetUrl(targetUrl: string): string {
-    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
-      return `https://${targetUrl}`;
-    }
+    try {
+      const url = new URL(targetUrl);
 
-    return targetUrl;
+      return url.toString();
+    } catch {
+      return targetUrl;
+    }
   }
 
   private validateTargetUrl(targetUrl: string): boolean {
@@ -37,26 +39,20 @@ export class WebhookService {
     });
   }
 
-  // This method replicates the EXACT business logic from CallWebhookJobsJob
-  async findByWorkspaceIdAndOperationPatterns(
+  /**
+   * Find webhooks by operations using exact same ArrayContains logic as workspace entities
+   * This preserves business logic for Zapier and external integrations
+   */
+  async findByOperations(
     workspaceId: string,
-    nameSingular: string,
-    operation: string,
+    operations: string[],
   ): Promise<Webhook[]> {
-    const webhooks = await this.webhookRepository.find({
-      where: { workspaceId },
+    return this.webhookRepository.find({
+      where: operations.map((operation) => ({
+        workspaceId,
+        operations: ArrayContains([operation]),
+      })),
     });
-
-    // Same exact filtering logic as the original ArrayContains queries
-    return webhooks.filter((webhook) =>
-      webhook.operations.some(
-        (op) =>
-          op === `${nameSingular}.${operation}` ||
-          op === `*.${operation}` ||
-          op === `${nameSingular}.*` ||
-          op === '*.*',
-      ),
-    );
   }
 
   async findById(id: string, workspaceId: string): Promise<Webhook | null> {

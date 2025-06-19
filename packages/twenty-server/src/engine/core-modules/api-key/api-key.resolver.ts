@@ -18,12 +18,12 @@ export class ApiKeyResolver {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
   @Query(() => [ApiKey])
-  async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
+  async coreApiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
     return this.apiKeyService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => ApiKey, { nullable: true })
-  async apiKey(
+  async coreApiKey(
     @Args('input') input: GetApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey | null> {
@@ -31,7 +31,7 @@ export class ApiKeyResolver {
   }
 
   @Mutation(() => ApiKey)
-  async createApiKey(
+  async createCoreApiKey(
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: CreateApiKeyDTO,
   ): Promise<ApiKey> {
@@ -44,7 +44,7 @@ export class ApiKeyResolver {
   }
 
   @Mutation(() => ApiKey, { nullable: true })
-  async updateApiKey(
+  async updateCoreApiKey(
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: UpdateApiKeyDTO,
   ): Promise<ApiKey | null> {
@@ -61,7 +61,7 @@ export class ApiKeyResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteApiKey(
+  async deleteCoreApiKey(
     @Args('input') input: DeleteApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
