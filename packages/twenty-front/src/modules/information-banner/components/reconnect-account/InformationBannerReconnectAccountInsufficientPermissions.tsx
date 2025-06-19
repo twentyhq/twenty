@@ -17,7 +17,7 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
 
   return (
     <InformationBanner
-      message={`Sync lost with mailbox ${accountToReconnect?.handle}. Please
+      message={`Sync lost with mailbox ${accountToReconnect.handle}. Please
     reconnect for updates:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
