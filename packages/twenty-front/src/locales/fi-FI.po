@@ -794,6 +794,7 @@ msgid "Average"
 msgstr "Keskiarvo"
 
 #. js-lingui-id: iH8pgl
+#: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 msgid "Back"
 msgstr ""
@@ -829,6 +830,16 @@ msgstr "Estoluettelo"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "Varaa puheluaika"
+
+#. js-lingui-id: d/yr35
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book onboarding"
+msgstr ""
+
+#. js-lingui-id: 2X0NCp
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book your onboarding"
+msgstr ""
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -2428,6 +2439,8 @@ msgid "Filters"
 msgstr "Suodattimet"
 
 #. js-lingui-id: JmZ/+d
+#: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCallDecision.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr ""
@@ -3940,6 +3953,11 @@ msgstr "Muu"
 msgid "Other workspaces"
 msgstr "Muut työtilat"
 
+#. js-lingui-id: p5ufK6
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Our team can help you set up your workspace to match your specific needs and workflows."
+msgstr ""
+
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 #~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
@@ -4898,6 +4916,7 @@ msgstr "Yksikön ja monikon nimien on oltava erilaisia"
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Ohita"
 
