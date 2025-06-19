@@ -29,7 +29,7 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
           name: agent.name,
           prompt: agent.prompt,
           modelId: agent.modelId,
-          responseFormat: agent.responseFormat,
+          responseFormat: JSON.stringify(agent.responseFormat, null, 2),
         });
       }
     },
@@ -42,11 +42,20 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
       return;
     }
 
+    const apiUpdates = { ...updates };
+    if (updates.responseFormat !== undefined) {
+      try {
+        apiUpdates.responseFormat = JSON.parse(updates.responseFormat);
+      } catch (error) {
+        delete apiUpdates.responseFormat;
+      }
+    }
+
     await updateAgent({
       variables: {
         input: {
           id: agentId,
-          ...updates,
+          ...apiUpdates,
         },
       },
     });
