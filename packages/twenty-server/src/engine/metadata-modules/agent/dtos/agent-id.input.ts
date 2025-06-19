@@ -1,9 +1,7 @@
-import { ID, InputType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class AgentIdInput {
-  @IDField(() => ID, { description: 'The id of the agent.' })
+  @Field(() => ID, { description: 'The id of the agent.' })
   id!: string;
 }
