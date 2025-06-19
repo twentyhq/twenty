@@ -5,10 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import {
-  LinksFieldGraphQLInput,
-  transformLinksValue,
-} from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   RichTextV2Metadata,
@@ -86,9 +84,11 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT_V2:
         return this.transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
-        return transformLinksValue(value as LinksFieldGraphQLInput);
+        return transformLinksValue(value);
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
+      case FieldMetadataType.PHONES:
+        return transformPhonesValue({ input: value });
       default:
         return value;
     }
@@ -132,7 +132,6 @@ export class RecordInputTransformerService {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformEmailsValue(value: any): any {
     if (!value) {
