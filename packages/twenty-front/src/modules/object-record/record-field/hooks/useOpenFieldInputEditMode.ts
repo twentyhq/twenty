@@ -16,11 +16,13 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,7 +34,7 @@ export const useOpenFieldInputEditMode = () => {
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openFieldInput = useRecoilCallback(
     ({ snapshot }) =>
@@ -107,9 +109,22 @@ export const useOpenFieldInputEditMode = () => {
           }
         }
 
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: DEFAULT_CELL_SCOPE.scope,
-          customScopes: DEFAULT_CELL_SCOPE.customScopes,
+        pushFocusItemToFocusStack({
+          focusId: getFieldInputInstanceId(
+            recordId,
+            fieldDefinition.metadata.fieldName,
+          ),
+          component: {
+            type: FocusComponentType.OPEN_FIELD_INPUT,
+            instanceId: getFieldInputInstanceId(
+              recordId,
+              fieldDefinition.metadata.fieldName,
+            ),
+          },
+          hotkeyScope: {
+            scope: DEFAULT_CELL_SCOPE.scope,
+            customScopes: DEFAULT_CELL_SCOPE.customScopes,
+          },
           memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
       },
@@ -117,7 +132,7 @@ export const useOpenFieldInputEditMode = () => {
       openActivityTargetCellEditMode,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
-      setHotkeyScopeAndMemorizePreviousScope,
+      pushFocusItemToFocusStack,
     ],
   );
 

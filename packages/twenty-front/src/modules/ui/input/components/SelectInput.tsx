@@ -1,3 +1,4 @@
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -81,19 +82,21 @@ export const SelectInput = ({
     listenerId: 'select-input',
   });
 
+  const handleEnter = () => {
+    const selectedOption = optionsInDropDown.find((option) =>
+      option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+    );
+    if (isDefined(selectedOption)) {
+      handleOptionChange(selectedOption);
+    }
+  };
+
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
-    callback: () => {
-      const selectedOption = optionsInDropDown.find((option) =>
-        option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-      );
-      if (isDefined(selectedOption)) {
-        handleOptionChange(selectedOption);
-      }
-    },
+    callback: handleEnter,
     focusId,
-    scope: focusId,
-    dependencies: [searchFilter, optionsInDropDown],
+    scope: DEFAULT_CELL_SCOPE.scope,
+    dependencies: [handleEnter],
   });
 
   return (

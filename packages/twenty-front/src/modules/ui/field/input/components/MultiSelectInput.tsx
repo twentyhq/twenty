@@ -2,13 +2,13 @@ import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -77,7 +77,7 @@ export const MultiSelectInput = ({
       resetSelectedItem();
     },
     focusId,
-    scope: focusId,
+    scope: DEFAULT_CELL_SCOPE.scope,
     dependencies: [onCancel, resetSelectedItem],
   });
 
@@ -105,7 +105,7 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       focusId={focusId}
-      hotkeyScope={DropdownHotkeyScope.Dropdown}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     >
       <DropdownContent
         ref={containerRef}
