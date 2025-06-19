@@ -6,6 +6,7 @@ import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hoo
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
@@ -47,7 +48,10 @@ export const useCreateNewIndexRecord = ({
           ...recordInputFromFilters,
           ...recordInput,
         });
-        if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+        if (
+          recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+          canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
+        ) {
           openRecordInCommandMenu({
             recordId,
             objectNameSingular: objectMetadataItem.nameSingular,
