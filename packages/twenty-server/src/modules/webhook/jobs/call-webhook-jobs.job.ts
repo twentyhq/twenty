@@ -84,7 +84,10 @@ export class CallWebhookJobsJob {
           targetUrl: webhook.targetUrl,
           secret: webhook.secret,
           eventName,
-          objectMetadata,
+          objectMetadata: {
+            id: eventData.objectMetadata.id,
+            nameSingular: eventData.objectMetadata.nameSingular,
+          },
           workspaceId,
           webhookId: webhook.id,
           eventDate: new Date(),
