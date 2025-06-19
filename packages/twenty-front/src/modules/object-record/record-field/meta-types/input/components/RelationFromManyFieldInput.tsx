@@ -10,6 +10,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
@@ -30,7 +31,10 @@ export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
+  const recordPickerInstanceId = getRelationFromManyFieldInputInstanceId({
+    recordId,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
 
   const { updateRelation } = useUpdateRelationFromManyFieldInput();
   const fieldName = fieldDefinition.metadata.fieldName;
@@ -138,6 +142,7 @@ export const RelationFromManyFieldInput = ({
 
   return (
     <MultipleRecordPicker
+      focusId={recordPickerInstanceId}
       componentInstanceId={recordPickerInstanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {

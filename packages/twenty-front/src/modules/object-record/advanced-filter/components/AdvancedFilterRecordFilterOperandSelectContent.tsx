@@ -8,6 +8,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -63,11 +64,12 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <SelectableList
-              hotkeyScope={dropdownId}
+              focusId={dropdownId}
               selectableItemIdArray={operandsForFilterType.map(
                 (operand) => operand,
               )}
               selectableListInstanceId={dropdownId}
+              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               {operandsForFilterType.map((filterOperand, index) => (
                 <SelectableListItem
@@ -90,7 +92,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"
     />

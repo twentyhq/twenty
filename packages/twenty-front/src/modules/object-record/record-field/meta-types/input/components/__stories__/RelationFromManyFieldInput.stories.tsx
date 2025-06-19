@@ -18,9 +18,10 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
+import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -71,7 +72,7 @@ const RelationManyFieldInputWithContext = () => {
   useEffect(() => {
     setRecordStoreFieldValue([]);
 
-    setHotKeyScope(MultipleRecordPickerHotkeyScope.MultipleRecordPicker);
+    setHotKeyScope(DropdownHotkeyScope.Dropdown);
     openFieldInput({
       fieldDefinition,
       recordId: 'recordId',
@@ -87,7 +88,10 @@ const RelationManyFieldInputWithContext = () => {
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: 'relation-from-many-field-record-id-people',
+          instanceId: getRelationFromManyFieldInputInstanceId({
+            recordId: 'recordId',
+            fieldName: 'people',
+          }),
         }}
       >
         <FieldContext.Provider

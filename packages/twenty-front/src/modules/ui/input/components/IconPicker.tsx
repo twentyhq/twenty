@@ -12,6 +12,7 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -71,9 +72,10 @@ const IconPickerIcon = ({
   );
 
   useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope: IconPickerHotkeyScope.IconPicker,
+    focusId: iconKey,
     itemId: iconKey,
     onEnter: onClick,
+    hotkeyScope: DropdownHotkeyScope.Dropdown,
   });
 
   return (
@@ -184,7 +186,6 @@ export const IconPicker = ({
     <div className={className}>
       <Dropdown
         dropdownId={dropdownId}
-        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
             ariaLabel={`Click to select icon ${
@@ -203,7 +204,8 @@ export const IconPicker = ({
             <SelectableList
               selectableListInstanceId="icon-list"
               selectableItemIdMatrix={iconKeys2d}
-              hotkeyScope={IconPickerHotkeyScope.IconPicker}
+              focusId={dropdownId}
+              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               <DropdownMenuSearchInput
                 placeholder={t`Search icon`}

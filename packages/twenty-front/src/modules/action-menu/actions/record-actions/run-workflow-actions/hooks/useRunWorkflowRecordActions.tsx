@@ -64,6 +64,7 @@ export const useRunWorkflowRecordActions = ({
               }
 
               await runWorkflowVersion({
+                workflowId: activeWorkflowVersion.workflowId,
                 workflowVersionId: activeWorkflowVersion.id,
                 payload: selectedRecord,
               });

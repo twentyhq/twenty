@@ -1,6 +1,6 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,20 +8,24 @@ import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 export const useSelectableListListenToEnterHotkeyOnItem = ({
-  hotkeyScope,
+  focusId,
   itemId,
   onEnter,
+  hotkeyScope,
 }: {
-  hotkeyScope: string;
+  focusId: string;
   itemId: string;
   onEnter: () => void;
+  // TODO: Remove this after migration to focus stack
+  hotkeyScope: string;
 }) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
   );
-  useScopedHotkeys(
-    Key.Enter,
-    useRecoilCallback(
+
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: useRecoilCallback(
       ({ snapshot }) =>
         () => {
           const selectedItemId = getSnapshotValue(
@@ -37,7 +41,8 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
         },
       [instanceId, itemId, onEnter],
     ),
-    hotkeyScope,
-    [itemId, onEnter],
-  );
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [itemId, onEnter],
+  });
 };

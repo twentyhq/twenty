@@ -1,6 +1,5 @@
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 
@@ -13,13 +12,7 @@ import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDr
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
-type ViewBarFilterDropdownProps = {
-  hotkeyScope: HotkeyScope;
-};
-
-export const ViewBarFilterDropdown = ({
-  hotkeyScope,
-}: ViewBarFilterDropdownProps) => {
+export const ViewBarFilterDropdown = () => {
   const { resetFilterDropdown } = useResetFilterDropdown();
   const { removeEmptyVectorSearchFilter } = useVectorSearchFilterActions();
   const { removeRecordFilter } = useRemoveRecordFilter();
@@ -47,13 +40,17 @@ export const ViewBarFilterDropdown = ({
     removeEmptyVectorSearchFilter();
   };
 
+  const handleDropdownOpen = () => {
+    resetFilterDropdown();
+  };
+
   return (
     <Dropdown
       dropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
       onClose={handleDropdownClose}
+      onOpen={handleDropdownOpen}
       clickableComponent={<ViewBarFilterButton />}
       dropdownComponents={<ViewBarFilterDropdownContent />}
-      dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
       onClickOutside={handleDropdownClickOutside}
       excludedClickOutsideIds={[OPERAND_DROPDOWN_CLICK_OUTSIDE_ID]}

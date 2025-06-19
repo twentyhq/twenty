@@ -9,6 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -19,7 +20,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -166,9 +166,10 @@ export const Select = <Value extends SelectValue>({
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
-                    hotkeyScope={SelectHotkeyScope.Select}
                     selectableListInstanceId={dropdownId}
+                    focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
+                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem
@@ -211,7 +212,6 @@ export const Select = <Value extends SelectValue>({
               )}
             </DropdownContent>
           }
-          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
     </StyledContainer>
