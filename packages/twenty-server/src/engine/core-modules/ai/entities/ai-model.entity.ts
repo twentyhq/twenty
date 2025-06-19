@@ -32,7 +32,12 @@ export class AIModel {
   @Column({ nullable: false })
   displayName: string;
 
-  @Column({ nullable: false })
+  @Column({
+    type: 'enum',
+    enum: ModelProvider,
+    enumName: 'ModelProvider_enum',
+    nullable: false,
+  })
   provider: ModelProvider;
 
   @Column('decimal', { precision: 10, scale: 4 })
