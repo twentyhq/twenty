@@ -79,7 +79,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
           <StyledPermissionLabel>{label}</StyledPermissionLabel>
         </StyledPermissionContent>
         <StyledOverrideInfo>
-          {isRevoked ? (
+          {isRevoked && revokedBy > 0 ? (
             <>
               {' · '}
               {t`Revoked for ${revokedBy} ${pluralizedRevokedObject}`}

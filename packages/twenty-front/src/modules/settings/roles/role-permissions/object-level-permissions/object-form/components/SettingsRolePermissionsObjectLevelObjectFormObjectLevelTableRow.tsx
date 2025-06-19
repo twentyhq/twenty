@@ -1,4 +1,5 @@
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
+import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
@@ -94,6 +95,15 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
       settingsDraftRoleGlobalPermissionValue === true &&
       isChecked === false;
 
+    const isGranted =
+      isDefined(settingsDraftRoleObjectPermissionValue) &&
+      settingsDraftRoleGlobalPermissionValue === false &&
+      isChecked === true;
+
+    const isGrantedAndInherited =
+      settingsDraftRoleObjectPermissionValue !== false &&
+      settingsDraftRoleGlobalPermissionValue === true;
+
     let checkboxType: OverridableCheckboxType;
 
     if (
@@ -119,6 +129,10 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
       }
     };
 
+    const humanReadableAction = objectPermissionKeyToHumanReadable(
+      permission.key as SettingsRoleObjectPermissionKey,
+    );
+
     return (
       <StyledTableRow onClick={handleCheckboxChange} isDisabled={!isEditable}>
         <StyledPermissionCell>
@@ -134,6 +148,16 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
               <>
                 {' · '}
                 {t`Revoked for this object`}
+              </>
+            ) : isGranted ? (
+              <>
+                {' · '}
+                {t`Granted for this object`}
+              </>
+            ) : isGrantedAndInherited ? (
+              <>
+                {' · '}
+                {t`This role can ${humanReadableAction} all records`}
               </>
             ) : null}
           </StyledOverrideInfo>

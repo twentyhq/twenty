@@ -1,3 +1,4 @@
+import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
@@ -46,19 +47,6 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
       isDefined(permissionValue) &&
       !!settingsDraftRole[rolePermission] !== !!permissionValue
     );
-  };
-
-  const objectPermissionKeyToHumanReadable = (
-    objectPermissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
-    const permissionAction = {
-      canReadObjectRecords: t`read`,
-      canUpdateObjectRecords: t`update`,
-      canSoftDeleteObjectRecords: t`delete`,
-      canDestroyObjectRecords: t`destroy`,
-    };
-
-    return permissionAction[objectPermissionKey] ?? t`read`;
   };
 
   if (!isOverridden(objectPermissionKey)) {
