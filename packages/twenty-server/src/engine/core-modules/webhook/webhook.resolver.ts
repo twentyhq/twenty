@@ -1,6 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
+import { DeleteWebhookDTO } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
+import { GetWebhookDTO } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
+import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -20,25 +24,22 @@ export class WebhookResolver {
 
   @Query(() => Webhook, { nullable: true })
   async webhook(
-    @Args('id') id: string,
+    @Args('input') input: GetWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<Webhook | null> {
-    return this.webhookService.findById(id, workspace.id);
+    return this.webhookService.findById(input.id, workspace.id);
   }
 
   @Mutation(() => Webhook)
   async createWebhook(
     @AuthWorkspace() workspace: Workspace,
-    @Args('targetUrl') targetUrl: string,
-    @Args('operations', { type: () => [String] }) operations: string[],
-    @Args('description', { nullable: true }) description?: string,
-    @Args('secret', { nullable: true }) secret?: string,
+    @Args('input') input: CreateWebhookDTO,
   ): Promise<Webhook> {
     return this.webhookService.create({
-      targetUrl,
-      operations,
-      description,
-      secret,
+      targetUrl: input.targetUrl,
+      operations: input.operations,
+      description: input.description,
+      secret: input.secret,
       workspaceId: workspace.id,
     });
   }
@@ -46,29 +47,26 @@ export class WebhookResolver {
   @Mutation(() => Webhook, { nullable: true })
   async updateWebhook(
     @AuthWorkspace() workspace: Workspace,
-    @Args('id') id: string,
-    @Args('targetUrl', { nullable: true }) targetUrl?: string,
-    @Args('operations', { type: () => [String], nullable: true })
-    operations?: string[],
-    @Args('description', { nullable: true }) description?: string,
-    @Args('secret', { nullable: true }) secret?: string,
+    @Args('input') input: UpdateWebhookDTO,
   ): Promise<Webhook | null> {
     const updateData: Partial<Webhook> = {};
 
-    if (targetUrl !== undefined) updateData.targetUrl = targetUrl;
-    if (operations !== undefined) updateData.operations = operations;
-    if (description !== undefined) updateData.description = description;
-    if (secret !== undefined) updateData.secret = secret;
+    if (input.targetUrl !== undefined) updateData.targetUrl = input.targetUrl;
+    if (input.operations !== undefined)
+      updateData.operations = input.operations;
+    if (input.description !== undefined)
+      updateData.description = input.description;
+    if (input.secret !== undefined) updateData.secret = input.secret;
 
-    return this.webhookService.update(id, workspace.id, updateData);
+    return this.webhookService.update(input.id, workspace.id, updateData);
   }
 
   @Mutation(() => Boolean)
   async deleteWebhook(
-    @Args('id') id: string,
+    @Args('input') input: DeleteWebhookDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.webhookService.delete(id, workspace.id);
+    const result = await this.webhookService.delete(input.id, workspace.id);
 
     return result !== null;
   }

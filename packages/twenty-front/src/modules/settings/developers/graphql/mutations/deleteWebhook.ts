@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const DELETE_WEBHOOK = gql`
-  mutation DeleteWebhook($id: String!) {
-    deleteWebhook(id: $id)
+  mutation DeleteWebhook($input: DeleteWebhookDTO!) {
+    deleteWebhook(input: $input)
   }
 `;

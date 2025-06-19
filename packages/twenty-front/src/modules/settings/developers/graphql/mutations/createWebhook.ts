@@ -1,18 +1,8 @@
 import gql from 'graphql-tag';
 
 export const CREATE_WEBHOOK = gql`
-  mutation CreateWebhook(
-    $targetUrl: String!
-    $operations: [String!]!
-    $description: String
-    $secret: String
-  ) {
-    createWebhook(
-      targetUrl: $targetUrl
-      operations: $operations
-      description: $description
-      secret: $secret
-    ) {
+  mutation CreateWebhook($input: CreateWebhookDTO!) {
+    createWebhook(input: $input) {
       id
       targetUrl
       operations
