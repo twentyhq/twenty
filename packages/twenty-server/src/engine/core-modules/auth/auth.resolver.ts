@@ -6,7 +6,6 @@ import omit from 'lodash.omit';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { Repository } from 'typeorm';
 
-import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
@@ -18,8 +17,8 @@ import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
@@ -62,6 +61,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
+import { ApiKeyTokenInput } from './dto/api-key-token.input';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';

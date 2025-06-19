@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -20,6 +21,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 @Module({
   imports: [
     JwtModule,
+    ApiKeyModule,
     TypeOrmModule.forFeature(
       [User, AppToken, Workspace, UserWorkspace],
       'core',
