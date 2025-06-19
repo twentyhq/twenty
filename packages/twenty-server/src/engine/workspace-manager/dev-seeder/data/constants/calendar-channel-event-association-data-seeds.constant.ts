@@ -41,7 +41,6 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
   (): CalendarChannelEventAssociationDataSeed[] => {
     const ASSOCIATION_SEEDS: CalendarChannelEventAssociationDataSeed[] = [];
 
-    // Get all event IDs and channel IDs
     const EVENT_IDS = Object.keys(CALENDAR_EVENT_DATA_SEED_IDS).map(
       (key) =>
         CALENDAR_EVENT_DATA_SEED_IDS[

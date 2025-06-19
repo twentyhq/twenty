@@ -59,7 +59,6 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
     const PARTICIPANT_SEEDS: CalendarEventParticipantDataSeed[] = [];
     let PARTICIPANT_INDEX = 1;
 
-    // Get all event IDs
     const EVENT_IDS = Object.keys(CALENDAR_EVENT_DATA_SEED_IDS).map(
       (key) =>
         CALENDAR_EVENT_DATA_SEED_IDS[
@@ -67,7 +66,6 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
         ],
     );
 
-    // Get person and workspace member IDs
     const PERSON_IDS = Object.keys(PERSON_DATA_SEED_IDS).map(
       (key) => PERSON_DATA_SEED_IDS[key as keyof typeof PERSON_DATA_SEED_IDS],
     );
@@ -75,7 +73,6 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
 
     // For each event, create 1-4 participants with weighted distribution
     EVENT_IDS.forEach((eventId) => {
-      // Determine number of participants for this event
       const RAND = Math.random();
       let PARTICIPANT_COUNT: number;
 
@@ -199,7 +196,6 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
           };
         }
 
-        // Determine response status
         let RESPONSE_STATUS: CalendarEventParticipantResponseStatus;
 
         if (IS_ORGANIZER) {
