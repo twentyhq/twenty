@@ -35,7 +35,6 @@ export const RecordTableColumnHeadWithDropdown = ({
       dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
-      dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
     />
   );
 };

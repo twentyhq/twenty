@@ -34,9 +34,7 @@ export type UpdateViewButtonGroupProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export const UpdateViewButtonGroup = ({
-  hotkeyScope,
-}: UpdateViewButtonGroupProps) => {
+export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
 
   const { setViewPickerMode } = useViewPickerMode();
@@ -109,7 +107,6 @@ export const UpdateViewButtonGroup = ({
           <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
-            dropdownHotkeyScope={hotkeyScope}
             clickableComponent={
               <IconButton
                 size="small"

@@ -5,12 +5,12 @@ import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/A
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -72,9 +72,6 @@ export const RecordIndexActionMenuDropdown = () => {
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
-      }}
       data-select-disable
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
@@ -89,9 +86,10 @@ export const RecordIndexActionMenuDropdown = () => {
           >
             <DropdownMenuItemsContainer>
               <SelectableList
-                hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
+                focusId={dropdownId}
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
+                hotkeyScope={DropdownHotkeyScope.Dropdown}
               >
                 {recordIndexActions.map((action) => (
                   <ActionComponent action={action} key={action.key} />

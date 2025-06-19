@@ -70,6 +70,7 @@ export const ActivityTargetsInlineCell = ({
               labelWidth: fieldDefinition?.labelWidth,
               editModeContent: (
                 <MultipleRecordPicker
+                  focusId={componentInstanceId}
                   componentInstanceId={componentInstanceId}
                   onClickOutside={() => {
                     closeInlineCell();

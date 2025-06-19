@@ -26,6 +26,7 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   objectNameSingular: string;
   recordPickerInstanceId?: string;
   layoutDirection?: RecordPickerLayoutDirection;
+  focusId: string;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
   | 'EmptyIcon'
@@ -44,6 +45,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   onRecordSelected,
   objectNameSingular,
   layoutDirection = 'search-bar-on-top',
+  focusId,
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useSingleRecordPickerSearch();
 
@@ -74,6 +76,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   const searchHasNoResults =
     isNonEmptyString(recordPickerSearchFilter) &&
     records.recordsToSelect.length === 0 &&
+    records.filteredSelectedRecords.length === 0 &&
     !records.loading;
 
   const handleCreateNew = () => {
@@ -96,9 +99,11 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               <DropdownMenuSeparator />
             </>
           )}
+
           <DropdownMenuItemsContainer hasMaxHeight>
             {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
             <SingleRecordPickerMenuItems
+              focusId={focusId}
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
@@ -123,6 +128,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
+              focusId={focusId}
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
