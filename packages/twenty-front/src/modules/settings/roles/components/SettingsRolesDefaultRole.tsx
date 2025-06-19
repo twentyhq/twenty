@@ -53,15 +53,19 @@ export const SettingsRoleDefaultRole = ({
 
   const { getIcon } = useIcons();
 
-  if (!currentWorkspace || !defaultRole) {
+  if (!currentWorkspace || !roles || !defaultRole) {
     return null;
   }
 
   const options = roles.map((role) => ({
     label: role.label,
     value: role.id,
-    Icon: getIcon(role.icon),
+    Icon: getIcon(role.icon) ?? IconUserPin,
   }));
+
+  if (options.length === 0) {
+    return null;
+  }
 
   return (
     <Section>
