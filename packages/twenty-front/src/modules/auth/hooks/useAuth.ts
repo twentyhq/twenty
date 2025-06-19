@@ -464,7 +464,7 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      signUp({
+      return signUp({
         variables: { email, password, captchaToken },
         onCompleted: async (data) => {
           handleSetAuthTokens(data.signUp.tokens);

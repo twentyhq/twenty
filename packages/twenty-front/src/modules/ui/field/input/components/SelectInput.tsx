@@ -1,3 +1,4 @@
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectOption } from 'twenty-ui/input';
@@ -5,7 +6,7 @@ import { SelectOption } from 'twenty-ui/input';
 type SelectInputProps = {
   selectableListComponentInstanceId: string;
   selectableItemIdArray: string[];
-  hotkeyScope: string;
+  focusId: string;
   onEnter: (itemId: string) => void;
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
@@ -19,7 +20,7 @@ type SelectInputProps = {
 export const SelectInput = ({
   selectableListComponentInstanceId,
   selectableItemIdArray,
-  hotkeyScope,
+  focusId,
   onOptionSelected,
   options,
   onCancel,
@@ -32,7 +33,8 @@ export const SelectInput = ({
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
-      hotkeyScope={hotkeyScope}
+      focusId={focusId}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     >
       <SelectBaseInput
         onOptionSelected={onOptionSelected}
@@ -42,7 +44,7 @@ export const SelectInput = ({
         onFilterChange={onFilterChange}
         onClear={onClear}
         clearLabel={clearLabel}
-        hotkeyScope={hotkeyScope}
+        focusId={focusId}
       />
     </SelectableList>
   );

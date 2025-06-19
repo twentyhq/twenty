@@ -6,6 +6,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { AppPath } from '@/types/AppPath';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -67,7 +68,10 @@ export const useOpenRecordFromIndexView = () => {
           },
         );
 
-        if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+        if (
+          recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+          canOpenObjectInSidePanel(objectNameSingular)
+        ) {
           openRecordInCommandMenu({
             recordId,
             objectNameSingular,

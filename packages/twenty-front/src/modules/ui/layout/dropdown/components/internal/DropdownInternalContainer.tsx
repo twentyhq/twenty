@@ -1,13 +1,12 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -45,11 +44,9 @@ export type DropdownInternalContainerProps = {
   dropdownPlacement: Placement;
   floatingUiRefs: UseFloatingReturn['refs'];
   onClickOutside?: () => void;
-  hotkeyScope: HotkeyScope;
   floatingStyles: UseFloatingReturn['floatingStyles'];
   hotkey?: {
     key: Keys;
-    scope: string;
   };
   onHotkeyTriggered?: () => void;
   dropdownComponents: React.ReactNode;
@@ -63,7 +60,6 @@ export const DropdownInternalContainer = ({
   dropdownPlacement,
   floatingUiRefs,
   onClickOutside,
-  hotkeyScope,
   floatingStyles,
   hotkey,
   onHotkeyTriggered,
@@ -108,23 +104,24 @@ export const DropdownInternalContainer = ({
     excludedClickOutsideIds,
   });
 
-  useInternalHotkeyScopeManagement({
-    dropdownScopeId: dropdownId,
-    dropdownHotkeyScopeFromParent: hotkeyScope,
-  });
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       if (activeDropdownFocusId !== dropdownId) return;
 
       if (isDropdownOpen) {
         closeDropdown();
       }
     },
-    hotkeyScope?.scope,
-    [closeDropdown, isDropdownOpen],
-  );
+    focusId: dropdownId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [
+      closeDropdown,
+      isDropdownOpen,
+      activeDropdownFocusId,
+      dropdownId,
+    ],
+  });
 
   const dropdownMenuStyles = {
     ...floatingStyles,
@@ -137,7 +134,11 @@ export const DropdownInternalContainer = ({
   return (
     <>
       {hotkey && onHotkeyTriggered && (
-        <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
+        <HotkeyEffect
+          hotkey={hotkey}
+          onHotkeyTriggered={onHotkeyTriggered}
+          focusId={dropdownId}
+        />
       )}
 
       <FloatingPortal>

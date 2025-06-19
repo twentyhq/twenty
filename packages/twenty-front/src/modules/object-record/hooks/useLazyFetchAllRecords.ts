@@ -94,9 +94,9 @@ export const useLazyFetchAllRecords = <T>({
 
       const rawResult = await fetchMoreRecordsLazy();
 
-      const fetchMoreResult = rawResult?.data?.[objectMetadataItem.namePlural];
+      const fetchMoreResult = rawResult?.data;
 
-      for (const edge of fetchMoreResult.edges) {
+      for (const edge of fetchMoreResult?.edges ?? []) {
         records.push(edge.node);
       }
 
@@ -106,11 +106,11 @@ export const useLazyFetchAllRecords = <T>({
         displayType: totalCount ? 'percentage' : 'number',
       });
 
-      if (fetchMoreResult.pageInfo.hasNextPage === false) {
+      if (fetchMoreResult?.pageInfo.hasNextPage === false) {
         break;
       }
 
-      lastCursor = fetchMoreResult.pageInfo.endCursor ?? null;
+      lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
     }
 
     setIsDownloading(false);

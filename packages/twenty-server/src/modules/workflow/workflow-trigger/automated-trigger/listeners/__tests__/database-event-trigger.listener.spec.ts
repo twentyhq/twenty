@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -12,7 +11,6 @@ describe('DatabaseEventTriggerListener', () => {
   let listener: DatabaseEventTriggerListener;
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
-  let featureFlagService: jest.Mocked<FeatureFlagService>;
 
   const mockRepository = {
     find: jest.fn(),
@@ -27,10 +25,6 @@ describe('DatabaseEventTriggerListener', () => {
       add: jest.fn(),
     } as any;
 
-    featureFlagService = {
-      isFeatureEnabled: jest.fn().mockResolvedValue(true),
-    } as any;
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseEventTriggerListener,
@@ -41,10 +35,6 @@ describe('DatabaseEventTriggerListener', () => {
         {
           provide: MessageQueueService,
           useValue: messageQueueService,
-        },
-        {
-          provide: FeatureFlagService,
-          useValue: featureFlagService,
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -301,14 +291,6 @@ describe('DatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
-    });
-
-    it('should ignore events when feature flag is disabled', async () => {
-      featureFlagService.isFeatureEnabled.mockResolvedValueOnce(false);
-
-      await listener.handleObjectRecordUpdateEvent(mockPayload);
-
-      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should handle multiple events in a batch', async () => {

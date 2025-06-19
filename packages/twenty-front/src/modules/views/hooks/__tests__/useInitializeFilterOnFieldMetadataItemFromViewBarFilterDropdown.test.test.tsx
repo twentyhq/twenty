@@ -15,16 +15,20 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 
-const mockSetHotkeyScope = jest.fn();
+const mockPushFocusItemToFocusStack = jest.fn();
 
-jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
-  useSetHotkeyScope: () => mockSetHotkeyScope,
+jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
+  usePushFocusItemToFocusStack: () => ({
+    pushFocusItemToFocusStack: mockPushFocusItemToFocusStack,
+  }),
 }));
 
 const peopleObjectMetadataItemMock = getMockPersonObjectMetadataItem();
@@ -109,7 +113,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     );
     expect(result.current.objectFilterDropdownFilterIsSelected).toBe(true);
     expect(result.current.selectedOperandInDropdown).toBe(defaultOperand);
-    expect(mockSetHotkeyScope).not.toHaveBeenCalled();
+    expect(mockPushFocusItemToFocusStack).not.toHaveBeenCalled();
   });
 
   it('should initialize filter with a relation field', () => {
@@ -161,9 +165,17 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     );
     expect(result.current.objectFilterDropdownFilterIsSelected).toBe(true);
     expect(result.current.selectedOperandInDropdown).toBe(defaultOperand);
-    expect(mockSetHotkeyScope).toHaveBeenCalledWith(
-      SingleRecordPickerHotkeyScope.SingleRecordPicker,
-    );
+    expect(mockPushFocusItemToFocusStack).toHaveBeenCalledWith({
+      focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
+      component: {
+        type: FocusComponentType.DROPDOWN,
+        instanceId: personCompanyFieldMetadataItemMock.id,
+      },
+      hotkeyScope: {
+        scope: DropdownHotkeyScope.Dropdown,
+      },
+      memoizeKey: personCompanyFieldMetadataItemMock.id,
+    });
   });
 
   it('should initialize filter with a duplicate field on city', () => {

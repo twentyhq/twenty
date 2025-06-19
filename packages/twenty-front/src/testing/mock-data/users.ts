@@ -68,10 +68,6 @@ export const mockCurrentWorkspace: Workspace = {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
-    {
-      key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
-      value: true,
-    },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',

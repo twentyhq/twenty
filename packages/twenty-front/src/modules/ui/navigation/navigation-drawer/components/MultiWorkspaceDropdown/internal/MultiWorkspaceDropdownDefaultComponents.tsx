@@ -1,14 +1,15 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -37,13 +38,11 @@ import {
   UndecoratedLink,
 } from 'twenty-ui/navigation';
 import {
-  useSignUpInNewWorkspaceMutation,
   AvailableWorkspace,
+  useSignUpInNewWorkspaceMutation,
 } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -118,7 +117,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               />
             }
             dropdownId={'multi-workspace-dropdown-context-menu'}
-            dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>

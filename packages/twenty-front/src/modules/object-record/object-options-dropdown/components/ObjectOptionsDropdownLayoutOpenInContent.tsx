@@ -1,12 +1,14 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -27,6 +29,10 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const canOpenInSidePanel = canOpenObjectInSidePanel(
+    objectMetadataItem.nameSingular,
+  );
 
   const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
@@ -53,17 +59,21 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           <SelectableListItem
             itemId={ViewOpenRecordInType.SIDE_PANEL}
-            onEnter={() =>
+            onEnter={() => {
+              if (!canOpenInSidePanel) {
+                return;
+              }
               setAndPersistOpenRecordIn(
                 ViewOpenRecordInType.SIDE_PANEL,
                 currentView,
-              )
-            }
+              );
+            }}
           >
             <MenuItemSelect
               LeftIcon={IconLayoutSidebarRight}
@@ -72,12 +82,17 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
                 recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
               }
               focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
-              onClick={() =>
+              onClick={() => {
+                if (!canOpenInSidePanel) {
+                  return;
+                }
+
                 setAndPersistOpenRecordIn(
                   ViewOpenRecordInType.SIDE_PANEL,
                   currentView,
-                )
-              }
+                );
+              }}
+              disabled={!canOpenInSidePanel}
             />
           </SelectableListItem>
           <SelectableListItem

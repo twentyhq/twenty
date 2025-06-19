@@ -3,7 +3,6 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -15,7 +14,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
 
-export const ObjectFilterDropdownSourceSelect = () => {
+export const ObjectFilterDropdownSourceSelect = ({
+  dropdownId,
+}: {
+  dropdownId: string;
+}) => {
   const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
   );
@@ -78,7 +81,7 @@ export const ObjectFilterDropdownSourceSelect = () => {
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <MultipleSelectDropdown
         selectableListId="object-filter-source-select-id"
-        hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
+        focusId={dropdownId}
         itemsToSelect={sourceTypes.filter(
           (item) =>
             !filteredSelectedItems.some((selected) => selected.id === item.id),

@@ -39,13 +39,11 @@ const meta: Meta<typeof Dropdown> = {
   decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
-    dropdownHotkeyScope: { scope: 'testDropdownMenu' },
     dropdownOffset: { x: 0, y: 8 },
     dropdownId: 'test-dropdown-id',
   },
   argTypes: {
     clickableComponent: { control: false },
-    dropdownHotkeyScope: { control: false },
     dropdownOffset: { control: false },
     dropdownComponents: { control: false },
   },
@@ -352,7 +350,6 @@ const ModalWithDropdown = () => {
                   title="Open Dropdown in Modal"
                 />
               }
-              dropdownHotkeyScope={{ scope: 'modal-dropdown' }}
               dropdownOffset={{ x: 0, y: 8 }}
               dropdownId="modal-dropdown-test"
               isDropdownInModal={true}
