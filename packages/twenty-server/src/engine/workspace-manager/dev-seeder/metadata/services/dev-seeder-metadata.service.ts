@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { COMPANY_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/company-custom-field-seeds.constant';
 import { PERSON_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/person-custom-field-seeds.constant';
 import { PET_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/pet-custom-field-seeds.constant';
@@ -20,6 +24,41 @@ export class DevSeederMetadataService {
     private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
+  private readonly workspaceConfigs: Record<
+    string,
+    {
+      objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
+      fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
+    }
+  > = {
+    [SEED_APPLE_WORKSPACE_ID]: {
+      objects: [
+        { seed: ROCKET_CUSTOM_OBJECT_SEED },
+        { seed: PET_CUSTOM_OBJECT_SEED, fields: PET_CUSTOM_FIELD_SEEDS },
+        {
+          seed: SURVEY_RESULT_CUSTOM_OBJECT_SEED,
+          fields: SURVEY_RESULT_CUSTOM_FIELD_SEEDS,
+        },
+      ],
+      fields: [
+        { objectName: 'company', seeds: COMPANY_CUSTOM_FIELD_SEEDS },
+        { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
+      ],
+    },
+    [SEED_YCOMBINATOR_WORKSPACE_ID]: {
+      objects: [
+        {
+          seed: SURVEY_RESULT_CUSTOM_OBJECT_SEED,
+          fields: SURVEY_RESULT_CUSTOM_FIELD_SEEDS,
+        },
+      ],
+      fields: [
+        { objectName: 'company', seeds: COMPANY_CUSTOM_FIELD_SEEDS },
+        { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
+      ],
+    },
+  };
+
   public async seed({
     dataSourceMetadata,
     workspaceId,
@@ -27,47 +66,31 @@ export class DevSeederMetadataService {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
   }) {
-    await this.seedCustomObject({
-      dataSourceId: dataSourceMetadata.id,
-      workspaceId,
-      objectMetadataSeed: ROCKET_CUSTOM_OBJECT_SEED,
-    });
+    const config = this.workspaceConfigs[workspaceId];
 
-    await this.seedCustomObject({
-      dataSourceId: dataSourceMetadata.id,
-      workspaceId,
-      objectMetadataSeed: PET_CUSTOM_OBJECT_SEED,
-    });
+    for (const obj of config.objects) {
+      await this.seedCustomObject({
+        dataSourceId: dataSourceMetadata.id,
+        workspaceId,
+        objectMetadataSeed: obj.seed,
+      });
 
-    await this.seedCustomFields({
-      workspaceId,
-      objectMetadataNameSingular: PET_CUSTOM_OBJECT_SEED.nameSingular,
-      fieldMetadataSeeds: PET_CUSTOM_FIELD_SEEDS,
-    });
+      if (obj.fields) {
+        await this.seedCustomFields({
+          workspaceId,
+          objectMetadataNameSingular: obj.seed.nameSingular,
+          fieldMetadataSeeds: obj.fields,
+        });
+      }
+    }
 
-    await this.seedCustomObject({
-      dataSourceId: dataSourceMetadata.id,
-      workspaceId,
-      objectMetadataSeed: SURVEY_RESULT_CUSTOM_OBJECT_SEED,
-    });
-
-    await this.seedCustomFields({
-      workspaceId,
-      objectMetadataNameSingular: SURVEY_RESULT_CUSTOM_OBJECT_SEED.nameSingular,
-      fieldMetadataSeeds: SURVEY_RESULT_CUSTOM_FIELD_SEEDS,
-    });
-
-    await this.seedCustomFields({
-      workspaceId,
-      objectMetadataNameSingular: 'company',
-      fieldMetadataSeeds: COMPANY_CUSTOM_FIELD_SEEDS,
-    });
-
-    await this.seedCustomFields({
-      workspaceId,
-      objectMetadataNameSingular: 'person',
-      fieldMetadataSeeds: PERSON_CUSTOM_FIELD_SEEDS,
-    });
+    for (const fieldConfig of config.fields) {
+      await this.seedCustomFields({
+        workspaceId,
+        objectMetadataNameSingular: fieldConfig.objectName,
+        fieldMetadataSeeds: fieldConfig.seeds,
+      });
+    }
   }
 
   private async seedCustomObject({
@@ -101,7 +124,9 @@ export class DevSeederMetadataService {
       });
 
     if (!objectMetadata) {
-      throw new Error('Object metadata not found');
+      throw new Error(
+        `Object metadata not found for: ${objectMetadataNameSingular}`,
+      );
     }
 
     await this.fieldMetadataService.createMany(
