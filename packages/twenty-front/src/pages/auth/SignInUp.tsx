@@ -1,8 +1,11 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -27,7 +30,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
-import { useAuth } from '@/auth/hooks/useAuth';
 
 const StandardContent = ({
   workspacePublicData,
@@ -60,6 +62,7 @@ const StandardContent = ({
 
 export const SignInUp = () => {
   const { t } = useLingui();
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -70,14 +73,11 @@ export const SignInUp = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
-  const { signOut } = useAuth();
 
   const [searchParams] = useSearchParams();
 
   const onClickOnLogo = () => {
-    if (!isOnAWorkspace && signInUpStep === SignInUpStep.WorkspaceSelection) {
-      signOut();
-    }
+    setSignInUpStep(SignInUpStep.Init);
   };
 
   const title = useMemo(() => {
