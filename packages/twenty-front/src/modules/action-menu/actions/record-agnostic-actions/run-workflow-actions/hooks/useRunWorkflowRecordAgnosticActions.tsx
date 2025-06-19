@@ -42,11 +42,10 @@ export const useRunWorkflowRecordAgnosticActions = () => {
 
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
-      const Icon =
-        activeWorkflowVersion.trigger?.type === 'MANUAL' &&
-        isDefined(activeWorkflowVersion.trigger?.settings?.icon)
-          ? getIcon(activeWorkflowVersion.trigger.settings.icon)
-          : COMMAND_MENU_DEFAULT_ICON;
+      const Icon = getIcon(
+        activeWorkflowVersion.trigger?.settings.icon,
+        COMMAND_MENU_DEFAULT_ICON,
+      );
 
       return {
         type: ActionType.WorkflowRun,
