@@ -4,7 +4,6 @@ import { Button } from 'twenty-ui/input';
 
 const StyledBanner = styled(Banner)`
   position: absolute;
-  z-index: 1;
 `;
 
 const StyledText = styled.div`

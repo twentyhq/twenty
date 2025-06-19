@@ -4039,6 +4039,11 @@ msgstr "Permissions · {objectLabelSingular}"
 msgid "Phone number copied to clipboard"
 msgstr "Phone number copied to clipboard"
 
+#. js-lingui-id: FdlpPK
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+msgid "Pick a {nameSingular} record"
+msgstr "Pick a {nameSingular} record"
+
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx

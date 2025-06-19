@@ -94,6 +94,7 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
   WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
@@ -220,6 +221,7 @@ export class DevSeederDataService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly timelineActivitySeederService: TimelineActivitySeederService,
   ) {}
 
   public async seed({
@@ -250,6 +252,12 @@ export class DevSeederDataService {
             recordSeeds: recordSeedsConfig.recordSeeds,
           });
         }
+
+        await this.timelineActivitySeederService.seedTimelineActivities({
+          entityManager,
+          schemaName,
+          workspaceId,
+        });
 
         const viewDefinitionsWithId = await prefillViews(
           entityManager,
