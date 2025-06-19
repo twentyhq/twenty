@@ -21,7 +21,7 @@ import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calen
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()

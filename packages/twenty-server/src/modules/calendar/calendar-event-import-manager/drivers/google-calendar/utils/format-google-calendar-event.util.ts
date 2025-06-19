@@ -2,7 +2,7 @@ import { calendar_v3 as calendarV3 } from 'googleapis';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const formatGoogleCalendarEvents = (
   events: calendarV3.Schema$Event[],

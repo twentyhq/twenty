@@ -1,5 +1,5 @@
 import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const filterOutBlocklistedEvents = (
   calendarChannelHandles: string[],
