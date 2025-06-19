@@ -12,6 +12,7 @@ import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 type MockedUser = Pick<
   User,
@@ -128,6 +129,13 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+      objectMetadataId: item.id,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: true,
+    })),
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
@@ -138,6 +146,26 @@ export const mockedUserData: MockedUser = {
     availableWorkspacesForSignUp: [],
   },
   userVars: {},
+};
+
+export const mockedLimitedPermissionsUserData: MockedUser = {
+  ...mockedUserData,
+  currentUserWorkspace: {
+    ...mockedUserData.currentUserWorkspace,
+    objectPermissions: generatedMockObjectMetadataItems
+      .filter(
+        (objectMetadata) =>
+          objectMetadata.nameSingular !== 'task' &&
+          objectMetadata.nameSingular !== 'opportunity',
+      )
+      .map((item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+      })),
+  },
 };
 
 export const mockedOnboardingUserData = (

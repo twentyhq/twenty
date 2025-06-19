@@ -410,7 +410,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ objectMetadataItem, viewType, isWorkflowEnabled }) =>
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      isWorkflowEnabled,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) === true &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
         viewType === ActionViewType.SHOW_PAGE) &&
       isWorkflowEnabled,
@@ -443,9 +449,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
-      viewType === ActionViewType.SHOW_PAGE,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Person) === true &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
+        viewType === ActionViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -469,9 +480,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
-      viewType === ActionViewType.SHOW_PAGE,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Company) === true &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
+        viewType === ActionViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -495,9 +511,16 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Opportunity ||
-      viewType === ActionViewType.SHOW_PAGE,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) ===
+        true &&
+      (objectMetadataItem?.nameSingular !==
+        CoreObjectNameSingular.Opportunity ||
+        viewType === ActionViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -547,9 +570,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
-      viewType === ActionViewType.SHOW_PAGE,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Task) === true &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
+        viewType === ActionViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}
@@ -573,9 +601,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
-      viewType === ActionViewType.SHOW_PAGE,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Note) === true &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
+        viewType === ActionViewType.SHOW_PAGE),
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}

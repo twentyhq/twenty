@@ -10,6 +10,7 @@ type Leaf = {
 
 type Node = {
   isLeaf: false;
+  type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
   value: OutputSchema;

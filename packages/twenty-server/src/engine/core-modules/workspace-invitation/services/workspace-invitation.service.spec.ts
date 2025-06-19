@@ -12,10 +12,10 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -70,6 +70,7 @@ describe('WorkspaceInvitationService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingInviteTeamPending: jest.fn(),
+            setOnboardingBookOnboardingPending: jest.fn(),
           },
         },
         {
@@ -148,7 +149,10 @@ describe('WorkspaceInvitationService', () => {
         inviteHash: 'invite-hash',
         displayName: 'Test Workspace',
       } as Workspace;
-      const sender = { email: 'sender@example.com', firstName: 'Sender' };
+      const sender = {
+        userEmail: 'sender@example.com',
+        name: { firstName: 'Sender' },
+      };
 
       jest.spyOn(service, 'createWorkspaceInvitation').mockResolvedValue({
         context: { email: 'test@example.com' },
@@ -166,7 +170,7 @@ describe('WorkspaceInvitationService', () => {
       const result = await service.sendInvitations(
         emails,
         workspace,
-        sender as User,
+        sender as WorkspaceMemberWorkspaceEntity,
       );
 
       expect(result.success).toBe(true);
@@ -177,6 +181,12 @@ describe('WorkspaceInvitationService', () => {
       ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
         value: false,
+      });
+      expect(
+        onboardingService.setOnboardingBookOnboardingPending,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        value: true,
       });
     });
   });

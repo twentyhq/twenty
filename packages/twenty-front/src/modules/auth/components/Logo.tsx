@@ -5,7 +5,7 @@ import { Avatar } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
-import { AppPath } from '~/modules/types/AppPath';
+import { useReadDefaultDomainFromConfiguration } from '~/modules/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -59,6 +59,8 @@ export const Logo = ({
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const defaultPrimaryLogoUrl = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
 
+  const { defaultUrl } = useReadDefaultDomainFromConfiguration();
+
   const primaryLogoUrl = getImageAbsoluteURI({
     imageUrl: primaryLogo ?? defaultPrimaryLogoUrl,
     baseUrl: REACT_APP_SERVER_BASE_URL,
@@ -77,7 +79,7 @@ export const Logo = ({
     <StyledContainer onClick={() => onClick?.()}>
       {isUsingDefaultLogo ? (
         <UndecoratedLink
-          to={AppPath.SignInUp}
+          to={defaultUrl.toString()}
           onClick={redirectToDefaultDomain}
         >
           <StyledPrimaryLogo src={primaryLogoUrl} />

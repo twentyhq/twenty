@@ -1,6 +1,7 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -66,9 +67,11 @@ export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
-
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const hasCalendarBooking = isDefined(calendarBookingPageId);
+
   const {
     control,
     handleSubmit,
@@ -136,8 +139,6 @@ export const InviteTeam = () => {
       );
       const result = await sendInvitation({ emails });
 
-      setNextOnboardingStatus();
-
       if (isDefined(result.errors)) {
         throw result.errors;
       }
@@ -147,6 +148,8 @@ export const InviteTeam = () => {
           duration: 2000,
         });
       }
+
+      setNextOnboardingStatus();
     },
     [enqueueSnackBar, sendInvitation, setNextOnboardingStatus, t],
   );
@@ -214,7 +217,7 @@ export const InviteTeam = () => {
       </StyledAnimatedContainer>
       <StyledButtonContainer>
         <MainButton
-          title={t`Continue`}
+          title={hasCalendarBooking ? t`Continue` : t`Finish`}
           disabled={!isValid || isSubmitting}
           onClick={handleSubmit(onSubmit)}
           fullWidth
