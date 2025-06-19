@@ -154,7 +154,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                   <SettingsCard
                     Icon={
                       <Icon
-                        size={theme.icon.size.xl}
+                        size={theme.icon.size.lg}
                         stroke={theme.icon.stroke.sm}
                       />
                     }
