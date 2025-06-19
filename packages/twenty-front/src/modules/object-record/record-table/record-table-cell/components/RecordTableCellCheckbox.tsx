@@ -16,6 +16,7 @@ const StyledContainer = styled.div`
   height: 32px;
   justify-content: center;
   min-width: ${TABLE_CELL_CHECKBOX_MIN_WIDTH};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledRecordTableTd = styled(RecordTableTd)`

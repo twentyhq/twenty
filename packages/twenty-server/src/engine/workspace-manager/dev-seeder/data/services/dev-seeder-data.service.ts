@@ -53,6 +53,14 @@ import {
   MESSAGE_THREAD_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import {
+  NOTE_DATA_SEED_COLUMNS,
+  NOTE_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
+import {
+  NOTE_TARGET_DATA_SEED_COLUMNS,
+  NOTE_TARGET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';
+import {
   OPPORTUNITY_DATA_SEED_COLUMNS,
   OPPORTUNITY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -69,17 +77,26 @@ import {
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
 import {
-  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-  WORKSPACE_MEMBER_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
-import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
+  TASK_DATA_SEED_COLUMNS,
+  TASK_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
+import {
+  TASK_TARGET_DATA_SEED_COLUMNS,
+  TASK_TARGET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import {
   WORKFLOW_DATA_SEED_COLUMNS,
   WORKFLOW_DATA_SEEDS,
   WORKFLOW_VERSION_DATA_SEED_COLUMNS,
   WORKFLOW_VERSION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workflow-data-seeds.constants';
+import {
+  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+  WORKSPACE_MEMBER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
+import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -96,6 +113,16 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'person',
     pgColumns: PERSON_DATA_SEED_COLUMNS,
     recordSeeds: PERSON_DATA_SEEDS,
+  },
+  {
+    tableName: 'note',
+    pgColumns: NOTE_DATA_SEED_COLUMNS,
+    recordSeeds: NOTE_DATA_SEEDS,
+  },
+  {
+    tableName: 'noteTarget',
+    pgColumns: NOTE_TARGET_DATA_SEED_COLUMNS,
+    recordSeeds: NOTE_TARGET_DATA_SEEDS,
   },
   {
     tableName: 'opportunity',
@@ -177,6 +204,16 @@ const RECORD_SEEDS_CONFIGS = [
     pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
     recordSeeds: SURVEY_RESULT_DATA_SEEDS,
   },
+  {
+    tableName: 'task',
+    pgColumns: TASK_DATA_SEED_COLUMNS,
+    recordSeeds: TASK_DATA_SEEDS,
+  },
+  {
+    tableName: 'taskTarget',
+    pgColumns: TASK_TARGET_DATA_SEED_COLUMNS,
+    recordSeeds: TASK_TARGET_DATA_SEEDS,
+  },
 ];
 
 @Injectable()
@@ -184,6 +221,7 @@ export class DevSeederDataService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly timelineActivitySeederService: TimelineActivitySeederService,
   ) {}
 
   public async seed({
@@ -214,6 +252,12 @@ export class DevSeederDataService {
             recordSeeds: recordSeedsConfig.recordSeeds,
           });
         }
+
+        await this.timelineActivitySeederService.seedTimelineActivities({
+          entityManager,
+          schemaName,
+          workspaceId,
+        });
 
         const viewDefinitionsWithId = await prefillViews(
           entityManager,

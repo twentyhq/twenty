@@ -9,17 +9,21 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -33,12 +37,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
-import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -84,12 +83,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceId,
       defaultAvatarUrl,
     });
-
-    this.workspaceEventEmitter.emitCustomBatchEvent(
-      USER_SIGNUP_EVENT_NAME,
-      [{ userId }],
-      workspaceId,
-    );
 
     return this.userWorkspaceRepository.save(userWorkspace);
   }
@@ -289,11 +282,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )
       .filter(
-        ({ workspaceId }) =>
+        ({ workspace }) =>
           ![
             ...alreadyMemberWorkspacesIds,
             ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspaceId),
+          ].includes(workspace.id),
       )
       .map((appToken) => ({
         workspace: appToken.workspace,
@@ -406,23 +399,24 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
       logo: workspace.logo,
-      sso: workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspace['sso'],
-      ),
+      sso:
+        workspace.workspaceSSOIdentityProviders?.reduce(
+          (acc, identityProvider) =>
+            acc.concat(
+              identityProvider.status === 'Inactive'
+                ? []
+                : [
+                    {
+                      id: identityProvider.id,
+                      name: identityProvider.name,
+                      issuer: identityProvider.issuer,
+                      type: identityProvider.type,
+                      status: identityProvider.status,
+                    },
+                  ],
+            ),
+          [] as AvailableWorkspace['sso'],
+        ) ?? [],
     };
   }
 
@@ -446,7 +440,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
           ({ workspace, appToken }) => {
             return {
               ...this.castWorkspaceToAvailableWorkspace(workspace),
-              ...(appToken ? { personalInviteToken: appToken.value } : {}),
+              ...(appToken
+                ? {
+                    personalInviteToken: appToken.value,
+                    inviteHash: workspace.inviteHash,
+                  }
+                : {}),
             };
           },
         ),

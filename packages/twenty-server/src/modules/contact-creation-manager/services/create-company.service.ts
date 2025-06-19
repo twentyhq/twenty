@@ -8,6 +8,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { DeepPartial, ILike, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { lowercaseDomainAndRemoveTrailingSlash } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -20,7 +21,7 @@ import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manag
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
-type CompanyToCreate = {
+export type CompanyToCreate = {
   domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
@@ -74,8 +75,16 @@ export class CreateCompanyService {
         },
       );
 
-    // Avoid creating duplicate companies
-    const uniqueCompanies = uniqBy(companies, 'domainName');
+    // Remove trailing slash from domain names
+    const companiesWithoutTrailingSlash = companies.map((company) => ({
+      ...company,
+      domainName: company.domainName
+        ? lowercaseDomainAndRemoveTrailingSlash(company.domainName)
+        : undefined,
+    }));
+
+    // Avoid creating duplicate companies, e.g. example.com and example.com/
+    const uniqueCompanies = uniqBy(companiesWithoutTrailingSlash, 'domainName');
     const conditions = uniqueCompanies.map((companyToCreate) => ({
       domainName: {
         primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),

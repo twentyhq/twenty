@@ -1,5 +1,6 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -27,6 +28,10 @@ export const RecordTableCellPortalWrapper = ({
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
@@ -35,6 +40,8 @@ export const RecordTableCellPortalWrapper = ({
   if (!isDefined(anchorElement) || !isDefined(recordId)) {
     return null;
   }
+
+  const isReadOnly = !objectPermissions.canUpdateObjectRecords;
 
   return ReactDOM.createPortal(
     <RecordTableRowContextProvider
@@ -48,6 +55,7 @@ export const RecordTableCellPortalWrapper = ({
             objectNameSingular: objectMetadataItem.nameSingular,
           }) + recordId,
         objectNameSingular: objectMetadataItem.nameSingular,
+        isReadOnly,
       }}
     >
       <RecordTableCellContext.Provider

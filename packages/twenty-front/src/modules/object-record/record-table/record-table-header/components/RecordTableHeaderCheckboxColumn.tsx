@@ -16,6 +16,8 @@ const StyledContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
+  width: 24px;
+  padding-right: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
@@ -27,8 +29,8 @@ const StyledColumnHeaderCell = styled.th<{
     isFirstRowActiveOrFocused
       ? 'none'
       : `1px solid ${theme.border.color.light}`};
-  border-right: transparent;
-  width: 30px;
+  width: 28px;
+  box-sizing: border-box;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {

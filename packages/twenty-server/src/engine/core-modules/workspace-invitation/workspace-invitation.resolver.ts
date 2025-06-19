@@ -14,6 +14,8 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
@@ -25,6 +27,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 @Resolver()
 export class WorkspaceInvitationResolver {
   constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly fileService: FileService,
   ) {}
@@ -47,10 +50,22 @@ export class WorkspaceInvitationResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ) {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,
       workspace,
-      user,
+      workspaceMember,
     );
   }
 
@@ -75,10 +90,22 @@ export class WorkspaceInvitationResolver {
       });
     }
 
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
       { ...workspace, logo: workspaceLogoWithToken },
-      user,
+      workspaceMember,
     );
   }
 }

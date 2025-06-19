@@ -78,13 +78,14 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.PlanRequired;
   }
 
-  if (
-    isWorkspaceSuspended &&
-    !isMatchingLocation(location, AppPath.SettingsCatchAll)
-  ) {
-    return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
-      SettingsPath.Billing
-    }`;
+  if (isWorkspaceSuspended) {
+    if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
+      return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+        SettingsPath.Billing
+      }`;
+    }
+
+    return;
   }
 
   if (

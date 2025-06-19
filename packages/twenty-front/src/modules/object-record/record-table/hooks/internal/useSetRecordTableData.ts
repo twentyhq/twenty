@@ -11,24 +11,20 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentFamilyCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (
-    entityCount?: number,
-    currentRecordGroupId?: string,
-  ) => void;
 };
 
 export const useSetRecordTableData = ({
   recordTableId,
-  onEntityCountChange,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentFamilyCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordTableId,
     );
@@ -38,7 +34,7 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -61,11 +57,9 @@ export const useSetRecordTableData = ({
       <T extends ObjectRecord>({
         records,
         currentRecordGroupId,
-        totalCount,
       }: {
         records: T[];
         currentRecordGroupId?: string;
-        totalCount?: number;
       }) => {
         for (const record of records) {
           // TODO: refactor with scoped state later
@@ -115,8 +109,6 @@ export const useSetRecordTableData = ({
           } else {
             set(recordIndexAllRecordIdsSelector, recordIds);
           }
-
-          onEntityCountChange(totalCount, currentRecordGroupId);
         }
       },
     [
@@ -125,7 +117,6 @@ export const useSetRecordTableData = ({
       hasUserSelectedAllRowsState,
       setIsFocusActiveForCurrentPosition,
       setRecordTableHoverPosition,
-      onEntityCountChange,
       isRowSelectedFamilyState,
     ],
   );

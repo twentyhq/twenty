@@ -27,4 +27,8 @@ export type SpreadsheetImportStep =
     }
   | {
       type: SpreadsheetImportStepType.loading;
+    }
+  | {
+      type: SpreadsheetImportStepType.importData;
+      recordsToImportCount: number;
     };
