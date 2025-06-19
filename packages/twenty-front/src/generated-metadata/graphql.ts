@@ -79,7 +79,7 @@ export type Agent = {
   modelId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
-  responseFormat: Scalars['String']['output'];
+  responseFormat: Scalars['JSON']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -273,6 +273,7 @@ export type BillingProduct = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  AI_TOKEN_USAGE = 'AI_TOKEN_USAGE',
   BASE_PRODUCT = 'BASE_PRODUCT',
   WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
 }
@@ -449,7 +450,7 @@ export type CreateAgentInput = {
   modelId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   prompt: Scalars['String']['input'];
-  responseFormat: Scalars['String']['input'];
+  responseFormat: Scalars['JSON']['input'];
 };
 
 export type CreateAppTokenInput = {
@@ -2349,10 +2350,10 @@ export type UuidFilterComparison = {
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
-  modelId?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  prompt?: InputMaybe<Scalars['String']['input']>;
-  responseFormat?: InputMaybe<Scalars['String']['input']>;
+  modelId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  prompt: Scalars['String']['input'];
+  responseFormat: Scalars['JSON']['input'];
 };
 
 export type UpdateFieldInput = {

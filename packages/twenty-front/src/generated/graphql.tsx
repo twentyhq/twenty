@@ -71,7 +71,7 @@ export type Agent = {
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
-  responseFormat: Scalars['String'];
+  responseFormat: Scalars['JSON'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -265,6 +265,7 @@ export type BillingProduct = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  AI_TOKEN_USAGE = 'AI_TOKEN_USAGE',
   BASE_PRODUCT = 'BASE_PRODUCT',
   WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
 }
@@ -441,7 +442,7 @@ export type CreateAgentInput = {
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
-  responseFormat: Scalars['String'];
+  responseFormat: Scalars['JSON'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -2190,7 +2191,7 @@ export type UpdateAgentInput = {
   modelId?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   prompt?: InputMaybe<Scalars['String']>;
-  responseFormat?: InputMaybe<Scalars['String']>;
+  responseFormat?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateFieldInput = {
@@ -3137,14 +3138,14 @@ export type UpdateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat: string } };
+export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat: any } };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat: string } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat: any } };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
