@@ -33,7 +33,10 @@ export class AgentExecutionService {
       case 'anthropic':
         return anthropic(modelId);
       default:
-        throw new Error(`Unsupported provider: ${provider}`);
+        throw new AgentException(
+          `Unsupported provider: ${provider}`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
     }
   };
 
@@ -50,7 +53,10 @@ export class AgentExecutionService {
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
       default:
-        throw new Error(`Unsupported provider: ${provider}`);
+        throw new AgentException(
+          `Unsupported provider: ${provider}`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
     }
 
     if (!apiKey) {
