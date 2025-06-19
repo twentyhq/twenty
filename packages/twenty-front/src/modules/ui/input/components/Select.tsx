@@ -41,7 +41,8 @@ export type SelectProps<Value extends SelectValue> = {
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
-  description?: string | Record<string, string>;
+  description?: string;
+  descriptions?: Record<string, string>;
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
@@ -81,6 +82,7 @@ export const Select = <Value extends SelectValue>({
   fullWidth,
   label,
   description,
+  descriptions,
   onChange,
   onBlur,
   options,
@@ -130,11 +132,7 @@ export const Select = <Value extends SelectValue>({
   );
 
   const computedDescription =
-    typeof description === 'string'
-      ? description
-      : typeof selectedOption.value === 'string'
-        ? description?.[selectedOption.value]
-        : undefined;
+    description || descriptions?.[`${selectedOption.value}`];
 
   return (
     <StyledContainer

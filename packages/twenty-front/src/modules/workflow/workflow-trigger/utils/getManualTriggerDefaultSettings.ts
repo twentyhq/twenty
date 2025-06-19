@@ -9,23 +9,25 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 export const getManualTriggerDefaultSettings = ({
   availability,
   activeNonSystemObjectMetadataItems,
+  icon,
 }: {
   availability: WorkflowManualTriggerAvailability;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  icon?: string;
 }): WorkflowManualTriggerSettings => {
   switch (availability) {
     case 'EVERYWHERE': {
       return {
         objectType: undefined,
         outputSchema: {},
-        icon: COMMAND_MENU_DEFAULT_ICON,
+        icon: icon || COMMAND_MENU_DEFAULT_ICON,
       };
     }
     case 'WHEN_RECORD_SELECTED': {
       return {
         objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         outputSchema: {},
-        icon: COMMAND_MENU_DEFAULT_ICON,
+        icon: icon || COMMAND_MENU_DEFAULT_ICON,
       };
     }
   }

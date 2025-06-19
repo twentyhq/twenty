@@ -17,7 +17,9 @@ import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { COMMAND_MENU_ICON_OPTIONS } from '@/workflow/workflow-trigger/constants/CommandMenuIconOptions';
+import { IconPicker } from '@/ui/input/components/IconPicker';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import styled from '@emotion/styled';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -31,6 +33,23 @@ type WorkflowEditTriggerManualFormProps = {
         onTriggerUpdate: (trigger: WorkflowManualTrigger) => void;
       };
 };
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(0.25)};
+`;
+
+const StyledIconPickerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export const WorkflowEditTriggerManualForm = ({
   trigger,
@@ -85,7 +104,7 @@ export const WorkflowEditTriggerManualForm = ({
         <Select
           dropdownId={'workflow-edit-manual-trigger-availability'}
           label={t`Available`}
-          description={{
+          descriptions={{
             WHEN_RECORD_SELECTED: t`Select a record then open the ⌘K to trigger this workflow`,
             EVERYWHERE: t`Open the ⌘K to trigger this workflow`,
           }}
@@ -103,6 +122,7 @@ export const WorkflowEditTriggerManualForm = ({
               settings: getManualTriggerDefaultSettings({
                 availability: updatedTriggerType,
                 activeNonSystemObjectMetadataItems,
+                icon: trigger.settings.icon,
               }),
             });
           }}
@@ -137,14 +157,35 @@ export const WorkflowEditTriggerManualForm = ({
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
         ) : null}
-        <Select
+        <IconPicker
           dropdownId={'workflow-edit-manual-trigger-icon'}
-          label={t`Command Menu Icon`}
-          description={t`The icon your workflow trigger will display in the command menu`}
-          value={trigger.settings.icon}
-          options={COMMAND_MENU_ICON_OPTIONS}
-          withSearchInput
-          onChange={(icon) => {
+          selectedIconKey={trigger.settings.icon}
+          dropdownOffset={{ y: -parseInt(theme.spacing(3), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+          maxIconsVisible={9 * 8} // 9 columns * 8 lines
+          disabled={triggerOptions.readonly}
+          clickableComponent={
+            <StyledIconPickerContainer
+              onClick={(e) => {
+                if (triggerOptions.readonly === true) {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }
+              }}
+            >
+              <StyledLabel>{t`Command menu icon`}</StyledLabel>
+              <SelectControl
+                isDisabled={triggerOptions.readonly}
+                selectedOption={{
+                  Icon: getIcon(trigger.settings.icon),
+                  value: trigger.settings.icon || null,
+                  label: '',
+                }}
+              />
+              <StyledDescription>{t`The icon your workflow trigger will display in the command menu`}</StyledDescription>
+            </StyledIconPickerContainer>
+          }
+          onChange={({ iconKey }) => {
             if (triggerOptions.readonly === true) {
               return;
             }
@@ -153,12 +194,10 @@ export const WorkflowEditTriggerManualForm = ({
               ...trigger,
               settings: {
                 ...trigger.settings,
-                icon,
+                icon: iconKey,
               },
             });
           }}
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
-          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>
     </>
