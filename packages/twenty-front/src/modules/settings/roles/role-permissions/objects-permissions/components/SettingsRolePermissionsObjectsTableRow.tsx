@@ -59,7 +59,8 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   const isRevoked =
     revokedBy !== undefined && revokedBy !== null && revokedBy > 0;
   const label = permission.label;
-  const pluralizedObject = pluralize('object', revokedBy);
+  const pluralizedRevokedObject = pluralize('object', revokedBy);
+  const pluralizedGrantedObject = pluralize('object', grantedBy);
   const isDisabled = !isEditable;
 
   const handleRowClick = () => {
@@ -81,12 +82,12 @@ export const SettingsRolePermissionsObjectsTableRow = ({
           {isRevoked ? (
             <>
               {' · '}
-              {t`Revoked on ${revokedBy} ${pluralizedObject}`}
+              {t`Revoked for ${revokedBy} ${pluralizedRevokedObject}`}
             </>
           ) : grantedBy && grantedBy > 0 ? (
             <>
               {' · '}
-              {t`Granted on ${grantedBy} ${pluralizedObject}`}
+              {t`Granted for ${grantedBy} ${pluralizedGrantedObject}`}
             </>
           ) : null}
         </StyledOverrideInfo>

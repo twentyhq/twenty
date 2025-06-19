@@ -184,7 +184,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     key={objectMetadataItem.id}
                     Icon={
                       <Icon
-                        size={theme.icon.size.xl}
+                        size={theme.icon.size.lg}
                         stroke={theme.icon.stroke.sm}
                       />
                     }

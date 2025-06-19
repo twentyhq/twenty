@@ -152,7 +152,7 @@ export const SettingsRolePermissionsObjectsSection = ({
   return (
     <Section>
       <H2Title
-        title={t`Objects`}
+        title={t`All objects`}
         description={t`Actions users can perform on all objects`}
       />
       <StyledTable>
