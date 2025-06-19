@@ -183,7 +183,7 @@ export const IconPicker = ({
           ),
         ].slice(0, maxIconsVisible)
       : filteredAndSortedIconKeys.slice(0, maxIconsVisible);
-  }, [icons, searchString, selectedIconKey]);
+  }, [icons, searchString, selectedIconKey, maxIconsVisible]);
 
   const iconKeys2d = useMemo(
     () => arrayToChunks(matchingSearchIconKeys.slice(), 5),

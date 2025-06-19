@@ -71,14 +71,15 @@ export const WorkflowEditTriggerManualForm = ({
       Icon: getIcon(item.icon),
     }));
 
+  const objectType = trigger.settings.objectType;
+
   const manualTriggerAvailability: WorkflowManualTriggerAvailability =
-    isDefined(trigger.settings.objectType)
-      ? 'WHEN_RECORD_SELECTED'
-      : 'EVERYWHERE';
+    isDefined(objectType) ? 'WHEN_RECORD_SELECTED' : 'EVERYWHERE';
 
   const headerTitle = trigger.name ?? getTriggerDefaultLabel(trigger);
 
   const headerIcon = getTriggerIcon(trigger);
+
   const headerType = getTriggerHeaderType(trigger);
 
   return (
@@ -134,9 +135,9 @@ export const WorkflowEditTriggerManualForm = ({
           <Select
             dropdownId={'workflow-edit-manual-trigger-object'}
             label={t`Object`}
-            description={t`Will return one ${trigger.settings.objectType} to the next step of this workflow`}
+            description={t`Will return one ${objectType} to the next step of this workflow`}
             fullWidth
-            value={trigger.settings.objectType}
+            value={objectType}
             options={availableMetadata}
             disabled={triggerOptions.readonly}
             onChange={(updatedObject) => {
