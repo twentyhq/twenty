@@ -1,27 +1,23 @@
-import styled from '@emotion/styled';
-
+import { RecordPickerInitialLoadingEmptyContainer } from '@/object-record/record-picker/components/RecordPickerInitialLoadingEmptyContainer';
+import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowInitialLoadingComponentState';
+import { multipleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowSkeletonComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
-
-export const StyledSelectableItem = styled(SelectableListItem)`
-  height: 100%;
-  width: 100%;
-`;
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -79,9 +75,23 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
+  const multipleRecordPickerShowInitialLoading = useRecoilComponentValueV2(
+    multipleRecordPickerShowInitialLoadingComponentState,
+  );
+
+  const multipleRecordPickerShowSkeleton = useRecoilComponentValueV2(
+    multipleRecordPickerShowSkeletonComponentState,
+  );
+
+  const searchHasNoResults = pickableRecordIds.length === 0;
+
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      {pickableRecordIds.length === 0 ? (
+      {multipleRecordPickerShowInitialLoading ? (
+        <RecordPickerInitialLoadingEmptyContainer />
+      ) : multipleRecordPickerShowSkeleton ? (
+        <RecordPickerLoadingSkeletonList />
+      ) : searchHasNoResults ? (
         <RecordPickerNoRecordFoundMenuItem />
       ) : (
         <SelectableList
