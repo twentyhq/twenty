@@ -41,6 +41,11 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   box-sizing: border-box;
 `;
 
+const ALLOWED_REPLY_PROVIDERS = [
+  ConnectedAccountProvider.GOOGLE,
+  ConnectedAccountProvider.MICROSOFT,
+];
+
 export const CommandMenuMessageThreadPage = () => {
   const setMessageThread = useSetRecoilComponentStateV2(
     messageThreadComponentState,
@@ -83,7 +88,7 @@ export const CommandMenuMessageThreadPage = () => {
     return (
       connectedAccountHandle &&
       connectedAccountProvider &&
-      connectedAccountProvider !== ConnectedAccountProvider.IMAP &&
+      ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
       lastMessage &&
       messageThreadExternalId != null
     );
