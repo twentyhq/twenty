@@ -52,9 +52,14 @@ export const RecordChip = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const canOpenObjectInSidePanel = !(
+    objectNameSingular === 'workflow' ||
+    objectNameSingular === 'workflowVersion'
+  );
 
   const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+    canOpenObjectInSidePanel;
 
   const handleCustomClick = isDefined(onClick)
     ? onClick
