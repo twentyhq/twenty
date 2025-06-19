@@ -4,6 +4,7 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -52,9 +53,11 @@ export const RecordChip = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
   const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+    canOpenInSidePanel;
 
   const handleCustomClick = isDefined(onClick)
     ? onClick

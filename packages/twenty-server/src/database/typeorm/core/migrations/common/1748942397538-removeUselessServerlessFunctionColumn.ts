@@ -15,13 +15,27 @@ export class RemoveUselessServerlessFunctionColumn1748942397538
     );
 
     if (metadataSchemaExists && metadataSchemaExists.length > 0) {
-      await queryRunner.query(`
-        ALTER TYPE "metadata"."dataSource_type_enum" SET SCHEMA "core";
-        ALTER TYPE "metadata"."indexMetadata_indextype_enum" SET SCHEMA "core";
-        ALTER TYPE "metadata"."relationMetadata_ondeleteaction_enum" SET SCHEMA "core";
-        ALTER TYPE "metadata"."serverlessFunction_syncstatus_enum" SET SCHEMA "core";
-      
-      `);
+      const potentialTypeNameToMigrate = [
+        'dataSource_type_enum',
+        'indexMetadata_indextype_enum',
+        'relationMetadata_ondeleteaction_enum',
+        'serverlessFunction_syncstatus_enum',
+      ] as const;
+
+      for (const typeName of potentialTypeNameToMigrate) {
+        const selectResult = await queryRunner.query(
+          `SELECT 1 FROM information_schema.types WHERE type_schema = 'metadata' AND type_name = '${typeName}';`,
+        );
+        const typeNameExists = selectResult && selectResult.length > 0;
+
+        if (!typeNameExists) {
+          continue;
+        }
+
+        await queryRunner.query(
+          `ALTER TYPE "metadata"."${typeName}" SET SCHEMA "core";`,
+        );
+      }
     }
     await queryRunner.query(
       `DROP TYPE "core"."serverlessFunction_syncstatus_enum"`,

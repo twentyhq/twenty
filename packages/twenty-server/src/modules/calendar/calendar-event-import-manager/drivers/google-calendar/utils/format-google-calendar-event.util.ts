@@ -2,17 +2,17 @@ import { calendar_v3 as calendarV3 } from 'googleapis';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const formatGoogleCalendarEvents = (
   events: calendarV3.Schema$Event[],
-): CalendarEventWithParticipants[] => {
+): FetchedCalendarEvent[] => {
   return events.map(formatGoogleCalendarEvent);
 };
 
 const formatGoogleCalendarEvent = (
   event: calendarV3.Schema$Event,
-): CalendarEventWithParticipants => {
+): FetchedCalendarEvent => {
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {
       case 'accepted':
@@ -27,15 +27,15 @@ const formatGoogleCalendarEvent = (
   };
 
   // Create the event object
-  const calendarEvent: CalendarEventWithParticipants = {
+  const calendarEvent: FetchedCalendarEvent = {
     title: event.summary ?? '',
     isCanceled: event.status === 'cancelled',
     isFullDay: event.start?.dateTime == null,
-    startsAt: event.start?.dateTime ?? event.start?.date ?? null,
-    endsAt: event.end?.dateTime ?? event.end?.date ?? null,
-    externalId: event.id ?? '',
-    externalCreatedAt: event.created ?? null,
-    externalUpdatedAt: event.updated ?? null,
+    startsAt: event.start?.dateTime ?? event.start?.date ?? '',
+    endsAt: event.end?.dateTime ?? event.end?.date ?? '',
+    id: event.id ?? '',
+    externalCreatedAt: event.created ?? '',
+    externalUpdatedAt: event.updated ?? '',
     description: event.description ?? '',
     location: event.location ?? '',
     iCalUID: event.iCalUID ?? '',
@@ -54,11 +54,11 @@ const formatGoogleCalendarEvent = (
     status: event.status ?? '',
   };
 
-  const propertiesToSanitize: (keyof CalendarEventWithParticipants)[] = [
+  const propertiesToSanitize: (keyof FetchedCalendarEvent)[] = [
     'title',
     'startsAt',
     'endsAt',
-    'externalId',
+    'id',
     'externalCreatedAt',
     'externalUpdatedAt',
     'description',
