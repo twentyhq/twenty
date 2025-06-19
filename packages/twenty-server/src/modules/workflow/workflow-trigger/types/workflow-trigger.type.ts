@@ -58,7 +58,7 @@ export type WorkflowCronTrigger = BaseTrigger & {
           type: 'CUSTOM';
           pattern: string;
         }
-    ) & { outputSchema: object };
+    );
 };
 
 export type WorkflowWebhookTrigger = BaseTrigger & {
@@ -69,11 +69,11 @@ export type WorkflowWebhookTrigger = BaseTrigger & {
           httpMethod: 'GET';
           authentication: 'API_KEY' | null;
         }
-      | ({
+      | {
           httpMethod: 'POST';
           authentication: 'API_KEY' | null;
           expectedBody: object;
-        } & { outputSchema: object })
+        }
     );
 };
 

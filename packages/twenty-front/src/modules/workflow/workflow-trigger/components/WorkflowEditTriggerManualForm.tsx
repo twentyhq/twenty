@@ -83,7 +83,7 @@ export const WorkflowEditTriggerManualForm = ({
       />
       <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-manual-trigger-availability"
+          dropdownId={'workflow-edit-manual-trigger-availability'}
           label={t`Available`}
           description={t`Select record(s) then open the ⌘K to trigger this workflow`}
           fullWidth
@@ -109,7 +109,7 @@ export const WorkflowEditTriggerManualForm = ({
 
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
           <Select
-            dropdownId="workflow-edit-manual-trigger-object"
+            dropdownId={'workflow-edit-manual-trigger-object'}
             label={t`Object`}
             description={t`Will return one or several record(s) to the next step of this workflow`}
             fullWidth
