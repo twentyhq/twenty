@@ -787,6 +787,11 @@ msgstr "Crea automaticamente contatti per le persone."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Creare automaticamente i record delle persone quando si ricevono o si inviano email"
 
+#. js-lingui-id: csDS2L
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Available"
+msgstr ""
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1088,6 +1093,11 @@ msgstr ""
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
+msgstr ""
+
+#. js-lingui-id: Icd+JO
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Command menu icon"
 msgstr ""
 
 #. js-lingui-id: NM9bMd
@@ -3825,6 +3835,7 @@ msgid "Number type"
 msgstr "Tipo di numero"
 
 #. js-lingui-id: W0i24j
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -3886,6 +3897,11 @@ msgstr "Aprire in"
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
+msgstr ""
+
+#. js-lingui-id: avIMon
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
@@ -4666,6 +4682,11 @@ msgstr "Vedi workflow"
 msgid "See workflows"
 msgstr "Vedi workflow"
 
+#. js-lingui-id: 5S/Gqz
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Select a record then open the ⌘K to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -5214,6 +5235,11 @@ msgstr "Descrizione di questo campo"
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "L'email associata al tuo account"
+
+#. js-lingui-id: diO3fm
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5792,6 +5818,11 @@ msgstr "Quando la chiave sarà disabilitata"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #~ msgid "Will be saved as:"
 #~ msgstr ""
+
+#. js-lingui-id: e9sagb
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Will return one {objectType} to the next step of this workflow"
+msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
