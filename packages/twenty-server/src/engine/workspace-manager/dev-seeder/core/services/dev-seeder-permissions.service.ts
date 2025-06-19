@@ -9,8 +9,8 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
-    SEED_APPLE_WORKSPACE_ID,
-    SEED_YCOMBINATOR_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 @Injectable()

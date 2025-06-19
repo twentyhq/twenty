@@ -53,7 +53,6 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
     const MESSAGE_IDS = Object.keys(MESSAGE_DATA_SEED_IDS).map(
       (key) => MESSAGE_DATA_SEED_IDS[key as keyof typeof MESSAGE_DATA_SEED_IDS],
     );
-    const MESSAGE_CHANNEL_IDS = Object.values(MESSAGE_CHANNEL_DATA_SEED_IDS);
 
     MESSAGE_IDS.forEach((messageId, index) => {
       const ASSOCIATION_INDEX = index + 1;
