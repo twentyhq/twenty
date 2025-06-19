@@ -21,13 +21,16 @@ export const removeUndefinedFields = <T>(input: T): T | Partial<T> => {
         return acc;
       }
 
-      if (value === null) {
+      if (value === null || value instanceof Date) {
         return { ...acc, [key]: value };
       }
 
       if (typeof value === 'object') {
         const cleaned = removeUndefinedFields(value);
-        if (!isUndefined(cleaned) && Object.keys(cleaned as object).length > 0) {
+        if (
+          !isUndefined(cleaned) &&
+          Object.keys(cleaned as object).length > 0
+        ) {
           return { ...acc, [key]: cleaned };
         }
         return acc;
@@ -37,4 +40,4 @@ export const removeUndefinedFields = <T>(input: T): T | Partial<T> => {
     },
     {} as Record<string, unknown>,
   ) as Partial<T>;
-}; 
+};
