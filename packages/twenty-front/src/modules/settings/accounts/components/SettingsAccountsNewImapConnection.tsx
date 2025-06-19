@@ -45,7 +45,10 @@ export const SettingsAccountsNewImapConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <SetttingsAccountsImapConnectionForm control={control} isEditing={false} />
+          <SetttingsAccountsImapConnectionForm
+            control={control}
+            isEditing={false}
+          />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>
