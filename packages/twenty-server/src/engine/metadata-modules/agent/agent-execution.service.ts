@@ -39,10 +39,18 @@ export class AgentExecutionService {
   private async validateApiKey(
     provider: 'openai' | 'anthropic',
   ): Promise<void> {
-    const apiKey =
-      process.env[
-        provider === 'openai' ? 'OPENAI_API_KEY' : 'ANTHROPIC_API_KEY'
-      ];
+    let apiKey: string | undefined;
+
+    switch (provider) {
+      case 'openai':
+        apiKey = process.env['OPENAI_API_KEY'];
+        break;
+      case 'anthropic':
+        apiKey = process.env['ANTHROPIC_API_KEY'];
+        break;
+      default:
+        throw new Error(`Unsupported provider: ${provider}`);
+    }
 
     if (!apiKey) {
       throw new AgentException(
