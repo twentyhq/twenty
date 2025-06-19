@@ -19,6 +19,7 @@ import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotk
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 
@@ -165,7 +166,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     expect(result.current.objectFilterDropdownFilterIsSelected).toBe(true);
     expect(result.current.selectedOperandInDropdown).toBe(defaultOperand);
     expect(mockPushFocusItemToFocusStack).toHaveBeenCalledWith({
-      focusId: personCompanyFieldMetadataItemMock.id,
+      focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
       component: {
         type: FocusComponentType.DROPDOWN,
         instanceId: personCompanyFieldMetadataItemMock.id,
