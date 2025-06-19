@@ -1,20 +1,24 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useDropdownV2 = () => {
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const closeDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -26,7 +30,10 @@ export const useDropdownV2 = () => {
           .getValue();
 
         if (isDropdownOpen) {
-          goBackToPreviousHotkeyScope();
+          removeFocusItemFromFocusStack({
+            focusId: scopeId,
+            memoizeKey: 'global',
+          });
           goBackToPreviousDropdownFocusId();
           set(
             isDropdownOpenComponentState({
@@ -36,17 +43,16 @@ export const useDropdownV2 = () => {
           );
         }
       },
-    [goBackToPreviousHotkeyScope, goBackToPreviousDropdownFocusId],
+    [removeFocusItemFromFocusStack, goBackToPreviousDropdownFocusId],
   );
 
   const openDropdown = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (specificComponentId: string, customHotkeyScope?: HotkeyScope) => {
+    ({ set }) =>
+      (
+        specificComponentId: string,
+        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>,
+      ) => {
         const scopeId = specificComponentId;
-
-        const dropdownHotkeyScope = snapshot
-          .getLoadable(dropdownHotkeyComponentState({ scopeId }))
-          .getValue();
 
         set(
           isDropdownOpenComponentState({
@@ -55,24 +61,29 @@ export const useDropdownV2 = () => {
           true,
         );
 
-        if (isDefined(customHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope({
-            scope: customHotkeyScope.scope,
-            customScopes: customHotkeyScope.customScopes,
-          });
-        } else if (isDefined(dropdownHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope({
-            scope: dropdownHotkeyScope.scope,
-            customScopes: dropdownHotkeyScope.customScopes,
-          });
-        }
+        setActiveDropdownFocusIdAndMemorizePrevious(specificComponentId);
+
+        pushFocusItemToFocusStack({
+          focusId: scopeId,
+          component: {
+            type: FocusComponentType.DROPDOWN,
+            instanceId: scopeId,
+          },
+          globalHotkeysConfig,
+          // TODO: Remove this once we've fully migrated away from hotkey scopes
+          hotkeyScope: { scope: 'dropdown' } as HotkeyScope,
+          memoizeKey: 'global',
+        });
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [pushFocusItemToFocusStack, setActiveDropdownFocusIdAndMemorizePrevious],
   );
 
   const toggleDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      (specificComponentId: string, customHotkeyScope?: HotkeyScope) => {
+      (
+        specificComponentId: string,
+        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>,
+      ) => {
         const scopeId = specificComponentId;
         const isDropdownOpen = snapshot
           .getLoadable(isDropdownOpenComponentState({ scopeId }))
@@ -81,7 +92,7 @@ export const useDropdownV2 = () => {
         if (isDropdownOpen) {
           closeDropdown(specificComponentId);
         } else {
-          openDropdown(specificComponentId, customHotkeyScope);
+          openDropdown(specificComponentId, globalHotkeysConfig);
         }
       },
     [closeDropdown, openDropdown],

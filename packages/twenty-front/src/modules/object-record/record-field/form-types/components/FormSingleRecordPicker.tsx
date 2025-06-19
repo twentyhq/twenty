@@ -10,6 +10,7 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -18,7 +19,6 @@ import styled from '@emotion/styled';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -189,6 +189,7 @@ export const FormSingleRecordPicker = ({
             }
             dropdownComponents={
               <SingleRecordPicker
+                focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
                 emptyLabel={'No ' + objectNameSingular}
@@ -199,7 +200,6 @@ export const FormSingleRecordPicker = ({
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
             }
-            dropdownHotkeyScope={{ scope: dropdownId }}
           />
         )}
         {isDefined(VariablePicker) && !disabled && (

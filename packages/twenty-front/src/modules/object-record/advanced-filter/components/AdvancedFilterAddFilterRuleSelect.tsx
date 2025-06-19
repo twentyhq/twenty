@@ -180,7 +180,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
     />

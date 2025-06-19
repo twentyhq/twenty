@@ -6,7 +6,6 @@ import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/S
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
@@ -71,7 +70,6 @@ export const ViewPickerDropdown = () => {
   return (
     <Dropdown
       dropdownId={VIEW_PICKER_DROPDOWN_ID}
-      dropdownHotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
       dropdownOffset={{ x: 0, y: 8 }}
       dropdownPlacement="bottom-start"
       onClickOutside={handleClickOutside}

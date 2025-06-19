@@ -6,7 +6,6 @@ import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/co
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
-import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
@@ -25,6 +24,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -86,11 +86,7 @@ export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export const ObjectSortDropdownButton = ({
-  hotkeyScope,
-}: ObjectSortDropdownButtonProps) => {
-  const { toggleSortDropdown } = useToggleSortDropdown();
-
+export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
@@ -162,13 +158,14 @@ export const ObjectSortDropdownButton = ({
   const shouldShowSeparator =
     visibleFieldMetadataItems.length > 0 && hiddenFieldMetadataItems.length > 0;
 
-  const handleButtonClick = () => {
-    toggleSortDropdown();
-  };
-
   const handleDropdownButtonClose = () => {
     resetRecordSortDropdownSearchInput();
     resetSortDropdown();
+  };
+
+  const handleDropdownOpen = () => {
+    resetSortDropdown();
+    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -224,16 +221,10 @@ export const ObjectSortDropdownButton = ({
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
-      dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
+      onOpen={handleDropdownOpen}
       clickableComponent={
-        <StyledHeaderDropdownButton
-          onClick={() => {
-            handleButtonClick();
-            setSelectedItemId(selectableItemIdArray[0]);
-          }}
-          isUnfolded={isDropdownOpen}
-        >
+        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
           <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
@@ -241,8 +232,9 @@ export const ObjectSortDropdownButton = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <SelectableList
             selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
-            hotkeyScope={hotkeyScope.scope}
             selectableItemIdArray={selectableItemIdArray}
+            focusId={OBJECT_SORT_DROPDOWN_ID}
+            hotkeyScope={DropdownHotkeyScope.Dropdown}
           >
             {isRecordSortDirectionMenuUnfolded && (
               <StyledSelectedSortDirectionContainer>

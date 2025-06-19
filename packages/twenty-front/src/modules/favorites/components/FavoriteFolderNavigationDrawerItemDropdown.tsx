@@ -1,4 +1,3 @@
-import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -33,9 +32,6 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
   return (
     <Dropdown
       dropdownId={`favorite-folder-edit-${folderId}`}
-      dropdownHotkeyScope={{
-        scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
-      }}
       data-select-disable
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />

@@ -6,6 +6,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useResetFocusStack } from '@/ui/utilities/focus/hooks/useResetFocusStack';
 import { useCallback } from 'react';
 
 export const useCloseRecordTableCellNoGroup = () => {
@@ -22,10 +23,16 @@ export const useCloseRecordTableCellNoGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
+  const { resetFocusStack } = useResetFocusStack();
+
   const closeTableCellNoGroup = useCallback(() => {
     toggleClickOutside(true);
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
+
+    // TODO: Remove this once we've fully migrated away from hotkey scopes
+    resetFocusStack();
+
     setHotkeyScope(TableHotkeyScope.TableFocus, {
       goto: true,
       keyboardShortcutMenu: true,
@@ -33,6 +40,7 @@ export const useCloseRecordTableCellNoGroup = () => {
     });
   }, [
     closeCurrentTableCellInEditMode,
+    resetFocusStack,
     setDragSelectionStartEnabled,
     setHotkeyScope,
     toggleClickOutside,

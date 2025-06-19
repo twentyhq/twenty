@@ -4,7 +4,6 @@ import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/m
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -12,10 +11,11 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
@@ -36,6 +36,7 @@ type MultipleRecordPickerProps = {
   layoutDirection?: RecordPickerLayoutDirection;
   componentInstanceId: string;
   onClickOutside: () => void;
+  focusId: string;
 };
 
 export const MultipleRecordPicker = ({
@@ -45,6 +46,7 @@ export const MultipleRecordPicker = ({
   onClickOutside,
   layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
+  focusId,
 }: MultipleRecordPickerProps) => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
@@ -94,14 +96,15 @@ export const MultipleRecordPicker = ({
     resetState();
   };
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       handleSubmit();
     },
-    MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
-    [handleSubmit],
-  );
+    focusId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [handleSubmit],
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -140,13 +143,19 @@ export const MultipleRecordPicker = ({
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+            <MultipleRecordPickerItemsDisplay
+              onChange={onChange}
+              focusId={focusId}
+            />
           </>
         )}
         <MultipleRecordPickerSearchInput />
         {layoutDirection === 'search-bar-on-top' && (
           <>
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+            <MultipleRecordPickerItemsDisplay
+              onChange={onChange}
+              focusId={focusId}
+            />
             {createNewButtonSection}
           </>
         )}

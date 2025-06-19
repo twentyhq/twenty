@@ -10,8 +10,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 
 export const MultipleRecordPickerItemsDisplay = ({
   onChange,
+  focusId,
 }: {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  focusId: string;
 }) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -33,7 +35,7 @@ export const MultipleRecordPickerItemsDisplay = ({
       {isLoading && itemsLength === 0 ? (
         <DropdownMenuSkeletonItem />
       ) : (
-        <MultipleRecordPickerMenuItems onChange={onChange} />
+        <MultipleRecordPickerMenuItems onChange={onChange} focusId={focusId} />
       )}
       <DropdownMenuSeparator />
     </>

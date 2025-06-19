@@ -216,10 +216,10 @@ export const RecordDetailRelationSectionDropdown = ({
             accent="tertiary"
           />
         }
-        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownComponents={
           isToOneObject ? (
             <SingleRecordPicker
+              focusId={dropdownId}
               componentInstanceId={dropdownId}
               EmptyIcon={IconForbid}
               onRecordSelected={handleRelationPickerEntitySelected}
@@ -235,6 +235,7 @@ export const RecordDetailRelationSectionDropdown = ({
             />
           ) : (
             <MultipleRecordPicker
+              focusId={dropdownId}
               componentInstanceId={dropdownId}
               onCreate={() => {
                 closeDropdown();
