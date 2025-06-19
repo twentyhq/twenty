@@ -49,7 +49,7 @@ export const useHotkeysOnFocusedElementCallback = (
                 hotkeysEvent.keys
               }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
                 ', ',
-              )}] and the current focus identifier is [${focusId}]`,
+              )}] and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
               'color: gray; ',
             );
           }
@@ -63,7 +63,7 @@ export const useHotkeysOnFocusedElementCallback = (
               hotkeysEvent.keys
             }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
               ', ',
-            )}], and the current focus identifier is [${focusId}]`,
+            )}], and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
             'color: green;',
           );
         }

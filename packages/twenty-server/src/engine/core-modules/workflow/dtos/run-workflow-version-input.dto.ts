@@ -10,6 +10,12 @@ export class RunWorkflowVersionInput {
   })
   workflowVersionId: string;
 
+  @Field(() => String, {
+    description: 'Workflow run ID',
+    nullable: true,
+  })
+  workflowRunId?: string | null;
+
   @Field(() => graphqlTypeJson, {
     description: 'Execution result in JSON format',
     nullable: true,

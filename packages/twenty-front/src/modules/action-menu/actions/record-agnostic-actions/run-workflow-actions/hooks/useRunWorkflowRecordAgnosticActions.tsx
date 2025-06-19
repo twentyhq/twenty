@@ -4,20 +4,14 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
-
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ENABLED,
-  );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
@@ -29,10 +23,6 @@ export const useRunWorkflowRecordAgnosticActions = () => {
     });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
-
-  if (!isWorkflowEnabled) {
-    return [];
-  }
 
   return activeWorkflowVersions
     .map((activeWorkflowVersion, index) => {
@@ -60,6 +50,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
             onClick={() => {
               runWorkflowVersion({
                 workflowVersionId: activeWorkflowVersion.id,
+                workflowId: activeWorkflowVersion.workflowId,
               });
             }}
             closeSidePanelOnCommandMenuListActionExecution={false}

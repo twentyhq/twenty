@@ -40,7 +40,6 @@ export const useSingleRecordPickerSearch = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setRecordPickerSelectedId(undefined);
   };
 
   return {

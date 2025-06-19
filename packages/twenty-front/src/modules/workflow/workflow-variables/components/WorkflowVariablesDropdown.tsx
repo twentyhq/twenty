@@ -101,9 +101,6 @@ export const WorkflowVariablesDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
       clickableComponent={
         <StyledDropdownVariableButtonContainer
           isUnfolded={isDropdownOpen}
