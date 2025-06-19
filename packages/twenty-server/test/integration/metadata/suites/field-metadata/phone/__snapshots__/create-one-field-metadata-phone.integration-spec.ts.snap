@@ -143,3 +143,27 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   },
 ]
 `;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field without country or calling code at all 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid phone number",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field without country or calling code at all 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid phone number",
+  },
+]
+`;

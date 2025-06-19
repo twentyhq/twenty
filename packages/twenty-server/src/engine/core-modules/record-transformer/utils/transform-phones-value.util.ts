@@ -10,7 +10,7 @@ import {
   CountryCode,
   getCountries,
   getCountryCallingCode,
-  parsePhoneNumberWithError
+  parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
   AdditionalPhoneMetadata,
@@ -27,8 +27,10 @@ export type PhonesFieldGraphQLInput =
     >
   | null
   | undefined;
-type PhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
+type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
+
+const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
 const isValidCountryCode = (input: string): input is CountryCode => {
   return ALL_COUNTRIES_CODE.includes(input as unknown as CountryCode);
@@ -72,15 +74,18 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   }
 };
 
-const parsePhoneNumberExceptionWrapper = (phoneNumber: string) => {
+const parsePhoneNumberExceptionWrapper = ({
+  callingCode,
+  countryCode,
+  number,
+}: AdditionalPhoneMetadataWithNumber) => {
   try {
-    const phone = parsePhoneNumberWithError(phoneNumber);
-    console.log(phone)
-    if (!phone.isValid()) {
-      throw new Error("TODO invalid phone number")
-    }
-
-    return phone
+    return parsePhoneNumberWithError(number, {
+      defaultCallingCode: callingCode
+        ? removePlusFromString(callingCode)
+        : callingCode,
+      defaultCountry: countryCode,
+    });
   } catch (error) {
     throw new Error('TODO invalid phone number');
   }
@@ -90,8 +95,12 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   callingCode,
   countryCode,
   number,
-}: PhoneMetadataWithNumber): Partial<AdditionalPhoneMetadata> => {
-  const phone = parsePhoneNumberExceptionWrapper(number);
+}: AdditionalPhoneMetadataWithNumber): Partial<AdditionalPhoneMetadata> => {
+  const phone = parsePhoneNumberExceptionWrapper({
+    callingCode,
+    countryCode,
+    number,
+  });
 
   if (
     isNonEmptyString(phone.country) &&
@@ -104,13 +113,14 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   if (
     isNonEmptyString(phone.countryCallingCode) &&
     isNonEmptyString(callingCode) &&
-    phone.countryCallingCode !== callingCode.replace(/\+/g, '')
+    phone.countryCallingCode !== removePlusFromString(callingCode)
   ) {
     throw new Error('TODO conficting callingCode');
   }
 
   const finalPrimaryPhoneCallingCode =
-    callingCode ?? (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
+    callingCode ??
+    (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
   const finalPrimaryPhoneCountryCode = countryCode ?? phone.country;
 
   return {
@@ -151,13 +161,11 @@ type TransformPhonesValueArgs = {
 export const transformPhonesValue = ({
   input,
 }: TransformPhonesValueArgs): PhonesFieldGraphQLInput => {
-
   if (!isDefined(input)) {
     return input;
   }
 
   const { additionalPhones, ...primary } = input;
-
   const {
     callingCode: primaryPhoneCallingCode,
     countryCode: primaryPhoneCountryCode,
