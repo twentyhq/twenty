@@ -5,6 +5,7 @@ import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { AgentEntity } from './agent.entity';
@@ -23,7 +24,7 @@ export interface AgentExecutionResult {
 
 @Injectable()
 export class AgentExecutionService {
-  constructor() {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   private getModel = (modelId: string, provider: 'openai' | 'anthropic') => {
     switch (provider) {
@@ -43,10 +44,10 @@ export class AgentExecutionService {
 
     switch (provider) {
       case 'openai':
-        apiKey = process.env['OPENAI_API_KEY'];
+        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
         break;
       case 'anthropic':
-        apiKey = process.env['ANTHROPIC_API_KEY'];
+        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
       default:
         throw new Error(`Unsupported provider: ${provider}`);
