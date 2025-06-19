@@ -68,6 +68,10 @@ export class DevSeederMetadataService {
   }) {
     const config = this.workspaceConfigs[workspaceId];
 
+    if (!config) {
+      throw new Error(`Workspace configuration not found for workspaceId: ${workspaceId}`);
+    }
+
     for (const obj of config.objects) {
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
