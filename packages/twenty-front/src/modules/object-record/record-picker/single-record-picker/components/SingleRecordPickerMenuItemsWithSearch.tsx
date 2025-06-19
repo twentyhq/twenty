@@ -76,6 +76,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   const searchHasNoResults =
     isNonEmptyString(recordPickerSearchFilter) &&
     records.recordsToSelect.length === 0 &&
+    records.filteredSelectedRecords.length === 0 &&
     !records.loading;
 
   const handleCreateNew = () => {
