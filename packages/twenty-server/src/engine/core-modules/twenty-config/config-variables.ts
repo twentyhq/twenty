@@ -1042,7 +1042,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

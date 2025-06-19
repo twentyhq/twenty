@@ -19,7 +19,6 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
         throw new ConflictError(error.message);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING:
-      case ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED:
         throw new ForbiddenError(error.message);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:

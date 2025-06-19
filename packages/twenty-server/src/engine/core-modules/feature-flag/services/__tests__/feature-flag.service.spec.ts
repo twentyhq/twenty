@@ -41,7 +41,7 @@ describe('FeatureFlagService', () => {
   };
 
   const workspaceId = 'workspace-id';
-  const featureFlag = FeatureFlagKey.IS_WORKFLOW_ENABLED;
+  const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -130,12 +130,10 @@ describe('FeatureFlagService', () => {
       // Prepare
       mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
         {
-          [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
           [FeatureFlagKey.IS_AI_ENABLED]: false,
         },
       );
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true },
         { key: FeatureFlagKey.IS_AI_ENABLED, value: false },
       ];
 
@@ -154,7 +152,6 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true, workspaceId },
         { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
       ];
 
@@ -165,7 +162,6 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual({
-        [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
         [FeatureFlagKey.IS_AI_ENABLED]: false,
       });
     });
@@ -174,10 +170,7 @@ describe('FeatureFlagService', () => {
   describe('enableFeatureFlags', () => {
     it('should enable multiple feature flags for a workspace', async () => {
       // Prepare
-      const keys = [
-        FeatureFlagKey.IS_WORKFLOW_ENABLED,
-        FeatureFlagKey.IS_AI_ENABLED,
-      ];
+      const keys = [FeatureFlagKey.IS_AI_ENABLED];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
 
