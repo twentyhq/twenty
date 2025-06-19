@@ -5,6 +5,8 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -22,6 +24,9 @@ export class DevSeederPermissionsService {
     private readonly userRoleService: UserRoleService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly objectPermissionService: ObjectPermissionService,
+    @InjectRepository(ObjectMetadataEntity, 'core')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   public async initPermissions(workspaceId: string) {
@@ -31,9 +36,11 @@ export class DevSeederPermissionsService {
 
     let adminUserWorkspaceId: string | undefined;
     let memberUserWorkspaceId: string | undefined;
+    let limitedUserWorkspaceId: string | undefined;
 
     if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-      adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
+      adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
+      limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
       memberUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JONY;
 
       // Create guest role only in this workspace
@@ -45,6 +52,15 @@ export class DevSeederPermissionsService {
         workspaceId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
         roleId: guestRole.id,
+      });
+
+      const limitedRole =
+        await this.createLimitedRoleForSeedWorkspace(workspaceId);
+
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: limitedUserWorkspaceId,
+        roleId: limitedRole.id,
       });
     } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
@@ -74,5 +90,64 @@ export class DevSeederPermissionsService {
         roleId: memberRole.id,
       });
     }
+  }
+
+  private async createLimitedRoleForSeedWorkspace(workspaceId: string) {
+    const customRole = await this.roleService.createRole({
+      workspaceId,
+      input: {
+        label: 'Object-restricted',
+        description:
+          'All permissions except read on Rockets and update on Pets',
+        icon: 'custom',
+        canUpdateAllSettings: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      },
+    });
+
+    const petObjectMetadata = await this.objectMetadataRepository.findOneOrFail(
+      {
+        where: {
+          nameSingular: 'pet',
+          workspaceId,
+        },
+      },
+    );
+
+    const rocketObjectMetadata =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'rocket',
+          workspaceId,
+        },
+      });
+
+    await this.objectPermissionService.upsertObjectPermissions({
+      workspaceId,
+      input: {
+        roleId: customRole.id,
+        objectPermissions: [
+          {
+            objectMetadataId: petObjectMetadata.id,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+          {
+            objectMetadataId: rocketObjectMetadata.id,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        ],
+      },
+    });
+
+    return customRole;
   }
 }
