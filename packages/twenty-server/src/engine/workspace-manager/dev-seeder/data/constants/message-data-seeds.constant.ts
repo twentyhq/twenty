@@ -50,6 +50,7 @@ const EMAIL_TEMPLATES = [
   {
     subject: 'Invoice for Services',
     text: "Dear Sir/Madam,\n\nPlease find attached the invoice for services rendered during the month of January. The total amount due is $2,500.\n\nPayment terms: Net 30 days\nPayment methods: Bank transfer or check\n\nIf you have any questions regarding this invoice, please don't hesitate to contact me.\n\nThank you for your business.\n\nBest regards",
+  },
   {
     subject: 'Thank You for the Meeting',
     text: 'Good evening,\n\nI wanted to extend my sincere gratitude for taking the time to meet with me earlier today. It was a pleasure discussing our potential collaboration.\n\nI am excited about the opportunities we discussed and look forward to moving forward with our partnership.\n\nPlease feel free to reach out if you have any further questions or require additional information.\n\nBest regards',
