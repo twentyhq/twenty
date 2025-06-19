@@ -33,6 +33,7 @@ export const SingleRecordPicker = ({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
+      event.preventDefault();
       event.stopImmediatePropagation();
 
       const weAreNotInAnHTMLInput = !(
