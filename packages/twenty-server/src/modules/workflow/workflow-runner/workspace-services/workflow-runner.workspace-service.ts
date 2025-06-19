@@ -23,14 +23,12 @@ export class WorkflowRunnerWorkspaceService {
 
   async run({
     workspaceId,
-    workflowRunId: initialWorkflowRunId,
     workflowVersionId,
     payload,
     source,
     workflowRunId: initialWorkflowRunId,
   }: {
     workspaceId: string;
-    workflowRunId?: string;
     workflowVersionId: string;
     payload: object;
     source: ActorMetadata;
