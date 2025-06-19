@@ -4044,6 +4044,11 @@ msgstr ""
 msgid "Phone number copied to clipboard"
 msgstr "Número de telèfon copiat al porta-retalls"
 
+#. js-lingui-id: FdlpPK
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+msgid "Pick a {nameSingular} record"
+msgstr ""
+
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
