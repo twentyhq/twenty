@@ -31,8 +31,8 @@ export class AgentDTO {
   @Field(() => AIModelDto, { nullable: true })
   aiModel?: AIModelDto;
 
-  @Field(() => String)
-  responseFormat: string;
+  @Field(() => Object, { nullable: false })
+  responseFormat: object;
 
   @HideField()
   workspaceId: string;

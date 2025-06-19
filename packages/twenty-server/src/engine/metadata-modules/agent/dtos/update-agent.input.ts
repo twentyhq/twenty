@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -13,7 +19,7 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field()
   name?: string;
 
   @IsString()
@@ -23,16 +29,16 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field()
   prompt?: string;
 
   @IsString()
   @IsOptional()
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   modelId?: string;
 
-  @IsString()
+  @IsObject()
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  responseFormat?: string;
+  @Field(() => Object)
+  responseFormat?: object;
 }

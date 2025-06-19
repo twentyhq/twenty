@@ -600,7 +600,7 @@ export class WorkflowVersionStepWorkspaceService {
             description: 'Created automatically for workflow step',
             prompt: '',
             modelId: 'gpt-4o',
-            responseFormat: '',
+            responseFormat: {},
           },
           workspaceId,
         );

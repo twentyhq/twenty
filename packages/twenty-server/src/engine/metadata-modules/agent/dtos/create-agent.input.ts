@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateAgentInput {
@@ -24,7 +24,8 @@ export class CreateAgentInput {
   @Field(() => String)
   modelId: string;
 
-  @IsString()
-  @Field(() => String, { nullable: false })
-  responseFormat: string;
+  @IsObject()
+  @IsNotEmpty()
+  @Field(() => Object)
+  responseFormat: object;
 }

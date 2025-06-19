@@ -43,7 +43,7 @@ export class AgentService {
       description?: string;
       prompt: string;
       modelId: string;
-      responseFormat: string;
+      responseFormat: object;
     },
     workspaceId: string,
   ) {
@@ -64,7 +64,7 @@ export class AgentService {
       description?: string;
       prompt?: string;
       modelId?: string;
-      responseFormat?: string;
+      responseFormat?: object;
     },
     workspaceId: string,
   ) {

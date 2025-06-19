@@ -79,9 +79,7 @@ export class AgentExecutionService {
       let schema: z.ZodType;
 
       try {
-        schema = inferZodSchemaFromExampleResponse(
-          JSON.parse(agent.responseFormat),
-        );
+        schema = inferZodSchemaFromExampleResponse(agent.responseFormat);
       } catch (error) {
         throw new AgentException(
           `Invalid response format schema: ${error instanceof Error ? error.message : 'Unknown error'}`,
