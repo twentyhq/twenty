@@ -10,7 +10,6 @@ import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/t
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -231,13 +230,7 @@ export class DatabaseEventTriggerListener {
       return true;
     }
 
-    const isWorkflowEnabled =
-      await this.isFeatureFlagEnabledService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKFLOW_ENABLED,
-        workspaceId,
-      );
-
-    return !isWorkflowEnabled;
+    return false;
   }
 
   private async handleEvent({

@@ -13,10 +13,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
@@ -61,10 +59,6 @@ export const useShouldActionBeRegisteredParams = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ENABLED,
-  );
-
   const numberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
@@ -101,7 +95,6 @@ export const useShouldActionBeRegisteredParams = ({
     isSoftDeleteFilterActive,
     isShowPage,
     selectedRecord,
-    isWorkflowEnabled,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
