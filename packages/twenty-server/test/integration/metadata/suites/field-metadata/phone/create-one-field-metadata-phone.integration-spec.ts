@@ -215,33 +215,33 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
 
 const FAILING_TEST_INPUTS: { input: Partial<PhonesMetadata>; label: string }[] =
   [
-    // {
-    //   label: 'phone field with invalid country code',
-    //   input: {
-    //     primaryPhoneNumber: '123456789',
-    //     primaryPhoneCallingCode: '+33',
-    //     primaryPhoneCountryCode: 'XX' as any,
-    //     additionalPhones: [],
-    //   },
-    // },
-    // {
-    //   label: 'phone field with invalid calling code',
-    //   input: {
-    //     primaryPhoneNumber: '123456789',
-    //     primaryPhoneCallingCode: '+999',
-    //     primaryPhoneCountryCode: 'FR',
-    //     additionalPhones: [],
-    //   },
-    // },
-    // {
-    //   label: 'phone field with conflicting country code and calling code',
-    //   input: {
-    //     primaryPhoneNumber: '123456789',
-    //     primaryPhoneCallingCode: '+33',
-    //     primaryPhoneCountryCode: 'US',
-    //     additionalPhones: [],
-    //   },
-    // },
+    {
+      label: 'phone field with invalid country code',
+      input: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'XX' as any,
+        additionalPhones: [],
+      },
+    },
+    {
+      label: 'phone field with invalid calling code',
+      input: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+999',
+        primaryPhoneCountryCode: 'FR',
+        additionalPhones: [],
+      },
+    },
+    {
+      label: 'phone field with conflicting country code and calling code',
+      input: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'US',
+        additionalPhones: [],
+      },
+    },
     {
       label: 'phone field with invalid phone number format',
       input: {
@@ -249,22 +249,22 @@ const FAILING_TEST_INPUTS: { input: Partial<PhonesMetadata>; label: string }[] =
         additionalPhones: [],
       },
     },
-    // {
-    //   label: 'phone field with conflicting phone number country code',
-    //   input: {
-    //     primaryPhoneNumber: '+33123456789',
-    //     primaryPhoneCountryCode: 'US',
-    //     additionalPhones: [],
-    //   },
-    // },
-    // {
-    //   label: 'phone field with conflicting phone number calling code',
-    //   input: {
-    //     primaryPhoneNumber: '+33123456789',
-    //     primaryPhoneCallingCode: '+1',
-    //     additionalPhones: [],
-    //   },
-    // },
+    {
+      label: 'phone field with conflicting phone number country code',
+      input: {
+        primaryPhoneNumber: '+33123456789',
+        primaryPhoneCountryCode: 'US',
+        additionalPhones: [],
+      },
+    },
+    {
+      label: 'phone field with conflicting phone number calling code',
+      input: {
+        primaryPhoneNumber: '+33123456789',
+        primaryPhoneCallingCode: '+1',
+        additionalPhones: [],
+      },
+    },
   ];
 
 const primaryFailingTests = FAILING_TEST_INPUTS.map<

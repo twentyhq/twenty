@@ -76,8 +76,8 @@ const parsePhoneNumberExceptionWrapper = (phoneNumber: string) => {
   try {
     const phone = parsePhoneNumberWithError(phoneNumber);
     console.log(phone)
-    if (!phone.isValid() && !phone.isPossible()) {
-      throw new Error("TODO invalid phone number A")
+    if (!phone.isValid()) {
+      throw new Error("TODO invalid phone number")
     }
 
     return phone
@@ -120,7 +120,6 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   };
 };
 
-// TODO factorize types ?
 const validateAndInferPhoneInput = ({
   callingCode,
   countryCode,
@@ -131,8 +130,7 @@ const validateAndInferPhoneInput = ({
     countryCode,
   });
 
-  // Should we swallow only in case that's not a valid phone numnber :thinking:
-  if (isDefined(number) && number.startsWith('+')) {
+  if (isDefined(number)) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
       callingCode,

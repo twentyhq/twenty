@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting country code and calling code 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conflicting country code and calling code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting country code and calling code 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conflicting country code and calling code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting phone number calling code 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conficting callingCode",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting phone number calling code 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conficting callingCode",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting phone number country code 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conflicting countryCode",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with conflicting phone number country code 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO conflicting countryCode",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid calling code 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid country calling code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid calling code 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid country calling code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid country code 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TOOD invalid country code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid country code 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TOOD invalid country code",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid phone number format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid phone number",
+  },
+]
+`;
+
+exports[`Phone field metadata tests suite It should fail to create primary phone field with invalid phone number format 2`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "TODO invalid phone number",
+  },
+]
+`;
