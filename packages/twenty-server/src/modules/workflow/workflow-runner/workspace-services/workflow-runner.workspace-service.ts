@@ -27,12 +27,14 @@ export class WorkflowRunnerWorkspaceService {
     workflowVersionId,
     payload,
     source,
+    workflowRunId: initialWorkflowRunId,
   }: {
     workspaceId: string;
     workflowRunId?: string;
     workflowVersionId: string;
     payload: object;
     source: ActorMetadata;
+    workflowRunId?: string;
   }) {
     const canFeatureBeUsed =
       await this.billingUsageService.canFeatureBeUsed(workspaceId);

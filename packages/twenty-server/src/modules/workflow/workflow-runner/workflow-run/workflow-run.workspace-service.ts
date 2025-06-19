@@ -41,10 +41,12 @@ export class WorkflowRunWorkspaceService {
     workflowRunId,
     workflowVersionId,
     createdBy,
+    workflowRunId,
   }: {
     workflowRunId?: string;
     workflowVersionId: string;
     createdBy: ActorMetadata;
+    workflowRunId?: string;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;

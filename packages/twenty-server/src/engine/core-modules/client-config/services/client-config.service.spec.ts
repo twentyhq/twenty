@@ -78,6 +78,7 @@ describe('ClientConfigService', () => {
             MESSAGING_PROVIDER_GMAIL_ENABLED: true,
             CALENDAR_PROVIDER_GOOGLE_ENABLED: true,
             IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
+            CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
           };
 
           return mockValues[key];
@@ -145,6 +146,7 @@ describe('ClientConfigService', () => {
         isGoogleMessagingEnabled: true,
         isGoogleCalendarEnabled: true,
         isConfigVariablesInDbEnabled: false,
+        calendarBookingPageId: 'team/twenty/talk-to-us',
       });
     });
 
