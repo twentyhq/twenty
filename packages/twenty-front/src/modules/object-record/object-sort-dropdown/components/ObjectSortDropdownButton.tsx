@@ -278,7 +278,10 @@ export const ObjectSortDropdownButton = () => {
             />
             {shouldShowVisibleFields && (
               <>
-                <DropdownMenuSectionLabel label={t`Visible fields`} />
+                <DropdownMenuSectionLabel
+                  label={t`Visible fields`}
+                  isSubsectionLabel={true}
+                />
                 <DropdownMenuItemsContainer>
                   {visibleFieldMetadataItems.map(
                     (visibleFieldMetadataItem, index) => (
@@ -307,7 +310,10 @@ export const ObjectSortDropdownButton = () => {
             {shouldShowSeparator && <DropdownMenuSeparator />}
             {shouldShowHiddenFields && (
               <>
-                <DropdownMenuSectionLabel label={t`Hidden fields`} />
+                <DropdownMenuSectionLabel
+                  label={t`Hidden fields`}
+                  isSubsectionLabel={true}
+                />
                 <DropdownMenuItemsContainer>
                   {hiddenFieldMetadataItems.map(
                     (hiddenFieldMetadataItem, index) => (
