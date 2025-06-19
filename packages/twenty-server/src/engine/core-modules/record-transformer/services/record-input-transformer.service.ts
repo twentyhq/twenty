@@ -74,7 +74,6 @@ export class RecordInputTransformerService {
       return value;
     }
 
-    // Here too
     switch (fieldType) {
       case FieldMetadataType.UUID:
         return value || null;

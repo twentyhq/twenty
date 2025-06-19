@@ -194,7 +194,6 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
-          // Here ?
           const newValue = await this.recordPositionService.buildRecordPosition(
             {
               value,
