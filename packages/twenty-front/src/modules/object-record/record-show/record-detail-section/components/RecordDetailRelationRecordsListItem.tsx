@@ -285,7 +285,6 @@ export const RecordDetailRelationRecordsListItem = ({
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
-              dropdownHotkeyScope={{ scope: dropdownScopeId }}
             />
           </DropdownScope>
         )}

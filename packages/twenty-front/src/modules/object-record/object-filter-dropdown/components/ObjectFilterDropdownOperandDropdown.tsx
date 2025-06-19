@@ -3,7 +3,6 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { ObjectFilterDropdownOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -47,9 +46,6 @@ export const ObjectFilterDropdownOperandDropdown = ({
           </StyledDropdownMenuHeader>
         }
         dropdownComponents={<ObjectFilterDropdownOperandSelect />}
-        dropdownHotkeyScope={{
-          scope: FiltersHotkeyScope.ObjectFilterDropdownOperandDropdown,
-        }}
         dropdownOffset={{ x: parseInt(theme.spacing(2), 10) }}
       />
     </ClickOutsideListenerContext.Provider>

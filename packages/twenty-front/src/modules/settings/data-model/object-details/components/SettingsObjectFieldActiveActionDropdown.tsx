@@ -82,7 +82,6 @@ export const SettingsObjectFieldActiveActionDropdown = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
     />
   );
 };

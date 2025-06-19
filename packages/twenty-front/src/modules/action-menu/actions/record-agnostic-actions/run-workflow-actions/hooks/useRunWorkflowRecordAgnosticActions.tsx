@@ -4,18 +4,12 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { IconSettingsAutomation } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ENABLED,
-  );
-
   const { actionMenuType } = useContext(ActionMenuContext);
 
   const { records: activeWorkflowVersions } =
@@ -26,10 +20,6 @@ export const useRunWorkflowRecordAgnosticActions = () => {
     });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
-
-  if (!isWorkflowEnabled) {
-    return [];
-  }
 
   return activeWorkflowVersions
     .map((activeWorkflowVersion, index) => {

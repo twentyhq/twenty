@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -63,7 +62,6 @@ export const ContextDropdownAndAvatar: Story = {
     EndComponent: (
       <Dropdown
         dropdownId={'story-dropdown-id-context-menu'}
-        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>

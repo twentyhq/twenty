@@ -6,7 +6,7 @@ describe('featureFlagValidator', () => {
     it('should not throw error if featureFlagKey is valid', () => {
       expect(() =>
         featureFlagValidator.assertIsFeatureFlagKey(
-          'IS_WORKFLOW_ENABLED',
+          'IS_AI_ENABLED',
           new CustomException('Error', 'Error'),
         ),
       ).not.toThrow();

@@ -3,6 +3,7 @@ import { useRelationField } from '../../hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { getRelationToOneFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationToOneFieldInputInstanceId';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
@@ -25,7 +26,10 @@ export const RelationToOneFieldInput = ({
 
   const persistField = usePersistField();
 
-  const recordPickerInstanceId = `relation-to-one-field-input-${recordId}-${fieldDefinition.metadata.fieldName}`;
+  const recordPickerInstanceId = getRelationToOneFieldInputInstanceId({
+    recordId,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
 
   const handleRecordSelected = (
     selectedRecord: SingleRecordPickerRecord | null | undefined,
@@ -64,6 +68,7 @@ export const RelationToOneFieldInput = ({
 
   return (
     <SingleRecordPicker
+      focusId={recordPickerInstanceId}
       componentInstanceId={recordPickerInstanceId}
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
