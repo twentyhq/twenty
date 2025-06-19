@@ -121,7 +121,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     <Section>
       <H2Title
         title={t`Object-Level Permissions`}
-        description={t`Ability to interact with this specific object`}
+        description={t`Actions users can perform on this object`}
       />
       <StyledTable>
         <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader />

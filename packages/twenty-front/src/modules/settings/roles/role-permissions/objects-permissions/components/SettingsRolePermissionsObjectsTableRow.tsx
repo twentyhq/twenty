@@ -36,7 +36,7 @@ const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -54,6 +54,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   isEditable,
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   const revokedBy = permission.revokedBy;
+  const grantedBy = permission.grantedBy;
   const isRevoked =
     revokedBy !== undefined && revokedBy !== null && revokedBy > 0;
   const label = permission.label;
@@ -74,6 +75,11 @@ export const SettingsRolePermissionsObjectsTableRow = ({
             <>
               {' · '}
               {t`Revoked on ${revokedBy} ${pluralizedObject}`}
+            </>
+          ) : grantedBy && grantedBy > 0 ? (
+            <>
+              {' · '}
+              {t`Granted on ${grantedBy} ${pluralizedObject}`}
             </>
           ) : null}
         </StyledOverrideInfo>

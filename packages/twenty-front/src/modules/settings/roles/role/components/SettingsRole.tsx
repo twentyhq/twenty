@@ -57,7 +57,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const isPermissionsV2Enabled = useIsFeatureEnabled(
@@ -302,7 +302,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         <TabList
           tabs={tabs}
           className="tab-list"
-          componentInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+          componentInstanceId={
+            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
+          }
         />
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT && (
           <SettingsRoleAssignment roleId={roleId} isCreateMode={isCreateMode} />
