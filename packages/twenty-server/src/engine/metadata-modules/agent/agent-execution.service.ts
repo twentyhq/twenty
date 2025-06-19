@@ -12,6 +12,15 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 
 import { inferZodSchemaFromExampleResponse } from './utils/infer-zod-schema-from-example-response.util';
 
+export interface AgentExecutionResult {
+  object: object;
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}
+
 @Injectable()
 export class AgentExecutionService {
   constructor() {}
@@ -62,7 +71,10 @@ export class AgentExecutionService {
     }
   }
 
-  async executeAgent(agent: AgentEntity, context: Record<string, unknown>) {
+  async executeAgent(
+    agent: AgentEntity,
+    context: Record<string, unknown>,
+  ): Promise<AgentExecutionResult> {
     try {
       const { provider } = this.getModelConfig(agent.modelId);
 
@@ -87,7 +99,14 @@ export class AgentExecutionService {
         schema,
       });
 
-      return output.object;
+      return {
+        object: output.object,
+        usage: {
+          promptTokens: output.usage?.promptTokens ?? 0,
+          completionTokens: output.usage?.completionTokens ?? 0,
+          totalTokens: output.usage?.totalTokens,
+        },
+      };
     } catch (error) {
       if (error instanceof AgentException) {
         throw error;

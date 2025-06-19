@@ -65,27 +65,4 @@ export class AIModelService {
 
     return (result.affected ?? 0) > 0;
   }
-
-  async calculateCost(
-    modelId: string,
-    tokenUsage: TokenUsage,
-  ): Promise<{ costInCents: number; model: AIModel } | null> {
-    const model = await this.findById(modelId);
-
-    if (!model) {
-      return null;
-    }
-
-    const inputCost =
-      (tokenUsage.inputTokens / 1000) * model.inputCostPer1kTokensInCents;
-    const outputCost =
-      (tokenUsage.outputTokens / 1000) * model.outputCostPer1kTokensInCents;
-
-    const totalCostInCents = Math.round(inputCost + outputCost);
-
-    return {
-      costInCents: totalCostInCents,
-      model,
-    };
-  }
 }

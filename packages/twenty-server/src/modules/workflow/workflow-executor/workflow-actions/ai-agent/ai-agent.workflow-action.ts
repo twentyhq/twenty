@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
@@ -24,6 +25,7 @@ import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.gu
 export class AiAgentWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly agentExecutionService: AgentExecutionService,
+    private readonly aiBillingService: AIBillingService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
   ) {}
@@ -50,12 +52,13 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
     }
 
     const { agentId } = step.settings.input;
+    const workspaceId = context.workspaceId as string;
 
     try {
       const agent = await this.agentRepository.findOne({
         where: {
           id: agentId,
-          workspaceId: context.workspaceId as string,
+          workspaceId,
         },
       });
 
@@ -66,12 +69,18 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
         );
       }
 
-      const response = await this.agentExecutionService.executeAgent(
+      const executionResult = await this.agentExecutionService.executeAgent(
         agent,
         context,
       );
 
-      return { result: response };
+      await this.aiBillingService.calculateAndBillUsage(
+        agent.modelId,
+        executionResult.usage,
+        workspaceId,
+      );
+
+      return { result: executionResult.object };
     } catch (error) {
       if (error instanceof AgentException) {
         return {
