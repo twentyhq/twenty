@@ -4,10 +4,10 @@ import {
   RecordOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
+import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated/graphql';
 
 const isValidRecordOutputSchema = (
   outputSchema: RecordOutputSchema,
@@ -34,11 +34,7 @@ const filterRecordOutputSchema = (
     const field = outputSchema.fields[key];
 
     if (field.isLeaf) {
-      if (
-        !Object.values(FieldMetadataType).includes(
-          field.type as FieldMetadataType,
-        )
-      ) {
+      if (isFieldTypeCompatibleWithRecordId(field.type)) {
         filteredFields[key] = field;
         hasValidFields = true;
       }
@@ -84,11 +80,7 @@ const filterBaseOutputSchema = (
     const field = outputSchema[key];
 
     if (field.isLeaf) {
-      if (
-        !Object.values(FieldMetadataType).includes(
-          field.type as FieldMetadataType,
-        )
-      ) {
+      if (isFieldTypeCompatibleWithRecordId(field.type)) {
         filteredSchema[key] = field;
         hasValidFields = true;
       }

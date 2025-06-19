@@ -118,16 +118,18 @@ export const WorkflowVariablesDropdownObjectItems = ({
         {filteredOptions.length > 0 && shouldDisplayObject && (
           <DropdownMenuSeparator />
         )}
-        {filteredOptions.map(([key, value]) => (
+        {filteredOptions.map(([key, option]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             focused={false}
             onClick={() => handleSelectField(key)}
-            text={value.label || key}
-            hasSubMenu={!value.isLeaf}
-            LeftIcon={value.icon ? getIcon(value.icon) : undefined}
-            contextualText={value.isLeaf ? value?.value?.toString() : undefined}
+            text={option.label || key}
+            hasSubMenu={!option.isLeaf}
+            LeftIcon={option.icon ? getIcon(option.icon) : undefined}
+            contextualText={
+              option.isLeaf ? option?.value?.toString() : undefined
+            }
           />
         ))}
       </DropdownMenuItemsContainer>
