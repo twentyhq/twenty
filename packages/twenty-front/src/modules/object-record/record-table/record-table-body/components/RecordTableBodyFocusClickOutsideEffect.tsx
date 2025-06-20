@@ -7,7 +7,6 @@ import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
@@ -23,8 +22,6 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
-
-  const setHotkeyScope = useSetHotkeyScope();
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -44,11 +41,6 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
       }
 
       leaveTableFocus();
-      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
-        goto: true,
-        keyboardShortcutMenu: true,
-        searchRecords: true,
-      });
     },
   });
 
