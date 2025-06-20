@@ -33,7 +33,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -95,7 +95,31 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
+
+  const resetFocusStackToRecordIndex = () => {
+    resetFocusStackToFocusItem({
+      focusStackItem: {
+        focusId: RECORD_INDEX_FOCUS_ID,
+        componentInstance: {
+          componentType: FocusComponentType.PAGE,
+          componentInstanceId: RECORD_INDEX_FOCUS_ID,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysWithModifiers: true,
+          enableGlobalHotkeysConflictingWithKeyboard: true,
+        },
+      },
+      hotkeyScope: {
+        scope: RecordIndexHotkeyScope.RecordIndex,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
+      },
+    });
+  };
 
   useEffect(() => {
     closeCommandMenu();
@@ -136,35 +160,10 @@ export const PageChangeEffect = () => {
         unfocusBoardCard();
       }
     }
-  }, [
-    previousLocation,
-    resetTableSelections,
-    unfocusRecordTableRow,
-    deactivateRecordTableRow,
-    contextStoreCurrentViewType,
-    resetRecordSelection,
-    deactivateBoardCard,
-    unfocusBoardCard,
-  ]);
 
-  useEffect(() => {
     switch (true) {
       case isMatchingLocation(location, AppPath.RecordIndexPage): {
-        pushFocusItemToFocusStack({
-          focusId: RECORD_INDEX_FOCUS_ID,
-          component: {
-            type: FocusComponentType.PAGE,
-            instanceId: RECORD_INDEX_FOCUS_ID,
-          },
-          hotkeyScope: {
-            scope: RecordIndexHotkeyScope.RecordIndex,
-            customScopes: {
-              goto: true,
-              keyboardShortcutMenu: true,
-              searchRecords: true,
-            },
-          },
-        });
+        resetFocusStackToRecordIndex();
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
@@ -214,7 +213,20 @@ export const PageChangeEffect = () => {
         break;
       }
     }
-  }, [location, setHotkeyScope, pushFocusItemToFocusStack]);
+  }, [
+    location,
+    setHotkeyScope,
+    resetFocusStackToFocusItem,
+    previousLocation,
+    contextStoreCurrentViewType,
+    resetTableSelections,
+    unfocusRecordTableRow,
+    deactivateRecordTableRow,
+    resetRecordSelection,
+    deactivateBoardCard,
+    unfocusBoardCard,
+    resetFocusStackToRecordIndex,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {
