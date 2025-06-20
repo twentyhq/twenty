@@ -36,6 +36,7 @@ export const useAiAgentOutputSchema = (
             type: field.type,
             value: null,
             icon: getFieldIcon(field.type),
+            label: field.name,
           };
         }
         return schema;
