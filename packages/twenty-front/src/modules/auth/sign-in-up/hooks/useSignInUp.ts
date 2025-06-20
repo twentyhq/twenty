@@ -54,7 +54,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     useBuildSearchParamsFromUrlSyncedStates();
 
   const continueWithEmail = useCallback(() => {
-    requestFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
   }, [requestFreshCaptchaToken, setSignInUpStep]);
 
@@ -74,7 +73,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         });
       },
       onCompleted: (data) => {
-        requestFreshCaptchaToken();
         setSignInUpMode(
           data?.checkUserExists.exists
             ? SignInUpMode.SignIn
@@ -154,8 +152,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
         });
-      } finally {
-        requestFreshCaptchaToken();
       }
     },
     [
