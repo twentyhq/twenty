@@ -43,8 +43,18 @@ export enum ChargeRecurrence {
   MONTHLY = 'Monthly',
 }
 
+export enum ChargeAction {
+  NONE = 'none',
+  ISSUE = 'issue',
+  CANCEL = 'cancel',
+}
+
 registerEnumType(ChargeRecurrence, {
   name: 'ChargeRecurrence',
+});
+
+registerEnumType(ChargeAction, {
+  name: 'ChargeAction',
 });
 
 @WorkspaceEntity({
@@ -210,9 +220,19 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Product charge action(issue products can be used in charges)`,
     icon: 'IconProgress',
     options: [
-      { value: 'none', label: 'None', position: 0, color: 'gray' },
-      { value: 'issue', label: 'Issue', position: 1, color: 'green' },
-      { value: 'cancel', label: 'Cancel', position: 2, color: 'red' },
+      { value: ChargeAction.NONE, label: 'None', position: 0, color: 'gray' },
+      {
+        value: ChargeAction.ISSUE,
+        label: 'Issue',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: ChargeAction.CANCEL,
+        label: 'Cancel',
+        position: 2,
+        color: 'red',
+      },
     ],
     defaultValue: "'none'",
   })

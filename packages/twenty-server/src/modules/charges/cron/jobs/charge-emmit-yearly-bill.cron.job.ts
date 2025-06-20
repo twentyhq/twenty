@@ -1,8 +1,5 @@
 // packages/twenty-server/src/engine/core-modules/billing/crons/jobs/check-inter-payment-expiration.job.ts
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -10,12 +7,12 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   ChageEmmitBillJob,
   ChargeEmmitBillJob,
 } from 'src/modules/charges/jobs/charge-emmit-bill.job';
+import { ChargeService } from 'src/modules/charges/services/charge.service';
+import { ChargeRecurrence } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
 // '0 0 1 1 *'
 export const CHARGE_EMMIT_YEARLY_BILL_CRON_PATTERN = '*/5 * * * *'; // Run every year on day 1 ad midnight
@@ -33,9 +30,7 @@ export class ChargeEmmitYearlyBillCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.chargeQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly chargeService: ChargeService,
   ) {}
 
   @Process(ChargeEmmitYearlyBillCronJob.name)
@@ -46,16 +41,27 @@ export class ChargeEmmitYearlyBillCronJob {
   async handle() {
     this.logger.warn(`Checking yearly charges to emmit`);
 
-    await Promise.all(
-      MOCK_YEARLY_CHARGE_IDS.map((chargeId) =>
-        this.messageQueueService.add<ChargeEmmitBillJob>(
-          ChageEmmitBillJob.name,
-          {
-            chargeId,
-            workspaceId: 'mock-workspace-id',
-          },
+    const workspaceYearlyChargesMap =
+      await this.chargeService.getWorkspaceChargesMapByRecurrence(
+        ChargeRecurrence.ANNUAL,
+      );
+
+    for (const workspaceChargeMap of Object.entries(
+      workspaceYearlyChargesMap,
+    )) {
+      const [workspaceId, workspaceCharges] = workspaceChargeMap;
+
+      await Promise.all(
+        workspaceCharges.map((chargeId) =>
+          this.messageQueueService.add<ChargeEmmitBillJob>(
+            ChageEmmitBillJob.name,
+            {
+              chargeId,
+              workspaceId,
+            },
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

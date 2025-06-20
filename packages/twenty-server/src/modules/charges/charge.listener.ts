@@ -10,7 +10,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-import { InterApiService } from './inter/inter-api.service';
+import { InterApiService } from './inter/services/inter-api.service';
 import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
 
 @Injectable()
@@ -86,16 +86,17 @@ export class ChargeEventListener {
         this.logger.log('person', client);
 
         const cliente = {
-          telefone: contact.phone || '',
+          nome: client.name || '',
           cpfCnpj: client.cpfCnpj || '',
           tipoPessoa:
             charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
-          nome: client.name || '',
+          endereco: client.address.addressStreet1 || 'Rua ...',
+          telefone: contact.phone || '',
+          cep: client.address.addressZipCode || '18103418',
           cidade: client.address.addressCity || '',
           uf: client.address.addressState || 'SP',
-          cep: client.address.addressZipCode || '18103418',
+          //TODO: Maybe remove these since they are not required data for charge emmission for inter?
           ddd: contact.phone?.replace(/^\+/, '') || '',
-          endereco: client.address.addressStreet1 || 'Rua ...',
           bairro: client.address.addressStreet1 || '',
           email: contact.emails.primaryEmail || '',
           complemento: '-',

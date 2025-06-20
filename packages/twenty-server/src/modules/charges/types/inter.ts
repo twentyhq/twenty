@@ -1,19 +1,19 @@
 // src/engine/core-modules/inter/inter.types.ts
 
 export interface Payer {
+  nome: string;
   cpfCnpj: string;
   tipoPessoa: string;
-  nome: string;
-  cidade: string;
-  telefone: string;
-  uf: string;
   cep: string;
-  email: string;
-  ddd: string;
-  numero: string;
-  complemento: string;
   endereco: string;
-  bairro: string;
+  cidade: string;
+  uf: string;
+  telefone?: string;
+  email?: string;
+  ddd?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
 }
 
 export interface ChargeMessage {
