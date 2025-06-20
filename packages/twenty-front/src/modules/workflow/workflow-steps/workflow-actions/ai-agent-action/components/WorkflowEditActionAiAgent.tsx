@@ -5,6 +5,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useIcons } from 'twenty-ui/display';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
@@ -39,7 +40,7 @@ export const WorkflowEditActionAiAgent = ({
   });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
-    action.settings.outputSchema,
+    action.settings.outputSchema as BaseOutputSchema,
     actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
     action,
     actionOptions.readonly,
