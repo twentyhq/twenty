@@ -190,7 +190,7 @@ export const WorkflowOutputSchemaBuilder = ({
                 <FormFieldInputContainer>
                   <FormTextFieldInput
                     label="Description"
-                    placeholder="e.g., Brief explanation of this output field"
+                    placeholder="Brief explanation of this output field"
                     defaultValue={field.description}
                     onChange={(value) =>
                       updateField(field.id, { description: value })
