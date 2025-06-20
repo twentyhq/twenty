@@ -141,7 +141,7 @@ export const WorkflowOutputSchemaBuilder = ({
         <StyledOutputSchemaFieldContainer>
           <StyledMessageContentContainer>
             <StyledMessageDescription data-testid="empty-output-schema-message-description">
-              {t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
+              {t`Click on "Add Output Field" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps.`}
             </StyledMessageDescription>
           </StyledMessageContentContainer>
         </StyledOutputSchemaFieldContainer>
