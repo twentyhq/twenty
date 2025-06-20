@@ -91,6 +91,16 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
 
         if (isDefined(focusedRowIndex) && focusedRowIndex !== rowIndex) {
           set(isRowFocusedState(focusedRowIndex), false);
+
+          const focusId = getRecordTableRowFocusId({
+            recordTableId: recordTableIdFromContext,
+            rowIndex: focusedRowIndex,
+          });
+
+          removeFocusItemFromFocusStack({
+            focusId,
+            memoizeKey: focusId,
+          });
         }
 
         const focusId = getRecordTableRowFocusId({
@@ -125,6 +135,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
       pushFocusItemToFocusStack,
       isRowFocusedState,
       isRowFocusActiveState,
+      removeFocusItemFromFocusStack,
     ],
   );
 
