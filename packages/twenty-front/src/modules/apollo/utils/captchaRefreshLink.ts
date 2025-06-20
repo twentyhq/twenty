@@ -1,7 +1,7 @@
 import { ApolloLink } from '@apollo/client';
 
 export const createCaptchaRefreshLink = (
-  requestFreshCaptchaToken: () => void
+  requestFreshCaptchaToken: () => void,
 ) => {
   return new ApolloLink((operation, forward) => {
     const { variables } = operation;
