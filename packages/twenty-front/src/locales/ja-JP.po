@@ -124,6 +124,16 @@ msgstr ""
 msgid "{name}"
 msgstr "{name}"
 
+#. js-lingui-id: OeIgEg
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
+msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
+msgstr ""
+
+#. js-lingui-id: D0C09b
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
+msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -223,13 +233,13 @@ msgstr ""
 
 #. js-lingui-id: 4lzAkF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Ability to interact with specific objects"
-msgstr ""
+#~ msgid "Ability to interact with specific objects"
+#~ msgstr ""
 
 #. js-lingui-id: nJHSWx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Ability to interact with this specific object"
-msgstr ""
+#~ msgid "Ability to interact with this specific object"
+#~ msgstr ""
 
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -283,15 +293,31 @@ msgid "Action"
 msgstr "アクション"
 
 #. js-lingui-id: 7L01XJ
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
 msgstr "アクション"
 
+#. js-lingui-id: 9MxZtA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Actions users can perform on all objects"
+msgstr ""
+
+#. js-lingui-id: xnXGwA
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Actions users can perform on specific objects"
+msgstr ""
+
+#. js-lingui-id: N4ZcCd
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Actions users can perform on this object"
+msgstr ""
+
 #. js-lingui-id: Ws0qQB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Actions you can perform on all objects"
-msgstr ""
+#~ msgid "Actions you can perform on all objects"
+#~ msgstr ""
 
 #. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -497,6 +523,11 @@ msgstr ""
 msgid "All lines"
 msgstr "すべての行"
 
+#. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "All objects"
+msgstr ""
+
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "All Objects"
@@ -509,7 +540,12 @@ msgstr "すべてのロール"
 
 #. js-lingui-id: F8bx9e
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the basic objects"
+#~ msgid "All the basic objects"
+#~ msgstr ""
+
+#. js-lingui-id: XuuWVF
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+msgid "All the standard objects"
 msgstr ""
 
 #. js-lingui-id: MLmnB2
@@ -707,10 +743,15 @@ msgstr "昇順"
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName}に割り当てますか？"
 
+#. js-lingui-id: 17M/rH
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Assign roles to manage each member’s access and permissions"
+msgstr ""
+
 #. js-lingui-id: rfYmIr
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each member's access permissions"
-msgstr "各メンバーのアクセス権限を指定するロールを割り当てる"
+#~ msgid "Assign roles to specify each member's access permissions"
+#~ msgstr "各メンバーのアクセス権限を指定するロールを割り当てる"
 
 #. js-lingui-id: 2y2quh
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
@@ -787,6 +828,11 @@ msgstr "人々のために自動的に連絡先を作成する。"
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "メールの受信・送信時に自動的に人物レコードを作成"
 
+#. js-lingui-id: csDS2L
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Available"
+msgstr ""
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -806,8 +852,8 @@ msgstr "コンテンツに戻る"
 
 #. js-lingui-id: ehOkF+
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Basics"
-msgstr ""
+#~ msgid "Basics"
+#~ msgstr ""
 
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
@@ -1088,6 +1134,11 @@ msgstr ""
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
+msgstr ""
+
+#. js-lingui-id: Icd+JO
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Command menu icon"
 msgstr ""
 
 #. js-lingui-id: NM9bMd
@@ -1607,6 +1658,11 @@ msgstr ""
 msgid "Define what will be visible to other users in your workspace"
 msgstr "ワークスペース内の他のユーザーに表示される内容を定義"
 
+#. js-lingui-id: HNlEFZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "delete"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1766,6 +1822,11 @@ msgstr "降順"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "説明"
+
+#. js-lingui-id: +ow7t4
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "destroy"
+msgstr ""
 
 #. js-lingui-id: 2xxBws
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2610,6 +2671,16 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx
 #~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 #~ msgstr "Twentyサポートに一時的なアクセスを許可して、問題のトラブルシューティングやコンテンツの復旧を行います。アクセスはいつでも取り消せます。"
+
+#. js-lingui-id: MM43i1
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Granted for {grantedBy} {pluralizedGrantedObject}"
+msgstr ""
+
+#. js-lingui-id: WUgtid
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "Granted for this object"
+msgstr ""
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3691,12 +3762,17 @@ msgstr ""
 
 #. js-lingui-id: fE7upK
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No overrides found"
-msgstr ""
+#~ msgid "No overrides found"
+#~ msgstr ""
 
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
+msgstr ""
+
+#. js-lingui-id: CfOZmU
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "No permissions found"
 msgstr ""
 
 #. js-lingui-id: EqGTpW
@@ -3825,6 +3901,7 @@ msgid "Number type"
 msgstr "数値型"
 
 #. js-lingui-id: W0i24j
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -3835,11 +3912,17 @@ msgstr "オブジェクト"
 msgid "Object destination"
 msgstr "オブジェクトの目的地"
 
+#. js-lingui-id: YJgmMZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Object-Level"
+msgstr ""
+
 #. js-lingui-id: ZXhr6E
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Object-Level Permissions"
-msgstr ""
+#~ msgid "Object-Level Permissions"
+#~ msgstr ""
 
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -3848,7 +3931,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
 msgstr "オブジェクト"
 
@@ -3886,6 +3968,11 @@ msgstr "で開く"
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
+msgstr ""
+
+#. js-lingui-id: avIMon
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
@@ -4398,6 +4485,11 @@ msgstr "結果"
 #~ msgid "Review your import"
 #~ msgstr ""
 
+#. js-lingui-id: Wz7mbi
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Revoked for {revokedBy} {pluralizedRevokedObject}"
+msgstr ""
+
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Revoked for this object"
@@ -4405,8 +4497,8 @@ msgstr ""
 
 #. js-lingui-id: 4+uhWL
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Revoked on {revokedBy} {pluralizedObject}"
-msgstr ""
+#~ msgid "Revoked on {revokedBy} {pluralizedObject}"
+#~ msgstr ""
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -4589,6 +4681,11 @@ msgstr ""
 msgid "Security"
 msgstr "セキュリティ"
 
+#. js-lingui-id: i0zibG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "see"
+msgstr ""
+
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4665,6 +4762,11 @@ msgstr "ワークフローを見る"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "ワークフローを表示"
+
+#. js-lingui-id: 5S/Gqz
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Select a record then open the ⌘K to trigger this workflow"
+msgstr ""
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4952,6 +5054,11 @@ msgstr "SSO（SAML / OIDC）"
 msgid "Stages"
 msgstr "ステージ"
 
+#. js-lingui-id: TJBHlP
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+msgid "Standard"
+msgstr ""
+
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5215,6 +5322,11 @@ msgstr "このフィールドの説明"
 msgid "The email associated to your account"
 msgstr "アカウントに関連付けられたメール"
 
+#. js-lingui-id: diO3fm
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
+
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -5318,6 +5430,11 @@ msgstr ""
 #~ msgid "This member will be unassigned from this role."
 #~ msgstr "This member will be unassigned from this role."
 
+#. js-lingui-id: vbLBMd
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "This role can {humanReadableAction} all records"
+msgstr ""
+
 #. js-lingui-id: /tr8Uy
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -5392,6 +5509,11 @@ msgstr "今日"
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
+msgstr ""
+
+#. js-lingui-id: /kWolQ
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+msgid "Toggle all settings permissions"
 msgstr ""
 
 #. js-lingui-id: BRMXj0
@@ -5493,6 +5615,11 @@ msgstr "連絡先無制限"
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
+msgstr ""
+
+#. js-lingui-id: Y8zko3
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "update"
 msgstr ""
 
 #. js-lingui-id: EkH9pt
@@ -5792,6 +5919,11 @@ msgstr "キーが無効になる時期"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #~ msgid "Will be saved as:"
 #~ msgstr ""
+
+#. js-lingui-id: e9sagb
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Will return one {objectType} to the next step of this workflow"
+msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx

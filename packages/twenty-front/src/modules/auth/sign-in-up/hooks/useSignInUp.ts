@@ -10,7 +10,6 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -47,16 +46,14 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const { readCaptchaToken } = useReadCaptchaToken();
 
   const { buildSearchParamsFromUrlSyncedStates } =
     useBuildSearchParamsFromUrlSyncedStates();
 
   const continueWithEmail = useCallback(() => {
-    requestFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
-  }, [requestFreshCaptchaToken, setSignInUpStep]);
+  }, [setSignInUpStep]);
 
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
@@ -74,7 +71,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         });
       },
       onCompleted: (data) => {
-        requestFreshCaptchaToken();
         setSignInUpMode(
           data?.checkUserExists.exists
             ? SignInUpMode.SignIn
@@ -88,7 +84,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     form,
     checkUserExistsQuery,
     enqueueSnackBar,
-    requestFreshCaptchaToken,
     setSignInUpStep,
     setSignInUpMode,
   ]);
@@ -154,8 +149,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
         });
-      } finally {
-        requestFreshCaptchaToken();
       }
     },
     [
@@ -169,7 +162,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspaceInviteHash,
       workspacePersonalInviteToken,
       enqueueSnackBar,
-      requestFreshCaptchaToken,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
     ],

@@ -113,7 +113,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     [objectMetadataItems, searchFilter, excludedObjectMetadataIds],
   );
 
-  const basicObjects = filteredObjectMetadataItems.filter(
+  const standardObjects = filteredObjectMetadataItems.filter(
     (item) => !item.isCustom,
   );
   const customObjects = filteredObjectMetadataItems.filter(
@@ -135,11 +135,14 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
         </StyledSearchContainer>
       </Section>
 
-      {basicObjects.length > 0 && (
+      {standardObjects.length > 0 && (
         <Section>
-          <H2Title title={t`Basics`} description={t`All the basic objects`} />
+          <H2Title
+            title={t`Standard`}
+            description={t`All the standard objects`}
+          />
           <StyledContainer>
-            {basicObjects.map((objectMetadataItem) => {
+            {standardObjects.map((objectMetadataItem) => {
               const Icon = getIcon(objectMetadataItem.icon);
               return (
                 <StyledCardContainer
@@ -151,7 +154,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                   <SettingsCard
                     Icon={
                       <Icon
-                        size={theme.icon.size.xl}
+                        size={theme.icon.size.lg}
                         stroke={theme.icon.stroke.sm}
                       />
                     }
@@ -181,7 +184,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     key={objectMetadataItem.id}
                     Icon={
                       <Icon
-                        size={theme.icon.size.xl}
+                        size={theme.icon.size.lg}
                         stroke={theme.icon.stroke.sm}
                       />
                     }

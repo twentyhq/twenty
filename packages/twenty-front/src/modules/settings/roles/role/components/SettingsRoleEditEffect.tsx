@@ -22,7 +22,7 @@ export const SettingsRoleEditEffect = ({
   const role = useRecoilValue(settingsPersistedRoleFamilyState(roleId));
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const updateDraftRoleIfNeeded = useRecoilCallback(
@@ -45,7 +45,7 @@ export const SettingsRoleEditEffect = ({
       return;
     }
 
-    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT);
+    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS);
     updateDraftRoleIfNeeded(role);
     setIsInitialized(true);
   }, [isInitialized, role, setActiveTabId, updateDraftRoleIfNeeded]);
