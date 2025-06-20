@@ -19,7 +19,7 @@ export const SettingsRolesContainer = () => {
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
   const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
 
-  if (settingsRolesIsLoading) {
+  if (settingsRolesIsLoading && !settingsAllRoles) {
     return null;
   }
 

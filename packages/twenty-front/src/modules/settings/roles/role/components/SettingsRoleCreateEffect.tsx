@@ -18,7 +18,7 @@ export const SettingsRoleCreateEffect = ({
   );
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const [isInitialized, setIsInitialized] = useState(false);

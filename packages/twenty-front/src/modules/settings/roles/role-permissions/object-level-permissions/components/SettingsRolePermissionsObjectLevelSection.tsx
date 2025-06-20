@@ -84,8 +84,8 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   return (
     <Section>
       <H2Title
-        title={t`Object-Level Permissions`}
-        description={t`Ability to interact with specific objects`}
+        title={t`Object-Level`}
+        description={t`Actions users can perform on specific objects`}
       />
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader />
@@ -103,7 +103,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               />
             ))
           ) : (
-            <StyledNoOverride>{t`No overrides found`}</StyledNoOverride>
+            <StyledNoOverride>{t`No permissions found`}</StyledNoOverride>
           )}
         </StyledTableRows>
       </Table>

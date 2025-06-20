@@ -501,7 +501,8 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-  }, [clearSession]);
+    await requestFreshCaptchaToken();
+  }, [clearSession, requestFreshCaptchaToken]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({
@@ -519,60 +520,55 @@ export const useAuth = () => {
       captchaToken?: string;
       verifyEmailNextPath?: string;
     }) => {
-      try {
-        const signUpInWorkspaceResult = await signUpInWorkspace({
-          variables: {
-            email,
-            password,
-            workspaceInviteHash,
-            workspacePersonalInviteToken,
-            captchaToken,
-            locale: i18n.locale ?? 'en',
-            ...(workspacePublicData?.id
-              ? { workspaceId: workspacePublicData.id }
-              : {}),
-            verifyEmailNextPath,
-          },
-        });
+      const signUpInWorkspaceResult = await signUpInWorkspace({
+        variables: {
+          email,
+          password,
+          workspaceInviteHash,
+          workspacePersonalInviteToken,
+          captchaToken,
+          locale: i18n.locale ?? 'en',
+          ...(workspacePublicData?.id
+            ? { workspaceId: workspacePublicData.id }
+            : {}),
+          verifyEmailNextPath,
+        },
+      });
 
-        if (isDefined(signUpInWorkspaceResult.errors)) {
-          throw signUpInWorkspaceResult.errors;
-        }
-
-        if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
-          throw new Error('No login token');
-        }
-
-        if (isEmailVerificationRequired) {
-          setSearchParams({ email });
-          setSignInUpStep(SignInUpStep.EmailVerification);
-          return null;
-        }
-
-        if (isMultiWorkspaceEnabled) {
-          return await redirectToWorkspaceDomain(
-            getWorkspaceUrl(
-              signUpInWorkspaceResult.data.signUpInWorkspace.workspace
-                .workspaceUrls,
-            ),
-            isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
-            {
-              ...(!isEmailVerificationRequired && {
-                loginToken:
-                  signUpInWorkspaceResult.data.signUpInWorkspace.loginToken
-                    .token,
-              }),
-              email,
-            },
-          );
-        }
-
-        await handleGetAuthTokensFromLoginToken(
-          signUpInWorkspaceResult.data?.signUpInWorkspace.loginToken.token,
-        );
-      } finally {
-        requestFreshCaptchaToken();
+      if (isDefined(signUpInWorkspaceResult.errors)) {
+        throw signUpInWorkspaceResult.errors;
       }
+
+      if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
+        throw new Error('No login token');
+      }
+
+      if (isEmailVerificationRequired) {
+        setSearchParams({ email });
+        setSignInUpStep(SignInUpStep.EmailVerification);
+        return null;
+      }
+
+      if (isMultiWorkspaceEnabled) {
+        return await redirectToWorkspaceDomain(
+          getWorkspaceUrl(
+            signUpInWorkspaceResult.data.signUpInWorkspace.workspace
+              .workspaceUrls,
+          ),
+          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
+          {
+            ...(!isEmailVerificationRequired && {
+              loginToken:
+                signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
+            }),
+            email,
+          },
+        );
+      }
+
+      await handleGetAuthTokensFromLoginToken(
+        signUpInWorkspaceResult.data?.signUpInWorkspace.loginToken.token,
+      );
     },
     [
       signUpInWorkspace,
@@ -583,7 +579,6 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
-      requestFreshCaptchaToken,
     ],
   );
 
