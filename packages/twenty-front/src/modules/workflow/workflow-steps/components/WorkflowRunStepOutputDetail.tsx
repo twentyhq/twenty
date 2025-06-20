@@ -67,7 +67,13 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       ? getTriggerHeaderType(stepDefinition.definition)
       : i18n._(getActionHeaderTypeOrThrow(stepDefinition.definition.type));
 
-  const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = () => 'red';
+  const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = (keyPath) => {
+    if (keyPath === 'error') {
+      return 'red';
+    }
+
+    return undefined;
+  };
 
   return (
     <>
