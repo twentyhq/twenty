@@ -19,7 +19,6 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -34,10 +33,7 @@ export class QueryResultGettersFactory {
   );
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly fileService: FileService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
@@ -49,20 +45,8 @@ export class QueryResultGettersFactory {
         'workspaceMember',
         new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
-      [
-        'note',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.featureFlagService,
-        ),
-      ],
-      [
-        'task',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.featureFlagService,
-        ),
-      ],
+      ['note', new ActivityQueryResultGetterHandler(this.fileService)],
+      ['task', new ActivityQueryResultGetterHandler(this.fileService)],
     ]);
   }
 

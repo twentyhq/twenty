@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledChildContainer = styled.div`

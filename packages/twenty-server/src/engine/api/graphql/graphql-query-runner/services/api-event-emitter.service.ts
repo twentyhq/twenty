@@ -6,8 +6,8 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
