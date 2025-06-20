@@ -4,12 +4,12 @@ import {
   TEST_PRIMARY_LINK_URL,
   TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
 } from 'test/integration/constants/test-primary-link-url.constant';
-import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
@@ -94,7 +94,9 @@ describe('Core REST API Create One endpoint', () => {
         const createdPerson = res.body.data.createPerson;
 
         expect(createdPerson.createdBy.source).toBe(FieldActorSource.MANUAL);
-        expect(createdPerson.createdBy.workspaceMemberId).toBe(TIM_ACCOUNT_ID);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        );
       });
   });
 
