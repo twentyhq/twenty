@@ -1,6 +1,7 @@
+import { Injectable } from '@nestjs/common';
+
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
@@ -10,13 +11,11 @@ type RichTextBlock = Record<string, any>;
 
 type RichTextBody = RichTextBlock[];
 
+@Injectable()
 export class ActivityQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
 {
-  constructor(
-    private readonly fileService: FileService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   async handle(
     activity: TaskWorkspaceEntity | NoteWorkspaceEntity,
@@ -50,12 +49,25 @@ export class ActivityQueryResultGetterHandler
         }
 
         const imageProps = block.props;
-        const imageUrl = new URL(imageProps.url);
+        const url = new URL(imageProps.url);
+        // Example: "http://localhost:3000/files/attachment/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlbmFtZSI6ImU0NWNiNDhhLTM2MmYtNGU4Zi1iOTEzLWM5MmI1ZTNlMGFhNi5qcGciLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsInN1YiI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsInR5cGUiOiJGSUxFIiwiaWF0IjoxNzUwNDI4NDQ1LCJleHAiOjE3NTA1MTQ4NDV9.qTN1b9IcmZvfVAqt1UlfJ_nn3GwIAEp7G9IoPtRJDxk/e45cb48a-362f-4e8f-b913-c92b5e3e0aa6.jpg"
 
-        imageUrl.searchParams.delete('token');
+        const pathname = url.pathname;
+
+        if (!pathname.startsWith('/files/attachment/')) {
+          return block;
+        }
+
+        const fileName = pathname.match(
+          /files\/attachment\/(?:.+)\/(.+)$/,
+        )?.[1];
+
+        if (!fileName) {
+          return block;
+        }
 
         const signedPath = this.fileService.signFileUrl({
-          url: imageProps.url.toString(),
+          url: `attachment/${fileName}`,
           workspaceId,
         });
 
@@ -63,7 +75,7 @@ export class ActivityQueryResultGetterHandler
           ...block,
           props: {
             ...imageProps,
-            url: signedPath,
+            url: `${process.env.SERVER_URL}/files/${signedPath}`,
           },
         };
       }),
