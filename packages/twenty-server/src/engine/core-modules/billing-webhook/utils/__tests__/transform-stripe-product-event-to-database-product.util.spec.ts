@@ -2,7 +2,7 @@
 
 import Stripe from 'stripe';
 
-import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-product-event-to-database-product.util';
+import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-product-event-to-database-product.util';
 
 describe('transformStripeProductEventToDatabaseProduct', () => {
   it('should return the correct data', () => {

@@ -2,8 +2,8 @@ import {
   mockStripeSubscriptionUpdatedEventWithDeletedItem,
   mockStripeSubscriptionUpdatedEventWithoutUpdatedItem,
   mockStripeSubscriptionUpdatedEventWithUpdatedItemOnly,
-} from 'src/engine/core-modules/billing/webhooks/__mocks__/stripe-subscription-updated-events';
-import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing/webhooks/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
+} from 'src/engine/core-modules/billing-webhook/__mocks__/stripe-subscription-updated-events';
+import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 
 describe('getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent', () => {
   it('should return an empty array if subscription items are not updated', () => {
