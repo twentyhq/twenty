@@ -6,16 +6,20 @@ import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTree
 import { ANIMATION } from '@ui/theme';
 import { motion } from 'framer-motion';
 
-const StyledButton = styled(motion.button)`
+const StyledButton = styled(motion.button)<{ variant?: 'blue' | 'red' }>`
   align-items: center;
-  border-color: ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme, variant }) =>
+    variant === 'red'
+      ? theme.background.danger
+      : theme.background.transparent.lighter};
+  border-color: ${({ theme, variant }) =>
+    variant === 'red' ? theme.border.color.danger : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
   display: flex;
   justify-content: center;
   padding-inline: ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
   height: 24px;
   width: 24px;
   box-sizing: border-box;
@@ -31,7 +35,7 @@ export const JsonArrow = ({
 }: {
   isOpen: boolean;
   onClick: () => void;
-  variant?: 'blue';
+  variant?: 'blue' | 'red';
 }) => {
   const theme = useTheme();
 
@@ -39,7 +43,7 @@ export const JsonArrow = ({
     useJsonTreeContextOrThrow();
 
   return (
-    <StyledButton onClick={onClick}>
+    <StyledButton variant={variant} onClick={onClick}>
       <VisibilityHidden>
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>
@@ -47,7 +51,11 @@ export const JsonArrow = ({
       <MotionIconChevronDown
         size={theme.icon.size.md}
         color={
-          variant === 'blue' ? theme.color.blue : theme.font.color.secondary
+          variant === 'blue'
+            ? theme.color.blue
+            : variant === 'red'
+              ? theme.font.color.danger
+              : theme.font.color.secondary
         }
         initial={false}
         animate={{ rotate: isOpen ? 0 : -90 }}

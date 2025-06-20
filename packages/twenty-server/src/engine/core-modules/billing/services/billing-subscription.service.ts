@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
+import { getSubscriptionStatus } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -19,6 +20,7 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -28,10 +30,8 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
-import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 
 @Injectable()
 export class BillingSubscriptionService {

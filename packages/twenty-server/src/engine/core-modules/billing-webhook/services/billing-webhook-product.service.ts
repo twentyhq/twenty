@@ -6,9 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
+import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-product-event-to-database-product.util';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-product-event-to-database-product.util';
 @Injectable()
 export class BillingWebhookProductService {
   protected readonly logger = new Logger(BillingWebhookProductService.name);
