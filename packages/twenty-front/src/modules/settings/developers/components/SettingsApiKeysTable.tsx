@@ -1,8 +1,5 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { formatExpirations } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,7 +8,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useGetApiKeysQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
@@ -33,10 +32,14 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 export const SettingsApiKeysTable = () => {
-  const { records: apiKeys } = useFindManyRecords<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-    filter: { revokedAt: { is: 'NULL' } },
-  });
+  const { data, loading } = useGetApiKeysQuery();
+
+  const apiKeys = data?.coreApiKeys || [];
+  const nonRevokedApiKeys = apiKeys.filter((apiKey) => !apiKey.revokedAt);
+
+  if (isDefined(loading)) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Table>
@@ -49,9 +52,9 @@ export const SettingsApiKeysTable = () => {
         </TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
-      {!!apiKeys.length && (
+      {!!nonRevokedApiKeys.length && (
         <StyledTableBody>
-          {formatExpirations(apiKeys).map((fieldItem) => (
+          {formatExpirations(nonRevokedApiKeys).map((fieldItem) => (
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem as ApiFieldItem}

@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -19,6 +20,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -35,6 +37,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         Workspace,
         UserWorkspace,
         AppToken,
+        ApiKey,
         KeyValuePair,
         FeatureFlag,
         BillingSubscription,
@@ -48,6 +51,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         WorkspaceSSOIdentityProvider,
         ApprovedAccessDomain,
         TwoFactorMethod,
+        Webhook,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
