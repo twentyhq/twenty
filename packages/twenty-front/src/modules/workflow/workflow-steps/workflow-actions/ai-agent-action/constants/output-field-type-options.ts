@@ -16,6 +16,7 @@ export type WorkflowOutputFieldType =
 export interface OutputSchemaField {
   id: string;
   name: string;
+  description?: string;
   type: WorkflowOutputFieldType;
 }
 

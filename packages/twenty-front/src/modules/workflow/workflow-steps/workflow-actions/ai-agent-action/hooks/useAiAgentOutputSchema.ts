@@ -18,7 +18,7 @@ export const useAiAgentOutputSchema = (
       id: v4(),
       name,
       type: field.type,
-      description: undefined,
+      description: field.description,
       required: false,
     })),
   );
@@ -37,6 +37,7 @@ export const useAiAgentOutputSchema = (
             value: null,
             icon: getFieldIcon(field.type),
             label: field.name,
+            description: field.description,
           };
         }
         return schema;

@@ -22,12 +22,16 @@ export const convertOutputSchemaToZod = (
           fieldSchema = z.boolean();
           break;
         case 'DATE':
-          fieldSchema = z.string().datetime();
+          fieldSchema = z.string().describe('Date-time string');
           break;
         default:
           throw new Error(
             `Unsupported field type for AI agent output: ${field.type}`,
           );
+      }
+
+      if (field.description) {
+        fieldSchema = fieldSchema.describe(field.description);
       }
 
       shape[fieldName] = fieldSchema;

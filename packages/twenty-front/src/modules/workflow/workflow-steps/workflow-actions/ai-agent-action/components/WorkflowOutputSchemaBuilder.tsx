@@ -115,6 +115,7 @@ export const WorkflowOutputSchemaBuilder = ({
     const newField: OutputSchemaField = {
       id: v4(),
       name: '',
+      description: '',
       type: 'TEXT' as WorkflowOutputFieldType,
     };
     onChange([...fields, newField]);
@@ -183,6 +184,18 @@ export const WorkflowOutputSchemaBuilder = ({
                     value={field.type}
                     disabled={readonly}
                     dropdownId={`output-field-type-selector-${field.id}`}
+                  />
+                </FormFieldInputContainer>
+
+                <FormFieldInputContainer>
+                  <FormTextFieldInput
+                    label="Description"
+                    placeholder="e.g., Brief explanation of this output field"
+                    defaultValue={field.description}
+                    onChange={(value) =>
+                      updateField(field.id, { description: value })
+                    }
+                    readonly={readonly}
                   />
                 </FormFieldInputContainer>
               </StyledSettingsContent>
