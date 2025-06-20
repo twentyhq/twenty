@@ -8,16 +8,18 @@ type WorkflowOutputFieldTypeSelectorProps = {
   value: WorkflowOutputFieldType;
   onChange: (value: WorkflowOutputFieldType) => void;
   disabled?: boolean;
+  dropdownId: string;
 };
 
 export const WorkflowOutputFieldTypeSelector = ({
   value,
   onChange,
   disabled,
+  dropdownId,
 }: WorkflowOutputFieldTypeSelectorProps) => {
   return (
     <Select
-      dropdownId="output-field-type-selector"
+      dropdownId={dropdownId}
       label="Field Type"
       options={OUTPUT_FIELD_TYPE_OPTIONS}
       value={value}

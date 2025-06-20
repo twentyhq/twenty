@@ -179,9 +179,10 @@ export const WorkflowOutputSchemaBuilder = ({
 
                 <FormFieldInputContainer>
                   <WorkflowOutputFieldTypeSelector
-                    value={field.type}
                     onChange={(value) => updateField(field.id, { type: value })}
+                    value={field.type}
                     disabled={readonly}
+                    dropdownId={`output-field-type-selector-${field.id}`}
                   />
                 </FormFieldInputContainer>
               </StyledSettingsContent>
