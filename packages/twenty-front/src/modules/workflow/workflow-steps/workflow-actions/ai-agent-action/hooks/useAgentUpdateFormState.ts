@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 import { UPDATE_ONE_AGENT } from '../graphql/mutations/updateOneAgent';
 import { FIND_ONE_AGENT } from '../graphql/queries/findOneAgent';
 
@@ -10,7 +11,13 @@ type AgentFormValues = {
   modelId: string;
 };
 
-export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
+export const useAgentUpdateFormState = ({
+  agentId,
+  readonly = false,
+}: {
+  agentId: string;
+  readonly?: boolean;
+}) => {
   const [formValues, setFormValues] = useState<AgentFormValues>({
     name: '',
     prompt: '',
@@ -49,10 +56,30 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
     });
   };
 
+  const handleSave = useDebouncedCallback(async (formData: AgentFormValues) => {
+    await updateAgentMutation({
+      name: formData.name,
+      prompt: formData.prompt,
+      modelId: formData.modelId,
+    });
+  }, 500);
+
+  const handleFieldChange = async (field: string, value: string) => {
+    if (readonly) {
+      return;
+    }
+
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+
+    await handleSave({ ...formValues, [field]: value });
+  };
+
   return {
     formValues,
     setFormValues,
     updateAgent: updateAgentMutation,
+    handleSave,
+    handleFieldChange,
     loading,
   };
 };

@@ -6,7 +6,6 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useIcons } from 'twenty-ui/display';
-import { useDebouncedCallback } from 'use-debounce';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
 import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
@@ -34,10 +33,10 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: 'AI Agent',
     });
 
-  const { formValues, setFormValues, updateAgent, loading } =
-    useAgentUpdateFormState({
-      agentId: action.settings.input.agentId,
-    });
+  const { formValues, handleFieldChange, loading } = useAgentUpdateFormState({
+    agentId: action.settings.input.agentId,
+    readonly: actionOptions.readonly === true,
+  });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
     action.settings.outputSchema,
@@ -45,24 +44,6 @@ export const WorkflowEditActionAiAgent = ({
     action,
     actionOptions.readonly,
   );
-
-  const handleSave = useDebouncedCallback(async (formData) => {
-    await updateAgent({
-      name: formData.name,
-      prompt: formData.prompt,
-      modelId: formData.modelId,
-    });
-  }, 500);
-
-  const handleFieldChange = async (field: string, value: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-
-    await handleSave({ ...formValues, [field]: value });
-  };
 
   const modelOptions = useAiModelOptions();
 
