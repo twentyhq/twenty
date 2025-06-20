@@ -104,6 +104,18 @@ describe('roles permissions', () => {
             ],
           },
           {
+            label: 'Object-restricted',
+            workspaceMembers: [
+              {
+                id: '20202020-463f-435b-828c-107e007a2711',
+                name: {
+                  firstName: 'Jane',
+                  lastName: 'Austen',
+                },
+              },
+            ],
+          },
+          {
             label: 'Admin',
             workspaceMembers: [
               {
@@ -183,7 +195,7 @@ describe('roles permissions', () => {
       const query = {
         query: `
             mutation UpdateWorkspaceMemberRole {
-                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.TIM}", roleId: "test-role-id") {
+                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JANE}", roleId: "test-role-id") {
                     id
                 }
             }
