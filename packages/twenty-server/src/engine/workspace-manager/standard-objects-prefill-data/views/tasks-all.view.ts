@@ -20,7 +20,7 @@ export const tasksAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconCheckbox',
+    icon: 'IconList',
     kanbanFieldMetadataId: '',
     filters: [] /* [
       {
