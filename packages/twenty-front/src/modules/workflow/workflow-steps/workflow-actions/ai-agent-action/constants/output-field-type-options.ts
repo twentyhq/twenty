@@ -3,6 +3,7 @@ import {
   IllustrationIconCalendarEvent,
   IllustrationIconNumbers,
   IllustrationIconText,
+  IllustrationIconToggle,
 } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -33,6 +34,7 @@ export const OUTPUT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowOutputFieldType>[] 
     {
       label: 'Boolean',
       value: FieldMetadataType.BOOLEAN,
+      Icon: IllustrationIconToggle,
     },
     {
       label: 'Date',
