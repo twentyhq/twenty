@@ -53,17 +53,15 @@ export class ActivityQueryResultGetterHandler
 
         const pathname = url.pathname;
 
-        if (!pathname.startsWith('/files/attachment/')) {
+        const isLinkExternal = !pathname.startsWith('/files/attachment/');
+
+        if (isLinkExternal) {
           return block;
         }
 
         const fileName = pathname.match(
           /files\/attachment\/(?:.+)\/(.+)$/,
         )?.[1];
-
-        if (!fileName) {
-          return block;
-        }
 
         const signedPath = this.fileService.signFileUrl({
           url: `attachment/${fileName}`,
