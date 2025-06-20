@@ -31,8 +31,8 @@ describe('updateOneObjectRecordsPermissions', () => {
       objectMetadataSingularName: 'view',
       gqlFields: 'id',
       filter: {
-        icon: {
-          eq: 'IconCat',
+        name: {
+          eq: 'All Pets',
         },
       },
     });
@@ -50,7 +50,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       gqlFields: 'id',
       recordId: allPetsViewId,
       data: {
-        icon: 'IconCat',
+        icon: 'IconList',
       },
     });
 

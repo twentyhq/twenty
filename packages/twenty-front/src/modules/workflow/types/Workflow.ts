@@ -114,6 +114,10 @@ export type WorkflowVersion = {
   __typename: 'WorkflowVersion';
 };
 
+export type ManualTriggerWorkflowVersion = WorkflowVersion & {
+  trigger: WorkflowManualTrigger | null;
+};
+
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
 export type WorkflowExecutorOutput = z.infer<
   typeof workflowExecutorOutputSchema
