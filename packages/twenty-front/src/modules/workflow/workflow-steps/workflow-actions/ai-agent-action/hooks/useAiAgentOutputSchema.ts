@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
+import { getFieldIcon } from '../utils/getFieldIcon';
 
 export const useAiAgentOutputSchema = (
   outputSchema?: object,
@@ -34,7 +35,7 @@ export const useAiAgentOutputSchema = (
             isLeaf: true,
             type: field.type,
             value: null,
-            icon: 'IconVariable',
+            icon: getFieldIcon(field.type),
           };
         }
         return schema;
