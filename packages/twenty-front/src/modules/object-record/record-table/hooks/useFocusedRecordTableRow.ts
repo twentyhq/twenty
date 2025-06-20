@@ -7,7 +7,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -46,7 +46,8 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
   );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const unfocusRecordTableRow = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -64,7 +65,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
           rowIndex: focusedRowIndex,
         });
 
-        removeFocusItemFromFocusStack({
+        removeFocusItemFromFocusStackById({
           focusId,
           memoizeKey: focusId,
         });
@@ -78,7 +79,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
       isRowFocusedState,
       isRowFocusActiveState,
       recordTableIdFromContext,
-      removeFocusItemFromFocusStack,
+      removeFocusItemFromFocusStackById,
     ],
   );
 
@@ -97,7 +98,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
             rowIndex: focusedRowIndex,
           });
 
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId,
             memoizeKey: focusId,
           });
@@ -135,7 +136,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
       pushFocusItemToFocusStack,
       isRowFocusedState,
       isRowFocusActiveState,
-      removeFocusItemFromFocusStack,
+      removeFocusItemFromFocusStackById,
     ],
   );
 

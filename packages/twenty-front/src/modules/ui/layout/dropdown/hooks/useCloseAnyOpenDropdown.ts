@@ -1,14 +1,15 @@
 import { useCloseDropdownFromOutside } from '@/ui/layout/dropdown/hooks/useCloseDropdownFromOutside';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseAnyOpenDropdown = () => {
   const { closeDropdownFromOutside } = useCloseDropdownFromOutside();
 
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeAnyOpenDropdown = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -33,7 +34,7 @@ export const useCloseAnyOpenDropdown = () => {
 
         if (isDefined(activeDropdownFocusId)) {
           closeDropdownFromOutside(activeDropdownFocusId);
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId: activeDropdownFocusId,
             memoizeKey: 'global',
           });
@@ -41,7 +42,7 @@ export const useCloseAnyOpenDropdown = () => {
 
         if (thereIsOneNestedDropdownOpen) {
           closeDropdownFromOutside(previousDropdownFocusId);
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId: previousDropdownFocusId,
             memoizeKey: 'global',
           });
@@ -50,7 +51,7 @@ export const useCloseAnyOpenDropdown = () => {
         set(previousDropdownFocusIdState, null);
         set(activeDropdownFocusIdState, null);
       },
-    [closeDropdownFromOutside, removeFocusItemFromFocusStack],
+    [closeDropdownFromOutside, removeFocusItemFromFocusStackById],
   );
 
   return { closeAnyOpenDropdown };

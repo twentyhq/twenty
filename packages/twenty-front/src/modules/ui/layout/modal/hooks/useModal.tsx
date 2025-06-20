@@ -1,13 +1,14 @@
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 
 export const useModal = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeModal = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -22,7 +23,7 @@ export const useModal = () => {
           return;
         }
 
-        removeFocusItemFromFocusStack({
+        removeFocusItemFromFocusStackById({
           focusId: modalId,
           memoizeKey: modalId,
         });
@@ -32,7 +33,7 @@ export const useModal = () => {
           false,
         );
       },
-    [removeFocusItemFromFocusStack],
+    [removeFocusItemFromFocusStackById],
   );
 
   const openModal = useRecoilCallback(

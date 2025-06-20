@@ -5,7 +5,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -27,7 +27,8 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
     useSetIsRecordTableFocusActive(recordTableIdFromProps);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
@@ -41,7 +42,7 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
           cellPosition: currentPosition,
         });
 
-        removeFocusItemFromFocusStack({
+        removeFocusItemFromFocusStackById({
           focusId: currentCellFocusId,
           memoizeKey: currentCellFocusId,
         });
@@ -75,7 +76,7 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
       setIsFocusActive,
       recordTableIdFromProps,
       pushFocusItemToFocusStack,
-      removeFocusItemFromFocusStack,
+      removeFocusItemFromFocusStackById,
     ],
   );
 };

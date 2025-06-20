@@ -4,10 +4,10 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 
-export const useRemoveFocusItemFromFocusStack = () => {
+export const useRemoveFocusItemFromFocusStackById = () => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  const removeFocusItemFromFocusStack = useRecoilCallback(
+  const removeFocusItemFromFocusStackById = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
         focusId,
@@ -36,5 +36,5 @@ export const useRemoveFocusItemFromFocusStack = () => {
     [goBackToPreviousHotkeyScope],
   );
 
-  return { removeFocusItemFromFocusStack };
+  return { removeFocusItemFromFocusStackById };
 };
