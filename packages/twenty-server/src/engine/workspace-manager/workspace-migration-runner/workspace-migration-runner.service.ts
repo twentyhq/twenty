@@ -223,9 +223,8 @@ export class WorkspaceMigrationRunnerService {
       // Ignore error if index already exists
       if (error.code === '42P07') {
         return;
-      } else {
-        throw error;
       }
+      throw error;
     }
   }
 
