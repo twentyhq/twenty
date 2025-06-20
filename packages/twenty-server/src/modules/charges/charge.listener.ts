@@ -26,6 +26,7 @@ export class ChargeEventListener {
   async handleChargeCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
+    // TODO: Move this to use the chargeQueue
     const { workspaceId, name: eventName, events } = payload;
 
     this.logger.log(`Charge update triggered.`);
