@@ -29,6 +29,8 @@ export const SettingsRoleLabelContainer = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
+  const titleInputInstanceId = `settings-role-label-${roleId}`;
+
   const handleChange = (newValue: string) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
@@ -43,8 +45,9 @@ export const SettingsRoleLabelContainer = ({
         sizeVariant="md"
         value={settingsDraftRole.label}
         onChange={handleChange}
-        placeholder={t`Role name`}
+        placeholder={t`Untitled Role`}
         hotkeyScope={ROLE_LABEL_EDIT_HOTKEY_SCOPE}
+        instanceId={titleInputInstanceId}
       />
     </StyledHeaderTitle>
   );

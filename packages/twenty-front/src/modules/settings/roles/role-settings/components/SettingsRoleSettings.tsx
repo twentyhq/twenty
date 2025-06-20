@@ -68,7 +68,7 @@ export const SettingsRoleSettings = ({
                 label: value,
               });
             }}
-            placeholder={t`Role name`}
+            placeholder={t`Untitled Role`}
             disabled={!isEditable}
           />
         </StyledInputsContainer>
