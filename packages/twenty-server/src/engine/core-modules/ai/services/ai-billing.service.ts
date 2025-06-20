@@ -48,7 +48,7 @@ export class AIBillingService {
     const outputCost =
       (tokenUsage.completionTokens / 1000) * model.outputCostPer1kTokensInCents;
 
-    const totalCostInCents = Math.round(inputCost + outputCost);
+    const totalCostInCents = inputCost + outputCost;
 
     return totalCostInCents;
   }
@@ -66,7 +66,7 @@ export class AIBillingService {
 
     if (costInCents !== null) {
       const costInDollars = costInCents / 100;
-      const creditsUsed = Math.ceil(
+      const creditsUsed = Math.round(
         costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER,
       );
 
