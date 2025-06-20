@@ -227,9 +227,7 @@ export class WorkspaceMigrationRunnerService {
         return;
       }
 
-      const isv55tov56 = true;
-
-      if (isv55tov56) {
+      if (error.message.includes('already exists')) {
         this.logger.error(
           `Allowed error creating index ${index.name} on table ${schemaName}.${tableName}: ${error.message} due to index relations`,
         );
