@@ -20,5 +20,5 @@ export const getLabelIdentifierFieldValue = (
     return `${record[labelIdentifierFieldMetadataItem.name]?.firstName ?? ''} ${record[labelIdentifierFieldMetadataItem.name]?.lastName ?? ''}`;
   }
 
-  return record[labelIdentifierFieldMetadataItem.name] ?? '';
+  return `${record[labelIdentifierFieldMetadataItem.name]}` ?? '';
 };
