@@ -8,12 +8,6 @@ import {
 } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 
-export type WorkflowOutputFieldType =
-  | FieldMetadataType.TEXT
-  | FieldMetadataType.NUMBER
-  | FieldMetadataType.BOOLEAN
-  | FieldMetadataType.DATE;
-
 export interface OutputSchemaField {
   id: string;
   name: string;
