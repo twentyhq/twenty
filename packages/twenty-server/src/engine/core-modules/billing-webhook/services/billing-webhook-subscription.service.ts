@@ -117,7 +117,7 @@ export class BillingWebhookSubscriptionService {
 
     if (
       this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus == WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
     ) {
       await this.workspaceService.deleteWorkspace(workspace.id);
     }
