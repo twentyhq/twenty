@@ -2,10 +2,8 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import {
-  OutputSchemaField,
-  WorkflowOutputFieldType,
-} from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options';
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -116,7 +114,7 @@ export const WorkflowOutputSchemaBuilder = ({
       id: v4(),
       name: '',
       description: '',
-      type: 'TEXT' as WorkflowOutputFieldType,
+      type: 'TEXT' as InputSchemaPropertyType,
     };
     onChange([...fields, newField]);
   };

@@ -1,6 +1,7 @@
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-export const getFieldIcon = (fieldType: FieldMetadataType): string => {
+export const getFieldIcon = (fieldType?: InputSchemaPropertyType): string => {
   switch (fieldType) {
     case FieldMetadataType.TEXT:
       return 'IconAbc';

@@ -1,3 +1,4 @@
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IllustrationIconCalendarEvent,
@@ -17,10 +18,10 @@ export interface OutputSchemaField {
   id: string;
   name: string;
   description?: string;
-  type: WorkflowOutputFieldType;
+  type: InputSchemaPropertyType | undefined;
 }
 
-export const OUTPUT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowOutputFieldType>[] =
+export const OUTPUT_FIELD_TYPE_OPTIONS: SelectOption<InputSchemaPropertyType>[] =
   [
     {
       label: 'Text',

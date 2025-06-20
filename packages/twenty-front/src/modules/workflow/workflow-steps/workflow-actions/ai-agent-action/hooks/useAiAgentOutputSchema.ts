@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 import { getFieldIcon } from '../utils/getFieldIcon';
 
 export const useAiAgentOutputSchema = (
-  outputSchema?: object,
+  outputSchema?: BaseOutputSchema,
   onActionUpdate?: (action: WorkflowAiAgentAction) => void,
   action?: WorkflowAiAgentAction,
   readonly?: boolean,
@@ -19,7 +19,6 @@ export const useAiAgentOutputSchema = (
       name,
       type: field.type,
       description: field.description,
-      required: false,
     })),
   );
 
@@ -29,19 +28,22 @@ export const useAiAgentOutputSchema = (
         return;
       }
 
-      const newOutputSchema = fields.reduce((schema, field) => {
-        if (isDefined(field.name)) {
-          schema[field.name] = {
-            isLeaf: true,
-            type: field.type,
-            value: null,
-            icon: getFieldIcon(field.type),
-            label: field.name,
-            description: field.description,
-          };
-        }
-        return schema;
-      }, {} as BaseOutputSchema);
+      const newOutputSchema = fields.reduce<BaseOutputSchema>(
+        (schema, field) => {
+          if (isDefined(field.name)) {
+            schema[field.name] = {
+              isLeaf: true,
+              type: field.type,
+              value: null,
+              icon: getFieldIcon(field.type),
+              label: field.name,
+              description: field.description,
+            };
+          }
+          return schema;
+        },
+        {},
+      );
 
       if (isDefined(onActionUpdate) && isDefined(action)) {
         onActionUpdate({

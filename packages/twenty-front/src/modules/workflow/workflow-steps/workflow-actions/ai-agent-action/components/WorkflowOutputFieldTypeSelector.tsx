@@ -1,12 +1,10 @@
 import { Select } from '@/ui/input/components/Select';
-import {
-  OUTPUT_FIELD_TYPE_OPTIONS,
-  WorkflowOutputFieldType,
-} from '../constants/output-field-type-options';
+import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { OUTPUT_FIELD_TYPE_OPTIONS } from '../constants/output-field-type-options';
 
 type WorkflowOutputFieldTypeSelectorProps = {
-  value: WorkflowOutputFieldType;
-  onChange: (value: WorkflowOutputFieldType) => void;
+  value?: InputSchemaPropertyType;
+  onChange: (value: InputSchemaPropertyType) => void;
   disabled?: boolean;
   dropdownId: string;
 };
