@@ -63,7 +63,7 @@ describe('ActivityQueryResultGetterHandler', () => {
   });
 
   describe('should do nothing', () => {
-    it('when no image is found', async () => {
+    it('when activity is a note and no image is found', async () => {
       const note = {
         ...baseNote,
         bodyV2: {
@@ -79,7 +79,7 @@ describe('ActivityQueryResultGetterHandler', () => {
       expect(result).toEqual(note);
     });
 
-    it('when link are external', async () => {
+    it('when activity is a note and link is external', async () => {
       const note = {
         ...baseNote,
         bodyV2: {
@@ -118,7 +118,7 @@ describe('ActivityQueryResultGetterHandler', () => {
       expect(result).toEqual(note);
     });
 
-    it('when link are external and activity is a task', async () => {
+    it('when activity is a task and no image is found', async () => {
       const task = {
         ...baseTask,
         bodyV2: {
@@ -133,7 +133,7 @@ describe('ActivityQueryResultGetterHandler', () => {
     });
   });
 
-  describe('should update token in file link ', () => {
+  describe('should update token in file link', () => {
     it('when file link is in the body', async () => {
       const imageBlock = {
         id: 'c6a5f700-5e56-480d-90a9-7f295216370e',
