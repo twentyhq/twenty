@@ -6,6 +6,10 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ChargeEmmitRecurrentBillsCronCommand as EmmitRecurrentBillsCronCommand } from 'src/modules/charges/cron/command/charge-emmit-bills.cron.command';
+import { ChargeEmmitMonthlyBillCronJob } from 'src/modules/charges/cron/jobs/charge-emmit-monthly-bill.cron.job';
+import { ChargeEmmitYearlyBillCronJob } from 'src/modules/charges/cron/jobs/charge-emmit-yearly-bill.cron.job';
+import { ChageEmmitBillJob } from 'src/modules/charges/jobs/charge-emmit-bill.job';
 
 import { ChargeEventListener } from './charge.listener';
 
@@ -17,7 +21,14 @@ import { InterApiService } from './inter/inter-api.service';
     FileUploadModule,
     TypeOrmModule.forFeature([InterIntegration, Workspace], 'core'),
   ],
-  providers: [ChargeEventListener, InterApiService],
+  providers: [
+    ChargeEventListener,
+    InterApiService,
+    ChageEmmitBillJob,
+    ChargeEmmitMonthlyBillCronJob,
+    ChargeEmmitYearlyBillCronJob,
+    EmmitRecurrentBillsCronCommand,
+  ],
   exports: [InterApiService],
 })
 export class ChargeModule {}

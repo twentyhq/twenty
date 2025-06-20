@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -34,6 +36,16 @@ const NAME_FIELD_NAME = 'name';
 export const SEARCH_FIELDS_FOR_CHARGE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
+
+export enum ChargeRecurrence {
+  NONE = 'None',
+  ANNUAL = 'Annual',
+  MONTHLY = 'Monthly',
+}
+
+registerEnumType(ChargeRecurrence, {
+  name: 'ChargeRecurrence',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.charge,
@@ -103,10 +115,20 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Charge recurrence`,
     icon: 'IconSettings',
     options: [
-      { value: 'None', label: 'None', position: 0, color: 'gray' },
-      { value: 'Annual', label: 'Annual', position: 1, color: 'gray' },
       {
-        value: 'Monthly',
+        value: ChargeRecurrence.NONE,
+        label: 'None',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: ChargeRecurrence.ANNUAL,
+        label: 'Annual',
+        position: 1,
+        color: 'gray',
+      },
+      {
+        value: ChargeRecurrence.MONTHLY,
         label: 'Monthly',
         position: 2,
         color: 'gray',
@@ -267,5 +289,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   searchVector: any;
 }
