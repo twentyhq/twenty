@@ -271,7 +271,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
 // Step output schemas
 export const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
-  error: z.string().optional(),
+  error: z.any().optional(),
   pendingEvent: z.boolean().optional(),
 });
 
@@ -286,7 +286,7 @@ export const workflowRunOutputSchema = z.object({
     steps: z.array(workflowActionSchema),
   }),
   stepsOutput: workflowRunOutputStepsOutputSchema.optional(),
-  error: z.string().optional(),
+  error: z.any().optional(),
 });
 
 export const workflowRunContextSchema = z.record(z.any());
