@@ -22,11 +22,13 @@ export interface AgentExecutionResult {
   };
 }
 
+type ModelProvider = 'openai' | 'anthropic';
+
 @Injectable()
 export class AgentExecutionService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  private getModel = (modelId: string, provider: 'openai' | 'anthropic') => {
+  private getModel = (modelId: string, provider: ModelProvider) => {
     switch (provider) {
       case 'openai':
         return openai(modelId);
@@ -40,9 +42,7 @@ export class AgentExecutionService {
     }
   };
 
-  private async validateApiKey(
-    provider: 'openai' | 'anthropic',
-  ): Promise<void> {
+  private async validateApiKey(provider: ModelProvider): Promise<void> {
     let apiKey: string | undefined;
 
     switch (provider) {
