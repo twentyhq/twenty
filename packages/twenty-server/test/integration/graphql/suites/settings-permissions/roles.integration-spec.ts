@@ -88,7 +88,7 @@ describe('roles permissions', () => {
 
       expect(resp.status).toBe(200);
       expect(resp.body.errors).toBeUndefined();
-      expect(resp.body.data.getRoles).toHaveLength(3);
+      expect(resp.body.data.getRoles).toHaveLength(4);
       expect(resp.body.data.getRoles).toEqual(
         expect.arrayContaining([
           {
@@ -104,13 +104,25 @@ describe('roles permissions', () => {
             ],
           },
           {
-            label: 'Admin',
+            label: 'Object-restricted',
             workspaceMembers: [
               {
                 id: '20202020-0687-4c41-b707-ed1bfca972a7',
                 name: {
                   firstName: 'Tim',
                   lastName: 'Apple',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Admin',
+            workspaceMembers: [
+              {
+                id: '20202020-463f-435b-828c-107e007a2711',
+                name: {
+                  firstName: 'Jane',
+                  lastName: 'Austen',
                 },
               },
             ],
@@ -171,7 +183,7 @@ describe('roles permissions', () => {
       const query = {
         query: `
             mutation UpdateWorkspaceMemberRole {
-                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.TIM}", roleId: "test-role-id") {
+                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JANE}", roleId: "test-role-id") {
                     id
                 }
             }
