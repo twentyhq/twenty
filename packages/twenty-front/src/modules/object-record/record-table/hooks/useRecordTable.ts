@@ -12,7 +12,6 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 
-import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -96,8 +95,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
 
-  const { move } = useRecordTableMove(recordTableId);
-
   const { selectAllRows } = useSelectAllRows(recordTableId);
 
   return {
@@ -106,7 +103,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,
-    move,
     selectAllRows,
     setOnColumnsChange,
     setIsRecordTableInitialLoading,

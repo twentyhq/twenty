@@ -1,21 +1,46 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableMoveFocusedRow } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedRow';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
 
-export const RecordTableBodyRowFocusKeyboardEffect = () => {
+export const useRecordTableRowFocusHotkeys = ({
+  focusId,
+  hotkeyScope,
+}: {
+  focusId: string;
+  hotkeyScope: string;
+}) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
+    callback: () => {
+      moveFocusedRow('up');
+    },
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [moveFocusedRow],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.ArrowDown],
+    callback: () => {
+      moveFocusedRow('down');
+    },
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [moveFocusedRow],
+  });
 
   useHotkeysOnFocusedElement({
     keys: [Key.ArrowUp, 'k'],
     callback: () => {
       moveFocusedRow('up');
     },
-    focusId: recordTableId,
-    scope: TableHotkeyScope.TableFocus,
+    focusId,
+    scope: hotkeyScope,
     dependencies: [moveFocusedRow],
   });
 
@@ -24,10 +49,8 @@ export const RecordTableBodyRowFocusKeyboardEffect = () => {
     callback: () => {
       moveFocusedRow('down');
     },
-    focusId: recordTableId,
-    scope: TableHotkeyScope.TableFocus,
+    focusId,
+    scope: hotkeyScope,
     dependencies: [moveFocusedRow],
   });
-
-  return <></>;
 };

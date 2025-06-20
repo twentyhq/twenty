@@ -1,11 +1,16 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
+import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { Key } from 'ts-key-enum';
 
@@ -56,6 +61,25 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     });
   };
 
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId,
+  });
+
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
+
+  const isAtLeastOneRecordSelected = useRecoilComponentValueV2(
+    isAtLeastOneTableRowSelectedSelector,
+  );
+
+  const handleEscape = () => {
+    unfocusRecordTableRow();
+    if (isAtLeastOneRecordSelected) {
+      resetTableRowSelection();
+    }
+  };
+
   useHotkeysOnFocusedElement({
     keys: ['x'],
     callback: handleSelectRow,
@@ -86,5 +110,13 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     focusId,
     scope: TableHotkeyScope.TableFocus,
     dependencies: [handleEnterRow],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId,
+    scope: TableHotkeyScope.TableFocus,
+    dependencies: [handleEscape],
   });
 };
