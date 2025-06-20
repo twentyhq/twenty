@@ -76,9 +76,6 @@ export const useAgentUpdateFormState = ({
 
   return {
     formValues,
-    setFormValues,
-    updateAgent: updateAgentMutation,
-    handleSave,
     handleFieldChange,
     loading,
   };
