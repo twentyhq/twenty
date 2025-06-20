@@ -67,7 +67,6 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
 
         removeFocusItemFromFocusStackById({
           focusId,
-          memoizeKey: focusId,
         });
 
         set(focusedRowIndexState, null);
@@ -100,7 +99,6 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
 
           removeFocusItemFromFocusStackById({
             focusId,
-            memoizeKey: focusId,
           });
         }
 

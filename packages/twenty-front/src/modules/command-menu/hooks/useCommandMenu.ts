@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
@@ -35,7 +34,6 @@ export const useCommandMenu = () => {
           closeAnyOpenDropdown();
           removeFocusItemFromFocusStackById({
             focusId: SIDE_PANEL_FOCUS_ID,
-            memoizeKey: COMMAND_MENU_COMPONENT_INSTANCE_ID,
           });
         }
       },

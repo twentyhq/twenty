@@ -57,6 +57,8 @@ export const usePushFocusItemToFocusStack = () => {
               globalHotkeysConfig?.enableGlobalHotkeysConflictingWithKeyboard ??
               true,
           },
+          // TODO: Remove this once we've migrated hotkey scopes to the new api
+          memoizeKey,
         };
 
         const currentFocusStack = snapshot

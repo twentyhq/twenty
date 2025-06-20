@@ -25,7 +25,6 @@ export const useModal = () => {
 
         removeFocusItemFromFocusStackById({
           focusId: modalId,
-          memoizeKey: modalId,
         });
 
         set(

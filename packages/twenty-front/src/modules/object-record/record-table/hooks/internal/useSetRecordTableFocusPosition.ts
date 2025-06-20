@@ -44,7 +44,6 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
 
         removeFocusItemFromFocusStackById({
           focusId: currentCellFocusId,
-          memoizeKey: currentCellFocusId,
         });
 
         set(focusPositionState, newPosition);

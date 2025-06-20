@@ -44,6 +44,7 @@ describe('useResetFocusStackToFocusItem', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     const secondFocusItem = {

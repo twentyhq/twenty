@@ -36,7 +36,6 @@ export const useCloseAnyOpenDropdown = () => {
           closeDropdownFromOutside(activeDropdownFocusId);
           removeFocusItemFromFocusStackById({
             focusId: activeDropdownFocusId,
-            memoizeKey: 'global',
           });
         }
 
@@ -44,7 +43,6 @@ export const useCloseAnyOpenDropdown = () => {
           closeDropdownFromOutside(previousDropdownFocusId);
           removeFocusItemFromFocusStackById({
             focusId: previousDropdownFocusId,
-            memoizeKey: 'global',
           });
         }
 

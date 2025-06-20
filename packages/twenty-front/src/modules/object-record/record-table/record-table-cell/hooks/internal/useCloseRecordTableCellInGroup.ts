@@ -6,7 +6,6 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 
 export const useCloseRecordTableCellInGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
@@ -19,9 +18,6 @@ export const useCloseRecordTableCellInGroup = () => {
 
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
-
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
 
   const closeTableCellInGroup = useRecoilCallback(
     () => () => {

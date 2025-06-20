@@ -33,7 +33,6 @@ export const useDropdownV2 = () => {
         if (isDropdownOpen) {
           removeFocusItemFromFocusStackById({
             focusId: scopeId,
-            memoizeKey: 'global',
           });
           goBackToPreviousDropdownFocusId();
           set(

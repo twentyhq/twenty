@@ -18,6 +18,7 @@ export const useResetFocusStackToRecordIndex = () => {
           enableGlobalHotkeysWithModifiers: true,
           enableGlobalHotkeysConflictingWithKeyboard: true,
         },
+        memoizeKey: 'global',
       },
       hotkeyScope: {
         scope: RecordIndexHotkeyScope.RecordIndex,

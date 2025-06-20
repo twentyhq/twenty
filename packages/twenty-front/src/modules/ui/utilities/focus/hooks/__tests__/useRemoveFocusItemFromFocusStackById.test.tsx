@@ -92,7 +92,6 @@ describe('useRemoveFocusItemFromFocusStackById', () => {
     await act(async () => {
       result.current.removeFocusItemFromFocusStackById({
         focusId: firstFocusItem.focusId,
-        memoizeKey: 'global',
       });
     });
 

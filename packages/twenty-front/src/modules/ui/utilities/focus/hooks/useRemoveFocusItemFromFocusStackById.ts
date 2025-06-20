@@ -9,14 +9,16 @@ export const useRemoveFocusItemFromFocusStackById = () => {
 
   const removeFocusItemFromFocusStackById = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({
-        focusId,
-        memoizeKey = 'global',
-      }: {
-        focusId: string;
-        memoizeKey?: string;
-      }) => {
+      ({ focusId }: { focusId: string }) => {
         const focusStack = snapshot.getLoadable(focusStackState).getValue();
+
+        const removedFocusItem = focusStack.find(
+          (focusStackItem) => focusStackItem.focusId === focusId,
+        );
+
+        if (!removedFocusItem) {
+          return;
+        }
 
         const newFocusStack = focusStack.filter(
           (focusStackItem) => focusStackItem.focusId !== focusId,
@@ -31,7 +33,7 @@ export const useRemoveFocusItemFromFocusStackById = () => {
         }
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
-        goBackToPreviousHotkeyScope(memoizeKey);
+        goBackToPreviousHotkeyScope(removedFocusItem.memoizeKey);
       },
     [goBackToPreviousHotkeyScope],
   );

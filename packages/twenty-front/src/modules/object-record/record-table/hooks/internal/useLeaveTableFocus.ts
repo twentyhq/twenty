@@ -62,6 +62,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
           enableGlobalHotkeysWithModifiers: true,
           enableGlobalHotkeysConflictingWithKeyboard: true,
         },
+        memoizeKey: 'global',
       },
       hotkeyScope: {
         scope: RecordIndexHotkeyScope.RecordIndex,

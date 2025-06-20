@@ -37,7 +37,6 @@ export const useDropdown = (dropdownId?: string) => {
       goBackToPreviousDropdownFocusId();
       removeFocusItemFromFocusStackById({
         focusId: dropdownId ?? scopeId,
-        memoizeKey: 'global',
       });
     }
   }, [
@@ -64,7 +63,6 @@ export const useDropdown = (dropdownId?: string) => {
           globalHotkeysConfig,
           // TODO: Remove this once we've fully migrated away from hotkey scopes
           hotkeyScope: { scope: 'dropdown' } as HotkeyScope,
-          memoizeKey: 'global',
         });
       }
     },
