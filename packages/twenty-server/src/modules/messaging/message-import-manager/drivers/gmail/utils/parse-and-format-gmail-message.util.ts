@@ -5,9 +5,9 @@ import planer from 'planer';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
-import { sanitizeString } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/sanitize-string.util';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,

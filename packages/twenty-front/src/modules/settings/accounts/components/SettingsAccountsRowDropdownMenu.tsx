@@ -1,7 +1,7 @@
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -40,7 +40,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
-  const { triggerApisOAuth } = useTriggerApisOAuth();
+  const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
   const deleteAccount = async () => {
     await destroyOneRecord(account.id);
@@ -78,7 +78,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   LeftIcon={IconRefresh}
                   text={t`Reconnect`}
                   onClick={() => {
-                    triggerApisOAuth(account.provider);
+                    triggerProviderReconnect(account.provider, account.id);
                     closeDropdown();
                   }}
                 />

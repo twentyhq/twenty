@@ -64,6 +64,22 @@ const SettingsNewObject = lazy(() =>
   })),
 );
 
+const SettingsNewImapConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewImapConnection,
+  })),
+);
+
+const SettingsEditImapConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsEditImapConnection,
+  })),
+);
+
 const SettingsObjectDetailPage = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
     (module) => ({
@@ -357,6 +373,14 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}
+      />
+      <Route
+        path={SettingsPath.NewImapConnection}
+        element={<SettingsNewImapConnection />}
+      />
+      <Route
+        path={SettingsPath.EditImapConnection}
+        element={<SettingsEditImapConnection />}
       />
       <Route
         element={

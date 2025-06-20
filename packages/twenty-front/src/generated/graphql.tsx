@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -330,6 +330,7 @@ export type ClientConfig = {
   isEmailVerificationRequired: Scalars['Boolean'];
   isGoogleCalendarEnabled: Scalars['Boolean'];
   isGoogleMessagingEnabled: Scalars['Boolean'];
+  isIMAPMessagingEnabled: Scalars['Boolean'];
   isMicrosoftCalendarEnabled: Scalars['Boolean'];
   isMicrosoftMessagingEnabled: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
@@ -403,6 +404,15 @@ export type ConfigVariablesGroupData = {
 export type ConfigVariablesOutput = {
   __typename?: 'ConfigVariablesOutput';
   groups: Array<ConfigVariablesGroupData>;
+};
+
+export type ConnectedImapAccount = {
+  __typename?: 'ConnectedImapAccount';
+  accountOwnerId: Scalars['String'];
+  connectionParameters?: Maybe<ImapConnectionParams>;
+  handle: Scalars['String'];
+  id: Scalars['String'];
+  provider: Scalars['String'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -611,6 +621,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -761,6 +772,21 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type ImapConnectionParams = {
+  __typename?: 'ImapConnectionParams';
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
+};
+
+export type ImapConnectionSuccess = {
+  __typename?: 'ImapConnectionSuccess';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
 
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
@@ -943,6 +969,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveImapConnection: ImapConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1189,6 +1216,17 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveImapConnectionArgs = {
+  accountOwnerId: Scalars['String'];
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
 };
 
 
@@ -1564,6 +1602,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConnectedImapAccount: ConnectedImapAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1617,6 +1656,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetConnectedImapAccountArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2774,6 +2818,26 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
+
+export type SaveImapConnectionMutationVariables = Exact<{
+  accountOwnerId: Scalars['String'];
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
+  password: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type SaveImapConnectionMutation = { __typename?: 'Mutation', saveImapConnection: { __typename?: 'ImapConnectionSuccess', success: boolean } };
+
+export type GetConnectedImapAccountQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetConnectedImapAccountQuery = { __typename?: 'Query', getConnectedImapAccount: { __typename?: 'ConnectedImapAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapConnectionParams', handle: string, host: string, port: number, secure: boolean, password: string } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -4923,6 +4987,98 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
+export const SaveImapConnectionDocument = gql`
+    mutation SaveImapConnection($accountOwnerId: String!, $handle: String!, $host: String!, $port: Float!, $secure: Boolean!, $password: String!, $id: String) {
+  saveImapConnection(
+    accountOwnerId: $accountOwnerId
+    handle: $handle
+    host: $host
+    port: $port
+    secure: $secure
+    password: $password
+    id: $id
+  ) {
+    success
+  }
+}
+    `;
+export type SaveImapConnectionMutationFn = Apollo.MutationFunction<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
+
+/**
+ * __useSaveImapConnectionMutation__
+ *
+ * To run a mutation, you first call `useSaveImapConnectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveImapConnectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveImapConnectionMutation, { data, loading, error }] = useSaveImapConnectionMutation({
+ *   variables: {
+ *      accountOwnerId: // value for 'accountOwnerId'
+ *      handle: // value for 'handle'
+ *      host: // value for 'host'
+ *      port: // value for 'port'
+ *      secure: // value for 'secure'
+ *      password: // value for 'password'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSaveImapConnectionMutation(baseOptions?: Apollo.MutationHookOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>(SaveImapConnectionDocument, options);
+      }
+export type SaveImapConnectionMutationHookResult = ReturnType<typeof useSaveImapConnectionMutation>;
+export type SaveImapConnectionMutationResult = Apollo.MutationResult<SaveImapConnectionMutation>;
+export type SaveImapConnectionMutationOptions = Apollo.BaseMutationOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
+export const GetConnectedImapAccountDocument = gql`
+    query GetConnectedImapAccount($id: String!) {
+  getConnectedImapAccount(id: $id) {
+    id
+    handle
+    provider
+    accountOwnerId
+    connectionParameters {
+      handle
+      host
+      port
+      secure
+      password
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetConnectedImapAccountQuery__
+ *
+ * To run a query within a React component, call `useGetConnectedImapAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConnectedImapAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConnectedImapAccountQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetConnectedImapAccountQuery(baseOptions: Apollo.QueryHookOptions<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>(GetConnectedImapAccountDocument, options);
+      }
+export function useGetConnectedImapAccountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>(GetConnectedImapAccountDocument, options);
+        }
+export type GetConnectedImapAccountQueryHookResult = ReturnType<typeof useGetConnectedImapAccountQuery>;
+export type GetConnectedImapAccountLazyQueryHookResult = ReturnType<typeof useGetConnectedImapAccountLazyQuery>;
+export type GetConnectedImapAccountQueryResult = Apollo.QueryResult<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)

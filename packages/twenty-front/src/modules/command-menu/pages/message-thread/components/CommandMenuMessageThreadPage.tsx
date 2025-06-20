@@ -12,8 +12,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Button } from 'twenty-ui/input';
 import { IconArrowBackUp } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -40,6 +40,11 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   width: 100%;
   box-sizing: border-box;
 `;
+
+const ALLOWED_REPLY_PROVIDERS = [
+  ConnectedAccountProvider.GOOGLE,
+  ConnectedAccountProvider.MICROSOFT,
+];
 
 export const CommandMenuMessageThreadPage = () => {
   const setMessageThread = useSetRecoilComponentStateV2(
@@ -83,6 +88,7 @@ export const CommandMenuMessageThreadPage = () => {
     return (
       connectedAccountHandle &&
       connectedAccountProvider &&
+      ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
       lastMessage &&
       messageThreadExternalId != null
     );
@@ -108,6 +114,8 @@ export const CommandMenuMessageThreadPage = () => {
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
         window.open(url, '_blank');
         break;
+      case ConnectedAccountProvider.IMAP:
+        throw new Error('IMAP account provider not supported');
       case null:
         throw new Error('Account provider not provided');
       default:

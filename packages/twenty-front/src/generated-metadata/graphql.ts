@@ -338,6 +338,7 @@ export type ClientConfig = {
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
+  isIMAPMessagingEnabled: Scalars['Boolean']['output'];
   isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
   isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
@@ -411,6 +412,15 @@ export type ConfigVariablesGroupData = {
 export type ConfigVariablesOutput = {
   __typename?: 'ConfigVariablesOutput';
   groups: Array<ConfigVariablesGroupData>;
+};
+
+export type ConnectedImapAccount = {
+  __typename?: 'ConnectedImapAccount';
+  accountOwnerId: Scalars['String']['output'];
+  connectionParameters?: Maybe<ImapConnectionParams>;
+  handle: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
 };
 
 export type CreateAppTokenInput = {
@@ -655,6 +665,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -812,6 +823,21 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type ImapConnectionParams = {
+  __typename?: 'ImapConnectionParams';
+  handle: Scalars['String']['output'];
+  host: Scalars['String']['output'];
+  password: Scalars['String']['output'];
+  port: Scalars['Float']['output'];
+  secure: Scalars['Boolean']['output'];
+};
+
+export type ImapConnectionSuccess = {
+  __typename?: 'ImapConnectionSuccess';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
 
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
@@ -996,6 +1022,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveImapConnection: ImapConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1266,6 +1293,17 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveImapConnectionArgs = {
+  accountOwnerId: Scalars['String']['input'];
+  handle: Scalars['String']['input'];
+  host: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure: Scalars['Boolean']['input'];
 };
 
 
@@ -1664,6 +1702,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConnectedImapAccount: ConnectedImapAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1743,6 +1782,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetConnectedImapAccountArgs = {
+  id: Scalars['String']['input'];
 };
 
 

@@ -107,6 +107,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   scopes: string[] | null;
 
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Custom Connection Parameters`,
+    description: msg`JSON object containing custom connection parameters`,
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  connectionParameters: Record<string, unknown> | null;
+
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationType.MANY_TO_ONE,
