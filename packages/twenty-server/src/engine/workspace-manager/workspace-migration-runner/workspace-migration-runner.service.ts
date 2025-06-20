@@ -226,7 +226,16 @@ export class WorkspaceMigrationRunnerService {
       if (error.code === '42P07') {
         return;
       }
-      throw error;
+
+      const isv55tov56 = true;
+
+      if (isv55tov56) {
+        this.logger.error(
+          `Allowed error creating index ${index.name} on table ${schemaName}.${tableName}: ${error.message} due to index relations`,
+        );
+      } else {
+        throw error;
+      }
     }
   }
 
