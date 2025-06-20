@@ -23,6 +23,7 @@ export const useSingleRecordPickerSearch = (
     singleRecordPickerSelectedIdComponentState,
     recordPickerComponentInstanceId,
   );
+
   const debouncedSetSearchFilter = useDebouncedCallback(
     setRecordPickerSearchFilter,
     100,

@@ -1,13 +1,17 @@
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
+import { RecordPickerInitialLoadingEmptyContainer } from '@/object-record/record-picker/components/RecordPickerInitialLoadingEmptyContainer';
+import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
+import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
+import { singleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowInitialLoadingComponentState';
+import { singleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowSkeletonComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -17,6 +21,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -25,36 +30,24 @@ export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
   emptyLabel?: string;
   recordsToSelect: SingleRecordPickerRecord[];
-  loading?: boolean;
   onCancel?: () => void;
   onRecordSelected: (entity?: SingleRecordPickerRecord) => void;
   selectedRecord?: SingleRecordPickerRecord;
   focusId: string;
+  filteredSelectedRecords: SingleRecordPickerRecord[];
 };
 
 export const SingleRecordPickerMenuItems = ({
   EmptyIcon,
   emptyLabel,
   recordsToSelect,
-  loading,
   onCancel,
   onRecordSelected,
+  filteredSelectedRecords,
   selectedRecord,
   focusId,
 }: SingleRecordPickerMenuItemsProps) => {
-  const selectNone = emptyLabel
-    ? {
-        __typename: '',
-        id: 'select-none',
-        name: emptyLabel,
-      }
-    : null;
-
-  const recordsInDropdown = [
-    selectNone,
-    selectedRecord,
-    ...recordsToSelect,
-  ].filter(
+  const recordsInDropdown = [selectedRecord, ...recordsToSelect].filter(
     (entity): entity is SingleRecordPickerRecord =>
       isDefined(entity) && isNonEmptyString(entity.name),
   );
@@ -93,6 +86,17 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerSelectedIdComponentState,
   );
 
+  const singleRecordPickerShowSkeleton = useRecoilComponentValueV2(
+    singleRecordPickerShowSkeletonComponentState,
+  );
+
+  const singleRecordPickerShowInitialLoading = useRecoilComponentValueV2(
+    singleRecordPickerShowInitialLoadingComponentState,
+  );
+
+  const searchHasNoResults =
+    recordsToSelect.length === 0 && filteredSelectedRecords?.length === 0;
+
   return (
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
@@ -100,49 +104,42 @@ export const SingleRecordPickerMenuItems = ({
       hotkeyScope={DropdownHotkeyScope.Dropdown}
       focusId={focusId}
     >
-      {loading ? (
-        <DropdownMenuSkeletonItem />
-      ) : (
-        recordsInDropdown?.map((record) => {
-          switch (record.id) {
-            case 'select-none': {
-              return (
-                emptyLabel && (
-                  <SelectableListItem
-                    key={record.id}
-                    itemId={record.id}
-                    onEnter={() => {
-                      setSelectedRecordId(undefined);
-                      onRecordSelected();
-                    }}
-                  >
-                    <MenuItemSelect
-                      onClick={() => {
-                        setSelectedRecordId(undefined);
-                        onRecordSelected();
-                      }}
-                      LeftIcon={EmptyIcon}
-                      text={emptyLabel}
-                      selected={isUndefined(selectedRecordId)}
-                      focused={isSelectedSelectNoneButton}
-                    />
-                  </SelectableListItem>
-                )
-              );
-            }
-            default: {
-              return (
-                <SingleRecordPickerMenuItem
-                  key={record.id}
-                  record={record}
-                  onRecordSelected={onRecordSelected}
-                  selectedRecord={selectedRecord}
-                />
-              );
-            }
-          }
-        })
+      {emptyLabel && (
+        <SelectableListItem
+          key={'select-none'}
+          itemId={'select-none'}
+          onEnter={() => {
+            setSelectedRecordId(undefined);
+            onRecordSelected();
+          }}
+        >
+          <MenuItemSelect
+            onClick={() => {
+              setSelectedRecordId(undefined);
+              onRecordSelected();
+            }}
+            LeftIcon={EmptyIcon}
+            text={emptyLabel}
+            selected={isUndefined(selectedRecordId)}
+            focused={isSelectedSelectNoneButton}
+          />
+        </SelectableListItem>
       )}
+      {singleRecordPickerShowInitialLoading ? (
+        <RecordPickerInitialLoadingEmptyContainer />
+      ) : singleRecordPickerShowSkeleton ? (
+        <RecordPickerLoadingSkeletonList />
+      ) : (
+        recordsInDropdown?.map((record) => (
+          <SingleRecordPickerMenuItem
+            key={record.id}
+            record={record}
+            onRecordSelected={onRecordSelected}
+            selectedRecord={selectedRecord}
+          />
+        ))
+      )}
+      {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
     </SelectableList>
   );
 };

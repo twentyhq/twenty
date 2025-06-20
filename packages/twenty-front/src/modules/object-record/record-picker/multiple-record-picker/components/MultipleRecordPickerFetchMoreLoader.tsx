@@ -1,10 +1,16 @@
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+
+import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
+
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowInitialLoadingComponentState';
+import { multipleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowSkeletonComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
@@ -23,10 +29,17 @@ const StyledText = styled.div`
 `;
 
 const StyledIntersectionObserver = styled.div`
-  height: 1px;
+  height: 0px;
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
+  const [
+    multipleRecordPickerIsFetchingMore,
+    setMultipleRecordPickerIsFetchingMore,
+  ] = useRecoilComponentStateV2(
+    multipleRecordPickerIsFetchingMoreComponentState,
+  );
+
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -46,6 +59,14 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
+  const multipleRecordPickerShowInitialLoading = useRecoilComponentValueV2(
+    multipleRecordPickerShowInitialLoadingComponentState,
+  );
+
+  const multipleRecordPickerShowSkeleton = useRecoilComponentValueV2(
+    multipleRecordPickerShowSkeletonComponentState,
+  );
+
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
   const fetchMore = useRecoilCallback(
@@ -63,7 +84,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
           return;
         }
 
-        performSearch({
+        await performSearch({
           multipleRecordPickerInstanceId: componentInstanceId,
           forceSearchFilter: searchFilter,
           loadMore: true,
@@ -74,23 +95,34 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
   const { ref } = useInView({
     onChange: useCallback(
-      (inView: boolean) => {
+      async (inView: boolean) => {
         if (inView) {
-          fetchMore();
+          setMultipleRecordPickerIsFetchingMore(true);
+
+          await fetchMore();
+
+          setMultipleRecordPickerIsFetchingMore(false);
         }
       },
-      [fetchMore],
+      [fetchMore, setMultipleRecordPickerIsFetchingMore],
     ),
   });
 
-  if (!paginationState.hasNextPage) {
+  if (
+    !paginationState.hasNextPage ||
+    multipleRecordPickerShowInitialLoading ||
+    multipleRecordPickerShowSkeleton ||
+    (isLoading && !multipleRecordPickerIsFetchingMore)
+  ) {
     return null;
   }
 
   return (
-    <div>
+    <>
       <StyledIntersectionObserver ref={ref} />
-      {isLoading && <StyledText>Loading more...</StyledText>}
-    </div>
+      {multipleRecordPickerIsFetchingMore && (
+        <StyledText>Loading more...</StyledText>
+      )}
+    </>
   );
 };
