@@ -104,18 +104,6 @@ describe('roles permissions', () => {
             ],
           },
           {
-            label: 'Object-restricted',
-            workspaceMembers: [
-              {
-                id: '20202020-463f-435b-828c-107e007a2711',
-                name: {
-                  firstName: 'Jane',
-                  lastName: 'Austen',
-                },
-              },
-            ],
-          },
-          {
             label: 'Admin',
             workspaceMembers: [
               {
