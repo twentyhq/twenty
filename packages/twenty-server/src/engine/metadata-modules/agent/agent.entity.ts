@@ -39,7 +39,7 @@ export class AgentEntity {
   @JoinColumn({ name: 'modelId' })
   aiModel: Relation<AIModel>;
 
-  @Column({ nullable: false, type: 'jsonb' })
+  @Column({ nullable: true, type: 'jsonb' })
   responseFormat: object;
 
   @Column({ nullable: false, type: 'uuid' })

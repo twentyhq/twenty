@@ -79,7 +79,7 @@ export type Agent = {
   modelId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
-  responseFormat: Scalars['JSON']['output'];
+  responseFormat?: Maybe<Scalars['JSON']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -451,7 +451,7 @@ export type CreateAgentInput = {
   modelId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   prompt: Scalars['String']['input'];
-  responseFormat: Scalars['JSON']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type CreateAppTokenInput = {
@@ -2357,7 +2357,7 @@ export type UpdateAgentInput = {
   modelId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   prompt: Scalars['String']['input'];
-  responseFormat: Scalars['JSON']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateFieldInput = {

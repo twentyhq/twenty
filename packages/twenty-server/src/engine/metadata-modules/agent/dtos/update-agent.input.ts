@@ -40,6 +40,6 @@ export class UpdateAgentInput {
 
   @IsObject()
   @IsOptional()
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: object;
 }

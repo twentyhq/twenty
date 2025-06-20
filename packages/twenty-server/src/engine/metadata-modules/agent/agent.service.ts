@@ -43,7 +43,7 @@ export class AgentService {
       description?: string;
       prompt: string;
       modelId: string;
-      responseFormat: object;
+      responseFormat?: object;
     },
     workspaceId: string,
   ) {

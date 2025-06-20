@@ -26,7 +26,7 @@ export class CreateAgentInput {
   modelId: string;
 
   @IsObject()
-  @IsNotEmpty()
-  @Field(() => GraphQLJSON)
-  responseFormat: object;
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  responseFormat?: object;
 }

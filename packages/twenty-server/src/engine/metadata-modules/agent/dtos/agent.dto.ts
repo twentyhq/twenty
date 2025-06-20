@@ -32,7 +32,7 @@ export class AgentDTO {
   @Field(() => AIModelDto, { nullable: true })
   aiModel?: AIModelDto;
 
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSON, { nullable: true })
   responseFormat: object;
 
   @HideField()
