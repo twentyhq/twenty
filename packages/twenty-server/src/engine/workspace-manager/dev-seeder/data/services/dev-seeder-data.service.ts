@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
@@ -244,6 +245,16 @@ export class DevSeederDataService {
     await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
+          const objectMetadata = objectMetadataItems.find(
+            (item) =>
+              computeTableName(item.nameSingular, item.isCustom) ===
+              recordSeedsConfig.tableName,
+          );
+
+          if (!objectMetadata) {
+            continue;
+          }
+
           await this.seedRecords({
             entityManager,
             schemaName,
@@ -259,10 +270,14 @@ export class DevSeederDataService {
           workspaceId,
         });
 
+        // For now views/favorites are auto-created for custom
+        // objects but not for standard objects.
+        // This is probably something we want to fix in the future.
+
         const viewDefinitionsWithId = await prefillViews(
           entityManager,
           schemaName,
-          objectMetadataItems,
+          objectMetadataItems.filter((item) => !item.isCustom),
         );
 
         await prefillWorkspaceFavorites(
