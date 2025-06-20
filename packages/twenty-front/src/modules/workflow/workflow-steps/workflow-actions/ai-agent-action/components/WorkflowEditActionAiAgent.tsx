@@ -1,19 +1,17 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
-import { getHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { CodeEditor } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
+import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
 import { useAiModelOptions } from '../hooks/useAiModelOptions';
+import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -41,12 +39,18 @@ export const WorkflowEditActionAiAgent = ({
       agentId: action.settings.input.agentId,
     });
 
+  const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
+    action.settings.outputSchema,
+    actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
+    action,
+    actionOptions.readonly,
+  );
+
   const handleSave = useDebouncedCallback(async (formData) => {
     await updateAgent({
       name: formData.name,
       prompt: formData.prompt,
       modelId: formData.modelId,
-      responseFormat: formData.responseFormat,
     });
   }, 500);
 
@@ -56,25 +60,6 @@ export const WorkflowEditActionAiAgent = ({
     }
 
     setFormValues((prev) => ({ ...prev, [field]: value }));
-
-    if (field === 'responseFormat') {
-      try {
-        const parsedResponseFormat = JSON.parse(value);
-        const outputSchema = getHttpRequestOutputSchema(parsedResponseFormat);
-
-        if (isDefined(actionOptions.onActionUpdate)) {
-          actionOptions.onActionUpdate({
-            ...action,
-            settings: {
-              ...action.settings,
-              outputSchema,
-            },
-          });
-        }
-      } catch (error) {
-        // do nothing
-      }
-    }
 
     await handleSave({ ...formValues, [field]: value });
   };
@@ -117,24 +102,11 @@ export const WorkflowEditActionAiAgent = ({
           VariablePicker={WorkflowVariablePicker}
           multiline
         />
-        <div>
-          <InputLabel>Expected Response Structure (JSON)</InputLabel>
-          <CodeEditor
-            height={200}
-            value={formValues.responseFormat}
-            language="json"
-            onChange={(value) => handleFieldChange('responseFormat', value)}
-            options={{
-              readOnly: actionOptions.readonly,
-              domReadOnly: actionOptions.readonly,
-              minimap: { enabled: false },
-              scrollBeyondLastLine: false,
-              lineNumbers: 'on',
-              folding: true,
-              wordWrap: 'on',
-            }}
-          />
-        </div>
+        <WorkflowOutputSchemaBuilder
+          fields={outputFields}
+          onChange={handleOutputSchemaChange}
+          readonly={actionOptions.readonly}
+        />
       </WorkflowStepBody>
     </>
   );

@@ -70,10 +70,11 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
         );
       }
 
-      const executionResult = await this.agentExecutionService.executeAgent(
+      const executionResult = await this.agentExecutionService.executeAgent({
         agent,
         context,
-      );
+        schema: step.settings.outputSchema,
+      });
 
       await this.aiBillingService.calculateAndBillUsage(
         agent.modelId,

@@ -8,7 +8,6 @@ type AgentFormValues = {
   name: string;
   prompt: string;
   modelId: string;
-  responseFormat: string;
 };
 
 export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
@@ -16,7 +15,6 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
     name: '',
     prompt: '',
     modelId: '',
-    responseFormat: '',
   });
 
   const { loading } = useQuery(FIND_ONE_AGENT, {
@@ -29,7 +27,6 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
           name: agent.name,
           prompt: agent.prompt,
           modelId: agent.modelId,
-          responseFormat: JSON.stringify(agent.responseFormat, null, 2),
         });
       }
     },
@@ -42,20 +39,11 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
       return;
     }
 
-    const apiUpdates = { ...updates };
-    if (updates.responseFormat !== undefined) {
-      try {
-        apiUpdates.responseFormat = JSON.parse(updates.responseFormat);
-      } catch (error) {
-        delete apiUpdates.responseFormat;
-      }
-    }
-
     await updateAgent({
       variables: {
         input: {
           id: agentId,
-          ...apiUpdates,
+          ...updates,
         },
       },
     });

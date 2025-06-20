@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
-import { z } from 'zod';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
-import { inferZodSchemaFromExampleResponse } from './utils/infer-zod-schema-from-example-response.util';
+import { convertOutputSchemaToZod } from './utils/convert-output-schema-to-zod';
 
 export interface AgentExecutionResult {
   object: object;
@@ -67,30 +67,24 @@ export class AgentExecutionService {
     }
   }
 
-  async executeAgent(
-    agent: AgentEntity,
-    context: Record<string, unknown>,
-  ): Promise<AgentExecutionResult> {
+  async executeAgent({
+    agent,
+    context,
+    schema,
+  }: {
+    agent: AgentEntity;
+    context: Record<string, unknown>;
+    schema: OutputSchema;
+  }): Promise<AgentExecutionResult> {
     try {
       const provider = agent.aiModel.provider;
 
       await this.validateApiKey(provider);
 
-      let schema: z.ZodType;
-
-      try {
-        schema = inferZodSchemaFromExampleResponse(agent.responseFormat);
-      } catch (error) {
-        throw new AgentException(
-          `Invalid response format schema: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          AgentExceptionCode.AGENT_INVALID_PROMPT,
-        );
-      }
-
       const output = await generateObject({
         model: this.getModel(agent.modelId, provider),
         prompt: resolveInput(agent.prompt, context) as string,
-        schema,
+        schema: convertOutputSchemaToZod(schema),
       });
 
       return {

@@ -1,0 +1,56 @@
+import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { isDefined } from 'twenty-shared/utils';
+import { OutputSchemaField } from '../components/WorkflowOutputSchemaBuilder';
+
+export const useAiAgentOutputSchema = (
+  outputSchema?: object,
+  onActionUpdate?: (action: WorkflowAiAgentAction) => void,
+  action?: WorkflowAiAgentAction,
+  readonly?: boolean,
+) => {
+  const outputFields = Object.entries(outputSchema || {}).map(
+    ([name, field]) => {
+      return {
+        id: `field-${name}`,
+        name,
+        type: field.type,
+        description: undefined,
+        required: false,
+      };
+    },
+  );
+
+  const handleOutputSchemaChange = async (fields: OutputSchemaField[]) => {
+    if (readonly === true) {
+      return;
+    }
+
+    const newOutputSchema = fields.reduce((schema, field) => {
+      if (isDefined(field.name)) {
+        schema[field.name] = {
+          isLeaf: true,
+          type: field.type,
+          value: null,
+          icon: 'IconVariable',
+        };
+      }
+      return schema;
+    }, {} as BaseOutputSchema);
+
+    if (isDefined(onActionUpdate) && isDefined(action)) {
+      onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          outputSchema: newOutputSchema,
+        },
+      });
+    }
+  };
+
+  return {
+    handleOutputSchemaChange,
+    outputFields,
+  };
+};
