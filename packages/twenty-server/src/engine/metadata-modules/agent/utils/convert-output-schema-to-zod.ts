@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { camelCase } from 'src/utils/camel-case';
 
 export const convertOutputSchemaToZod = (
   schema: OutputSchema,
@@ -30,7 +31,7 @@ export const convertOutputSchemaToZod = (
           );
       }
 
-      shape[fieldName] = fieldSchema;
+      shape[camelCase(fieldName)] = fieldSchema;
     }
   }
 
