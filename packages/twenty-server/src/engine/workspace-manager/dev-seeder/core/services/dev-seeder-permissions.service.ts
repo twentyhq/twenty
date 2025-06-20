@@ -35,13 +35,13 @@ export class DevSeederPermissionsService {
     });
 
     let adminUserWorkspaceId: string | undefined;
-    let memberUserWorkspaceId: string | undefined;
+    let memberUserWorkspaceIds: string[] | undefined;
     let limitedUserWorkspaceId: string | undefined;
 
     if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
       limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
-      memberUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JONY;
+      memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
 
       // Create guest role only in this workspace
       const guestRole = await this.roleService.createGuestRole({
@@ -64,6 +64,7 @@ export class DevSeederPermissionsService {
       });
     } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
+      memberUserWorkspaceIds?.push(USER_WORKSPACE_DATA_SEED_IDS.JANE);
     }
 
     if (adminUserWorkspaceId) {
@@ -83,12 +84,14 @@ export class DevSeederPermissionsService {
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    if (memberUserWorkspaceId) {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        workspaceId,
-        userWorkspaceId: memberUserWorkspaceId,
-        roleId: memberRole.id,
-      });
+    if (memberUserWorkspaceIds) {
+      for (const memberUserWorkspaceId of memberUserWorkspaceIds) {
+        await this.userRoleService.assignRoleToUserWorkspace({
+          workspaceId,
+          userWorkspaceId: memberUserWorkspaceId,
+          roleId: memberRole.id,
+        });
+      }
     }
   }
 
