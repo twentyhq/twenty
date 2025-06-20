@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
+import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-price-event-to-database-price.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -15,7 +16,6 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
-import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-price-event-to-database-price.util';
 
 @Injectable()
 export class BillingWebhookPriceService {

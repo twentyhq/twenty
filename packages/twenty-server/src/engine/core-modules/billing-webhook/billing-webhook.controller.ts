@@ -15,6 +15,13 @@ import {
 import { Response } from 'express';
 import Stripe from 'stripe';
 
+import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
+import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
+import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
+import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import {
   BillingException,
   BillingExceptionCode,
@@ -23,19 +30,12 @@ import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billi
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-alert.service';
-import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-customer.service';
-import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
-import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-invoice.service';
-import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
-import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
-import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller()
 @UseFilters(BillingRestApiExceptionFilter)
-export class BillingController {
-  protected readonly logger = new Logger(BillingController.name);
+export class BillingWebhookController {
+  protected readonly logger = new Logger(BillingWebhookController.name);
 
   constructor(
     private readonly stripeWebhookService: StripeWebhookService,
