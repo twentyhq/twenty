@@ -112,14 +112,6 @@ export class DomainManagerService {
     };
   };
 
-  async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
-    return subdomain
-      ? await this.workspaceRepository.findOne({
-          where: { subdomain },
-        })
-      : await this.getDefaultWorkspace();
-  }
-
   isDefaultSubdomain(subdomain: string) {
     return subdomain === this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
   }

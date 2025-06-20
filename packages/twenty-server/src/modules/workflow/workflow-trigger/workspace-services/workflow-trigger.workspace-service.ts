@@ -63,10 +63,12 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId,
     payload,
     createdBy,
+    workflowRunId,
   }: {
     workflowVersionId: string;
     payload: object;
     createdBy: ActorMetadata;
+    workflowRunId?: string;
   }) {
     await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
       workflowVersionId,
@@ -75,6 +77,7 @@ export class WorkflowTriggerWorkspaceService {
 
     return this.workflowRunnerWorkspaceService.run({
       workspaceId: this.getWorkspaceId(),
+      workflowRunId,
       workflowVersionId,
       payload,
       source: createdBy,

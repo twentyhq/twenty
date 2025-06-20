@@ -113,7 +113,7 @@ export const workflowFormActionSettingsSchema =
 export const workflowHttpRequestActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      url: z.string().url(),
+      url: z.string(),
       method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
       headers: z.record(z.string()).optional(),
       body: z
@@ -206,6 +206,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema.extend({
   settings: z.object({
     objectType: z.string().optional(),
     outputSchema: z.object({}).passthrough(),
+    icon: z.string().optional(),
   }),
 });
 

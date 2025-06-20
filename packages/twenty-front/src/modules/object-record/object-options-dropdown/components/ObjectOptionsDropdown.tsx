@@ -7,7 +7,6 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
 import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -40,7 +39,6 @@ export const ObjectOptionsDropdown = ({
     <>
       <Dropdown
         dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
-        dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
         dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
         clickableComponent={
           <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>

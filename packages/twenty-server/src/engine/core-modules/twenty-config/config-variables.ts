@@ -631,6 +631,14 @@ export class ConfigVariables {
   CHROME_EXTENSION_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Page ID for Cal.com booking integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,
@@ -1034,7 +1042,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

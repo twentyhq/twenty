@@ -22,7 +22,7 @@ describe('calendarEventsResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(1);
+    expect(edges.length).toEqual(60);
 
     const calendarEvent = edges[0].node;
 
