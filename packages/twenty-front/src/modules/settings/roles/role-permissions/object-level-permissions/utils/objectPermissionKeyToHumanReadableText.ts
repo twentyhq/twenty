@@ -4,12 +4,12 @@ import { t } from '@lingui/core/macro';
 export const objectPermissionKeyToHumanReadable = (
   objectPermissionKey: SettingsRoleObjectPermissionKey,
 ) => {
-  const permissionAction = {
+  const permissionAction: Record<SettingsRoleObjectPermissionKey, string> = {
     canReadObjectRecords: t`see`,
     canUpdateObjectRecords: t`update`,
     canSoftDeleteObjectRecords: t`delete`,
     canDestroyObjectRecords: t`destroy`,
   };
 
-  return permissionAction[objectPermissionKey] ?? t`see`;
+  return permissionAction[objectPermissionKey];
 };
