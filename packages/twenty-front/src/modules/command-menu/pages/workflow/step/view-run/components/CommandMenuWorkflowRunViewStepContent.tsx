@@ -76,9 +76,10 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
 
   const shouldFocusNodeTab = getShouldFocusNodeTab({
     stepExecutionStatus,
-    isFormNode:
-      stepDefinition?.type === 'action' &&
-      stepDefinition.definition.type === 'FORM',
+    actionType:
+      stepDefinition?.type === 'action'
+        ? stepDefinition.definition.type
+        : undefined,
   });
   const isInputTabDisabled = getIsInputTabDisabled({
     stepExecutionStatus,

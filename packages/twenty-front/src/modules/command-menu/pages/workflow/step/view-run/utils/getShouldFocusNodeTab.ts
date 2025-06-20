@@ -1,11 +1,12 @@
+import { WorkflowActionType } from '@/workflow/types/Workflow';
 import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const getShouldFocusNodeTab = ({
   stepExecutionStatus,
-  isFormNode,
+  actionType,
 }: {
   stepExecutionStatus: WorkflowDiagramRunStatus;
-  isFormNode: boolean;
+  actionType: WorkflowActionType | undefined;
 }) => {
-  return isFormNode && stepExecutionStatus === 'running';
+  return actionType === 'FORM' && stepExecutionStatus === 'running';
 };
