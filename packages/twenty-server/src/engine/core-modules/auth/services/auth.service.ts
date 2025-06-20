@@ -779,7 +779,7 @@ export class AuthService {
         workspace: currentWorkspace,
         userData,
         authParams: {
-          provider: authProvider
+          provider: authProvider,
         },
         billingCheckoutSessionState,
       });
