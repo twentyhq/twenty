@@ -1,7 +1,6 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownMenuHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 
@@ -72,12 +71,9 @@ export const DropdownMenuInnerSelect = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{
-        scope: DropdownMenuHotkeyScope.InnerSelect,
-        customScopes: {
-          commandMenu: false,
-          commandMenuOpen: false,
-        },
+      globalHotkeysConfig={{
+        enableGlobalHotkeysWithModifiers: false,
+        enableGlobalHotkeysConflictingWithKeyboard: false,
       }}
       dropdownId={dropdownId}
       dropdownOffset={{

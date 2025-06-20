@@ -787,6 +787,11 @@ msgstr "自动为人创建联系人。"
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "接收或发送电子邮件时自动创建人员记录"
 
+#. js-lingui-id: csDS2L
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Available"
+msgstr ""
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -794,6 +799,7 @@ msgid "Average"
 msgstr "平均"
 
 #. js-lingui-id: iH8pgl
+#: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 msgid "Back"
 msgstr ""
@@ -829,6 +835,16 @@ msgstr "拦截列表"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "预约电话"
+
+#. js-lingui-id: d/yr35
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book onboarding"
+msgstr ""
+
+#. js-lingui-id: 2X0NCp
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book your onboarding"
+msgstr ""
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -1077,6 +1093,11 @@ msgstr ""
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
+msgstr ""
+
+#. js-lingui-id: Icd+JO
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Command menu icon"
 msgstr ""
 
 #. js-lingui-id: NM9bMd
@@ -2428,6 +2449,8 @@ msgid "Filters"
 msgstr "过滤器"
 
 #. js-lingui-id: JmZ/+d
+#: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCallDecision.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr ""
@@ -3812,6 +3835,7 @@ msgid "Number type"
 msgstr "数字类型"
 
 #. js-lingui-id: W0i24j
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -3873,6 +3897,11 @@ msgstr "在以下中打开"
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
+msgstr ""
+
+#. js-lingui-id: avIMon
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
@@ -3939,6 +3968,11 @@ msgstr "其他"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "其他工作区"
+
+#. js-lingui-id: p5ufK6
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Our team can help you set up your workspace to match your specific needs and workflows."
+msgstr ""
 
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -4043,6 +4077,11 @@ msgstr ""
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "电话号码已复制到剪贴板"
+
+#. js-lingui-id: FdlpPK
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+msgid "Pick a {nameSingular} record"
+msgstr ""
 
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4643,6 +4682,11 @@ msgstr "查看工作流"
 msgid "See workflows"
 msgstr "查看工作流"
 
+#. js-lingui-id: 5S/Gqz
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Select a record then open the ⌘K to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4893,6 +4937,7 @@ msgstr "单数和复数名称必须不同"
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "跳过"
 
@@ -5190,6 +5235,11 @@ msgstr "此字段的描述"
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "与您的账户关联的电子邮件"
+
+#. js-lingui-id: diO3fm
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5768,6 +5818,11 @@ msgstr "密钥何时会被禁用"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #~ msgid "Will be saved as:"
 #~ msgstr ""
+
+#. js-lingui-id: e9sagb
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Will return one {objectType} to the next step of this workflow"
+msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx

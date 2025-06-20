@@ -15,6 +15,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
+import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
@@ -40,6 +41,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DevSeederMetadataService,
     DevSeederPermissionsService,
     DevSeederDataService,
+    TimelineActivitySeederService,
   ],
 })
 export class DevSeederModule {}

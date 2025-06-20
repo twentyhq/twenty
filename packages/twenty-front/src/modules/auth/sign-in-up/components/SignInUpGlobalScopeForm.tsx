@@ -260,7 +260,9 @@ export const SignInUpGlobalScopeForm = () => {
                 />
               )}
               <MainButton
-                disabled={isRequestingCaptchaToken}
+                disabled={
+                  isRequestingCaptchaToken || form.formState.isSubmitting
+                }
                 title={
                   signInUpStep === SignInUpStep.Password
                     ? signInUpMode === SignInUpMode.SignIn

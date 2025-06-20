@@ -69,7 +69,6 @@ export const SettingsSecuritySSORowDropdownMenu = ({
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
-      dropdownHotkeyScope={{ scope: dropdownId }}
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }

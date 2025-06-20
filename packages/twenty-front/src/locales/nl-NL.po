@@ -787,6 +787,11 @@ msgstr "Automatisch contacten aanmaken voor mensen."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Automatisch personenrecords aanmaken bij het ontvangen of verzenden van e-mails"
 
+#. js-lingui-id: csDS2L
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Available"
+msgstr ""
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -794,6 +799,7 @@ msgid "Average"
 msgstr "Gemiddeld"
 
 #. js-lingui-id: iH8pgl
+#: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 msgid "Back"
 msgstr ""
@@ -829,6 +835,16 @@ msgstr "Blokkeringslijst"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "Boek een gesprek"
+
+#. js-lingui-id: d/yr35
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book onboarding"
+msgstr ""
+
+#. js-lingui-id: 2X0NCp
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book your onboarding"
+msgstr ""
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -1077,6 +1093,11 @@ msgstr ""
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
+msgstr ""
+
+#. js-lingui-id: Icd+JO
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Command menu icon"
 msgstr ""
 
 #. js-lingui-id: NM9bMd
@@ -2428,6 +2449,8 @@ msgid "Filters"
 msgstr "Filters"
 
 #. js-lingui-id: JmZ/+d
+#: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCallDecision.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr ""
@@ -3812,6 +3835,7 @@ msgid "Number type"
 msgstr "Nummer type"
 
 #. js-lingui-id: W0i24j
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -3873,6 +3897,11 @@ msgstr "Openen met"
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
+msgstr ""
+
+#. js-lingui-id: avIMon
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
@@ -3939,6 +3968,11 @@ msgstr "Overige"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "Andere werkruimtes"
+
+#. js-lingui-id: p5ufK6
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Our team can help you set up your workspace to match your specific needs and workflows."
+msgstr ""
 
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -4043,6 +4077,11 @@ msgstr ""
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "Telefoonnummer gekopieerd naar klembord"
+
+#. js-lingui-id: FdlpPK
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+msgid "Pick a {nameSingular} record"
+msgstr ""
 
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4643,6 +4682,11 @@ msgstr "Zie workflow"
 msgid "See workflows"
 msgstr "Bekijk workflows"
 
+#. js-lingui-id: 5S/Gqz
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Select a record then open the ⌘K to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -4893,6 +4937,7 @@ msgstr "Enkelvoudige en meervoudige namen moeten verschillend zijn"
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Overslaan"
 
@@ -5190,6 +5235,11 @@ msgstr "De beschrijving van dit veld"
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Het e-mailadres geassocieerd met uw account"
+
+#. js-lingui-id: diO3fm
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5768,6 +5818,11 @@ msgstr "Wanneer de sleutel wordt uitgeschakeld"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #~ msgid "Will be saved as:"
 #~ msgstr ""
+
+#. js-lingui-id: e9sagb
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Will return one {objectType} to the next step of this workflow"
+msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx

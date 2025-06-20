@@ -46,7 +46,6 @@ export const ConfigVariableFilterDropdown = ({
         />
       }
       dropdownId="env-var-options-dropdown"
-      dropdownHotkeyScope={{ scope: 'env-var-options' }}
       dropdownOffset={{ x: 0, y: 10 }}
       dropdownComponents={
         <ConfigVariableOptionsDropdownContent

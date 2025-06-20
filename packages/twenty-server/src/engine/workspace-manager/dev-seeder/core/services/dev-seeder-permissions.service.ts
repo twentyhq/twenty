@@ -11,8 +11,8 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
-  SEED_ACME_WORKSPACE_ID,
   SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 @Injectable()
@@ -62,7 +62,7 @@ export class DevSeederPermissionsService {
         userWorkspaceId: limitedUserWorkspaceId,
         roleId: limitedRole.id,
       });
-    } else if (workspaceId === SEED_ACME_WORKSPACE_ID) {
+    } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
     }
 

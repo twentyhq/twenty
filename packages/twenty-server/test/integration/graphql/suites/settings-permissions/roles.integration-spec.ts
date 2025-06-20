@@ -107,10 +107,10 @@ describe('roles permissions', () => {
             label: 'Object-restricted',
             workspaceMembers: [
               {
-                id: '20202020-0687-4c41-b707-ed1bfca972a7',
+                id: '20202020-463f-435b-828c-107e007a2711',
                 name: {
-                  firstName: 'Tim',
-                  lastName: 'Apple',
+                  firstName: 'Jane',
+                  lastName: 'Austen',
                 },
               },
             ],
@@ -135,6 +135,18 @@ describe('roles permissions', () => {
                 name: {
                   firstName: 'Jony',
                   lastName: 'Ive',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Object-restricted',
+            workspaceMembers: [
+              {
+                id: '20202020-0687-4c41-b707-ed1bfca972a7',
+                name: {
+                  firstName: 'Tim',
+                  lastName: 'Apple',
                 },
               },
             ],

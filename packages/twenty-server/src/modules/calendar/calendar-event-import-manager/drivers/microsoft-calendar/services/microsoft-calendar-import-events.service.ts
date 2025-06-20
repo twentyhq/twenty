@@ -4,7 +4,7 @@ import { Event } from '@microsoft/microsoft-graph-types';
 
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
 import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -20,7 +20,7 @@ export class MicrosoftCalendarImportEventsService {
       'provider' | 'refreshToken' | 'id'
     >,
     changedEventIds: string[],
-  ): Promise<CalendarEventWithParticipants[]> {
+  ): Promise<FetchedCalendarEvent[]> {
     try {
       const microsoftClient =
         await this.microsoftOAuth2ClientManagerService.getOAuth2Client(

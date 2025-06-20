@@ -10,9 +10,11 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -23,8 +25,6 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
       useRecoilComponentCallbackStateV2(
         selectedOperandInDropdownComponentState,
       );
-
-    const setHotkeyScope = useSetHotkeyScope();
 
     const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
       currentRecordFiltersComponentState,
@@ -48,6 +48,8 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
     const { upsertObjectFilterDropdownCurrentFilter } =
       useUpsertObjectFilterDropdownCurrentFilter();
 
+    const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
     const initializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
       useRecoilCallback(
         ({ set, snapshot }) =>
@@ -66,7 +68,17 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
             );
 
             if (filterType === 'RELATION' || filterType === 'SELECT') {
-              setHotkeyScope(SingleRecordPickerHotkeyScope.SingleRecordPicker);
+              pushFocusItemToFocusStack({
+                focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
+                component: {
+                  type: FocusComponentType.DROPDOWN,
+                  instanceId: fieldMetadataItem.id,
+                },
+                hotkeyScope: {
+                  scope: DropdownHotkeyScope.Dropdown,
+                },
+                memoizeKey: fieldMetadataItem.id,
+              });
             }
 
             set(objectFilterDropdownFilterIsSelectedCallbackState, true);
@@ -130,11 +142,11 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
           },
         [
           fieldMetadataItemUsedInDropdownCallbackState,
+          currentRecordFiltersCallbackState,
+          objectFilterDropdownFilterIsSelectedCallbackState,
+          pushFocusItemToFocusStack,
           objectFilterDropdownCurrentRecordFilterCallbackState,
           selectedOperandInDropdownCallbackState,
-          setHotkeyScope,
-          objectFilterDropdownFilterIsSelectedCallbackState,
-          currentRecordFiltersCallbackState,
           upsertObjectFilterDropdownCurrentFilter,
         ],
       );

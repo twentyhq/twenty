@@ -25,7 +25,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
   recordFilterId?: string;
 };
 
@@ -113,7 +113,10 @@ export const ObjectFilterDropdownFilterInput = ({
           <>
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
-            <ObjectFilterDropdownRecordSelect recordFilterId={recordFilterId} />
+            <ObjectFilterDropdownRecordSelect
+              recordFilterId={recordFilterId}
+              dropdownId={filterDropdownId}
+            />
           </>
         )}
         {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}
@@ -123,7 +126,7 @@ export const ObjectFilterDropdownFilterInput = ({
           <>
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
-            <ObjectFilterDropdownOptionSelect />
+            <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
           </>
         )}
         {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}

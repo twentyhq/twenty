@@ -11,6 +11,7 @@ import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldM
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -21,7 +22,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -256,7 +256,7 @@ export const FormMultiSelectFieldInput = ({
                   selectableListComponentInstanceId={
                     SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
                   }
-                  hotkeyScope={hotkeyScope}
+                  focusId={hotkeyScope}
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}

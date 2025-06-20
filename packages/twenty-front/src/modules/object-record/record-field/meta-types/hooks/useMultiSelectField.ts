@@ -39,6 +39,7 @@ export const useMultiSelectField = () => {
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
+    recordId,
     fieldDefinition,
     persistField,
     fieldValues: fieldMultiSelectValues,
