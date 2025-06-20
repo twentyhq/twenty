@@ -226,7 +226,7 @@ export class WorkspaceMigrationRunnerService {
       if (error.code === '42P07') {
         return;
       }
-
+      // TODO: Remove this once we have re-indexed all our relations
       if (error.message.includes('already exists')) {
         this.logger.error(
           `Allowed error creating index ${index.name} on table ${schemaName}.${tableName}: ${error.message} due to index relations`,
