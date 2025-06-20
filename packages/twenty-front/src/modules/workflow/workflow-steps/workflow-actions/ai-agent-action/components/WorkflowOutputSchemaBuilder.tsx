@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconPlus, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { v4 } from 'uuid';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 
 type WorkflowOutputSchemaBuilderProps = {
@@ -112,7 +113,7 @@ export const WorkflowOutputSchemaBuilder = ({
 
   const addField = () => {
     const newField: OutputSchemaField = {
-      id: crypto.randomUUID(),
+      id: v4(),
       name: '',
       type: 'TEXT' as WorkflowOutputFieldType,
     };
@@ -148,7 +149,7 @@ export const WorkflowOutputSchemaBuilder = ({
       {fields.length > 0 && (
         <StyledFieldsContainer>
           {fields.map((field, index) => (
-            <StyledOutputSchemaFieldContainer key={index}>
+            <StyledOutputSchemaFieldContainer key={field.id}>
               <StyledSettingsHeader>
                 <StyledTitleContainer>
                   <span>Output Field {index + 1}</span>

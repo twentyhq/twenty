@@ -1,7 +1,10 @@
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { OutputSchemaField } from '../components/WorkflowOutputSchemaBuilder';
+import { useDebouncedCallback } from 'use-debounce';
+import { v4 } from 'uuid';
 
 export const useAiAgentOutputSchema = (
   outputSchema?: object,
@@ -9,44 +12,50 @@ export const useAiAgentOutputSchema = (
   action?: WorkflowAiAgentAction,
   readonly?: boolean,
 ) => {
-  const outputFields = Object.entries(outputSchema || {}).map(
-    ([name, field]) => {
-      return {
-        id: `field-${name}`,
-        name,
-        type: field.type,
-        description: undefined,
-        required: false,
-      };
+  const [outputFields, setOutputFields] = useState<OutputSchemaField[]>(
+    Object.entries(outputSchema || {}).map(([name, field]) => ({
+      id: v4(),
+      name,
+      type: field.type,
+      description: undefined,
+      required: false,
+    })),
+  );
+
+  const debouncedSave = useDebouncedCallback(
+    async (fields: OutputSchemaField[]) => {
+      if (readonly === true) {
+        return;
+      }
+
+      const newOutputSchema = fields.reduce((schema, field) => {
+        if (isDefined(field.name)) {
+          schema[field.name] = {
+            isLeaf: true,
+            type: field.type,
+            value: null,
+            icon: 'IconVariable',
+          };
+        }
+        return schema;
+      }, {} as BaseOutputSchema);
+
+      if (isDefined(onActionUpdate) && isDefined(action)) {
+        onActionUpdate({
+          ...action,
+          settings: {
+            ...action.settings,
+            outputSchema: newOutputSchema,
+          },
+        });
+      }
     },
+    500,
   );
 
   const handleOutputSchemaChange = async (fields: OutputSchemaField[]) => {
-    if (readonly === true) {
-      return;
-    }
-
-    const newOutputSchema = fields.reduce((schema, field) => {
-      if (isDefined(field.name)) {
-        schema[field.name] = {
-          isLeaf: true,
-          type: field.type,
-          value: null,
-          icon: 'IconVariable',
-        };
-      }
-      return schema;
-    }, {} as BaseOutputSchema);
-
-    if (isDefined(onActionUpdate) && isDefined(action)) {
-      onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          outputSchema: newOutputSchema,
-        },
-      });
-    }
+    setOutputFields(fields);
+    await debouncedSave(fields);
   };
 
   return {
