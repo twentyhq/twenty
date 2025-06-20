@@ -6,4 +6,5 @@ export enum FocusComponentType {
   PAGE = 'page',
   RECORD_TABLE = 'record-table',
   RECORD_TABLE_ROW = 'record-table-row',
+  RECORD_TABLE_CELL = 'record-table-cell',
 }

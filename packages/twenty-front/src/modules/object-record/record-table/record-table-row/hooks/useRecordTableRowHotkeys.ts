@@ -5,10 +5,13 @@ import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hoo
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -29,6 +32,10 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
   );
 
   const setFocusPosition = useSetRecordTableFocusPosition();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const { recordTableId } = useRecordTableContextOrThrow();
 
   const handleSelectRow = () => {
     setCurrentRowSelected({
@@ -55,13 +62,29 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const handleEnterRow = () => {
     setIsRowFocusActive(false);
-    setFocusPosition({
+    const cellPosition = {
       row: rowIndex,
       column: 0,
+    };
+    setFocusPosition(cellPosition);
+
+    const cellFocusId = getRecordTableCellFocusId({
+      recordTableId,
+      cellPosition,
+    });
+
+    pushFocusItemToFocusStack({
+      focusId: cellFocusId,
+      component: {
+        type: FocusComponentType.RECORD_TABLE_CELL,
+        instanceId: cellFocusId,
+      },
+      hotkeyScope: {
+        scope: TableHotkeyScope.TableFocus,
+      },
+      memoizeKey: cellFocusId,
     });
   };
-
-  const { recordTableId } = useRecordTableContextOrThrow();
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId,
