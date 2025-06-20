@@ -24,7 +24,7 @@ export class RemoveUselessServerlessFunctionColumn1748942397538
 
       for (const typeName of potentialTypeNameToMigrate) {
         const selectResult = await queryRunner.query(
-          `SELECT 1 FROM information_schema.types WHERE type_schema = 'metadata' AND type_name = '${typeName}';`,
+          `SELECT true FROM pg_type WHERE typname = '${typeName}' AND typnamespace = 'metadata'::regnamespace`,
         );
         const typeNameExists = selectResult && selectResult.length > 0;
 
