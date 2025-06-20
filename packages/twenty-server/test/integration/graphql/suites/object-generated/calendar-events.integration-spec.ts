@@ -31,6 +31,8 @@ describe('calendarEventsResolver (e2e)', () => {
       endsAt: expect.any(String),
       startsAt: expect.any(String),
       updatedAt: expect.any(String),
+      title: expect.any(String),
+      description: expect.any(String),
     });
   });
 
@@ -51,6 +53,8 @@ describe('calendarEventsResolver (e2e)', () => {
       endsAt: expect.any(String),
       startsAt: expect.any(String),
       updatedAt: expect.any(String),
+      title: expect.any(String),
+      description: expect.any(String),
     });
   });
 });
