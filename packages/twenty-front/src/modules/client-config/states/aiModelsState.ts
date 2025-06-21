@@ -1,7 +1,7 @@
 import { createState } from 'twenty-ui/utilities';
-import { AiModelConfig } from '~/generated/graphql';
+import { ClientAiModelConfig } from '~/generated/graphql';
 
-export const aiModelsState = createState<AiModelConfig[]>({
+export const aiModelsState = createState<ClientAiModelConfig[]>({
   key: 'aiModelsState',
   defaultValue: [],
 });

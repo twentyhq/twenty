@@ -30,15 +30,6 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export type AiModelConfig = {
-  __typename?: 'AIModelConfig';
-  displayName: Scalars['String']['output'];
-  inputCostPer1kTokensInCredits: Scalars['Float']['output'];
-  modelId: Scalars['String']['output'];
-  outputCostPer1kTokensInCredits: Scalars['Float']['output'];
-  provider: ModelProvider;
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -346,9 +337,18 @@ export type CheckUserExistOutput = {
   isEmailVerified: Scalars['Boolean']['output'];
 };
 
+export type ClientAiModelConfig = {
+  __typename?: 'ClientAIModelConfig';
+  displayName: Scalars['String']['output'];
+  inputCostPer1kTokensInCredits: Scalars['Float']['output'];
+  modelId: Scalars['String']['output'];
+  outputCostPer1kTokensInCredits: Scalars['Float']['output'];
+  provider: ModelProvider;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
-  aiModels: Array<AiModelConfig>;
+  aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
