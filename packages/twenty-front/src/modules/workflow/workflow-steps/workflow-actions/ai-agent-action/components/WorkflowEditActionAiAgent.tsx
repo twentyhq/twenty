@@ -6,6 +6,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { t } from '@lingui/core/macro';
 import { useIcons } from 'twenty-ui/display';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
@@ -68,7 +69,7 @@ export const WorkflowEditActionAiAgent = ({
       <WorkflowStepBody>
         <Select
           dropdownId="select-model"
-          label="AI Model"
+          label={t`AI Model`}
           options={modelOptions}
           value={formValues.modelId}
           onChange={(value) => handleFieldChange('modelId', value)}
@@ -76,8 +77,8 @@ export const WorkflowEditActionAiAgent = ({
         />
         <FormTextFieldInput
           key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
-          label="Instructions for AI"
-          placeholder="Describe what you want the AI to do..."
+          label={t`Instructions for AI`}
+          placeholder={t`Describe what you want the AI to do...`}
           readonly={actionOptions.readonly}
           defaultValue={formValues.prompt}
           onChange={(value) => handleFieldChange('prompt', value)}

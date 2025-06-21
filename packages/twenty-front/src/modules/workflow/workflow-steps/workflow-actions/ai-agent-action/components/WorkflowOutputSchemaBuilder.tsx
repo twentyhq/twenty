@@ -133,7 +133,7 @@ export const WorkflowOutputSchemaBuilder = ({
 
   return (
     <StyledOutputSchemaContainer>
-      <InputLabel>AI Response Schema</InputLabel>
+      <InputLabel>{t`AI Response Schema`}</InputLabel>
 
       {fields.length === 0 && (
         <StyledOutputSchemaFieldContainer>
@@ -147,58 +147,66 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {fields.length > 0 && (
         <StyledFieldsContainer>
-          {fields.map((field, index) => (
-            <StyledOutputSchemaFieldContainer key={field.id}>
-              <StyledSettingsHeader>
-                <StyledTitleContainer>
-                  <span>Output Field {index + 1}</span>
-                </StyledTitleContainer>
-                <StyledCloseButtonContainer>
-                  {!readonly && (
-                    <LightIconButton
-                      testId="close-button"
-                      Icon={IconTrash}
-                      size="small"
-                      accent="secondary"
-                      onClick={() => removeField(field.id)}
+          {fields.map((field, index) => {
+            const fieldNumber = index + 1;
+
+            return (
+              <StyledOutputSchemaFieldContainer key={field.id}>
+                <StyledSettingsHeader>
+                  <StyledTitleContainer>
+                    <span>{t`Output Field ${fieldNumber}`}</span>
+                  </StyledTitleContainer>
+                  <StyledCloseButtonContainer>
+                    {!readonly && (
+                      <LightIconButton
+                        testId="close-button"
+                        Icon={IconTrash}
+                        size="small"
+                        accent="secondary"
+                        onClick={() => removeField(field.id)}
+                      />
+                    )}
+                  </StyledCloseButtonContainer>
+                </StyledSettingsHeader>
+                <StyledSettingsContent>
+                  <FormFieldInputContainer>
+                    <FormTextFieldInput
+                      label={t`Field Name`}
+                      placeholder={t`e.g., summary, status, count`}
+                      defaultValue={field.name}
+                      onChange={(value) =>
+                        updateField(field.id, { name: value })
+                      }
+                      readonly={readonly}
                     />
-                  )}
-                </StyledCloseButtonContainer>
-              </StyledSettingsHeader>
-              <StyledSettingsContent>
-                <FormFieldInputContainer>
-                  <FormTextFieldInput
-                    label="Field Name"
-                    placeholder="e.g., summary, status, count"
-                    defaultValue={field.name}
-                    onChange={(value) => updateField(field.id, { name: value })}
-                    readonly={readonly}
-                  />
-                </FormFieldInputContainer>
+                  </FormFieldInputContainer>
 
-                <FormFieldInputContainer>
-                  <WorkflowOutputFieldTypeSelector
-                    onChange={(value) => updateField(field.id, { type: value })}
-                    value={field.type}
-                    disabled={readonly}
-                    dropdownId={`output-field-type-selector-${field.id}`}
-                  />
-                </FormFieldInputContainer>
+                  <FormFieldInputContainer>
+                    <WorkflowOutputFieldTypeSelector
+                      onChange={(value) =>
+                        updateField(field.id, { type: value })
+                      }
+                      value={field.type}
+                      disabled={readonly}
+                      dropdownId={`output-field-type-selector-${field.id}`}
+                    />
+                  </FormFieldInputContainer>
 
-                <FormFieldInputContainer>
-                  <FormTextFieldInput
-                    label="Description"
-                    placeholder="Brief explanation of this output field"
-                    defaultValue={field.description}
-                    onChange={(value) =>
-                      updateField(field.id, { description: value })
-                    }
-                    readonly={readonly}
-                  />
-                </FormFieldInputContainer>
-              </StyledSettingsContent>
-            </StyledOutputSchemaFieldContainer>
-          ))}
+                  <FormFieldInputContainer>
+                    <FormTextFieldInput
+                      label={t`Description`}
+                      placeholder={t`Brief explanation of this output field`}
+                      defaultValue={field.description}
+                      onChange={(value) =>
+                        updateField(field.id, { description: value })
+                      }
+                      readonly={readonly}
+                    />
+                  </FormFieldInputContainer>
+                </StyledSettingsContent>
+              </StyledOutputSchemaFieldContainer>
+            );
+          })}
         </StyledFieldsContainer>
       )}
 
