@@ -698,7 +698,7 @@ export class AuthService {
       !workspaceId &&
       !workspaceInviteHash &&
       action === 'list-available-workspaces' &&
-      availableWorkspacesCount !== 0
+      availableWorkspacesCount > 1
     ) {
       const user =
         existingUser ??
@@ -779,7 +779,7 @@ export class AuthService {
         workspace: currentWorkspace,
         userData,
         authParams: {
-          provider: AuthProviderEnum.Google,
+          provider: authProvider,
         },
         billingCheckoutSessionState,
       });

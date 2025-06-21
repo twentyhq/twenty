@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
-import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
+import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
+
 describe('transformStripeSubscriptionEventToDatabaseCustomer', () => {
   const mockWorkspaceId = 'workspace_123';
   const mockTimestamp = 1672531200; // 2023-01-01 00:00:00 UTC

@@ -28,13 +28,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-alert.service';
-import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-customer.service';
-import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
-import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-invoice.service';
-import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
-import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
-import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -67,12 +60,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       'core',
     ),
   ],
-  controllers: [BillingController],
   providers: [
     BillingSubscriptionService,
     BillingSubscriptionItemService,
-    BillingWebhookSubscriptionService,
-    BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
     BillingProductService,
     BillingResolver,
@@ -80,11 +70,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingWorkspaceMemberListener,
     BillingFeatureUsedListener,
     BillingService,
-    BillingWebhookProductService,
-    BillingWebhookPriceService,
-    BillingWebhookAlertService,
-    BillingWebhookInvoiceService,
-    BillingWebhookCustomerService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingUpdateSubscriptionPriceCommand,

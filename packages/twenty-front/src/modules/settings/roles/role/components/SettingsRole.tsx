@@ -57,7 +57,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const isPermissionsV2Enabled = useIsFeatureEnabled(
@@ -95,14 +95,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const tabs = [
     {
-      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
-      title: t`Assignment`,
-      Icon: IconUserPlus,
-    },
-    {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
       Icon: IconLockOpen,
+    },
+    {
+      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
+      title: t`Assignment`,
+      Icon: IconUserPlus,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS,
@@ -135,7 +135,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     if (isCreateMode) {
       const roleId = v4();
 
-      createRole({
+      const { data } = await createRole({
         variables: {
           createRoleInput: {
             id: roleId,
@@ -152,60 +152,63 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               settingsDraftRole.canDestroyAllObjectRecords,
           },
         },
-        onCompleted: async (data) => {
-          if (isDefined(dirtyFields.workspaceMembers)) {
-            await addWorkspaceMembersToRole({
+        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+      });
+
+      if (!data) {
+        return;
+      }
+
+      if (isDefined(dirtyFields.workspaceMembers)) {
+        await addWorkspaceMembersToRole({
+          roleId: data.createOneRole.id,
+          workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
+            (member) => member.id,
+          ),
+        });
+      }
+
+      if (isDefined(dirtyFields.settingPermissions)) {
+        await upsertSettingPermissions({
+          variables: {
+            upsertSettingPermissionsInput: {
               roleId: data.createOneRole.id,
-              workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
-                (member) => member.id,
-              ),
-            });
-          }
+              settingPermissionKeys:
+                settingsDraftRole.settingPermissions?.map(
+                  (settingPermission) => settingPermission.setting,
+                ) ?? [],
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+      }
 
-          if (isDefined(dirtyFields.settingPermissions)) {
-            await upsertSettingPermissions({
-              variables: {
-                upsertSettingPermissionsInput: {
-                  roleId: data.createOneRole.id,
-                  settingPermissionKeys:
-                    settingsDraftRole.settingPermissions?.map(
-                      (settingPermission) => settingPermission.setting,
-                    ) ?? [],
-                },
-              },
-              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-            });
-          }
+      if (isDefined(dirtyFields.objectPermissions)) {
+        await upsertObjectPermissions({
+          variables: {
+            upsertObjectPermissionsInput: {
+              roleId: data.createOneRole.id,
+              objectPermissions:
+                settingsDraftRole.objectPermissions?.map(
+                  (objectPermission) => ({
+                    objectMetadataId: objectPermission.objectMetadataId,
+                    canReadObjectRecords: objectPermission.canReadObjectRecords,
+                    canUpdateObjectRecords:
+                      objectPermission.canUpdateObjectRecords,
+                    canSoftDeleteObjectRecords:
+                      objectPermission.canSoftDeleteObjectRecords,
+                    canDestroyObjectRecords:
+                      objectPermission.canDestroyObjectRecords,
+                  }),
+                ) ?? [],
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+      }
 
-          if (isDefined(dirtyFields.objectPermissions)) {
-            await upsertObjectPermissions({
-              variables: {
-                upsertObjectPermissionsInput: {
-                  roleId: data.createOneRole.id,
-                  objectPermissions:
-                    settingsDraftRole.objectPermissions?.map(
-                      (objectPermission) => ({
-                        objectMetadataId: objectPermission.objectMetadataId,
-                        canReadObjectRecords:
-                          objectPermission.canReadObjectRecords,
-                        canUpdateObjectRecords:
-                          objectPermission.canUpdateObjectRecords,
-                        canSoftDeleteObjectRecords:
-                          objectPermission.canSoftDeleteObjectRecords,
-                        canDestroyObjectRecords:
-                          objectPermission.canDestroyObjectRecords,
-                      }),
-                    ) ?? [],
-                },
-              },
-              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-            });
-          }
-
-          navigateSettings(SettingsPath.RoleDetail, {
-            roleId: data.createOneRole.id,
-          });
-        },
+      navigateSettings(SettingsPath.RoleDetail, {
+        roleId: data.createOneRole.id,
       });
     } else {
       if (isDefined(dirtyFields.settingPermissions)) {
@@ -244,6 +247,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               },
             },
           },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
         });
       }
 
@@ -302,7 +306,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         <TabList
           tabs={tabs}
           className="tab-list"
-          componentInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+          componentInstanceId={
+            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
+          }
         />
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT && (
           <SettingsRoleAssignment roleId={roleId} isCreateMode={isCreateMode} />

@@ -1,6 +1,7 @@
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 describe('getTriggerDefaultDefinition', () => {
   it('throws if the activeNonSystemObjectMetadataItems list is empty', () => {
@@ -94,6 +95,7 @@ describe('getTriggerDefaultDefinition', () => {
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},
+        icon: COMMAND_MENU_DEFAULT_ICON,
       },
     });
   });

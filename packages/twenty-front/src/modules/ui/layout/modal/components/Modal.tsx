@@ -195,6 +195,7 @@ export type ModalProps = React.PropsWithChildren & {
   onEnter?: () => void;
   modalVariant?: ModalVariants;
   dataGloballyPreventClickOutside?: boolean;
+  shouldCloseModalOnClickOutsideOrEscape?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -217,6 +218,7 @@ export const Modal = ({
   onClose,
   modalVariant = 'primary',
   dataGloballyPreventClickOutside = false,
+  shouldCloseModalOnClickOutsideOrEscape = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -236,7 +238,7 @@ export const Modal = ({
 
   const handleClose = () => {
     onClose?.();
-    closeModal(modalId);
+    if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalId);
   };
 
   return (

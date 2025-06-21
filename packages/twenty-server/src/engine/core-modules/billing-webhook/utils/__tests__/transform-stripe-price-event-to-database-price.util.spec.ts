@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
+import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-price-event-to-database-price.util';
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
 import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-price-event-to-database-price.util';
 
 describe('transformStripePriceEventToDatabasePrice', () => {
   const createMockPriceData = (overrides = {}) => ({

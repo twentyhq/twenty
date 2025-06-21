@@ -22,7 +22,7 @@ describe('messagesResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(3);
+    expect(edges.length).toEqual(60);
 
     const message1 = edges[0].node;
 

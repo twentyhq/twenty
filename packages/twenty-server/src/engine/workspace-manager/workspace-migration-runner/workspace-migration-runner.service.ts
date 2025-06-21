@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { QueryRunner, Table, TableColumn, TableIndex } from 'typeorm';
+import { QueryRunner, Table, TableColumn } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -208,18 +208,16 @@ export class WorkspaceMigrationRunnerService {
         const quotedColumns = index.columns.map((column) => `"${column}"`);
 
         await queryRunner.query(`
-          CREATE INDEX "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
+          CREATE INDEX IF NOT EXISTS "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
         `);
       } else {
-        await queryRunner.createIndex(
-          `${schemaName}.${tableName}`,
-          new TableIndex({
-            name: index.name,
-            columnNames: index.columns,
-            isUnique: index.isUnique,
-            where: index.where ?? undefined,
-          }),
-        );
+        const quotedColumns = index.columns.map((column) => `"${column}"`);
+        const isUnique = index.isUnique ? 'UNIQUE' : '';
+        const whereClause = index.where ? `WHERE ${index.where}` : '';
+
+        await queryRunner.query(`
+          CREATE ${isUnique} INDEX IF NOT EXISTS "${index.name}" ON "${schemaName}"."${tableName}" (${quotedColumns.join(', ')}) ${whereClause}
+        `);
       }
     } catch (error) {
       // Ignore error if index already exists
