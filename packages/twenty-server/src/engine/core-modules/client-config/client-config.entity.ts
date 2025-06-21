@@ -20,7 +20,7 @@ registerEnumType(ModelProvider, {
 });
 
 @ObjectType()
-class AIModelConfig {
+export class ClientAIModelConfig {
   @Field(() => String)
   modelId: ModelId;
 
@@ -114,8 +114,8 @@ export class ClientConfig {
   @Field(() => Billing, { nullable: false })
   billing: Billing;
 
-  @Field(() => [AIModelConfig])
-  aiModels: AIModelConfig[];
+  @Field(() => [ClientAIModelConfig])
+  aiModels: ClientAIModelConfig[];
 
   @Field(() => Boolean)
   signInPrefilled: boolean;

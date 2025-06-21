@@ -3,9 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AI_MODELS } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import {
+  AI_MODELS,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { convertCentsToCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
-import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
+import {
+  ClientAIModelConfig,
+  ClientConfig,
+} from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -20,19 +26,29 @@ export class ClientConfigService {
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
+    const openaiApiKey = this.twentyConfigService.get('OPENAI_API_KEY');
+    const anthropicApiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
 
-    // Transform AI models to include credit costs calculated from cents
-    const aiModels = AI_MODELS.map((model) => ({
-      modelId: model.modelId,
-      displayName: model.displayName,
-      provider: model.provider,
-      inputCostPer1kTokensInCredits: convertCentsToCredits(
-        model.inputCostPer1kTokensInCents,
-      ),
-      outputCostPer1kTokensInCredits: convertCentsToCredits(
-        model.outputCostPer1kTokensInCents,
-      ),
-    }));
+    const aiModels = AI_MODELS.reduce<ClientAIModelConfig[]>((acc, model) => {
+      const isAvailable =
+        (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
+        (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
+
+      if (!isAvailable) return acc;
+      acc.push({
+        modelId: model.modelId,
+        displayName: model.displayName,
+        provider: model.provider,
+        inputCostPer1kTokensInCredits: convertCentsToCredits(
+          model.inputCostPer1kTokensInCents,
+        ),
+        outputCostPer1kTokensInCredits: convertCentsToCredits(
+          model.outputCostPer1kTokensInCents,
+        ),
+      });
+
+      return acc;
+    }, []);
 
     const clientConfig: ClientConfig = {
       billing: {
