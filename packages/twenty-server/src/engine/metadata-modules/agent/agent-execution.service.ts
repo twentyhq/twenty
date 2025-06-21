@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { anthropic } from '@ai-sdk/anthropic';
-import { openai } from '@ai-sdk/openai';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 
 import {
@@ -33,10 +33,20 @@ export class AgentExecutionService {
 
   private getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
-      case ModelProvider.OPENAI:
-        return openai(modelId);
-      case ModelProvider.ANTHROPIC:
-        return anthropic(modelId);
+      case ModelProvider.OPENAI: {
+        const OpenAIProvider = createOpenAI({
+          apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
+        });
+
+        return OpenAIProvider(modelId);
+      }
+      case ModelProvider.ANTHROPIC: {
+        const AnthropicProvider = createAnthropic({
+          apiKey: this.twentyConfigService.get('ANTHROPIC_API_KEY'),
+        });
+
+        return AnthropicProvider(modelId);
+      }
       default:
         throw new AgentException(
           `Unsupported provider: ${provider}`,
