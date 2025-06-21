@@ -60,7 +60,6 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
           id: agentId,
           workspaceId,
         },
-        relations: ['aiModel'],
       });
 
       if (!agent) {
