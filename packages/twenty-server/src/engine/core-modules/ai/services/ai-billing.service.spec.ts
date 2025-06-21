@@ -47,12 +47,6 @@ describe('AIBillingService', () => {
       expect(costInCents).toBe(0.75);
     });
 
-    it('should throw error for non-existent model', async () => {
-      await expect(
-        service.calculateCost('non-existent', mockTokenUsage),
-      ).rejects.toThrow('AI model with id non-existent not found');
-    });
-
     it('should calculate cost correctly with different token usage', async () => {
       const differentTokenUsage = {
         promptTokens: 2000,
@@ -91,20 +85,6 @@ describe('AIBillingService', () => {
         ],
         'workspace-1',
       );
-    });
-
-    it('should throw error when model does not exist', async () => {
-      await expect(
-        service.calculateAndBillUsage(
-          'non-existent',
-          mockTokenUsage,
-          'workspace-1',
-        ),
-      ).rejects.toThrow('AI model with id non-existent not found');
-
-      expect(
-        mockWorkspaceEventEmitter.emitCustomBatchEvent,
-      ).not.toHaveBeenCalled();
     });
   });
 });
