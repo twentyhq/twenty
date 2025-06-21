@@ -1,11 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer, ValidationError } from 'class-validator';
+import { useContainer } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
@@ -51,6 +50,10 @@ const bootstrap = async () => {
   app.useGlobalFilters(new UnhandledExceptionFilter());
 
   // Apply validation pipes globally
+  // DEPRECATED: Global validation pipe has been replaced with specific pipes per endpoint
+  // Use ControllerValidationPipe for REST endpoints and ResolverValidationPipe for GraphQL resolvers
+  // Import from: src/engine/core-modules/pipes
+  /*
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -66,6 +69,8 @@ const bootstrap = async () => {
       },
     }),
   );
+  */
+
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
   app.useBodyParser('urlencoded', {
     limit: settings.storage.maxFileSize,
