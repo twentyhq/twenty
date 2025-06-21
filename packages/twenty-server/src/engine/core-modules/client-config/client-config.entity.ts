@@ -28,10 +28,10 @@ class AIModelConfig {
   provider: ModelProvider;
 
   @Field(() => Number)
-  inputCostPer1kTokensInCents: number;
+  inputCostPer1kTokensInCredits: number;
 
   @Field(() => Number)
-  outputCostPer1kTokensInCents: number;
+  outputCostPer1kTokensInCredits: number;
 
   @Field(() => Boolean)
   isActive: boolean;

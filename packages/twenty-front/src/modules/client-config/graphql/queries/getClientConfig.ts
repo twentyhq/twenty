@@ -7,6 +7,8 @@ export const GET_CLIENT_CONFIG = gql`
         modelId
         displayName
         provider
+        inputCostPer1kTokensInCredits
+        outputCostPer1kTokensInCredits
         isActive
         isDefault
       }
