@@ -11,9 +11,9 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 const DOLLAR_TO_CREDIT_MULTIPLIER = 1000; // 1 / 0.001 = 1000 credits per dollar
 
 export interface TokenUsage {
-  inputTokens: number;
-  outputTokens: number;
-  cachedInputTokens?: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
 }
 
 export interface CostCalculation {
@@ -38,9 +38,9 @@ export class AIBillingService {
     }
 
     const inputCost =
-      (usage.inputTokens / 1000) * model.inputCostPer1kTokensInCents;
+      (usage.promptTokens / 1000) * model.inputCostPer1kTokensInCents;
     const outputCost =
-      (usage.outputTokens / 1000) * model.outputCostPer1kTokensInCents;
+      (usage.completionTokens / 1000) * model.outputCostPer1kTokensInCents;
 
     const totalCost = inputCost + outputCost;
 
