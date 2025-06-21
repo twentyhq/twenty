@@ -35,9 +35,6 @@ class AIModelConfig {
 
   @Field(() => Boolean)
   isActive: boolean;
-
-  @Field(() => Boolean)
-  isDefault: boolean;
 }
 
 @ObjectType()

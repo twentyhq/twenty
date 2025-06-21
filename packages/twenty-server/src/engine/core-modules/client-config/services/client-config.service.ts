@@ -35,7 +35,6 @@ export class ClientConfigService {
         model.outputCostPer1kTokensInCents,
       ),
       isActive: model.isActive,
-      isDefault: model.isDefault,
     }));
 
     const clientConfig: ClientConfig = {

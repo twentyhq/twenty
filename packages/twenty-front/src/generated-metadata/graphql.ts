@@ -35,7 +35,6 @@ export type AiModelConfig = {
   displayName: Scalars['String']['output'];
   inputCostPer1kTokensInCredits: Scalars['Float']['output'];
   isActive: Scalars['Boolean']['output'];
-  isDefault: Scalars['Boolean']['output'];
   modelId: Scalars['String']['output'];
   outputCostPer1kTokensInCredits: Scalars['Float']['output'];
   provider: ModelProvider;

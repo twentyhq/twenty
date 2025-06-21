@@ -53,7 +53,6 @@ describe('ClientConfigController', () => {
             inputCostPer1kTokensInCredits: 2.5,
             outputCostPer1kTokensInCredits: 10.0,
             isActive: true,
-            isDefault: true,
           },
         ],
         authProviders: {
