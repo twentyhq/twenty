@@ -3,8 +3,16 @@ export enum ModelProvider {
   ANTHROPIC = 'anthropic',
 }
 
+export type ModelId =
+  | 'gpt-4o'
+  | 'gpt-4o-mini'
+  | 'gpt-4-turbo'
+  | 'claude-opus-4-20250514'
+  | 'claude-sonnet-4-20250514'
+  | 'claude-3-5-haiku-20241022';
+
 export interface AIModelConfig {
-  modelId: string;
+  modelId: ModelId;
   displayName: string;
   provider: ModelProvider;
   inputCostPer1kTokensInCents: number;

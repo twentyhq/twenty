@@ -12,6 +12,7 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity('agent')
@@ -30,7 +31,7 @@ export class AgentEntity {
   prompt: string;
 
   @Column({ nullable: false, type: 'varchar' })
-  modelId: string;
+  modelId: ModelId;
 
   @Column({ nullable: true, type: 'jsonb' })
   responseFormat: object;

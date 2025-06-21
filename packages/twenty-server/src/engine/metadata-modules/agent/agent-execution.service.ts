@@ -4,7 +4,10 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import {
+  ModelId,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -28,7 +31,7 @@ export interface AgentExecutionResult {
 export class AgentExecutionService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  private getModel = (modelId: string, provider: ModelProvider) => {
+  private getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
       case ModelProvider.OPENAI:
         return openai(modelId);

@@ -2,7 +2,10 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import {
+  ModelId,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -19,7 +22,7 @@ registerEnumType(ModelProvider, {
 @ObjectType()
 class AIModelConfig {
   @Field(() => String)
-  modelId: string;
+  modelId: ModelId;
 
   @Field(() => String)
   displayName: string;

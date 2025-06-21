@@ -4,6 +4,7 @@ import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 
 @ObjectType('Agent')
 export class AgentDTO {
@@ -26,7 +27,7 @@ export class AgentDTO {
   prompt: string;
 
   @Field(() => String)
-  modelId: string;
+  modelId: ModelId;
 
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat: object;

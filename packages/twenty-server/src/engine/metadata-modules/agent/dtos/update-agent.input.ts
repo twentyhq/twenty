@@ -10,6 +10,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 
 @InputType()
 export class UpdateAgentInput {
@@ -36,7 +37,7 @@ export class UpdateAgentInput {
   @IsString()
   @IsOptional()
   @Field(() => String)
-  modelId?: string;
+  modelId?: ModelId;
 
   @IsObject()
   @IsOptional()

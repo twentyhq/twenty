@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/core-modules/ai/constants/dollar-to-credit-multiplier';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
@@ -19,7 +20,7 @@ export class AIBillingService {
 
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  async calculateCost(modelId: string, usage: TokenUsage): Promise<number> {
+  async calculateCost(modelId: ModelId, usage: TokenUsage): Promise<number> {
     const model = getAIModelById(modelId);
 
     if (!model) {
@@ -41,7 +42,7 @@ export class AIBillingService {
   }
 
   async calculateAndBillUsage(
-    modelId: string,
+    modelId: ModelId,
     usage: TokenUsage,
     workspaceId: string,
   ): Promise<void> {

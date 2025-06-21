@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -40,7 +42,7 @@ export class AgentService {
       name: string;
       description?: string;
       prompt: string;
-      modelId: string;
+      modelId: ModelId;
       responseFormat?: object;
     },
     workspaceId: string,
@@ -61,7 +63,7 @@ export class AgentService {
       name?: string;
       description?: string;
       prompt?: string;
-      modelId?: string;
+      modelId?: ModelId;
       responseFormat?: object;
     },
     workspaceId: string,
