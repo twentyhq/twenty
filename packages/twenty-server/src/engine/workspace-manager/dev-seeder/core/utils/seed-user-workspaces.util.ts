@@ -10,9 +10,11 @@ import {
 const tableName = 'userWorkspace';
 
 export const USER_WORKSPACE_DATA_SEED_IDS = {
+  JANE: '20202020-1e7c-43d9-a5db-685b5069d816',
   TIM: '20202020-9e3b-46d4-a556-88b9ddc2b035',
   JONY: '20202020-3957-4908-9c36-2929a23f8353',
   PHIL: '20202020-7169-42cf-bc47-1cfef15264b1',
+  JANE_ACME: '20202020-ae8d-41ea-9469-f74f5d4b002e',
   TIM_ACME: '20202020-e10a-4c27-a90b-b08c57b02d44',
   JONY_ACME: '20202020-e10a-4c27-a90b-b08c57b02d45',
   PHIL_ACME: '20202020-e10a-4c27-a90b-b08c57b02d46',
@@ -31,6 +33,11 @@ export const seedUserWorkspaces = async (
       {
         id: USER_WORKSPACE_DATA_SEED_IDS.TIM,
         userId: USER_DATA_SEED_IDS.TIM,
+        workspaceId,
+      },
+      {
+        id: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        userId: USER_DATA_SEED_IDS.JANE,
         workspaceId,
       },
       {
@@ -61,6 +68,11 @@ export const seedUserWorkspaces = async (
       {
         id: USER_WORKSPACE_DATA_SEED_IDS.PHIL_ACME,
         userId: USER_DATA_SEED_IDS.PHIL,
+        workspaceId,
+      },
+      {
+        id: USER_WORKSPACE_DATA_SEED_IDS.JANE_ACME,
+        userId: USER_DATA_SEED_IDS.JANE,
         workspaceId,
       },
     ];
