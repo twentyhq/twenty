@@ -22,6 +22,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -120,6 +121,11 @@ export class Workspace {
     (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
   )
   workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProvider[]>;
+
+  @OneToMany(() => AgentEntity, (agent) => agent.workspace, {
+    onDelete: 'CASCADE',
+  })
+  agents: Relation<AgentEntity[]>;
 
   @Field()
   @Column({ default: 1 })

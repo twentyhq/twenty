@@ -1,5 +1,6 @@
 import {
-  workflowActionSchema,
+  workflowAiAgentActionSchema,
+  workflowAiAgentActionSettingsSchema,
   workflowCodeActionSchema,
   workflowCodeActionSettingsSchema,
   workflowCreateRecordActionSchema,
@@ -72,7 +73,23 @@ export type WorkflowHttpRequestAction = z.infer<
   typeof workflowHttpRequestActionSchema
 >;
 
-export type WorkflowAction = z.infer<typeof workflowActionSchema>;
+export type WorkflowAiAgentActionSettings = z.infer<
+  typeof workflowAiAgentActionSettingsSchema
+>;
+
+export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
+
+export type WorkflowAction =
+  | WorkflowCodeAction
+  | WorkflowSendEmailAction
+  | WorkflowCreateRecordAction
+  | WorkflowUpdateRecordAction
+  | WorkflowDeleteRecordAction
+  | WorkflowFindRecordsAction
+  | WorkflowFormAction
+  | WorkflowHttpRequestAction
+  | WorkflowAiAgentAction;
+
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;
 export type WorkflowStepType = WorkflowStep['type'];

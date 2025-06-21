@@ -30,6 +30,17 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AiModelConfig = {
+  __typename?: 'AIModelConfig';
+  displayName: Scalars['String']['output'];
+  inputCostPer1kTokensInCents: Scalars['Float']['output'];
+  isActive: Scalars['Boolean']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  modelId: Scalars['String']['output'];
+  outputCostPer1kTokensInCents: Scalars['Float']['output'];
+  provider: ModelProvider;
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -55,6 +66,23 @@ export type AdminPanelWorkerQueueHealth = {
   id: Scalars['String']['output'];
   queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type Agent = {
+  __typename?: 'Agent';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  modelId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  prompt: Scalars['String']['output'];
+  responseFormat?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AgentIdInput = {
+  /** The id of the agent. */
+  id: Scalars['ID']['input'];
 };
 
 export type Analytics = {
@@ -322,6 +350,7 @@ export type CheckUserExistOutput = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  aiModels: Array<AiModelConfig>;
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
@@ -411,6 +440,14 @@ export type ConfigVariablesGroupData = {
 export type ConfigVariablesOutput = {
   __typename?: 'ConfigVariablesOutput';
   groups: Array<ConfigVariablesGroupData>;
+};
+
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  modelId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  prompt: Scalars['String']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type CreateAppTokenInput = {
@@ -944,6 +981,11 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
+export enum ModelProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  OPENAI = 'OPENAI'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
@@ -957,6 +999,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -969,6 +1012,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1012,6 +1056,7 @@ export type Mutation = {
   unsyncRemoteTable: RemoteTable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateOneAgent: Agent;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1093,6 +1138,11 @@ export type MutationCreateObjectEventArgs = {
 };
 
 
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
+};
+
+
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
@@ -1145,6 +1195,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
@@ -1336,6 +1391,11 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateOneAgentArgs = {
+  input: UpdateAgentInput;
 };
 
 
@@ -1655,8 +1715,10 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
+  findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
+  findOneAgent: Agent;
   findOneRemoteServerById: RemoteServer;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
@@ -1723,6 +1785,11 @@ export type QueryFindDistantTablesWithStatusArgs = {
 
 export type QueryFindManyRemoteServersByTypeArgs = {
   input: RemoteServerTypeInput;
+};
+
+
+export type QueryFindOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
@@ -2278,6 +2345,15 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']['input']>;
   notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
   notLike?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpdateAgentInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['UUID']['input'];
+  modelId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  prompt: Scalars['String']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateFieldInput = {

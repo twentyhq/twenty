@@ -6,6 +6,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { AiAgentWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
@@ -29,6 +30,7 @@ export class WorkflowExecutorFactory {
     private readonly formWorkflowAction: FormWorkflowAction,
     private readonly filterWorkflowAction: FilterWorkflowAction,
     private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
+    private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowExecutor {
@@ -51,6 +53,8 @@ export class WorkflowExecutorFactory {
         return this.filterWorkflowAction;
       case WorkflowActionType.HTTP_REQUEST:
         return this.httpRequestWorkflowAction;
+      case WorkflowActionType.AI_AGENT:
+        return this.aiAgentWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

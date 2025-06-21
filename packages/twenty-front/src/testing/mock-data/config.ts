@@ -5,6 +5,7 @@ import {
 } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
+  aiModels: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,

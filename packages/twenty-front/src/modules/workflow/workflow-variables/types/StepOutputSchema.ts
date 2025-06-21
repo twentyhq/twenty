@@ -5,6 +5,7 @@ type Leaf = {
   type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
+  description?: string;
   value: any;
 };
 
@@ -14,6 +15,7 @@ type Node = {
   icon?: string;
   label?: string;
   value: OutputSchema;
+  description?: string;
 };
 
 type Link = {

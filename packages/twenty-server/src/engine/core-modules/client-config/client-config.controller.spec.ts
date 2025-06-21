@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigController } from './client-config.controller';
@@ -44,6 +45,17 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiModels: [
+          {
+            modelId: 'gpt-4o',
+            displayName: 'GPT-4o',
+            provider: ModelProvider.OPENAI,
+            inputCostPer1kTokensInCents: 0.25,
+            outputCostPer1kTokensInCents: 1.0,
+            isActive: true,
+            isDefault: true,
+          },
+        ],
         authProviders: {
           google: true,
           magicLink: false,
@@ -92,8 +104,8 @@ describe('ClientConfigController', () => {
 
       const result = await controller.getClientConfig();
 
-      expect(clientConfigService.getClientConfig).toHaveBeenCalled();
       expect(result).toEqual(mockClientConfig);
+      expect(clientConfigService.getClientConfig).toHaveBeenCalled();
     });
   });
 });

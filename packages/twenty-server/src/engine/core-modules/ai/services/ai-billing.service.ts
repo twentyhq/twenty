@@ -1,0 +1,86 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import { AIModelConfig } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
+import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
+import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+
+// Configuration: $0.001 = 1 credit
+const DOLLAR_TO_CREDIT_MULTIPLIER = 1000; // 1 / 0.001 = 1000 credits per dollar
+
+export interface TokenUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
+export interface CostCalculation {
+  costInCents: number;
+  model: AIModelConfig;
+}
+
+@Injectable()
+export class AIBillingService {
+  private readonly logger = new Logger(AIBillingService.name);
+
+  constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
+
+  async calculateCost(
+    modelId: string,
+    usage: TokenUsage,
+  ): Promise<CostCalculation> {
+    const model = getAIModelById(modelId);
+
+    if (!model) {
+      throw new Error(`AI model with id ${modelId} not found`);
+    }
+
+    const inputCost =
+      (usage.promptTokens / 1000) * model.inputCostPer1kTokensInCents;
+    const outputCost =
+      (usage.completionTokens / 1000) * model.outputCostPer1kTokensInCents;
+
+    const totalCost = inputCost + outputCost;
+
+    this.logger.log(
+      `Calculated cost for model ${modelId}: ${totalCost} cents (input: ${inputCost}, output: ${outputCost})`,
+    );
+
+    return {
+      costInCents: totalCost,
+      model,
+    };
+  }
+
+  async calculateAndBillUsage(
+    modelId: string,
+    usage: TokenUsage,
+    workspaceId: string,
+  ): Promise<void> {
+    const costCalculation = await this.calculateCost(modelId, usage);
+
+    const costInCents = costCalculation.costInCents;
+    const costInDollars = costInCents / 100;
+    const creditsUsed = Math.round(costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER);
+
+    this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
+  }
+
+  private sendAiTokenUsageEvent(
+    workspaceId: string,
+    creditsUsed: number,
+  ): void {
+    this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
+      BILLING_FEATURE_USED,
+      [
+        {
+          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
+          value: creditsUsed,
+        },
+      ],
+      workspaceId,
+    );
+  }
+}

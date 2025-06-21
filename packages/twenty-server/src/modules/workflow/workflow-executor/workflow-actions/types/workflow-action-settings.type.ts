@@ -1,4 +1,5 @@
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
@@ -32,4 +33,5 @@ export type WorkflowActionSettings =
   | WorkflowFindRecordsActionSettings
   | WorkflowFormActionSettings
   | WorkflowFilterActionSettings
-  | WorkflowHttpRequestActionSettings;
+  | WorkflowHttpRequestActionSettings
+  | WorkflowAiAgentActionSettings;
