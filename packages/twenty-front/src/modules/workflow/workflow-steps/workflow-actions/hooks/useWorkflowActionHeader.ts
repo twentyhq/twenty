@@ -1,4 +1,5 @@
 import { WorkflowAction } from '@/workflow/types/Workflow';
+import { t } from '@lingui/core/macro';
 import { IconComponent, useIcons } from 'twenty-ui/display';
 import { getActionIcon } from '../utils/getActionIcon';
 import { useActionHeaderTypeOrThrow } from './useActionHeaderTypeOrThrow';
@@ -29,7 +30,7 @@ export const useWorkflowActionHeader = ({
   const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return {
-    headerTitle,
+    headerTitle: t`${headerTitle}`,
     headerIcon,
     headerIconColor,
     headerType,
