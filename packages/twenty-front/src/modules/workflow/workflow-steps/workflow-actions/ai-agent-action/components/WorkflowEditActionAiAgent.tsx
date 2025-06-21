@@ -93,8 +93,7 @@ export const WorkflowEditActionAiAgent = ({
 
           {noModelsAvailable && (
             <StyledErrorMessage>
-              You haven't configured any model provider. Please set up an API
-              Key in your instance's admin panel or as an environment variable.
+              {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
             </StyledErrorMessage>
           )}
         </div>
