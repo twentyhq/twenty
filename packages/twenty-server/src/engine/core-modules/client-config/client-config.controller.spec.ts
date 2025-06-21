@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import {
+  ModelId,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigController } from './client-config.controller';
@@ -47,7 +50,7 @@ describe('ClientConfigController', () => {
         },
         aiModels: [
           {
-            modelId: 'gpt-4o',
+            modelId: 'gpt-4o' as ModelId,
             displayName: 'GPT-4o',
             provider: ModelProvider.OPENAI,
             inputCostPer1kTokensInCredits: 2.5,
