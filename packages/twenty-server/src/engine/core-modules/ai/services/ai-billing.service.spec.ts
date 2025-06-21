@@ -84,7 +84,7 @@ describe('AIBillingService', () => {
         BILLING_FEATURE_USED,
         [
           {
-            eventName: BillingMeterEventName.AI_TOKEN_USAGE,
+            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
             value: 8,
           },
         ],

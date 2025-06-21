@@ -262,7 +262,6 @@ export type BillingProduct = {
 
 /** The different billing products available */
 export enum BillingProductKey {
-  AI_TOKEN_USAGE = 'AI_TOKEN_USAGE',
   BASE_PRODUCT = 'BASE_PRODUCT',
   WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
 }
