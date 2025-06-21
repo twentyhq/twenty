@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -6,6 +6,8 @@ import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
 
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -23,6 +25,8 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
+@UsePipes(ResolverValidationPipe)
+@UseFilters(GraphqlValidationExceptionFilter)
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,

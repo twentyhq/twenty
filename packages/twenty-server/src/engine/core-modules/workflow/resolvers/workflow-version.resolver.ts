@@ -1,6 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateDraftFromWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/create-draft-from-workflow-version-input';
 import { WorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -13,12 +15,16 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
 
 @Resolver()
+@UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
   SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
 )
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  GraphqlValidationExceptionFilter,
+)
 export class WorkflowVersionResolver {
   constructor(
     private readonly workflowVersionWorkspaceService: WorkflowVersionWorkspaceService,
