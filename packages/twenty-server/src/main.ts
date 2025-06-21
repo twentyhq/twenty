@@ -49,28 +49,6 @@ const bootstrap = async () => {
 
   app.useGlobalFilters(new UnhandledExceptionFilter());
 
-  // Apply validation pipes globally
-  // DEPRECATED: Global validation pipe has been replaced with specific pipes per endpoint
-  // Use ControllerValidationPipe for REST endpoints and ResolverValidationPipe for GraphQL resolvers
-  // Import from: src/engine/core-modules/pipes
-  /*
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      exceptionFactory: (errors) => {
-        const error = new ValidationError();
-
-        error.constraints = Object.assign(
-          {},
-          ...errors.map((error) => error.constraints),
-        );
-
-        return error;
-      },
-    }),
-  );
-  */
-
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
   app.useBodyParser('urlencoded', {
     limit: settings.storage.maxFileSize,

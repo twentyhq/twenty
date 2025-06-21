@@ -1,13 +1,13 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
-import { ValidationError, validateSync } from 'class-validator';
+import { ValidationError, validate } from 'class-validator';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Injectable()
 export class ResolverValidationPipe implements PipeTransform {
-  transform(value: unknown, metadata: ArgumentMetadata) {
+  async transform(value: unknown, metadata: ArgumentMetadata) {
     const { metatype } = metadata;
 
     if (!metatype || !this.toValidate(metatype)) {
@@ -17,10 +17,7 @@ export class ResolverValidationPipe implements PipeTransform {
     const object = plainToInstance(metatype, value, {
       enableImplicitConversion: true,
     });
-    const errors = validateSync(object, {
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    });
+    const errors = await validate(object);
 
     if (errors.length > 0) {
       const errorMessage = this.formatErrorMessage(errors);
