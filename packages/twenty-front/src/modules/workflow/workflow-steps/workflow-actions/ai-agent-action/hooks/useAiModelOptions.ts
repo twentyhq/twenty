@@ -6,7 +6,6 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useRecoilValue(aiModelsState);
 
   return aiModels
-    .filter((model) => model.isActive)
     .map((model) => ({
       value: model.modelId,
       label: `${model.displayName} (${model.provider})`,

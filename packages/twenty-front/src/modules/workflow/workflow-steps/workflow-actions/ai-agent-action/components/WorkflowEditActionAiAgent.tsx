@@ -6,6 +6,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useIcons } from 'twenty-ui/display';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
@@ -13,6 +14,13 @@ import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
 import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
 import { useAiModelOptions } from '../hooks/useAiModelOptions';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
+
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.danger};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -49,6 +57,8 @@ export const WorkflowEditActionAiAgent = ({
 
   const modelOptions = useAiModelOptions();
 
+  const noModelsAvailable = modelOptions.length === 0;
+
   return loading ? (
     <RightDrawerSkeletonLoader />
   ) : (
@@ -67,14 +77,27 @@ export const WorkflowEditActionAiAgent = ({
         disabled={actionOptions.readonly}
       />
       <WorkflowStepBody>
-        <Select
-          dropdownId="select-model"
-          label={t`AI Model`}
-          options={modelOptions}
-          value={formValues.modelId}
-          onChange={(value) => handleFieldChange('modelId', value)}
-          disabled={actionOptions.readonly}
-        />
+        <div>
+          <Select
+            dropdownId="select-model"
+            label={t`AI Model`}
+            options={modelOptions}
+            value={formValues.modelId}
+            onChange={(value) => handleFieldChange('modelId', value)}
+            disabled={actionOptions.readonly || noModelsAvailable}
+            emptyOption={{
+              label: t`No AI models available`,
+              value: '',
+            }}
+          />
+
+          {noModelsAvailable && (
+            <StyledErrorMessage>
+              You haven't configured any model provider. Please set up an API
+              Key in your instance's admin panel or as an environment variable.
+            </StyledErrorMessage>
+          )}
+        </div>
         <FormTextFieldInput
           key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
           label={t`Instructions for AI`}
