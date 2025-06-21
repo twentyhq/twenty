@@ -52,7 +52,6 @@ describe('ClientConfigController', () => {
             provider: ModelProvider.OPENAI,
             inputCostPer1kTokensInCredits: 2.5,
             outputCostPer1kTokensInCredits: 10.0,
-            isActive: true,
           },
         ],
         authProviders: {

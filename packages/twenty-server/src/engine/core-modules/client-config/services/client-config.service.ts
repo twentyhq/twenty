@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { AI_MODELS } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { convertCentsToCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
-import { getActiveAIModels } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -21,10 +21,8 @@ export class ClientConfigService {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
 
-    const aiModelsFromConstants = getActiveAIModels();
-
     // Transform AI models to include credit costs calculated from cents
-    const aiModels = aiModelsFromConstants.map((model) => ({
+    const aiModels = AI_MODELS.map((model) => ({
       modelId: model.modelId,
       displayName: model.displayName,
       provider: model.provider,
@@ -34,7 +32,6 @@ export class ClientConfigService {
       outputCostPer1kTokensInCredits: convertCentsToCredits(
         model.outputCostPer1kTokensInCents,
       ),
-      isActive: model.isActive,
     }));
 
     const clientConfig: ClientConfig = {

@@ -9,7 +9,6 @@ export interface AIModelConfig {
   provider: ModelProvider;
   inputCostPer1kTokensInCents: number;
   outputCostPer1kTokensInCents: number;
-  isActive: boolean;
 }
 
 export const AI_MODELS: AIModelConfig[] = [
@@ -19,7 +18,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.25,
     outputCostPer1kTokensInCents: 1.0,
-    isActive: true,
   },
   {
     modelId: 'gpt-4o-mini',
@@ -27,7 +25,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.015,
     outputCostPer1kTokensInCents: 0.06,
-    isActive: true,
   },
   {
     modelId: 'gpt-4-turbo',
@@ -35,7 +32,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 1.0,
     outputCostPer1kTokensInCents: 3.0,
-    isActive: true,
   },
   {
     modelId: 'claude-opus-4-20250514',
@@ -43,7 +39,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 1.5,
     outputCostPer1kTokensInCents: 7.5,
-    isActive: true,
   },
   {
     modelId: 'claude-sonnet-4-20250514',
@@ -51,7 +46,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
-    isActive: true,
   },
   {
     modelId: 'claude-3-5-haiku-20241022',
@@ -59,6 +53,5 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,
-    isActive: true,
   },
 ];

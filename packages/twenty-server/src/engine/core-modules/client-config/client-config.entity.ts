@@ -32,9 +32,6 @@ class AIModelConfig {
 
   @Field(() => Number)
   outputCostPer1kTokensInCredits: number;
-
-  @Field(() => Boolean)
-  isActive: boolean;
 }
 
 @ObjectType()

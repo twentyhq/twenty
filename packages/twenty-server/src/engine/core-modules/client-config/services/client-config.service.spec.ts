@@ -9,8 +9,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-jest.mock('src/engine/core-modules/ai/utils/ai-model.utils', () => ({
-  getActiveAIModels: jest.fn().mockReturnValue([]),
+jest.mock('src/engine/core-modules/ai/constants/ai-models.const', () => ({
+  AI_MODELS: [],
 }));
 
 describe('ClientConfigService', () => {

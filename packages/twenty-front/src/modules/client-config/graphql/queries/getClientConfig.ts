@@ -9,7 +9,6 @@ export const GET_CLIENT_CONFIG = gql`
         provider
         inputCostPer1kTokensInCredits
         outputCostPer1kTokensInCredits
-        isActive
       }
       billing {
         isBillingEnabled
