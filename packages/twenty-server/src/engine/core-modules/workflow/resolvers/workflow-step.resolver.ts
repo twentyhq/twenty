@@ -1,6 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
@@ -18,12 +20,16 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Resolver()
+@UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
   SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
 )
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  GraphqlValidationExceptionFilter,
+)
 export class WorkflowStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,

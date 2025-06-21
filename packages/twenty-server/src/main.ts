@@ -1,11 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer, ValidationError } from 'class-validator';
+import { useContainer } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
@@ -50,22 +49,6 @@ const bootstrap = async () => {
 
   app.useGlobalFilters(new UnhandledExceptionFilter());
 
-  // Apply validation pipes globally
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      exceptionFactory: (errors) => {
-        const error = new ValidationError();
-
-        error.constraints = Object.assign(
-          {},
-          ...errors.map((error) => error.constraints),
-        );
-
-        return error;
-      },
-    }),
-  );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
   app.useBodyParser('urlencoded', {
     limit: settings.storage.maxFileSize,

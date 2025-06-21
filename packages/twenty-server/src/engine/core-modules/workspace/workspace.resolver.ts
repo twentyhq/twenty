@@ -32,6 +32,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -57,7 +58,6 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 

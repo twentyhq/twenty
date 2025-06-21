@@ -1,18 +1,22 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(GraphqlValidationExceptionFilter)
 @Resolver()
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}

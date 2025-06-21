@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +21,8 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -40,7 +42,11 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  GraphqlValidationExceptionFilter,
+)
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
