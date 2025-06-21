@@ -46,10 +46,10 @@ export class AgentExecutionService {
     let apiKey: string | undefined;
 
     switch (provider) {
-      case 'openai':
+      case ModelProvider.OPENAI:
         apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
         break;
-      case 'anthropic':
+      case ModelProvider.ANTHROPIC:
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
       default:
