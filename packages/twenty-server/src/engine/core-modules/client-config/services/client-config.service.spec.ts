@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AIModelService } from 'src/engine/core-modules/ai/services/ai-model.service';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -29,12 +28,6 @@ describe('ClientConfigService', () => {
           provide: DomainManagerService,
           useValue: {
             getFrontUrl: jest.fn(),
-          },
-        },
-        {
-          provide: AIModelService,
-          useValue: {
-            findAll: jest.fn().mockResolvedValue([]),
           },
         },
       ],
