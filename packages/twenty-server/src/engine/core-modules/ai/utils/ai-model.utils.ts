@@ -1,6 +1,6 @@
 import {
-    AI_MODELS,
-    AIModelConfig,
+  AI_MODELS,
+  AIModelConfig,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 
 export const getActiveAIModels = (): AIModelConfig[] => {
