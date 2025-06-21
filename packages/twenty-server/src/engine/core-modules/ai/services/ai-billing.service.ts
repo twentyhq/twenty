@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { AIModelConfig } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/core-modules/ai/constants/dollar-to-credit-multiplier';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
@@ -14,21 +13,13 @@ export interface TokenUsage {
   totalTokens: number;
 }
 
-export interface CostCalculation {
-  costInCents: number;
-  model: AIModelConfig;
-}
-
 @Injectable()
 export class AIBillingService {
   private readonly logger = new Logger(AIBillingService.name);
 
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  async calculateCost(
-    modelId: string,
-    usage: TokenUsage,
-  ): Promise<CostCalculation> {
+  async calculateCost(modelId: string, usage: TokenUsage): Promise<number> {
     const model = getAIModelById(modelId);
 
     if (!model) {
@@ -46,10 +37,7 @@ export class AIBillingService {
       `Calculated cost for model ${modelId}: ${totalCost} cents (input: ${inputCost}, output: ${outputCost})`,
     );
 
-    return {
-      costInCents: totalCost,
-      model,
-    };
+    return totalCost;
   }
 
   async calculateAndBillUsage(
@@ -57,9 +45,8 @@ export class AIBillingService {
     usage: TokenUsage,
     workspaceId: string,
   ): Promise<void> {
-    const costCalculation = await this.calculateCost(modelId, usage);
+    const costInCents = await this.calculateCost(modelId, usage);
 
-    const costInCents = costCalculation.costInCents;
     const costInDollars = costInCents / 100;
     const creditsUsed = Math.round(costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER);
 

@@ -41,12 +41,10 @@ describe('AIBillingService', () => {
 
   describe('calculateCost', () => {
     it('should calculate cost correctly for valid model and token usage', async () => {
-      const result = await service.calculateCost('gpt-4o', mockTokenUsage);
+      const costInCents = await service.calculateCost('gpt-4o', mockTokenUsage);
 
       // Expected: (1000/1000 * 0.25) + (500/1000 * 1.0) = 0.25 + 0.5 = 0.75 cents
-      expect(result.costInCents).toBe(0.75);
-      expect(result.model.modelId).toBe('gpt-4o');
-      expect(result.model.displayName).toBe('GPT-4o');
+      expect(costInCents).toBe(0.75);
     });
 
     it('should throw error for non-existent model', async () => {
@@ -62,10 +60,13 @@ describe('AIBillingService', () => {
         totalTokens: 3000,
       };
 
-      const result = await service.calculateCost('gpt-4o', differentTokenUsage);
+      const costInCents = await service.calculateCost(
+        'gpt-4o',
+        differentTokenUsage,
+      );
 
       // Expected: (2000/1000 * 0.25) + (1000/1000 * 1.0) = 0.5 + 1.0 = 1.5 cents
-      expect(result.costInCents).toBe(1.5);
+      expect(costInCents).toBe(1.5);
     });
   });
 
