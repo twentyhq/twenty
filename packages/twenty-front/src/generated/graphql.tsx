@@ -72,7 +72,7 @@ export type Agent = {
 
 export type AgentIdInput = {
   /** The id of the agent. */
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
 };
 
 export type Analytics = {
@@ -3144,7 +3144,7 @@ export type UpdateOneAgentMutationVariables = Exact<{
 export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null } };
 
 export type FindOneAgentQueryVariables = Exact<{
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6560,7 +6560,7 @@ export type UpdateOneAgentMutationHookResult = ReturnType<typeof useUpdateOneAge
 export type UpdateOneAgentMutationResult = Apollo.MutationResult<UpdateOneAgentMutation>;
 export type UpdateOneAgentMutationOptions = Apollo.BaseMutationOptions<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
 export const FindOneAgentDocument = gql`
-    query FindOneAgent($id: ID!) {
+    query FindOneAgent($id: UUID!) {
   findOneAgent(input: {id: $id}) {
     id
     name

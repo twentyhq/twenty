@@ -80,7 +80,7 @@ export type Agent = {
 
 export type AgentIdInput = {
   /** The id of the agent. */
-  id: Scalars['ID']['input'];
+  id: Scalars['UUID']['input'];
 };
 
 export type Analytics = {
