@@ -1,4 +1,9 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  Injectable,
+  PipeTransform,
+  Type,
+} from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
@@ -14,21 +19,26 @@ export class ResolverValidationPipe implements PipeTransform {
       return value;
     }
 
-    const object = plainToInstance(metatype, value, {
-      enableImplicitConversion: true,
-    });
-    const errors = await validate(object);
+    const object = plainToInstance(metatype, value);
 
-    if (errors.length > 0) {
-      const errorMessage = this.formatErrorMessage(errors);
+    try {
+      const errors = await validate(object);
 
-      throw new UserInputError(errorMessage);
+      if (errors.length > 0) {
+        const errorMessage = this.formatErrorMessage(errors);
+
+        throw new UserInputError(errorMessage);
+      }
+    } catch (error) {
+      // If the element is not a class, we can't validate it
+      return value;
     }
 
     return value;
   }
 
-  private toValidate(metatype: unknown): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private toValidate(metatype: Type<any>): boolean {
     const types: unknown[] = [String, Boolean, Number, Array, Object];
 
     return !types.includes(metatype);
