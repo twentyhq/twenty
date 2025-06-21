@@ -25,15 +25,9 @@ export class CreateAgentTable1747401483136 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_a086693a2fa496c8df2f90fbffb" FOREIGN KEY ("modelId") REFERENCES "core"."aiModel"("modelId") ON DELETE RESTRICT ON UPDATE NO ACTION`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_a086693a2fa496c8df2f90fbffb"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1"`,
     );

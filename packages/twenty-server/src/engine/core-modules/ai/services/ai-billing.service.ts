@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { Repository } from 'typeorm';
-
-import { AIModel } from 'src/engine/core-modules/ai/entities/ai-model.entity';
+import { AIModelConfig } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
@@ -13,68 +11,67 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 const DOLLAR_TO_CREDIT_MULTIPLIER = 1000; // 1 / 0.001 = 1000 credits per dollar
 
 export interface TokenUsage {
-  promptTokens: number;
-  completionTokens: number;
-  totalTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  cachedInputTokens?: number;
 }
 
 export interface CostCalculation {
   costInCents: number;
-  model: AIModel;
+  model: AIModelConfig;
 }
 
 @Injectable()
 export class AIBillingService {
-  constructor(
-    @InjectRepository(AIModel, 'core')
-    private readonly aiModelRepository: Repository<AIModel>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-  ) {}
+  private readonly logger = new Logger(AIBillingService.name);
+
+  constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
   async calculateCost(
     modelId: string,
-    tokenUsage: TokenUsage,
-  ): Promise<number | null> {
-    const model = await this.aiModelRepository.findOne({
-      where: { modelId, isActive: true },
-    });
+    usage: TokenUsage,
+  ): Promise<CostCalculation> {
+    const model = getAIModelById(modelId);
 
     if (!model) {
-      return null;
+      throw new Error(`AI model with id ${modelId} not found`);
     }
 
     const inputCost =
-      (tokenUsage.promptTokens / 1000) * model.inputCostPer1kTokensInCents;
+      (usage.inputTokens / 1000) * model.inputCostPer1kTokensInCents;
     const outputCost =
-      (tokenUsage.completionTokens / 1000) * model.outputCostPer1kTokensInCents;
+      (usage.outputTokens / 1000) * model.outputCostPer1kTokensInCents;
 
-    const totalCostInCents = inputCost + outputCost;
+    const totalCost = inputCost + outputCost;
 
-    return totalCostInCents;
+    this.logger.log(
+      `Calculated cost for model ${modelId}: ${totalCost} cents (input: ${inputCost}, output: ${outputCost})`,
+    );
+
+    return {
+      costInCents: totalCost,
+      model,
+    };
   }
 
   async calculateAndBillUsage(
     modelId: string,
-    tokenUsage: {
-      promptTokens: number;
-      completionTokens: number;
-      totalTokens: number;
-    },
+    usage: TokenUsage,
     workspaceId: string,
   ): Promise<void> {
-    const costInCents = await this.calculateCost(modelId, tokenUsage);
+    const costCalculation = await this.calculateCost(modelId, usage);
 
-    if (costInCents !== null) {
-      const costInDollars = costInCents / 100;
-      const creditsUsed = Math.round(
-        costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER,
-      );
+    const costInCents = costCalculation.costInCents;
+    const costInDollars = costInCents / 100;
+    const creditsUsed = Math.round(costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER);
 
-      this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
-    }
+    this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
   }
 
-  private sendAiTokenUsageEvent(workspaceId: string, creditsUsed: number) {
+  private sendAiTokenUsageEvent(
+    workspaceId: string,
+    creditsUsed: number,
+  ): void {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [

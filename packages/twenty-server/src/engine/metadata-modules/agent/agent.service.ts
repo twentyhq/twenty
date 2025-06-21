@@ -16,7 +16,6 @@ export class AgentService {
   async findManyAgents(workspaceId: string) {
     return this.agentRepository.find({
       where: { workspaceId },
-      relations: ['aiModel'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -24,7 +23,6 @@ export class AgentService {
   async findOneAgent(id: string, workspaceId: string) {
     const agent = await this.agentRepository.findOne({
       where: { id, workspaceId },
-      relations: ['aiModel'],
     });
 
     if (!agent) {

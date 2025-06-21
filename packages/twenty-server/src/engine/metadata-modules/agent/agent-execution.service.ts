@@ -4,6 +4,8 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
@@ -22,17 +24,15 @@ export interface AgentExecutionResult {
   };
 }
 
-type ModelProvider = 'openai' | 'anthropic';
-
 @Injectable()
 export class AgentExecutionService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   private getModel = (modelId: string, provider: ModelProvider) => {
     switch (provider) {
-      case 'openai':
+      case ModelProvider.OPENAI:
         return openai(modelId);
-      case 'anthropic':
+      case ModelProvider.ANTHROPIC:
         return anthropic(modelId);
       default:
         throw new AgentException(
@@ -77,7 +77,16 @@ export class AgentExecutionService {
     schema: OutputSchema;
   }): Promise<AgentExecutionResult> {
     try {
-      const provider = agent.aiModel.provider;
+      const aiModel = getAIModelById(agent.modelId);
+
+      if (!aiModel) {
+        throw new AgentException(
+          `AI model with id ${agent.modelId} not found`,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
+      const provider = aiModel.provider;
 
       await this.validateApiKey(provider);
 

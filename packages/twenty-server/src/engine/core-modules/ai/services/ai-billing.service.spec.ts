@@ -1,12 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import {
-  AIModel,
-  ModelProvider,
-} from 'src/engine/core-modules/ai/entities/ai-model.entity';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -15,34 +8,15 @@ import { AIBillingService } from './ai-billing.service';
 
 describe('AIBillingService', () => {
   let service: AIBillingService;
-  let mockRepository: jest.Mocked<Repository<AIModel>>;
   let mockWorkspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
 
-  const mockModel: AIModel = {
-    modelId: 'gpt-4',
-    displayName: 'GPT-4',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 30,
-    outputCostPer1kTokensInCents: 60,
-    isActive: true,
-    isDefault: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
   const mockTokenUsage = {
-    promptTokens: 1000,
-    completionTokens: 500,
-    totalTokens: 1500,
+    inputTokens: 1000,
+    outputTokens: 500,
+    cachedInputTokens: 0,
   };
-
-  const mockCostInCents = 60; // (1000/1000 * 30) + (500/1000 * 60) = 30 + 30 = 60
 
   beforeEach(async () => {
-    const mockRepositoryMethods = {
-      findOne: jest.fn(),
-    };
-
     const mockEventEmitterMethods = {
       emitCustomBatchEvent: jest.fn(),
     };
@@ -51,10 +25,6 @@ describe('AIBillingService', () => {
       providers: [
         AIBillingService,
         {
-          provide: getRepositoryToken(AIModel, 'core'),
-          useValue: mockRepositoryMethods,
-        },
-        {
           provide: WorkspaceEventEmitter,
           useValue: mockEventEmitterMethods,
         },
@@ -62,7 +32,6 @@ describe('AIBillingService', () => {
     }).compile();
 
     service = module.get<AIBillingService>(AIBillingService);
-    mockRepository = module.get(getRepositoryToken(AIModel, 'core'));
     mockWorkspaceEventEmitter = module.get(WorkspaceEventEmitter);
   });
 
@@ -72,61 +41,43 @@ describe('AIBillingService', () => {
 
   describe('calculateCost', () => {
     it('should calculate cost correctly for valid model and token usage', async () => {
-      mockRepository.findOne.mockResolvedValue(mockModel);
+      const result = await service.calculateCost('gpt-4o', mockTokenUsage);
 
-      const result = await service.calculateCost('gpt-4', mockTokenUsage);
-
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { modelId: 'gpt-4', isActive: true },
-      });
-      expect(result).toEqual(mockCostInCents);
+      // Expected: (1000/1000 * 0.25) + (500/1000 * 1.0) = 0.25 + 0.5 = 0.75 cents
+      expect(result.costInCents).toBe(0.75);
+      expect(result.model.modelId).toBe('gpt-4o');
+      expect(result.model.displayName).toBe('GPT-4o');
     });
 
-    it('should return null for non-existent model', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
-
-      const result = await service.calculateCost(
-        'non-existent',
-        mockTokenUsage,
-      );
-
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { modelId: 'non-existent', isActive: true },
-      });
-      expect(result).toBeNull();
+    it('should throw error for non-existent model', async () => {
+      await expect(
+        service.calculateCost('non-existent', mockTokenUsage),
+      ).rejects.toThrow('AI model with id non-existent not found');
     });
 
     it('should calculate cost correctly with different token usage', async () => {
       const differentTokenUsage = {
-        promptTokens: 2000,
-        completionTokens: 1000,
-        totalTokens: 3000,
+        inputTokens: 2000,
+        outputTokens: 1000,
+        cachedInputTokens: 0,
       };
 
-      mockRepository.findOne.mockResolvedValue(mockModel);
+      const result = await service.calculateCost('gpt-4o', differentTokenUsage);
 
-      const result = await service.calculateCost('gpt-4', differentTokenUsage);
-
-      // Expected: (2000/1000 * 30) + (1000/1000 * 60) = 60 + 60 = 120
-      expect(result).toEqual(120);
+      // Expected: (2000/1000 * 0.25) + (1000/1000 * 1.0) = 0.5 + 1.0 = 1.5 cents
+      expect(result.costInCents).toBe(1.5);
     });
   });
 
   describe('calculateAndBillUsage', () => {
     it('should calculate cost and emit billing event when model exists', async () => {
-      mockRepository.findOne.mockResolvedValue(mockModel);
-
       await service.calculateAndBillUsage(
-        'gpt-4',
+        'gpt-4o',
         mockTokenUsage,
         'workspace-1',
       );
 
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { modelId: 'gpt-4', isActive: true },
-      });
-
-      // Expected credits: (60 cents / 100) * 1000 = 0.6 * 1000 = 600 credits
+      // Expected credits: (0.75 cents / 100) * 1000 = 0.0075 * 1000 = 7.5 credits, rounded to 8
       expect(
         mockWorkspaceEventEmitter.emitCustomBatchEvent,
       ).toHaveBeenCalledWith(
@@ -134,25 +85,22 @@ describe('AIBillingService', () => {
         [
           {
             eventName: BillingMeterEventName.AI_TOKEN_USAGE,
-            value: 600,
+            value: 8,
           },
         ],
         'workspace-1',
       );
     });
 
-    it('should not emit billing event when model does not exist', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+    it('should throw error when model does not exist', async () => {
+      await expect(
+        service.calculateAndBillUsage(
+          'non-existent',
+          mockTokenUsage,
+          'workspace-1',
+        ),
+      ).rejects.toThrow('AI model with id non-existent not found');
 
-      await service.calculateAndBillUsage(
-        'non-existent',
-        mockTokenUsage,
-        'workspace-1',
-      );
-
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { modelId: 'non-existent', isActive: true },
-      });
       expect(
         mockWorkspaceEventEmitter.emitCustomBatchEvent,
       ).not.toHaveBeenCalled();
