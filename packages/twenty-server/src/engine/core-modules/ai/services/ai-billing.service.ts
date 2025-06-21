@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AIModelConfig } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/core-modules/ai/constants/dollar-to-credit-multiplier';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-// Configuration: $0.001 = 1 credit
-const DOLLAR_TO_CREDIT_MULTIPLIER = 1000; // 1 / 0.001 = 1000 credits per dollar
 
 export interface TokenUsage {
   promptTokens: number;
