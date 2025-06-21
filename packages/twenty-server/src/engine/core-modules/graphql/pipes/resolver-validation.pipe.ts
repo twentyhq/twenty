@@ -25,7 +25,7 @@ export class ResolverValidationPipe implements PipeTransform {
       throw new UserInputError(errorMessage);
     }
 
-    return object;
+    return value;
   }
 
   private toValidate(metatype: unknown): boolean {
