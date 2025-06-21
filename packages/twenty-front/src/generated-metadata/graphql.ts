@@ -30,17 +30,15 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export type AiModel = {
-  __typename?: 'AIModel';
-  createdAt: Scalars['DateTime']['output'];
+export type AiModelConfig = {
+  __typename?: 'AIModelConfig';
   displayName: Scalars['String']['output'];
   inputCostPer1kTokensInCents: Scalars['Float']['output'];
   isActive: Scalars['Boolean']['output'];
   isDefault: Scalars['Boolean']['output'];
-  modelId: Scalars['ID']['output'];
+  modelId: Scalars['String']['output'];
   outputCostPer1kTokensInCents: Scalars['Float']['output'];
   provider: ModelProvider;
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ActivateWorkspaceInput = {
@@ -72,7 +70,6 @@ export type AdminPanelWorkerQueueHealth = {
 
 export type Agent = {
   __typename?: 'Agent';
-  aiModel?: Maybe<AiModel>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
@@ -354,7 +351,7 @@ export type CheckUserExistOutput = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
-  aiModels: Array<AiModel>;
+  aiModels: Array<AiModelConfig>;
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
