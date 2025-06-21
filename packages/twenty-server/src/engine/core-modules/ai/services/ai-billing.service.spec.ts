@@ -11,9 +11,9 @@ describe('AIBillingService', () => {
   let mockWorkspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
 
   const mockTokenUsage = {
-    inputTokens: 1000,
-    outputTokens: 500,
-    cachedInputTokens: 0,
+    promptTokens: 1000,
+    completionTokens: 500,
+    totalTokens: 1500,
   };
 
   beforeEach(async () => {
@@ -57,9 +57,9 @@ describe('AIBillingService', () => {
 
     it('should calculate cost correctly with different token usage', async () => {
       const differentTokenUsage = {
-        inputTokens: 2000,
-        outputTokens: 1000,
-        cachedInputTokens: 0,
+        promptTokens: 2000,
+        completionTokens: 1000,
+        totalTokens: 3000,
       };
 
       const result = await service.calculateCost('gpt-4o', differentTokenUsage);
