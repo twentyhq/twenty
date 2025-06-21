@@ -2,7 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AIModelDto } from 'src/engine/core-modules/ai/dtos/ai-model.dto';
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -11,6 +11,34 @@ import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-wor
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
 });
+
+registerEnumType(ModelProvider, {
+  name: 'ModelProvider',
+});
+
+@ObjectType()
+class AIModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  displayName: string;
+
+  @Field(() => ModelProvider)
+  provider: ModelProvider;
+
+  @Field(() => Number)
+  inputCostPer1kTokensInCents: number;
+
+  @Field(() => Number)
+  outputCostPer1kTokensInCents: number;
+
+  @Field(() => Boolean)
+  isActive: boolean;
+
+  @Field(() => Boolean)
+  isDefault: boolean;
+}
 
 @ObjectType()
 class Billing {
@@ -89,8 +117,8 @@ export class ClientConfig {
   @Field(() => Billing, { nullable: false })
   billing: Billing;
 
-  @Field(() => [AIModelDto])
-  aiModels: AIModelDto[];
+  @Field(() => [AIModelConfig])
+  aiModels: AIModelConfig[];
 
   @Field(() => Boolean)
   signInPrefilled: boolean;
