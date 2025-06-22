@@ -51,7 +51,7 @@ describe('ClientConfigController', () => {
         aiModels: [
           {
             modelId: 'gpt-4o' as ModelId,
-            displayName: 'GPT-4o',
+            label: 'GPT-4o',
             provider: ModelProvider.OPENAI,
             inputCostPer1kTokensInCredits: 2.5,
             outputCostPer1kTokensInCredits: 10.0,
