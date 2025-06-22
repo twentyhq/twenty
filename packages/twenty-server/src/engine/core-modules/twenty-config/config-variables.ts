@@ -979,7 +979,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    isEnvOnly: true,
     description: 'API key for OpenAI integration',
     type: ConfigVariableType.STRING,
   })
@@ -988,7 +987,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    isEnvOnly: true,
     description: 'API key for Anthropic integration',
     type: ConfigVariableType.STRING,
   })
