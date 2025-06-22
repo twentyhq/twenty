@@ -400,6 +400,11 @@ msgstr "Opció hozzáadása"
 msgid "Add or remove users"
 msgstr ""
 
+#. js-lingui-id: 7YdkgZ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Add Output Field"
+msgstr ""
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -492,6 +497,21 @@ msgstr "Haladó:"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
 msgstr "Afrikaans"
+
+#. js-lingui-id: MnmJG1
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "AI Agent"
+msgstr ""
+
+#. js-lingui-id: kNfr85
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "AI Model"
+msgstr ""
+
+#. js-lingui-id: QwgquD
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "AI Response Schema"
+msgstr ""
 
 #. js-lingui-id: N40H+G
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -887,6 +907,16 @@ msgstr ""
 msgid "Book your onboarding"
 msgstr ""
 
+#. js-lingui-id: bOwPjT
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Boolean"
+msgstr ""
+
+#. js-lingui-id: qDsMss
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Brief explanation of this output field"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
@@ -1077,6 +1107,11 @@ msgstr ""
 #. js-lingui-id: HevGC0
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+msgstr ""
+
+#. js-lingui-id: RFmRvm
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Click on \"Add Output Field\" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps."
 msgstr ""
 
 #. js-lingui-id: b8wwse
@@ -1566,6 +1601,7 @@ msgid "Database configuration is currently disabled."
 msgstr ""
 
 #. js-lingui-id: mYGY3B
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -1816,9 +1852,15 @@ msgstr "Törölt rekordok"
 msgid "Descending"
 msgstr "Cs\\u00f6kken\\u0151 sorrend"
 
+#. js-lingui-id: g+5exC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Describe what you want the AI to do..."
+msgstr ""
+
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
@@ -1950,6 +1992,11 @@ msgstr "Holland"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
 msgstr "P\\. p\\. backoffice integr\\u00e1ci\\u00f3"
+
+#. js-lingui-id: GhTFTJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "e.g., summary, status, count"
+msgstr ""
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -2469,6 +2516,11 @@ msgstr "Funkció jelölők és megszemélyesítés"
 msgid "Field name"
 msgstr "Mező neve"
 
+#. js-lingui-id: fV7qkH
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Field Name"
+msgstr ""
+
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -2910,6 +2962,11 @@ msgstr "Bemeneti beállítások"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
 msgstr "Példányok"
+
+#. js-lingui-id: g+29+d
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Instructions for AI"
+msgstr ""
 
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
@@ -3660,6 +3717,11 @@ msgstr "Új SSO szolgáltató"
 msgid "Next Step"
 msgstr ""
 
+#. js-lingui-id: QNbLNQ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No AI models available"
+msgstr ""
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
@@ -3887,6 +3949,7 @@ msgid "Notes"
 msgstr ""
 
 #. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Number"
 msgstr "Szám"
@@ -4044,6 +4107,11 @@ msgstr "Egyéb munkaterületek"
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
+msgstr ""
+
+#. js-lingui-id: xvfn7l
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Output Field {fieldNumber}"
 msgstr ""
 
 #. js-lingui-id: bv8ZsZ
@@ -5304,9 +5372,9 @@ msgid "Test Workflow"
 msgstr "Teszt munkafolyamat"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
-#~ msgid "Text"
-#~ msgstr "Szöveg"
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Text"
+msgstr "Szöveg"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
@@ -6072,6 +6140,11 @@ msgstr "Nincs jogosultság rekord létrehozására ehhez az objektumhoz"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
 #~ msgstr "You do not have access to impersonate users."
+
+#. js-lingui-id: cdk3eC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
+msgstr ""
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
