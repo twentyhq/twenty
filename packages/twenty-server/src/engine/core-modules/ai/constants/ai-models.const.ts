@@ -13,7 +13,7 @@ export type ModelId =
 
 export interface AIModelConfig {
   modelId: ModelId;
-  displayName: string;
+  label: string;
   provider: ModelProvider;
   inputCostPer1kTokensInCents: number;
   outputCostPer1kTokensInCents: number;
@@ -22,42 +22,42 @@ export interface AIModelConfig {
 export const AI_MODELS: AIModelConfig[] = [
   {
     modelId: 'gpt-4o',
-    displayName: 'GPT-4o',
+    label: 'GPT-4o',
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.25,
     outputCostPer1kTokensInCents: 1.0,
   },
   {
     modelId: 'gpt-4o-mini',
-    displayName: 'GPT-4o Mini',
+    label: 'GPT-4o Mini',
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 0.015,
     outputCostPer1kTokensInCents: 0.06,
   },
   {
     modelId: 'gpt-4-turbo',
-    displayName: 'GPT-4 Turbo',
+    label: 'GPT-4 Turbo',
     provider: ModelProvider.OPENAI,
     inputCostPer1kTokensInCents: 1.0,
     outputCostPer1kTokensInCents: 3.0,
   },
   {
     modelId: 'claude-opus-4-20250514',
-    displayName: 'Claude Opus 4',
+    label: 'Claude Opus 4',
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 1.5,
     outputCostPer1kTokensInCents: 7.5,
   },
   {
     modelId: 'claude-sonnet-4-20250514',
-    displayName: 'Claude Sonnet 4',
+    label: 'Claude Sonnet 4',
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
   },
   {
     modelId: 'claude-3-5-haiku-20241022',
-    displayName: 'Claude Haiku 3.5',
+    label: 'Claude Haiku 3.5',
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,

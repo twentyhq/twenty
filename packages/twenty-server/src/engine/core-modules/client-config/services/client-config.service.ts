@@ -40,7 +40,7 @@ export class ClientConfigService {
 
       acc.push({
         modelId: model.modelId,
-        displayName: model.displayName,
+        label: model.label,
         provider: model.provider,
         inputCostPer1kTokensInCredits: convertCentsToCredits(
           model.inputCostPer1kTokensInCents,

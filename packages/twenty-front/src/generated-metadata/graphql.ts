@@ -339,8 +339,8 @@ export type CheckUserExistOutput = {
 
 export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
-  displayName: Scalars['String']['output'];
   inputCostPer1kTokensInCredits: Scalars['Float']['output'];
+  label: Scalars['String']['output'];
   modelId: Scalars['String']['output'];
   outputCostPer1kTokensInCredits: Scalars['Float']['output'];
   provider: ModelProvider;

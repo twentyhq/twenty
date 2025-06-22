@@ -25,7 +25,7 @@ export class ClientAIModelConfig {
   modelId: ModelId;
 
   @Field(() => String)
-  displayName: string;
+  label: string;
 
   @Field(() => ModelProvider)
   provider: ModelProvider;

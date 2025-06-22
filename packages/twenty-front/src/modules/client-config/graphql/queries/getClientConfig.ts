@@ -5,7 +5,7 @@ export const GET_CLIENT_CONFIG = gql`
     clientConfig {
       aiModels {
         modelId
-        displayName
+        label
         provider
         inputCostPer1kTokensInCredits
         outputCostPer1kTokensInCredits
