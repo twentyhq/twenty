@@ -172,8 +172,7 @@ export class ImapGetMessageListService {
         if (message.envelope?.messageId) {
           messages.push({
             id: message.envelope.messageId,
-            date:
-              message.envelope.date?.toISOString() || new Date().toISOString(),
+            date: new Date(message.envelope.date ?? Date.now()).toISOString(),
           });
         }
       }
