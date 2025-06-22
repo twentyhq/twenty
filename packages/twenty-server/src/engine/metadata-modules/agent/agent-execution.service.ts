@@ -8,7 +8,7 @@ import {
   ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { getAIModelById } from 'src/engine/core-modules/ai/utils/ai-model.utils';
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
