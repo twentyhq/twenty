@@ -1,4 +1,5 @@
 import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IllustrationIconCalendarEvent,
@@ -6,7 +7,6 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
 } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
 
 export interface OutputSchemaField {
   id: string;
@@ -15,26 +15,25 @@ export interface OutputSchemaField {
   type: InputSchemaPropertyType | undefined;
 }
 
-export const OUTPUT_FIELD_TYPE_OPTIONS: SelectOption<InputSchemaPropertyType>[] =
-  [
-    {
-      label: 'Text',
-      value: FieldMetadataType.TEXT,
-      Icon: IllustrationIconText,
-    },
-    {
-      label: 'Number',
-      value: FieldMetadataType.NUMBER,
-      Icon: IllustrationIconNumbers,
-    },
-    {
-      label: 'Boolean',
-      value: FieldMetadataType.BOOLEAN,
-      Icon: IllustrationIconToggle,
-    },
-    {
-      label: 'Date',
-      value: FieldMetadataType.DATE,
-      Icon: IllustrationIconCalendarEvent,
-    },
-  ];
+export const OUTPUT_FIELD_TYPE_OPTIONS = [
+  {
+    label: msg`Text`,
+    value: FieldMetadataType.TEXT,
+    Icon: IllustrationIconText,
+  },
+  {
+    label: msg`Number`,
+    value: FieldMetadataType.NUMBER,
+    Icon: IllustrationIconNumbers,
+  },
+  {
+    label: msg`Boolean`,
+    value: FieldMetadataType.BOOLEAN,
+    Icon: IllustrationIconToggle,
+  },
+  {
+    label: msg`Date`,
+    value: FieldMetadataType.DATE,
+    Icon: IllustrationIconCalendarEvent,
+  },
+];
