@@ -2,10 +2,10 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
-import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
 import { useIcons } from 'twenty-ui/display';
+import { MenuItemCommand } from 'twenty-ui/navigation';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -16,6 +16,7 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const { createStep } = useCreateStep({
     workflow,
   });
+  const filteredOtherActions = useFilteredOtherActions();
 
   return (
     <RightDrawerStepListContainer>
@@ -33,7 +34,7 @@ export const CommandMenuWorkflowSelectActionContent = ({
       <RightDrawerWorkflowSelectStepTitle>
         Other
       </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_ACTIONS.map((action) => (
+      {filteredOtherActions.map((action) => (
         <MenuItemCommand
           key={action.type}
           LeftIcon={getIcon(action.icon)}

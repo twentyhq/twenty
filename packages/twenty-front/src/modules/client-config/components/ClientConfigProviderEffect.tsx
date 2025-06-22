@@ -1,4 +1,5 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
@@ -29,6 +30,7 @@ export const ClientConfigProviderEffect = () => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
   const setAuthProviders = useSetRecoilState(authProvidersState);
+  const setAiModels = useSetRecoilState(aiModelsState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -134,6 +136,7 @@ export const ClientConfigProviderEffect = () => {
       magicLink: false,
       sso: data?.clientConfig.authProviders.sso,
     });
+    setAiModels(data?.clientConfig.aiModels || []);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
@@ -197,6 +200,7 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled,
     setDomainConfiguration,
     setAuthProviders,
+    setAiModels,
     setCanManageFeatureFlags,
     setLabPublicFeatureFlags,
     setMicrosoftMessagingEnabled,

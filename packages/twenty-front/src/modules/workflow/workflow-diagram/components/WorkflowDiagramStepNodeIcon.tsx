@@ -64,6 +64,13 @@ export const WorkflowDiagramStepNodeIcon = ({
             </StyledStepNodeLabelIconContainer>
           );
         }
+        case 'AI_AGENT': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon size={theme.icon.size.md} color={theme.color.pink} />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
         default: {
           return (
             <StyledStepNodeLabelIconContainer>
