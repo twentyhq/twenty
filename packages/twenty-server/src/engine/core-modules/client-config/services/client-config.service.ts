@@ -34,7 +34,10 @@ export class ClientConfigService {
         (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
         (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
 
-      if (!isAvailable) return acc;
+      if (!isAvailable) {
+        return acc;
+      }
+
       acc.push({
         modelId: model.modelId,
         displayName: model.displayName,
