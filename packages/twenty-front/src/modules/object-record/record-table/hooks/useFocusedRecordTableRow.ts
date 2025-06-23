@@ -169,16 +169,14 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
 
         unfocusRecordTableCell();
 
-        set(isRowFocusedState(focusedRowIndex), true);
-        set(isRowFocusActiveState, true);
+        focusRecordTableRow(focusedCellPosition.row);
       },
     [
       focusedRowIndexState,
       focusedCellPositionState,
       isRecordTableCellFocusActiveState,
-      isRowFocusedState,
-      isRowFocusActiveState,
       unfocusRecordTableCell,
+      focusRecordTableRow,
     ],
   );
 
