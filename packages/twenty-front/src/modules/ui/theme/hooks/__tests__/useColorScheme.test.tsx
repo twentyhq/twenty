@@ -15,7 +15,7 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
 
 const workspaceMember: Omit<
   WorkspaceMember,
-  'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
+  'createdAt' | 'updatedAt' | 'userId'
 > = {
   __typename: 'WorkspaceMember',
   id: 'id',
@@ -25,6 +25,7 @@ const workspaceMember: Omit<
   },
   locale: 'en',
   colorScheme: 'System',
+  userEmail: 'userEmail',
 };
 
 describe('useColorScheme', () => {
