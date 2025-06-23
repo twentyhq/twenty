@@ -45,6 +45,7 @@ export const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
       dateFormat,
       timeFormat,
       timeZone,
+      userEmail,
     }) => ({
       id,
       locale,
@@ -54,5 +55,6 @@ export const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
       dateFormat,
       timeFormat,
       timeZone,
+      userEmail,
     }),
   );
