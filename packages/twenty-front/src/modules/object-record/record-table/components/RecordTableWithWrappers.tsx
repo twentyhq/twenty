@@ -13,7 +13,6 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -63,7 +62,7 @@ export const RecordTableWithWrappers = ({
     keys: ['ctrl+a,meta+a'],
     callback: handleSelectAllRows,
     focusId: recordTableId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleSelectAllRows],
     options: {
       enableOnFormTags: false,

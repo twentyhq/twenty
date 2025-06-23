@@ -1,4 +1,5 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -9,7 +10,6 @@ import { getRecordTableCellFocusId } from '@/object-record/record-table/record-t
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -80,7 +80,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
         instanceId: cellFocusId,
       },
       hotkeyScope: {
-        scope: TableHotkeyScope.TableFocus,
+        scope: RecordIndexHotkeyScope.RecordIndex,
       },
       memoizeKey: cellFocusId,
     });
@@ -107,7 +107,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     keys: ['x'],
     callback: handleSelectRow,
     focusId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleSelectRow],
   });
 
@@ -115,7 +115,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     keys: [`${Key.Shift}+x`],
     callback: handleSelectRowWithShift,
     focusId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleSelectRowWithShift],
   });
 
@@ -123,7 +123,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     callback: handleOpenRecordInCommandMenu,
     focusId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleOpenRecordInCommandMenu],
   });
 
@@ -131,7 +131,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     keys: [Key.Enter],
     callback: handleEnterRow,
     focusId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEnterRow],
   });
 
@@ -139,7 +139,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     keys: [Key.Escape],
     callback: handleEscape,
     focusId,
-    scope: TableHotkeyScope.TableFocus,
+    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEscape],
   });
 };

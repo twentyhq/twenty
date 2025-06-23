@@ -4,7 +4,6 @@ import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/Recor
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -33,10 +32,7 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
     listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     refs: [tableBodyRef],
     callback: () => {
-      if (
-        currentHotkeyScope.scope !== TableHotkeyScope.TableFocus &&
-        currentHotkeyScope.scope !== RecordIndexHotkeyScope.RecordIndex
-      ) {
+      if (currentHotkeyScope.scope !== RecordIndexHotkeyScope.RecordIndex) {
         return;
       }
 

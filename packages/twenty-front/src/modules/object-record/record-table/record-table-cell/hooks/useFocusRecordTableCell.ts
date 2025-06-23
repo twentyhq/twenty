@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -69,7 +69,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
             instanceId: cellFocusId,
           },
           hotkeyScope: {
-            scope: TableHotkeyScope.TableFocus,
+            scope: RecordIndexHotkeyScope.RecordIndex,
           },
           memoizeKey: cellFocusId,
         });
