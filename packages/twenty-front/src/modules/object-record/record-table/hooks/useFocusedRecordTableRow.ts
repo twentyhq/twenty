@@ -145,7 +145,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
   );
 
   const restoreRecordTableRowFocusFromCellPosition = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       () => {
         const focusedRowIndex = snapshot
           .getLoadable(focusedRowIndexState)
@@ -159,17 +159,15 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
           .getLoadable(isRecordTableCellFocusActiveState)
           .getValue();
 
-        if (
-          !isDefined(focusedRowIndex) ||
-          !isDefined(focusedCellPosition) ||
-          !isRecordTableCellFocusActive
-        ) {
+        if (!isDefined(focusedCellPosition) || !isRecordTableCellFocusActive) {
           return;
         }
 
         unfocusRecordTableCell();
 
-        focusRecordTableRow(focusedCellPosition.row);
+        if (isDefined(focusedRowIndex)) {
+          focusRecordTableRow(focusedCellPosition.row);
+        }
       },
     [
       focusedRowIndexState,
