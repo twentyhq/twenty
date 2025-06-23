@@ -43,9 +43,11 @@ export class WorkspaceSchemaFactory {
     }
 
     const { objectMetadataMaps, metadataVersion } =
-      await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
-        workspaceId: authContext.workspace.id,
-      });
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId: authContext.workspace.id,
+        },
+      );
 
     if (!objectMetadataMaps) {
       throw new WorkspaceMetadataCacheException(

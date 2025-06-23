@@ -12,6 +12,10 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -461,7 +465,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const createdByFieldMetadata =
       objectMetadataItemWithFieldMaps.fieldsById[createdByFieldMetadataId];
 
-    if ('createdBy' in record && createdByFieldMetadata?.isCustom === false) {
+    if (!isDefined(createdByFieldMetadata)) {
+      throw new GraphqlQueryRunnerException(
+        `Missing createdBy field metadata for object ${objectMetadataItemWithFieldMaps.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD,
+      );
+    }
+
+    if ('createdBy' in record && createdByFieldMetadata.isCustom === false) {
       const { createdBy: _createdBy, ...recordWithoutCreatedBy } = record;
 
       recordWithoutCreatedByUpdate = recordWithoutCreatedBy;

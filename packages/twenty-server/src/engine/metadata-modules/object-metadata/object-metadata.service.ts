@@ -8,8 +8,6 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -94,9 +92,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
     const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
-        workspaceId: objectMetadataInput.workspaceId,
-      });
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+      );
 
     const lastDataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -233,9 +233,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
     const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
-        workspaceId,
-      });
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
 
     const inputId = input.id;
 
@@ -446,39 +448,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
-  public async findMany(options?: FindManyOptions<ObjectMetadataEntity>) {
-    return this.objectMetadataRepository.find({
-      relations: ['fields'],
-      ...options,
-      where: {
-        ...options?.where,
-      },
-    });
-  }
-
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
-  }
-
-  public async getObjectMetadataStandardIdToIdMap(workspaceId: string) {
-    const objectMetadata = await this.findManyWithinWorkspace(workspaceId);
-
-    const objectMetadataStandardIdToIdMap =
-      objectMetadata.reduce<ObjectMetadataStandardIdToIdMap>((acc, object) => {
-        acc[object.standardId ?? ''] = {
-          id: object.id,
-          fields: object.fields.reduce((acc, field) => {
-            // @ts-expect-error legacy noImplicitAny
-            acc[field.standardId ?? ''] = field.id;
-
-            return acc;
-          }, {}),
-        };
-
-        return acc;
-      }, {});
-
-    return { objectMetadataStandardIdToIdMap };
   }
 
   private async handleObjectNameAndLabelUpdates(

@@ -145,7 +145,7 @@ export class WorkspaceDatasourceFactory {
             objectMetadataMaps: cachedObjectMetadataMaps,
             metadataVersion: metadataVersionForFinalUpToDateCheck,
           } =
-            await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps(
+            await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
               {
                 workspaceId,
               },

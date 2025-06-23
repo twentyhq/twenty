@@ -15,7 +15,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
-type GetFreshObjectMetadataMapsResult = {
+type getExistingOrRecomputeMetadataMapsResult = {
   objectMetadataMaps: ObjectMetadataMaps;
   metadataVersion: number;
 };
@@ -34,11 +34,11 @@ export class WorkspaceMetadataCacheService {
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {}
 
-  async getFreshObjectMetadataMaps({
+  async getExistingOrRecomputeMetadataMaps({
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<GetFreshObjectMetadataMapsResult> {
+  }): Promise<getExistingOrRecomputeMetadataMapsResult> {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -84,7 +84,7 @@ export class WorkspaceMetadataCacheService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<GetFreshObjectMetadataMapsResult> {
+  }): Promise<getExistingOrRecomputeMetadataMapsResult> {
     const currentDatabaseVersion =
       await this.getMetadataVersionFromDatabase(workspaceId);
 
