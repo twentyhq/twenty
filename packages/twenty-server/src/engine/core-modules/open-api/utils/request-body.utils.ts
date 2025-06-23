@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 export const getRequestBody = (name: string) => {
   return {
     description: 'body',
@@ -59,8 +61,13 @@ export const getFindDuplicatesRequestBody = (name: string) => {
             },
             ids: {
               type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
             },
           },
+          example: { ids: [v4()] },
         },
       },
     },
