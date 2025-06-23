@@ -5,6 +5,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,7 +19,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
     selectedOperandInDropdownComponentState,
   );
 
-  const objectFilterDropdownFilterIsCreated = isDefined(
+  const objectFilterDropdownFilterHasBeenCreated = isDefined(
     objectFilterDropdownCurrentRecordFilter,
   );
 
@@ -43,13 +44,13 @@ export const useApplyObjectFilterDropdownOperand = () => {
       RecordFilterOperand.IsToday,
     ].includes(newOperand);
 
-    if (objectFilterDropdownFilterIsCreated) {
-      const newCurrentRecordFilter = {
+    let recordFilterToUpsert: RecordFilter | null | undefined = null;
+
+    if (objectFilterDropdownFilterHasBeenCreated) {
+      recordFilterToUpsert = {
         ...objectFilterDropdownCurrentRecordFilter,
         operand: newOperand,
       } satisfies RecordFilter;
-
-      upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
     } else if (isValuelessOperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(
@@ -62,12 +63,39 @@ export const useApplyObjectFilterDropdownOperand = () => {
           fieldMetadataItemUsedInDropdown,
         );
 
-      const recordFilterToCreate = {
+      recordFilterToUpsert = {
         ...emptyRecordFilter,
         operand: newOperand,
       } satisfies RecordFilter;
+    }
 
-      upsertObjectFilterDropdownCurrentFilter(recordFilterToCreate);
+    if (
+      recordFilterToUpsert?.type === 'DATE' ||
+      recordFilterToUpsert?.type === 'DATE_TIME'
+    ) {
+      if (
+        recordFilterToUpsert.operand === RecordFilterOperand.Is ||
+        recordFilterToUpsert.operand === RecordFilterOperand.IsNot ||
+        recordFilterToUpsert.operand === RecordFilterOperand.IsAfter ||
+        recordFilterToUpsert.operand === RecordFilterOperand.IsBefore
+      ) {
+        const newDateValue = new Date();
+
+        recordFilterToUpsert.value = newDateValue.toISOString();
+        const { displayValue } = getDateFilterDisplayValue(
+          newDateValue,
+          recordFilterToUpsert.type,
+        );
+
+        recordFilterToUpsert.displayValue = displayValue;
+      } else {
+        recordFilterToUpsert.value = '';
+        recordFilterToUpsert.displayValue = '';
+      }
+    }
+
+    if (isDefined(recordFilterToUpsert)) {
+      upsertObjectFilterDropdownCurrentFilter(recordFilterToUpsert);
     }
 
     setSelectedOperandInDropdown(newOperand);
