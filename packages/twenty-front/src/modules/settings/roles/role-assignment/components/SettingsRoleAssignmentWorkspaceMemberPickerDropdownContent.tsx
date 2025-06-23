@@ -40,7 +40,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   return (
     <>
       {enrichedWorkspaceMembers.map((workspaceMember) => {
-        const workspaceMemberFullName = `${workspaceMember?.name.firstName} ${workspaceMember?.name.lastName}`;
+        const workspaceMemberFullName = `${workspaceMember?.name.firstName ?? ''} ${workspaceMember?.name.lastName ?? ''}`;
 
         return (
           <MenuItemAvatar
@@ -50,11 +50,11 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
               type: 'rounded',
               size: 'md',
               placeholder: workspaceMemberFullName,
-              placeholderColorSeed: workspaceMember?.id,
-              avatarUrl: workspaceMember?.avatarUrl,
+              placeholderColorSeed: workspaceMember.id,
+              avatarUrl: workspaceMember.avatarUrl,
             }}
             text={workspaceMemberFullName}
-            contextualText={workspaceMember?.userEmail}
+            contextualText={workspaceMember.userEmail}
           />
         );
       })}

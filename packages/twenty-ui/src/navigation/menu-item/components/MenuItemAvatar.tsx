@@ -73,10 +73,10 @@ export const MenuItemAvatar = ({
             isDefined(avatar) ? (
               <Avatar
                 placeholder={avatar.placeholder}
-                avatarUrl={avatar.avatarUrl ?? undefined}
-                placeholderColorSeed={avatar.placeholderColorSeed ?? undefined}
-                size={avatar.size ?? undefined}
-                type={avatar.type ?? undefined}
+                avatarUrl={avatar.avatarUrl}
+                placeholderColorSeed={avatar.placeholderColorSeed}
+                size={avatar.size}
+                type={avatar.type}
               />
             ) : undefined
           }
