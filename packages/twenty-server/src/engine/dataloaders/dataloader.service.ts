@@ -110,6 +110,7 @@ export class DataloaderService {
                 createdAt: new Date(indexMetadata.createdAt),
                 updatedAt: new Date(indexMetadata.updatedAt),
                 id: indexMetadata.id,
+                indexWhereClause: indexMetadata.indexWhereClause ?? undefined,
                 objectMetadataId: id,
                 workspaceId: workspaceId,
               };

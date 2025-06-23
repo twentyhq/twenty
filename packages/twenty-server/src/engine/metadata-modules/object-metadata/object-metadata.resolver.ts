@@ -153,7 +153,7 @@ export class ObjectMetadataResolver {
   }
 
   @ResolveField(() => [IndexMetadataDTO], { nullable: false })
-  async indexMetadatas(
+  async indexMetadataList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders },

@@ -72,7 +72,7 @@ export class IndexMetadataDTO {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  indexWhereClause: string | null;
+  indexWhereClause?: string;
 
   @IsEnum(IndexType)
   @IsNotEmpty()

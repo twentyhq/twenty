@@ -42,7 +42,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflow Runs",
           "description": "A workflow run",
           "icon": "IconHistoryToggle",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -561,7 +561,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Note Targets",
           "description": "A note target",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -1033,7 +1033,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Survey results",
           "description": null,
           "icon": "IconRulerMeasure",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -1650,7 +1650,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "API Keys",
           "description": "An API key",
           "icon": "IconRobot",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -1835,7 +1835,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Filter Groups",
           "description": "(System) View Filter Groups",
           "icon": "IconFilterBolt",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -2092,7 +2092,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Timeline Activities",
           "description": "Aggregated / filtered event to be displayed on the timeline",
           "icon": "IconTimelineEvent",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -2940,7 +2940,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Threads",
           "description": "A group of related messages (e.g. email thread, chat thread)",
           "icon": "IconMessage",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -3110,7 +3110,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Groups",
           "description": "(System) View Groups",
           "icon": "IconTag",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -3366,7 +3366,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Rockets",
           "description": "A rocket",
           "icon": "IconRocket",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -3839,7 +3839,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Participants",
           "description": "Message Participants",
           "icon": "IconUserCircle",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -4203,7 +4203,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Views",
           "description": "(System) Views",
           "icon": "IconLayoutCollage",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -4952,7 +4952,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Favorites",
           "description": "A favorite that can be accessed from the left menu",
           "icon": "IconHeart",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -5795,7 +5795,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Favorite Folders",
           "description": "A Folder of favorites",
           "icon": "IconFolder",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -6007,7 +6007,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Attachments",
           "description": "An attachment",
           "icon": "IconFileImport",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -6642,7 +6642,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Channel Message Associations",
           "description": "Message Synced with a Message Channel",
           "icon": "IconMessage",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -6942,7 +6942,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Filters",
           "description": "(System) View Filters",
           "icon": "IconFilterBolt",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -7261,7 +7261,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Tasks",
           "description": "A task",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -7852,7 +7852,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Task Targets",
           "description": "A task target",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -8324,7 +8324,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar events",
           "description": "Calendar events",
           "icon": "IconCalendar",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -8798,7 +8798,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Blocklists",
           "description": "Blocklist",
           "icon": "IconForbid2",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -9002,7 +9002,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "People",
           "description": "A person",
           "icon": "IconUser",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -10013,7 +10013,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Opportunities",
           "description": "An opportunity",
           "icon": "IconTargetArrow",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -10735,7 +10735,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Pets",
           "description": null,
           "icon": "IconCat",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -11688,7 +11688,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "WorkflowAutomatedTriggers",
           "description": "A workflow automated trigger",
           "icon": "IconSettingsAutomation",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -11924,7 +11924,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Companies",
           "description": "A company",
           "icon": "IconBuildingSkyscraper",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -12860,7 +12860,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Connected Accounts",
           "description": "A connected account",
           "icon": "IconAt",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -13296,7 +13296,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Notes",
           "description": "A note",
           "icon": "IconNotes",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -13773,7 +13773,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Fields",
           "description": "(System) View Fields",
           "icon": "IconTag",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -14135,7 +14135,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflow Versions",
           "description": "A workflow version",
           "icon": "IconVersions",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -14585,7 +14585,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar event participants",
           "description": "Calendar event participants",
           "icon": "IconCalendar",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -14970,7 +14970,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflows",
           "description": "A workflow",
           "icon": "IconSettingsAutomation",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -15460,7 +15460,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workspace Members",
           "description": "A workspace member",
           "icon": "IconUserCircle",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": [
               {
@@ -16329,7 +16329,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Webhooks",
           "description": "A webhook",
           "icon": "IconRobot",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -16537,7 +16537,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Folders",
           "description": "Folder for Message Channel",
           "icon": "IconFolder",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -16751,7 +16751,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Sorts",
           "description": "(System) View Sorts",
           "icon": "IconArrowsSort",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -16965,7 +16965,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar Channel Event Associations",
           "description": "Calendar Channel Event Associations",
           "icon": "IconCalendar",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -17229,10 +17229,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar Channels",
           "description": "Calendar Channels",
           "icon": "IconCalendar",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -17803,7 +17800,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Channels",
           "description": "Message Channels",
           "icon": "IconMessage",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
@@ -18503,7 +18500,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Messages",
           "description": "A message sent or received through a messaging channel (email, chat, etc.)",
           "icon": "IconMessage",
-          "indexMetadatas": {
+          "indexMetadataList": {
             "__typename": "ObjectIndexMetadatasConnection",
             "edges": []
           },
