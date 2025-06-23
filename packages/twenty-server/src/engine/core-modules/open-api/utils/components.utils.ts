@@ -1,7 +1,7 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
+import { faker } from '@faker-js/faker';
 
 import {
   FieldMetadataSettings,
@@ -21,6 +21,7 @@ import {
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -92,13 +93,12 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
   }
 };
 
-const getSchemaComponentsExample = ({
-  item,
-  forUpdate,
-}: {
-  item: ObjectMetadataEntity;
-  forUpdate: boolean;
-}): Example => {
+const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
+  const randomName = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+  };
+
   return item.fields.reduce((node, field) => {
     switch (field.type) {
       case FieldMetadataType.TEXT: {
@@ -106,34 +106,62 @@ const getSchemaComponentsExample = ({
           return node;
         }
 
-        node[field.name] = `${capitalize(item.nameSingular)} name`;
+        node[field.name] = `${camelToTitleCase(item.nameSingular)} name`;
 
         return node;
       }
-      case FieldMetadataType.UUID: {
-        if (forUpdate) {
-          return node;
-        }
 
-        node[field.name] = v4();
+      case FieldMetadataType.PHONES: {
+        node[field.name] = {
+          primaryPhoneNumber: '06 10 20 30 40',
+          primaryPhoneCountryCode: '+33',
+          additionalPhones: [],
+        };
 
         return node;
       }
 
       case FieldMetadataType.EMAILS: {
         node[field.name] = {
-          primaryEmail: 'johndoe@gmail.com',
+          primaryEmail: faker.internet.email(randomName).toLowerCase(),
           additionalEmails: null,
         };
 
         return node;
       }
 
-      case FieldMetadataType.FULL_NAME: {
+      case FieldMetadataType.LINKS: {
         node[field.name] = {
-          firstName: 'John',
-          lastName: 'Doe',
+          primaryLink: faker.internet.url(),
+          additionalLinks: [],
         };
+
+        return node;
+      }
+
+      case FieldMetadataType.CURRENCY: {
+        node[field.name] = {
+          amountMicros: faker.number.int({ min: 100, max: 1_000 }) * 1_000_000,
+          currencyCode: 'EUR',
+        };
+
+        return node;
+      }
+
+      case FieldMetadataType.FULL_NAME: {
+        node[field.name] = randomName;
+
+        return node;
+      }
+
+      case FieldMetadataType.SELECT: {
+        node[field.name] = field.options[0].value;
+
+        return node;
+      }
+
+      case FieldMetadataType.MULTI_SELECT: {
+        node[field.name] = [field.options[0].value];
 
         return node;
       }
@@ -474,9 +502,7 @@ const computeSchemaComponent = ({
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties({ item, forResponse }),
-    ...(!forResponse
-      ? { example: getSchemaComponentsExample({ item, forUpdate }) }
-      : {}),
+    ...(!forResponse ? { example: getSchemaComponentsExample(item) } : {}),
   } as OpenAPIV3_1.SchemaObject;
 
   if (withRelations) {
