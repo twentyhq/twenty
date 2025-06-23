@@ -5,7 +5,6 @@ import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/tr
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 
@@ -58,15 +57,10 @@ describe('WorkspaceEntityManager', () => {
       objectMetadataMaps: {
         idByNameSingular: {},
       },
-      featureFlagsMap: {
-        [FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED]: true,
-      },
     } as WorkspaceInternalContext;
 
     mockDataSource = {
-      featureFlagMap: {
-        [FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED]: true,
-      },
+      featureFlagMap: {},
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
 
@@ -140,11 +134,6 @@ describe('WorkspaceEntityManager', () => {
       .mockImplementation((entityName: string) => {
         return entityName;
       });
-
-    // Mock getFeatureFlagMap
-    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
-      [FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED]: true,
-    });
 
     // Mock typeORM's EntityManager methods
     jest

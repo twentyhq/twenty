@@ -23,7 +23,6 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -70,23 +69,17 @@ export class WorkspaceRepository<
       alias,
       queryRunner,
     ) as unknown as WorkspaceSelectQueryBuilder<U>;
-    const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
-    if (!isPermissionsV2Enabled) {
-      return queryBuilder;
-    } else {
-      if (!this.objectRecordsPermissions) {
-        throw new Error('Object records permissions are required');
-      }
-
-      return new WorkspaceSelectQueryBuilder(
-        queryBuilder,
-        this.objectRecordsPermissions,
-        this.internalContext,
-        this.shouldBypassPermissionChecks,
-      );
+    if (!this.objectRecordsPermissions) {
+      throw new Error('Object records permissions are required');
     }
+
+    return new WorkspaceSelectQueryBuilder(
+      queryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
   }
 
   /**
