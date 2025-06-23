@@ -9,18 +9,23 @@ import {
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 
 import { AgentService } from './agent.service';
 
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
+import { AssignRoleToAgentInput } from './dtos/assign-role-to-agent.input';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
 export class AgentResolver {
-  constructor(private readonly agentService: AgentService) {}
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly agentRoleService: AgentRoleService,
+  ) {}
 
   @Query(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
@@ -62,5 +67,20 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentService.deleteOneAgent(id, workspaceId);
+  }
+
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async assignRoleToAgent(
+    @Args('input') input: AssignRoleToAgentInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.agentRoleService.assignRoleToAgent({
+      agentId: input.agentId,
+      roleId: input.roleId,
+      workspaceId,
+    });
+
+    return true;
   }
 }
