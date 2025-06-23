@@ -64,6 +64,7 @@ export const BookCall = () => {
               layout: 'month_view',
               theme: theme.name === 'light' ? 'light' : 'dark',
               email: currentUser?.email ?? '',
+              name: `${currentUser?.firstName} ${currentUser?.lastName}`,
             }}
           />
         </StyledScrollWrapper>
