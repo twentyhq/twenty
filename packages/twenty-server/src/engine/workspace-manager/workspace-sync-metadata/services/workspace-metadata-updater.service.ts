@@ -114,7 +114,9 @@ export class WorkspaceMetadataUpdaterService {
   private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
     return {
       ...field,
-      ...(field.type === FieldMetadataType.SELECT && field.options
+      ...((field.type === FieldMetadataType.SELECT ||
+        field.type === FieldMetadataType.MULTI_SELECT) &&
+      field.options
         ? {
             options: this.generateUUIDForNewSelectFieldOptions(
               field.options as FieldMetadataComplexOption[],
