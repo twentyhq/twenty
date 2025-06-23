@@ -17,8 +17,7 @@ export const generateObjectMetadataMaps = (
 
   for (const objectMetadata of objectMetadataCollection) {
     const fieldsByIdMap: FieldMetadataMap = {};
-    const fieldsByNameMap: FieldMetadataMap = {};
-    const fieldsByJoinColumnNameMap: FieldMetadataMap = {};
+    const fieldIdByJoinColumnNameMap: Record<string, string> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       if (
@@ -28,20 +27,26 @@ export const generateObjectMetadataMaps = (
         )
       ) {
         if (fieldMetadata.settings?.joinColumnName) {
-          fieldsByJoinColumnNameMap[fieldMetadata.settings.joinColumnName] =
-            fieldMetadata;
+          fieldIdByJoinColumnNameMap[fieldMetadata.settings.joinColumnName] =
+            fieldMetadata.id;
         }
       }
-
-      fieldsByNameMap[fieldMetadata.name] = fieldMetadata;
-      fieldsByIdMap[fieldMetadata.id] = fieldMetadata;
     }
+
+    const fieldIdByNameMap: Record<string, string> =
+      objectMetadata.fields.reduce(
+        (acc, field) => ({
+          ...acc,
+          [field.name]: field.id,
+        }),
+        {} as Record<string, string>,
+      );
 
     const processedObjectMetadata: ObjectMetadataItemWithFieldMaps = {
       ...objectMetadata,
       fieldsById: fieldsByIdMap,
-      fieldsByName: fieldsByNameMap,
-      fieldsByJoinColumnName: fieldsByJoinColumnNameMap,
+      fieldIdByName: fieldIdByNameMap,
+      fieldIdByJoinColumnName: fieldIdByJoinColumnNameMap,
     };
 
     objectMetadataMaps.byId[objectMetadata.id] = processedObjectMetadata;
