@@ -116,6 +116,7 @@ describe('DatabaseEventTriggerListener', () => {
             updatedAt: new Date(),
             fields: [],
             indexMetadatas: [],
+            icon: 'Icon123',
           },
           properties: {
             updatedFields: ['field1', 'field2'],

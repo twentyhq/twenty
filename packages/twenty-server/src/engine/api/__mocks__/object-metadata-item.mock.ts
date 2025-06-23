@@ -307,6 +307,7 @@ export const objectMetadataItemMock = {
 
 export const objectMetadataMapItemMock = {
   id: 'mockObjectId',
+  icon: 'Icon123',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
   fieldsById: fields.reduce((acc, field) => {

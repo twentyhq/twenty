@@ -7,6 +7,7 @@ export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
 ): ObjectMetadataItemWithFieldMaps => ({
   id: '',
+  icon: 'Icon123',
   standardId: '',
   nameSingular: 'person',
   namePlural: 'people',

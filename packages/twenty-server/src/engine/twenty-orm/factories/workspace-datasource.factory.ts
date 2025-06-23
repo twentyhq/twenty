@@ -111,7 +111,7 @@ export class WorkspaceDatasourceFactory {
       dataSourceMetadataVersion !== desiredDataSourceMetadataVersion
     ) {
       throw new TwentyORMException(
-        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${workspaceMetadataVersion}`,
+        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Datasource version: ${dataSourceMetadataVersion}. Desired datasource version: ${desiredDataSourceMetadataVersion}`,
         TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
       );
     }
