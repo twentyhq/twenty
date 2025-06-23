@@ -458,12 +458,12 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  const result = {
+  const result: OpenAPIV3_1.SchemaObject = {
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties({ item, forResponse }),
     ...(!forResponse ? { example: getSchemaComponentsExample(item) } : {}),
-  } as OpenAPIV3_1.SchemaObject;
+  };
 
   if (withRelations) {
     result.properties = {
