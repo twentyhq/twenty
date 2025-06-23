@@ -26,6 +26,7 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -37,7 +38,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -98,18 +98,8 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
-      const isPermissionsV2Enabled =
-        featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
-
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSettingsPermissionsOnObjectOrThrow(options);
-      } else {
-        if (!isPermissionsV2Enabled)
-          await this.validateObjectRecordPermissionsOrThrow({
-            objectMetadataId: objectMetadataItemWithFieldMaps.id,
-            operationName,
-            options,
-          });
       }
 
       const hookedArgs =
@@ -225,39 +215,6 @@ export abstract class GraphqlQueryBaseResolverService<
           PermissionsExceptionCode.PERMISSION_DENIED,
         );
       }
-    }
-  }
-
-  private async validateObjectRecordPermissionsOrThrow({
-    objectMetadataId,
-    operationName,
-    options,
-  }: {
-    objectMetadataId: string;
-    operationName: WorkspaceResolverBuilderMethodNames;
-    options: WorkspaceQueryRunnerOptions;
-  }) {
-    const requiredPermission =
-      this.getRequiredPermissionForMethod(operationName);
-
-    const workspace = options.authContext.workspace;
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    const userHasPermission =
-      await this.permissionsService.userHasObjectRecordsPermission({
-        userWorkspaceId: options.authContext.userWorkspaceId,
-        requiredPermission,
-        workspaceId: workspace.id,
-        isExecutedByApiKey: isDefined(options.authContext.apiKey),
-        objectMetadataId,
-      });
-
-    if (!userHasPermission) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
     }
   }
 
