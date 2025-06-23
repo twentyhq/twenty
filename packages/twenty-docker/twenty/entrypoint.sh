@@ -28,7 +28,19 @@ setup_and_migrate_db() {
     yarn command:prod upgrade
     echo "Successfully migrated DB!"
 }
+
+register_background_jobs() {
+  
+    echo "Registering background sync jobs..."
+    if yarn command:prod cron:register:all; then
+        echo "Successfully registered all background sync jobs!"
+    else
+        echo "Warning: Failed to register background jobs, but continuing startup..."
+    fi
+}
+
 setup_and_migrate_db
+register_background_jobs
 
 # Continue with the original Docker command
 exec "$@"
