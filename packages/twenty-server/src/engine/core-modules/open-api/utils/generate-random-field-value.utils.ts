@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { faker } from '@faker-js/faker';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
@@ -81,11 +81,11 @@ export const generateRandomFieldValue = ({
     }
 
     case FieldMetadataType.SELECT: {
-      return field.options[0].value;
+      return isDefined(field.options[0].value) ? field.options[0].value : [];
     }
 
     case FieldMetadataType.MULTI_SELECT: {
-      return [field.options[0].value];
+      return isDefined(field.options[0].value) ? [field.options[0].value] : [];
     }
 
     case FieldMetadataType.RELATION: {
