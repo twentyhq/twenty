@@ -1485,6 +1485,11 @@ msgstr "Створіть свій робочий простір"
 #~ msgid "Created"
 #~ msgstr "Створено"
 
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your schema"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -4310,6 +4315,11 @@ msgstr "Португальська — Португалія"
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
 
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data"
+msgstr ""
+
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -4994,6 +5004,11 @@ msgstr "Встановіть ім'я вашого домашнього доме�
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
+
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database"
+msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
