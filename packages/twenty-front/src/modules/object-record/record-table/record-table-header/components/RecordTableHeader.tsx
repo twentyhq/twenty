@@ -40,7 +40,7 @@ const StyledTableHead = styled.thead`
 
     th:nth-of-type(3) {
       position: sticky;
-      left: 43px;
+      left: 39px;
       z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
 
