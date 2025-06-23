@@ -170,9 +170,16 @@ export class ImapGetMessageListService {
         envelope: true,
       })) {
         if (message.envelope?.messageId) {
+          const messageDate = message.envelope.date
+            ? new Date(message.envelope.date)
+            : new Date();
+          const validDate = isNaN(messageDate.getTime())
+            ? new Date()
+            : messageDate;
+
           messages.push({
             id: message.envelope.messageId,
-            date: new Date(message.envelope.date ?? Date.now()).toISOString(),
+            date: validDate.toISOString(),
           });
         }
       }
