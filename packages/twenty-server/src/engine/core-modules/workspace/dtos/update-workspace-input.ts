@@ -186,6 +186,12 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   isPasswordAuthEnabled?: boolean;
 
+  @Field(() => String, { nullable: true })
+  onesignalAppId?: string;
+
+  @Field(() => String, { nullable: true })
+  onesignalApiKey?: string;
+
   @Field({ nullable: true })
   @IsUUID()
   @IsOptional()

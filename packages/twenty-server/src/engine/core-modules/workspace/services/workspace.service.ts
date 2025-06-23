@@ -150,6 +150,70 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
+  async setupOneSignalApp(workspaceId: string): Promise<Workspace> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new Error('Workspace não encontrado');
+    }
+
+    if (workspace.onesignalAppId && workspace.onesignalApiKey) {
+      return workspace;
+    }
+
+    const organizationApiKey = this.twentyConfigService.get(
+      'ONESIGNAL_REST_API_KEY',
+    );
+    const organizationId = this.twentyConfigService.get('ONESIGNAL_ORG_ID');
+
+    if (!organizationApiKey || !organizationId) {
+      throw new Error('Chaves da organização OneSignal não configuradas');
+    }
+
+    if (!workspace.subdomain) {
+      throw new Error('Subdomínio do workspace não definido');
+    }
+
+    const chromeWebOrigin = `https://${workspace.subdomain}.woulz.com.br`;
+
+    const response = await fetch('https://api.onesignal.com/apps', {
+      method: 'POST',
+      headers: {
+        Authorization: `Key ${organizationApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: `App - ${workspace.subdomain}`,
+        organization_id: organizationId,
+        chrome_web_origin: chromeWebOrigin,
+        site_name: `Workspace ${workspace.subdomain}`,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      const message =
+        error?.errors?.[0] ||
+        error?.message ||
+        'Erro desconhecido ao criar app OneSignal';
+
+      throw new Error(`Erro ao criar app OneSignal: ${message}`);
+    }
+
+    const onesignalApp = await response.json();
+
+    if (!onesignalApp.id || !onesignalApp.api_key) {
+      throw new Error('Resposta inválida da API do OneSignal');
+    }
+
+    workspace.onesignalAppId = onesignalApp.id;
+    workspace.onesignalApiKey = onesignalApp.api_key;
+
+    return await this.workspaceRepository.save(workspace);
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,

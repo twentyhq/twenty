@@ -40,6 +40,7 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const [setupOneSignalApp] = useSetupOneSignalAppMutation();
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
