@@ -2,9 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
@@ -29,6 +30,8 @@ export class WorkspaceMetadataCacheService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(IndexMetadataEntity, 'core')
+    private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {}
 
   async getFreshObjectMetadataMaps({
@@ -96,15 +99,31 @@ export class WorkspaceMetadataCacheService {
 
     const objectMetadataItems = await this.objectMetadataRepository.find({
       where: { workspaceId },
-      relations: [
-        'fields',
-        'indexMetadatas',
-        'indexMetadatas.indexFieldMetadatas',
-      ],
+      relations: ['fields'],
     });
 
-    const freshObjectMetadataMaps =
-      generateObjectMetadataMaps(objectMetadataItems);
+    const objectMetadataItemsIds = objectMetadataItems.map(
+      (objectMetadataItem) => objectMetadataItem.id,
+    );
+
+    const indexMetadataItems = await this.indexMetadataRepository.find({
+      where: { objectMetadataId: In(objectMetadataItemsIds) },
+      relations: ['indexFieldMetadatas'],
+    });
+
+    const objectMetadataItemsWithIndexMetadatas = objectMetadataItems.map(
+      (objectMetadataItem) => ({
+        ...objectMetadataItem,
+        indexMetadatas: indexMetadataItems.filter(
+          (indexMetadataItem) =>
+            indexMetadataItem.objectMetadataId === objectMetadataItem.id,
+        ),
+      }),
+    );
+
+    const freshObjectMetadataMaps = generateObjectMetadataMaps(
+      objectMetadataItemsWithIndexMetadatas,
+    );
 
     await this.workspaceCacheStorageService.setObjectMetadataMaps(
       workspaceId,

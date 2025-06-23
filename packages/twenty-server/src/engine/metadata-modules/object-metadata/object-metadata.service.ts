@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import console from 'console';
+
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
@@ -36,6 +38,7 @@ import {
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -91,7 +94,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
-    const objectMetadataMaps =
+    const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
         workspaceId: objectMetadataInput.workspaceId,
       });
@@ -138,13 +141,28 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+    validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNamePlural: objectMetadataInput.namePlural,
       objectMetadataNameSingular: objectMetadataInput.nameSingular,
-      workspaceId: objectMetadataInput.workspaceId,
+      objectMetadataMaps,
     });
 
-    const createdObjectMetadata = await super.createOne({
+    const baseCustomFields = buildDefaultFieldsForCustomObject(
+      objectMetadataInput.workspaceId,
+    );
+
+    const labelIdentifierFieldMetadataId = baseCustomFields.find(
+      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    )?.id;
+
+    if (!labelIdentifierFieldMetadataId) {
+      throw new ObjectMetadataException(
+        'Label identifier field metadata not created properly',
+        ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
+      );
+    }
+
+    const createdObjectMetadata = await this.objectMetadataRepository.save({
       ...objectMetadataInput,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
@@ -153,24 +171,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
       isSearchable: !objectMetadataInput.isRemote,
-      fields: objectMetadataInput.isRemote
-        ? []
-        : buildDefaultFieldsForCustomObject(objectMetadataInput.workspaceId),
-    });
-
-    const labelIdentifierFieldMetadata = createdObjectMetadata.fields.find(
-      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    );
-
-    if (!labelIdentifierFieldMetadata) {
-      throw new ObjectMetadataException(
-        'Label identifier field metadata not created properly',
-        ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
-      );
-    }
-
-    await this.objectMetadataRepository.update(createdObjectMetadata.id, {
-      labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
+      fields: objectMetadataInput.isRemote ? [] : baseCustomFields,
+      labelIdentifierFieldMetadataId,
     });
 
     if (objectMetadataInput.isRemote) {
@@ -181,6 +183,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyColumnType,
       );
     } else {
+      const createdRelatedObjectMetadataCollection =
+        await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
+          objectMetadataInput.workspaceId,
+          createdObjectMetadata,
+        );
+
       await this.objectMetadataMigrationService.createTableMigration(
         createdObjectMetadata,
       );
@@ -189,12 +197,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata,
         createdObjectMetadata.fields,
       );
-
-      const createdRelatedObjectMetadataCollection =
-        await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
-          objectMetadataInput.workspaceId,
-          createdObjectMetadata,
-        );
 
       await this.objectMetadataMigrationService.createRelationMigrations(
         createdObjectMetadata,
@@ -230,6 +232,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    const { objectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
+        workspaceId,
+      });
+
     const inputId = input.id;
 
     const inputPayload = {
@@ -260,14 +267,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ...inputPayload,
     };
 
-    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+    await validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNameSingular:
         existingObjectMetadataCombinedWithUpdateInput.nameSingular,
       objectMetadataNamePlural:
         existingObjectMetadataCombinedWithUpdateInput.namePlural,
-      workspaceId: workspaceId,
       existingObjectMetadataId:
         existingObjectMetadataCombinedWithUpdateInput.id,
+      objectMetadataMaps,
     });
 
     if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
@@ -537,45 +544,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }
     }
   }
-
-  private validatesNoOtherObjectWithSameNameExistsOrThrows = async ({
-    objectMetadataNameSingular,
-    objectMetadataNamePlural,
-    workspaceId,
-    existingObjectMetadataId,
-  }: {
-    objectMetadataNameSingular: string;
-    objectMetadataNamePlural: string;
-    workspaceId: string;
-    existingObjectMetadataId?: string;
-  }): Promise<void> => {
-    const baseWhereConditions = [
-      { nameSingular: objectMetadataNameSingular, workspaceId },
-      { nameSingular: objectMetadataNamePlural, workspaceId },
-      { namePlural: objectMetadataNameSingular, workspaceId },
-      { namePlural: objectMetadataNamePlural, workspaceId },
-    ];
-
-    const whereConditions = baseWhereConditions.map((condition) => {
-      return {
-        ...condition,
-        ...(isDefined(existingObjectMetadataId)
-          ? { id: Not(In([existingObjectMetadataId])) }
-          : {}),
-      };
-    });
-
-    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
-      where: whereConditions,
-    });
-
-    if (objectAlreadyExists) {
-      throw new ObjectMetadataException(
-        'Object already exists',
-        ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
-      );
-    }
-  };
 
   async resolveOverridableString(
     objectMetadata: ObjectMetadataDTO,
