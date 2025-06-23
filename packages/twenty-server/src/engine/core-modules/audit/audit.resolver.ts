@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { AuditExceptionFilter } from 'src/engine/core-modules/audit/audit-exception-filter';
@@ -7,6 +7,8 @@ import {
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { CreateObjectEventInput } from 'src/engine/core-modules/audit/dtos/create-object-event.input';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -23,7 +25,8 @@ import { Analytics } from './entities/analytics.entity';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
-@UseFilters(AuditExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(AuditExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 
