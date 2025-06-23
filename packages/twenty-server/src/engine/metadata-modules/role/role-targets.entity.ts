@@ -11,18 +11,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('userWorkspaceRole')
-@Unique('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_ROLE_ID_UNIQUE', [
-  'userWorkspaceId',
-  'roleId',
-])
-@Index('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID', [
-  'userWorkspaceId',
-  'workspaceId',
-])
-export class UserWorkspaceRoleEntity {
+@Entity('roleTargets')
+@Unique('IDX_ROLE_TARGETS_UNIQUE', ['userWorkspaceId', 'roleId', 'agentId'])
+@Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
+@Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
+export class RoleTargetsEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,14 +29,33 @@ export class UserWorkspaceRoleEntity {
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.userWorkspaceRoles, {
+  @ManyToOne(() => RoleEntity, (role) => role.roleTargets, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string;
+
+  @ManyToOne(
+    () => UserWorkspace,
+    (userWorkspace) => userWorkspace.roleTargets,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({ name: 'userWorkspaceId' })
+  userWorkspace: Relation<UserWorkspace>;
+
+  @Column({ nullable: true, type: 'uuid' })
+  agentId: string;
+
+  @ManyToOne(() => AgentEntity, (agent) => agent.roleTargets, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'agentId' })
+  agent: Relation<AgentEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
