@@ -83,7 +83,10 @@ export class ObjectMetadataRelatedRecordsService {
   }
 
   public async updateObjectViews(
-    updatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'id' | 'labelPlural' | 'icon'
+    >,
     workspaceId: string,
   ) {
     const viewRepository =

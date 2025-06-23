@@ -18,44 +18,47 @@ export const generateObjectRecordFields = ({
 }): BaseOutputSchema => {
   const objectMetadata = objectMetadataInfo.objectMetadataItemWithFieldsMaps;
 
-  return objectMetadata.fields.reduce((acc: BaseOutputSchema, field) => {
-    if (!shouldGenerateFieldFakeValue(field)) {
+  return Object.values(objectMetadata.fieldsById).reduce(
+    (acc: BaseOutputSchema, field) => {
+      if (!shouldGenerateFieldFakeValue(field)) {
+        return acc;
+      }
+
+      if (field.type !== FieldMetadataType.RELATION) {
+        acc[field.name] = generateFakeField({
+          type: field.type,
+          label: field.label,
+          icon: field.icon,
+        });
+
+        return acc;
+      }
+
+      if (
+        depth < MAXIMUM_DEPTH &&
+        isDefined(field.relationTargetObjectMetadataId)
+      ) {
+        const relationTargetObjectMetadata =
+          objectMetadataInfo.objectMetadataMaps.byId[
+            field.relationTargetObjectMetadataId
+          ];
+
+        acc[field.name] = {
+          isLeaf: false,
+          icon: field.icon,
+          label: field.label,
+          value: generateFakeObjectRecord({
+            objectMetadataInfo: {
+              objectMetadataItemWithFieldsMaps: relationTargetObjectMetadata,
+              objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
+            },
+            depth: depth + 1,
+          }),
+        };
+      }
+
       return acc;
-    }
-
-    if (field.type !== FieldMetadataType.RELATION) {
-      acc[field.name] = generateFakeField({
-        type: field.type,
-        label: field.label,
-        icon: field.icon,
-      });
-
-      return acc;
-    }
-
-    if (
-      depth < MAXIMUM_DEPTH &&
-      isDefined(field.relationTargetObjectMetadataId)
-    ) {
-      const relationTargetObjectMetadata =
-        objectMetadataInfo.objectMetadataMaps.byId[
-          field.relationTargetObjectMetadataId
-        ];
-
-      acc[field.name] = {
-        isLeaf: false,
-        icon: field.icon,
-        label: field.label,
-        value: generateFakeObjectRecord({
-          objectMetadataInfo: {
-            objectMetadataItemWithFieldsMaps: relationTargetObjectMetadata,
-            objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
-          },
-          depth: depth + 1,
-        }),
-      };
-    }
-
-    return acc;
-  }, {} as BaseOutputSchema);
+    },
+    {} as BaseOutputSchema,
+  );
 };

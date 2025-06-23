@@ -3,26 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   WorkspaceMetadataCacheException,
   WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -34,8 +26,6 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
@@ -52,38 +42,12 @@ export class WorkspaceSchemaFactory {
       return new GraphQLSchema({});
     }
 
-    let currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(
-        authContext.workspace.id,
-      );
-
-    let objectMetadataMaps: ObjectMetadataMaps | undefined;
-
-    if (currentCacheVersion === undefined) {
-      const recomputed =
-        await this.workspaceMetadataCacheService.recomputeMetadataCache({
+    const { objectMetadataMaps, metadataVersion } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
           workspaceId: authContext.workspace.id,
-        });
-
-      objectMetadataMaps = recomputed?.recomputedObjectMetadataMaps;
-      currentCacheVersion = recomputed?.recomputedMetadataVersion;
-    } else {
-      objectMetadataMaps =
-        await this.workspaceCacheStorageService.getObjectMetadataMaps(
-          authContext.workspace.id,
-          currentCacheVersion,
-        );
-
-      if (!isDefined(objectMetadataMaps)) {
-        const recomputed =
-          await this.workspaceMetadataCacheService.recomputeMetadataCache({
-            workspaceId: authContext.workspace.id,
-          });
-
-        objectMetadataMaps = recomputed?.recomputedObjectMetadataMaps;
-        currentCacheVersion = recomputed?.recomputedMetadataVersion;
-      }
-    }
+        },
+      );
 
     if (!objectMetadataMaps) {
       throw new WorkspaceMetadataCacheException(
@@ -92,17 +56,10 @@ export class WorkspaceSchemaFactory {
       );
     }
 
-    if (!currentCacheVersion) {
-      throw new WorkspaceMetadataVersionException(
-        'Metadata cache version not found',
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const objectMetadataCollection = Object.values(objectMetadataMaps.byId).map(
       (objectMetadataItem) => ({
         ...objectMetadataItem,
-        fields: objectMetadataItem.fields,
+        fields: Object.values(objectMetadataItem.fieldsById),
         indexes: objectMetadataItem.indexMetadatas,
       }),
     );
@@ -110,12 +67,12 @@ export class WorkspaceSchemaFactory {
     // Get typeDefs from cache
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
       authContext.workspace.id,
-      currentCacheVersion,
+      metadataVersion,
     );
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
         authContext.workspace.id,
-        currentCacheVersion,
+        metadataVersion,
       );
 
     // If typeDefs are not cached, generate them
@@ -133,12 +90,12 @@ export class WorkspaceSchemaFactory {
 
       await this.workspaceCacheStorageService.setGraphQLTypeDefs(
         authContext.workspace.id,
-        currentCacheVersion,
+        metadataVersion,
         typeDefs,
       );
       await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
         authContext.workspace.id,
-        currentCacheVersion,
+        metadataVersion,
         usedScalarNames,
       );
     }

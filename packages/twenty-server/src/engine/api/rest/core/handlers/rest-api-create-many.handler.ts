@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
+
 @Injectable()
 export class RestApiCreateManyHandler extends RestApiBaseHandler {
   async handle(request: Request) {
@@ -57,7 +59,9 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
     this.apiEventEmitterService.emitCreateEvents({
       records: createdRecords,
       authContext: this.getAuthContextFromRequest(request),
-      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadata.objectMetadataMapItem,
+      ),
     });
 
     const records = await this.getRecord({

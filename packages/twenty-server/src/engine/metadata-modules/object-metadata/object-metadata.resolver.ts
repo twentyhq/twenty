@@ -17,6 +17,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
@@ -144,6 +145,28 @@ export class ObjectMetadataResolver {
       );
 
       return fieldMetadataItems;
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
+    }
+  }
+
+  @ResolveField(() => [IndexMetadataDTO], { nullable: false })
+  async indexMetadataList(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<IndexMetadataDTO[]> {
+    try {
+      const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
+        {
+          objectMetadata,
+          workspaceId: workspace.id,
+        },
+      );
+
+      return indexMetadataItems;
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
 

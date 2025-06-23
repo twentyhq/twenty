@@ -1,11 +1,11 @@
-import { mockPersonObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonObjectMetadata';
-import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
+import { mockPersonObjectMetadataWithFieldMaps } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonObjectMetadata';
 import { mockPersonRecords } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonRecords';
+import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
 describe('buildDuplicateConditions', () => {
   it('should build conditions based on duplicate criteria from composite field', () => {
     const duplicateConditons = buildDuplicateConditions(
-      mockPersonObjectMetadata([['emailsPrimaryEmail']]),
+      mockPersonObjectMetadataWithFieldMaps([['emailsPrimaryEmail']]),
       mockPersonRecords,
       'recordId',
     );
@@ -13,8 +13,10 @@ describe('buildDuplicateConditions', () => {
     expect(duplicateConditons).toEqual({
       or: [
         {
-          emailsPrimaryEmail: {
-            eq: 'test@test.fr',
+          emails: {
+            primaryEmail: {
+              eq: 'test@test.fr',
+            },
           },
         },
       ],
@@ -26,7 +28,7 @@ describe('buildDuplicateConditions', () => {
 
   it('should build conditions based on duplicate criteria from basic field', () => {
     const duplicateConditons = buildDuplicateConditions(
-      mockPersonObjectMetadata([['jobTitle']]),
+      mockPersonObjectMetadataWithFieldMaps([['jobTitle']]),
       mockPersonRecords,
       'recordId',
     );
@@ -47,7 +49,7 @@ describe('buildDuplicateConditions', () => {
 
   it('should not build conditions based on duplicate criteria if record value is null or too small', () => {
     const duplicateConditons = buildDuplicateConditions(
-      mockPersonObjectMetadata([['linkedinLinkPrimaryLinkUrl']]),
+      mockPersonObjectMetadataWithFieldMaps([['linkedinLinkPrimaryLinkUrl']]),
       mockPersonRecords,
       'recordId',
     );
@@ -57,7 +59,7 @@ describe('buildDuplicateConditions', () => {
 
   it('should build conditions based on duplicate criteria and without recordId filter', () => {
     const duplicateConditons = buildDuplicateConditions(
-      mockPersonObjectMetadata([['jobTitle']]),
+      mockPersonObjectMetadataWithFieldMaps([['jobTitle']]),
       mockPersonRecords,
     );
 

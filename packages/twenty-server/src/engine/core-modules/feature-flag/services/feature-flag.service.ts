@@ -74,10 +74,7 @@ export class FeatureFlagService {
       );
 
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-        {
-          workspaceId,
-          ignoreLock: true,
-        },
+        { workspaceId },
       );
     }
   }
@@ -132,10 +129,7 @@ export class FeatureFlagService {
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-      {
-        workspaceId,
-        ignoreLock: true,
-      },
+      { workspaceId },
     );
 
     return result;
