@@ -47,10 +47,8 @@ export class TwentyORMGlobalManager {
       );
     }
 
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      null,
-    );
+    const workspaceDataSource =
+      await this.workspaceDataSourceFactory.create(workspaceId);
 
     const repository = workspaceDataSource.getRepository<T>(
       objectMetadataName,
@@ -61,7 +59,7 @@ export class TwentyORMGlobalManager {
   }
 
   async getDataSourceForWorkspace({ workspaceId }: { workspaceId: string }) {
-    return await this.workspaceDataSourceFactory.create(workspaceId, null);
+    return await this.workspaceDataSourceFactory.create(workspaceId);
   }
 
   async destroyDataSourceForWorkspace(workspaceId: string) {

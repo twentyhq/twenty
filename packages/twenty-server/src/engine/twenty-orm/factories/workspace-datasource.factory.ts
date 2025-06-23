@@ -99,22 +99,9 @@ export class WorkspaceDatasourceFactory {
     }
   }
 
-  public async create(
-    workspaceId: string,
-    desiredDataSourceMetadataVersion: number | null,
-  ): Promise<WorkspaceDataSource> {
+  public async create(workspaceId: string): Promise<WorkspaceDataSource> {
     const dataSourceMetadataVersion =
       await this.getWorkspaceMetadataVersionFromCacheOrFromDB(workspaceId);
-
-    if (
-      desiredDataSourceMetadataVersion !== null &&
-      dataSourceMetadataVersion !== desiredDataSourceMetadataVersion
-    ) {
-      throw new TwentyORMException(
-        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Datasource version: ${dataSourceMetadataVersion}. Desired datasource version: ${desiredDataSourceMetadataVersion}`,
-        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
-      );
-    }
 
     const { data: cachedFeatureFlagMap, version: cachedFeatureFlagMapVersion } =
       await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
@@ -161,14 +148,16 @@ export class WorkspaceDatasourceFactory {
               },
             );
 
-          const cachedMetadataVersion =
+          const metadataVersionForFinalUpToDateCheck =
             await this.workspaceCacheStorageService.getMetadataVersion(
               workspaceId,
             );
 
-          if (cachedMetadataVersion !== dataSourceMetadataVersion) {
+          if (
+            metadataVersionForFinalUpToDateCheck !== dataSourceMetadataVersion
+          ) {
             throw new TwentyORMException(
-              `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${cachedMetadataVersion}. Desired version: ${dataSourceMetadataVersion}`,
+              `Workspace metadata version mismatch detected for workspace ${workspaceId}. Latest version: ${metadataVersionForFinalUpToDateCheck}. Built version: ${dataSourceMetadataVersion}`,
               TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
             );
           }
