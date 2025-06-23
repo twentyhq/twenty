@@ -19,6 +19,7 @@ describe('checkFilterEnumValues', () => {
     isNullable: fieldSelectMock.isNullable,
     defaultValue: fieldSelectMock.defaultValue,
     options: fieldSelectMock.options,
+    isLabelSyncedWithName: true,
   };
 
   const fieldsById: FieldMetadataMap = {
