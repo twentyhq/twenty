@@ -3,13 +3,15 @@ import { v4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const generateRandomFieldValue = ({
   field,
 }: {
   field: FieldMetadataEntity;
-}) => {
+}): FieldMetadataDefaultValue => {
   switch (field.type) {
     case FieldMetadataType.UUID: {
       return v4();
