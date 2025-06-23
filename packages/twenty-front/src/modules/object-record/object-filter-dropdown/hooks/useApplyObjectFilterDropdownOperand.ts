@@ -70,8 +70,9 @@ export const useApplyObjectFilterDropdownOperand = () => {
     }
 
     if (
-      recordFilterToUpsert?.type === 'DATE' ||
-      recordFilterToUpsert?.type === 'DATE_TIME'
+      isDefined(recordFilterToUpsert) &&
+      (recordFilterToUpsert.type === 'DATE' ||
+        recordFilterToUpsert.type === 'DATE_TIME')
     ) {
       if (
         recordFilterToUpsert.operand === RecordFilterOperand.Is ||
