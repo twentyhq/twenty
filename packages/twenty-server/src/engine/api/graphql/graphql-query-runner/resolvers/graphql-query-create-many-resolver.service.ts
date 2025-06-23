@@ -168,7 +168,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     }[],
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
-    let queryBuilder = executionArgs.repository.createQueryBuilder(
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
@@ -178,7 +178,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     );
 
     whereConditions.forEach((condition) => {
-      queryBuilder = queryBuilder.orWhere(condition);
+      queryBuilder.orWhere(condition);
     });
 
     return await queryBuilder.getMany();
@@ -211,9 +211,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
     for (const field of conflictingFields) {
       const fieldValues = records
-        .map(
-          (record) => this.getValueFromPath(record, field.fullPath) as string,
-        )
+        .map((record) => this.getValueFromPath(record, field.fullPath))
         .filter(Boolean);
 
       //TODO : Adapt to composite constraint - https://github.com/twentyhq/core-team-issues/issues/1115
