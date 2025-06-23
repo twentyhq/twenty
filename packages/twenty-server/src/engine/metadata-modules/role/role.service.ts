@@ -16,8 +16,8 @@ import {
   UpdateRoleInput,
   UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -28,8 +28,8 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -39,11 +39,7 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: [
-        'userWorkspaceRoles',
-        'settingPermissions',
-        'objectPermissions',
-      ],
+      relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
     });
   }
 
@@ -56,7 +52,7 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['userWorkspaceRoles', 'settingPermissions'],
+      relations: ['roleTargets', 'settingPermissions'],
     });
   }
 

@@ -10,8 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -20,8 +20,8 @@ export class UserRoleService {
   constructor(
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -47,13 +47,13 @@ export class UserRoleService {
       return;
     }
 
-    const newUserWorkspaceRole = await this.userWorkspaceRoleRepository.save({
+    const newUserWorkspaceRole = await this.roleTargetsRepository.save({
       roleId,
       userWorkspaceId,
       workspaceId,
     });
 
-    await this.userWorkspaceRoleRepository.delete({
+    await this.roleTargetsRepository.delete({
       userWorkspaceId,
       workspaceId,
       id: Not(newUserWorkspaceRole.id),
@@ -99,7 +99,7 @@ export class UserRoleService {
       return new Map();
     }
 
-    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
+    const allUserWorkspaceRoles = await this.roleTargetsRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         workspaceId,

@@ -8,17 +8,18 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { SettingPermissionModule } from 'src/engine/metadata-modules/setting-permission/setting-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
+import { RoleEntity } from './role.entity';
+import { RoleResolver } from './role.resolver';
+import { RoleService } from './role.service';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity, UserWorkspaceRoleEntity], 'core'),
+    TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity], 'core'),
     TypeOrmModule.forFeature([UserWorkspace, Workspace], 'core'),
     UserRoleModule,
     PermissionsModule,
