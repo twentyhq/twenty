@@ -38,7 +38,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={320}>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
