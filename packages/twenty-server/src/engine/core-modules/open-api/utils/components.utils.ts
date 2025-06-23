@@ -1,7 +1,6 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { faker } from '@faker-js/faker';
 
 import {
   FieldMetadataSettings,
@@ -22,6 +21,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.utils';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -94,12 +94,12 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
 };
 
 const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
-  const randomName = {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-  };
-
   return item.fields.reduce((node, field) => {
+    // If field is required
+    if (!field.isNullable && field.defaultValue === null) {
+      node[field.name] = generateRandomFieldValue({ field });
+    }
+
     switch (field.type) {
       case FieldMetadataType.TEXT: {
         if (field.name !== 'name') {
@@ -111,57 +111,14 @@ const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
         return node;
       }
 
+      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.LINKS:
+      case FieldMetadataType.CURRENCY:
+      case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
       case FieldMetadataType.PHONES: {
-        node[field.name] = {
-          primaryPhoneNumber: '06 10 20 30 40',
-          primaryPhoneCountryCode: '+33',
-          additionalPhones: [],
-        };
-
-        return node;
-      }
-
-      case FieldMetadataType.EMAILS: {
-        node[field.name] = {
-          primaryEmail: faker.internet.email(randomName).toLowerCase(),
-          additionalEmails: null,
-        };
-
-        return node;
-      }
-
-      case FieldMetadataType.LINKS: {
-        node[field.name] = {
-          primaryLink: faker.internet.url(),
-          additionalLinks: [],
-        };
-
-        return node;
-      }
-
-      case FieldMetadataType.CURRENCY: {
-        node[field.name] = {
-          amountMicros: faker.number.int({ min: 100, max: 1_000 }) * 1_000_000,
-          currencyCode: 'EUR',
-        };
-
-        return node;
-      }
-
-      case FieldMetadataType.FULL_NAME: {
-        node[field.name] = randomName;
-
-        return node;
-      }
-
-      case FieldMetadataType.SELECT: {
-        node[field.name] = field.options[0].value;
-
-        return node;
-      }
-
-      case FieldMetadataType.MULTI_SELECT: {
-        node[field.name] = [field.options[0].value];
+        node[field.name] = generateRandomFieldValue({ field });
 
         return node;
       }
