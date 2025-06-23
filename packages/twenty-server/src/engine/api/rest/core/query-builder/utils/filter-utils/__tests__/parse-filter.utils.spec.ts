@@ -18,6 +18,7 @@ describe('parseFilter', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const completeFieldTextMock: FieldMetadataInterface = {
@@ -28,6 +29,7 @@ describe('parseFilter', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const fieldsById: FieldMetadataMap = {

@@ -4,6 +4,7 @@ import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 describe('computeCursorArgFilter', () => {
   const objectMetadataItemWithFieldMaps = {
@@ -17,7 +18,6 @@ describe('computeCursorArgFilter', () => {
     labelPlural: 'People',
     targetTableName: 'person',
     indexMetadatas: [],
-    indexFieldMetadatas: [],
     isSystem: false,
     isActive: true,
     isAuditLogged: false,
@@ -36,6 +36,8 @@ describe('computeCursorArgFilter', () => {
         name: 'name',
         label: 'Name',
         objectMetadataId: 'object-id',
+        isLabelSyncedWithName: true,
+        isNullable: true,
       },
       'age-id': {
         type: FieldMetadataType.NUMBER,
@@ -43,6 +45,8 @@ describe('computeCursorArgFilter', () => {
         name: 'age',
         label: 'Age',
         objectMetadataId: 'object-id',
+        isLabelSyncedWithName: true,
+        isNullable: true,
       },
       'fullname-id': {
         type: FieldMetadataType.FULL_NAME,
@@ -50,9 +54,11 @@ describe('computeCursorArgFilter', () => {
         name: 'fullName',
         label: 'Full Name',
         objectMetadataId: 'object-id',
+        isLabelSyncedWithName: true,
+        isNullable: true,
       },
     },
-  };
+  } satisfies ObjectMetadataItemWithFieldMaps;
 
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {

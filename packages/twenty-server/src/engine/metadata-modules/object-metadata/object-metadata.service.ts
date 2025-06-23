@@ -234,9 +234,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ): Promise<ObjectMetadataEntity> {
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        {
-          workspaceId,
-        },
+        { workspaceId },
       );
 
     const inputId = input.id;

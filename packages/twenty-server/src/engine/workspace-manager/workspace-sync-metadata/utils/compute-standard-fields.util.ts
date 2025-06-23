@@ -43,6 +43,8 @@ export const computeStandardFields = (
           ...rest,
           standardId: relationStandardId,
           defaultValue: null,
+          isNullable: true,
+          isLabelSyncedWithName: true,
         });
       }
     } else {

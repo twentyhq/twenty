@@ -18,6 +18,7 @@ describe('getFieldType', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const fieldsById: FieldMetadataMap = {

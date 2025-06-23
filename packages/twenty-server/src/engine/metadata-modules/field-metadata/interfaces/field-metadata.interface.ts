@@ -19,7 +19,7 @@ export interface FieldMetadataInterface<
   workspaceId?: string;
   description?: string;
   icon?: string;
-  isNullable?: boolean;
+  isNullable: boolean;
   isUnique?: boolean;
   relationTargetFieldMetadataId?: string;
   relationTargetFieldMetadata?: FieldMetadataInterface;
@@ -30,4 +30,5 @@ export interface FieldMetadataInterface<
   isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
+  isLabelSyncedWithName: boolean;
 }

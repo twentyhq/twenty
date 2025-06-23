@@ -24,6 +24,7 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const typedFieldTextMock: FieldMetadataInterface = {
@@ -34,6 +35,7 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const typedFieldCurrencyMock: FieldMetadataInterface = {
@@ -44,6 +46,7 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldCurrencyMock.isNullable,
     defaultValue: fieldCurrencyMock.defaultValue,
+    isLabelSyncedWithName: true,
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -108,6 +111,8 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           name: 'toObjectMetadataName',
           label: 'Test Field',
           objectMetadataId: 'object-metadata-id',
+          isNullable: true,
+          isLabelSyncedWithName: true,
         };
 
         if (fieldMetadataType === FieldMetadataType.RELATION) {

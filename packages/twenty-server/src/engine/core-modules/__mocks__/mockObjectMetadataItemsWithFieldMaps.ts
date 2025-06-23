@@ -41,6 +41,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isNullable: true,
           isUnique: false,
           workspaceId: '',
+          isLabelSyncedWithName: true,
         },
       },
       fieldIdByName: {
@@ -81,6 +82,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isNullable: true,
           isUnique: false,
           workspaceId: '',
+          isLabelSyncedWithName: true,
         },
         domainNameFieldMetadataId: {
           id: 'domainNameFieldMetadataId',
@@ -94,6 +96,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isNullable: true,
           isUnique: false,
           workspaceId: '',
+          isLabelSyncedWithName: true,
         },
       },
       fieldIdByName: {
@@ -135,6 +138,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isNullable: true,
           isUnique: false,
           workspaceId: '',
+          isLabelSyncedWithName: true,
         },
         imageIdentifierFieldMetadataId: {
           id: 'imageIdentifierFieldMetadataId',
@@ -148,6 +152,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isNullable: true,
           isUnique: false,
           workspaceId: '',
+          isLabelSyncedWithName: true,
         },
       },
       fieldIdByName: {
