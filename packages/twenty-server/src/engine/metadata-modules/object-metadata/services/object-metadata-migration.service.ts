@@ -89,8 +89,14 @@ export class ObjectMetadataMigrationService {
   }
 
   public async createRenameTableMigration(
-    existingObjectMetadata: ObjectMetadataEntity,
-    objectMetadataForUpdate: ObjectMetadataEntity,
+    existingObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom'
+    >,
+    objectMetadataForUpdate: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom'
+    >,
     workspaceId: string,
   ) {
     const newTargetTableName = computeObjectTargetTable(
@@ -114,8 +120,8 @@ export class ObjectMetadataMigrationService {
   }
 
   public async updateRelationMigrations(
-    currentObjectMetadata: ObjectMetadataEntity,
-    alteredObjectMetadata: ObjectMetadataEntity,
+    currentObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
+    alteredObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
     relationMetadataCollection: {
       targetObjectMetadata: ObjectMetadataEntity;
       targetFieldMetadata: FieldMetadataEntity;
@@ -282,7 +288,10 @@ export class ObjectMetadataMigrationService {
   }
 
   public async recomputeEnumNames(
-    updatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id'
+    >,
     workspaceId: string,
   ) {
     const fieldMetadataToUpdate = await this.fieldMetadataRepository.find({

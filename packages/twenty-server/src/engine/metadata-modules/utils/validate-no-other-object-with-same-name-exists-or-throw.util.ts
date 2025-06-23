@@ -11,7 +11,7 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataMaps: ObjectMetadataMaps;
 };
 
-export const validatesNoOtherObjectWithSameNameExistsOrThrows = async ({
+export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
   objectMetadataNameSingular,
   objectMetadataNamePlural,
   existingObjectMetadataId,

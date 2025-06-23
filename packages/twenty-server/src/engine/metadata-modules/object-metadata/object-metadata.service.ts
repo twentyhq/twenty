@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
@@ -249,9 +249,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     validateObjectMetadataInputNamesOrThrow(inputPayload);
 
-    const existingObjectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id: inputId, workspaceId: workspaceId },
-    });
+    const existingObjectMetadata = objectMetadataMaps.byId[inputId];
 
     if (!existingObjectMetadata) {
       throw new ObjectMetadataException(
@@ -265,7 +263,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ...inputPayload,
     };
 
-    await validatesNoOtherObjectWithSameNameExistsOrThrows({
+    validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNameSingular:
         existingObjectMetadataCombinedWithUpdateInput.nameSingular,
       objectMetadataNamePlural:
@@ -482,8 +480,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   private async handleObjectNameAndLabelUpdates(
-    existingObjectMetadata: ObjectMetadataEntity,
-    objectMetadataForUpdate: ObjectMetadataEntity,
+    existingObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon'
+    >,
+    objectMetadataForUpdate: Pick<
+      ObjectMetadataEntity,
+      | 'nameSingular'
+      | 'isCustom'
+      | 'workspaceId'
+      | 'id'
+      | 'labelSingular'
+      | 'labelPlural'
+      | 'icon'
+    >,
     inputPayload: UpdateObjectPayload,
   ) {
     const newTargetTableName = computeObjectTargetTable(
@@ -549,17 +559,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (objectMetadata.isCustom) {
-      return objectMetadata[labelKey];
-    }
-
-    if (!locale || locale === SOURCE_LOCALE) {
-      if (
-        objectMetadata.standardOverrides &&
-        isDefined(objectMetadata.standardOverrides[labelKey])
-      ) {
-        return objectMetadata.standardOverrides[labelKey] as string;
-      }
-
       return objectMetadata[labelKey];
     }
 

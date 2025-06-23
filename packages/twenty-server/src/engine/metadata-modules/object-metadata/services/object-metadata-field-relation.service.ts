@@ -119,7 +119,10 @@ export class ObjectMetadataFieldRelationService {
 
   public async updateRelationsAndForeignKeysMetadata(
     workspaceId: string,
-    updatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id' | 'labelSingular'
+    >,
   ): Promise<
     {
       targetObjectMetadata: ObjectMetadataEntity;
@@ -141,7 +144,10 @@ export class ObjectMetadataFieldRelationService {
 
   private async updateRelationAndForeignKeyMetadata(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'id' | 'isCustom' | 'labelSingular'
+    >,
     targetObjectMetadataStandardId: string,
   ) {
     const targetObjectMetadata =
@@ -261,8 +267,8 @@ export class ObjectMetadataFieldRelationService {
   }
 
   private updateSourceFieldMetadata(
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<ObjectMetadataEntity, 'labelSingular'>,
+    targetObjectMetadata: Pick<ObjectMetadataEntity, 'namePlural'>,
   ) {
     const relationObjectMetadataNamePlural = targetObjectMetadata.namePlural;
 
@@ -319,8 +325,14 @@ export class ObjectMetadataFieldRelationService {
   }
 
   private updateTargetFieldMetadata(
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'labelSingular'
+    >,
+    targetObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'namePlural'
+    >,
   ) {
     const customStandardFieldId =
       // @ts-expect-error legacy noImplicitAny

@@ -23,6 +23,7 @@ describe('computeCursorArgFilter', () => {
     isAuditLogged: false,
     isSearchable: false,
     fieldIdByJoinColumnName: {},
+    icon: 'Icon123',
     fieldIdByName: {
       name: 'name-id',
       age: 'age-id',

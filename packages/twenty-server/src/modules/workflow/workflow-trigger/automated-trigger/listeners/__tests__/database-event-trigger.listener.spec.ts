@@ -73,6 +73,7 @@ describe('DatabaseEventTriggerListener', () => {
                 isRemote: false,
                 isAuditLogged: true,
                 isSearchable: true,
+                icon: 'Icon123',
               } satisfies ObjectMetadataItemWithFieldMaps,
             }),
           },
