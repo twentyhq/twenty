@@ -10,13 +10,14 @@ export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
         edge.node.labelIdentifierFieldMetadataId,
       );
 
-    const { fieldsList, ...objectWithoutFieldsList } = edge.node;
+    const { fieldsList, indexMetadataList, ...objectWithoutFieldsList } =
+      edge.node;
 
     return {
       ...objectWithoutFieldsList,
       fields: fieldsList,
       labelIdentifierFieldMetadataId,
-      indexMetadatas: edge.node.indexMetadataList.map((index) => ({
+      indexMetadatas: indexMetadataList.map((index) => ({
         ...index,
         indexFieldMetadatas: [],
       })),
