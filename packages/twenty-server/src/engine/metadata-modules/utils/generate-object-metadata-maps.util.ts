@@ -1,3 +1,4 @@
+import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -16,7 +17,6 @@ export const generateObjectMetadataMaps = (
   };
 
   for (const objectMetadata of objectMetadataCollection) {
-    const fieldsByIdMap: FieldMetadataMap = {};
     const fieldIdByJoinColumnNameMap: Record<string, string> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
@@ -33,19 +33,18 @@ export const generateObjectMetadataMaps = (
       }
     }
 
-    const fieldIdByNameMap: Record<string, string> =
-      objectMetadata.fields.reduce(
-        (acc, field) => ({
-          ...acc,
-          [field.name]: field.id,
-        }),
-        {} as Record<string, string>,
-      );
+    const fieldsByIdMap = objectMetadata.fields.reduce((acc, field) => {
+      acc[field.id] = field;
+
+      return acc;
+    }, {} as FieldMetadataMap);
 
     const processedObjectMetadata: ObjectMetadataItemWithFieldMaps = {
-      ...objectMetadata,
+      ...omit(objectMetadata, 'fields'),
       fieldsById: fieldsByIdMap,
-      fieldIdByName: fieldIdByNameMap,
+      fieldIdByName: Object.fromEntries(
+        Object.entries(fieldsByIdMap).map(([id, field]) => [field.name, id]),
+      ),
       fieldIdByJoinColumnName: fieldIdByJoinColumnNameMap,
     };
 
