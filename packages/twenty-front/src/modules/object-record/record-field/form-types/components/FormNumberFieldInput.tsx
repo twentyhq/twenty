@@ -113,6 +113,8 @@ export const FormNumberFieldInput = ({
     onChange(variableName);
   };
 
+  const error = errorMessage ?? errorFromProps;
+
   return (
     <FormFieldInputContainer>
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
@@ -153,7 +155,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <InputHint>{hint}</InputHint> : null}
-      {errorMessage && <InputHint danger>{errorMessage}</InputHint>}
+      {error && <InputHint danger>{error}</InputHint>}
     </FormFieldInputContainer>
   );
 };
