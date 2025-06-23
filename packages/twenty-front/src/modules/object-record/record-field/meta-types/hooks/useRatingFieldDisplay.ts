@@ -10,11 +10,9 @@ export const useRatingFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(recordId, fieldName) as
-    | FieldRatingValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldRatingValue>(recordId, fieldName);
 
-  const rating = fieldValue ?? 'RATING_1';
+  const rating = fieldValue ?? null;
 
   return {
     fieldDefinition,

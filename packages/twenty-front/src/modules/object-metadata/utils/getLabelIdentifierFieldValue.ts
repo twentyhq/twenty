@@ -13,12 +13,13 @@ export const getLabelIdentifierFieldValue = (
     return record.id;
   }
 
+  const recordIdentifierValue = record[labelIdentifierFieldMetadataItem.name];
   if (
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember ||
     labelIdentifierFieldMetadataItem.type === FieldMetadataType.FULL_NAME
   ) {
-    return `${record[labelIdentifierFieldMetadataItem.name]?.firstName ?? ''} ${record[labelIdentifierFieldMetadataItem.name]?.lastName ?? ''}`;
+    return `${recordIdentifierValue?.firstName ?? ''} ${recordIdentifierValue?.lastName ?? ''}`;
   }
 
-  return record[labelIdentifierFieldMetadataItem.name] ?? '';
+  return isDefined(recordIdentifierValue) ? `${recordIdentifierValue}` : '';
 };

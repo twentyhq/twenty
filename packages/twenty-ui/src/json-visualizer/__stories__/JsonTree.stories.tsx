@@ -571,6 +571,9 @@ export const RedHighlighting: Story = {
     value: {
       name: 'John Doe',
       age: 30,
+      address: {
+        city: 'Paris',
+      },
     },
     getNodeHighlighting: () => 'red',
   },

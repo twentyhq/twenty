@@ -20,6 +20,8 @@ import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-f
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -48,6 +50,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         WorkspaceSSOIdentityProvider,
         ApprovedAccessDomain,
         TwoFactorMethod,
+        AgentEntity,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
