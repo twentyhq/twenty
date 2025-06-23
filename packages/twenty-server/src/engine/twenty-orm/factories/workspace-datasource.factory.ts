@@ -141,16 +141,14 @@ export class WorkspaceDatasourceFactory {
 
           let cachedEntitySchemas: EntitySchema[];
 
-          const { objectMetadataMaps: cachedObjectMetadataMaps } =
+          const {
+            objectMetadataMaps: cachedObjectMetadataMaps,
+            metadataVersion: metadataVersionForFinalUpToDateCheck,
+          } =
             await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps(
               {
                 workspaceId,
               },
-            );
-
-          const metadataVersionForFinalUpToDateCheck =
-            await this.workspaceCacheStorageService.getMetadataVersion(
-              workspaceId,
             );
 
           if (

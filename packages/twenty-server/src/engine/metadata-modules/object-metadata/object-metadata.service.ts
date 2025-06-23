@@ -35,6 +35,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -185,6 +186,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
           objectMetadataInput.workspaceId,
           createdObjectMetadata,
+          objectMetadataMaps,
         );
 
       await this.objectMetadataMigrationService.createTableMigration(
@@ -481,11 +483,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   private async handleObjectNameAndLabelUpdates(
     existingObjectMetadata: Pick<
-      ObjectMetadataEntity,
-      'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon'
+      ObjectMetadataItemWithFieldMaps,
+      'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon' | 'fieldsById'
     >,
     objectMetadataForUpdate: Pick<
-      ObjectMetadataEntity,
+      ObjectMetadataItemWithFieldMaps,
       | 'nameSingular'
       | 'isCustom'
       | 'workspaceId'
@@ -493,6 +495,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       | 'labelSingular'
       | 'labelPlural'
       | 'icon'
+      | 'fieldsById'
     >,
     inputPayload: UpdateObjectPayload,
   ) {

@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -73,8 +74,14 @@ export class ObjectMetadataMigrationService {
   }
 
   public async createRelationMigrations(
-    createdObjectMetadata: ObjectMetadataEntity,
-    relatedObjectMetadataCollection: ObjectMetadataEntity[],
+    createdObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'nameSingular' | 'workspaceId' | 'isCustom'
+    >,
+    relatedObjectMetadataCollection: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'nameSingular' | 'isCustom'
+    >[],
   ) {
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(
@@ -289,23 +296,21 @@ export class ObjectMetadataMigrationService {
 
   public async recomputeEnumNames(
     updatedObjectMetadata: Pick<
-      ObjectMetadataEntity,
-      'nameSingular' | 'isCustom' | 'id'
+      ObjectMetadataItemWithFieldMaps,
+      'nameSingular' | 'isCustom' | 'id' | 'fieldsById'
     >,
     workspaceId: string,
   ) {
-    const fieldMetadataToUpdate = await this.fieldMetadataRepository.find({
-      where: {
-        objectMetadataId: updatedObjectMetadata.id,
-        workspaceId,
-        type: In([
-          FieldMetadataType.SELECT,
-          FieldMetadataType.MULTI_SELECT,
-          FieldMetadataType.RATING,
-          FieldMetadataType.ACTOR,
-        ]),
-      },
-    });
+    const enumFieldMetadataTypes = [
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+      FieldMetadataType.RATING,
+      FieldMetadataType.ACTOR,
+    ];
+
+    const fieldMetadataToUpdate = Object.values(
+      updatedObjectMetadata.fieldsById,
+    ).filter((field) => enumFieldMetadataTypes.includes(field.type));
 
     for (const fieldMetadata of fieldMetadataToUpdate) {
       await this.workspaceMigrationService.createCustomMigration(
