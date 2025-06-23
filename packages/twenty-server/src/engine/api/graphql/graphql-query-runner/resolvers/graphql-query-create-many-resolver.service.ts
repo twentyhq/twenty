@@ -119,6 +119,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return result;
   }
 
+  //TODO : Improve conflicting fields logic - unicity can be define on combination of fields - should be based on unique index not on field metadata
+  //TODO : https://github.com/twentyhq/core-team-issues/issues/1115
   private getConflictingFields(
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): {
@@ -210,6 +212,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         .filter(Boolean);
 
       if (fieldValues.length > 0) {
+        //TODO : Use one constraint only - id by default - https://github.com/twentyhq/core-team-issues/issues/1115
+        if (field.column === 'id') {
+          return { id: In(fieldValues) };
+        }
+
         // @ts-expect-error legacy noImplicitAny
         whereConditions[field.column] = In(fieldValues);
       }
