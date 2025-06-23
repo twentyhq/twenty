@@ -4,7 +4,6 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -154,7 +153,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <InputHint>{hint}</InputHint> : null}
-      <InputErrorHelper>{errorMessage ?? errorFromProps}</InputErrorHelper>
+      {errorMessage && <InputHint isError>{errorMessage}</InputHint>}
     </FormFieldInputContainer>
   );
 };
