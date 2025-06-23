@@ -247,6 +247,27 @@ export const MatchColumnsStep = <T extends string>({
       ),
   );
 
+  const onBackConfirmation = () => {
+    onBack?.();
+    setColumns([]);
+  };
+
+  const openRestartDialog = () => {
+    enqueueDialog({
+      title: t`Restart Import`,
+      message: t`You will lose all your mappings.`,
+      buttons: [
+        { title: t`Cancel` },
+        {
+          title: t`Restart`,
+          onClick: onBackConfirmation,
+          accent: 'danger',
+          role: 'confirm',
+        },
+      ],
+    });
+  };
+
   return (
     <>
       <StyledContent>
@@ -282,10 +303,8 @@ export const MatchColumnsStep = <T extends string>({
         onContinue={handleOnContinue}
         isLoading={isLoading}
         continueTitle={t`Next Step`}
-        onBack={() => {
-          onBack?.();
-          setColumns([]);
-        }}
+        backTitle={t`Restart Import`}
+        onBack={openRestartDialog}
         isContinueDisabled={!hasMatchedColumns}
       />
     </>

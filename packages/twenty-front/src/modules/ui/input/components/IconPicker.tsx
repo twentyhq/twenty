@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -25,6 +25,8 @@ import {
   LightIconButton,
 } from 'twenty-ui/input';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+
 export type IconPickerProps = {
   disabled?: boolean;
   dropdownId?: string;
@@ -36,6 +38,10 @@ export type IconPickerProps = {
   variant?: IconButtonVariant;
   className?: string;
   size?: IconButtonSize;
+  clickableComponent?: ReactNode;
+  dropdownWidth?: number;
+  dropdownOffset?: DropdownOffset;
+  maxIconsVisible?: number;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -102,6 +108,10 @@ export const IconPicker = ({
   variant = 'secondary',
   className,
   size = 'medium',
+  clickableComponent,
+  dropdownWidth,
+  dropdownOffset,
+  maxIconsVisible = 25,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const {
@@ -171,9 +181,9 @@ export const IconPicker = ({
           ...filteredAndSortedIconKeys.filter(
             (iconKey) => iconKey !== selectedIconKey,
           ),
-        ].slice(0, 25)
-      : filteredAndSortedIconKeys.slice(0, 25);
-  }, [icons, searchString, selectedIconKey]);
+        ].slice(0, maxIconsVisible)
+      : filteredAndSortedIconKeys.slice(0, maxIconsVisible);
+  }, [icons, searchString, selectedIconKey, maxIconsVisible]);
 
   const iconKeys2d = useMemo(
     () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
@@ -186,21 +196,26 @@ export const IconPicker = ({
     <div className={className}>
       <Dropdown
         dropdownId={dropdownId}
+        dropdownOffset={dropdownOffset}
         clickableComponent={
-          <IconButton
-            ariaLabel={`Click to select icon ${
-              selectedIconKey
-                ? `(selected: ${selectedIconKey})`
-                : `(no icon selected)`
-            }`}
-            disabled={disabled}
-            Icon={icon}
-            variant={variant}
-            size={size}
-          />
+          clickableComponent || (
+            <IconButton
+              ariaLabel={`Click to select icon ${
+                selectedIconKey
+                  ? `(selected: ${selectedIconKey})`
+                  : `(no icon selected)`
+              }`}
+              disabled={disabled}
+              Icon={icon}
+              variant={variant}
+              size={size}
+            />
+          )
         }
         dropdownComponents={
-          <DropdownContent widthInPixels={ICON_PICKER_DROPDOWN_CONTENT_WIDTH}>
+          <DropdownContent
+            widthInPixels={dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH}
+          >
             <SelectableList
               selectableListInstanceId="icon-list"
               selectableItemIdMatrix={iconKeys2d}

@@ -49,7 +49,7 @@ export const SettingsRolesList = () => {
     <Section>
       <H2Title
         title={t`All roles`}
-        description={t`Assign roles to specify each member's access permissions`}
+        description={t`Assign roles to manage each member’s access and permissions`}
       />
       <Table>
         <SettingsRolesTableHeader />

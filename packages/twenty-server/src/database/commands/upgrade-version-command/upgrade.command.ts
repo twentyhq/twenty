@@ -165,10 +165,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_060: VersionCommands = {
+      afterSyncMetadata: [],
+      beforeSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
       '0.55.0': commands_055,
+      '0.60.0': commands_060,
     };
   }
 

@@ -5,6 +5,7 @@ export type Leaf = {
   type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
+  description?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -14,6 +15,7 @@ export type Node = {
   type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
+  description?: string;
   value: OutputSchema;
 };
 

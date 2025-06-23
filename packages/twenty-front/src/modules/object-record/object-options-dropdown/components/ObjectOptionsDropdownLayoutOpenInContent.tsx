@@ -1,7 +1,9 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -27,6 +29,10 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const canOpenInSidePanel = canOpenObjectInSidePanel(
+    objectMetadataItem.nameSingular,
+  );
 
   const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
@@ -59,12 +65,15 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
         >
           <SelectableListItem
             itemId={ViewOpenRecordInType.SIDE_PANEL}
-            onEnter={() =>
+            onEnter={() => {
+              if (!canOpenInSidePanel) {
+                return;
+              }
               setAndPersistOpenRecordIn(
                 ViewOpenRecordInType.SIDE_PANEL,
                 currentView,
-              )
-            }
+              );
+            }}
           >
             <MenuItemSelect
               LeftIcon={IconLayoutSidebarRight}
@@ -73,12 +82,17 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
                 recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
               }
               focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
-              onClick={() =>
+              onClick={() => {
+                if (!canOpenInSidePanel) {
+                  return;
+                }
+
                 setAndPersistOpenRecordIn(
                   ViewOpenRecordInType.SIDE_PANEL,
                   currentView,
-                )
-              }
+                );
+              }}
+              disabled={!canOpenInSidePanel}
             />
           </SelectableListItem>
           <SelectableListItem

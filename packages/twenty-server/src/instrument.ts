@@ -3,6 +3,7 @@ import process from 'process';
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import {
+  AggregationTemporality,
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
@@ -65,6 +66,7 @@ const meterProvider = new MeterProvider({
           new PeriodicExportingMetricReader({
             exporter: new OTLPMetricExporter({
               url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
+              temporalityPreference: AggregationTemporality.DELTA,
             }),
             exportIntervalMillis: 10000,
           }),

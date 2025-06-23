@@ -8,12 +8,12 @@ import {
   CalendarEventImportException,
   CalendarEventImportExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type GetCalendarEventsResponse = {
   fullEvents: boolean;
-  calendarEvents?: CalendarEventWithParticipants[];
+  calendarEvents?: FetchedCalendarEvent[];
   calendarEventIds?: string[];
   nextSyncCursor: string;
 };

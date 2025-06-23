@@ -11,12 +11,10 @@ export const useIcons = () => {
     return icons;
   };
 
-  const getIcon = (iconKey?: string | null) => {
-    if (!iconKey) {
-      return defaultIcon;
-    }
-
-    return icons[iconKey] ?? defaultIcon;
+  const getIcon = (iconKey?: string | null, customDefaultIcon?: string) => {
+    return (
+      icons[iconKey ?? ''] || icons[customDefaultIcon ?? ''] || defaultIcon
+    );
   };
 
   return { getIcons, getIcon };

@@ -130,7 +130,11 @@ export const SettingsRolePermissionsSettingsSection = ({
         containAnimation={false}
       >
         <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader />
+          <SettingsRolePermissionsSettingsTableHeader
+            roleId={roleId}
+            settingsPermissionsConfig={settingsPermissionsConfig}
+            isEditable={isEditable}
+          />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (
               <SettingsRolePermissionsSettingsTableRow

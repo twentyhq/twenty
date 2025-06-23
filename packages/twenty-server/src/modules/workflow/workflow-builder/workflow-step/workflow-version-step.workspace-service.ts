@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -50,6 +51,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly agentService: AgentService,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -350,11 +352,13 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     // We don't enrich on the fly for code and HTTP request workflow actions.
     // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests, OutputSchema is determined by the expamle response input
+    // For HTTP requests and AI agent, OutputSchema is determined by the expamle response input
     if (
-      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
-        step.type,
-      )
+      [
+        WorkflowActionType.CODE,
+        WorkflowActionType.HTTP_REQUEST,
+        WorkflowActionType.AI_AGENT,
+      ].includes(step.type)
     ) {
       return step;
     }
@@ -393,6 +397,17 @@ export class WorkflowVersionStepWorkspaceService {
             workspaceId,
             softDelete: false,
           });
+        }
+        break;
+      }
+      case WorkflowActionType.AI_AGENT: {
+        const agent = await this.agentService.findOneAgent(
+          step.settings.input.agentId,
+          workspaceId,
+        );
+
+        if (agent) {
+          await this.agentService.deleteOneAgent(agent.id, workspaceId);
         }
         break;
       }
@@ -574,6 +589,37 @@ export class WorkflowVersionStepWorkspaceService {
               method: 'GET',
               headers: {},
               body: {},
+            },
+          },
+        };
+      }
+      case WorkflowActionType.AI_AGENT: {
+        const newAgent = await this.agentService.createOneAgent(
+          {
+            name: 'AI Agent Workflow Step',
+            description: 'Created automatically for workflow step',
+            prompt: '',
+            modelId: 'gpt-4o',
+          },
+          workspaceId,
+        );
+
+        if (!isDefined(newAgent)) {
+          throw new WorkflowVersionStepException(
+            'Failed to create AI Agent Step',
+            WorkflowVersionStepExceptionCode.FAILURE,
+          );
+        }
+
+        return {
+          id: newStepId,
+          name: 'AI Agent',
+          type: WorkflowActionType.AI_AGENT,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              agentId: newAgent.id,
             },
           },
         };

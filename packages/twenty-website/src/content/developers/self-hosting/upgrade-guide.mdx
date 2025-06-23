@@ -32,6 +32,17 @@ Upgrade your Twenty instance to use v0.55 image
 You don't need to run any command anymore, the new image will automatically care about running all required migrations.
 
 
+### `User does not have permission` error
+
+If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+
+In your `twenty-server` container, run:
+```bash
+yarn command:prod cache:flush
+```
+
+This issue is specific to this Twenty version and should not be required for future upgrades.
+
 ### 0.54
 
 Since version `0.53`, no manual actions needed.
