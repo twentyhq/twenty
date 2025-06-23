@@ -22,7 +22,7 @@ describe('calendarEventsResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(1);
+    expect(edges.length).toEqual(60);
 
     const calendarEvent = edges[0].node;
 
@@ -31,6 +31,8 @@ describe('calendarEventsResolver (e2e)', () => {
       endsAt: expect.any(String),
       startsAt: expect.any(String),
       updatedAt: expect.any(String),
+      title: expect.any(String),
+      description: expect.any(String),
     });
   });
 
@@ -51,6 +53,8 @@ describe('calendarEventsResolver (e2e)', () => {
       endsAt: expect.any(String),
       startsAt: expect.any(String),
       updatedAt: expect.any(String),
+      title: expect.any(String),
+      description: expect.any(String),
     });
   });
 });

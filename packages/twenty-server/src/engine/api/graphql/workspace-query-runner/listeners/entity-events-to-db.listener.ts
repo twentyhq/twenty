@@ -17,6 +17,7 @@ import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
+import { ObjectRecordEventForWebhook } from 'src/modules/webhook/types/object-record-event-for-webhook.type';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -66,15 +67,26 @@ export class EntityEventsToDbListener {
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
+    const batchEventEventsForWebhook: ObjectRecordEventForWebhook[] =
+      batchEvent.events.map((event) => ({
+        ...event,
+        objectMetadata: {
+          id: event.objectMetadata.id,
+          nameSingular: event.objectMetadata.nameSingular,
+        },
+      }));
+
     await Promise.all([
       this.subscriptionsQueueService.add<WorkspaceEventBatch<T>>(
         SubscriptionsJob.name,
         batchEvent,
         { retryLimit: 3 },
       ),
-      this.webhookQueueService.add<WorkspaceEventBatch<T>>(
+      this.webhookQueueService.add<
+        WorkspaceEventBatch<ObjectRecordEventForWebhook>
+      >(
         CallWebhookJobsJob.name,
-        batchEvent,
+        { ...batchEvent, events: batchEventEventsForWebhook },
         {
           retryLimit: 3,
         },

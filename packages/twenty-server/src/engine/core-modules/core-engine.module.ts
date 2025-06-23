@@ -10,6 +10,7 @@ import { aiModuleFactory } from 'src/engine/core-modules/ai/ai.module-factory';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
@@ -58,6 +59,7 @@ import { FileModule } from './file/file.module';
     AuditModule,
     AuthModule,
     BillingModule,
+    BillingWebhookModule,
     ClientConfigModule,
     FeatureFlagModule,
     FileModule,

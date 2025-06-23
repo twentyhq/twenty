@@ -4,19 +4,20 @@ import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropd
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { View } from '@/views/types/View';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
+import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -62,8 +63,6 @@ export const ObjectOptionsDropdownMenuViewName = ({
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
 
-  setViewPickerSelectedIcon(currentView.icon);
-
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
   );
@@ -77,26 +76,34 @@ export const ObjectOptionsDropdownMenuViewName = ({
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
   const [viewName, setViewName] = useState(currentView?.name);
 
-  useScopedHotkeys(
-    Key.Enter,
-    async () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: async () => {
       if (viewPickerIsPersisting) {
         return;
       }
 
       await updateViewFromCurrentState();
     },
-    ViewsHotkeyScope.ListDropdown,
-  );
+    focusId: VIEW_PICKER_DROPDOWN_ID,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
+  });
 
   const handleIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
     setAndPersistViewIcon(iconKey, currentView);
   };
+
   const handleViewNameChange = useDebouncedCallback((value: string) => {
     setAndPersistViewName(value, currentView);
   }, 500);
+
+  useEffect(() => {
+    setViewPickerSelectedIcon(currentView.icon);
+  }, [currentView.icon, setViewPickerSelectedIcon]);
+
   const theme = useTheme();
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);

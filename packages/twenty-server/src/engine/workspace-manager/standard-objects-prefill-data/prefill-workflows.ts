@@ -63,7 +63,7 @@ export const prefillWorkflows = async (
         trigger: JSON.stringify({
           name: 'Launch manually',
           type: 'MANUAL',
-          settings: { outputSchema: {} },
+          settings: { outputSchema: {}, icon: 'IconUserPlus' },
         }),
         steps: JSON.stringify([
           {

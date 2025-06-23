@@ -10,7 +10,8 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
-import { ObjectFilterDropdownOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
+import { ObjectFilterDropdownFilterInputHeader } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader';
+import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
@@ -19,11 +20,12 @@ import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/consta
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
   recordFilterId?: string;
 };
 
@@ -41,7 +43,7 @@ export const ObjectFilterDropdownFilterInput = ({
     filterDropdownId,
   );
 
-  const isConfigurable =
+  const isOperandWithFilterValue =
     selectedOperandInDropdown &&
     [
       ViewFilterOperand.Is,
@@ -76,25 +78,30 @@ export const ObjectFilterDropdownFilterInput = ({
   );
 
   const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
-  const isOnlyOperand = !isConfigurable;
+  const isOnlyOperand = !isOperandWithFilterValue;
 
   if (isOnlyOperand) {
     return (
-      <DropdownContent>
-        <ObjectFilterDropdownOperandDropdown />
+      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <ObjectFilterDropdownFilterInputHeader />
+        <ObjectFilterDropdownInnerSelectOperandDropdown />
       </DropdownContent>
     );
   } else if (isDateFilter) {
     return (
       <DropdownContent widthInPixels={DATE_PICKER_DROPDOWN_CONTENT_WIDTH}>
-        <ObjectFilterDropdownOperandDropdown />
+        <ObjectFilterDropdownFilterInputHeader />
+        <ObjectFilterDropdownInnerSelectOperandDropdown />
+        <DropdownMenuSeparator />
         <ObjectFilterDropdownDateInput />
       </DropdownContent>
     );
   } else {
     return (
-      <DropdownContent>
-        <ObjectFilterDropdownOperandDropdown />
+      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <ObjectFilterDropdownFilterInputHeader />
+        <ObjectFilterDropdownInnerSelectOperandDropdown />
+        <DropdownMenuSeparator />
         {TEXT_FILTER_TYPES.includes(filterType) && (
           <ObjectFilterDropdownTextInput />
         )}
@@ -106,7 +113,10 @@ export const ObjectFilterDropdownFilterInput = ({
           <>
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
-            <ObjectFilterDropdownRecordSelect recordFilterId={recordFilterId} />
+            <ObjectFilterDropdownRecordSelect
+              recordFilterId={recordFilterId}
+              dropdownId={filterDropdownId}
+            />
           </>
         )}
         {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}
@@ -116,7 +126,7 @@ export const ObjectFilterDropdownFilterInput = ({
           <>
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
-            <ObjectFilterDropdownOptionSelect />
+            <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
           </>
         )}
         {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}

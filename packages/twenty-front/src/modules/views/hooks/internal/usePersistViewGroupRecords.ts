@@ -31,12 +31,12 @@ export const usePersistViewGroupRecords = () => {
     ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
       if (viewGroupsToCreate.length === 0) return;
 
-      return createManyRecords(
-        viewGroupsToCreate.map((viewGroup) => ({
+      return createManyRecords({
+        recordsToCreate: viewGroupsToCreate.map((viewGroup) => ({
           ...viewGroup,
           viewId,
         })),
-      );
+      });
     },
     [createManyRecords],
   );

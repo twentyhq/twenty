@@ -123,9 +123,6 @@ export const MatchColumnToFieldSelect = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
       dropdownPlacement="bottom-start"
       clickableComponent={
         <StyledMenuItem
@@ -150,7 +147,6 @@ export const MatchColumnToFieldSelect = ({
             onSelectSuggestedOption={handleSelectSuggestedOption}
             onCancelSelect={handleCancelSelectClick}
             onDoNotImportSelect={handleDoNotImportSelect}
-            options={options}
             suggestedOptions={suggestedOptions}
           />
         )

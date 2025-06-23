@@ -14,6 +14,7 @@ import {
   IconKey,
   IconLockOpen,
   IconSettings,
+  IconSettingsAutomation,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -90,6 +91,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         description: t`Manage security policies`,
         Icon: IconKey,
       },
+      {
+        key: SettingPermissionType.WORKFLOWS,
+        name: t`Workflows`,
+        description: t`Manage workflows`,
+        Icon: IconSettingsAutomation,
+      },
     ];
 
   return (
@@ -123,7 +130,11 @@ export const SettingsRolePermissionsSettingsSection = ({
         containAnimation={false}
       >
         <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader />
+          <SettingsRolePermissionsSettingsTableHeader
+            roleId={roleId}
+            settingsPermissionsConfig={settingsPermissionsConfig}
+            isEditable={isEditable}
+          />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (
               <SettingsRolePermissionsSettingsTableRow

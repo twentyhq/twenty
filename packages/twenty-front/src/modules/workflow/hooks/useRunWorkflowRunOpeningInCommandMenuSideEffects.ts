@@ -49,9 +49,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         if (
           !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.output))
         ) {
-          throw new Error(
-            `No workflow run record found for record ID ${recordId}`,
-          );
+          return;
         }
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({

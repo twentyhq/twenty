@@ -44,7 +44,6 @@ export const SupportDropdown = () => {
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
     />
   );
 };

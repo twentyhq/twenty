@@ -4,7 +4,6 @@ import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
 // TODO: automate the generation of this file
-// ⚠️ WARNING ⚠️: Be sure to activate the workflow feature flag (IsWorkflowEnabled) before updating that mock.
 
 // prettier-ignore
 export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =

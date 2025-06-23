@@ -18,6 +18,8 @@ import { CompositeFieldSubFieldName } from '@/settings/data-model/types/Composit
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -90,9 +92,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     return null;
   }
 
-  const subFieldNames =
-    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[objectFilterDropdownSubMenuFieldType]
-      .filterableSubFields;
+  const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
+    objectFilterDropdownSubMenuFieldType
+  ].subFields.map((subField) => subField.subFieldName);
 
   const subFieldsAreFilterable =
     isDefined(fieldMetadataItemUsedInDropdown) &&
@@ -110,7 +112,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
   ];
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -123,9 +125,10 @@ export const AdvancedFilterSubFieldSelectMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          hotkeyScope={advancedFilterFieldSelectDropdownId}
+          focusId={advancedFilterFieldSelectDropdownId}
           selectableItemIdArray={selectableItemIdArray}
           selectableListInstanceId={advancedFilterFieldSelectDropdownId}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {compositeFieldTypeIsFilterableByAnySubField && (
             <SelectableListItem

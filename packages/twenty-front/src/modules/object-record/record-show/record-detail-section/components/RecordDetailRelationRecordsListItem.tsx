@@ -285,7 +285,6 @@ export const RecordDetailRelationRecordsListItem = ({
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
-              dropdownHotkeyScope={{ scope: dropdownScopeId }}
             />
           </DropdownScope>
         )}
@@ -308,7 +307,7 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly: false,
+                  isReadOnly: isFieldReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

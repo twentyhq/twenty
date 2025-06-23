@@ -5,6 +5,7 @@ export type RecordTitleCellContextProps = {
   editModeContentOnly?: boolean;
   displayModeContent?: ReactElement;
   loading?: boolean;
+  isReadOnly?: boolean;
 };
 
 const defaultRecordTitleCellContextProp: RecordTitleCellContextProps = {
@@ -12,6 +13,7 @@ const defaultRecordTitleCellContextProp: RecordTitleCellContextProps = {
   editModeContentOnly: false,
   displayModeContent: undefined,
   loading: false,
+  isReadOnly: false,
 };
 
 export const RecordTitleCellContext =

@@ -119,9 +119,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     }
 
     closeObjectFilterDropdown();
-    openAdvancedFilterDropdown({
-      scope: ADVANCED_FILTER_DROPDOWN_ID,
-    });
+    openAdvancedFilterDropdown();
   };
 
   return (

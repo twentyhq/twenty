@@ -1,6 +1,11 @@
-import { CaptchaDriverType, ClientConfig } from '~/generated/graphql';
+import {
+  CaptchaDriverType,
+  ClientConfig,
+  SupportDriver,
+} from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
+  aiModels: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
@@ -17,7 +22,7 @@ export const mockedClientConfig: ClientConfig = {
   debugMode: false,
   analyticsEnabled: true,
   support: {
-    supportDriver: 'front',
+    supportDriver: SupportDriver.FRONT,
     supportFrontChatId: null,
   },
   sentry: {

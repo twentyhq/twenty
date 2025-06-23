@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
 import { WorkflowStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-step.resolver';
@@ -14,6 +15,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
+    FeatureFlagModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,
     WorkflowCommonModule,

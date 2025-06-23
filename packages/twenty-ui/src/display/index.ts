@@ -35,6 +35,7 @@ export { IconMicrosoft } from './icon/components/IconMicrosoft';
 export { IconMicrosoftCalendar } from './icon/components/IconMicrosoftCalendar';
 export { IconMicrosoftOutlook } from './icon/components/IconMicrosoftOutlook';
 export { IconRelationManyToOne } from './icon/components/IconRelationManyToOne';
+export { IconTrashXOff } from './icon/components/IconTrashXOff';
 export { IconTwentyStar } from './icon/components/IconTwentyStar';
 export { IconTwentyStarFilled } from './icon/components/IconTwentyStarFilled';
 export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
@@ -65,18 +66,18 @@ export {
   IconAlertCircle,
   IconAlertTriangle,
   IconApi,
-  IconAppWindow,
   IconApps,
+  IconAppWindow,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
   IconArrowDown,
   IconArrowLeft,
   IconArrowRight,
-  IconArrowUp,
-  IconArrowUpRight,
   IconArrowsDiagonal,
   IconArrowsVertical,
+  IconArrowUp,
+  IconArrowUpRight,
   IconAt,
   IconBaselineDensitySmall,
   IconBell,
@@ -108,8 +109,9 @@ export {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
-  IconChevronUp,
+  IconChevronRightPipe,
   IconChevronsRight,
+  IconChevronUp,
   IconCircleDot,
   IconCircleOff,
   IconCirclePlus,

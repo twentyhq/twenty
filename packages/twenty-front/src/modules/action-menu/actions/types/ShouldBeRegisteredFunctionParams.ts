@@ -8,7 +8,6 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
   objectPermissions: ObjectPermissions;
-  isWorkflowEnabled: boolean;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   isSoftDeleteFilterActive?: boolean;
@@ -20,4 +19,7 @@ export type ShouldBeRegisteredFunctionParams = {
   numberOfSelectedRecords?: number;
   workflowWithCurrentVersion?: WorkflowWithCurrentVersion;
   viewType?: ActionViewType;
+  getTargetObjectReadPermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
 };

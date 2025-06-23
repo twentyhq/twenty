@@ -57,6 +57,23 @@ export type AdminPanelWorkerQueueHealth = {
   status: AdminPanelHealthServiceStatus;
 };
 
+export type Agent = {
+  __typename?: 'Agent';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  modelId: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  prompt: Scalars['String']['output'];
+  responseFormat?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AgentIdInput = {
+  /** The id of the agent. */
+  id: Scalars['UUID']['input'];
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -134,21 +151,28 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String']['output'];
 };
 
-export type AvailableWorkspaceOutput = {
-  __typename?: 'AvailableWorkspaceOutput';
+export type AvailableWorkspace = {
+  __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+  inviteHash?: Maybe<Scalars['String']['output']>;
+  loginToken?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
+  personalInviteToken?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
   workspaceUrls: WorkspaceUrls;
 };
 
-export type AvailableWorkspacesToJoin = {
-  __typename?: 'AvailableWorkspacesToJoin';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  workspaceUrl: Scalars['String']['output'];
+export type AvailableWorkspaces = {
+  __typename?: 'AvailableWorkspaces';
+  availableWorkspacesForSignIn: Array<AvailableWorkspace>;
+  availableWorkspacesForSignUp: Array<AvailableWorkspace>;
+};
+
+export type AvailableWorkspacesAndAccessTokensOutput = {
+  __typename?: 'AvailableWorkspacesAndAccessTokensOutput';
+  availableWorkspaces: AvailableWorkspaces;
+  tokens: AuthTokenPair;
 };
 
 export type Billing = {
@@ -308,17 +332,28 @@ export enum CaptchaDriverType {
 
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
-  availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  availableWorkspacesCount: Scalars['Float']['output'];
   exists: Scalars['Boolean']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
 };
 
+export type ClientAiModelConfig = {
+  __typename?: 'ClientAIModelConfig';
+  inputCostPer1kTokensInCredits: Scalars['Float']['output'];
+  label: Scalars['String']['output'];
+  modelId: Scalars['String']['output'];
+  outputCostPer1kTokensInCredits: Scalars['Float']['output'];
+  provider: ModelProvider;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
+  calendarBookingPageId?: Maybe<Scalars['String']['output']>;
   canManageFeatureFlags: Scalars['Boolean']['output'];
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']['output']>;
@@ -403,6 +438,14 @@ export type ConfigVariablesGroupData = {
 export type ConfigVariablesOutput = {
   __typename?: 'ConfigVariablesOutput';
   groups: Array<ConfigVariablesGroupData>;
+};
+
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  modelId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  prompt: Scalars['String']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type CreateAppTokenInput = {
@@ -651,8 +694,7 @@ export enum FeatureFlagKey {
   IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
-  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_ENABLED = 'IS_WORKFLOW_ENABLED'
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
 }
 
 export type Field = {
@@ -937,6 +979,11 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
+export enum ModelProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  OPENAI = 'OPENAI'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
@@ -950,6 +997,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -957,12 +1005,12 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
-  createUserAndWorkspace: SignUpOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -991,8 +1039,11 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
-  signUp: SignUpOutput;
+  signIn: AvailableWorkspacesAndAccessTokensOutput;
+  signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
+  signUpInWorkspace: SignUpOutput;
+  skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
   switchToEnterprisePlan: BillingUpdateOutput;
@@ -1003,6 +1054,7 @@ export type Mutation = {
   unsyncRemoteTable: RemoteTable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateOneAgent: Agent;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1084,6 +1136,11 @@ export type MutationCreateObjectEventArgs = {
 };
 
 
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
+};
+
+
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
@@ -1119,16 +1176,6 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
-export type MutationCreateUserAndWorkspaceArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  lastName?: InputMaybe<Scalars['String']['input']>;
-  locale?: InputMaybe<Scalars['String']['input']>;
-  picture?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
@@ -1146,6 +1193,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
@@ -1275,7 +1327,21 @@ export type MutationSendInvitationsArgs = {
 };
 
 
+export type MutationSignInArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
 export type MutationSignUpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
+export type MutationSignUpInWorkspaceArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
@@ -1323,6 +1389,11 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateOneAgentArgs = {
+  input: UpdateAgentInput;
 };
 
 
@@ -1562,6 +1633,7 @@ export type OnDbEventInput = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
+  BOOK_ONBOARDING = 'BOOK_ONBOARDING',
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
@@ -1641,8 +1713,10 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
+  findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
+  findOneAgent: Agent;
   findOneRemoteServerById: RemoteServer;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
@@ -1666,7 +1740,6 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listAvailableWorkspaces: Array<AvailableWorkspaceOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1713,6 +1786,11 @@ export type QueryFindManyRemoteServersByTypeArgs = {
 };
 
 
+export type QueryFindOneAgentArgs = {
+  input: AgentIdInput;
+};
+
+
 export type QueryFindOneRemoteServerByIdArgs = {
   input: RemoteServerIdInput;
 };
@@ -1744,7 +1822,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin: Scalars['String']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1795,12 +1873,6 @@ export type QueryIndexArgs = {
 export type QueryIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
-};
-
-
-export type QueryListAvailableWorkspacesArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
 };
 
 
@@ -1940,6 +2012,8 @@ export type Role = {
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']['input']>;
+  /** Workflow run ID */
+  workflowRunId?: InputMaybe<Scalars['String']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };
@@ -2064,6 +2138,7 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
@@ -2152,9 +2227,14 @@ export enum SubscriptionStatus {
 
 export type Support = {
   __typename?: 'Support';
-  supportDriver: Scalars['String']['output'];
+  supportDriver: SupportDriver;
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
 };
+
+export enum SupportDriver {
+  FRONT = 'FRONT',
+  NONE = 'NONE'
+}
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
@@ -2263,6 +2343,15 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']['input']>;
   notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
   notLike?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpdateAgentInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['UUID']['input'];
+  modelId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  prompt: Scalars['String']['input'];
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateFieldInput = {
@@ -2386,7 +2475,7 @@ export type UpsertSettingPermissionsInput = {
 
 export type User = {
   __typename?: 'User';
-  availableWorkspaces: Array<AvailableWorkspacesToJoin>;
+  availableWorkspaces: AvailableWorkspaces;
   canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -2406,7 +2495,7 @@ export type User = {
   passwordHash?: Maybe<Scalars['String']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
-  userVars: Scalars['JSONObject']['output'];
+  userVars?: Maybe<Scalars['JSONObject']['output']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
