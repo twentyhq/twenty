@@ -6,15 +6,15 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -37,12 +37,15 @@ export const WorkflowEditActionDeleteRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionDeleteRecordProps) => {
+  const theme = useTheme();
+
   const { getIcon } = useIcons();
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -68,7 +71,7 @@ export const WorkflowEditActionDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  const objectNameSingular = activeObjectMetadataItems.find(
+  const objectNameSingular = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectName,
   )?.nameSingular;
 
@@ -103,10 +106,11 @@ export const WorkflowEditActionDeleteRecord = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Delete Record',
+    });
 
   return (
     <>
@@ -147,6 +151,8 @@ export const WorkflowEditActionDeleteRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         <HorizontalSeparator noMargin />

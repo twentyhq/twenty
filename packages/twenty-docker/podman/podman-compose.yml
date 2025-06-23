@@ -7,13 +7,14 @@ services:
     environment:
       POSTGRES_DB: twenty
       POSTGRES_USER: twenty
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD}
     volumes:
       - twenty-db-data:/var/lib/postgresql/data:Z
 
   redis:
     container_name: twenty-redis
     image: redis:latest
+    command: ["--maxmemory-policy", "noeviction"]
     volumes:
       - twenty-redis-data:/data:Z
 
@@ -23,7 +24,7 @@ services:
     environment:
       NODE_PORT: "3000"
       SERVER_URL: ${SERVER_URL}
-      PG_DATABASE_URL: "postgresql://twenty:${POSTGRES_PASSWORD}@twenty-db:5432/twenty"
+      PG_DATABASE_URL: "postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty"
       REDIS_URL: "redis://twenty-redis:6379"
       APP_SECRET: ${APP_SECRET}
       NODE_ENV: production
@@ -39,7 +40,7 @@ services:
     command: yarn worker:prod
     environment:
       SERVER_URL: ${SERVER_URL}
-      PG_DATABASE_URL: "postgresql://twenty:${POSTGRES_PASSWORD}@twenty-db:5432/twenty"
+      PG_DATABASE_URL: "postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty"
       REDIS_URL: "redis://twenty-redis:6379"
       APP_SECRET: ${APP_SECRET}
       DISABLE_DB_MIGRATIONS: "true"

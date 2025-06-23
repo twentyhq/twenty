@@ -4,18 +4,17 @@ import {
   ResponseType,
 } from '@microsoft/microsoft-graph-types';
 
+import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const formatMicrosoftCalendarEvents = (
   events: Event[],
-): CalendarEventWithParticipants[] => {
+): FetchedCalendarEvent[] => {
   return events.map(formatMicrosoftCalendarEvent);
 };
 
-const formatMicrosoftCalendarEvent = (
-  event: Event,
-): CalendarEventWithParticipants => {
+const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
   const formatResponseStatus = (
     status: NullableOption<ResponseType> | undefined,
   ) => {
@@ -32,15 +31,15 @@ const formatMicrosoftCalendarEvent = (
     }
   };
 
-  return {
+  const calendarEvent: FetchedCalendarEvent = {
     title: event.subject ?? '',
     isCanceled: !!event.isCancelled,
     isFullDay: !!event.isAllDay,
-    startsAt: event.start?.dateTime ?? null,
-    endsAt: event.end?.dateTime ?? null,
-    externalId: event.id ?? '',
-    externalCreatedAt: event.createdDateTime ?? null,
-    externalUpdatedAt: event.lastModifiedDateTime ?? null,
+    startsAt: event.start?.dateTime ?? '',
+    endsAt: event.end?.dateTime ?? '',
+    id: event.id ?? '',
+    externalCreatedAt: event.createdDateTime ?? '',
+    externalUpdatedAt: event.lastModifiedDateTime ?? '',
     description: event.body?.content ?? '',
     location: event.location?.displayName ?? '',
     iCalUID: event.iCalUId ?? '',
@@ -57,4 +56,23 @@ const formatMicrosoftCalendarEvent = (
       })) ?? [],
     status: '',
   };
+
+  const propertiesToSanitize: (keyof FetchedCalendarEvent)[] = [
+    'title',
+    'startsAt',
+    'endsAt',
+    'id',
+    'externalCreatedAt',
+    'externalUpdatedAt',
+    'description',
+    'location',
+    'iCalUID',
+    'conferenceSolution',
+    'conferenceLinkLabel',
+    'conferenceLinkUrl',
+    'recurringEventExternalId',
+    'status',
+  ];
+
+  return sanitizeCalendarEvent(calendarEvent, propertiesToSanitize);
 };

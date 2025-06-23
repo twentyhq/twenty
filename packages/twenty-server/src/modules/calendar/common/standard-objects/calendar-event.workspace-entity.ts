@@ -1,13 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -151,7 +149,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId:
       CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Channel Event Associations`,
     description: msg`Calendar Channel Event Associations`,
     icon: 'IconCalendar',
@@ -164,7 +162,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Event Participants`,
     description: msg`Event Participants`,
     icon: 'IconUserCircle',

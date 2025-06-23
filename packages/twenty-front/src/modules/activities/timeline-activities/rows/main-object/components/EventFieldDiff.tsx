@@ -5,7 +5,6 @@ import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-
 import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { Trans } from '@lingui/react/macro';
 
 type EventFieldDiffProps = {
@@ -54,29 +53,27 @@ export const EventFieldDiff = ({
       isObjectEmpty(diffRecord));
 
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <StyledEventFieldDiffContainer>
-        <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
-        {isUpdatedToEmpty ? (
-          <StyledEmptyValue>
-            <Trans>Empty</Trans>
-          </StyledEmptyValue>
-        ) : (
-          <>
-            <EventFieldDiffValueEffect
-              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              fieldMetadataItem={fieldMetadataItem}
-              diffRecord={diffRecord}
-            />
-            <EventFieldDiffValue
-              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              fieldMetadataItem={fieldMetadataItem}
-            />
-          </>
-        )}
-      </StyledEventFieldDiffContainer>
-    </RecordFieldValueSelectorContextProvider>
+    <StyledEventFieldDiffContainer>
+      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+      {isUpdatedToEmpty ? (
+        <StyledEmptyValue>
+          <Trans>Empty</Trans>
+        </StyledEmptyValue>
+      ) : (
+        <>
+          <EventFieldDiffValueEffect
+            diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            fieldMetadataItem={fieldMetadataItem}
+            diffRecord={diffRecord}
+          />
+          <EventFieldDiffValue
+            diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            fieldMetadataItem={fieldMetadataItem}
+          />
+        </>
+      )}
+    </StyledEventFieldDiffContainer>
   );
 };

@@ -2,6 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -15,12 +17,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
+import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
+
 @Global()
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, UserWorkspaceRoleEntity],
-      'metadata',
+      [ObjectMetadataEntity, UserWorkspaceRoleEntity, Workspace],
+      'core',
     ),
     DataSourceModule,
     WorkspaceCacheStorageModule,
@@ -29,12 +33,19 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     WorkspaceFeatureFlagsMapCacheModule,
     WorkspacePermissionsCacheModule,
     FeatureFlagModule,
+    TwentyConfigModule,
+    PgPoolSharedModule,
   ],
   providers: [
     ...entitySchemaFactories,
     TwentyORMManager,
     TwentyORMGlobalManager,
   ],
-  exports: [EntitySchemaFactory, TwentyORMManager, TwentyORMGlobalManager],
+  exports: [
+    EntitySchemaFactory,
+    TwentyORMManager,
+    TwentyORMGlobalManager,
+    PgPoolSharedModule,
+  ],
 })
 export class TwentyORMModule {}

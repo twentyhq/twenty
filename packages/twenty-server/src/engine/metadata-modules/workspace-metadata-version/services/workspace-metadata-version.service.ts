@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -27,7 +28,7 @@ export class WorkspaceMetadataVersionService {
 
     const metadataVersion = workspace?.metadataVersion;
 
-    if (metadataVersion === undefined) {
+    if (!isDefined(metadataVersion)) {
       throw new WorkspaceMetadataVersionException(
         'Metadata version not found',
         WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,

@@ -21,7 +21,6 @@ export const PasswordResetLinkEmail = ({
   return (
     <BaseEmail locale={locale}>
       <Title value={i18n._('Reset your password 🗝')} />
-      <CallToAction href={link} value={i18n._('Reset')} />
       <MainText>
         <Trans
           id="This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
@@ -30,6 +29,10 @@ export const PasswordResetLinkEmail = ({
         <br />
         <Link href={link} value={link} />
       </MainText>
+      <br />
+      <CallToAction href={link} value={i18n._('Reset')} />
+      <br />
+      <br />
     </BaseEmail>
   );
 };

@@ -2,8 +2,8 @@ import { ReactNode, useEffect } from 'react';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { selectableListOnEnterComponentState } from '@/ui/layout/selectable-list/states/selectableListOnEnterComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
@@ -13,35 +13,31 @@ type SelectableListProps = {
   selectableItemIdArray?: string[];
   selectableItemIdMatrix?: string[][];
   onSelect?: (selected: string) => void;
-  hotkeyScope: string;
-  onEnter?: (itemId: string) => void;
   selectableListInstanceId: string;
+  focusId: string;
+  hotkeyScope: string;
 };
 
 export const SelectableList = ({
   children,
-  hotkeyScope,
   selectableItemIdArray,
   selectableItemIdMatrix,
   selectableListInstanceId,
-  onEnter,
   onSelect,
+  focusId,
+  hotkeyScope,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(selectableListInstanceId, hotkeyScope, onSelect);
-
-  const setSelectableListOnEnter = useSetRecoilComponentStateV2(
-    selectableListOnEnterComponentState,
+  useSelectableListHotKeys(
     selectableListInstanceId,
+    hotkeyScope,
+    focusId,
+    onSelect,
   );
 
   const setSelectableItemIds = useSetRecoilComponentStateV2(
     selectableItemIdsComponentState,
     selectableListInstanceId,
   );
-
-  useEffect(() => {
-    setSelectableListOnEnter(() => onEnter);
-  }, [onEnter, setSelectableListOnEnter]);
 
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
@@ -65,7 +61,9 @@ export const SelectableList = ({
         instanceId: selectableListInstanceId,
       }}
     >
-      {children}
+      <SelectableListContextProvider value={{ focusId, hotkeyScope }}>
+        {children}
+      </SelectableListContextProvider>
     </SelectableListComponentInstanceContext.Provider>
   );
 };

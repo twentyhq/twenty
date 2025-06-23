@@ -28,8 +28,8 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
+      isCustomDomainEnabled: false,
       customDomain: 'my-custom-domain.com',
-      isCustomDomainEnabled: true,
       workspaceUrls: {
         subdomainUrl: 'https://twenty.twenty.com',
         customUrl: 'https://my-custom-domain.com',
@@ -38,11 +38,13 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
         id: '1',
         interval: SubscriptionInterval.Month,
         status: SubscriptionStatus.Active,
+        metadata: {},
       },
       billingSubscriptions: [
         {
           id: '1',
           status: SubscriptionStatus.Active,
+          metadata: {},
         },
       ],
     });
@@ -67,6 +69,6 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(22);
+    expect(columnDefinitions.length).toBe(21);
   });
 });

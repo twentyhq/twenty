@@ -22,7 +22,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
     const provider = {
       provide: EXCEPTION_HANDLER_DRIVER,
       useValue:
-        options.type === ExceptionHandlerDriver.Console
+        options.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver(),
     };
@@ -37,6 +37,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: EXCEPTION_HANDLER_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options?.useFactory?.(...args);
 
@@ -44,7 +45,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
           return null;
         }
 
-        return config.type === ExceptionHandlerDriver.Console
+        return config.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver();
       },

@@ -9,6 +9,8 @@ import styled from '@emotion/styled';
 import camelCase from 'lodash.camelcase';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
 
 type WorkflowFormFieldSettingsRecordPickerProps = {
   field: WorkflowFormActionField;
@@ -25,12 +27,15 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
   field,
   onChange,
 }: WorkflowFormFieldSettingsRecordPickerProps) => {
+  const theme = useTheme();
+
   const { getIcon } = useIcons();
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -50,7 +55,7 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
             onChange({
               ...field,
               placeholder: `Select a ${
-                activeObjectMetadataItems.find(
+                activeNonSystemObjectMetadataItems.find(
                   (item) => item.nameSingular === updatedObjectName,
                 )?.labelSingular || 'record'
               }`,
@@ -61,6 +66,8 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
             });
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </FormFieldInputContainer>
       <FormFieldInputContainer>

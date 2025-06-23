@@ -6,8 +6,8 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
@@ -21,7 +21,7 @@ export class IsFieldMetadataDefaultValue
   implements ValidatorConstraintInterface
 {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly loggerService: LoggerService,
   ) {}
@@ -31,10 +31,12 @@ export class IsFieldMetadataDefaultValue
     args: ValidationArguments,
   ): Promise<boolean> {
     // Try to extract type value from the object
+    // @ts-expect-error legacy noImplicitAny
     let type: FieldMetadataType | null = args.object['type'];
 
     if (!type) {
       // Extract id value from the instance, should happen only when updating
+      // @ts-expect-error legacy noImplicitAny
       const id: string | undefined = args.instance?.['id'];
 
       if (!id) {

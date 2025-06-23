@@ -1,9 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -11,7 +9,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workspace permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state
@@ -25,7 +23,6 @@ describe('workspace permissions', () => {
           logo
           isPublicInviteLinkEnabled
           subdomain
-          isCustomDomainEnabled
         }
       }
     `;
@@ -36,14 +33,6 @@ describe('workspace permissions', () => {
   });
 
   afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
-
     // Restore workspace state
     const restoreQuery = gql`
       mutation updateWorkspace {
@@ -463,7 +452,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'IsStripeIntegrationEnabled',
+              publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
               value: true,
             },
           },

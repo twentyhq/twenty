@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import {
+  IndexMetadataEntity,
+  IndexType,
+} from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -15,12 +17,13 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 
 @Injectable()
 export class StandardIndexFactory {
+  private readonly logger = new Logger(StandardIndexFactory.name);
+
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     originalCustomObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const standardIndexOnStandardObjects =
       standardObjectMetadataDefinitions.flatMap((standardObjectMetadata) =>
@@ -28,7 +31,6 @@ export class StandardIndexFactory {
           standardObjectMetadata,
           context,
           originalStandardObjectMetadataMap,
-          workspaceFeatureFlagsMap,
         ),
       );
 
@@ -36,7 +38,6 @@ export class StandardIndexFactory {
       this.createStandardIndexMetadataForCustomObject(
         context,
         originalCustomObjectMetadataMap,
-        workspaceFeatureFlagsMap,
       );
 
     return [
@@ -49,7 +50,6 @@ export class StandardIndexFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const workspaceEntity = metadataArgsStorage.filterEntities(target);
 
@@ -59,7 +59,7 @@ export class StandardIndexFactory {
       );
     }
 
-    if (isGatedAndNotEnabled(workspaceEntity?.gate, workspaceFeatureFlagsMap)) {
+    if (isGatedAndNotEnabled(workspaceEntity?.gate, context.featureFlags)) {
       return [];
     }
 
@@ -68,7 +68,7 @@ export class StandardIndexFactory {
       .filter((workspaceIndexMetadataArgs) => {
         return !isGatedAndNotEnabled(
           workspaceIndexMetadataArgs.gate,
-          workspaceFeatureFlagsMap,
+          context.featureFlags,
         );
       });
 
@@ -91,7 +91,7 @@ export class StandardIndexFactory {
           isUnique: workspaceIndexMetadataArgs.isUnique,
           isCustom: false,
           indexWhereClause: workspaceIndexMetadataArgs.whereClause,
-          indexType: workspaceIndexMetadataArgs.type,
+          indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
         };
 
         return indexMetadata;
@@ -102,7 +102,6 @@ export class StandardIndexFactory {
   private createStandardIndexMetadataForCustomObject(
     context: WorkspaceSyncContext,
     originalCustomObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const target = CustomWorkspaceEntity;
     const workspaceEntity = metadataArgsStorage.filterExtendedEntities(target);
@@ -118,7 +117,7 @@ export class StandardIndexFactory {
       .filter((workspaceIndexMetadataArgs) => {
         return !isGatedAndNotEnabled(
           workspaceIndexMetadataArgs.gate,
-          workspaceFeatureFlagsMap,
+          context.featureFlags,
         );
       });
 
@@ -133,7 +132,7 @@ export class StandardIndexFactory {
               columns: workspaceIndexMetadataArgs.columns,
               isCustom: false,
               isUnique: workspaceIndexMetadataArgs.isUnique,
-              indexType: workspaceIndexMetadataArgs.type,
+              indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
               indexWhereClause: workspaceIndexMetadataArgs.whereClause,
             };
 

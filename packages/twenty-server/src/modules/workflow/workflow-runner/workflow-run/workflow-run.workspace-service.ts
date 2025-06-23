@@ -2,36 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
   WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
   ) {}
@@ -39,23 +40,40 @@ export class WorkflowRunWorkspaceService {
   async createWorkflowRun({
     workflowVersionId,
     createdBy,
+    workflowRunId,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
+    workflowRunId?: string;
   }) {
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create()?.workspaceId;
+
+    if (!workspaceId) {
+      throw new WorkflowRunException(
+        'Workspace id is invalid',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
         workflowVersionId,
-      );
+      });
 
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOne({
@@ -77,16 +95,6 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
-    const workspaceId =
-      this.scopedWorkspaceContextFactory.create()?.workspaceId;
-
-    if (!workspaceId) {
-      throw new WorkflowRunException(
-        'Workspace id is invalid',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
-    }
-
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
       objectMetadata: {
@@ -96,30 +104,38 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    return (
-      await workflowRunRepository.save({
-        name: `#${workflowRunCount + 1} - ${workflow.name}`,
-        workflowVersionId,
-        createdBy,
-        workflowId: workflow.id,
-        status: WorkflowRunStatus.NOT_STARTED,
-        position,
-      })
-    ).id;
+    const workflowRun = workflowRunRepository.create({
+      id: workflowRunId ?? v4(),
+      name: `#${workflowRunCount + 1} - ${workflow.name}`,
+      workflowVersionId,
+      createdBy,
+      workflowId: workflow.id,
+      status: WorkflowRunStatus.NOT_STARTED,
+      position,
+    });
+
+    await workflowRunRepository.insert(workflowRun);
+
+    return workflowRun.id;
   }
 
   async startWorkflowRun({
     workflowRunId,
+    workspaceId,
     context,
     output,
   }: {
     workflowRunId: string;
+    workspaceId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
     output: WorkflowRunOutput;
   }) {
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -151,23 +167,26 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
   }
 
   async endWorkflowRun({
     workflowRunId,
+    workspaceId,
     status,
     error,
   }: {
     workflowRunId: string;
+    workspaceId: string;
     status: WorkflowRunStatus;
     error?: string;
   }) {
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -194,7 +213,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['status', 'endedAt', 'output'],
     });
   }
@@ -202,15 +220,20 @@ export class WorkflowRunWorkspaceService {
   async saveWorkflowRunState({
     workflowRunId,
     stepOutput,
+    workspaceId,
     context,
   }: {
     workflowRunId: string;
     stepOutput: StepOutput;
+    workspaceId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -242,7 +265,6 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['context', 'output'],
     });
   }
@@ -250,13 +272,17 @@ export class WorkflowRunWorkspaceService {
   async updateWorkflowRunStep({
     workflowRunId,
     step,
+    workspaceId,
   }: {
     workflowRunId: string;
     step: WorkflowAction;
+    workspaceId: string;
   }) {
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -298,17 +324,22 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      diff: partialUpdate,
       updatedFields: ['output'],
     });
   }
 
-  async getWorkflowRunOrFail(
-    workflowRunId: string,
-  ): Promise<WorkflowRunWorkspaceEntity> {
+  async getWorkflowRunOrFail({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<WorkflowRunWorkspaceEntity> {
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRun = await workflowRunRepository.findOne({
@@ -328,11 +359,9 @@ export class WorkflowRunWorkspaceService {
   private async emitWorkflowRunUpdatedEvent({
     workflowRunBefore,
     updatedFields,
-    diff,
   }: {
     workflowRunBefore: WorkflowRunWorkspaceEntity;
     updatedFields: string[];
-    diff: object;
   }) {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
@@ -345,6 +374,7 @@ export class WorkflowRunWorkspaceService {
         nameSingular: 'workflowRun',
         workspaceId,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
@@ -355,8 +385,10 @@ export class WorkflowRunWorkspaceService {
     }
 
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunAfter = await workflowRunRepository.findOneBy({
@@ -381,7 +413,12 @@ export class WorkflowRunWorkspaceService {
             after: workflowRunAfter,
             before: workflowRunBefore,
             updatedFields,
-            diff,
+            diff: objectRecordChangedValues(
+              workflowRunBefore,
+              workflowRunAfter,
+              updatedFields,
+              objectMetadata,
+            ),
           },
         },
       ],

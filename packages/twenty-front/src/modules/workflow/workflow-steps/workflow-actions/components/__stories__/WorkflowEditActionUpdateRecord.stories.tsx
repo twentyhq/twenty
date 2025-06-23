@@ -1,6 +1,7 @@
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -11,7 +12,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionUpdateRecord } from '../WorkflowEditActionUpdateRecord';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -119,9 +119,7 @@ export const DisabledWithEmptyValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);
@@ -176,7 +174,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     const selectedRecord = await canvas.findByText(
       `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
       undefined,
-      { timeout: 3000 },
+      { timeout: 5000 },
     );
     expect(selectedRecord).toBeVisible();
 
@@ -189,9 +187,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);
@@ -253,9 +249,7 @@ export const DisabledWithDefaultVariableValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);

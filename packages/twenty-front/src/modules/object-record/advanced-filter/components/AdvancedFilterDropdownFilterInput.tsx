@@ -5,17 +5,24 @@ import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { AdvancedFilterDropdownDateInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownDateInput';
+import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownCountrySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect';
+import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
+import { ObjectFilterDropdownDateInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type AdvancedFilterDropdownFilterInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
   recordFilter: RecordFilter;
 };
 
@@ -36,35 +43,50 @@ export const AdvancedFilterDropdownFilterInput = ({
 
   return (
     <>
+      {filterType === 'ADDRESS' &&
+        (subFieldNameUsedInDropdown === 'addressCountry' ? (
+          <ObjectFilterDropdownCountrySelect />
+        ) : (
+          <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
+        ))}
       {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
       {DATE_FILTER_TYPES.includes(filterType) && (
-        <AdvancedFilterDropdownDateInput />
+        <ObjectFilterDropdownDateInput />
       )}
       {filterType === 'RELATION' && (
-        <>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownRecordSelect recordFilterId={recordFilter.id} />
-        </>
+          <ObjectFilterDropdownRecordSelect
+            recordFilterId={recordFilter.id}
+            dropdownId={filterDropdownId}
+          />
+        </DropdownContent>
       )}
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
-          <>
-            <ObjectFilterDropdownSourceSelect />
-          </>
+          <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
         ) : (
-          <>
-            <ObjectFilterDropdownTextInput />
-          </>
+          <ObjectFilterDropdownTextInput />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-        <>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownOptionSelect />
-        </>
+          <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
+        </DropdownContent>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
+      {filterType === 'CURRENCY' &&
+        (isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          recordFilter.subFieldName,
+        ) ? (
+          <ObjectFilterDropdownCurrencySelect />
+        ) : (
+          <></>
+        ))}
     </>
   );
 };

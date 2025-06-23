@@ -9,8 +9,6 @@ import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/Spreadshe
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
-  // Is modal visible.
-  isOpen: boolean;
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
@@ -37,6 +35,8 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
     validationResult: SpreadsheetImportImportValidationResult<FieldNames>,
     file: File,
   ) => Promise<void>;
+  // Function called when user aborts the importing flow
+  onAbortSubmit?: () => void;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI

@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -12,24 +13,24 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
-  isPrimary?: boolean;
   value: T;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
-  hasPrimaryButton?: boolean;
+  showPrimaryIcon: boolean;
+  showSetAsPrimaryButton: boolean;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
   dropdownId,
-  isPrimary,
   value,
   onEdit,
   onSetAsPrimary,
   onDelete,
   DisplayComponent,
-  hasPrimaryButton = true,
+  showPrimaryIcon,
+  showSetAsPrimaryButton,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
@@ -69,30 +70,32 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       text={<DisplayComponent value={value} />}
-      isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
-      RightIcon={!isHovered && isPrimary ? IconBookmark : null}
+      isIconDisplayedOnHoverOnly={!showPrimaryIcon && !isDropdownOpen}
+      RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
-        <DropdownMenuItemsContainer>
-          {hasPrimaryButton && !isPrimary && (
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            {showSetAsPrimaryButton && (
+              <MenuItem
+                LeftIcon={IconBookmarkPlus}
+                text="Set as Primary"
+                onClick={handleSetAsPrimaryClick}
+              />
+            )}
             <MenuItem
-              LeftIcon={IconBookmarkPlus}
-              text="Set as Primary"
-              onClick={handleSetAsPrimaryClick}
+              LeftIcon={IconPencil}
+              text="Edit"
+              onClick={handleEditClick}
             />
-          )}
-          <MenuItem
-            LeftIcon={IconPencil}
-            text="Edit"
-            onClick={handleEditClick}
-          />
-          <MenuItem
-            accent="danger"
-            LeftIcon={IconTrash}
-            text="Delete"
-            onClick={handleDeleteClick}
-          />
-        </DropdownMenuItemsContainer>
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Delete"
+              onClick={handleDeleteClick}
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
     />
   );

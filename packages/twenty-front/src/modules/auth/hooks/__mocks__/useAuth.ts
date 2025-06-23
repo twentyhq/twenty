@@ -3,6 +3,7 @@ import {
   GetCurrentUserDocument,
   GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
+  SignUpInWorkspaceDocument,
 } from '~/generated/graphql';
 
 export const queries = {
@@ -10,10 +11,12 @@ export const queries = {
   getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
+  signUpInWorkspace: SignUpInWorkspaceDocument,
 };
 
 export const email = 'test@test.com';
 export const password = 'testing';
+export const origin = 'http://localhost';
 export const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
@@ -21,13 +24,20 @@ export const variables = {
   getLoginTokenFromCredentials: {
     email,
     password,
+    origin,
   },
-  getAuthTokensFromLoginToken: { loginToken: token },
+  getAuthTokensFromLoginToken: { loginToken: token, origin },
   signup: {
     email,
     password,
     workspacePersonalInviteToken: null,
-    locale: "",
+    locale: '',
+  },
+  signUpInWorkspace: {
+    email,
+    password,
+    workspacePersonalInviteToken: null,
+    locale: '',
   },
   getCurrentUser: {},
 };
@@ -46,6 +56,16 @@ export const results = {
     },
   },
   signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
+  signUpInWorkspace: {
+    loginToken: { token, expiresAt: 'expiresAt' },
+    workspace: {
+      id: 'workspace-id',
+      workspaceUrls: {
+        subdomainUrl: 'https://subdomain.twenty.com',
+        customUrl: 'https://custom.twenty.com',
+      },
+    },
+  },
   getCurrentUser: {
     currentUser: {
       id: 'id',
@@ -65,6 +85,7 @@ export const results = {
         avatarUrl: 'avatarUrl',
         locale: 'locale',
       },
+      availableWorkspaces: [],
       currentWorkspace: {
         id: 'id',
         displayName: 'displayName',
@@ -72,6 +93,11 @@ export const results = {
         inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
+        customDomain: null,
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://twenty.com',
+        },
         featureFlags: {
           id: 'id',
           key: 'key',
@@ -83,8 +109,8 @@ export const results = {
   },
 };
 
-export const mocks = [
-  {
+export const mocks = {
+  getLoginTokenFromCredentials: {
     request: {
       query: queries.getLoginTokenFromCredentials,
       variables: variables.getLoginTokenFromCredentials,
@@ -95,7 +121,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  getAuthTokensFromLoginToken: {
     request: {
       query: queries.getAuthTokensFromLoginToken,
       variables: variables.getAuthTokensFromLoginToken,
@@ -106,7 +132,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  signup: {
     request: {
       query: queries.signup,
       variables: variables.signup,
@@ -117,7 +143,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  getCurrentUser: {
     request: {
       query: queries.getCurrentUser,
       variables: variables.getCurrentUser,
@@ -126,4 +152,15 @@ export const mocks = [
       data: results.getCurrentUser,
     })),
   },
-];
+  signUpInWorkspace: {
+    request: {
+      query: queries.signUpInWorkspace,
+      variables: variables.signUpInWorkspace,
+    },
+    result: jest.fn(() => ({
+      data: {
+        signUpInWorkspace: results.signUpInWorkspace,
+      },
+    })),
+  },
+};

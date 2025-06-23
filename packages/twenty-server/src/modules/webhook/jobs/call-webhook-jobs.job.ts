@@ -1,14 +1,12 @@
-import { Logger } from '@nestjs/common';
-
 import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains } from 'typeorm';
 
-import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
@@ -17,11 +15,10 @@ import {
 } from 'src/modules/webhook/jobs/call-webhook.job';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import { ObjectRecordEventForWebhook } from 'src/modules/webhook/types/object-record-event-for-webhook.type';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
-  private readonly logger = new Logger(CallWebhookJobsJob.name);
-
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -30,7 +27,7 @@ export class CallWebhookJobsJob {
 
   @Process(CallWebhookJobsJob.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEventForWebhook>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
@@ -56,10 +53,11 @@ export class CallWebhookJobsJob {
 
     for (const eventData of workspaceEventBatch.events) {
       const eventName = workspaceEventBatch.name;
-      const objectMetadata = {
-        id: eventData.objectMetadata.id,
-        nameSingular: eventData.objectMetadata.nameSingular,
-      };
+      const objectMetadata: Pick<ObjectMetadataEntity, 'id' | 'nameSingular'> =
+        {
+          id: eventData.objectMetadata.id,
+          nameSingular: eventData.objectMetadata.nameSingular,
+        };
       const workspaceId = workspaceEventBatch.workspaceId;
       const record =
         'after' in eventData.properties && isDefined(eventData.properties.after)

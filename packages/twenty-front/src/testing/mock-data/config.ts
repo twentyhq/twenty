@@ -1,6 +1,8 @@
-import { CaptchaDriverType, ClientConfig } from '~/generated/graphql';
+import { ClientConfig } from '@/client-config/types/ClientConfig';
+import { CaptchaDriverType, SupportDriver } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
+  aiModels: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
@@ -10,7 +12,6 @@ export const mockedClientConfig: ClientConfig = {
     password: true,
     microsoft: false,
     sso: [],
-    __typename: 'AuthProviders',
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
@@ -18,37 +19,31 @@ export const mockedClientConfig: ClientConfig = {
   debugMode: false,
   analyticsEnabled: true,
   support: {
-    supportDriver: 'front',
+    supportDriver: SupportDriver.FRONT,
     supportFrontChatId: null,
-    __typename: 'Support',
   },
   sentry: {
     dsn: 'MOCKED_DSN',
     release: 'MOCKED_RELEASE',
     environment: 'MOCKED_ENVIRONMENT',
-    __typename: 'Sentry',
   },
   billing: {
     isBillingEnabled: true,
     billingUrl: '',
     trialPeriods: [
       {
-        __typename: 'BillingTrialPeriodDTO',
         duration: 30,
         isCreditCardRequired: true,
       },
       {
-        __typename: 'BillingTrialPeriodDTO',
         duration: 7,
         isCreditCardRequired: false,
       },
     ],
-    __typename: 'Billing',
   },
   captcha: {
-    provider: CaptchaDriverType.GoogleRecaptcha,
+    provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
     siteKey: 'MOCKED_SITE_KEY',
-    __typename: 'Captcha',
   },
   api: { mutationMaximumAffectedRecords: 100 },
   canManageFeatureFlags: true,
@@ -58,4 +53,5 @@ export const mockedClientConfig: ClientConfig = {
   isGoogleMessagingEnabled: true,
   isGoogleCalendarEnabled: true,
   isAttachmentPreviewEnabled: true,
+  isConfigVariablesInDbEnabled: false,
 };

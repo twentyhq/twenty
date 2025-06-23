@@ -1,4 +1,10 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import {
+  ExecutionContext,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  createParamDecorator,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -24,8 +30,11 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -43,7 +52,7 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -51,16 +60,25 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
+import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
+const OriginHeader = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = getRequest(ctx);
+
+    return request.headers['origin'];
+  },
+);
+
 @Resolver(() => Workspace)
+@UsePipes(ResolverValidationPipe)
 @UseFilters(
-  GraphqlValidationExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
 )
 export class WorkspaceResolver {
@@ -89,19 +107,12 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
@@ -127,7 +138,7 @@ export class WorkspaceResolver {
     }
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
@@ -136,12 +147,12 @@ export class WorkspaceResolver {
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.WorkspaceLogo;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -149,15 +160,15 @@ export class WorkspaceResolver {
       workspaceId: id,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload workspace logo');
+    }
+
     await this.workspaceService.updateOne(id, {
-      logo: paths[0],
+      logo: files[0].path,
     });
 
-    const workspaceLogoToken = this.fileService.encodeFileToken({
-      workspaceId: id,
-    });
-
-    return `${paths[0]}?token=${workspaceLogoToken}`;
+    return files[0];
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
@@ -235,11 +246,10 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = this.fileService.encodeFileToken({
+        return this.fileService.signFileUrl({
+          url: workspace.logo,
           workspaceId: workspace.id,
         });
-
-        return `${workspace.logo}?token=${workspaceLogoToken}`;
       } catch (e) {
         return workspace.logo;
       }
@@ -291,10 +301,33 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
+  @UseGuards(PublicEndpointGuard)
   async getPublicWorkspaceDataByDomain(
-    @OriginHeader() origin: string,
+    @OriginHeader() originHeader: string,
+    @Args('origin', { nullable: true }) origin?: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
+      const systemEnabledProviders: AuthProviders = {
+        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
+        magicLink: false,
+        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: [],
+      };
+
+      if (!origin) {
+        return {
+          id: 'default-workspace',
+          logo: '',
+          displayName: 'Default Workspace',
+          workspaceUrls: {
+            subdomainUrl: originHeader,
+            customUrl: originHeader,
+          },
+          authProviders: systemEnabledProviders,
+        };
+      }
+
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
@@ -306,23 +339,14 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = this.fileService.encodeFileToken({
+          workspaceLogoWithToken = this.fileService.signFileUrl({
+            url: workspace.logo,
             workspaceId: workspace.id,
           });
-
-          workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
         } catch (e) {
           workspaceLogoWithToken = workspace.logo;
         }
       }
-
-      const systemEnabledProviders: AuthProviders = {
-        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
-        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: [],
-      };
 
       return {
         id: workspace.id,

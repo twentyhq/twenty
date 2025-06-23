@@ -48,15 +48,19 @@ export class MessagingGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
-      case ConnectedAccountProvider.GOOGLE:
+      case ConnectedAccountProvider.GOOGLE: {
+        const fullMessageList =
+          await this.gmailGetMessageListService.getFullMessageList(
+            messageChannel.connectedAccount,
+          );
+
         return [
           {
-            ...(await this.gmailGetMessageListService.getFullMessageList(
-              messageChannel.connectedAccount,
-            )),
+            ...fullMessageList,
             folderId: undefined,
           },
         ];
+      }
       case ConnectedAccountProvider.MICROSOFT: {
         const folderRepository =
           await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(

@@ -1,11 +1,11 @@
 import { singular } from 'pluralize';
 import { DataSource } from 'typeorm';
 
-import { camelCase } from 'src/utils/camel-case';
 import {
   RemoteTableException,
   RemoteTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
+import { camelCase } from 'src/utils/camel-case';
 
 const MAX_SUFFIX = 10;
 
@@ -19,9 +19,10 @@ const isNameAvailable = async (
   workspaceSchemaName: string,
   workspaceDataSource: DataSource,
 ) => {
+  // TO DO workspaceDataSource.query method is not allowed, this will throw
   const numberOfTablesWithSameName = +(
     await workspaceDataSource.query(
-      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', 'metadata', '${workspaceSchemaName}')`,
+      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', '${workspaceSchemaName}')`,
     )
   )[0].count;
 

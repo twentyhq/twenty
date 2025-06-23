@@ -17,7 +17,6 @@ type SpreadsheetKey = 'spreadsheet_key';
 
 export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<SpreadsheetKey> =
   {
-    isOpen: true,
     onClose: () => {},
     fields: [],
     uploadStepHook: async () => [],
@@ -61,6 +60,7 @@ describe('useSpreadsheetImport', () => {
     );
     expect(result.current.spreadsheetImportState).toStrictEqual({
       isOpen: false,
+      isStepBarVisible: true,
       options: null,
     });
     act(() => {
@@ -70,6 +70,7 @@ describe('useSpreadsheetImport', () => {
     });
     expect(result.current.spreadsheetImportState).toStrictEqual({
       isOpen: true,
+      isStepBarVisible: true,
       options: mockedSpreadsheetOptions,
     });
   });

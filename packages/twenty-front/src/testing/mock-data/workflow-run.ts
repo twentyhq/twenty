@@ -319,7 +319,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -347,7 +347,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -375,7 +375,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -1216,7 +1216,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -1311,7 +1311,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -1365,7 +1365,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -2074,7 +2074,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -2132,7 +2132,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -2223,7 +2223,7 @@ export const oneFailedWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -3539,7 +3539,7 @@ export const oneFailedWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -3566,7 +3566,7 @@ export const oneFailedWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -3593,7 +3593,7 @@ export const oneFailedWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -5111,7 +5111,7 @@ export const oneFailedWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',
@@ -5137,7 +5137,7 @@ export const oneFailedWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',
@@ -5163,7 +5163,7 @@ export const oneFailedWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',
@@ -6275,7 +6275,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -6303,7 +6303,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -6331,7 +6331,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -7172,7 +7172,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -7267,7 +7267,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -7321,7 +7321,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -8030,7 +8030,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -8088,7 +8088,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -8179,7 +8179,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               isSystem: false,
               isUnique: false,
               settings: {
-                displayAsRelativeDate: true,
+                displayFormat: 'RELATIVE',
               },
               createdAt: '2025-03-05T15:41:09.390Z',
               updatedAt: '2025-03-05T15:41:09.390Z',
@@ -9541,7 +9541,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -9568,7 +9568,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -9595,7 +9595,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                         isSystem: false,
                         isUnique: false,
                         settings: {
-                          displayAsRelativeDate: true,
+                          displayFormat: 'RELATIVE',
                         },
                         createdAt: '2025-03-05T15:41:09.390Z',
                         updatedAt: '2025-03-05T15:41:09.390Z',
@@ -11161,7 +11161,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',
@@ -11187,7 +11187,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',
@@ -11213,7 +11213,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                       isSystem: false,
                       isUnique: false,
                       settings: {
-                        displayAsRelativeDate: true,
+                        displayFormat: 'RELATIVE',
                       },
                       createdAt: '2025-03-05T15:41:09.390Z',
                       updatedAt: '2025-03-05T15:41:09.390Z',

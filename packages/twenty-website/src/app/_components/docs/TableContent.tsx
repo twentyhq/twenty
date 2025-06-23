@@ -92,7 +92,7 @@ interface HeadingType {
 const DocsTableContents = () => {
   const [headings, setHeadings] = useState<HeadingType[]>([]);
   const pathname = usePathname();
-  const { activeText } = useHeadsObserver(pathname);
+  const { activeId } = useHeadsObserver(pathname);
 
   useEffect(() => {
     const nodes: HTMLElement[] = Array.from(
@@ -126,11 +126,11 @@ const DocsTableContents = () => {
               <StyledUnorderedList>
                 {headings.map((heading) => (
                   <StyledList
-                    key={heading.text}
+                    key={heading.id}
                     style={getStyledHeading(heading.level)}
                   >
                     <StyledLink
-                      href={`#${heading.text}`}
+                      href={`#${heading.id}`}
                       onClick={(e) => {
                         e.preventDefault();
                         const yOffset = -70;
@@ -142,8 +142,7 @@ const DocsTableContents = () => {
                         window.scrollTo({ top: y, behavior: 'smooth' });
                       }}
                       style={{
-                        fontWeight:
-                          activeText === heading.text ? 'bold' : 'normal',
+                        fontWeight: activeId === heading.id ? 'bold' : 'normal',
                       }}
                     >
                       {heading.text}

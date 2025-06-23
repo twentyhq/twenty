@@ -1,5 +1,5 @@
 import { SendMailOptions } from 'nodemailer';
 
-export interface EmailDriver {
+export interface EmailDriverInterface {
   send(sendMailOptions: SendMailOptions): Promise<void>;
 }

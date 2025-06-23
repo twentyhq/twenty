@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
@@ -53,6 +54,39 @@ describe('createManyObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data.createPeople).toBeDefined();
+    expect(response.body.data.createPeople).toHaveLength(2);
+    expect([
+      response.body.data.createPeople[0].id,
+      response.body.data.createPeople[1].id,
+    ]).toContain(personId1);
+    expect([
+      response.body.data.createPeople[0].id,
+      response.body.data.createPeople[1].id,
+    ]).toContain(personId2);
+  });
+
+  it('should create multiple object records when executed by api key', async () => {
+    const personId1 = randomUUID();
+    const personId2 = randomUUID();
+
+    const graphqlOperation = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS,
+      data: [
+        {
+          id: personId1,
+        },
+        {
+          id: personId2,
+        },
+      ],
+    });
+
+    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.createPeople).toBeDefined();

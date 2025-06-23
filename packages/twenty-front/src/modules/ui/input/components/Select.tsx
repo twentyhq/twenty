@@ -8,12 +8,18 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -35,6 +41,7 @@ export type SelectProps<Value extends SelectValue> = {
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
+  description?: string;
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
@@ -58,16 +65,22 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
 export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
   dropdownId,
-  dropdownWidth = 176,
+  dropdownWidth = GenericDropdownContentWidth.Medium,
   dropdownWidthAuto = false,
   emptyOption,
   fullWidth,
   label,
+  description,
   onChange,
   onBlur,
   options,
@@ -109,6 +122,13 @@ export const Select = <Value extends SelectValue>({
       ? selectContainerRef.current?.clientWidth
       : dropdownWidth;
 
+  const selectableItemIdArray = filteredOptions.map((option) => option.label);
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
+
   return (
     <StyledContainer
       className={className}
@@ -128,7 +148,6 @@ export const Select = <Value extends SelectValue>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           clickableComponent={
@@ -140,7 +159,7 @@ export const Select = <Value extends SelectValue>({
             />
           }
           dropdownComponents={
-            <>
+            <DropdownContent widthInPixels={dropDownMenuWidth}>
               {!!withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -152,21 +171,38 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
-                  {filteredOptions.map((option) => (
-                    <MenuItemSelect
-                      key={`${option.value}-${option.label}`}
-                      LeftIcon={option.Icon}
-                      text={option.label}
-                      selected={selectedOption.value === option.value}
-                      needIconCheck={needIconCheck}
-                      onClick={() => {
-                        onChange?.(option.value);
-                        onBlur?.();
-                        closeDropdown();
-                      }}
-                    />
-                  ))}
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  <SelectableList
+                    selectableListInstanceId={dropdownId}
+                    focusId={dropdownId}
+                    selectableItemIdArray={selectableItemIdArray}
+                    hotkeyScope={DropdownHotkeyScope.Dropdown}
+                  >
+                    {filteredOptions.map((option) => (
+                      <SelectableListItem
+                        key={`${option.value}-${option.label}`}
+                        itemId={option.label}
+                        onEnter={() => {
+                          onChange?.(option.value);
+                          onBlur?.();
+                          closeDropdown();
+                        }}
+                      >
+                        <MenuItemSelect
+                          LeftIcon={option.Icon}
+                          text={option.label}
+                          selected={selectedOption.value === option.value}
+                          focused={selectedItemId === option.label}
+                          needIconCheck={needIconCheck}
+                          onClick={() => {
+                            onChange?.(option.value);
+                            onBlur?.();
+                            closeDropdown();
+                          }}
+                        />
+                      </SelectableListItem>
+                    ))}
+                  </SelectableList>
                 </DropdownMenuItemsContainer>
               )}
               {!!callToActionButton && !!filteredOptions.length && (
@@ -181,11 +217,11 @@ export const Select = <Value extends SelectValue>({
                   />
                 </DropdownMenuItemsContainer>
               )}
-            </>
+            </DropdownContent>
           }
-          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
+      {!!description && <StyledDescription>{description}</StyledDescription>}
     </StyledContainer>
   );
 };

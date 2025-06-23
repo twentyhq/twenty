@@ -3,7 +3,6 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableRow';
 import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/settings-permissions/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
@@ -14,13 +13,11 @@ import {
   IconKey,
   IconLockOpen,
   IconSettings,
+  IconSettingsAutomation,
   IconUsers,
 } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import {
-  FeatureFlagKey,
-  SettingPermissionType,
-} from '~/generated-metadata/graphql';
+import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { SettingPermissionType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -44,10 +41,6 @@ export const SettingsRolePermissionsSettingsSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsSettingsSectionProps) => {
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
-  );
-
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -90,41 +83,60 @@ export const SettingsRolePermissionsSettingsSection = ({
         description: t`Manage security policies`,
         Icon: IconKey,
       },
+      {
+        key: SettingPermissionType.WORKFLOWS,
+        name: t`Workflows`,
+        description: t`Manage workflows`,
+        Icon: IconSettingsAutomation,
+      },
     ];
 
   return (
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
-      {isPermissionsV2Enabled && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconSettings}
-            title={t`Settings All Access`}
-            description={t`Ability to edit all settings`}
-            checked={settingsDraftRole.canUpdateAllSettings}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-              });
-            }}
+      <StyledCard rounded>
+        <SettingsOptionCardContentToggle
+          Icon={IconSettings}
+          title={t`Settings All Access`}
+          description={t`Ability to edit all settings`}
+          checked={settingsDraftRole.canUpdateAllSettings}
+          disabled={!isEditable}
+          onChange={() => {
+            setSettingsDraftRole({
+              ...settingsDraftRole,
+              canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+            });
+          }}
+        />
+      </StyledCard>
+      <AnimatedExpandableContainer
+        isExpanded={!settingsDraftRole.canUpdateAllSettings}
+        dimension="height"
+        animationDurations={{
+          opacity: 0.2,
+          size: 0.4,
+        }}
+        mode="scroll-height"
+        containAnimation={false}
+      >
+        <StyledTable>
+          <SettingsRolePermissionsSettingsTableHeader
+            roleId={roleId}
+            settingsPermissionsConfig={settingsPermissionsConfig}
+            isEditable={isEditable}
           />
-        </StyledCard>
-      )}
-      <StyledTable>
-        <SettingsRolePermissionsSettingsTableHeader />
-        <StyledTableRows>
-          {settingsPermissionsConfig.map((permission) => (
-            <SettingsRolePermissionsSettingsTableRow
-              key={permission.key}
-              roleId={roleId}
-              permission={permission}
-              isEditable={isEditable}
-            />
-          ))}
-        </StyledTableRows>
-      </StyledTable>
+          <StyledTableRows>
+            {settingsPermissionsConfig.map((permission) => (
+              <SettingsRolePermissionsSettingsTableRow
+                key={permission.key}
+                roleId={roleId}
+                permission={permission}
+                isEditable={isEditable}
+              />
+            ))}
+          </StyledTableRows>
+        </StyledTable>
+      </AnimatedExpandableContainer>
     </Section>
   );
 };

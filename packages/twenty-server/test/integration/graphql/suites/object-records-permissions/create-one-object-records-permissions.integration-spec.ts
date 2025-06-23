@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
@@ -39,6 +40,23 @@ describe('createOneObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data.createPerson).toBeDefined();
+    expect(response.body.data.createPerson.id).toBe(personId);
+  });
+
+  it('should create an object record when executed by api key', async () => {
+    const personId = randomUUID();
+    const graphqlOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS,
+      data: {
+        id: personId,
+      },
+    });
+
+    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.createPerson).toBeDefined();

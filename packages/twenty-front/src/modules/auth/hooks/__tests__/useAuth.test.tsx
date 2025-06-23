@@ -1,8 +1,8 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -15,6 +15,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { SupportDriver } from '~/generated/graphql';
 
 const redirectSpy = jest.fn();
 
@@ -31,9 +32,13 @@ jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter>
+        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+          {children}
+        </SnackBarProviderScope>
+      </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>
 );
@@ -64,7 +69,7 @@ describe('useAuth', () => {
       ).toStrictEqual(results.getLoginTokenFromCredentials);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks.getLoginTokenFromCredentials.result).toHaveBeenCalled();
   });
 
   it('should verify user', async () => {
@@ -74,19 +79,19 @@ describe('useAuth', () => {
       await result.current.getAuthTokensFromLoginToken(token);
     });
 
-    expect(mocks[1].result).toHaveBeenCalled();
-    expect(mocks[3].result).toHaveBeenCalled();
+    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
+    expect(mocks.getCurrentUser.result).toHaveBeenCalled();
   });
 
   it('should handle credential sign-in', async () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signInWithCredentials(email, password);
+      await result.current.signInWithCredentialsInWorkspace(email, password);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
-    expect(mocks[1].result).toHaveBeenCalled();
+    expect(mocks.getLoginTokenFromCredentials.result).toHaveBeenCalled();
+    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
   });
 
   it('should handle google sign-in', async () => {
@@ -95,6 +100,7 @@ describe('useAuth', () => {
     await act(async () => {
       await result.current.signInWithGoogle({
         workspaceInviteHash: 'workspaceInviteHash',
+        action: 'join-workspace',
       });
     });
 
@@ -118,7 +124,6 @@ describe('useAuth', () => {
           isDeveloperDefaultSignInPrefilledState,
         );
         const supportChat = useRecoilValue(supportChatState);
-        const isDebugMode = useRecoilValue(isDebugModeState);
         const isMultiWorkspaceEnabled = useRecoilValue(
           isMultiWorkspaceEnabledState,
         );
@@ -131,7 +136,6 @@ describe('useAuth', () => {
             billing,
             isDeveloperDefaultSignInPrefilled,
             supportChat,
-            isDebugMode,
             isMultiWorkspaceEnabled,
           },
         };
@@ -157,19 +161,21 @@ describe('useAuth', () => {
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({
-      supportDriver: 'none',
+      supportDriver: SupportDriver.NONE,
       supportFrontChatId: null,
     });
-    expect(state.isDebugMode).toBe(false);
   });
 
   it('should handle credential sign-up', async () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signUpWithCredentials(email, password);
+      await result.current.signUpWithCredentialsInWorkspace({
+        email,
+        password,
+      });
     });
 
-    expect(mocks[2].result).toHaveBeenCalled();
+    expect(mocks.signUpInWorkspace.result).toHaveBeenCalled();
   });
 });

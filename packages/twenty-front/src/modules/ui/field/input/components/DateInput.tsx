@@ -117,10 +117,10 @@ export const DateInput = ({
   return (
     <div ref={wrapperRef}>
       <DateTimePicker
-        date={internalValue ?? new Date()}
+        date={internalValue ?? null}
         onChange={handleChange}
         onClose={handleClose}
-        clearable={clearable ? clearable : false}
+        clearable={clearable ?? false}
         onEnter={onEnter}
         onEscape={onEscape}
         onClear={handleClear}

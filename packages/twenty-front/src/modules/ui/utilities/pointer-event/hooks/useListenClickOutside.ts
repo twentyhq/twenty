@@ -1,46 +1,52 @@
+import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
+import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
-
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
+import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
-export enum ClickOutsideMode {
-  comparePixels = 'comparePixels',
-  compareHTMLRef = 'compareHTMLRef',
-}
-
 export type ClickOutsideListenerProps<T extends Element> = {
   refs: Array<React.RefObject<T>>;
-  excludeClassNames?: string[];
+  excludedClickOutsideIds?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
-  mode?: ClickOutsideMode;
   listenerId: string;
   enabled?: boolean;
 };
 
 export const useListenClickOutside = <T extends Element>({
   refs,
-  excludeClassNames,
+  excludedClickOutsideIds,
   callback,
-  mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
-  const {
-    getClickOutsideListenerIsMouseDownInsideState,
-    getClickOutsideListenerIsActivatedState,
-    getClickOutsideListenerMouseDownHappenedState,
-  } = useClickOustideListenerStates(listenerId);
+  const clickOutsideListenerIsMouseDownInsideState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsMouseDownInsideComponentState,
+      listenerId,
+    );
+  const clickOutsideListenerIsActivatedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsActivatedComponentState,
+      listenerId,
+    );
+  const clickOutsideListenerMouseDownHappenedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerMouseDownHappenedComponentState,
+      listenerId,
+    );
 
   const handleMouseDown = useRecoilCallback(
     ({ snapshot, set }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getLoadable(clickOutsideListenerIsActivatedState)
           .getValue();
 
-        set(getClickOutsideListenerMouseDownHappenedState, true);
+        set(clickOutsideListenerMouseDownHappenedState, true);
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
@@ -48,69 +54,18 @@ export const useListenClickOutside = <T extends Element>({
           return;
         }
 
-        switch (mode) {
-          case ClickOutsideMode.compareHTMLRef: {
-            const clickedOnAtLeastOneRef = refs
-              .filter((ref) => !!ref.current)
-              .some((ref) => ref.current?.contains(event.target as Node));
+        const clickedOnAtLeastOneRef = refs
+          .filter((ref) => !!ref.current)
+          .some((ref) => ref.current?.contains(event.target as Node));
 
-            set(
-              getClickOutsideListenerIsMouseDownInsideState,
-              clickedOnAtLeastOneRef,
-            );
-            break;
-          }
-
-          case ClickOutsideMode.comparePixels: {
-            const clickedOnAtLeastOneRef = refs
-              .filter((ref) => !!ref.current)
-              .some((ref) => {
-                if (!ref.current) {
-                  return false;
-                }
-
-                const { x, y, width, height } =
-                  ref.current.getBoundingClientRect();
-
-                const clientX =
-                  'clientX' in event
-                    ? event.clientX
-                    : event.changedTouches[0].clientX;
-                const clientY =
-                  'clientY' in event
-                    ? event.clientY
-                    : event.changedTouches[0].clientY;
-
-                if (
-                  clientX < x ||
-                  clientX > x + width ||
-                  clientY < y ||
-                  clientY > y + height
-                ) {
-                  return false;
-                }
-                return true;
-              });
-
-            set(
-              getClickOutsideListenerIsMouseDownInsideState,
-              clickedOnAtLeastOneRef,
-            );
-            break;
-          }
-
-          default: {
-            break;
-          }
-        }
+        set(clickOutsideListenerIsMouseDownInsideState, clickedOnAtLeastOneRef);
       },
     [
-      getClickOutsideListenerIsActivatedState,
-      getClickOutsideListenerMouseDownHappenedState,
+      clickOutsideListenerIsActivatedState,
+      clickOutsideListenerMouseDownHappenedState,
       enabled,
-      mode,
       refs,
-      getClickOutsideListenerIsMouseDownInsideState,
+      clickOutsideListenerIsMouseDownInsideState,
     ],
   );
 
@@ -118,17 +73,17 @@ export const useListenClickOutside = <T extends Element>({
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getLoadable(clickOutsideListenerIsActivatedState)
           .getValue();
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
         const isMouseDownInside = snapshot
-          .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
+          .getLoadable(clickOutsideListenerIsMouseDownInsideState)
           .getValue();
 
         const hasMouseDownHappened = snapshot
-          .getLoadable(getClickOutsideListenerMouseDownHappenedState)
+          .getLoadable(clickOutsideListenerMouseDownHappenedState)
           .getValue();
 
         const clickedElement = event.target as HTMLElement;
@@ -136,12 +91,17 @@ export const useListenClickOutside = <T extends Element>({
         let currentElement: HTMLElement | null = clickedElement;
 
         while (currentElement) {
-          const currentClassList = currentElement.classList;
+          const currentDataAttributes = currentElement.dataset;
+          const isGloballyExcluded =
+            currentDataAttributes?.globallyPreventClickOutside === 'true';
+
+          const clickOutsideId = currentDataAttributes?.clickOutsideId;
 
           isClickedOnExcluded =
-            excludeClassNames?.some((className) =>
-              currentClassList.contains(className),
-            ) ?? false;
+            isGloballyExcluded ||
+            (isDefined(clickOutsideId) &&
+              isDefined(excludedClickOutsideIds) &&
+              excludedClickOutsideIds.includes(clickOutsideId));
 
           if (isClickedOnExcluded) {
             break;
@@ -150,104 +110,43 @@ export const useListenClickOutside = <T extends Element>({
           currentElement = currentElement.parentElement;
         }
 
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => ref.current?.contains(event.target as Node));
+        const clickedOnAtLeastOneRef = refs
+          .filter((ref) => !!ref.current)
+          .some((ref) => ref.current?.contains(event.target as Node));
 
-          const shouldTrigger =
-            isListening &&
-            hasMouseDownHappened &&
-            !clickedOnAtLeastOneRef &&
-            !isMouseDownInside &&
-            !isClickedOnExcluded;
+        const shouldTrigger =
+          isListening &&
+          hasMouseDownHappened &&
+          !clickedOnAtLeastOneRef &&
+          !isMouseDownInside &&
+          !isClickedOnExcluded;
 
-          if (CLICK_OUTSIDE_DEBUG_MODE) {
-            // eslint-disable-next-line no-console
-            console.log('click outside compare ref', {
-              listenerId,
-              shouldTrigger,
-              clickedOnAtLeastOneRef,
-              isMouseDownInside,
-              isListening,
-              hasMouseDownHappened,
-              isClickedOnExcluded,
-              enabled,
-              event,
-            });
-          }
-
-          if (shouldTrigger) {
-            callback(event);
-          }
+        if (CLICK_OUTSIDE_DEBUG_MODE) {
+          // eslint-disable-next-line no-console
+          console.log('click outside compare ref', {
+            listenerId,
+            shouldTrigger,
+            clickedOnAtLeastOneRef,
+            isMouseDownInside,
+            isListening,
+            hasMouseDownHappened,
+            isClickedOnExcluded,
+            enabled,
+            event,
+          });
         }
 
-        if (mode === ClickOutsideMode.comparePixels) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => {
-              if (!ref.current) {
-                return false;
-              }
-
-              const { x, y, width, height } =
-                ref.current.getBoundingClientRect();
-
-              const clientX =
-                'clientX' in event
-                  ? event.clientX
-                  : event.changedTouches[0].clientX;
-              const clientY =
-                'clientY' in event
-                  ? event.clientY
-                  : event.changedTouches[0].clientY;
-
-              if (
-                clientX < x ||
-                clientX > x + width ||
-                clientY < y ||
-                clientY > y + height
-              ) {
-                return false;
-              }
-              return true;
-            });
-
-          const shouldTrigger =
-            !clickedOnAtLeastOneRef &&
-            !isMouseDownInside &&
-            isListening &&
-            hasMouseDownHappened &&
-            !isClickedOnExcluded;
-
-          if (CLICK_OUTSIDE_DEBUG_MODE) {
-            // eslint-disable-next-line no-console
-            console.log('click outside compare pixel', {
-              listenerId,
-              shouldTrigger,
-              clickedOnAtLeastOneRef,
-              isMouseDownInside,
-              isListening,
-              hasMouseDownHappened,
-              isClickedOnExcluded,
-              enabled,
-              event,
-            });
-          }
-
-          if (shouldTrigger) {
-            callback(event);
-          }
+        if (shouldTrigger) {
+          callback(event);
         }
       },
     [
-      getClickOutsideListenerIsActivatedState,
+      clickOutsideListenerIsActivatedState,
       enabled,
-      getClickOutsideListenerIsMouseDownInsideState,
-      getClickOutsideListenerMouseDownHappenedState,
-      mode,
+      clickOutsideListenerIsMouseDownInsideState,
+      clickOutsideListenerMouseDownHappenedState,
       refs,
-      excludeClassNames,
+      excludedClickOutsideIds,
       callback,
       listenerId,
     ],
@@ -279,5 +178,5 @@ export const useListenClickOutside = <T extends Element>({
         capture: true,
       });
     };
-  }, [refs, callback, mode, handleClickOutside, handleMouseDown]);
+  }, [refs, callback, handleClickOutside, handleMouseDown]);
 };

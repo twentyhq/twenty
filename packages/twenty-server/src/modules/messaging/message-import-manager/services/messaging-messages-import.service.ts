@@ -26,8 +26,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
-
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 @Injectable()
 export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
@@ -38,7 +37,7 @@ export class MessagingMessagesImportService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
@@ -62,16 +61,12 @@ export class MessagingMessagesImportService {
         return;
       }
 
-      await this.messagingTelemetryService.track({
+      await this.messagingMonitoringService.track({
         eventName: 'messages_import.started',
         workspaceId,
         connectedAccountId: messageChannel.connectedAccountId,
         messageChannelId: messageChannel.id,
       });
-
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
-      );
 
       await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
         messageChannel.id,
@@ -87,7 +82,7 @@ export class MessagingMessagesImportService {
         switch (error.code) {
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingTelemetryService.track({
+            await this.messagingMonitoringService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
@@ -104,6 +99,10 @@ export class MessagingMessagesImportService {
               message: error.message,
             };
           default:
+            this.logger.error(
+              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
+            );
+            this.logger.log(error);
             throw error;
         }
       }
@@ -131,7 +130,6 @@ export class MessagingMessagesImportService {
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
-        workspaceId,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -185,6 +183,10 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      // TODO: remove this log once we catch better the error codes
+      this.logger.error(
+        `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+      );
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,
@@ -208,7 +210,7 @@ export class MessagingMessagesImportService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messagingTelemetryService.track({
+    await this.messagingMonitoringService.track({
       eventName: 'messages_import.completed',
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,

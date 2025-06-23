@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import Cloudflare from 'cloudflare';
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
-import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 jest.mock('cloudflare');
@@ -28,15 +28,15 @@ describe('CustomDomainService', () => {
           },
         },
         {
-          provide: AnalyticsService,
+          provide: AuditService,
           useValue: {
-            createAnalyticsContext: AnalyticsContextMock,
+            createContext: AuditContextMock,
           },
         },
         {
           provide: DomainManagerService,
           useValue: {
-            getFrontUrl: jest.fn(),
+            getBaseUrl: jest.fn(),
           },
         },
       ],
@@ -148,7 +148,7 @@ describe('CustomDomainService', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
 
       jest
-        .spyOn(domainManagerService, 'getFrontUrl')
+        .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (customDomainService as any).cloudflareClient = cloudflareMock;
 
@@ -185,7 +185,7 @@ describe('CustomDomainService', () => {
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
       jest
-        .spyOn(domainManagerService, 'getFrontUrl')
+        .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
       (customDomainService as any).cloudflareClient = cloudflareMock;
 

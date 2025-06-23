@@ -2,18 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
+import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 @Injectable()
 export class RecordInputTransformerService {
@@ -21,26 +18,20 @@ export class RecordInputTransformerService {
     recordInput,
     objectMetadataMapItem,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recordInput: Record<string, any>;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<Record<string, any>> {
     if (!recordInput) {
       return recordInput;
     }
 
-    const fieldMetadataByFieldName = objectMetadataMapItem.fields.reduce(
-      (acc, field) => {
-        acc[field.name] = field;
-
-        return acc;
-      },
-      {} as Record<string, FieldMetadataInterface>,
-    );
-
     let transformedEntries = {};
 
     for (const [key, value] of Object.entries(recordInput)) {
-      const fieldMetadata = fieldMetadataByFieldName[key];
+      const fieldMetadataId = objectMetadataMapItem.fieldIdByName[key];
+      const fieldMetadata = objectMetadataMapItem.fieldsById[fieldMetadataId];
 
       if (!fieldMetadata) {
         transformedEntries = { ...transformedEntries, [key]: value };
@@ -63,7 +54,9 @@ export class RecordInputTransformerService {
 
   async transformFieldValue(
     fieldType: FieldMetadataType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
@@ -81,26 +74,39 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT_V2:
         return this.transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
-        return this.transformLinksValue(value);
+        return transformLinksValue(value);
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
+      case FieldMetadataType.PHONES:
+        return transformPhonesValue({ input: value });
       default:
         return value;
     }
   }
 
   private async transformRichTextV2Value(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     richTextValue: any,
   ): Promise<RichTextV2Metadata> {
     const parsedValue = richTextV2ValueSchema.parse(richTextValue);
 
+    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
+
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
-    const convertedMarkdown = parsedValue.blocknote
-      ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-          JSON.parse(parsedValue.blocknote),
-        )
-      : null;
+    // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
+    // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
+    let convertedMarkdown: string | null = null;
+
+    try {
+      convertedMarkdown = parsedValue.blocknote
+        ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+            JSON.parse(parsedValue.blocknote),
+          )
+        : null;
+    } catch {
+      convertedMarkdown = parsedValue.blocknote;
+    }
 
     const convertedBlocknote = parsedValue.markdown
       ? JSON.stringify(
@@ -116,39 +122,7 @@ export class RecordInputTransformerService {
     };
   }
 
-  private transformLinksValue(value: any): any {
-    if (!value) {
-      return value;
-    }
-
-    const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
-
-    let secondaryLinks = value?.secondaryLinks;
-
-    if (secondaryLinks) {
-      try {
-        const secondaryLinksArray = JSON.parse(secondaryLinks);
-
-        secondaryLinks = JSON.stringify(
-          secondaryLinksArray.map((link: LinkMetadata) => {
-            return {
-              ...link,
-              url: lowercaseDomain(link.url),
-            };
-          }),
-        );
-      } catch {
-        /* empty */
-      }
-    }
-
-    return {
-      ...value,
-      primaryLinkUrl: newPrimaryLinkUrl,
-      secondaryLinks,
-    };
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformEmailsValue(value: any): any {
     if (!value) {
       return value;
@@ -177,6 +151,7 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -205,6 +180,7 @@ export class RecordInputTransformerService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -213,6 +189,7 @@ export class RecordInputTransformerService {
     }
 
     return Object.entries(value).reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc, [subFieldName, subFieldValue]: [string, any]) => {
         const subFieldType = compositeType.properties.find(
           (property) => property.name === subFieldName,

@@ -1,9 +1,12 @@
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { i18n } from '@lingui/core';
 import { UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 
+import {
+  ForbiddenError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
@@ -48,7 +51,7 @@ describe('BeforeUpdateOneField', () => {
     jest.clearAllMocks();
   });
 
-  it('should throw UnauthorizedException if workspaceId is not provided', async () => {
+  it('should throw ForbiddenError if workspaceId is not provided', async () => {
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,
       update: {
@@ -61,10 +64,10 @@ describe('BeforeUpdateOneField', () => {
         workspaceId: '',
         locale: undefined,
       }),
-    ).rejects.toThrow(UnauthorizedException);
+    ).rejects.toThrow(ForbiddenError);
   });
 
-  it('should throw BadRequestException if field does not exist', async () => {
+  it('should throw ValidationError if field does not exist', async () => {
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,
       update: {
@@ -81,7 +84,7 @@ describe('BeforeUpdateOneField', () => {
         workspaceId: mockWorkspaceId,
         locale: undefined,
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(ValidationError);
   });
 
   it('should not affect custom fields', async () => {
@@ -113,7 +116,7 @@ describe('BeforeUpdateOneField', () => {
     expect(result).toEqual(instance);
   });
 
-  it('should throw BadRequestException when trying to update non-updatable fields on standard fields', async () => {
+  it('should throw ValidationError when trying to update non-updatable fields on standard fields', async () => {
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,
       update: {
@@ -135,10 +138,10 @@ describe('BeforeUpdateOneField', () => {
         workspaceId: mockWorkspaceId,
         locale: undefined,
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(ValidationError);
   });
 
-  it('should throw BadRequestException when trying to update label when it is synced with name', async () => {
+  it('should throw ValidationError when trying to update label when it is synced with name', async () => {
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,
       update: {
@@ -162,7 +165,7 @@ describe('BeforeUpdateOneField', () => {
         workspaceId: mockWorkspaceId,
         locale: undefined,
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(ValidationError);
   });
 
   it('should handle isActive updates for standard fields', async () => {

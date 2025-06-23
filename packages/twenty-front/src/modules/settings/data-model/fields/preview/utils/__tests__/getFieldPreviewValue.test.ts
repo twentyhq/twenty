@@ -29,7 +29,7 @@ describe('getFieldPreviewValue', () => {
     });
 
     // Then
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {
@@ -51,7 +51,7 @@ describe('getFieldPreviewValue', () => {
     // Then
     expect(result).toBe(2000);
     expect(result).toBe(
-      getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValue,
+      getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValues?.[0],
     );
   });
 

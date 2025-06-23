@@ -1,13 +1,9 @@
-import { useState } from 'react';
-
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { v4 } from 'uuid';
 
 export const AdvancedFilterDropdownNumberInput = () => {
   const selectedOperandInDropdown = useRecoilComponentValueV2(
@@ -18,34 +14,14 @@ export const AdvancedFilterDropdownNumberInput = () => {
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
-  );
+  const { objectFilterDropdownFilterValue } =
+    useObjectFilterDropdownFilterValue();
 
-  const { applyRecordFilter } = useApplyRecordFilter();
-
-  const [inputValue, setInputValue] = useState(
-    () => selectedFilter?.value || '',
-  );
+  const { applyObjectFilterDropdownFilterValue } =
+    useApplyObjectFilterDropdownFilterValue();
 
   const handleChange = (newValue: string) => {
-    if (!fieldMetadataItemUsedInDropdown || !selectedOperandInDropdown) {
-      return;
-    }
-
-    setInputValue(newValue);
-
-    applyRecordFilter({
-      id: selectedFilter?.id ? selectedFilter.id : v4(),
-      fieldMetadataId: fieldMetadataItemUsedInDropdown?.id ?? '',
-      value: newValue,
-      operand: selectedOperandInDropdown,
-      displayValue: newValue,
-      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
-      label: fieldMetadataItemUsedInDropdown.label,
-      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
-    });
+    applyObjectFilterDropdownFilterValue(newValue);
   };
 
   if (!selectedOperandInDropdown || !fieldMetadataItemUsedInDropdown) {
@@ -54,7 +30,7 @@ export const AdvancedFilterDropdownNumberInput = () => {
 
   return (
     <TextInputV2
-      value={inputValue}
+      value={objectFilterDropdownFilterValue}
       onChange={handleChange}
       placeholder="Enter value"
       fullWidth

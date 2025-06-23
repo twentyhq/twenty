@@ -25,6 +25,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
@@ -32,6 +33,7 @@ import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isF
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -56,7 +58,7 @@ export const usePersistField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const persistField = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (valueToPersist: unknown) => {
         const fieldIsRelationToOneObject =
           isFieldRelationToOneObject(
@@ -126,6 +128,12 @@ export const usePersistField = () => {
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
+        const isUnpersistableRawJsonField = isWorkflowRunJsonField({
+          objectMetadataNameSingular:
+            fieldDefinition.metadata.objectMetadataNameSingular,
+          fieldName: fieldDefinition.metadata.fieldName,
+        });
+
         const isValuePersistable =
           fieldIsRelationToOneObject ||
           fieldIsText ||
@@ -142,13 +150,29 @@ export const usePersistField = () => {
           fieldIsSelect ||
           fieldIsMultiSelect ||
           fieldIsAddress ||
-          fieldIsRawJson ||
+          (fieldIsRawJson && !isUnpersistableRawJsonField) ||
           fieldIsArray ||
           fieldIsRichText ||
           fieldIsRichTextV2;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
+
+          const currentValue: any = snapshot
+            .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
+            .getValue();
+
+          if (
+            fieldIsRelationToOneObject &&
+            valueToPersist?.id === currentValue?.id
+          ) {
+            return;
+          }
+
+          if (isDeeplyEqual(valueToPersist, currentValue)) {
+            return;
+          }
+
           set(
             recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,

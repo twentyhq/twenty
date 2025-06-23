@@ -1,5 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { t } from '@lingui/core/macro';
 import {
@@ -60,32 +62,30 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
           accent="tertiary"
         />
       }
-      dropdownWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text={isCustomField ? t`Edit` : t`View`}
-            LeftIcon={isCustomField ? IconPencil : IconEye}
-            onClick={handleEdit}
-          />
-          <MenuItem
-            text={t`Activate`}
-            LeftIcon={IconArchiveOff}
-            onClick={handleActivate}
-          />
-          {isDeletable && (
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
             <MenuItem
-              text={t`Delete`}
-              accent="danger"
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
+              text={isCustomField ? t`Edit` : t`View`}
+              LeftIcon={isCustomField ? IconPencil : IconEye}
+              onClick={handleEdit}
             />
-          )}
-        </DropdownMenuItemsContainer>
+            <MenuItem
+              text={t`Activate`}
+              LeftIcon={IconArchiveOff}
+              onClick={handleActivate}
+            />
+            {isDeletable && (
+              <MenuItem
+                text={t`Delete`}
+                accent="danger"
+                LeftIcon={IconTrash}
+                onClick={handleDelete}
+              />
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
     />
   );
 };

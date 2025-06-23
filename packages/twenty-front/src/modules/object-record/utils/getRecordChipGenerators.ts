@@ -11,8 +11,8 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getRecordChipGenerators = (
   objectMetadataItems: ObjectMetadataItem[],
@@ -48,8 +48,8 @@ export const getRecordChipGenerators = (
 
           const currentObjectNameSingular = objectMetadataItem.nameSingular;
           const fieldObjectNameSingular =
-            fieldMetadataItem.relationDefinition?.targetObjectMetadata
-              .nameSingular ?? undefined;
+            fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ??
+            undefined;
 
           const objectNameSingularToFind = isLabelIdentifier
             ? currentObjectNameSingular

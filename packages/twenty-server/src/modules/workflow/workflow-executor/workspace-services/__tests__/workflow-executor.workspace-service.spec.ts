@@ -18,7 +18,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
   let service: WorkflowExecutorWorkspaceService;
   let workflowExecutorFactory: WorkflowExecutorFactory;
   let workspaceEventEmitter: WorkspaceEventEmitter;
-  let scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory;
   let workflowRunWorkspaceService: WorkflowRunWorkspaceService;
 
   const mockWorkflowExecutor = {
@@ -86,9 +85,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
     );
-    scopedWorkspaceContextFactory = module.get<ScopedWorkspaceContextFactory>(
-      ScopedWorkspaceContextFactory,
-    );
     workflowRunWorkspaceService = module.get<WorkflowRunWorkspaceService>(
       WorkflowRunWorkspaceService,
     );
@@ -107,6 +103,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
             retryOnFailure: { value: false },
           },
         },
+        nextStepIds: ['step-2'],
       },
       {
         id: 'step-2',
@@ -117,6 +114,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
             retryOnFailure: { value: false },
           },
         },
+        nextStepIds: [],
       },
     ] as WorkflowAction[];
 
@@ -124,7 +122,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       // No steps to execute
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 2,
+        currentStepId: 'step-2',
         steps: mockSteps,
         context: mockContext,
       });
@@ -145,7 +143,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
       });
@@ -156,7 +154,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       );
       expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
         attemptCount: 1,
@@ -183,6 +181,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           data: 'some-data',
           'step-1': { stepOutput: 'success' },
         },
+        workspaceId: 'workspace-id',
       });
       expect(result).toEqual({ result: { success: true } });
 
@@ -199,7 +198,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
       });
@@ -219,6 +218,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           },
         },
         context: mockContext,
+        workspaceId: 'workspace-id',
       });
     });
 
@@ -231,7 +231,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
       });
@@ -246,6 +246,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           output: mockPendingEvent,
         },
         context: mockContext,
+        workspaceId: 'workspace-id',
       });
 
       // No recursive call to execute should happen
@@ -265,6 +266,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
               retryOnFailure: { value: false },
             },
           },
+          nextStepIds: ['step-2'],
         },
         {
           id: 'step-2',
@@ -284,7 +286,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: stepsWithContinueOnFailure,
         context: mockContext,
       });
@@ -301,6 +303,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           },
         },
         context: mockContext,
+        workspaceId: 'workspace-id',
       });
       expect(result).toEqual({ result: { success: true } });
 
@@ -330,7 +333,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: stepsWithRetryOnFailure,
         context: mockContext,
       });
@@ -367,7 +370,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: stepsWithRetryOnFailure,
         context: mockContext,
         attemptCount: 3, // MAX_RETRIES_ON_FAILURE is 3
@@ -384,6 +387,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           output: errorOutput,
         },
         context: mockContext,
+        workspaceId: 'workspace-id',
       });
       expect(result).toEqual(errorOutput);
     });
@@ -394,7 +398,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
-        currentStepIndex: 0,
+        currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
       });
@@ -411,6 +415,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           },
         },
         context: mockContext,
+        workspaceId: 'workspace-id',
       });
       expect(result).toEqual({
         error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
@@ -420,9 +425,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   describe('sendWorkflowNodeRunEvent', () => {
     it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']();
+      service['sendWorkflowNodeRunEvent']('workspace-id');
 
-      expect(scopedWorkspaceContextFactory.create).toHaveBeenCalled();
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         BILLING_FEATURE_USED,
         [
@@ -432,25 +436,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
           },
         ],
         'workspace-id',
-      );
-    });
-
-    it('should handle missing workspace ID', () => {
-      mockScopedWorkspaceContextFactory.create.mockReturnValueOnce({
-        workspaceId: null,
-      });
-
-      service['sendWorkflowNodeRunEvent']();
-
-      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
-        [
-          {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 1,
-          },
-        ],
-        '',
       );
     });
   });

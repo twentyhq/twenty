@@ -16,6 +16,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const TwentyConfigServiceGetAllMock = jest.fn();
+const TwentyConfigServiceGetVariableWithMetadataMock = jest.fn();
 
 jest.mock(
   'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata',
@@ -72,6 +73,8 @@ describe('AdminPanelService', () => {
           provide: TwentyConfigService,
           useValue: {
             getAll: TwentyConfigServiceGetAllMock,
+            getVariableWithMetadata:
+              TwentyConfigServiceGetVariableWithMetadataMock,
           },
         },
       ],
@@ -165,14 +168,20 @@ describe('AdminPanelService', () => {
           metadata: {
             group: 'SERVER_CONFIG',
             description: 'Server URL',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
         RATE_LIMIT_TTL: {
-          value: '60',
+          value: 60,
           metadata: {
             group: 'RATE_LIMITING',
             description: 'Rate limit TTL',
+            type: 'number',
+            options: undefined,
           },
+          source: 'env',
         },
         API_KEY: {
           value: 'secret-key',
@@ -180,14 +189,20 @@ describe('AdminPanelService', () => {
             group: 'SERVER_CONFIG',
             description: 'API Key',
             isSensitive: true,
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
         OTHER_VAR: {
           value: 'other',
           metadata: {
             group: 'OTHER',
             description: 'Other var',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
       });
 
@@ -205,12 +220,20 @@ describe('AdminPanelService', () => {
                 value: 'secret-key',
                 description: 'API Key',
                 isSensitive: true,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
               {
                 name: 'SERVER_URL',
                 value: 'http://localhost',
                 description: 'Server URL',
                 isSensitive: false,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -221,9 +244,13 @@ describe('AdminPanelService', () => {
             variables: [
               {
                 name: 'RATE_LIMIT_TTL',
-                value: '60',
+                value: 60,
                 description: 'Rate limit TTL',
                 isSensitive: false,
+                isEnvOnly: false,
+                type: 'number',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -237,6 +264,10 @@ describe('AdminPanelService', () => {
                 value: 'other',
                 description: 'Other var',
                 isSensitive: false,
+                isEnvOnly: false,
+                type: 'string',
+                options: undefined,
+                source: 'env',
               },
             ],
           },
@@ -264,7 +295,10 @@ describe('AdminPanelService', () => {
           value: 'test',
           metadata: {
             group: 'SERVER_CONFIG',
+            type: 'string',
+            options: undefined,
           },
+          source: 'env',
         },
       });
 
@@ -275,6 +309,10 @@ describe('AdminPanelService', () => {
         value: 'test',
         description: undefined,
         isSensitive: false,
+        isEnvOnly: false,
+        options: undefined,
+        source: 'env',
+        type: 'string',
       });
     });
   });
@@ -374,6 +412,44 @@ describe('AdminPanelService', () => {
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
       });
+    });
+  });
+
+  describe('getConfigVariable', () => {
+    it('should return config variable with all fields', () => {
+      TwentyConfigServiceGetVariableWithMetadataMock.mockReturnValue({
+        value: 'test-value',
+        metadata: {
+          group: 'SERVER_CONFIG',
+          description: 'Test description',
+          isSensitive: true,
+          isEnvOnly: true,
+          type: 'string',
+          options: ['option1', 'option2'],
+        },
+        source: 'env',
+      });
+
+      const result = service.getConfigVariable('SERVER_URL');
+
+      expect(result).toEqual({
+        name: 'SERVER_URL',
+        value: 'test-value',
+        description: 'Test description',
+        isSensitive: true,
+        isEnvOnly: true,
+        type: 'string',
+        options: ['option1', 'option2'],
+        source: 'env',
+      });
+    });
+
+    it('should throw error when variable not found', () => {
+      TwentyConfigServiceGetVariableWithMetadataMock.mockReturnValue(undefined);
+
+      expect(() => service.getConfigVariable('INVALID_VAR')).toThrow(
+        'Config variable INVALID_VAR not found',
+      );
     });
   });
 });

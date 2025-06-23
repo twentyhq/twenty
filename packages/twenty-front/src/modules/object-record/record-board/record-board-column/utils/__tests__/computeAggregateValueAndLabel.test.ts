@@ -4,8 +4,9 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { enUS } from 'date-fns/locale';
 import { FieldMetadataType } from '~/generated/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
@@ -34,7 +35,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: {} as AggregateRecordsData,
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      aggregateOperation: AggregateOperations.SUM,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -44,7 +46,7 @@ describe('computeAggregateValueAndLabel', () => {
   it('should handle currency field with division by 1M', () => {
     const mockData = {
       amount: {
-        [AGGREGATE_OPERATIONS.sum]: 2000000,
+        [AggregateOperations.SUM]: 2000000,
       },
     } as AggregateRecordsData;
 
@@ -52,7 +54,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockData,
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      aggregateOperation: AggregateOperations.SUM,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -81,7 +84,7 @@ describe('computeAggregateValueAndLabel', () => {
 
     const mockData = {
       percentage: {
-        [AGGREGATE_OPERATIONS.avg]: 0.3,
+        [AggregateOperations.AVG]: 0.3,
       },
     } as AggregateRecordsData;
 
@@ -89,7 +92,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockData,
       objectMetadataItem: mockObjectMetadataWithPercentageField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.avg,
+      aggregateOperation: AggregateOperations.AVG,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -118,7 +122,7 @@ describe('computeAggregateValueAndLabel', () => {
 
     const mockData = {
       decimals: {
-        [AGGREGATE_OPERATIONS.sum]: 0.009,
+        [AggregateOperations.SUM]: 0.009,
       },
     } as AggregateRecordsData;
 
@@ -126,7 +130,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockData,
       objectMetadataItem: mockObjectMetadataWithDecimalsField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      aggregateOperation: AggregateOperations.SUM,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -152,7 +157,7 @@ describe('computeAggregateValueAndLabel', () => {
 
     const mockFormattedData = {
       createdAt: {
-        [DATE_AGGREGATE_OPERATIONS.earliest]: '2023-01-01T12:00:00Z',
+        [DateAggregateOperations.EARLIEST]: '2023-01-01T12:00:00Z',
       },
     } as AggregateRecordsData;
 
@@ -160,7 +165,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: DATE_AGGREGATE_OPERATIONS.earliest,
+      aggregateOperation: DateAggregateOperations.EARLIEST,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -186,7 +192,7 @@ describe('computeAggregateValueAndLabel', () => {
 
     const mockFormattedData = {
       updatedAt: {
-        [DATE_AGGREGATE_OPERATIONS.latest]: '2023-12-31T23:59:59Z',
+        [DateAggregateOperations.LATEST]: '2023-12-31T23:59:59Z',
       },
     } as AggregateRecordsData;
 
@@ -194,7 +200,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: DATE_AGGREGATE_OPERATIONS.latest,
+      aggregateOperation: DateAggregateOperations.LATEST,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -208,13 +215,14 @@ describe('computeAggregateValueAndLabel', () => {
   it('should default to count when field not found', () => {
     const mockData = {
       id: {
-        [AGGREGATE_OPERATIONS.count]: 42,
+        [AggregateOperations.COUNT]: 42,
       },
     } as AggregateRecordsData;
 
     const result = computeAggregateValueAndLabel({
       data: mockData,
       objectMetadataItem: mockObjectMetadata,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 
@@ -228,7 +236,7 @@ describe('computeAggregateValueAndLabel', () => {
   it('should handle undefined aggregate value', () => {
     const mockData = {
       amount: {
-        [AGGREGATE_OPERATIONS.sum]: undefined,
+        [AggregateOperations.SUM]: undefined,
       },
     } as AggregateRecordsData;
 
@@ -236,7 +244,8 @@ describe('computeAggregateValueAndLabel', () => {
       data: mockData,
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      aggregateOperation: AggregateOperations.SUM,
+      localeCatalog: enUS,
       ...defaultParams,
     });
 

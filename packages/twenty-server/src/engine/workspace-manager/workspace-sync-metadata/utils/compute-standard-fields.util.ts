@@ -1,26 +1,26 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import {
   ComputedPartialFieldMetadata,
   PartialComputedFieldMetadata,
   PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  createForeignKeyDeterministicUuid,
-  createRelationDeterministicUuid,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export const computeStandardFields = (
+  context: WorkspaceSyncContext,
   standardFieldMetadataCollection: (
     | PartialFieldMetadata
     | PartialComputedFieldMetadata
   )[],
   originalObjectMetadata: ObjectMetadataEntity,
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
-): ComputedPartialFieldMetadata[] => {
-  const fields: ComputedPartialFieldMetadata[] = [];
+): Omit<ComputedPartialFieldMetadata, 'createdAt' | 'updatedAt'>[] => {
+  const fields: Omit<
+    ComputedPartialFieldMetadata,
+    'createdAt' | 'updatedAt'
+  >[] = [];
 
   for (const partialFieldMetadata of standardFieldMetadataCollection) {
     // Relation from standard object to custom object
@@ -30,10 +30,6 @@ export const computeStandardFields = (
         const { argsFactory, ...rest } = partialFieldMetadata;
         const { joinColumn, ...data } = argsFactory(customObjectMetadata);
         const relationStandardId = createRelationDeterministicUuid({
-          objectId: customObjectMetadata.id,
-          standardId: data.standardId,
-        });
-        const foreignKeyStandardId = createForeignKeyDeterministicUuid({
           objectId: customObjectMetadata.id,
           standardId: data.standardId,
         });
@@ -50,19 +46,8 @@ export const computeStandardFields = (
           ...rest,
           standardId: relationStandardId,
           defaultValue: null,
-        });
-
-        // Foreign key
-        fields.push({
-          ...rest,
-          standardId: foreignKeyStandardId,
-          name: joinColumn,
-          type: FieldMetadataType.UUID,
-          label: `${data.label} ID (foreign key)`,
-          description: `${data.description} id foreign key`,
-          defaultValue: null,
-          icon: undefined,
-          isSystem: true,
+          isNullable: true,
+          isLabelSyncedWithName: true,
         });
       }
     } else {

@@ -5,7 +5,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useLingui } from '@lingui/react/macro';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -24,6 +24,8 @@ export const MainNavigationDrawerFixedItems = () => {
     navigationDrawerExpandedMemorizedState,
   );
 
+  const navigate = useNavigate();
+
   const { t } = useLingui();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
@@ -35,6 +37,7 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSearch}
           onClick={openRecordsSearchPage}
           keyboard={['/']}
+          mouseUpNavigation={true}
         />
         <NavigationDrawerItem
           label={t`Settings`}
@@ -43,6 +46,7 @@ export const MainNavigationDrawerFixedItems = () => {
             setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
             setIsNavigationDrawerExpanded(true);
             setNavigationMemorizedUrl(location.pathname + location.search);
+            navigate(getSettingsPath(SettingsPath.ProfilePage));
           }}
           Icon={IconSettings}
         />

@@ -26,6 +26,7 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
 
     return Array.from({ length: 3 }, () => generateFakeValue(elementType));
   } else if (valueType.startsWith('{') && valueType.endsWith('}')) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const objData: Record<string, any> = {};
 
     const properties = valueType

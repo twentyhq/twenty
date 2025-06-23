@@ -22,6 +22,7 @@ interface BlockEditorProps {
   readonly?: boolean;
 }
 
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledEditor = styled.div`
   width: 100%;
 
@@ -43,9 +44,6 @@ const StyledEditor = styled.div`
     width: 20px;
     background: transparent;
   }
-  & .bn-editor {
-    padding-inline: 44px;
-  }
   & .bn-container .bn-drag-handle {
     width: 20px;
     height: 20px;
@@ -66,6 +64,14 @@ const StyledEditor = styled.div`
     border-radius: 8px;
     border: 1px solid ${({ theme }) => theme.border.color.medium};
     left: 26px;
+  }
+
+  & .bn-editor {
+    padding-inline: 0px;
+  }
+
+  & .bn-inline-content {
+    width: 100%;
   }
 
   & .bn-container .bn-suggestion-menu-item:hover {
@@ -108,6 +114,10 @@ const StyledEditor = styled.div`
   }
   & .bn-color-picker-dropdown {
     margin-left: 8px;
+  }
+
+  & .bn-inline-content a {
+    color: ${({ theme }) => theme.color.blue};
   }
 
   & .bn-inline-content code {

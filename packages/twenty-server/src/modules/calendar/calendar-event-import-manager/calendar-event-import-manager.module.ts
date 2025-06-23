@@ -31,17 +31,15 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([
-      BlocklistWorkspaceEntity,
-      WorkspaceMemberWorkspaceEntity,
-    ]),
+    ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     CalendarEventParticipantManagerModule,
-    TypeOrmModule.forFeature([FeatureFlag, Workspace], 'core'),
-    TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
+    TypeOrmModule.forFeature(
+      [FeatureFlag, Workspace, DataSourceEntity],
+      'core',
+    ),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
     GoogleCalendarDriverModule,
@@ -69,6 +67,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     CalendarOngoingStaleCronCommand,
     CalendarOngoingStaleJob,
   ],
-  exports: [CalendarEventsImportService, CalendarFetchEventsService],
+  exports: [
+    CalendarEventsImportService,
+    CalendarFetchEventsService,
+    CalendarEventListFetchCronCommand,
+    CalendarEventsImportCronCommand,
+    CalendarOngoingStaleCronCommand,
+  ],
 })
 export class CalendarEventImportManagerModule {}

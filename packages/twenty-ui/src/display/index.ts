@@ -35,6 +35,7 @@ export { IconMicrosoft } from './icon/components/IconMicrosoft';
 export { IconMicrosoftCalendar } from './icon/components/IconMicrosoftCalendar';
 export { IconMicrosoftOutlook } from './icon/components/IconMicrosoftOutlook';
 export { IconRelationManyToOne } from './icon/components/IconRelationManyToOne';
+export { IconTrashXOff } from './icon/components/IconTrashXOff';
 export { IconTwentyStar } from './icon/components/IconTwentyStar';
 export { IconTwentyStarFilled } from './icon/components/IconTwentyStarFilled';
 export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
@@ -108,6 +109,7 @@ export {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
+  IconChevronRightPipe,
   IconChevronsRight,
   IconChevronUp,
   IconCircleDot,
@@ -247,10 +249,12 @@ export {
   IconLayoutSidebarRight,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
+  IconLetterK,
   IconLibraryPlus,
   IconLifebuoy,
   IconLink,
   IconLinkOff,
+  IconLinkPlus,
   IconList,
   IconListCheck,
   IconListDetails,
@@ -262,6 +266,7 @@ export {
   IconLogout,
   IconMail,
   IconMailCog,
+  IconMailX,
   IconMap,
   IconMaximize,
   IconMessage,
@@ -299,6 +304,7 @@ export {
   IconPuzzle,
   IconQuestionMark,
   IconRefresh,
+  IconRefreshAlert,
   IconRefreshDot,
   IconRelationManyToMany,
   IconRelationOneToMany,

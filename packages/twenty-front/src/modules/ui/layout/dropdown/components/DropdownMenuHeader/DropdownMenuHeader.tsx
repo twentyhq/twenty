@@ -14,12 +14,16 @@ const StyledHeader = styled.li`
   padding: ${({ theme }) => theme.spacing(1)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
+  height: ${({ theme }) => theme.spacing(6)};
+
   user-select: none;
 
   &:hover {
     background: ${({ theme, onClick }) =>
       onClick ? theme.background.transparent.light : 'none'};
   }
+
+  flex-shrink: 0;
 `;
 
 const StyledChildrenWrapper = styled.span`
@@ -32,7 +36,6 @@ const StyledChildrenWrapper = styled.span`
 const StyledEndComponent = styled.div`
   display: inline-flex;
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(1)};
   margin-left: auto;
   margin-right: 0;
 

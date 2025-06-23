@@ -100,7 +100,9 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
-    fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
+    if (isLabelSyncedWithName) {
+      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
+    }
   };
 
   const fillNameSingularFromLabelSingular = (
@@ -318,17 +320,19 @@ export const SettingsDataModelObjectAboutForm = ({
                         advancedMode
                         onChange={(value) => {
                           onChange(value);
-                          onNewDirtyField?.();
-
+                          const isCustomObject =
+                            isDefined(objectMetadataItem) &&
+                            objectMetadataItem.isCustom;
+                          const isbeingCreatedObject =
+                            !isDefined(objectMetadataItem);
                           if (
                             value === true &&
-                            ((isDefined(objectMetadataItem) &&
-                              objectMetadataItem.isCustom) ||
-                              !isDefined(objectMetadataItem))
+                            (isCustomObject || isbeingCreatedObject)
                           ) {
                             fillNamePluralFromLabelPlural(labelPlural);
                             fillNameSingularFromLabelSingular(labelSingular);
                           }
+                          onNewDirtyField?.();
                         }}
                       />
                     </Card>

@@ -13,6 +13,7 @@ export type MenuItemBaseProps = {
   isHoverBackgroundDisabled?: boolean;
   hovered?: boolean;
   disabled?: boolean;
+  focused?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -72,6 +73,12 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     }
   }}
 
+  ${({ focused, theme }) =>
+    focused &&
+    css`
+      background: ${theme.background.transparent.light};
+    `};
+
   position: relative;
   user-select: none;
 
@@ -124,7 +131,7 @@ export const StyledDraggableItem = styled.div`
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
-  cursor?: 'drag' | 'default' | 'not-allowed';
+  cursor?: 'drag' | 'default';
 }>`
   ${({ isIconDisplayedOnHoverOnly, theme }) =>
     isIconDisplayedOnHoverOnly &&
@@ -149,14 +156,12 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
 
   cursor: ${({ cursor, disabled }) => {
     if (!isUndefined(disabled) && disabled !== false) {
-      return 'not-allowed';
+      return 'default';
     }
 
     switch (cursor) {
       case 'drag':
         return 'grab';
-      case 'not-allowed':
-        return 'not-allowed';
       default:
         return 'pointer';
     }

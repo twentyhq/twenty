@@ -8,15 +8,16 @@ import { useTableColumns } from '@/object-record/record-table/hooks/useTableColu
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
@@ -45,7 +46,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuItemsContainer>
         {hiddenTableColumns.map((column) => (
           <MenuItem
@@ -70,6 +71,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
           <MenuItem LeftIcon={IconSettings} text={t`Customize fields`} />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

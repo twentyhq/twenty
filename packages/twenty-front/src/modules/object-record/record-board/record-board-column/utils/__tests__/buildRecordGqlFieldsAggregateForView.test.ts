@@ -2,7 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
@@ -47,7 +47,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
   it('should build fields for numeric aggregate', () => {
     const kanbanAggregateOperation: KanbanAggregateOperation = {
       fieldMetadataId: MOCK_FIELD_ID,
-      operation: AGGREGATE_OPERATIONS.sum,
+      operation: AggregateOperations.SUM,
     };
 
     const result = buildRecordGqlFieldsAggregateForView({
@@ -56,14 +56,14 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     });
 
     expect(result).toEqual({
-      amount: [AGGREGATE_OPERATIONS.sum],
+      amount: [AggregateOperations.SUM],
     });
   });
 
   it('should default to count when no field is found', () => {
     const operation: KanbanAggregateOperation = {
       fieldMetadataId: 'non-existent-id',
-      operation: AGGREGATE_OPERATIONS.count,
+      operation: AggregateOperations.COUNT,
     };
 
     const result = buildRecordGqlFieldsAggregateForView({
@@ -72,14 +72,14 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     });
 
     expect(result).toEqual({
-      id: [AGGREGATE_OPERATIONS.count],
+      id: [AggregateOperations.COUNT],
     });
   });
 
   it('should throw error for non-count operation with invalid field', () => {
     const operation: KanbanAggregateOperation = {
       fieldMetadataId: 'non-existent-id',
-      operation: AGGREGATE_OPERATIONS.sum,
+      operation: AggregateOperations.SUM,
     };
 
     expect(() =>
@@ -88,7 +88,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
         recordIndexKanbanAggregateOperation: operation,
       }),
     ).toThrow(
-      `No field found to compute aggregate operation ${AGGREGATE_OPERATIONS.sum} on object ${mockObjectMetadata.nameSingular}`,
+      `No field found to compute aggregate operation ${AggregateOperations.SUM} on object ${mockObjectMetadata.nameSingular}`,
     );
   });
 });

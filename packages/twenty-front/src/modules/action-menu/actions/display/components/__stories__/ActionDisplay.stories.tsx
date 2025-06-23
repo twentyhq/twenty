@@ -115,6 +115,13 @@ export const AsDropdownItem: Story = {
   },
   decorators: [
     (Story) => (
+      <SelectableListComponentInstanceContext.Provider
+        value={{ instanceId: 'story' }}
+      >
+        <Story />
+      </SelectableListComponentInstanceContext.Provider>
+    ),
+    (Story) => (
       <ActionMenuContext.Provider
         value={{
           isInRightDrawer: false,

@@ -2,74 +2,112 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
-  RelationDefinitionType,
+  ObjectPermission,
+  RelationType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  gqlField: string;
+  fieldMetadata: Pick<
+    FieldMetadataItem,
+    'name' | 'type' | 'relation' | 'settings'
+  >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
-// TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
+// TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
-  field,
+  gqlField,
+  fieldMetadata,
   relationRecordGqlFields,
   computeReferences = false,
+  objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
-  const fieldType = field.type;
+  const fieldType = fieldMetadata.type;
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
+  const objectPermission = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    fieldMetadata.relation?.targetObjectMetadata.id,
+  );
+
   if (fieldIsNonCompositeField) {
-    return field.name;
+    return gqlField;
   }
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    field.relationDefinition?.direction === RelationDefinitionType.MANY_TO_ONE
+    fieldMetadata.relation?.type === RelationType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        field.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
     }
 
-    return `${field.name}
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
+    }
+
+    if (gqlField === fieldMetadata.settings?.joinColumnName) {
+      return `${gqlField}`;
+    }
+
+    return `${gqlField}
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
   recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
+  objectPermissionsByObjectMetadataId,
 })}`;
   }
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    field.relationDefinition?.direction === RelationDefinitionType.ONE_TO_MANY
+    fieldMetadata.relation?.type === RelationType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        field.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
     }
 
-    return `${field.name}
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
+    }
+
+    return `${gqlField}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({
@@ -78,13 +116,14 @@ ${mapObjectMetadataToGraphQLQuery({
       recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
+      objectPermissionsByObjectMetadataId,
     })}
   }
 }`;
   }
 
   if (fieldType === FieldMetadataType.LINKS) {
-    return `${field.name}
+    return `${gqlField}
 {
   primaryLinkUrl
   primaryLinkLabel
@@ -93,7 +132,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.CURRENCY) {
-    return `${field.name}
+    return `${gqlField}
 {
   amountMicros
   currencyCode
@@ -102,7 +141,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.FULL_NAME) {
-    return `${field.name}
+    return `${gqlField}
 {
   firstName
   lastName
@@ -110,7 +149,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ADDRESS) {
-    return `${field.name}
+    return `${gqlField}
 {
   addressStreet1
   addressStreet2
@@ -124,7 +163,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
-    return `${field.name}
+    return `${gqlField}
 {
     source
     workspaceMemberId
@@ -134,7 +173,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.EMAILS) {
-    return `${field.name}
+    return `${gqlField}
 {
   primaryEmail
   additionalEmails
@@ -142,7 +181,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.PHONES) {
-    return `${field.name}
+    return `${gqlField}
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
@@ -152,7 +191,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
-    return `${field.name}
+    return `${gqlField}
 {
   blocknote
   markdown

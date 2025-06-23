@@ -3,11 +3,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconArrowLeft,
@@ -23,6 +25,10 @@ import { ColumnDefinition } from '../../types/ColumnDefinition';
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
+
+const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+  z-index: ${({ theme }) => theme.lastLayerZIndex};
+`;
 
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
@@ -76,9 +82,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnFilter = useRecoilComponentValueV2(
-    onToggleColumnFilterComponentState,
-  );
   const onToggleColumnSort = useRecoilComponentValueV2(
     onToggleColumnSortComponentState,
   );
@@ -89,10 +92,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
     onToggleColumnSort?.(column.fieldMetadataId);
   };
 
+  const { openRecordFilterChipFromTableHeader } =
+    useOpenRecordFilterChipFromTableHeader();
+
   const handleFilterClick = () => {
     closeDropdownAndToggleScroll();
 
-    onToggleColumnFilter?.(column.fieldMetadataId);
+    openRecordFilterChipFromTableHeader(column.fieldMetadataId);
   };
 
   const isSortable = column.isSortable === true;
@@ -102,43 +108,45 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = column.isLabelIdentifier !== true;
 
   return (
-    <DropdownMenuItemsContainer>
-      {isFilterable && (
-        <MenuItem
-          LeftIcon={IconFilter}
-          onClick={handleFilterClick}
-          text={t`Filter`}
-        />
-      )}
-      {isSortable && (
-        <MenuItem
-          LeftIcon={IconSortDescending}
-          onClick={handleSortClick}
-          text={t`Sort`}
-        />
-      )}
-      {showSeparator && <DropdownMenuSeparator />}
-      {canMoveLeft && (
-        <MenuItem
-          LeftIcon={IconArrowLeft}
-          onClick={handleColumnMoveLeft}
-          text={t`Move left`}
-        />
-      )}
-      {canMoveRight && (
-        <MenuItem
-          LeftIcon={IconArrowRight}
-          onClick={handleColumnMoveRight}
-          text={t`Move right`}
-        />
-      )}
-      {canHide && (
-        <MenuItem
-          LeftIcon={IconEyeOff}
-          onClick={handleColumnVisibility}
-          text={t`Hide`}
-        />
-      )}
-    </DropdownMenuItemsContainer>
+    <DropdownContent>
+      <StyledDropdownMenuItemsContainer>
+        {isFilterable && (
+          <MenuItem
+            LeftIcon={IconFilter}
+            onClick={handleFilterClick}
+            text={t`Filter`}
+          />
+        )}
+        {isSortable && (
+          <MenuItem
+            LeftIcon={IconSortDescending}
+            onClick={handleSortClick}
+            text={t`Sort`}
+          />
+        )}
+        {showSeparator && <DropdownMenuSeparator />}
+        {canMoveLeft && (
+          <MenuItem
+            LeftIcon={IconArrowLeft}
+            onClick={handleColumnMoveLeft}
+            text={t`Move left`}
+          />
+        )}
+        {canMoveRight && (
+          <MenuItem
+            LeftIcon={IconArrowRight}
+            onClick={handleColumnMoveRight}
+            text={t`Move right`}
+          />
+        )}
+        {canHide && (
+          <MenuItem
+            LeftIcon={IconEyeOff}
+            onClick={handleColumnVisibility}
+            text={t`Hide`}
+          />
+        )}
+      </StyledDropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };

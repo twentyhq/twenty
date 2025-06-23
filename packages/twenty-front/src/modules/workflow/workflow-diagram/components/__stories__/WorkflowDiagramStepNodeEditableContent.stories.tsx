@@ -5,10 +5,10 @@ import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/Wo
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import { ComponentProps } from 'react';
+import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
-import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
 
 type ComponentState = 'default' | 'hover' | 'selected';
 
@@ -67,6 +67,11 @@ const ALL_STEPS = [
     nodeType: 'action',
     actionType: 'CODE',
     name: 'Code',
+  },
+  {
+    nodeType: 'action',
+    actionType: 'HTTP_REQUEST',
+    name: 'HTTP Request',
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 

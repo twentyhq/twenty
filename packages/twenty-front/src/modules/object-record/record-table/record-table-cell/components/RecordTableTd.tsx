@@ -20,12 +20,13 @@ const StyledTd = styled.td<{
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
+
   color: ${({ fontColor }) => fontColor};
   border-right: ${({ borderColor, hasRightBorder, isDragging }) =>
     hasRightBorder && !isDragging ? `1px solid ${borderColor}` : 'none'};
 
   padding: 0;
-  transition: 0.3s ease;
+  transition: transform 0.3s ease;
 
   text-align: left;
 
@@ -73,6 +74,7 @@ export const RecordTableTd = ({
     : theme.background.primary;
 
   const borderColor = theme.border.color.light;
+
   const fontColor = theme.font.color.primary;
 
   return (

@@ -1,12 +1,16 @@
 import { Meta } from '@storybook/react';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
-import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { UploadStep } from '@/spreadsheet-import/steps/components/UploadStep/UploadStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { RecoilRoot } from 'recoil';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof UploadStep> = {
@@ -15,7 +19,26 @@ const meta: Meta<typeof UploadStep> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [SnackBarDecorator, I18nFrontDecorator],
+  decorators: [
+    ObjectMetadataItemsDecorator,
+    ContextStoreDecorator,
+    (Story) => (
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(
+            isModalOpenedComponentState.atomFamily({
+              instanceId: 'upload-step',
+            }),
+            true,
+          );
+        }}
+      >
+        <Story />
+      </RecoilRoot>
+    ),
+    SnackBarDecorator,
+    I18nFrontDecorator,
+  ],
 };
 
 export default meta;
@@ -23,7 +46,7 @@ export default meta;
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <SpreadSheetImportModalWrapper modalId="upload-step" onClose={() => null}>
         <UploadStep
           setUploadedFile={() => null}
           setCurrentStepState={() => null}
@@ -32,7 +55,7 @@ export const Default = () => (
           setPreviousStepState={() => null}
           currentStepState={{ type: SpreadsheetImportStepType.upload }}
         />
-      </ModalWrapper>
+      </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
   </DialogManagerScope>
 );

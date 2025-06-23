@@ -5,7 +5,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -15,6 +14,7 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -31,7 +31,6 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -39,21 +38,25 @@ export class RunWorkflowJob {
     workflowRunId,
     payload,
     lastExecutedStepId,
+    workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     try {
       if (lastExecutedStepId) {
         await this.resumeWorkflowExecution({
+          workspaceId,
           workflowRunId,
           lastExecutedStepId,
         });
       } else {
         await this.startWorkflowExecution({
           workflowRunId,
+          workspaceId,
           payload: payload ?? {},
         });
       }
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
+        workspaceId,
         workflowRunId,
         status: WorkflowRunStatus.FAILED,
         error: error.message,
@@ -63,9 +66,11 @@ export class RunWorkflowJob {
 
   private async startWorkflowExecution({
     workflowRunId,
+    workspaceId,
     payload,
   }: {
     workflowRunId: string;
+    workspaceId: string;
     payload: object;
   }): Promise<void> {
     const context = {
@@ -73,14 +78,16 @@ export class RunWorkflowJob {
     };
 
     const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
-      );
+        workspaceId,
+      });
 
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
-        workflowRun.workflowVersionId,
-      );
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: workflowRun.workflowVersionId,
+      });
 
     if (!workflowVersion.trigger || !workflowVersion.steps) {
       throw new WorkflowRunException(
@@ -91,6 +98,7 @@ export class RunWorkflowJob {
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
+      workspaceId,
       context,
       output: {
         flow: {
@@ -107,25 +115,31 @@ export class RunWorkflowJob {
 
     await this.throttleExecution(workflowVersion.workflowId);
 
+    const rootSteps = getRootSteps(workflowVersion.steps);
+
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: 0,
+      currentStepId: rootSteps[0].id,
       steps: workflowVersion.steps,
       context,
+      workspaceId,
     });
   }
 
   private async resumeWorkflowExecution({
     workflowRunId,
     lastExecutedStepId,
+    workspaceId,
   }: {
     workflowRunId: string;
     lastExecutedStepId: string;
+    workspaceId: string;
   }): Promise<void> {
     const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
-      );
+        workspaceId,
+      });
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
       throw new WorkflowRunException(
@@ -134,40 +148,56 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepIndex = workflowRun.output?.flow?.steps?.findIndex(
+    const lastExecutedStep = workflowRun.output?.flow?.steps?.find(
       (step) => step.id === lastExecutedStepId,
     );
 
-    if (lastExecutedStepIndex === undefined) {
+    if (!lastExecutedStep) {
       throw new WorkflowRunException(
         'Last executed step not found',
         WorkflowRunExceptionCode.INVALID_INPUT,
       );
     }
 
+    const nextStepId = lastExecutedStep.nextStepIds?.[0];
+
+    if (!nextStepId) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.COMPLETED,
+      });
+
+      return;
+    }
+
     await this.executeWorkflow({
       workflowRunId,
-      currentStepIndex: lastExecutedStepIndex + 1,
+      currentStepId: nextStepId,
       steps: workflowRun.output?.flow?.steps ?? [],
       context: workflowRun.context ?? {},
+      workspaceId,
     });
   }
 
   private async executeWorkflow({
     workflowRunId,
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
+    workspaceId,
   }: {
     workflowRunId: string;
-    currentStepIndex: number;
+    currentStepId: string;
     steps: WorkflowAction[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
+    workspaceId: string;
   }) {
     const { error, pendingEvent } =
       await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
-        currentStepIndex,
+        currentStepId,
         steps,
         context,
       });
@@ -178,6 +208,7 @@ export class RunWorkflowJob {
 
     await this.workflowRunWorkspaceService.endWorkflowRun({
       workflowRunId,
+      workspaceId,
       status: error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
       error,
     });

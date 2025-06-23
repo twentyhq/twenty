@@ -14,6 +14,7 @@ module.exports = {
         project: ['packages/twenty-server/tsconfig.json'],
       },
       rules: {
+        '@typescript-eslint/no-explicit-any': 'error',
         'no-restricted-imports': [
           'error',
           {
@@ -96,6 +97,20 @@ module.exports = {
         'prefer-arrow/prefer-arrow-functions': 'off',
         '@nx/workspace-max-consts-per-file': 'off',
         '@nx/workspace-inject-workspace-repository': 'warn',
+        '@nx/workspace-rest-api-methods-should-be-guarded': 'error',
+        '@nx/workspace-graphql-resolvers-should-be-guarded': 'error',
+      },
+    },
+    {
+      files: [
+        '**/*.spec.ts',
+        '**/*.integration-spec.ts',
+        '**/__tests__/**',
+        '**/test/integration/**',
+        '**/test/utils/**',
+      ],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
       },
     },
     {

@@ -1,9 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -28,6 +29,11 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
 export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspaceEntity {
+  /**
+   * External ID of the calendar event. Comes from the provider's API, is unique per connected account.
+   * Used by the provider to identify the event in their system.
+   * So two External ID can be related to the same event sharing the same iCalUID.
+   */
   @WorkspaceField({
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
@@ -51,12 +57,13 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
   @WorkspaceRelation({
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Channel ID`,
     description: msg`Channel ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   calendarChannel: Relation<CalendarChannelWorkspaceEntity>;
 
@@ -66,12 +73,13 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
   @WorkspaceRelation({
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Event ID`,
     description: msg`Event ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 

@@ -9,6 +9,7 @@ import {
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
+import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 
 type EventRowMessageProps = EventRowDynamicComponentProps;
 
@@ -49,10 +50,12 @@ export const EventRowMessage = ({
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
       <EventCard isOpen={isOpen}>
-        <EventCardMessage
-          messageId={event.linkedRecordId}
-          authorFullName={authorFullName}
-        />
+        {isTimelineActivityWithLinkedRecord(event) && (
+          <EventCardMessage
+            messageId={event.linkedRecordId}
+            authorFullName={authorFullName}
+          />
+        )}
       </EventCard>
     </StyledEventRowMessageContainer>
   );

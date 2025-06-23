@@ -5,6 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -18,15 +19,18 @@ import {
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-export interface FieldMetadataUpdate {
-  current: FieldMetadataEntity;
-  altered: FieldMetadataEntity;
+export interface FieldMetadataUpdate<
+  Type extends FieldMetadataType = FieldMetadataType,
+> {
+  current: FieldMetadataEntity<Type>;
+  altered: FieldMetadataEntity<Type>;
 }
 
 @Injectable()
 export class WorkspaceMigrationFieldFactory {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async create(
@@ -86,6 +90,10 @@ export class WorkspaceMigrationFieldFactory {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
+    if (fieldMetadataCollection.length === 0) {
+      return [];
+    }
+
     const fieldMetadataCollectionGroupByObjectMetadataId =
       fieldMetadataCollection.reduce(
         (result, currentFieldMetadata) => {
@@ -109,11 +117,6 @@ export class WorkspaceMigrationFieldFactory {
         originalObjectMetadataMap[fieldMetadataCollection[0]?.objectMetadataId];
 
       for (const fieldMetadata of fieldMetadataCollection) {
-        // Relations are handled in workspace-migration-relation.factory.ts
-        if (fieldMetadata.type === FieldMetadataType.RELATION) {
-          continue;
-        }
-
         columns.push(
           ...this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
@@ -127,7 +130,7 @@ export class WorkspaceMigrationFieldFactory {
         name: generateMigrationName(
           `create-${objectMetadata.nameSingular}-fields`,
         ),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations: [
           {
             name: computeObjectTargetTable(
@@ -149,12 +152,11 @@ export class WorkspaceMigrationFieldFactory {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
-    for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
-      // Skip relations, because they're just representation and not real columns
-      if (fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION) {
-        continue;
-      }
+    if (fieldMetadataUpdateCollection.length === 0) {
+      return [];
+    }
 
+    for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
       const columnActions = this.workspaceMigrationFactory.createColumnActions(
         WorkspaceMigrationColumnActionType.ALTER,
         fieldMetadataUpdate.current,
@@ -211,7 +213,7 @@ export class WorkspaceMigrationFieldFactory {
           name: generateMigrationName(
             `update-${fieldMetadataUpdate.altered.name}`,
           ),
-          isCustom: false,
+          isCustom: fieldMetadataUpdate.altered.isCustom,
           migrations,
         });
       }
@@ -250,7 +252,7 @@ export class WorkspaceMigrationFieldFactory {
       workspaceMigrations.push({
         workspaceId: fieldMetadata.workspaceId,
         name: generateMigrationName(`delete-${fieldMetadata.name}`),
-        isCustom: false,
+        isCustom: fieldMetadata.isCustom,
         migrations,
       });
     }

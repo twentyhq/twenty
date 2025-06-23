@@ -8,12 +8,12 @@ import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
 import { getPhonesFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'type' | 'options' | 'defaultValue'
+    'type' | 'options' | 'defaultValue' | 'relation'
   >;
   relationObjectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
@@ -43,7 +43,9 @@ export const useFieldPreviewValue = ({
     case FieldMetadataType.CURRENCY:
       return getCurrencyFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.RELATION:
-      return relationFieldPreviewValue;
+      return fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
+        ? relationFieldPreviewValue
+        : [relationFieldPreviewValue];
     case FieldMetadataType.SELECT:
       return getSelectFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.MULTI_SELECT:

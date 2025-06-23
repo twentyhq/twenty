@@ -10,9 +10,8 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -30,59 +29,59 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
+  const recordShowComponentInstanceId =
+    computeRecordShowComponentInstanceId(objectRecordId);
+
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <RecordFilterGroupsComponentInstanceContext.Provider
-        value={{ instanceId: `record-show-${objectRecordId}` }}
+    <RecordFilterGroupsComponentInstanceContext.Provider
+      value={{ instanceId: recordShowComponentInstanceId }}
+    >
+      <RecordFiltersComponentInstanceContext.Provider
+        value={{ instanceId: recordShowComponentInstanceId }}
       >
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{ instanceId: `record-show-${objectRecordId}` }}
+        <RecordSortsComponentInstanceContext.Provider
+          value={{ instanceId: recordShowComponentInstanceId }}
         >
-          <RecordSortsComponentInstanceContext.Provider
-            value={{ instanceId: `record-show-${objectRecordId}` }}
+          <ContextStoreComponentInstanceContext.Provider
+            value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: recordShowComponentInstanceId }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{ instanceId: `record-show-${objectRecordId}` }}
-              >
-                <RecordValueSetterEffect recordId={objectRecordId} />
-                <PageContainer>
-                  <RecordShowPageTitle
-                    objectNameSingular={objectNameSingular}
-                    objectRecordId={objectRecordId}
-                  />
-                  <RecordShowPageHeader
-                    objectNameSingular={objectNameSingular}
-                    objectRecordId={objectRecordId}
+              <PageContainer>
+                <RecordShowPageTitle
+                  objectNameSingular={objectNameSingular}
+                  objectRecordId={objectRecordId}
+                />
+                <RecordShowPageHeader
+                  objectNameSingular={objectNameSingular}
+                  objectRecordId={objectRecordId}
+                >
+                  <RecordShowActionMenu />
+                  <PageHeaderToggleCommandMenuButton />
+                </RecordShowPageHeader>
+                <PageBody>
+                  <TimelineActivityContext.Provider
+                    value={{
+                      recordId: objectRecordId,
+                    }}
                   >
-                    <RecordShowActionMenu />
-                    <PageHeaderToggleCommandMenuButton />
-                  </RecordShowPageHeader>
-                  <PageBody>
-                    <TimelineActivityContext.Provider
-                      value={{
-                        recordId: objectRecordId,
-                      }}
-                    >
-                      <RecordShowEffect
-                        objectNameSingular={objectNameSingular}
-                        recordId={objectRecordId}
-                      />
-                      <RecordShowContainer
-                        objectNameSingular={objectNameSingular}
-                        objectRecordId={objectRecordId}
-                        loading={false}
-                      />
-                    </TimelineActivityContext.Provider>
-                  </PageBody>
-                </PageContainer>
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </RecordSortsComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
-      </RecordFilterGroupsComponentInstanceContext.Provider>
-    </RecordFieldValueSelectorContextProvider>
+                    <RecordShowEffect
+                      objectNameSingular={objectNameSingular}
+                      recordId={objectRecordId}
+                    />
+                    <RecordShowContainer
+                      objectNameSingular={objectNameSingular}
+                      objectRecordId={objectRecordId}
+                      loading={false}
+                    />
+                  </TimelineActivityContext.Provider>
+                </PageBody>
+              </PageContainer>
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </RecordSortsComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
+    </RecordFilterGroupsComponentInstanceContext.Provider>
   );
 };

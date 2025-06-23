@@ -14,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ApiKeys/SettingsDevelopersApiKeysNew',
   component: SettingsDevelopersApiKeysNew,
   decorators: [PageDecorator],
-  args: { routePath: getSettingsPath(SettingsPath.DevelopersNewApiKey) },
+  args: { routePath: getSettingsPath(SettingsPath.NewApiKey) },
   parameters: {
     msw: graphqlMocks,
   },

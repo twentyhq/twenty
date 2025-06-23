@@ -3,12 +3,18 @@ import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarC
 import { AvatarChipVariant } from '@ui/components/avatar-chip/types/AvatarChipsVariant.type';
 import { ChipVariant } from '@ui/components/chip/Chip';
 import { LinkChip, LinkChipProps } from '@ui/components/chip/LinkChip';
+import { TriggerEventType } from '@ui/utilities';
 
-export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
+export type LinkAvatarChipProps = Omit<
+  AvatarChipsCommonProps,
+  'clickable' | 'variant'
+> & {
   to: string;
   onClick?: LinkChipProps['onClick'];
+  onMouseDown?: LinkChipProps['onMouseDown'];
   variant?: AvatarChipVariant;
   isLabelHidden?: boolean;
+  triggerEvent?: TriggerEventType;
 };
 
 export const LinkAvatarChip = ({
@@ -26,6 +32,7 @@ export const LinkAvatarChip = ({
   size,
   variant,
   isLabelHidden,
+  triggerEvent,
 }: LinkAvatarChipProps) => (
   <LinkChip
     to={to}
@@ -52,5 +59,6 @@ export const LinkAvatarChip = ({
     }
     className={className}
     maxWidth={maxWidth}
+    triggerEvent={triggerEvent}
   />
 );

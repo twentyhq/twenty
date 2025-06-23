@@ -1,11 +1,11 @@
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerNodeSelection = () => {
@@ -14,7 +14,9 @@ export const useTriggerNodeSelection = () => {
   const [
     workflowDiagramTriggerNodeSelection,
     setWorkflowDiagramTriggerNodeSelection,
-  ] = useRecoilState(workflowDiagramTriggerNodeSelectionState);
+  ] = useRecoilComponentStateV2(
+    workflowDiagramTriggerNodeSelectionComponentState,
+  );
 
   useEffect(() => {
     if (!isDefined(workflowDiagramTriggerNodeSelection)) {

@@ -1,11 +1,11 @@
+import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -47,7 +47,7 @@ export const useServerlessFunctionUpdateFormState = ({
   const { loading } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: serverlessFunctionVersion,
-    onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
+    onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
       const newState = {
         code: data?.getServerlessFunctionSourceCode || undefined,
         name: serverlessFunction?.name || '',
@@ -63,9 +63,11 @@ export const useServerlessFunctionUpdateFormState = ({
         const sourceCode =
           data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
 
+        const functionInput = await getFunctionInputFromSourceCode(sourceCode);
+
         setServerlessFunctionTestData((prev) => ({
           ...prev,
-          input: getFunctionInputFromSourceCode(sourceCode),
+          input: functionInput,
           shouldInitInput: false,
         }));
       }

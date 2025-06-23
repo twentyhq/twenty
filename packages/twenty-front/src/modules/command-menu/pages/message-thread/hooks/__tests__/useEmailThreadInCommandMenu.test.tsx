@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import gql from 'graphql-tag';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useEmailThreadInCommandMenu } from '../useEmailThreadInCommandMenu';
@@ -11,7 +12,7 @@ const mocks = [
   {
     request: {
       query: gql`
-        query FindOneMessageThread($objectRecordId: ID!) {
+        query FindOneMessageThread($objectRecordId: UUID!) {
           messageThread(filter: { id: { eq: $objectRecordId } }) {
             __typename
             id
@@ -122,6 +123,7 @@ const mocks = [
                           firstName
                           lastName
                         }
+                        position
                         timeFormat
                         timeZone
                         updatedAt
@@ -155,7 +157,7 @@ const mocks = [
         filter: { messageThreadId: { eq: '1' } },
         orderBy: [{ receivedAt: 'AscNullsLast' }],
         lastCursor: undefined,
-        limit: 10,
+        limit: QUERY_MAX_RECORDS,
       },
     },
     result: jest.fn(() => ({
@@ -283,6 +285,7 @@ const mocks = [
                     firstName
                     lastName
                   }
+                  position
                   timeFormat
                   timeZone
                   updatedAt

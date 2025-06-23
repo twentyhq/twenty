@@ -23,4 +23,14 @@ export const OTHER_ACTIONS: Array<{
     type: 'FORM',
     icon: 'IconForms',
   },
+  {
+    label: 'HTTP Request',
+    type: 'HTTP_REQUEST',
+    icon: 'IconWorld',
+  },
+  {
+    label: 'AI Agent',
+    type: 'AI_AGENT',
+    icon: 'IconBrain',
+  },
 ];

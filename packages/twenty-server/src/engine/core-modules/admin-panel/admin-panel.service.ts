@@ -18,6 +18,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -127,14 +128,20 @@ export class AdminPanelService {
     const rawEnvVars = this.twentyConfigService.getAll();
     const groupedData = new Map<ConfigVariablesGroup, ConfigVariable[]>();
 
-    for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
+    for (const [varName, { value, metadata, source }] of Object.entries(
+      rawEnvVars,
+    )) {
       const { group, description } = metadata;
 
       const envVar: ConfigVariable = {
         name: varName,
         description,
-        value: String(value),
+        value: value ?? null,
         isSensitive: metadata.isSensitive ?? false,
+        isEnvOnly: metadata.isEnvOnly ?? false,
+        type: metadata.type,
+        options: metadata.options,
+        source,
       };
 
       if (!groupedData.has(group)) {
@@ -161,6 +168,30 @@ export class AdminPanelService {
     return { groups };
   }
 
+  getConfigVariable(key: string): ConfigVariable {
+    const variableWithMetadata =
+      this.twentyConfigService.getVariableWithMetadata(
+        key as keyof ConfigVariables,
+      );
+
+    if (!variableWithMetadata) {
+      throw new Error(`Config variable ${key} not found`);
+    }
+
+    const { value, metadata, source } = variableWithMetadata;
+
+    return {
+      name: key,
+      description: metadata.description ?? '',
+      value: value ?? null,
+      isSensitive: metadata.isSensitive ?? false,
+      isEnvOnly: metadata.isEnvOnly ?? false,
+      type: metadata.type,
+      options: metadata.options,
+      source,
+    };
+  }
+
   async getVersionInfo(): Promise<VersionInfo> {
     const currentVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -170,14 +201,18 @@ export class AdminPanelService {
       );
 
       const versions = response.data.results
+        // @ts-expect-error legacy noImplicitAny
         .filter((tag) => tag && tag.name !== 'latest')
+        // @ts-expect-error legacy noImplicitAny
         .map((tag) => semver.coerce(tag.name)?.version)
+        // @ts-expect-error legacy noImplicitAny
         .filter((version) => version !== undefined);
 
       if (versions.length === 0) {
         return { currentVersion, latestVersion: 'latest' };
       }
 
+      // @ts-expect-error legacy noImplicitAny
       versions.sort((a, b) => semver.compare(b, a));
       const latestVersion = versions[0];
 

@@ -453,9 +453,10 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
 };
 
-export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
-  eventName: '20202020-7318-4cf8-a6ac-2de75e3fd97d',
-  workflow: '20202020-4082-4641-8569-dc08d5365002',
+export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
+  type: '20202020-3319-4234-a34c-3f92c1ab56e7',
+  settings: '20202020-3319-4234-a34c-bac8f903de12',
+  workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
 };
 
 export const WORKFLOW_STANDARD_FIELD_IDS = {
@@ -466,6 +467,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
   runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
+  automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
@@ -578,7 +580,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   view: VIEW_STANDARD_FIELD_IDS,
   webhook: WEBHOOK_STANDARD_FIELD_IDS,
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
-  workflowEventListener: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,

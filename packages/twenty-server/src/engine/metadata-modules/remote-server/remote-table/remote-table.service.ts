@@ -49,9 +49,9 @@ export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
 
   constructor(
-    @InjectRepository(RemoteTableEntity, 'metadata')
+    @InjectRepository(RemoteTableEntity, 'core')
     private readonly remoteTableRepository: Repository<RemoteTableEntity>,
-    @InjectRepository(RemoteServerEntity, 'metadata')
+    @InjectRepository(RemoteServerEntity, 'core')
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
@@ -182,16 +182,14 @@ export class RemoteTableService {
         workspaceId,
       );
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
 
     const { baseName: localTableBaseName, suffix: localTableSuffix } =
       await getRemoteTableLocalName(
         input.name,
         dataSourceMetatada.schema,
-        workspaceDataSource,
+        mainDataSource,
       );
 
     const localTableName = localTableSuffix

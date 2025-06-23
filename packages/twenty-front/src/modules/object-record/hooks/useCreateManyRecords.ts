@@ -14,6 +14,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -27,11 +28,16 @@ type PartialObjectRecordWithId = Partial<ObjectRecord> & {
   id: string;
 };
 
-type useCreateManyRecordsProps = {
+type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
+  id?: string;
+};
+
+export type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
+  shouldRefetchAggregateQueries?: boolean;
 };
 
 export const useCreateManyRecords = <
@@ -41,6 +47,7 @@ export const useCreateManyRecords = <
   recordGqlFields,
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
+  shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
 
@@ -66,25 +73,36 @@ export const useCreateManyRecords = <
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const createManyRecords = async (
-    recordsToCreate: Partial<CreatedObjectRecord>[],
-    upsert?: boolean,
-  ) => {
-    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithId[] = [];
+  type createManyRecordsProps = {
+    recordsToCreate: Partial<CreatedObjectRecord>[];
+    upsert?: boolean;
+    abortController?: AbortController;
+  };
+
+  const createManyRecords = async ({
+    recordsToCreate,
+    upsert,
+    abortController,
+  }: createManyRecordsProps) => {
+    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
+      [];
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
     recordsToCreate.forEach((recordToCreate) => {
-      const idForCreation = recordToCreate?.id ?? v4();
+      const shouldDoOptimisticEffect = upsert !== true;
+      const idForCreation = shouldDoOptimisticEffect
+        ? (recordToCreate?.id ?? v4())
+        : undefined;
       const sanitizedRecord = {
         ...sanitizeRecordInput({
           objectMetadataItem,
           recordInput: recordToCreate,
         }),
-        id: idForCreation,
+        ...(isDefined(idForCreation) ? { id: idForCreation } : {}),
       };
       const baseOptimisticRecordInputCreatedBy:
         | { createdBy: FieldActorForInputValue }
@@ -96,22 +114,26 @@ export const useCreateManyRecords = <
             },
           }
         : undefined;
-      const optimisticRecordInput = {
-        ...computeOptimisticRecordFromInput({
-          cache: apolloClient.cache,
-          objectMetadataItem,
-          objectMetadataItems,
-          currentWorkspaceMember: currentWorkspaceMember,
-          recordInput: {
-            ...baseOptimisticRecordInputCreatedBy,
-            ...recordToCreate,
-          },
-        }),
-        id: idForCreation,
-      };
 
       sanitizedCreateManyRecordsInput.push(sanitizedRecord);
-      recordOptimisticRecordsInput.push(optimisticRecordInput);
+
+      if (shouldDoOptimisticEffect) {
+        const optimisticRecordInput = {
+          ...computeOptimisticRecordFromInput({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            currentWorkspaceMember: currentWorkspaceMember,
+            recordInput: {
+              ...baseOptimisticRecordInputCreatedBy,
+              ...recordToCreate,
+            },
+            objectPermissionsByObjectMetadataId,
+          }),
+          id: idForCreation as string,
+        };
+        recordOptimisticRecordsInput.push(optimisticRecordInput);
+      }
     });
 
     const recordsCreatedInCache = recordOptimisticRecordsInput
@@ -141,6 +163,7 @@ export const useCreateManyRecords = <
         recordsToCreate: recordNodeCreatedInCache,
         objectMetadataItems,
         shouldMatchRootQueryFilter,
+        objectPermissionsByObjectMetadataId,
       });
     }
 
@@ -155,6 +178,11 @@ export const useCreateManyRecords = <
           data: sanitizedCreateManyRecordsInput,
           upsert: upsert,
         },
+        context: {
+          fetchOptions: {
+            signal: abortController?.signal,
+          },
+        },
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];
 
@@ -167,6 +195,7 @@ export const useCreateManyRecords = <
             objectMetadataItems,
             shouldMatchRootQueryFilter,
             checkForRecordInCache: true,
+            objectPermissionsByObjectMetadataId,
           });
         },
       })
@@ -190,7 +219,8 @@ export const useCreateManyRecords = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    if (shouldRefetchAggregateQueries) await refetchAggregateQueries();
+
     return createdObjects.data?.[mutationResponseField] ?? [];
   };
 

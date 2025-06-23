@@ -12,11 +12,11 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
-import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -28,16 +28,16 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
-    private readonly featureFlagService: FeatureFlagService,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
-    private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
+    private readonly workspaceSyncFieldMetadataRelationService: WorkspaceSyncFieldMetadataRelationService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -57,7 +57,7 @@ export class WorkspaceSyncMetadataService {
   }> {
     let workspaceMigrations: WorkspaceMigrationEntity[] = [];
     const storage = new WorkspaceSyncStorage();
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     this.logger.log('Syncing standard objects and fields metadata');
 
@@ -71,12 +71,6 @@ export class WorkspaceSyncMetadataService {
         WorkspaceMigrationEntity,
       );
 
-      // Retrieve feature flags
-      const workspaceFeatureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-          context.workspaceId,
-        );
-
       this.logger.log('Syncing standard objects and fields metadata');
 
       // 1 - Sync standard objects
@@ -87,7 +81,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceObjectMigrationsEnd = performance.now();
@@ -103,7 +96,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceFieldMigrationsEnd = performance.now();
@@ -123,12 +115,14 @@ export class WorkspaceSyncMetadataService {
 
       // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrationsStart = performance.now();
-      const workspaceRelationMigrations =
-        await this.workspaceSyncRelationMetadataService.synchronize(
+
+      let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+      workspaceRelationMigrations =
+        await this.workspaceSyncFieldMetadataRelationService.synchronize(
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceRelationMigrationsEnd = performance.now();
@@ -139,14 +133,13 @@ export class WorkspaceSyncMetadataService {
 
       // 4 - Sync standard indexes on standard objects
       const workspaceIndexMigrationsStart = performance.now();
+
       const workspaceIndexMigrations =
         await this.workspaceSyncIndexMetadataService.synchronize(
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
-
       const workspaceIndexMigrationsEnd = performance.now();
 
       this.logger.log(
@@ -160,7 +153,6 @@ export class WorkspaceSyncMetadataService {
         context,
         manager,
         storage,
-        workspaceFeatureFlagsMap,
       );
 
       const workspaceObjectMetadataIdentifiersEnd = performance.now();
@@ -216,7 +208,9 @@ export class WorkspaceSyncMetadataService {
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (error instanceof QueryFailedError && (error as any).detail) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
       await queryRunner.rollbackTransaction();
@@ -243,6 +237,7 @@ export class WorkspaceSyncMetadataService {
     objectMigrations: Partial<WorkspaceMigrationEntity>[];
     fieldMigrations: Partial<WorkspaceMigrationEntity>[];
   } {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createMigrationsByTable = new Map<string, any>();
 
     for (const objectMigration of objectMigrations) {

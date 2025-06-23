@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`computeSchemaComponents Float without decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "example": {
+      "number2": 692.1852368365229,
+    },
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "required": [
+      "number2",
+    ],
+    "type": "object",
+  },
+  "ObjectNameForResponse": {
+    "description": undefined,
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectNameForUpdate": {
+    "description": undefined,
+    "example": {
+      "number2": 316.2001153750569,
+    },
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "example": {
+      "number1": 957.9316406203515,
+    },
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "required": [
+      "number1",
+    ],
+    "type": "object",
+  },
+  "ObjectNameForResponse": {
+    "description": undefined,
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectNameForUpdate": {
+    "description": undefined,
+    "example": {
+      "number1": 533.6321196880441,
+    },
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "example": {
+      "number3": 686.8144267539021,
+    },
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "required": [
+      "number3",
+    ],
+    "type": "object",
+  },
+  "ObjectNameForResponse": {
+    "description": undefined,
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectNameForUpdate": {
+    "description": undefined,
+    "example": {
+      "number3": 834.7910462254755,
+    },
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "type": "object",
+  },
+}
+`;

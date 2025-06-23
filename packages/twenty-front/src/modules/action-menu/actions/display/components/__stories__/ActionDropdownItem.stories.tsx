@@ -2,6 +2,7 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
@@ -11,7 +12,17 @@ import { ActionDropdownItem } from '../ActionDropdownItem';
 const meta: Meta<typeof ActionDropdownItem> = {
   title: 'Modules/ActionMenu/Actions/Display/ActionDropdownItem',
   component: ActionDropdownItem,
-  decorators: [ComponentDecorator, RouterDecorator],
+  decorators: [
+    (Story) => (
+      <SelectableListComponentInstanceContext.Provider
+        value={{ instanceId: 'story' }}
+      >
+        <Story />
+      </SelectableListComponentInstanceContext.Provider>
+    ),
+    ComponentDecorator,
+    RouterDecorator,
+  ],
 };
 
 export default meta;

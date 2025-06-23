@@ -15,7 +15,7 @@ type MenuItemSelectColorProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
-  hovered?: boolean;
+  focused?: boolean;
   color: ThemeColor;
   variant?: ColorSampleVariant;
 };
@@ -39,7 +39,7 @@ export const MenuItemSelectColor = ({
   className,
   onClick,
   disabled,
-  hovered,
+  focused,
   variant = 'default',
 }: MenuItemSelectColorProps) => {
   const theme = useTheme();
@@ -48,9 +48,8 @@ export const MenuItemSelectColor = ({
     <StyledMenuItemSelect
       onClick={onClick}
       className={className}
-      selected={selected}
       disabled={disabled}
-      hovered={hovered}
+      focused={focused}
     >
       <StyledMenuItemLeftContent>
         <ColorSample colorName={color} variant={variant} />

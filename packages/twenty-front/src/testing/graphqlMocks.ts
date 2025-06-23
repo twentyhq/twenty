@@ -2,7 +2,6 @@ import { getOperationName } from '@apollo/client/utilities';
 import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
 
 import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
-import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -15,6 +14,7 @@ import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
@@ -90,22 +90,8 @@ export const graphqlMocks = {
       () => {
         return HttpResponse.json({
           data: {
-            getPublicWorkspaceDataByDomain: {
-              id: 'id',
-              logo: 'logo',
-              displayName: 'displayName',
-              workspaceUrls: {
-                customUrl: undefined,
-                subdomainUrl: 'https://twenty.com',
-              },
-              authProviders: {
-                google: true,
-                microsoft: false,
-                password: true,
-                magicLink: false,
-                sso: [],
-              },
-            },
+            getPublicWorkspaceDataByDomain:
+              mockedPublicWorkspaceDataBySubdomain,
           },
         });
       },
@@ -117,12 +103,8 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          clientConfig: mockedClientConfig,
-        },
-      });
+    http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () => {
+      return HttpResponse.json(mockedClientConfig);
     }),
     metadataGraphql.query(
       getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
@@ -186,44 +168,62 @@ export const graphqlMocks = {
     graphql.query('Search', () => {
       return HttpResponse.json({
         data: {
-          search: [
-            {
-              __typename: 'SearchRecordDTO',
-              recordId: '20202020-2d40-4e49-8df4-9c6a049191de',
-              objectNameSingular: 'person',
-              label: 'Louis Duss',
-              imageUrl: '',
-              tsRankCD: 0.2,
-              tsRank: 0.12158542,
+          search: {
+            edges: [
+              {
+                node: {
+                  __typename: 'SearchRecordDTO',
+                  recordId: '20202020-2d40-4e49-8df4-9c6a049191de',
+                  objectNameSingular: 'person',
+                  label: 'Louis Duss',
+                  imageUrl: '',
+                  tsRankCD: 0.2,
+                  tsRank: 0.12158542,
+                },
+                cursor: 'cursor-1',
+              },
+              {
+                node: {
+                  __typename: 'SearchRecordDTO',
+                  recordId: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
+                  objectNameSingular: 'company',
+                  label: 'Linkedin',
+                  imageUrl: 'https://twenty-icons.com/linkedin.com',
+                  tsRankCD: 0.2,
+                  tsRank: 0.12158542,
+                },
+                cursor: 'cursor-2',
+              },
+              {
+                node: {
+                  __typename: 'SearchRecordDTO',
+                  recordId: '20202020-3f74-492d-a101-2a70f50a1645',
+                  objectNameSingular: 'company',
+                  label: 'Libeo',
+                  imageUrl: 'https://twenty-icons.com/libeo.io',
+                  tsRankCD: 0.2,
+                  tsRank: 0.12158542,
+                },
+                cursor: 'cursor-3',
+              },
+              {
+                node: {
+                  __typename: 'SearchRecordDTO',
+                  recordId: '20202020-ac73-4797-824e-87a1f5aea9e0',
+                  objectNameSingular: 'person',
+                  label: 'Sylvie Palmer',
+                  imageUrl: '',
+                  tsRankCD: 0.1,
+                  tsRank: 0.06079271,
+                },
+                cursor: 'cursor-4',
+              },
+            ],
+            pageInfo: {
+              hasNextPage: true,
+              endCursor: 'cursor-4',
             },
-            {
-              __typename: 'SearchRecordDTO',
-              recordId: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-              objectNameSingular: 'company',
-              label: 'Linkedin',
-              imageUrl: 'https://twenty-icons.com/linkedin.com',
-              tsRankCD: 0.2,
-              tsRank: 0.12158542,
-            },
-            {
-              __typename: 'SearchRecordDTO',
-              recordId: '20202020-3f74-492d-a101-2a70f50a1645',
-              objectNameSingular: 'company',
-              label: 'Libeo',
-              imageUrl: 'https://twenty-icons.com/libeo.io',
-              tsRankCD: 0.2,
-              tsRank: 0.12158542,
-            },
-            {
-              __typename: 'SearchRecordDTO',
-              recordId: '20202020-ac73-4797-824e-87a1f5aea9e0',
-              objectNameSingular: 'person',
-              label: 'Sylvie Palmer',
-              imageUrl: '',
-              tsRankCD: 0.1,
-              tsRank: 0.06079271,
-            },
-          ],
+          },
         },
       });
     }),
@@ -646,6 +646,26 @@ export const graphqlMocks = {
         return HttpResponse.json({
           data: {
             person: peopleMock.find((person) => person.id === objectRecordId),
+          },
+        });
+      },
+    ),
+    graphql.query<GraphQLQuery, { objectRecordId: string }>(
+      'FindOneWebhook',
+      ({ variables: { objectRecordId } }) => {
+        return HttpResponse.json({
+          data: {
+            webhook: {
+              __typename: 'Webhook',
+              id: objectRecordId,
+              createdAt: '2021-08-27T12:00:00Z',
+              updatedAt: '2021-08-27T12:00:00Z',
+              deletedAt: null,
+              targetUrl: 'https://example.com/webhook',
+              description: 'A Sample Description',
+              operations: ['*.created', '*.updated'],
+              secret: 'sample-secret',
+            },
           },
         });
       },

@@ -1,10 +1,14 @@
-import { ReactNode, useCallback, useContext, useState } from 'react';
+import { ReactNode, useContext } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
@@ -14,6 +18,8 @@ export type ActionModalProps = {
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
+  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
+  closeSidePanelOnCommandMenuListActionExecution?: boolean;
 };
 
 export const ActionModal = ({
@@ -23,35 +29,44 @@ export const ActionModal = ({
   confirmButtonText = 'Confirm',
   confirmButtonAccent = 'danger',
   isLoading = false,
+  closeSidePanelOnShowPageOptionsActionExecution,
+  closeSidePanelOnCommandMenuListActionExecution,
 }: ActionModalProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { openModal } = useModal();
 
-  const handleOpen = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  const { closeActionMenu } = useCloseActionMenu();
+  const { closeActionMenu } = useCloseActionMenu({
+    closeSidePanelOnShowPageOptionsActionExecution,
+    closeSidePanelOnCommandMenuListActionExecution,
+  });
 
   const handleConfirmClick = () => {
-    closeActionMenu();
     onConfirmClick();
-    setIsOpen(false);
+    closeActionMenu();
   };
 
   const actionConfig = useContext(ActionConfigContext);
+  const { actionMenuType } = useContext(ActionMenuContext);
+
+  const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
+
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
 
   if (!actionConfig) {
     return null;
   }
 
+  const handleClick = () => openModal(modalId);
+
   return (
     <>
-      <ActionDisplay onClick={handleOpen} />
-      {isOpen &&
+      <ActionDisplay onClick={handleClick} />
+      {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
+            modalId={modalId}
             title={title}
             subtitle={subtitle}
             onConfirmClick={handleConfirmClick}

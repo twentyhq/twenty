@@ -1,34 +1,36 @@
 import styled from '@emotion/styled';
 
+import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
+import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
-import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 
-export const StyledSelectableItem = styled(SelectableItem)`
+export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
   width: 100%;
 `;
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  focusId: string;
 };
 
 export const MultipleRecordPickerMenuItems = ({
   onChange,
+  focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -45,11 +47,6 @@ export const MultipleRecordPickerMenuItems = ({
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
-  const singlePickableMorphItemFamilySelector =
-    useRecoilComponentCallbackStateV2(
-      multipleRecordPickerSinglePickableMorphItemComponentFamilySelector,
-      componentInstanceId,
-    );
 
   const multipleRecordPickerPickableMorphItemsState =
     useRecoilComponentCallbackStateV2(
@@ -82,57 +79,33 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
-  const handleEnter = useRecoilCallback(
-    ({ snapshot }) => {
-      return (selectedId: string) => {
-        const pickableMorphItem = snapshot
-          .getLoadable(singlePickableMorphItemFamilySelector(selectedId))
-          .getValue();
-
-        if (!isDefined(pickableMorphItem)) {
-          return;
-        }
-
-        const selectedMorphItem = {
-          ...pickableMorphItem,
-          isSelected: !pickableMorphItem.isSelected,
-        };
-
-        handleChange(selectedMorphItem);
-        onChange?.(selectedMorphItem);
-        resetSelectedItem();
-      };
-    },
-    [
-      handleChange,
-      onChange,
-      resetSelectedItem,
-      singlePickableMorphItemFamilySelector,
-    ],
-  );
-
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListInstanceId={selectableListComponentInstanceId}
-        selectableItemIdArray={pickableRecordIds}
-        hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
-        onEnter={handleEnter}
-      >
-        {pickableRecordIds.map((recordId) => {
-          return (
-            <MultipleRecordPickerMenuItem
-              key={recordId}
-              recordId={recordId}
-              onChange={(morphItem) => {
-                handleChange(morphItem);
-                onChange?.(morphItem);
-                resetSelectedItem();
-              }}
-            />
-          );
-        })}
-      </SelectableList>
+      {pickableRecordIds.length === 0 ? (
+        <RecordPickerNoRecordFoundMenuItem />
+      ) : (
+        <SelectableList
+          selectableListInstanceId={selectableListComponentInstanceId}
+          selectableItemIdArray={pickableRecordIds}
+          focusId={focusId}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
+        >
+          {pickableRecordIds.map((recordId) => {
+            return (
+              <MultipleRecordPickerMenuItem
+                key={recordId}
+                recordId={recordId}
+                onChange={(morphItem) => {
+                  handleChange(morphItem);
+                  onChange?.(morphItem);
+                  resetSelectedItem();
+                }}
+              />
+            );
+          })}
+          <MultipleRecordPickerFetchMoreLoader />
+        </SelectableList>
+      )}
     </DropdownMenuItemsContainer>
   );
 };

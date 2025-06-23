@@ -1,14 +1,15 @@
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 describe('getTriggerDefaultDefinition', () => {
-  it('throws if the activeObjectMetadataItems list is empty', () => {
+  it('throws if the activeNonSystemObjectMetadataItems list is empty', () => {
     expect(() => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: [],
+        activeNonSystemObjectMetadataItems: [],
       });
     }).toThrow();
   });
@@ -18,7 +19,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -35,7 +36,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -52,7 +53,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -69,7 +70,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -86,7 +87,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'MANUAL',
@@ -94,6 +95,7 @@ describe('getTriggerDefaultDefinition', () => {
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},
+        icon: COMMAND_MENU_DEFAULT_ICON,
       },
     });
   });
@@ -103,7 +105,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       });
     }).toThrow('Unknown type: unknown');
   });

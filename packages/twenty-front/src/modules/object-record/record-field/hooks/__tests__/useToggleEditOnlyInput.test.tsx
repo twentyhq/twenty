@@ -22,7 +22,7 @@ const mocks: MockedResponse[] = [
     request: {
       query: gql`
         mutation UpdateOneCompany(
-          $idToUpdate: ID!
+          $idToUpdate: UUID!
           $input: CompanyUpdateInput!
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
@@ -40,6 +40,7 @@ const mocks: MockedResponse[] = [
                 firstName
                 lastName
               }
+              position
               timeFormat
               timeZone
               updatedAt
@@ -76,6 +77,7 @@ const mocks: MockedResponse[] = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   type
@@ -112,6 +114,7 @@ const mocks: MockedResponse[] = [
                   personId
                   petId
                   position
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -124,7 +127,6 @@ const mocks: MockedResponse[] = [
             }
             id
             idealCustomerProfile
-            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -148,6 +150,7 @@ const mocks: MockedResponse[] = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   updatedAt
                 }
@@ -248,6 +251,7 @@ const mocks: MockedResponse[] = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -272,6 +276,7 @@ const mocks: MockedResponse[] = [
                   personId
                   petId
                   properties
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt

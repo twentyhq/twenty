@@ -1,6 +1,5 @@
 {
   "name": "twenty-shared",
-  "version": "0.52.0-canary",
   "main": "dist/twenty-shared.cjs.js",
   "module": "dist/twenty-shared.esm.js",
   "license": "AGPL-3.0",
@@ -8,7 +7,7 @@
     "build": "preconstruct build"
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },

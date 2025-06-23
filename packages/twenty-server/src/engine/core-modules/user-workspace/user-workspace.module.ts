@@ -5,6 +5,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
@@ -17,6 +19,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 @Module({
   imports: [
@@ -26,14 +30,18 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           [User, UserWorkspace, Workspace, TwoFactorMethod],
           'core',
         ),
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,
+        ApprovedAccessDomainModule,
         WorkspaceInvitationModule,
         DomainManagerModule,
         TwentyORMModule,
         UserRoleModule,
+        FileUploadModule,
+        FileModule,
+        TokenModule,
       ],
       services: [UserWorkspaceService],
     }),

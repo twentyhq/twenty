@@ -1,13 +1,13 @@
 import { Inject } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { isDefined } from 'twenty-shared/utils';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.subscriptionsQueue)

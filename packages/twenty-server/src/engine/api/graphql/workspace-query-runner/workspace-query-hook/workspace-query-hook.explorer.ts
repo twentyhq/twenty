@@ -3,12 +3,26 @@ import { DiscoveryService, ModuleRef, createContextId } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
 import { Module } from '@nestjs/core/injector/module';
 
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
+import {
+  WorkspacePostQueryHookInstance,
+  WorkspacePreQueryHookInstance,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-connection.guard';
+import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-nested-record-array.guard';
+import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record-array.guard';
+import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record.guard';
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class WorkspaceQueryHookExplorer implements OnModuleInit {
@@ -68,13 +82,17 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     }
   }
 
-  async handleHook(
-    payload: Parameters<WorkspaceQueryHookInstance['execute']>,
+  async handlePreHook(
+    executeParams: Parameters<WorkspacePreQueryHookInstance['execute']>,
     instance: object,
     host: Module,
     isRequestScoped: boolean,
-  ): Promise<ReturnType<WorkspaceQueryHookInstance['execute']>> {
+  ): Promise<ReturnType<WorkspacePreQueryHookInstance['execute']>> {
     const methodName = 'execute';
+
+    const workspace = executeParams?.[0].workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     if (isRequestScoped) {
       const contextId = createContextId();
@@ -83,7 +101,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         this.moduleRef.registerRequestByContextId(
           {
             req: {
-              workspaceId: payload?.[0].workspace.id,
+              workspaceId: workspace.id,
             },
           },
           contextId,
@@ -97,9 +115,94 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextId,
       );
 
-      return contextInstance[methodName].call(contextInstance, ...payload);
+      // @ts-expect-error legacy noImplicitAny
+      return contextInstance[methodName].call(
+        contextInstance,
+        ...executeParams,
+      );
     } else {
-      return instance[methodName].call(instance, ...payload);
+      // @ts-expect-error legacy noImplicitAny
+      return instance[methodName].call(instance, ...executeParams);
+    }
+  }
+
+  private transformPayload(payload: QueryResultFieldValue): ObjectRecord[] {
+    if (isQueryResultFieldValueAConnection(payload)) {
+      return payload.edges.map((edge) => edge.node);
+    }
+
+    if (isQueryResultFieldValueANestedRecordArray(payload)) {
+      return payload.records;
+    }
+
+    if (isQueryResultFieldValueARecordArray(payload)) {
+      return payload;
+    }
+
+    if (isQueryResultFieldValueARecord(payload)) {
+      return [payload];
+    }
+
+    throw new GraphqlQueryRunnerException(
+      `Unsupported payload type: ${payload}`,
+      GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD,
+    );
+  }
+
+  async handlePostHook(
+    executeParams: Parameters<WorkspacePostQueryHookInstance['execute']>,
+    instance: object,
+    host: Module,
+    isRequestScoped: boolean,
+  ): Promise<ReturnType<WorkspacePostQueryHookInstance['execute']>> {
+    const methodName = 'execute';
+
+    const workspace = executeParams?.[0].workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    const transformedPayload = this.transformPayload(executeParams[2]);
+
+    if (isRequestScoped) {
+      const contextId = createContextId();
+
+      if (this.moduleRef.registerRequestByContextId) {
+        this.moduleRef.registerRequestByContextId(
+          {
+            req: {
+              workspaceId: workspace.id,
+              userWorkspaceId: executeParams?.[0].userWorkspaceId,
+              apiKey: executeParams?.[0].apiKey,
+              workspaceMemberId: executeParams?.[0].workspaceMemberId,
+              user: executeParams?.[0].user,
+            },
+          },
+          contextId,
+        );
+      }
+
+      const contextInstance = await this.injector.loadPerContext(
+        instance,
+        host,
+        host.providers,
+        contextId,
+      );
+
+      // @ts-expect-error legacy noImplicitAny
+      return contextInstance[methodName].call(
+        contextInstance,
+        executeParams[0],
+        executeParams[1],
+        transformedPayload,
+      );
+    } else {
+      // @ts-expect-error legacy noImplicitAny
+      return instance[methodName].call(
+        instance,
+        executeParams[0],
+        executeParams[1],
+        transformedPayload,
+      );
     }
   }
 
@@ -111,21 +214,21 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     isRequestScoped: boolean,
   ) {
     switch (type) {
-      case WorkspaceQueryHookType.PreHook:
+      case WorkspaceQueryHookType.PRE_HOOK:
         this.workspaceQueryHookStorage.registerWorkspaceQueryPreHookInstance(
           key,
           {
-            instance: instance as WorkspaceQueryHookInstance,
+            instance: instance as WorkspacePreQueryHookInstance,
             host,
             isRequestScoped,
           },
         );
         break;
-      case WorkspaceQueryHookType.PostHook:
-        this.workspaceQueryHookStorage.registerWorkspaceQueryPostHookInstance(
+      case WorkspaceQueryHookType.POST_HOOK:
+        this.workspaceQueryHookStorage.registerWorkspacePostQueryHookInstance(
           key,
           {
-            instance: instance as WorkspaceQueryHookInstance,
+            instance: instance as WorkspacePostQueryHookInstance,
             host,
             isRequestScoped,
           },

@@ -1,3 +1,6 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import {
   SingleRecordPickerMenuItems,
   SingleRecordPickerMenuItemsProps,
@@ -7,13 +10,13 @@ import { useSingleRecordPickerSearch } from '@/object-record/record-picker/singl
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -23,6 +26,7 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   objectNameSingular: string;
   recordPickerInstanceId?: string;
   layoutDirection?: RecordPickerLayoutDirection;
+  focusId: string;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
   | 'EmptyIcon'
@@ -41,14 +45,13 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   onRecordSelected,
   objectNameSingular,
   layoutDirection = 'search-bar-on-top',
+  focusId,
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useSingleRecordPickerSearch();
 
   const recordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
     SingleRecordPickerComponentInstanceContext,
   );
-
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const recordPickerSearchFilter = useRecoilComponentValueV2(
     singleRecordPickerSearchFilterComponentState,
@@ -60,36 +63,58 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     excludedRecordIds,
   });
 
-  const createNewButton = isDefined(onCreate) && (
-    <CreateNewButton
-      onClick={() => onCreate?.(recordPickerSearchFilter)}
-      LeftIcon={IconPlus}
-      text="Add New"
-    />
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
   );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+
+  const searchHasNoResults =
+    isNonEmptyString(recordPickerSearchFilter) &&
+    records.recordsToSelect.length === 0 &&
+    records.filteredSelectedRecords.length === 0 &&
+    !records.loading;
+
+  const handleCreateNew = () => {
+    onCreate?.(recordPickerSearchFilter);
+  };
 
   return (
     <>
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+          {isDefined(onCreate) && hasObjectUpdatePermissions && (
+            <>
+              <DropdownMenuItemsContainer scrollable={false}>
+                <CreateNewButton
+                  onClick={handleCreateNew}
+                  LeftIcon={IconPlus}
+                  text="Add New"
+                />
+              </DropdownMenuItemsContainer>
+              <DropdownMenuSeparator />
+            </>
           )}
-          {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
-          <SingleRecordPickerMenuItems
-            recordsToSelect={records.recordsToSelect}
-            loading={records.loading}
-            selectedRecord={records.selectedRecords?.[0]}
-            isFiltered={!!recordPickerSearchFilter}
-            {...{
-              EmptyIcon,
-              emptyLabel,
-              onCancel,
-              onRecordSelected,
-            }}
-          />
+
+          <DropdownMenuItemsContainer hasMaxHeight>
+            {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
+            <SingleRecordPickerMenuItems
+              focusId={focusId}
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={records.selectedRecords?.[0]}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}
@@ -101,25 +126,32 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
       {layoutDirection === 'search-bar-on-top' && (
         <>
           <DropdownMenuSeparator />
-          <SingleRecordPickerMenuItems
-            recordsToSelect={records.recordsToSelect}
-            loading={records.loading}
-            selectedRecord={records.selectedRecords?.[0]}
-            isFiltered={!!recordPickerSearchFilter}
-            {...{
-              EmptyIcon,
-              emptyLabel,
-              onCancel,
-              onRecordSelected,
-            }}
-          />
-          {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
-            <DropdownMenuSeparator />
-          )}
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            <SingleRecordPickerMenuItems
+              focusId={focusId}
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={records.selectedRecords?.[0]}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+            {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
+          </DropdownMenuItemsContainer>
+          {isDefined(onCreate) && hasObjectUpdatePermissions && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer scrollable={false}>
+                <CreateNewButton
+                  onClick={handleCreateNew}
+                  LeftIcon={IconPlus}
+                  text="Add New"
+                />
+              </DropdownMenuItemsContainer>
+            </>
           )}
         </>
       )}

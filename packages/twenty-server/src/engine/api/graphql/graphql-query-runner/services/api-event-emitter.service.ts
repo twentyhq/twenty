@@ -6,17 +6,22 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitCreateEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.CREATED,
@@ -29,17 +34,27 @@ export class ApiEventEmitterService {
           after: record,
         },
       })),
-      workspaceId: authContext.workspace.id,
+      workspaceId: authContext.workspace?.id,
     });
   }
 
-  public emitUpdateEvents<T extends ObjectRecord>(
-    existingRecords: T[],
-    records: T[],
-    updatedFields: string[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitUpdateEvents<T extends ObjectRecord>({
+    existingRecords,
+    records,
+    updatedFields,
+    authContext,
+    objectMetadataItem,
+  }: {
+    existingRecords: T[];
+    records: T[];
+    updatedFields: string[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const mappedExistingRecords = existingRecords.reduce(
       (acc, { id, ...record }) => ({
         ...acc,
@@ -52,6 +67,7 @@ export class ApiEventEmitterService {
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.UPDATED,
       events: records.map((record) => {
+        // @ts-expect-error legacy noImplicitAny
         const before = mappedExistingRecords[record.id];
         const after = record;
         const diff = objectRecordChangedValues(
@@ -73,15 +89,23 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
-  public emitDeletedEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitDeletedEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DELETED,
@@ -96,15 +120,23 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
-  public emitRestoreEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitRestoreEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.RESTORED,
@@ -119,15 +151,23 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
-  public emitDestroyEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitDestroyEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DESTROYED,
@@ -142,7 +182,7 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 }

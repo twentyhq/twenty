@@ -5,7 +5,6 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -37,72 +36,114 @@ export const SettingsRolePermissionsObjectsSection = ({
     {
       key: 'canReadObjectRecords',
       label: t`See Records on All Objects`,
-      overriddenBy:
+      grantedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canReadObjectRecords) &&
-            permission.canReadObjectRecords !==
-              settingsDraftRole.canReadAllObjectRecords,
+            permission.canReadObjectRecords === true &&
+            settingsDraftRole.canReadAllObjectRecords === false,
+        )?.length ?? 0,
+      revokedBy:
+        objectPermissions?.filter(
+          (permission) =>
+            permission.canReadObjectRecords === false &&
+            settingsDraftRole.canReadAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canReadAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
           ...settingsDraftRole,
           canReadAllObjectRecords: value,
+          ...(value === false
+            ? {
+                canUpdateAllObjectRecords: value,
+                canSoftDeleteAllObjectRecords: value,
+                canDestroyAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
     {
       key: 'canUpdateObjectRecords',
       label: t`Edit Records on All Objects`,
-      overriddenBy:
+      grantedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canUpdateObjectRecords) &&
-            permission.canUpdateObjectRecords !==
-              settingsDraftRole.canUpdateAllObjectRecords,
+            permission.canUpdateObjectRecords === true &&
+            settingsDraftRole.canUpdateAllObjectRecords === false,
+        )?.length ?? 0,
+      revokedBy:
+        objectPermissions?.filter(
+          (permission) =>
+            permission.canUpdateObjectRecords === false &&
+            settingsDraftRole.canUpdateAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canUpdateAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
           ...settingsDraftRole,
           canUpdateAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
     {
       key: 'canSoftDeleteObjectRecords',
       label: t`Delete Records on All Objects`,
-      overriddenBy:
+      grantedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canSoftDeleteObjectRecords) &&
-            permission.canSoftDeleteObjectRecords !==
-              settingsDraftRole.canSoftDeleteAllObjectRecords,
+            permission.canSoftDeleteObjectRecords === true &&
+            settingsDraftRole.canSoftDeleteAllObjectRecords === false,
+        )?.length ?? 0,
+      revokedBy:
+        objectPermissions?.filter(
+          (permission) =>
+            permission.canSoftDeleteObjectRecords === false &&
+            settingsDraftRole.canSoftDeleteAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canSoftDeleteAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
           ...settingsDraftRole,
           canSoftDeleteAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
     {
       key: 'canDestroyObjectRecords',
       label: t`Destroy Records on All Objects`,
-      overriddenBy:
+      grantedBy:
         objectPermissions?.filter(
           (permission) =>
-            isDefined(permission.canDestroyObjectRecords) &&
-            permission.canDestroyObjectRecords !==
-              settingsDraftRole.canDestroyAllObjectRecords,
+            permission.canDestroyObjectRecords === true &&
+            settingsDraftRole.canDestroyAllObjectRecords === false,
+        )?.length ?? 0,
+      revokedBy:
+        objectPermissions?.filter(
+          (permission) =>
+            permission.canDestroyObjectRecords === false &&
+            settingsDraftRole.canDestroyAllObjectRecords === true,
         )?.length ?? 0,
       value: settingsDraftRole.canDestroyAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
           ...settingsDraftRole,
           canDestroyAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
@@ -111,8 +152,8 @@ export const SettingsRolePermissionsObjectsSection = ({
   return (
     <Section>
       <H2Title
-        title={t`Objects`}
-        description={t`Ability to interact with each object`}
+        title={t`All objects`}
+        description={t`Actions users can perform on all objects`}
       />
       <StyledTable>
         <SettingsRolePermissionsObjectsTableHeader

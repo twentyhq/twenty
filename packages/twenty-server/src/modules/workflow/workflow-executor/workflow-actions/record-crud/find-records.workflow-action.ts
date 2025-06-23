@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Entity } from '@microsoft/microsoft-graph-types';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectLiteral } from 'typeorm';
 
 import {
@@ -10,14 +11,12 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -37,18 +36,24 @@ import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-ex
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowExecutor {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowFindRecordsAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -62,10 +67,6 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       context,
     ) as WorkflowFindRecordsActionInput;
 
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
@@ -75,19 +76,22 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       );
     }
 
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        workflowActionInput.objectName,
+        { shouldBypassPermissionChecks: true },
+      );
+
     const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
         workflowActionInput.objectName,
         workspaceId,
       );
 
-    const featureFlagMaps =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldsMaps.fieldsByName,
+      objectMetadataItemWithFieldsMaps,
       objectMetadataMaps,
-      featureFlagMaps,
     );
 
     const objectRecords = await this.getObjectRecords(
@@ -127,7 +131,8 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const orderByWithIdCondition = [
@@ -165,14 +170,15 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
-        workflowActionInput.filter
-          ? workflowActionInput.filter
+        workflowActionInput.filter?.gqlOperationFilter
+          ? workflowActionInput.filter.gqlOperationFilter
           : ({} as ObjectRecordFilter),
       );
 

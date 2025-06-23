@@ -1,12 +1,13 @@
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { CommandMenuWorkflowEditStepContent } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepContent';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuWorkflowEditStep = () => {
-  const workflowId = useRecoilComponentValueV2(workflowIdComponentState);
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
   const workflow = useWorkflowWithCurrentVersion(workflowId);
 
   if (!isDefined(workflow)) {
@@ -14,10 +15,18 @@ export const CommandMenuWorkflowEditStep = () => {
   }
 
   return (
-    <WorkflowStepContextProvider
-      value={{ workflowVersionId: workflow.currentVersion.id }}
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{
+        instanceId: getWorkflowVisualizerComponentInstanceId({
+          recordId: workflowId,
+        }),
+      }}
     >
-      <CommandMenuWorkflowEditStepContent workflow={workflow} />
-    </WorkflowStepContextProvider>
+      <WorkflowStepContextProvider
+        value={{ workflowVersionId: workflow.currentVersion.id }}
+      >
+        <CommandMenuWorkflowEditStepContent workflow={workflow} />
+      </WorkflowStepContextProvider>
+    </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };

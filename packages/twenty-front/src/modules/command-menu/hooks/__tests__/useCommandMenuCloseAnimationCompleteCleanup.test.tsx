@@ -23,7 +23,6 @@ import { IconList } from 'twenty-ui/display';
 const mockCloseDropdown = jest.fn();
 const mockResetContextStoreStates = jest.fn();
 const mockResetSelectedItem = jest.fn();
-const mockGoBackToPreviousHotkeyScope = jest.fn();
 const mockEmitRightDrawerCloseEvent = jest.fn();
 
 jest.mock('@/ui/layout/dropdown/hooks/useDropdownV2', () => ({
@@ -41,12 +40,6 @@ jest.mock('@/command-menu/hooks/useResetContextStoreStates', () => ({
 jest.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
   useSelectableList: () => ({
     resetSelectedItem: mockResetSelectedItem,
-  }),
-}));
-
-jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
-  usePreviousHotkeyScope: () => ({
-    goBackToPreviousHotkeyScope: mockGoBackToPreviousHotkeyScope,
   }),
 }));
 
@@ -231,7 +224,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     expect(mockCloseDropdown).toHaveBeenCalledTimes(1);
     expect(mockResetContextStoreStates).toHaveBeenCalledTimes(2);
     expect(mockResetSelectedItem).toHaveBeenCalledTimes(1);
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalledTimes(1);
     expect(mockEmitRightDrawerCloseEvent).toHaveBeenCalledTimes(1);
 
     expect(mockCloseDropdown).toHaveBeenCalledWith(

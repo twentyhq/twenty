@@ -1,16 +1,14 @@
 import { ObjectType } from 'typeorm';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceBaseDynamicRelationOptions<TClass> {
-  type: RelationMetadataType;
+  type: RelationType;
   argsFactory: WorkspaceDynamicRelationMetadataArgsFactory;
   inverseSideTarget: () => ObjectType<TClass>;
   inverseSideFieldKey?: keyof TClass;

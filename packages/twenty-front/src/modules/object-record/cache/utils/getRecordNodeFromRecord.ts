@@ -7,12 +7,9 @@ import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getR
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
-import { pascalCase } from '~/utils/string/pascalCase';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -51,9 +48,11 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        const field = objectMetadataItem.fields.find(
-          (field) => field.name === fieldName,
-        );
+        const field =
+          objectMetadataItem.fields.find((field) => field.name === fieldName) ??
+          objectMetadataItem.fields.find(
+            (field) => field.settings?.joinColumnName === fieldName,
+          );
 
         if (isUndefined(field)) {
           return undefined;
@@ -61,13 +60,12 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
         if (
           field.type === FieldMetadataType.RELATION &&
-          field.relationDefinition?.direction ===
-            RelationDefinitionType.ONE_TO_MANY
+          field.relation?.type === RelationType.ONE_TO_MANY
         ) {
           const oneToManyObjectMetadataItem = objectMetadataItems.find(
             (item) =>
               item.namePlural ===
-              field.relationDefinition?.targetObjectMetadata.namePlural,
+              field.relation?.targetObjectMetadata.namePlural,
           );
 
           if (!oneToManyObjectMetadataItem) {
@@ -94,10 +92,14 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
         switch (field.type) {
           case FieldMetadataType.RELATION: {
+            const isJoinColumn = field.settings?.joinColumnName === fieldName;
+
+            if (isJoinColumn) {
+              return [fieldName, value];
+            }
+
             if (
-              isUndefined(
-                field.relationDefinition?.targetObjectMetadata.nameSingular,
-              )
+              isUndefined(field.relation?.targetObjectMetadata.nameSingular)
             ) {
               return undefined;
             }
@@ -111,7 +113,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             }
 
             const typeName = getObjectTypename(
-              field.relationDefinition?.targetObjectMetadata.nameSingular,
+              field.relation?.targetObjectMetadata.nameSingular,
             );
 
             if (computeReferences) {

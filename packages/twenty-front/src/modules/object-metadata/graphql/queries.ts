@@ -25,29 +25,14 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           isLabelSyncedWithName
           isSearchable
           duplicateCriteria
-          indexMetadatas(paging: { first: 100 }) {
-            edges {
-              node {
-                id
-                createdAt
-                updatedAt
-                name
-                indexWhereClause
-                indexType
-                isUnique
-                indexFieldMetadatas(paging: { first: 100 }) {
-                  edges {
-                    node {
-                      id
-                      createdAt
-                      updatedAt
-                      order
-                      fieldMetadataId
-                    }
-                  }
-                }
-              }
-            }
+          indexMetadataList {
+            id
+            createdAt
+            updatedAt
+            name
+            indexWhereClause
+            indexType
+            isUnique
           }
           fieldsList {
             id
@@ -67,10 +52,14 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             options
             settings
             isLabelSyncedWithName
-            relationDefinition {
-              relationId
-              direction
+            relation {
+              type
               sourceObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              targetObjectMetadata {
                 id
                 nameSingular
                 namePlural
@@ -78,11 +67,6 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
               sourceFieldMetadata {
                 id
                 name
-              }
-              targetObjectMetadata {
-                id
-                nameSingular
-                namePlural
               }
               targetFieldMetadata {
                 id

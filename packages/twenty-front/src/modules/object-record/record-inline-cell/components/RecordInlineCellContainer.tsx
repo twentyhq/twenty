@@ -9,6 +9,7 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -41,11 +42,27 @@ const StyledLabelAndIconContainer = styled.div`
   height: 24px;
 `;
 
-const StyledValueContainer = styled.div`
+const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
-  flex-grow: 1;
   min-width: 0;
   position: relative;
+
+  &:hover {
+    ${({ readonly, theme }) =>
+      readonly &&
+      `
+      outline: 1px solid ${theme.border.color.medium};
+      border-radius: ${theme.border.radius.sm};
+      
+      ${StyledIconContainer}, ${StyledLabelContainer} {
+        color: ${theme.font.color.secondary};
+      }
+      
+      img {
+        opacity: 0.64;
+      }
+    `}
+  }
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -54,7 +71,7 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div`
+const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   box-sizing: border-box;
   width: 100%;
   display: flex;
@@ -62,7 +79,7 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
-  justify-content: center;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -70,10 +87,21 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
-    useRecordInlineCellContext();
+  const {
+    readonly,
+    IconLabel,
+    label,
+    labelWidth,
+    showLabel,
+    editModeContentOnly,
+  } = useRecordInlineCellContext();
+
+  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
+  const shouldContainerBeClickable =
+    !readonly && !editModeContentOnly && !isInlineCellInEditMode;
 
   if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
@@ -101,8 +129,10 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
+      readonly={readonly ?? false}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
+      onClick={shouldContainerBeClickable ? openInlineCell : undefined}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
@@ -130,7 +160,7 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer>
+      <StyledValueContainer readonly={readonly ?? false}>
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

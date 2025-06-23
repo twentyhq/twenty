@@ -1,4 +1,5 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
@@ -7,6 +8,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
@@ -54,8 +56,13 @@ export const SummaryCard = ({
     }),
   );
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   return (
@@ -94,7 +101,10 @@ export const SummaryCard = ({
             isReadOnly: isRecordReadOnly,
           }}
         >
-          <RecordTitleCell sizeVariant="md" />
+          <RecordTitleCell
+            sizeVariant="md"
+            containerType={RecordTitleCellContainerType.ShowPage}
+          />
         </FieldContext.Provider>
       }
       avatarType={recordIdentifier?.avatarType ?? 'rounded'}

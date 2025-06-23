@@ -21,7 +21,7 @@ export class FindDuplicatesQueryFactory {
     return `
       query FindDuplicate${capitalize(
         objectNameSingular,
-      )}($ids: [ID], $data: [${capitalize(objectNameSingular)}CreateInput]) {
+      )}($ids: [UUID], $data: [${capitalize(objectNameSingular)}CreateInput]) {
         ${objectNameSingular}Duplicates(ids: $ids, data: $data) {
           totalCount
           pageInfo {
@@ -31,7 +31,7 @@ export class FindDuplicatesQueryFactory {
           }
           edges{
             node {
-                ${objectMetadata.objectMetadataMapItem.fields
+                ${Object.values(objectMetadata.objectMetadataMapItem.fieldsById)
                   .map((field) =>
                     mapFieldMetadataToGraphqlQuery(
                       objectMetadata.objectMetadataMaps,

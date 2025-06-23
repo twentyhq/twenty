@@ -4,7 +4,6 @@ import {
   ObjectRecordOrderBy,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -13,19 +12,14 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
 export class GraphqlQueryOrderFieldParser {
-  private fieldMetadataMapByName: FieldMetadataMap;
-  private featureFlagsMap: FeatureFlagMap;
+  private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
 
-  constructor(
-    fieldMetadataMapByName: FieldMetadataMap,
-    featureFlagsMap: FeatureFlagMap,
-  ) {
-    this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.featureFlagsMap = featureFlagsMap;
+  constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
+    this.objectMetadataMapItem = objectMetadataMapItem;
   }
 
   parse(
@@ -36,7 +30,9 @@ export class GraphqlQueryOrderFieldParser {
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
-          const fieldMetadata = this.fieldMetadataMapByName[key];
+          const fieldMetadataId = this.objectMetadataMapItem.fieldIdByName[key];
+          const fieldMetadata =
+            this.objectMetadataMapItem.fieldsById[fieldMetadataId];
 
           if (!fieldMetadata || value === undefined) {
             throw new GraphqlQueryRunnerException(
@@ -71,6 +67,7 @@ export class GraphqlQueryOrderFieldParser {
 
   private parseCompositeFieldForOrder(
     fieldMetadata: FieldMetadataInterface,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     objectNameSingular: string,
     isForwardPagination = true,

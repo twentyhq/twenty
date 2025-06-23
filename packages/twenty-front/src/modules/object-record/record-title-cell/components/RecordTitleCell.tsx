@@ -18,23 +18,30 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 
 type RecordTitleCellProps = {
   loading?: boolean;
   sizeVariant?: 'xs' | 'md';
+  containerType: RecordTitleCellContainerType;
 };
 
 export const RecordTitleCell = ({
   loading,
   sizeVariant,
+  containerType,
 }: RecordTitleCellProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, isReadOnly } = useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const { closeInlineCell } = useInlineCell(
-    getRecordTitleCellId(recordId, fieldDefinition?.fieldMetadataId),
+    getRecordTitleCellId(
+      recordId,
+      fieldDefinition?.fieldMetadataId,
+      containerType,
+    ),
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
@@ -75,6 +82,7 @@ export const RecordTitleCell = ({
     displayModeContent: <RecordTitleCellFieldDisplay />,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    isReadOnly,
   };
 
   return (
@@ -83,6 +91,7 @@ export const RecordTitleCell = ({
         instanceId: getRecordTitleCellId(
           recordId,
           fieldDefinition?.fieldMetadataId,
+          containerType,
         ),
       }}
     >

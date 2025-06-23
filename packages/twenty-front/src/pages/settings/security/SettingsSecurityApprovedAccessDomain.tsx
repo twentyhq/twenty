@@ -1,19 +1,19 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { z } from 'zod';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Controller, useForm } from 'react-hook-form';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { z } from 'zod';
+import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -62,7 +62,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           },
         },
         onCompleted: () => {
-          enqueueSnackBar(t`Domain added successfully.`, {
+          enqueueSnackBar(t`Please check your email for a verification link.`, {
             variant: SnackBarVariant.Success,
           });
           navigate(SettingsPath.Security);
@@ -115,12 +115,11 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
+                  autoFocus
                   autoComplete="off"
                   value={value}
-                  onChange={(domain: string) => {
-                    onChange(domain);
-                  }}
+                  onChange={onChange}
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
@@ -140,7 +139,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}

@@ -4,8 +4,8 @@ import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonS
 import { useSupportChat } from '@/support/hooks/useSupportChat';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilValue } from 'recoil';
-import { Button, LightIconButton } from 'twenty-ui/input';
 import { IconHelpCircle } from 'twenty-ui/display';
+import { Button, LightIconButton } from 'twenty-ui/input';
 
 const StyledButtonContainer = styled.div`
   display: flex;

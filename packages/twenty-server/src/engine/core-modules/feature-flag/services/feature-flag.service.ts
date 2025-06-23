@@ -15,6 +15,7 @@ import {
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class FeatureFlagService {
@@ -22,6 +23,7 @@ export class FeatureFlagService {
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async isFeatureEnabled(
@@ -72,9 +74,7 @@ export class FeatureFlagService {
       );
 
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-        {
-          workspaceId: workspaceId,
-        },
+        { workspaceId },
       );
     }
   }
@@ -98,11 +98,9 @@ export class FeatureFlagService {
       ),
     );
 
-    const featureFlagKey = FeatureFlagKey[featureFlag];
-
     if (shouldBePublic) {
       publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-        featureFlagKey,
+        featureFlag,
         new FeatureFlagException(
           'Invalid feature flag key, flag is not public',
           FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
@@ -112,7 +110,7 @@ export class FeatureFlagService {
 
     const existingFeatureFlag = await this.featureFlagRepository.findOne({
       where: {
-        key: featureFlagKey,
+        key: featureFlag,
         workspaceId: workspaceId,
       },
     });
@@ -123,7 +121,7 @@ export class FeatureFlagService {
           value,
         }
       : {
-          key: featureFlagKey,
+          key: featureFlag,
           value,
           workspaceId: workspaceId,
         };
@@ -131,9 +129,7 @@ export class FeatureFlagService {
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-      {
-        workspaceId: workspaceId,
-      },
+      { workspaceId },
     );
 
     return result;

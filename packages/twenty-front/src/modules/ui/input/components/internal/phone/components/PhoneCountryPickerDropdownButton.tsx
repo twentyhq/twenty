@@ -6,8 +6,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
-import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
-
 import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
 
 import 'react-phone-number-input/style.css';
@@ -98,7 +96,6 @@ export const PhoneCountryPickerDropdownButton = ({
   return (
     <Dropdown
       dropdownId="country-picker-dropdown-id"
-      dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>

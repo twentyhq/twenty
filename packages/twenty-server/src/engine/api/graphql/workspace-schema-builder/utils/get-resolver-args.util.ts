@@ -1,9 +1,10 @@
-import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export const getResolverArgs = (
   type: WorkspaceResolverBuilderMethodNames,
@@ -77,7 +78,7 @@ export const getResolverArgs = (
     case 'updateOne':
       return {
         id: {
-          type: GraphQLID,
+          type: UUIDScalarType,
           isNullable: false,
         },
         data: {
@@ -88,7 +89,7 @@ export const getResolverArgs = (
     case 'findDuplicates':
       return {
         ids: {
-          type: GraphQLID,
+          type: UUIDScalarType,
           isNullable: true,
           isArray: true,
         },
@@ -101,14 +102,14 @@ export const getResolverArgs = (
     case 'deleteOne':
       return {
         id: {
-          type: GraphQLID,
+          type: UUIDScalarType,
           isNullable: false,
         },
       };
     case 'destroyOne':
       return {
         id: {
-          type: GraphQLID,
+          type: UUIDScalarType,
           isNullable: false,
         },
       };
@@ -133,7 +134,7 @@ export const getResolverArgs = (
     case 'restoreOne':
       return {
         id: {
-          type: GraphQLID,
+          type: UUIDScalarType,
           isNullable: false,
         },
       };

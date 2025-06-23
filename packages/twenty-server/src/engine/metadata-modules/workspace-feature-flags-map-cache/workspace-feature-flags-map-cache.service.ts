@@ -49,39 +49,21 @@ export class WorkspaceFeatureFlagsMapCacheService {
       recomputeCache: (params) => this.recomputeFeatureFlagsMapCache(params),
       cachedEntityName: FEATURE_FLAG_MAP,
       exceptionCode: TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
   async recomputeFeatureFlagsMapCache({
     workspaceId,
-    ignoreLock = false,
   }: {
     workspaceId: string;
-    ignoreLock?: boolean;
   }): Promise<void> {
-    const isAlreadyCaching =
-      await this.workspaceCacheStorageService.getFeatureFlagsMapOngoingCachingLock(
-        workspaceId,
-      );
-
-    if (!ignoreLock && isAlreadyCaching) {
-      return;
-    }
-
-    await this.workspaceCacheStorageService.addFeatureFlagMapOngoingCachingLock(
-      workspaceId,
-    );
-
     const freshFeatureFlagMap =
       await this.getFeatureFlagsMapFromDatabase(workspaceId);
 
     await this.workspaceCacheStorageService.setFeatureFlagsMap(
       workspaceId,
       freshFeatureFlagMap,
-    );
-
-    await this.workspaceCacheStorageService.removeFeatureFlagsMapOngoingCachingLock(
-      workspaceId,
     );
   }
 

@@ -1,5 +1,5 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -16,8 +16,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 import { useIcons } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
 
 export type WorkflowEditActionFormFillerProps = {
   action: WorkflowFormAction;
@@ -37,8 +37,10 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const { workflowRunId } = useWorkflowStepContextOrThrow();
-  const { closeCommandMenu } = useCommandMenu();
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
+  const [error, setError] = useState<string | undefined>(undefined);
+  const canSubmit = !actionOptions.readonly && !isDefined(error);
 
   if (!isDefined(workflowRunId)) {
     throw new Error('Form filler action must be used in a workflow run');
@@ -96,7 +98,7 @@ export const WorkflowEditActionFormFiller = ({
       response,
     });
 
-    closeCommandMenu();
+    goBackFromCommandMenu();
   };
 
   useEffect(() => {
@@ -164,6 +166,9 @@ export const WorkflowEditActionFormFiller = ({
                 field.placeholder ??
                 getDefaultFormFieldSettings(field.type).placeholder
               }
+              onError={(error) => {
+                setError(error);
+              }}
             />
           );
         })}
@@ -174,7 +179,7 @@ export const WorkflowEditActionFormFiller = ({
             <CmdEnterActionButton
               title="Submit"
               onClick={onSubmit}
-              disabled={actionOptions.readonly}
+              disabled={!canSubmit}
             />,
           ]}
         />

@@ -1,11 +1,14 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
+import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
@@ -69,7 +72,6 @@ export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   title?: string;
   message?: string;
   buttons?: DialogButtonOptions[];
-  allowDismiss?: boolean;
   children?: React.ReactNode;
   className?: string;
   onClose?: () => void;
@@ -79,16 +81,11 @@ export const Dialog = ({
   title,
   message,
   buttons = [],
-  allowDismiss = true,
   children,
   className,
   onClose,
   id,
 }: DialogProps) => {
-  const closeSnackbar = useCallback(() => {
-    onClose && onClose();
-  }, [onClose]);
-
   const dialogVariants = {
     open: { opacity: 1 },
     closed: { opacity: 0 },
@@ -108,7 +105,7 @@ export const Dialog = ({
 
       if (isDefined(confirmButton)) {
         confirmButton?.onClick?.(event);
-        closeSnackbar();
+        onClose?.();
       }
     },
     DialogHotkeyScope.Dialog,
@@ -119,11 +116,21 @@ export const Dialog = ({
     Key.Escape,
     (event: KeyboardEvent) => {
       event.preventDefault();
-      closeSnackbar();
+      onClose?.();
     },
     DialogHotkeyScope.Dialog,
     [],
   );
+
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useListenClickOutside({
+    refs: [dialogRef],
+    callback: () => {
+      onClose?.();
+    },
+    listenerId: DIALOG_LISTENER_ID,
+  });
 
   return (
     <StyledDialogOverlay
@@ -131,18 +138,14 @@ export const Dialog = ({
       initial="closed"
       animate="open"
       exit="closed"
-      onClick={(e) => {
-        if (allowDismiss) {
-          e.stopPropagation();
-          closeSnackbar();
-        }
-      }}
       className={className}
+      data-click-outside-id={DIALOG_CLICK_OUTSIDE_ID}
     >
       <StyledDialogContainer
         variants={containerVariants}
         transition={{ damping: 15, stiffness: 100 }}
         id={id}
+        ref={dialogRef}
       >
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
@@ -150,8 +153,8 @@ export const Dialog = ({
         {buttons.map(({ accent, onClick, role, title: key, variant }) => (
           <StyledDialogButton
             onClick={(event) => {
+              onClose?.();
               onClick?.(event);
-              closeSnackbar();
             }}
             fullWidth={true}
             variant={variant ?? 'secondary'}

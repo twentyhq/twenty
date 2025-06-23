@@ -1,5 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { enUS } from 'date-fns/locale';
 import { DateTime } from 'luxon';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -14,6 +16,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: null,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe('');
@@ -23,31 +26,29 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: undefined,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe('');
   });
 
-  it('should format date as relative when displayAsRelativeDate is true', () => {
-    const mockDate = DateTime.now().minus({ months: 2 }).toISO();
-    const mockRelativeDate = 'about 2 months ago';
-
-    jest.mock('@/localization/utils/formatDateISOStringToRelativeDate', () => ({
-      formatDateISOStringToRelativeDate: jest
-        .fn()
-        .mockReturnValue(mockRelativeDate),
-    }));
+  it('should format date as relative when displayFormat is RELATIVE', () => {
+    const mockDate = DateTime.now().minus({ days: 2 }).toISO();
+    const mockRelativeDate = '2 days ago';
 
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayAsRelativeDate: true,
+      dateFieldSettings: {
+        displayFormat: FieldDateDisplayFormat.RELATIVE,
+      },
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockRelativeDate);
   });
 
-  it('should format date as datetime when displayAsRelativeDate is false', () => {
+  it('should format date as datetime when displayFormat is USER_SETTINGS', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023 12:00';
 
@@ -60,13 +61,42 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayAsRelativeDate: false,
+      dateFieldSettings: {
+        displayFormat: FieldDateDisplayFormat.USER_SETTINGS,
+      },
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should format date as datetime by default when displayAsRelativeDate is not provided', () => {
+  it('should format date as datetime when displayFormat is set to CUSTOM', () => {
+    const mockDate = '2023-01-01T12:00:00Z';
+    const mockFormattedDate = '2023';
+
+    jest.mock(
+      '@/localization/utils/formatDateISOStringToCustomUnicodeFormat',
+      () => ({
+        formatDateISOStringToCustomUnicodeFormat: jest
+          .fn()
+          .mockReturnValue(mockFormattedDate),
+      }),
+    );
+
+    const result = formatDateTimeString({
+      ...defaultParams,
+      value: mockDate,
+      dateFieldSettings: {
+        displayFormat: FieldDateDisplayFormat.CUSTOM,
+        customUnicodeDateFormat: 'yyyy',
+      },
+      localeCatalog: enUS,
+    });
+
+    expect(result).toBe(mockFormattedDate);
+  });
+
+  it('should format date as datetime by default when displayFormat is not provided', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023 12:00';
 
@@ -79,6 +109,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockFormattedDate);

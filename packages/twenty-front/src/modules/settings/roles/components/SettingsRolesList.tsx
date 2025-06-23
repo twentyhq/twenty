@@ -7,13 +7,12 @@ import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRoles
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { sortByAscString } from '~/utils/array/sortByAscString';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -34,25 +33,26 @@ const StyledNoRoles = styled(TableCell)`
 
 export const SettingsRolesList = () => {
   const navigateSettings = useNavigateSettings();
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
-  );
 
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+
+  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
+    sortByAscString(a.label, b.label),
+  );
 
   return (
     <Section>
       <H2Title
         title={t`All roles`}
-        description={t`Assign roles to specify each member's access permissions`}
+        description={t`Assign roles to manage each member’s access and permissions`}
       />
       <Table>
         <SettingsRolesTableHeader />
         <StyledTableRows>
-          {settingsAllRoles.length === 0 ? (
+          {sortedSettingsAllRoles.length === 0 ? (
             <StyledNoRoles>{t`No roles found`}</StyledNoRoles>
           ) : (
-            settingsAllRoles.map((role) => (
+            sortedSettingsAllRoles.map((role) => (
               <SettingsRolesTableRow key={role.id} role={role} />
             ))
           )}
@@ -64,8 +64,6 @@ export const SettingsRolesList = () => {
           title={t`Create Role`}
           variant="secondary"
           size="small"
-          soon={!isPermissionsV2Enabled}
-          disabled={!isPermissionsV2Enabled}
           onClick={() => navigateSettings(SettingsPath.RoleCreate)}
         />
       </StyledCreateRoleSection>

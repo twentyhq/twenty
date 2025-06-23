@@ -8,7 +8,7 @@ export const isRecordFilterConsideredEmpty = (
   const { value, operand } = recordFilter;
 
   if (
-    (!isDefined(value) || value === '') &&
+    (!isDefined(value) || value === '' || value === '[]') &&
     ![
       RecordFilterOperand.IsEmpty,
       RecordFilterOperand.IsNotEmpty,

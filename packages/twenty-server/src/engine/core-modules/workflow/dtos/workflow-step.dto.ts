@@ -21,4 +21,7 @@ export class WorkflowActionDTO {
 
   @Field(() => Boolean)
   valid: boolean;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  nextStepIds?: string[];
 }

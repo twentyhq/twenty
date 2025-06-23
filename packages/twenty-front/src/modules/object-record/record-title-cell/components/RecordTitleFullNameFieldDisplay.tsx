@@ -1,6 +1,9 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
+import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,8 +45,17 @@ export const RecordTitleFullNameFieldDisplay = () => {
     .join(' ')
     .trim();
 
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
   return (
-    <StyledDiv onClick={() => openInlineCell()}>
+    <StyledDiv
+      onClick={() => {
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: TitleInputHotkeyScope.TitleInput,
+          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+        });
+        openInlineCell();
+      }}
+    >
       {!content ? (
         <StyledEmptyText>Untitled</StyledEmptyText>
       ) : (

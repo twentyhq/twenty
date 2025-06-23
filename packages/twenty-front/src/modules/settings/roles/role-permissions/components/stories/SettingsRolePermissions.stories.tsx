@@ -3,10 +3,10 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { PENDING_ROLE_ID } from '~/pages/settings/roles/SettingsRoleCreate';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const SettingsRolePermissionsWrapper = (
   args: React.ComponentProps<typeof SettingsRolePermissions>,
@@ -25,6 +25,7 @@ const SettingsRolePermissionsWrapper = (
     <SettingsRolePermissions
       roleId={args.roleId}
       isEditable={args.isEditable}
+      isCreateMode={args.isCreateMode}
     />
   );
 };
@@ -42,6 +43,7 @@ export const Default: Story = {
   args: {
     roleId: '1',
     isEditable: true,
+    isCreateMode: false,
   },
 };
 
@@ -49,11 +51,14 @@ export const ReadOnly: Story = {
   args: {
     roleId: '1',
     isEditable: false,
+    isCreateMode: false,
   },
 };
 
 export const PendingRole: Story = {
   args: {
     roleId: PENDING_ROLE_ID,
+    isEditable: true,
+    isCreateMode: true,
   },
 };

@@ -15,50 +15,51 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
-    shouldFailIfMetadataNotFound?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
-    shouldFailIfMetadataNotFound?: boolean,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
-    workspaceEntityOrobjectMetadataName: Type<T> | string,
-    shouldFailIfMetadataNotFound = true,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    options: {
+      shouldBypassPermissionChecks?: boolean;
+    } = {
+      shouldBypassPermissionChecks: false,
+    },
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
-    if (typeof workspaceEntityOrobjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrobjectMetadataName;
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      objectMetadataName = workspaceEntityOrObjectMetadataName;
     } else {
       objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrobjectMetadataName.name,
+        workspaceEntityOrObjectMetadataName.name,
       );
     }
 
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      null,
-      shouldFailIfMetadataNotFound,
-    );
+    const workspaceDataSource =
+      await this.workspaceDataSourceFactory.create(workspaceId);
 
-    const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
+    const repository = workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      options.shouldBypassPermissionChecks,
+    );
 
     return repository;
   }
 
-  async getDataSourceForWorkspace(
-    workspaceId: string,
-    shouldFailIfMetadataNotFound = true,
-  ) {
-    return await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      null,
-      shouldFailIfMetadataNotFound,
-    );
+  async getDataSourceForWorkspace({ workspaceId }: { workspaceId: string }) {
+    return await this.workspaceDataSourceFactory.create(workspaceId);
   }
 
   async destroyDataSourceForWorkspace(workspaceId: string) {

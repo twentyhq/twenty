@@ -1,13 +1,11 @@
+import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
-import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
-import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
-import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
-import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
+import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
+import { Position } from '@xyflow/react';
 import React from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -164,21 +162,6 @@ const StyledStepNodeLabel = styled.div<{
   }
 `;
 
-export const StyledHandle = styled(Handle)`
-  height: ${NODE_HANDLE_HEIGHT_PX}px;
-  width: ${NODE_HANDLE_WIDTH_PX}px;
-`;
-
-const StyledSourceHandle = styled(StyledHandle)`
-  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
-  visibility: hidden;
-`;
-
-const StyledTargetHandle = styled(StyledSourceHandle)`
-  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
-  visibility: hidden;
-`;
-
 const StyledRightFloatingElementContainer = styled.div`
   display: flex;
   align-items: center;
@@ -203,9 +186,12 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   return (
-    <StyledStepNodeContainer className="workflow-node-container">
+    <StyledStepNodeContainer
+      className="workflow-node-container"
+      data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+    >
       {nodeType !== 'trigger' ? (
-        <StyledTargetHandle type="target" position={Position.Top} />
+        <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
       ) : null}
 
       <StyledStepNodeType variant="small" nodeVariant={variant}>
@@ -226,7 +212,7 @@ export const WorkflowDiagramStepNodeBase = ({
         ) : null}
       </StyledStepNodeInnerContainer>
 
-      <StyledSourceHandle type="source" position={Position.Bottom} />
+      <WorkflowDiagramBaseHandle type="source" position={Position.Bottom} />
     </StyledStepNodeContainer>
   );
 };

@@ -1,7 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
+import { isDefined } from 'twenty-shared/utils';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -23,7 +26,6 @@ export enum AppTokenType {
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
   InvitationToken = 'INVITATION_TOKEN',
-  OIDCCodeVerifier = 'OIDC_CODE_VERIFIER',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
 }
 
@@ -77,6 +79,14 @@ export class AppToken {
   @Field()
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  formatEmail?() {
+    if (isDefined(this.context?.email)) {
+      this.context.email = this.context.email.toLowerCase();
+    }
+  }
 
   @Column({ nullable: true, type: 'jsonb' })
   context: { email: string } | null;

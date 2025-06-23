@@ -17,20 +17,23 @@ describe('checkFields', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
     'field-number-id': completeFieldNumberMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldNumberMock.name]: completeFieldNumberMock,
-  };
-
   const mockObjectMetadataWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
+    fieldIdByName: {
+      [completeFieldNumberMock.name]: completeFieldNumberMock.id,
+    },
+    fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should check field types', () => {

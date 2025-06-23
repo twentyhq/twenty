@@ -1,18 +1,11 @@
-import styled from '@emotion/styled';
-
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback } from 'react';
-
-export const StyledSelectableItem = styled(SelectableItem)`
-  height: 100%;
-  width: 100%;
-`;
+import { useRecoilCallback } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerSearchInput = () => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
@@ -24,16 +17,32 @@ export const MultipleRecordPickerSearchInput = () => {
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const handleFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRecordPickerSearchFilter(event.currentTarget.value);
-      performSearch({
-        multipleRecordPickerInstanceId: componentInstanceId,
-        forceSearchFilter: event.currentTarget.value,
-      });
-    },
-    [componentInstanceId, performSearch, setRecordPickerSearchFilter],
+  const debouncedSearch = useDebouncedCallback(
+    useRecoilCallback(
+      ({ set }) =>
+        (searchFilter: string) => {
+          set(
+            multipleRecordPickerSearchFilterComponentState.atomFamily({
+              instanceId: componentInstanceId,
+            }),
+            searchFilter,
+          );
+
+          performSearch({
+            multipleRecordPickerInstanceId: componentInstanceId,
+            forceSearchFilter: searchFilter,
+          });
+        },
+      [componentInstanceId, performSearch],
+    ),
+    500,
   );
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchFilter = event.currentTarget.value;
+    setRecordPickerSearchFilter(newSearchFilter);
+    debouncedSearch(newSearchFilter);
+  };
 
   return (
     <DropdownMenuSearchInput

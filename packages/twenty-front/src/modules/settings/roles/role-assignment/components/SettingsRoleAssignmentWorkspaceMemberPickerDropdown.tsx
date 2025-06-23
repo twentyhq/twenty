@@ -1,17 +1,18 @@
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useState } from 'react';
-import { SearchRecord } from '~/generated-metadata/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
-  onSelect: (workspaceMemberSearchRecord: SearchRecord) => void;
+  onSelect: (workspaceMember: CurrentWorkspaceMember) => void;
 };
 
 export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
@@ -38,7 +39,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
   const { t } = useLingui();
 
   return (
-    <DropdownMenu>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
@@ -53,6 +54,6 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
           onSelect={onSelect}
         />
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

@@ -19,7 +19,7 @@ export const useGetWorkflowNodeExecutionUsage = () => {
     return {
       usageQuantity: 0,
       freeUsageQuantity: 0,
-      includedFreeQuantity: 0,
+      includedFreeQuantity: 10000,
       paidUsageQuantity: 0,
       unitPriceCents: 0,
       totalCostCents: 0,

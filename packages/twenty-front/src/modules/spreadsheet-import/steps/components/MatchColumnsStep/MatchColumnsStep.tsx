@@ -1,24 +1,23 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportedRow, ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
-import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
+import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
+import { TemplateColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn';
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
+import { UserTableColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn';
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -29,14 +28,10 @@ import { SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetIm
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { ColumnGrid } from './components/ColumnGrid';
-import { TemplateColumn } from './components/TemplateColumn';
-import { UserTableColumn } from './components/UserTableColumn';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding: 0px;
 `;
 
 const StyledColumnsContainer = styled.div`
@@ -80,10 +75,8 @@ export const MatchColumnsStep = <T extends string>({
   onError,
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
-  const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
-  const { fields, autoMapHeaders, autoMapDistance } =
-    useSpreadsheetImportInternal<T>();
+  const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
     initialComputedColumnsSelector(headerValues),
@@ -135,10 +128,6 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Another column unselected', {
-                detailedMessage: 'Columns cannot duplicate',
-                variant: SnackBarVariant.Error,
-              });
               return setColumn(column);
             } else {
               return column;
@@ -147,15 +136,7 @@ export const MatchColumnsStep = <T extends string>({
         );
       }
     },
-    [
-      columns,
-      onRevertIgnore,
-      onIgnore,
-      fields,
-      setColumns,
-      data,
-      enqueueSnackBar,
-    ],
+    [columns, onRevertIgnore, onIgnore, fields, setColumns, data],
   );
 
   const handleContinue = useCallback(
@@ -259,24 +240,38 @@ export const MatchColumnsStep = <T extends string>({
     t,
   ]);
 
-  useEffect(() => {
-    const isInitialColumnsState = columns.every(
-      (column) => column.type === SpreadsheetColumnType.empty,
-    );
-    if (autoMapHeaders && isInitialColumnsState) {
-      setColumns(getMatchedColumns(columns, fields, data, autoMapDistance));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const hasMatchedColumns = columns.some(
+    (column) =>
+      ![SpreadsheetColumnType.ignored, SpreadsheetColumnType.empty].includes(
+        column.type,
+      ),
+  );
+
+  const onBackConfirmation = () => {
+    onBack?.();
+    setColumns([]);
+  };
+
+  const openRestartDialog = () => {
+    enqueueDialog({
+      title: t`Restart Import`,
+      message: t`You will lose all your mappings.`,
+      buttons: [
+        { title: t`Cancel` },
+        {
+          title: t`Restart`,
+          onClick: onBackConfirmation,
+          accent: 'danger',
+          role: 'confirm',
+        },
+      ],
+    });
+  };
 
   return (
     <>
-      <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-        <StyledContent>
-          <Heading
-            title={t`Match Columns`}
-            description={t`Select the correct field for each column you'd like to import.`}
-          />
+      <StyledContent>
+        <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
             renderUserColumn={(columns, columnIndex) => (
@@ -302,16 +297,15 @@ export const MatchColumnsStep = <T extends string>({
               />
             )}
           />
-        </StyledContent>
-      </ScrollWrapper>
+        </ScrollWrapper>
+      </StyledContent>
       <StepNavigationButton
-        onClick={handleOnContinue}
+        onContinue={handleOnContinue}
         isLoading={isLoading}
-        title={t`Next Step`}
-        onBack={() => {
-          onBack?.();
-          setColumns([]);
-        }}
+        continueTitle={t`Next Step`}
+        backTitle={t`Restart Import`}
+        onBack={openRestartDialog}
+        isContinueDisabled={!hasMatchedColumns}
       />
     </>
   );

@@ -50,7 +50,6 @@ export const ActionButton = ({
           />
           <StyledWrapper>
             <AppTooltip
-              // eslint-disable-next-line
               anchorSelect={`#action-menu-entry-${action.key}`}
               content={label}
               delay={TooltipDelay.longDelay}

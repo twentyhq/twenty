@@ -14,6 +14,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 const mockCurrentUser = {
   id: 'fake-user-id',
@@ -23,6 +24,8 @@ const mockCurrentUser = {
   canImpersonate: false,
   onboardingStatus: OnboardingStatus.COMPLETED,
   userVars: {},
+  firstName: 'fake-first-name',
+  lastName: 'fake-last-name',
 };
 
 const mockBilling: Billing = {
@@ -41,7 +44,11 @@ const initializeState = ({ set }: MutableSnapshot) => {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <RecoilRoot initializeState={initializeState}>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter>
+        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+          {children}
+        </SnackBarProviderScope>
+      </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>
 );

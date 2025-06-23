@@ -1,6 +1,6 @@
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilCallback } from 'recoil';
@@ -31,7 +31,7 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
         );
 
         set(
-          selectedFilterComponentState.atomFamily({
+          objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
             instanceId:
               advancedFilterRowObjectFilterDropdownComponentInstanceId,
           }),

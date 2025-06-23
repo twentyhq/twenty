@@ -2,8 +2,8 @@ import { ApolloLink, gql, Operation } from '@apollo/client';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
-import formatTitle from './formatTitle';
 import { isDefined } from 'twenty-shared/utils';
+import formatTitle from './formatTitle';
 
 const getGroup = (collapsed: boolean) =>
   collapsed

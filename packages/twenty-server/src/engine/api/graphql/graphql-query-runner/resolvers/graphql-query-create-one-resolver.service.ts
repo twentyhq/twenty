@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { In, InsertResult } from 'typeorm';
 
 import {
@@ -10,11 +11,10 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -24,7 +24,6 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateOneResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
@@ -55,11 +54,13 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
+    this.apiEventEmitterService.emitCreateEvents({
+      records: structuredClone(upsertedRecords),
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -69,18 +70,14 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: upsertedRecords[0],

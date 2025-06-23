@@ -10,24 +10,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/analytics/utils/events/track/custom-domain/custom-domain-activated';
-
-@Controller('cloudflare')
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { handleException } from 'src/engine/utils/global-exception-handler.util';
+@Controller()
 @UseFilters(AuthRestApiExceptionFilter)
 export class CloudflareController {
   constructor(
@@ -36,20 +36,20 @@ export class CloudflareController {
     private readonly domainManagerService: DomainManagerService,
     private readonly customDomainService: CustomDomainService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly analyticsService: AnalyticsService,
+    private readonly auditService: AuditService,
   ) {}
 
-  @Post('custom-hostname-webhooks')
-  @UseGuards(CloudflareSecretMatchGuard)
+  @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
+  @UseGuards(CloudflareSecretMatchGuard, PublicEndpointGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     if (!req.body?.data?.data?.hostname) {
-      handleException(
-        new DomainManagerException(
+      handleException({
+        exception: new DomainManagerException(
           'Hostname missing',
           DomainManagerExceptionCode.INVALID_INPUT_DATA,
         ),
-        this.exceptionHandlerService,
-      );
+        exceptionHandlerService: this.exceptionHandlerService,
+      });
 
       return res.status(200).send();
     }
@@ -60,7 +60,7 @@ export class CloudflareController {
 
     if (!workspace) return;
 
-    const analytics = this.analyticsService.createAnalyticsContext({
+    const analytics = this.auditService.createContext({
       workspaceId: workspace.id,
     });
 
@@ -91,7 +91,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     }
 
     return res.status(200).send();

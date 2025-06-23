@@ -1,43 +1,191 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
+import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import {
-  FAKE_PERSON_ID,
-  PERSON_2_ID,
-} from 'test/integration/constants/mock-person-ids.constants';
+  TEST_PRIMARY_LINK_URL,
+  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+} from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe.skip('Core REST API Create One endpoint', () => {
-  afterAll(async () => {
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+describe('Core REST API Create One endpoint', () => {
+  beforeEach(async () => {
+    await deleteAllRecords('person');
     await makeRestAPIRequest({
-      method: 'delete',
-      path: `/people/${PERSON_2_ID}`,
-    }).expect(200);
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: TEST_COMPANY_1_ID,
+        domainName: {
+          primaryLinkUrl: TEST_PRIMARY_LINK_URL,
+        },
+      },
+    });
   });
 
-  it('2.a. should create a new person', async () => {
-    const personCity = generateRecordName(PERSON_2_ID);
+  it('should create a new person', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
-      id: PERSON_2_ID,
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.id).toBe(TEST_PERSON_1_ID);
+        expect(createdPerson.city).toBe(personCity);
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.API);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(null);
+      });
+  });
+
+  it('should create a new person with specific createdBy', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+      createdBy: {
+        source: FieldActorSource.EMAIL,
+      },
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.EMAIL);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(null);
+      });
+  });
+
+  it('should create a new person with MANUAL createdBy if user identified', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people`,
+      body: requestBody,
+      bearer: ADMIN_ACCESS_TOKEN,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.createdBy.source).toBe(FieldActorSource.MANUAL);
+        expect(createdPerson.createdBy.workspaceMemberId).toBe(
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        );
+      });
+  });
+
+  it('should support depth 0 parameter', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people?depth=0`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.companyId).toBeDefined();
+        expect(createdPerson.company).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 1 parameter', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people?depth=1`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.company).toBeDefined();
+        expect(createdPerson.company.domainName.primaryLinkUrl).toBe(
+          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+        );
+        expect(createdPerson.company.people).not.toBeDefined();
+      });
+  });
+
+  it('should support depth 2 parameter', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
+      city: personCity,
+      companyId: TEST_COMPANY_1_ID,
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/people?depth=2`,
+      body: requestBody,
+    })
+      .expect(201)
+      .expect((res) => {
+        const createdPerson = res.body.data.createPerson;
+
+        expect(createdPerson.company.people).toBeDefined();
+        const depth2Person = createdPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
+          (p) => p.id === createdPerson.id,
+        );
+
+        expect(depth2Person).toBeDefined();
+      });
+  });
+
+  it('should return a BadRequestException when trying to create a person with an existing ID', async () => {
+    const personCity = generateRecordName(TEST_PERSON_1_ID);
+    const requestBody = {
+      id: TEST_PERSON_1_ID,
       city: personCity,
     };
 
-    const response = await makeRestAPIRequest({
+    await makeRestAPIRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
     });
-
-    const createdPerson = response.body.data.createPerson;
-
-    expect(createdPerson.id).toBe(PERSON_2_ID);
-    expect(createdPerson.city).toBe(personCity);
-  });
-
-  it('2.b. should return a BadRequestException when trying to create a person with an existing ID', async () => {
-    const personCity = generateRecordName(PERSON_2_ID);
-    const requestBody = {
-      id: PERSON_2_ID,
-      city: personCity,
-    };
 
     await makeRestAPIRequest({
       method: 'post',
@@ -46,50 +194,27 @@ describe.skip('Core REST API Create One endpoint', () => {
     })
       .expect(400)
       .expect((res) => {
-        expect(res.body.messages[0]).toContain(
-          `duplicate key value violates unique constraint`,
+        expect(res.body.messages[0]).toContain(`Record already exists`);
+        expect(res.body.error).toBe('BadRequestException');
+      });
+  });
+
+  it('should return a BadRequestException when trying to create an opportunity with an invalid enum', async () => {
+    const requestBody = {
+      stage: 'INVALID_ENUM_VALUE',
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/opportunities`,
+      body: requestBody,
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toMatch(
+          /invalid input value for enum workspace_[a-z0-9]+\.opportunity_stage_enum: "INVALID_ENUM_VALUE"/,
         );
-        expect(res.body.error).toBe('QueryFailedError');
-      });
-  });
-
-  it('2.c. should return an UnauthorizedException when no token is provided', async () => {
-    await makeRestAPIRequest({
-      method: 'post',
-      path: `/people`,
-      headers: { authorization: '' },
-      body: { id: FAKE_PERSON_ID, city: 'FakeCity' },
-    })
-      .expect(401)
-      .expect((res) => {
-        expect(res.body.error).toBe('UNAUTHENTICATED');
-      });
-  });
-
-  it('2.d. should return an UnauthorizedException when an invalid token is provided', async () => {
-    await makeRestAPIRequest({
-      method: 'post',
-      path: `/people`,
-      body: { id: FAKE_PERSON_ID, city: 'FakeCity' },
-      headers: { authorization: 'Bearer invalid-token' },
-    })
-      .expect(401)
-      .expect((res) => {
-        expect(res.body.error).toBe('UNAUTHENTICATED');
-      });
-  });
-
-  it('2.e. should return an UnauthorizedException when an expired token is provided', async () => {
-    await makeRestAPIRequest({
-      method: 'post',
-      path: `/people`,
-      body: { id: FAKE_PERSON_ID, city: 'FakeCity' },
-      headers: { authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}` },
-    })
-      .expect(401)
-      .expect((res) => {
-        expect(res.body.error).toBe('UNAUTHENTICATED');
-        expect(res.body.messages[0]).toBe('Token has expired.');
+        expect(res.body.error).toBe('BadRequestException');
       });
   });
 });

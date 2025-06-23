@@ -1,15 +1,16 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
   OutputSchema,
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
-import { isEmptyObject } from '@tiptap/core';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = ({
   objectNameSingularToSelect,
@@ -18,17 +19,12 @@ export const useAvailableVariablesInWorkflowStep = ({
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
-
   const steps = flow.steps ?? [];
 
-  const previousStepIds: string[] = [];
-
-  for (const step of steps) {
-    if (step.id === workflowSelectedNode) {
-      break;
-    }
-    previousStepIds.push(step.id);
-  }
+  const previousStepIds: string[] = getPreviousSteps(
+    steps,
+    workflowSelectedNode,
+  ).map((step) => step.id);
 
   const availableStepsOutputSchema: StepOutputSchema[] = useRecoilValue(
     stepsOutputSchemaFamilySelector({

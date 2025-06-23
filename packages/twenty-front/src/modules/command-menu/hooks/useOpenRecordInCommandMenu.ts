@@ -2,6 +2,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -11,20 +12,25 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export const useOpenRecordInCommandMenu = () => {
-  const { navigateCommandMenu } = useCommandMenu();
-
   const theme = useTheme();
   const { getIcon } = useIcons();
+
+  const { navigateCommandMenu } = useCommandMenu();
+  const { runWorkflowRunOpeningInCommandMenuSideEffects } =
+    useRunWorkflowRunOpeningInCommandMenuSideEffects();
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set, snapshot }) => {
@@ -32,11 +38,33 @@ export const useOpenRecordInCommandMenu = () => {
         recordId,
         objectNameSingular,
         isNewRecord = false,
+        resetNavigationStack = false,
       }: {
         recordId: string;
         objectNameSingular: string;
         isNewRecord?: boolean;
+        resetNavigationStack?: boolean;
       }) => {
+        const navigationStack = getSnapshotValue(
+          snapshot,
+          commandMenuNavigationStackState,
+        );
+
+        const currentNavigationStackItem = navigationStack.at(-1);
+
+        if (isDefined(currentNavigationStackItem)) {
+          const currentRecordId = getSnapshotValue(
+            snapshot,
+            viewableRecordIdComponentState.atomFamily({
+              instanceId: currentNavigationStackItem.pageId,
+            }),
+          );
+
+          if (currentRecordId === recordId) {
+            return;
+          }
+        }
+
         const pageComponentInstanceId = v4();
 
         set(
@@ -145,11 +173,23 @@ export const useOpenRecordInCommandMenu = () => {
           pageIcon: Icon,
           pageIconColor: IconColor,
           pageId: pageComponentInstanceId,
-          resetNavigationStack: false,
+          resetNavigationStack,
         });
+
+        if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+          runWorkflowRunOpeningInCommandMenuSideEffects({
+            objectMetadataItem,
+            recordId,
+          });
+        }
       };
     },
-    [getIcon, navigateCommandMenu, theme],
+    [
+      getIcon,
+      navigateCommandMenu,
+      runWorkflowRunOpeningInCommandMenuSideEffects,
+      theme,
+    ],
   );
 
   return {

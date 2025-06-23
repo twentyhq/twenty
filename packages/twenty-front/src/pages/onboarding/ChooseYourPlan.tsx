@@ -1,3 +1,4 @@
+import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -8,6 +9,8 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -96,6 +99,14 @@ export const ChooseYourPlan = () => {
     billingCheckoutSessionState,
   );
 
+  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+
+  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
+    verifyEmailNextPathState,
+  );
+  if (isDefined(verifyEmailNextPath)) {
+    setVerifyEmailNextPath(undefined);
+  }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
   const currentPlan = billingCheckoutSession.plan;
@@ -243,7 +254,11 @@ export const ChooseYourPlan = () => {
               <Trans>Change Plan</Trans>
             </ClickToActionLink>
             <span />
-            <ClickToActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
+            <ClickToActionLink
+              href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
+              target={calendarBookingPageId ? '_self' : '_blank'}
+              rel={calendarBookingPageId ? '' : 'noreferrer'}
+            >
               <Trans>Book a Call</Trans>
             </ClickToActionLink>
           </StyledLinkGroup>

@@ -1,12 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
+
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import {
+  FileUploadService,
+  SignedFilesResult,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -19,21 +30,20 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
   let objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  let dataSourceService: DataSourceService;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
-  let domainManagerService: DomainManagerService;
+  let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
+  let fileService: FileService;
+  let fileUploadService: FileUploadService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +58,7 @@ describe('UserWorkspaceService', () => {
             countBy: jest.fn(),
             exists: jest.fn(),
             findOne: jest.fn(),
+            findOneOrFail: jest.fn(),
           },
         },
         {
@@ -57,7 +68,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -71,13 +82,14 @@ describe('UserWorkspaceService', () => {
         {
           provide: TypeORMService,
           useValue: {
-            connectToDataSource: jest.fn(),
+            getMainDataSource: jest.fn(),
           },
         },
         {
           provide: WorkspaceInvitationService,
           useValue: {
             invalidateWorkspaceInvitation: jest.fn(),
+            findInvitationsByEmail: jest.fn(),
           },
         },
         {
@@ -94,6 +106,13 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
+          provide: ApprovedAccessDomainService,
+          useValue: {
+            findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain:
+              jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
           provide: TwentyORMGlobalManager,
           useValue: {
             getRepositoryForWorkspace: jest.fn(),
@@ -105,18 +124,40 @@ describe('UserWorkspaceService', () => {
             assignRoleToUserWorkspace: jest.fn(),
           },
         },
+        {
+          provide: FileStorageService,
+          useValue: {
+            copy: jest.fn(),
+          },
+        },
+        {
+          provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: FileUploadService,
+          useValue: {
+            uploadImageFromUrl: jest.fn(),
+          },
+        },
+        {
+          provide: FileService,
+          useValue: {
+            copyFileFromWorkspaceToWorkspace: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
+    fileService = module.get<FileService>(FileService);
     userWorkspaceRepository = module.get(
       getRepositoryToken(UserWorkspace, 'core'),
     );
     userRepository = module.get(getRepositoryToken(User, 'core'));
     objectMetadataRepository = module.get(
-      getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+      getRepositoryToken(ObjectMetadataEntity, 'core'),
     );
-    dataSourceService = module.get<DataSourceService>(DataSourceService);
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
@@ -124,12 +165,14 @@ describe('UserWorkspaceService', () => {
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
     );
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
+      ApprovedAccessDomainService,
+    );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
     userRoleService = module.get<UserRoleService>(UserRoleService);
+    fileUploadService = module.get<FileUploadService>(FileUploadService);
   });
 
   it('should be defined', () => {
@@ -137,7 +180,7 @@ describe('UserWorkspaceService', () => {
   });
 
   describe('create', () => {
-    it('should create a user workspace and emit an event', async () => {
+    it("should create a user workspace with a default avatar url if it's an existing user with a user workspace having a default avatar url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
       const userWorkspace = { userId, workspaceId } as UserWorkspace;
@@ -148,22 +191,117 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(userWorkspaceRepository, 'save')
         .mockResolvedValue(userWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        defaultAvatarUrl: 'path/to/file',
+      } as UserWorkspace);
       jest
-        .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
-        .mockImplementation();
+        .spyOn(fileService, 'copyFileFromWorkspaceToWorkspace')
+        .mockResolvedValue(['', 'path/to', 'copy']);
 
-      const result = await service.create(userId, workspaceId);
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: true,
+      });
 
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
         workspaceId,
+        defaultAvatarUrl: 'path/to/copy',
+      });
+
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace without a default avatar url if it's an existing user without any user workspace having a default avatar url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: true,
+      });
+
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: undefined,
       });
       expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
-      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        USER_SIGNUP_EVENT_NAME,
-        [{ userId }],
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace with a default avatar url if it's a new user with a picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      jest.spyOn(fileUploadService, 'uploadImageFromUrl').mockResolvedValue({
+        files: [{ path: 'path/to/file', token: 'token' }],
+      } as SignedFilesResult);
+
+      const result = await service.create({
+        userId,
         workspaceId,
-      );
+        isExistingUser: false,
+        pictureUrl: 'picture-url',
+      });
+
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledWith({
+        imageUrl: 'picture-url',
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: 'path/to/file',
+      });
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace without a default avatar url if it's a new user without a picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: undefined,
+      });
+
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: undefined,
+      });
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
       expect(result).toEqual(userWorkspace);
     });
   });
@@ -179,12 +317,9 @@ describe('UserWorkspaceService', () => {
         defaultAvatarUrl: 'avatar-url',
         locale: 'en',
       } as User;
-      const dataSourceMetadata = {
-        schema: 'public',
-      } as DataSourceEntity;
-      const workspaceDataSource = {
+      const mainDataSource = {
         query: jest.fn(),
-      };
+      } as unknown as DataSource;
       const workspaceMember = [
         {
           id: 'workspace-member-id',
@@ -197,17 +332,16 @@ describe('UserWorkspaceService', () => {
       const objectMetadata = {
         nameSingular: 'workspaceMember',
       } as ObjectMetadataEntity;
+      const workspaceMemberRepository = {
+        insert: jest.fn(),
+        find: jest.fn().mockResolvedValue(workspaceMember),
+      };
 
       jest
-        .spyOn(
-          dataSourceService,
-          'getLastDataSourceMetadataFromWorkspaceIdOrFail',
-        )
-        .mockResolvedValue(dataSourceMetadata);
+        .spyOn(typeORMService, 'getMainDataSource')
+        .mockReturnValue(mainDataSource);
       jest
-        .spyOn(typeORMService, 'connectToDataSource')
-        .mockResolvedValue(workspaceDataSource as any);
-      workspaceDataSource.query
+        .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
       jest
@@ -217,15 +351,27 @@ describe('UserWorkspaceService', () => {
         .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
         .mockImplementation();
 
+      jest
+        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .mockResolvedValue(workspaceMemberRepository as any);
+
+      jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
+        defaultAvatarUrl: 'userWorkspace-avatar-url',
+      } as UserWorkspace);
+
       await service.createWorkspaceMember(workspaceId, user);
 
-      expect(
-        dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail,
-      ).toHaveBeenCalledWith(workspaceId);
-      expect(typeORMService.connectToDataSource).toHaveBeenCalledWith(
-        dataSourceMetadata,
-      );
-      expect(workspaceDataSource.query).toHaveBeenCalledTimes(2);
+      expect(workspaceMemberRepository.insert).toHaveBeenCalledWith({
+        name: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        colorScheme: 'System',
+        userId: user.id,
+        userEmail: user.email,
+        locale: 'en',
+        avatarUrl: 'userWorkspace-avatar-url',
+      });
       expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
         where: {
           nameSingular: 'workspaceMember',
@@ -283,7 +429,11 @@ describe('UserWorkspaceService', () => {
         user.id,
         workspace.id,
       );
-      expect(service.create).toHaveBeenCalledWith(user.id, workspace.id);
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
@@ -479,15 +629,15 @@ describe('UserWorkspaceService', () => {
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest
-        .spyOn(domainManagerService, 'getWorkspaceUrls')
-        .mockReturnValueOnce({
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        })
-        .mockReturnValueOnce({
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        });
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValue([]);
+
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
 
       const result = await service.findAvailableWorkspacesByEmail(email);
 
@@ -499,18 +649,26 @@ describe('UserWorkspaceService', () => {
           'workspaces',
           'workspaces.workspace',
           'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
-      expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({
-        id: workspace1.id,
-        displayName: workspace1.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        },
-        logo: workspace1.logo,
-        sso: [
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [
+          { workspace: workspace1 },
+          { workspace: workspace2 },
+        ],
+        availableWorkspacesForSignUp: [],
+      });
+    });
+
+    it('should find available workspaces including approved domain workspace for an email', async () => {
+      const email = 'test@example.com';
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [
           {
             id: 'sso-id-1',
             name: 'SSO Provider 1',
@@ -518,28 +676,106 @@ describe('UserWorkspaceService', () => {
             type: 'type1',
             status: 'Active',
           },
+          {
+            id: 'sso-id-2',
+            name: 'SSO Provider 2',
+            issuer: 'issuer2',
+            type: 'type2',
+            status: 'Inactive',
+          },
+        ],
+      } as unknown as Workspace;
+      const workspace2 = {
+        id: 'workspace-id-2',
+        displayName: 'Workspace 2',
+        logo: 'logo2.png',
+        workspaceSSOIdentityProviders: [],
+      } as unknown as Workspace;
+
+      const user = {
+        email,
+        workspaces: [
+          {
+            workspaceId: workspace1.id,
+            workspace: workspace1,
+          },
+        ],
+      } as User;
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+      jest
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValueOnce([
+          {
+            id: 'domain-id-2',
+            workspaceId: workspace2.id,
+            workspace: workspace2,
+            isValidated: true,
+          } as unknown as ApprovedAccessDomain,
+        ]);
+
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
+      const result = await service.findAvailableWorkspacesByEmail(email);
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          email,
+        },
+        relations: [
+          'workspaces',
+          'workspaces.workspace',
+          'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
-      expect(result[1]).toEqual({
-        id: workspace2.id,
-        displayName: workspace2.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        },
-        logo: workspace2.logo,
-        sso: [],
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [{ workspace: workspace1 }],
+        availableWorkspacesForSignUp: [{ workspace: workspace2 }],
       });
     });
 
-    it('should throw an exception if user is not found', async () => {
+    it('should return workspace with approved access domain if user is not found', async () => {
       const email = 'nonexistent@example.com';
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [],
+      } as unknown as Workspace;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(
-        service.findAvailableWorkspacesByEmail(email),
-      ).rejects.toThrow(AuthException);
+      jest
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValueOnce([
+          {
+            id: 'domain-id-1',
+            workspaceId: workspace1.id,
+            workspace: workspace1,
+            isValidated: true,
+          } as unknown as ApprovedAccessDomain,
+        ]);
+
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
+      const result = await service.findAvailableWorkspacesByEmail(email);
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [],
+        availableWorkspacesForSignUp: [{ workspace: workspace1 }],
+      });
     });
   });
 

@@ -5,6 +5,8 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -16,12 +18,14 @@ import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hook
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
+import { NotFound } from '~/pages/not-found/NotFound';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -56,10 +60,23 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+
+  if (!hasObjectReadPermissions) {
+    return <NotFound />;
+  }
+
   return (
     <>
       <RecordIndexContextProvider
         value={{
+          objectPermissionsByObjectMetadataId,
           recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -90,7 +107,9 @@ export const RecordIndexContainerGater = () => {
                   />
                   <RecordIndexPageHeader />
                   <PageBody>
-                    <StyledIndexContainer>
+                    <StyledIndexContainer
+                      className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+                    >
                       <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                       <RecordIndexContainer />
                     </StyledIndexContainer>

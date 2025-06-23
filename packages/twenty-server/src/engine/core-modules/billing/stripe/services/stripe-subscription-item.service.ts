@@ -3,6 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -34,10 +35,18 @@ export class StripeSubscriptionItemService {
   async createSubscriptionItem(
     stripeSubscriptionId: string,
     stripePriceId: string,
+    quantity?: number,
   ) {
     return this.stripe.subscriptionItems.create({
       subscription: stripeSubscriptionId,
       price: stripePriceId,
+      ...(isDefined(quantity) ? { quantity } : {}),
+    });
+  }
+
+  async deleteSubscriptionItem(stripeItemId: string, clearUsage = false) {
+    return this.stripe.subscriptionItems.del(stripeItemId, {
+      clear_usage: clearUsage,
     });
   }
 }

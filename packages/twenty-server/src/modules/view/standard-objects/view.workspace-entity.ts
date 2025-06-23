@@ -3,17 +3,14 @@ import { registerEnumType } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -45,7 +42,6 @@ registerEnumType(ViewOpenRecordInType, {
   icon: STANDARD_OBJECT_ICONS.view,
   labelIdentifierStandardId: VIEW_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -147,7 +143,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`View Fields`,
     description: msg`View Fields`,
     icon: 'IconTag',
@@ -159,7 +155,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewGroups,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`View Groups`,
     description: msg`View Groups`,
     icon: 'IconTag',
@@ -171,7 +167,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`View Filters`,
     description: msg`View Filters`,
     icon: 'IconFilterBolt',
@@ -183,7 +179,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilterGroups,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`View Filter Groups`,
     description: msg`View Filter Groups`,
     icon: 'IconFilterBolt',
@@ -195,7 +191,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`View Sorts`,
     description: msg`View Sorts`,
     icon: 'IconArrowsSort',
@@ -207,7 +203,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.favorites,
-    type: RelationMetadataType.ONE_TO_MANY,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the view`,
     icon: 'IconHeart',
@@ -225,82 +221,82 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalculator',
     options: [
       {
-        value: AGGREGATE_OPERATIONS.avg,
+        value: AggregateOperations.AVG,
         label: 'Average',
         position: 0,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.count,
+        value: AggregateOperations.COUNT,
         label: 'Count',
         position: 1,
         color: 'purple',
       },
       {
-        value: AGGREGATE_OPERATIONS.max,
+        value: AggregateOperations.MAX,
         label: 'Maximum',
         position: 2,
         color: 'sky',
       },
       {
-        value: AGGREGATE_OPERATIONS.min,
+        value: AggregateOperations.MIN,
         label: 'Minimum',
         position: 3,
         color: 'turquoise',
       },
       {
-        value: AGGREGATE_OPERATIONS.sum,
+        value: AggregateOperations.SUM,
         label: 'Sum',
         position: 4,
         color: 'yellow',
       },
       {
-        value: AGGREGATE_OPERATIONS.countEmpty,
+        value: AggregateOperations.COUNT_EMPTY,
         label: 'Count empty',
         position: 5,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.countNotEmpty,
+        value: AggregateOperations.COUNT_NOT_EMPTY,
         label: 'Count not empty',
         position: 6,
         color: 'purple',
       },
       {
-        value: AGGREGATE_OPERATIONS.countUniqueValues,
+        value: AggregateOperations.COUNT_UNIQUE_VALUES,
         label: 'Count unique values',
         position: 7,
         color: 'sky',
       },
       {
-        value: AGGREGATE_OPERATIONS.percentageEmpty,
+        value: AggregateOperations.PERCENTAGE_EMPTY,
         label: 'Percent empty',
         position: 8,
         color: 'turquoise',
       },
       {
-        value: AGGREGATE_OPERATIONS.percentageNotEmpty,
+        value: AggregateOperations.PERCENTAGE_NOT_EMPTY,
         label: 'Percent not empty',
         position: 9,
         color: 'yellow',
       },
       {
-        value: AGGREGATE_OPERATIONS.countTrue,
+        value: AggregateOperations.COUNT_TRUE,
         label: 'Count true',
         position: 10,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.countFalse,
+        value: AggregateOperations.COUNT_FALSE,
         label: 'Count false',
         position: 11,
         color: 'purple',
       },
     ],
-    defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
+    defaultValue: `'${AggregateOperations.COUNT}'`,
   })
   @WorkspaceIsNullable()
-  kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
+  kanbanAggregateOperation?: AggregateOperations | null;
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,

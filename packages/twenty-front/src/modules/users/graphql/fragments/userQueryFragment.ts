@@ -1,9 +1,20 @@
+import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
+import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
+import {
+  AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT,
+  AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT,
+} from '@/auth/graphql/fragments/authFragments';
+import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
 
 export const USER_QUERY_FRAGMENT = gql`
   ${ROLE_FRAGMENT}
+  ${OBJECT_PERMISSION_FRAGMENT}
+  ${WORKSPACE_URLS_FRAGMENT}
+  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
+  ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -19,9 +30,15 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
+    deletedWorkspaceMembers {
+      ...DeletedWorkspaceMemberQueryFragment
+    }
     currentUserWorkspace {
       settingsPermissions
       objectRecordsPermissions
+      objectPermissions {
+        ...ObjectPermissionFragment
+      }
     }
     currentWorkspace {
       id
@@ -39,8 +56,7 @@ export const USER_QUERY_FRAGMENT = gql`
       customDomain
       isCustomDomainEnabled
       workspaceUrls {
-        subdomainUrl
-        customUrl
+        ...WorkspaceUrlsFragment
       }
       featureFlags {
         key
@@ -51,9 +67,11 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         interval
+        metadata
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
+          quantity
           billingProduct {
             name
             description
@@ -68,27 +86,19 @@ export const USER_QUERY_FRAGMENT = gql`
       billingSubscriptions {
         id
         status
+        metadata
       }
       workspaceMembersCount
       defaultRole {
         ...RoleFragment
       }
     }
-    workspaces {
-      workspace {
-        id
-        logo
-        displayName
-        subdomain
-        customDomain
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
-      }
+    availableWorkspaces {
+      ...AvailableWorkspacesFragment
     }
     userVars
   }
 
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
 `;

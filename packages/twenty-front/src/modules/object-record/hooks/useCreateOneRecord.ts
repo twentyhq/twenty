@@ -14,6 +14,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
@@ -62,6 +63,7 @@ export const useCreateOneRecord = <
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
@@ -90,6 +92,7 @@ export const useCreateOneRecord = <
         ...recordInput,
         id: idForCreation,
       },
+      objectPermissionsByObjectMetadataId,
     });
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
@@ -113,6 +116,7 @@ export const useCreateOneRecord = <
           recordsToCreate: [optimisticRecordNode],
           objectMetadataItems,
           shouldMatchRootQueryFilter,
+          objectPermissionsByObjectMetadataId,
         });
       }
     }
@@ -136,6 +140,7 @@ export const useCreateOneRecord = <
               objectMetadataItems,
               shouldMatchRootQueryFilter,
               checkForRecordInCache: true,
+              objectPermissionsByObjectMetadataId,
             });
           }
 

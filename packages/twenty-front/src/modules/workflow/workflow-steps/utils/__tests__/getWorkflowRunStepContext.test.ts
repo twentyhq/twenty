@@ -55,6 +55,7 @@ describe('getWorkflowRunStepContext', () => {
             outputSchema: {},
           },
           valid: true,
+          nextStepIds: ['step2'],
         },
         {
           id: 'step2',
@@ -72,6 +73,7 @@ describe('getWorkflowRunStepContext', () => {
             outputSchema: {},
           },
           valid: true,
+          nextStepIds: [],
         },
       ],
     } satisfies WorkflowRunFlow;
@@ -195,6 +197,7 @@ describe('getWorkflowRunStepContext', () => {
             outputSchema: {},
           },
           valid: true,
+          nextStepIds: ['step2'],
         },
         {
           id: 'step2',
@@ -212,6 +215,7 @@ describe('getWorkflowRunStepContext', () => {
             outputSchema: {},
           },
           valid: true,
+          nextStepIds: ['step3'],
         },
         {
           id: 'step3',
@@ -229,6 +233,7 @@ describe('getWorkflowRunStepContext', () => {
             outputSchema: {},
           },
           valid: true,
+          nextStepIds: [],
         },
       ],
     } satisfies WorkflowRunFlow;

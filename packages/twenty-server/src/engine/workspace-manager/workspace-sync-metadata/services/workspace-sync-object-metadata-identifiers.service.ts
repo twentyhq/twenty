@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,7 +20,6 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     context: WorkspaceSyncContext,
     manager: EntityManager,
     _storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<void> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
@@ -32,10 +30,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
         objectMetadataRepository,
       );
 
-    const standardObjectMetadataMap = this.createStandardObjectMetadataMap(
-      context,
-      workspaceFeatureFlagsMap,
-    );
+    const standardObjectMetadataMap =
+      this.createStandardObjectMetadataMap(context);
 
     await this.processObjectMetadataCollection(
       originalObjectMetadataCollection,
@@ -56,12 +52,11 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
 
   private createStandardObjectMetadataMap(
     context: WorkspaceSyncContext,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, any> {
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
       standardObjectMetadataDefinitions,
       context,
-      workspaceFeatureFlagsMap,
     );
 
     return mapObjectMetadataByUniqueIdentifier(
@@ -71,6 +66,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
 
   private async processObjectMetadataCollection(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     standardObjectMetadataMap: Record<string, any>,
     objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ): Promise<void> {
@@ -117,6 +113,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
   private findIdentifierFieldMetadata(
     objectMetadata: ObjectMetadataEntity,
     objectStandardId: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     standardObjectMetadataMap: Record<string, any>,
     standardIdFieldName: string,
   ): FieldMetadataEntity | undefined {

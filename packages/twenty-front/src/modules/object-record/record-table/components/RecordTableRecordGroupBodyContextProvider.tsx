@@ -1,9 +1,9 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
-import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
+import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
@@ -29,10 +29,10 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     openTableCell(args);
   };
 
-  const { moveFocus } = useRecordTableMoveFocus(recordTableId);
+  const { move } = useRecordTableMove(recordTableId);
 
   const handleMoveFocus = (direction: MoveFocusDirection) => {
-    moveFocus(direction);
+    move(direction);
   };
 
   const { closeTableCellInGroup } = useCloseRecordTableCellInGroup();
@@ -41,13 +41,10 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     closeTableCellInGroup();
   };
 
-  const { moveSoftFocusToCurrentCell } =
-    useMoveSoftFocusToCurrentCellOnHover(recordTableId);
+  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const handleMoveSoftFocusToCurrentCell = (
-    cellPosition: TableCellPosition,
-  ) => {
-    moveSoftFocusToCurrentCell(cellPosition);
+  const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
+    moveHoverToCurrentCell(cellPosition);
   };
 
   const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
@@ -71,7 +68,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handlecloseTableCellInGroup,
-        onMoveSoftFocusToCurrentCell: handleMoveSoftFocusToCurrentCell,
+        onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
       }}

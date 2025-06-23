@@ -64,35 +64,11 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  addRolesPermissionsOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeRolesPermissionsOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
-  getRolesPermissionsOngoingCachingLock(
-    workspaceId: string,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
   async setUserWorkspaceRoleMap(
     workspaceId: string,
     userWorkspaceRoleMap: UserWorkspaceRoleMap,
-  ): Promise<{
-    newUserWorkspaceRoleMapVersion: string;
-  }> {
-    const [, newUserWorkspaceRoleMapVersion] = await Promise.all([
+  ): Promise<void> {
+    await Promise.all([
       this.cacheStorageService.set<UserWorkspaceRoleMap>(
         `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
         userWorkspaceRoleMap,
@@ -100,8 +76,6 @@ export class WorkspacePermissionsCacheStorageService {
       ),
       this.setUserWorkspaceRoleMapVersion(workspaceId),
     ]);
-
-    return { newUserWorkspaceRoleMapVersion };
   }
 
   async setUserWorkspaceRoleMapVersion(workspaceId: string) {
@@ -132,25 +106,9 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  addUserWorkspaceRoleMapOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeUserWorkspaceRoleMapOngoingCachingLock(workspaceId: string) {
+  removeUserWorkspaceRoleMap(workspaceId: string) {
     return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
-  getUserWorkspaceRoleMapOngoingCachingLock(
-    workspaceId: string,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
     );
   }
 }

@@ -1,7 +1,8 @@
-import { SuggestionMenuProps } from '@blocknote/react';
+import type { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { autoUpdate, useFloating } from '@floating-ui/react';
@@ -44,9 +45,13 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.1 }}
         >
-          <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
+          <OverlayContainer
+            ref={refs.setFloating}
+            style={floatingStyles}
+            data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+          >
             <StyledInnerContainer>
-              <DropdownMenu style={{ zIndex: 2001 }}>
+              <DropdownContent>
                 <DropdownMenuItemsContainer>
                   {props.items.map((item, index) => (
                     <MenuItemSuggestion
@@ -58,7 +63,7 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
                     />
                   ))}
                 </DropdownMenuItemsContainer>
-              </DropdownMenu>
+              </DropdownContent>
             </StyledInnerContainer>
           </OverlayContainer>
         </motion.div>,

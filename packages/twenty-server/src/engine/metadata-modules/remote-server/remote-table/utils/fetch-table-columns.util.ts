@@ -8,6 +8,7 @@ export const fetchTableColumns = async (
 ): Promise<PostgresTableSchemaColumn[]> => {
   const schemaName = workspaceDataSourceService.getSchemaName(workspaceId);
 
+  // TODO: executeRawQuery is deprecated and will throw
   const res = await workspaceDataSourceService.executeRawQuery(
     `SELECT column_name, data_type, udt_name
         FROM information_schema.columns
@@ -16,6 +17,7 @@ export const fetchTableColumns = async (
     workspaceId,
   );
 
+  // @ts-expect-error legacy noImplicitAny
   return res.map((column) => ({
     columnName: column.column_name,
     dataType: column.data_type,

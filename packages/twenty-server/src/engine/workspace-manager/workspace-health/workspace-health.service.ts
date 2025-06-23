@@ -10,7 +10,6 @@ import {
   WorkspaceHealthOptions,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -19,7 +18,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
-import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
@@ -28,16 +26,14 @@ export class WorkspaceHealthService {
   private readonly logger = new Logger(WorkspaceHealthService.name);
 
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly databaseStructureService: DatabaseStructureService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
-    private readonly relationMetadataHealthService: RelationMetadataHealthService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceFixService: WorkspaceFixService,
   ) {}
@@ -61,9 +57,6 @@ export class WorkspaceHealthService {
         `DataSource for workspace id ${workspaceId} not found`,
       );
     }
-
-    // Try to connect to the data source
-    await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const objectMetadataCollection =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
@@ -105,16 +98,6 @@ export class WorkspaceHealthService {
       );
 
       issues.push(...fieldIssues);
-
-      // Check relation metadata health
-      const relationIssues = this.relationMetadataHealthService.healthCheck(
-        workspaceTableColumns,
-        objectMetadataCollection,
-        objectMetadata,
-        options,
-      );
-
-      issues.push(...relationIssues);
     }
 
     return issues;
@@ -137,7 +120,7 @@ export class WorkspaceHealthService {
     // Set default options
     options.applyChanges ??= true;
 
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

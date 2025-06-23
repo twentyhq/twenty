@@ -1,6 +1,7 @@
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import styled from '@emotion/styled';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
@@ -53,21 +54,22 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
           />
           <Dropdown
             dropdownId={dropdownId}
-            dropdownHotkeyScope={{ scope: dropdownId }}
             clickableComponent={
               <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
             }
             dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconTrash}
-                  text="Remove"
-                  onClick={onRemove}
-                />
-                <UndecoratedLink to="./edit">
-                  <MenuItem LeftIcon={IconPencil} text="Edit" />
-                </UndecoratedLink>
-              </DropdownMenuItemsContainer>
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Remove"
+                    onClick={onRemove}
+                  />
+                  <UndecoratedLink to="./edit">
+                    <MenuItem LeftIcon={IconPencil} text="Edit" />
+                  </UndecoratedLink>
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         </>

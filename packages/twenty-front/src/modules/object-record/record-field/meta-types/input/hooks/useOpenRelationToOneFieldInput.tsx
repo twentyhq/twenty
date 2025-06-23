@@ -1,21 +1,26 @@
+import { getRelationToOneFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationToOneFieldInputInstanceId';
 import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
       ({ fieldName, recordId }: { fieldName: string; recordId: string }) => {
-        const recordPickerInstanceId = `relation-to-one-field-input-${recordId}-${fieldName}`;
+        const recordPickerInstanceId = getRelationToOneFieldInputInstanceId({
+          recordId,
+          fieldName,
+        });
         const fieldValue = snapshot
           .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(
             recordStoreFamilySelector({
@@ -34,11 +39,18 @@ export const useOpenRelationToOneFieldInput = () => {
           );
         }
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          SingleRecordPickerHotkeyScope.SingleRecordPicker,
-        );
+        pushFocusItemToFocusStack({
+          focusId: recordPickerInstanceId,
+          component: {
+            type: FocusComponentType.OPEN_FIELD_INPUT,
+            instanceId: recordPickerInstanceId,
+          },
+          // TODO: Remove this once we've fully migrated away from hotkey scopes
+          hotkeyScope: { scope: DropdownHotkeyScope.Dropdown },
+          memoizeKey: recordPickerInstanceId,
+        });
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [pushFocusItemToFocusStack],
   );
 
   return { openRelationToOneFieldInput };

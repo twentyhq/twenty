@@ -14,8 +14,6 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('datamodel permissions', () => {
-  beforeAll(async () => {});
-
   describe('fieldMetadata', () => {
     let listingObjectId = '';
     let testFieldId = '';

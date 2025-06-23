@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import deepEqual from 'deep-equal';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -31,9 +33,9 @@ import { WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workflow-e
 @Injectable()
 export class UpdateRecordWorkflowAction implements WorkflowExecutor {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -41,11 +43,18 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
   ) {}
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowUpdateRecordAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -59,9 +68,16 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       context,
     ) as WorkflowUpdateRecordActionInput;
 
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
+    if (
+      !isDefined(workflowActionInput.objectRecordId) ||
+      !isValidUuid(workflowActionInput.objectRecordId) ||
+      !isDefined(workflowActionInput.objectName)
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to update: Object record ID and name are required',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
@@ -72,10 +88,18 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       );
     }
 
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        workflowActionInput.objectName,
+        { shouldBypassPermissionChecks: true },
+      );
+
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: {
         nameSingular: workflowActionInput.objectName,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
@@ -143,6 +167,14 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       await repository.update(workflowActionInput.objectRecordId, {
         ...objectRecordFormatted,
       });
+
+      const diff = objectRecordChangedValues(
+        previousObjectRecord,
+        updatedObjectRecord,
+        workflowActionInput.fieldsToUpdate,
+        objectMetadata,
+      );
+
       this.workspaceEventEmitter.emitDatabaseBatchEvent({
         objectMetadataNameSingular: workflowActionInput.objectName,
         action: DatabaseEventAction.UPDATED,
@@ -153,6 +185,8 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
             properties: {
               before: previousObjectRecord,
               after: updatedObjectRecord,
+              updatedFields: workflowActionInput.fieldsToUpdate,
+              diff,
             },
           },
         ],

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -17,8 +16,7 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 @Module({
   imports: [
     WorkspaceCacheStorageModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
-    FeatureFlagModule,
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     RecordPositionModule,
     RecordTransformerModule,
     WorkflowCommonModule,

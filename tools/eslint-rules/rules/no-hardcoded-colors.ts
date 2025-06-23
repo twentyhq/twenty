@@ -21,9 +21,9 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
   defaultOptions: [],
   create: (context) => {
     const testHardcodedColor = (
-      literal: TSESTree.Literal | TSESTree.TemplateLiteral,
+      literal: TSESTree.Literal | TSESTree.TemplateLiteral
     ) => {
-      const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{2,6})/i;
+      const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{3,6})\b/i;
 
       if (
         literal.type === TSESTree.AST_NODE_TYPES.Literal &&
@@ -39,23 +39,26 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           });
         }
       } else if (literal.type === TSESTree.AST_NODE_TYPES.TemplateLiteral) {
-        const firstStringValue = literal.quasis[0]?.value.raw;
+        for (const quasi of literal.quasis) {
+          const firstStringValue = quasi.value.raw;
 
         if (colorRegex.test(firstStringValue)) {
           context.report({
             node: literal,
             messageId: 'hardcodedColor',
             data: {
-              color: firstStringValue,
-            },
-          });
+                color: firstStringValue,
+              },
+            });
+          }
         }
       }
     };
 
     return {
-      Literal: testHardcodedColor,
-      TemplateLiteral: testHardcodedColor,
+      Literal: (literal: TSESTree.Literal) => testHardcodedColor(literal),
+      TemplateLiteral: (templateLiteral: TSESTree.TemplateLiteral) =>
+        testHardcodedColor(templateLiteral),
     };
   },
 });

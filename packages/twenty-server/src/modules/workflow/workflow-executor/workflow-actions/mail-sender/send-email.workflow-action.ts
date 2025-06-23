@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { z } from 'zod';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
@@ -75,11 +75,18 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
   }
 
   async execute({
-    currentStepIndex,
+    currentStepId,
     steps,
     context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
-    const step = steps[currentStepIndex];
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
 
     if (!isWorkflowSendEmailAction(step)) {
       throw new WorkflowStepExecutorException(

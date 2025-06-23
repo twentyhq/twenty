@@ -1,19 +1,19 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const convertAggregateOperationToExtendedAggregateOperation = (
-  aggregateOperation: AGGREGATE_OPERATIONS,
+  aggregateOperation: AggregateOperations,
   fieldType?: FieldMetadataType,
 ): ExtendedAggregateOperations => {
   if (isFieldMetadataDateKind(fieldType) === true) {
-    if (aggregateOperation === AGGREGATE_OPERATIONS.min) {
-      return DATE_AGGREGATE_OPERATIONS.earliest;
+    if (aggregateOperation === AggregateOperations.MIN) {
+      return DateAggregateOperations.EARLIEST;
     }
-    if (aggregateOperation === AGGREGATE_OPERATIONS.max) {
-      return DATE_AGGREGATE_OPERATIONS.latest;
+    if (aggregateOperation === AggregateOperations.MAX) {
+      return DateAggregateOperations.LATEST;
     }
   }
   return aggregateOperation;

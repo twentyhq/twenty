@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
@@ -25,8 +21,7 @@ import {
 @Injectable()
 export class WorkflowSchemaWorkspaceService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async computeStepOutputSchema({
@@ -43,7 +38,6 @@ export class WorkflowSchemaWorkspaceService {
         return this.computeDatabaseEventTriggerOutputSchema({
           eventName: step.settings.eventName,
           workspaceId,
-          objectMetadataRepository: this.objectMetadataRepository,
         });
       }
       case WorkflowTriggerType.MANUAL: {
@@ -56,7 +50,6 @@ export class WorkflowSchemaWorkspaceService {
         return this.computeRecordOutputSchema({
           objectType,
           workspaceId,
-          objectMetadataRepository: this.objectMetadataRepository,
         });
       }
       case WorkflowTriggerType.WEBHOOK:
@@ -72,19 +65,16 @@ export class WorkflowSchemaWorkspaceService {
         return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
-          objectMetadataRepository: this.objectMetadataRepository,
         });
       case WorkflowActionType.FIND_RECORDS:
         return this.computeFindRecordsOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
-          objectMetadataRepository: this.objectMetadataRepository,
         });
       case WorkflowActionType.FORM:
         return this.computeFormActionOutputSchema({
           formMetadata: step.settings.input,
           workspaceId,
-          objectMetadataRepository: this.objectMetadataRepository,
         });
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
@@ -95,11 +85,9 @@ export class WorkflowSchemaWorkspaceService {
   private async computeDatabaseEventTriggerOutputSchema({
     eventName,
     workspaceId,
-    objectMetadataRepository,
   }: {
     eventName: string;
     workspaceId: string;
-    objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
     const [nameSingular, action] = eventName.split('.');
 
@@ -107,20 +95,14 @@ export class WorkflowSchemaWorkspaceService {
       return {};
     }
 
-    const objectMetadata = await objectMetadataRepository.findOneOrFail({
-      where: {
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
         nameSingular,
         workspaceId,
-      },
-      relations: ['fields'],
-    });
-
-    if (!isDefined(objectMetadata)) {
-      return {};
-    }
+      );
 
     return generateFakeObjectRecordEvent(
-      objectMetadata,
+      objectMetadataInfo,
       action as DatabaseEventAction,
     );
   }
@@ -128,16 +110,13 @@ export class WorkflowSchemaWorkspaceService {
   private async computeFindRecordsOutputSchema({
     objectType,
     workspaceId,
-    objectMetadataRepository,
   }: {
     objectType: string;
     workspaceId: string;
-    objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
     const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
-      objectMetadataRepository,
     });
 
     return {
@@ -159,25 +138,17 @@ export class WorkflowSchemaWorkspaceService {
   private async computeRecordOutputSchema({
     objectType,
     workspaceId,
-    objectMetadataRepository,
   }: {
     objectType: string;
     workspaceId: string;
-    objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
-    const objectMetadata = await objectMetadataRepository.findOneOrFail({
-      where: {
-        nameSingular: objectType,
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        objectType,
         workspaceId,
-      },
-      relations: ['fields'],
-    });
+      );
 
-    if (!isDefined(objectMetadata)) {
-      return {};
-    }
-
-    return generateFakeObjectRecord(objectMetadata);
+    return generateFakeObjectRecord({ objectMetadataInfo });
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
@@ -187,16 +158,18 @@ export class WorkflowSchemaWorkspaceService {
   private async computeFormActionOutputSchema({
     formMetadata,
     workspaceId,
-    objectMetadataRepository,
   }: {
     formMetadata: FormFieldMetadata[];
     workspaceId: string;
-    objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
+    const objectMetadataMaps =
+      await this.workflowCommonWorkspaceService.getObjectMetadataMaps(
+        workspaceId,
+      );
+
     return generateFakeFormResponse({
       formMetadata,
-      workspaceId,
-      objectMetadataRepository,
+      objectMetadataMaps,
     });
   }
 }

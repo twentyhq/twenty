@@ -1,0 +1,83 @@
+---
+description: Guidelines and best practices for working with Nx in the Twenty workspace, including workspace architecture understanding, configuration management, and generator usage.
+globs: 
+alwaysApply: false
+---
+---
+description: Guidelines and best practices for working with Nx in the Twenty workspace, including workspace architecture understanding, configuration management, and generator usage.
+globs: ["**/nx.json", "**/project.json", "**/workspace.json"]
+alwaysApply: false
+---
+
+# Nx Guidelines
+
+## Core Commands
+```bash
+# Run target for specific project
+npx nx run twenty-front:build
+npx nx run twenty-server:test
+
+# Run target for all projects
+npx nx run-many --target=build --all
+npx nx run-many --target=test --projects=twenty-front,twenty-server
+
+# Generate/modify projects
+npx nx g @nx/react:app my-app
+npx nx g @nx/react:component my-component
+```
+
+## Project Structure
+- Each package has a `project.json` with targets
+- Dependencies managed through `tsconfig.json` path mappings
+- Shared libraries in `packages/` directory
+
+## Build Targets
+```json
+// project.json
+{
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": { "outputPath": "dist/packages/twenty-front" }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": { "jestConfig": "packages/twenty-front/jest.config.ts" }
+    }
+  }
+}
+```
+
+## Dependency Graph
+```bash
+# View project dependencies
+npx nx graph
+
+# Check what's affected by changes
+npx nx affected --target=test
+npx nx affected --target=build --base=main
+```
+
+## Library Management
+- Use `npx nx g @nx/workspace:library` generator for shared libs
+- Internal imports use `@/` path mapping
+- Libraries must export through index.ts barrel files
+
+## Cache Configuration
+- Nx caches build outputs and test results
+- Configure `outputs` in project.json targets
+- Use `inputs` to define what invalidates cache
+
+```json
+{
+  "build": {
+    "outputs": ["dist/packages/my-app"],
+    "inputs": ["source", "^source"],
+    "cache": true
+  }
+}
+```
+
+
+
+

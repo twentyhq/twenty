@@ -41,7 +41,10 @@ export const PasswordUpdateNotifyEmail = ({
         <Trans id="If you did not initiate this change, please contact your workspace owner immediately." />
         <br />
       </MainText>
+      <br />
       <CallToAction value={i18n._('Connect to Twenty')} href={link} />
+      <br />
+      <br />
     </BaseEmail>
   );
 };

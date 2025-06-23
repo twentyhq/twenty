@@ -31,6 +31,7 @@ export const AdvancedFilterRecordFilterRow = ({
           index={recordFilterIndex}
           recordFilterGroup={recordFilterGroup}
         />
+
         <AdvancedFilterFieldSelectDropdownButton
           recordFilterId={recordFilter.id}
         />

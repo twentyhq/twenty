@@ -11,7 +11,11 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceFieldOptions<
-  T extends FieldMetadataType = FieldMetadataType,
+  T extends FieldMetadataType = Exclude<
+    FieldMetadataType,
+    // Use @WorkspaceRelation or @WorkspaceDynamicRelation for relation fields
+    FieldMetadataType.RELATION
+  >,
 > {
   standardId: string;
   type: T;

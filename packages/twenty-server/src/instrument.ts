@@ -3,6 +3,7 @@ import process from 'process';
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import {
+  AggregationTemporality,
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
@@ -23,10 +24,10 @@ const meterDrivers = parseArrayEnvVar(
   [],
 );
 
-if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
+if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
-    release: process.env.SENTRY_RELEASE,
+    release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
     integrations: [
       // TODO: Redis integration doesn't seem to work - investigate why
@@ -39,11 +40,12 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
       Sentry.expressIntegration(),
       Sentry.graphqlIntegration(),
       Sentry.postgresIntegration(),
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
-    debug: process.env.NODE_ENV === NodeEnvironment.development,
+    debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
   });
 }
 
@@ -64,6 +66,7 @@ const meterProvider = new MeterProvider({
           new PeriodicExportingMetricReader({
             exporter: new OTLPMetricExporter({
               url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
+              temporalityPreference: AggregationTemporality.DELTA,
             }),
             exportIntervalMillis: 10000,
           }),

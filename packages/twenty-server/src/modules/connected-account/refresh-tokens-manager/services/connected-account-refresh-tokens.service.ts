@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { assertUnreachable } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -22,6 +22,10 @@ export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
+  private readonly logger = new Logger(
+    ConnectedAccountRefreshTokensService.name,
+  );
+
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
@@ -74,11 +78,11 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return this.googleAPIRefreshAccessTokenService.refreshAccessToken(
+          return await this.googleAPIRefreshAccessTokenService.refreshAccessToken(
             refreshToken,
           );
         case ConnectedAccountProvider.MICROSOFT:
-          return this.microsoftAPIRefreshAccessTokenService.refreshTokens(
+          return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
         default:
@@ -88,8 +92,15 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
+      if (error?.name === 'AggregateError') {
+        this.logger.log(error.message);
+        this.logger.log(error.name);
+        this.logger.log(error?.errors);
+      } else {
+        this.logger.log(error);
+      }
       throw new ConnectedAccountRefreshAccessTokenException(
-        `Error refreshing tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} ${error?.response?.data?.error_description}`,
+        `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.message} ${error?.response?.data?.error_description}`,
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
       );
     }

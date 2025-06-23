@@ -8,11 +8,13 @@ import { aggregateOperationComponentState } from '@/object-record/record-board/r
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -20,7 +22,6 @@ import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
 
 export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
@@ -58,7 +59,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -81,7 +82,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                 key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
                 onContentChange={() => {
                   if (
-                    availableAggregationOperation !== AGGREGATE_OPERATIONS.count
+                    availableAggregationOperation !== AggregateOperations.COUNT
                   ) {
                     setAggregateOperation(
                       availableAggregationOperation as ExtendedAggregateOperations,
@@ -96,7 +97,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                       kanbanAggregateOperationFieldMetadataId:
                         availableAggregationFieldsIdsForOperation[0],
                       kanbanAggregateOperation:
-                        availableAggregationOperation as AGGREGATE_OPERATIONS,
+                        availableAggregationOperation as AggregateOperations,
                     });
                     closeDropdown();
                   }
@@ -105,15 +106,14 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                   availableAggregationOperation as ExtendedAggregateOperations,
                 )}
                 hasSubMenu={
-                  availableAggregationOperation === AGGREGATE_OPERATIONS.count
+                  availableAggregationOperation === AggregateOperations.COUNT
                     ? false
                     : true
                 }
                 RightIcon={
-                  availableAggregationOperation ===
-                    AGGREGATE_OPERATIONS.count &&
+                  availableAggregationOperation === AggregateOperations.COUNT &&
                   recordIndexKanbanAggregateOperation?.operation ===
-                    AGGREGATE_OPERATIONS.count
+                    AggregateOperations.COUNT
                     ? IconCheck
                     : undefined
                 }
@@ -121,6 +121,6 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
             ),
           )}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

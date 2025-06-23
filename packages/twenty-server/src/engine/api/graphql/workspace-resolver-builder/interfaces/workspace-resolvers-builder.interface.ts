@@ -8,6 +8,9 @@ import {
 
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
 export enum ResolverArgsType {
@@ -71,6 +74,7 @@ export interface UpdateOneResolverArgs<
 
 export interface UpdateManyResolverArgs<
   Data extends Partial<ObjectRecord> = Partial<ObjectRecord>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Filter = any,
 > {
   filter: Filter;
@@ -81,6 +85,7 @@ export interface DeleteOneResolverArgs {
   id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -89,6 +94,7 @@ export interface RestoreOneResolverArgs {
   id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -97,6 +103,7 @@ export interface DestroyOneResolverArgs {
   id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DestroyManyResolverArgs<Filter = any> {
   filter: Filter;
 }

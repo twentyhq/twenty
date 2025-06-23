@@ -1,6 +1,6 @@
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
@@ -10,8 +10,14 @@ import {
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export const buildMigrationsForCustomObjectRelations = (
-  createdObjectMetadata: ObjectMetadataEntity,
-  relatedObjectMetadataCollection: ObjectMetadataEntity[],
+  createdObjectMetadata: Pick<
+    ObjectMetadataItemWithFieldMaps,
+    'nameSingular' | 'isCustom'
+  >,
+  relatedObjectMetadataCollection: Pick<
+    ObjectMetadataItemWithFieldMaps,
+    'nameSingular' | 'isCustom'
+  >[],
 ): WorkspaceMigrationTableAction[] => {
   const migrations: WorkspaceMigrationTableAction[] = [];
 
@@ -23,6 +29,7 @@ export const buildMigrationsForCustomObjectRelations = (
         columns: [
           {
             action: WorkspaceMigrationColumnActionType.CREATE,
+            // TODO: When we get rid of this and use the sync metadata, columnName must be based on the joinColumnName from the field metadata settings
             columnName: computeColumnName(createdObjectMetadata.nameSingular, {
               isForeignKey: true,
             }),
@@ -38,6 +45,7 @@ export const buildMigrationsForCustomObjectRelations = (
         columns: [
           {
             action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+            // TODO: When we get rid of this and use the sync metadata, columnName must be based on the joinColumnName from the field metadata settings
             columnName: computeColumnName(createdObjectMetadata.nameSingular, {
               isForeignKey: true,
             }),

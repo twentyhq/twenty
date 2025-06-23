@@ -1,10 +1,11 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata
@@ -27,12 +28,18 @@ export class WorkspaceSyncStorage {
   })[] = [];
   private readonly _fieldMetadataDeleteCollection: FieldMetadataEntity[] = [];
 
-  // Relation metadata
-  private readonly _relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
-    [];
-  private readonly _relationMetadataUpdateCollection: Partial<RelationMetadataEntity>[] =
-    [];
-  private readonly _relationMetadataDeleteCollection: RelationMetadataEntity[] =
+  // Field relation metadata
+  private readonly _fieldRelationMetadataCreateCollection: (Partial<
+    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+  > & {
+    id: string;
+  })[] = [];
+  private readonly _fieldRelationMetadataUpdateCollection: (Partial<
+    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+  > & {
+    id: string;
+  })[] = [];
+  private readonly _fieldRelationMetadataDeleteCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[] =
     [];
 
   // Index metadata
@@ -68,16 +75,16 @@ export class WorkspaceSyncStorage {
     return this._fieldMetadataDeleteCollection;
   }
 
-  get relationMetadataCreateCollection() {
-    return this._relationMetadataCreateCollection;
+  get fieldRelationMetadataCreateCollection() {
+    return this._fieldRelationMetadataCreateCollection;
   }
 
-  get relationMetadataUpdateCollection() {
-    return this._relationMetadataUpdateCollection;
+  get fieldRelationMetadataUpdateCollection() {
+    return this._fieldRelationMetadataUpdateCollection;
   }
 
-  get relationMetadataDeleteCollection() {
-    return this._relationMetadataDeleteCollection;
+  get fieldRelationMetadataDeleteCollection() {
+    return this._fieldRelationMetadataDeleteCollection;
   }
 
   get indexMetadataCreateCollection() {
@@ -118,16 +125,26 @@ export class WorkspaceSyncStorage {
     this._fieldMetadataDeleteCollection.push(field);
   }
 
-  addCreateRelationMetadata(relation: Partial<RelationMetadataEntity>) {
-    this._relationMetadataCreateCollection.push(relation);
+  addCreateFieldRelationMetadata(
+    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      id: string;
+    },
+  ) {
+    this._fieldRelationMetadataCreateCollection.push(field);
   }
 
-  addUpdateRelationMetadata(relation: Partial<RelationMetadataEntity>) {
-    this._relationMetadataUpdateCollection.push(relation);
+  addUpdateFieldRelationMetadata(
+    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      id: string;
+    },
+  ) {
+    this._fieldRelationMetadataUpdateCollection.push(field);
   }
 
-  addDeleteRelationMetadata(relation: RelationMetadataEntity) {
-    this._relationMetadataDeleteCollection.push(relation);
+  addDeleteFieldRelationMetadata(
+    field: FieldMetadataEntity<FieldMetadataType.RELATION>,
+  ) {
+    this._fieldRelationMetadataDeleteCollection.push(field);
   }
 
   addCreateIndexMetadata(index: Partial<IndexMetadataEntity>) {

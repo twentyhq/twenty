@@ -9,7 +9,7 @@ export const areViewFilterGroupsEqual = (
     'positionInViewFilterGroup',
     'logicalOperator',
     'parentViewFilterGroupId',
-    'viewId',
+    'id',
   ];
 
   return propertiesToCompare.every((property) =>

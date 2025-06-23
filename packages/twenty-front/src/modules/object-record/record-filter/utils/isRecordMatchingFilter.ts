@@ -24,6 +24,7 @@ import {
   RichTextV2Filter,
   SelectFilter,
   StringFilter,
+  TSVectorFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
@@ -37,10 +38,11 @@ import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isM
 import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/isMatchingRichTextV2Filter';
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
+import { isMatchingTSVectorFilter } from '@/object-record/record-filter/utils/isMatchingTSVectorFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
-import { isDefined } from 'twenty-shared/utils';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -167,9 +169,13 @@ export const isRecordMatchingFilter = ({
 
     if (isEmptyObject(filterValue)) return true;
 
-    const objectMetadataField = objectMetadataItem.fields.find(
-      (field) => field.name === filterKey,
-    );
+    const objectMetadataField =
+      objectMetadataItem.fields.find((field) => field.name === filterKey) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          field.settings?.joinColumnName === filterKey,
+      );
 
     if (!isDefined(objectMetadataField)) {
       throw new Error(
@@ -315,7 +321,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.CURRENCY: {
         return isMatchingCurrencyFilter({
           currencyFilter: filterValue as CurrencyFilter,
-          value: record[filterKey].amountMicros,
+          value: record[filterKey],
         });
       }
       case FieldMetadataType.ACTOR: {
@@ -359,11 +365,26 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.RELATION: {
+        const isJoinColumn =
+          objectMetadataField.settings?.joinColumnName === filterKey;
+
+        if (isJoinColumn) {
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue as UUIDFilter,
+            value: record[filterKey],
+          });
+        }
+
         throw new Error(
-          `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
+          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
         );
       }
-
+      case FieldMetadataType.TS_VECTOR: {
+        return isMatchingTSVectorFilter({
+          tsVectorFilter: filterValue as TSVectorFilter,
+          value: record[filterKey],
+        });
+      }
       default: {
         throw new Error(
           `Not implemented yet for field type "${objectMetadataField.type}"`,

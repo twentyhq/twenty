@@ -34,6 +34,7 @@ export const useSelectField = () => {
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
+    recordId,
     fieldDefinition,
     persistField,
     fieldValue: fieldSelectValue,

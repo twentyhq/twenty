@@ -10,19 +10,19 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const instanceId = 'entity-options-scope';
 
@@ -92,6 +92,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
       return (
         <RecordIndexContextProvider
           value={{
+            objectPermissionsByObjectMetadataId: {},
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
             objectNamePlural: 'companies',
@@ -111,9 +112,9 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
               dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
             }}
           >
-            <DropdownMenu>
+            <DropdownContent>
               <Story />
-            </DropdownMenu>
+            </DropdownContent>
           </ObjectOptionsDropdownContext.Provider>
         </RecordIndexContextProvider>
       );

@@ -1,10 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UpsertObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permission-input';
+import {
+  ObjectPermissionInput,
+  UpsertObjectPermissionsInput,
+} from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import {
   PermissionsException,
@@ -13,36 +16,76 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class ObjectPermissionService {
   constructor(
-    @InjectRepository(ObjectPermissionEntity, 'metadata')
+    @InjectRepository(ObjectPermissionEntity, 'core')
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  public async upsertObjectPermission({
+  public async upsertObjectPermissions({
     workspaceId,
     input,
   }: {
     workspaceId: string;
-    input: UpsertObjectPermissionInput;
-  }): Promise<ObjectPermissionEntity | null> {
+    input: UpsertObjectPermissionsInput;
+  }): Promise<ObjectPermissionEntity[]> {
     try {
-      await this.validateRoleIsEditableOrThrow({
+      const role = await this.getRoleOrThrow({
         roleId: input.roleId,
         workspaceId,
       });
 
-      const result = await this.objectPermissionRepository.upsert(
-        {
+      await this.validateRoleIsEditableOrThrow({
+        role,
+      });
+
+      await this.validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+        objectPermissions: input.objectPermissions,
+        roleWithObjectPermissions: role,
+      });
+
+      const { byId: objectMetadataMapsById } =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
           workspaceId,
-          ...input,
-        },
+        );
+
+      input.objectPermissions.forEach((objectPermission) => {
+        const objectMetadataForObjectPermission =
+          objectMetadataMapsById[objectPermission.objectMetadataId];
+
+        if (!isDefined(objectMetadataForObjectPermission)) {
+          throw new PermissionsException(
+            'Object metadata id not found',
+            PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          );
+        }
+
+        if (objectMetadataForObjectPermission.isSystem === true) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+            PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+          );
+        }
+      });
+
+      const objectPermissions = input.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          roleId: input.roleId,
+          workspaceId,
+        }),
+      );
+
+      const result = await this.objectPermissionRepository.upsert(
+        objectPermissions,
         {
           conflictPaths: ['objectMetadataId', 'roleId'],
         },
@@ -61,9 +104,14 @@ export class ObjectPermissionService {
         },
       );
 
-      return this.objectPermissionRepository.findOne({
+      return this.objectPermissionRepository.find({
         where: {
-          id: objectPermissionId,
+          roleId: input.roleId,
+          objectMetadataId: In(
+            input.objectPermissions.map(
+              (objectPermission) => objectPermission.objectMetadataId,
+            ),
+          ),
         },
       });
     } catch (error) {
@@ -71,10 +119,64 @@ export class ObjectPermissionService {
         error,
         roleId: input.roleId,
         workspaceId,
-        objectMetadataId: input.objectMetadataId,
+        objectMetadataIds: input.objectPermissions.map(
+          (objectPermission) => objectPermission.objectMetadataId,
+        ),
       });
 
       throw error;
+    }
+  }
+
+  private async validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+    objectPermissions: newObjectPermissions,
+    roleWithObjectPermissions,
+  }: {
+    objectPermissions: ObjectPermissionInput[];
+    roleWithObjectPermissions: RoleEntity;
+  }) {
+    const existingObjectPermissions =
+      roleWithObjectPermissions.objectPermissions;
+
+    for (const newObjectPermission of newObjectPermissions) {
+      const existingObjectRecordPermission = existingObjectPermissions.find(
+        (objectPermission) =>
+          objectPermission.objectMetadataId ===
+          newObjectPermission.objectMetadataId,
+      );
+
+      const hasReadPermissionAfterUpdate =
+        newObjectPermission.canReadObjectRecords ??
+        existingObjectRecordPermission?.canReadObjectRecords ??
+        roleWithObjectPermissions.canReadAllObjectRecords;
+
+      if (hasReadPermissionAfterUpdate === false) {
+        const hasUpdatePermissionAfterUpdate =
+          newObjectPermission.canUpdateObjectRecords ??
+          existingObjectRecordPermission?.canUpdateObjectRecords ??
+          roleWithObjectPermissions.canUpdateAllObjectRecords;
+
+        const hasSoftDeletePermissionAfterUpdate =
+          newObjectPermission.canSoftDeleteObjectRecords ??
+          existingObjectRecordPermission?.canSoftDeleteObjectRecords ??
+          roleWithObjectPermissions.canSoftDeleteAllObjectRecords;
+
+        const hasDestroyPermissionAfterUpdate =
+          newObjectPermission.canDestroyObjectRecords ??
+          existingObjectRecordPermission?.canDestroyObjectRecords ??
+          roleWithObjectPermissions.canDestroyAllObjectRecords;
+
+        if (
+          hasUpdatePermissionAfterUpdate ||
+          hasSoftDeletePermissionAfterUpdate ||
+          hasDestroyPermissionAfterUpdate
+        ) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
+            PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
+          );
+        }
+      }
     }
   }
 
@@ -82,12 +184,12 @@ export class ObjectPermissionService {
     error,
     roleId,
     workspaceId,
-    objectMetadataId,
+    objectMetadataIds,
   }: {
     error: Error;
     roleId: string;
     workspaceId: string;
-    objectMetadataId: string;
+    objectMetadataIds: string[];
   }) {
     if (error.message.includes('violates foreign key constraint')) {
       const role = await this.roleRepository.findOne({
@@ -104,14 +206,14 @@ export class ObjectPermissionService {
         );
       }
 
-      const objectMetadata = await this.objectMetadataRepository.findOne({
+      const objectMetadata = await this.objectMetadataRepository.find({
         where: {
           workspaceId,
-          id: objectMetadataId,
+          id: In(objectMetadataIds),
         },
       });
 
-      if (!isDefined(objectMetadata)) {
+      if (objectMetadata.length !== objectMetadataIds.length) {
         throw new PermissionsException(
           PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
           PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -120,7 +222,7 @@ export class ObjectPermissionService {
     }
   }
 
-  private async validateRoleIsEditableOrThrow({
+  private async getRoleOrThrow({
     roleId,
     workspaceId,
   }: {
@@ -132,9 +234,21 @@ export class ObjectPermissionService {
         id: roleId,
         workspaceId,
       },
+      relations: ['objectPermissions'],
     });
 
-    if (!role?.isEditable) {
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    return role;
+  }
+
+  private async validateRoleIsEditableOrThrow({ role }: { role: RoleEntity }) {
+    if (!role.isEditable) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,

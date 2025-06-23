@@ -10,8 +10,6 @@ import { RecordShowContainer } from '@/object-record/record-show/components/Reco
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -37,9 +35,13 @@ export const CommandMenuRecordPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
+  if (!viewableRecordId) {
+    throw new Error(`Record id is not defined`);
+  }
+
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    viewableRecordNameSingular ?? '',
-    viewableRecordId ?? '',
+    viewableRecordNameSingular,
+    viewableRecordId,
   );
 
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
@@ -69,25 +71,22 @@ export const CommandMenuRecordPage = () => {
               value={{ instanceId: commandMenuPageInstanceId }}
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
-                <RecordFieldValueSelectorContextProvider>
-                  <RecordValueSetterEffect recordId={objectRecordId} />
-                  <TimelineActivityContext.Provider
-                    value={{
-                      recordId: objectRecordId,
-                    }}
-                  >
-                    <RecordShowEffect
-                      objectNameSingular={objectNameSingular}
-                      recordId={objectRecordId}
-                    />
-                    <RecordShowContainer
-                      objectNameSingular={objectNameSingular}
-                      objectRecordId={objectRecordId}
-                      loading={false}
-                      isInRightDrawer={true}
-                    />
-                  </TimelineActivityContext.Provider>
-                </RecordFieldValueSelectorContextProvider>
+                <TimelineActivityContext.Provider
+                  value={{
+                    recordId: objectRecordId,
+                  }}
+                >
+                  <RecordShowEffect
+                    objectNameSingular={objectNameSingular}
+                    recordId={objectRecordId}
+                  />
+                  <RecordShowContainer
+                    objectNameSingular={objectNameSingular}
+                    objectRecordId={objectRecordId}
+                    loading={false}
+                    isInRightDrawer={true}
+                  />
+                </TimelineActivityContext.Provider>
               </StyledRightDrawerRecord>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>

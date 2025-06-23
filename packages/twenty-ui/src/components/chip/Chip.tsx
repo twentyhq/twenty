@@ -19,6 +19,7 @@ export enum ChipVariant {
   Regular = 'regular',
   Transparent = 'transparent',
   Rounded = 'rounded',
+  Static = 'static',
 }
 
 export type ChipProps = {
@@ -89,7 +90,9 @@ const StyledContainer = withTheme(styled.div<
         ? theme.background.transparent.light
         : variant === ChipVariant.Highlighted
           ? theme.background.transparent.medium
-          : 'inherit'};
+          : variant === ChipVariant.Static
+            ? theme.background.transparent.light
+            : 'inherit'};
   }
 
   &:active {
@@ -98,23 +101,19 @@ const StyledContainer = withTheme(styled.div<
         ? theme.background.transparent.medium
         : variant === ChipVariant.Highlighted
           ? theme.background.transparent.strong
-          : 'inherit'};
+          : variant === ChipVariant.Static
+            ? theme.background.transparent.light
+            : 'inherit'};
   }
 
   background-color: ${({ theme, variant }) =>
-    variant === ChipVariant.Highlighted
+    variant === ChipVariant.Highlighted || variant === ChipVariant.Static
       ? theme.background.transparent.light
-      : variant === ChipVariant.Rounded
-        ? theme.background.transparent.lighter
-        : 'inherit'};
+      : 'inherit'};
 
-  border: ${({ theme, variant }) =>
-    variant === ChipVariant.Rounded
-      ? `1px solid ${theme.border.color.medium}`
-      : 'none'};
+  border: none;
 
-  border-radius: ${({ theme, variant }) =>
-    variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   & > svg {
     flex-shrink: 0;
@@ -151,7 +150,7 @@ export const Chip = ({
       maxWidth={maxWidth}
     >
       {leftComponent}
-      {!isLabelHidden && label.trim() ? (
+      {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : (
         <StyledDiv>Untitled</StyledDiv>
