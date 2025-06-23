@@ -1,11 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 import https from 'https';
 import { URLSearchParams } from 'url';
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, isAxiosError } from 'axios';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -278,7 +282,7 @@ export class InterApiService {
       dataVencimento: data.dataVencimento,
       numDiasAgenda: data.numDiasAgenda,
       pagador: data.pagador,
-      mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
+      // mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
     };
 
     try {
@@ -326,11 +330,24 @@ export class InterApiService {
 
       return response.data;
     } catch (error) {
-      this.logger.error('Erro na emissão da cobrança e armazenamento do PDF:', {
-        message: error.message,
-        stack: error.stack,
+      const isInterApiError = isAxiosError(error);
+
+      const message = isInterApiError
+        ? error.response?.data
+        : error.message || 'Unknown error';
+
+      if (isInterApiError) {
+        this.logger.error(
+          `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
+        );
+
+        throw new Error(message);
+      }
+
+      throw new InternalServerErrorException(message, {
+        cause: error,
+        description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
       });
-      throw error;
     }
   }
 

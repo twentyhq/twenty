@@ -7,10 +7,7 @@ import { validate } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import {
-  InterCustomerType,
-  InterCustomerUf,
-} from 'src/engine/core-modules/inter/interfaces/charge.interface';
+import { InterCustomerUf } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,6 +15,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeEmmitBillDataDto } from 'src/modules/charges/inter/dtos/charge-emmit-bill-data.dto';
 import { InterApiService } from 'src/modules/charges/inter/services/inter-api.service';
+import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
 import {
   ChargeAction,
   ChargeRecurrence,
@@ -123,8 +121,8 @@ export class ChargeService {
       workspaceId,
       attachmentRepository,
       {
-        id: randomUUID().slice(0.15),
-        seuNumero: randomUUID().slice(0.15),
+        id: randomUUID().slice(0, 15),
+        seuNumero: randomUUID().slice(0, 15),
         authorId: charge?.person?.id as string,
         dataVencimento: getNextBusinessDays(5),
         valorNominal: charge.price,
@@ -160,8 +158,11 @@ export class ChargeService {
 
     chargeData.name = client.name;
     chargeData.cpfCnpj = (client.cpfCnpj as string)?.replace(/\D/, '');
-    chargeData.legalEntity = charge.entityType as InterCustomerType;
-    chargeData.cep = client.address.addressZipCode?.replace(/\D/, '');
+    chargeData.legalEntity = chargeEntityTypeToInterCustomerTypeMap(
+      charge.entityType,
+    );
+    chargeData.cep =
+      client.address.addressZipCode?.replace(/\D/, '') || '18087686';
     chargeData.address = client.address.addressStreet1;
     chargeData.city = client.address.addressCity;
     chargeData.stateUnity = client.address.addressState as InterCustomerUf;

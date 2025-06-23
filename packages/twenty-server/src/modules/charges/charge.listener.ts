@@ -7,11 +7,13 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { chargeEntityTypeToInterCustomerTypeMap } from 'src/modules/charges/inter/utils/charge-entity-type-to-inter-cusotmer-type-map';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 import { InterApiService } from './inter/services/inter-api.service';
 import {
+  ChargeAction,
   ChargeRecurrence,
   ChargeWorkspaceEntity,
 } from './standard-objects/charge.workspace-entity';
@@ -82,7 +84,7 @@ export class ChargeEventListener {
             `Charge ${id} não possui relação com person ou company. Ignorando.`,
           );
 
-          charge.chargeAction = 'none';
+          charge.chargeAction = ChargeAction.NONE;
 
           return;
         }
@@ -92,8 +94,7 @@ export class ChargeEventListener {
         const cliente = {
           nome: client.name || '',
           cpfCnpj: client.cpfCnpj || '',
-          tipoPessoa:
-            charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
+          tipoPessoa: chargeEntityTypeToInterCustomerTypeMap(charge.entityType),
           endereco: client.address.addressStreet1 || 'Rua ...',
           telefone: contact.phone || '',
           cep: client.address.addressZipCode || '18103418',
@@ -150,7 +151,7 @@ export class ChargeEventListener {
                 'Cancelamento manual',
               );
               charge.requestCode = '';
-              charge.chargeAction = 'cancel';
+              charge.chargeAction = ChargeAction.CANCEL;
               this.logger.log(
                 `Cobrança cancelada com sucesso para charge ${id}`,
               );
@@ -167,7 +168,7 @@ export class ChargeEventListener {
               break;
           }
         } catch (error) {
-          charge.chargeAction = 'none';
+          charge.chargeAction = ChargeAction.NONE;
           charge.requestCode = '';
           this.logger.error(
             `Erro processando charge ${id}: ${error.message}`,

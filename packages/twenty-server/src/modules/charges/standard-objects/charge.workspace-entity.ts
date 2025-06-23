@@ -49,12 +49,21 @@ export enum ChargeAction {
   CANCEL = 'cancel',
 }
 
+export enum ChargeEntityType {
+  INDIVIDUAL = 'individual',
+  COMPANY = 'company',
+}
+
 registerEnumType(ChargeRecurrence, {
   name: 'ChargeRecurrence',
 });
 
 registerEnumType(ChargeAction, {
   name: 'ChargeAction',
+});
+
+registerEnumType(ChargeEntityType, {
+  name: 'ChargeEntityType',
 });
 
 @WorkspaceEntity({
@@ -146,7 +155,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   @WorkspaceIsNullable()
-  recurrence: string;
+  recurrence: ChargeRecurrence;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.taxId,
@@ -165,12 +174,22 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Indicates if the entity is an individual or a company`,
     icon: 'IconUserCheck',
     options: [
-      { value: 'individual', label: 'Individual', position: 0, color: 'blue' },
-      { value: 'company', label: 'Company', position: 1, color: 'green' },
+      {
+        value: ChargeEntityType.INDIVIDUAL,
+        label: 'Individual',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: ChargeEntityType.COMPANY,
+        label: 'Company',
+        position: 1,
+        color: 'green',
+      },
     ],
   })
   @WorkspaceIsNullable()
-  entityType: string;
+  entityType: ChargeEntityType;
 
   @WorkspaceField({
     standardId: CHARGE_STANDARD_FIELD_IDS.position,
@@ -234,10 +253,10 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
     ],
-    defaultValue: "'none'",
+    defaultValue: `'${ChargeAction.NONE}'`,
   })
   @WorkspaceFieldIndex()
-  chargeAction: string;
+  chargeAction: ChargeAction;
 
   //Relations
   @WorkspaceRelation({
