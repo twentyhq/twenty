@@ -1,10 +1,10 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
@@ -31,7 +31,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     isRecordTableRowFocusActiveComponentState,
   );
 
-  const setFocusPosition = useSetRecordTableFocusPosition();
+  const { focusRecordTableCell } = useFocusRecordTableCell();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -66,7 +66,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
       row: rowIndex,
       column: 0,
     };
-    setFocusPosition(cellPosition);
+    focusRecordTableCell(cellPosition);
 
     const cellFocusId = getRecordTableCellFocusId({
       recordTableId,

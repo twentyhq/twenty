@@ -9,10 +9,10 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useSetIsRecordTableFocusActive } from '../../record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { TableCellPosition } from '../../types/TableCellPosition';
+import { useSetIsRecordTableFocusActive } from './useSetIsRecordTableFocusActive';
 
-export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
+export const useFocusRecordTableCell = (recordTableId?: string) => {
   const recordTableIdFromProps = useAvailableComponentInstanceIdOrThrow(
     RecordTableComponentInstanceContext,
     recordTableId,
@@ -30,7 +30,7 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  return useRecoilCallback(
+  const focusRecordTableCell = useRecoilCallback(
     ({ set, snapshot }) => {
       return (newPosition: TableCellPosition) => {
         const currentPosition = snapshot
@@ -78,4 +78,6 @@ export const useSetRecordTableFocusPosition = (recordTableId?: string) => {
       removeFocusItemFromFocusStackById,
     ],
   );
+
+  return { focusRecordTableCell };
 };

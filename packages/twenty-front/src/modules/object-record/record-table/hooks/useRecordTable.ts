@@ -19,7 +19,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
-import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 type useRecordTableProps = {
   recordTableId?: string;
@@ -93,8 +92,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
-  const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
-
   const { selectAllRows } = useSelectAllRows(recordTableId);
 
   return {
@@ -106,7 +103,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     selectAllRows,
     setOnColumnsChange,
     setIsRecordTableInitialLoading,
-    setFocusPosition,
     setHasUserSelectedAllRows,
     setOnToggleColumnSort,
   };
