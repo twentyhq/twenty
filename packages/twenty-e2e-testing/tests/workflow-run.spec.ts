@@ -13,9 +13,7 @@ test('The workflow run visualizer shows the executed draft version without the l
 
   await manualTriggerAvailabilitySelect.click();
 
-  const alwaysAvailableOption = page.getByText(
-    'When no record is selected',
-  );
+  const alwaysAvailableOption = page.getByText('When no record is selected');
 
   await alwaysAvailableOption.click();
 
@@ -79,9 +77,7 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await manualTriggerAvailabilitySelect.click();
 
-  const alwaysAvailableOption = page.getByText(
-    'When no record is selected',
-  );
+  const alwaysAvailableOption = page.getByText('When no record is selected');
 
   await alwaysAvailableOption.click();
 
@@ -90,7 +86,7 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
   const { createdStepId: firstStepId } =
     await workflowVisualizer.createStep('form');
 
-  const addFormFieldButton = page.getByText('Add Field', { exact: true })
+  const addFormFieldButton = page.getByText('Add Field', { exact: true });
 
   await addFormFieldButton.click();
 
@@ -105,8 +101,8 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
   await expect(workflowVisualizer.stepHeaderInCommandMenu).toContainText(
     'Form',
     {
-      timeout: 30_000
-    }
+      timeout: 30_000,
+    },
   );
 
   await workflowVisualizer.goBackInCommandMenu.click();
@@ -116,7 +112,9 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await expect(workflowRunNameInCommandMenu).toBeVisible();
 
-  await workflowVisualizer.commandMenu.locator(workflowVisualizer.triggerNode).click();
+  await workflowVisualizer.commandMenu
+    .locator(workflowVisualizer.triggerNode)
+    .click();
 
   await expect(workflowVisualizer.stepHeaderInCommandMenu).toContainText(
     'Launch manually',
@@ -124,7 +122,9 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await workflowVisualizer.goBackInCommandMenu.click();
 
-  const formStep = workflowVisualizer.commandMenu.locator(workflowVisualizer.getStepNode(firstStepId));
+  const formStep = workflowVisualizer.commandMenu.locator(
+    workflowVisualizer.getStepNode(firstStepId),
+  );
 
   await formStep.click();
 
