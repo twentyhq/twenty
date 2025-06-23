@@ -1485,6 +1485,11 @@ msgstr "워크스페이스 만들기"
 #~ msgid "Created"
 #~ msgstr "생성됨"
 
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your schema"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -4310,6 +4315,11 @@ msgstr "포르투갈어 - 포르투갈"
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
 
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data"
+msgstr ""
+
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -4994,6 +5004,11 @@ msgstr "사용자 지정 도메인의 이름을 설정하고 DNS 레코드를 �
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "하위 도메인 이름 설정"
+
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database"
+msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
