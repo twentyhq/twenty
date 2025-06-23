@@ -1,4 +1,5 @@
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { isFieldRatingValue } from '@/object-record/record-field/types/guards/isFieldRatingValue';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { t } from '@lingui/core/macro';
@@ -221,11 +222,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
       return [
         {
           rule: 'function',
-          isValid: (value: string) => {
-            return RATING_VALUES.includes(
-              value as (typeof RATING_VALUES)[number],
-            );
-          },
+          isValid: isFieldRatingValue,
           errorMessage: `${fieldName} ${t` must be one of ${ratingValues} values`}`,
           level: 'error',
         },
