@@ -16,11 +16,17 @@ const convertFieldRatingValueToNumber = (
 
 export const convertGreaterThanRatingToArrayOfRatingValues = (
   greaterThanValue: number,
-) => RATING_VALUES.filter((_, index) => index + 1 >= greaterThanValue);
+) =>
+  RATING_VALUES.filter(
+    (ratingValue) => +ratingValue.split('_')[1] >= greaterThanValue,
+  );
 
 export const convertLessThanRatingToArrayOfRatingValues = (
   lessThanValue: number,
-) => RATING_VALUES.filter((_, index) => index + 1 <= lessThanValue);
+) =>
+  RATING_VALUES.filter(
+    (ratingValue) => +ratingValue.split('_')[1] <= lessThanValue,
+  );
 
 export const convertRatingToRatingValue = (rating: number) =>
   `RATING_${rating}` as FieldRatingValue;
