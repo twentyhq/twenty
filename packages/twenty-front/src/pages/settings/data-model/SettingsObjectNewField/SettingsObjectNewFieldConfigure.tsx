@@ -31,7 +31,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
@@ -85,18 +84,13 @@ export const SettingsObjectNewFieldConfigure = () => {
     );
   }, [fieldType, formConfig]);
 
-  const [, setObjectViews] = useState<View[]>([]);
-  const [, setRelationObjectViews] = useState<View[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
-    },
-    onCompleted: async (views) => {
-      if (isUndefinedOrNull(views)) return;
-      setObjectViews(views);
     },
   });
 
@@ -110,10 +104,6 @@ export const SettingsObjectNewFieldConfigure = () => {
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: relationObjectMetadataId },
-    },
-    onCompleted: async (views) => {
-      if (isUndefinedOrNull(views)) return;
-      setRelationObjectViews(views);
     },
   });
 
@@ -132,10 +122,7 @@ export const SettingsObjectNewFieldConfigure = () => {
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {
     try {
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural,
-      });
-
+      setIsSaving(true);
       if (
         formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues
@@ -163,7 +150,12 @@ export const SettingsObjectNewFieldConfigure = () => {
       await apolloClient.refetchQueries({
         include: ['FindManyViews', 'CombinedFindManyRecords'],
       });
+      navigate(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+      setIsSaving(false);
     } catch (error) {
+      setIsSaving(false);
       const isDuplicateFieldNameInObject = (error as Error).message.includes(
         'duplicate key value violates unique constraint "IndexOnNameObjectMetadataIdAndWorkspaceIdUnique"',
       );
@@ -206,6 +198,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         ]}
         actionButton={
           <SaveAndCancelButtons
+            isLoading={isSaving}
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             onCancel={() =>
