@@ -40,11 +40,15 @@ import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mod
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
 @Resolver(() => FieldMetadataDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  GraphqlValidationExceptionFilter,
+)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
