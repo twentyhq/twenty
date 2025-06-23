@@ -129,7 +129,7 @@ const getSchemaComponentsExample = (
         return node;
       }
     }
-  }, {} as OpenApiExample);
+  }, {});
 };
 
 const getSchemaComponentsProperties = ({
