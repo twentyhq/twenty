@@ -6,11 +6,13 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useListenToSidePanelOpening } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelOpening';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -18,6 +20,7 @@ export const RecordTableCellHotkeysEffect = () => {
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { isReadOnly } = useContext(FieldContext);
   const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
+  const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const isFieldInputOnly = useIsFieldInputOnly();
   const isFieldClearable = useIsFieldClearable();
@@ -73,6 +76,8 @@ export const RecordTableCellHotkeysEffect = () => {
   const handleEscape = () => {
     restoreRecordTableRowFocusFromCellPosition();
   };
+
+  useListenToSidePanelOpening(() => onCloseTableCell());
 
   useHotkeysOnFocusedElement({
     keys: [Key.Backspace, Key.Delete],

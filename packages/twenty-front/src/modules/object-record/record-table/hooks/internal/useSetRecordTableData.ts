@@ -4,10 +4,10 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetIsRecordTableCellFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableCellFocusActive';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -45,19 +45,13 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const { setIsRecordTableCellFocusActive } =
-    useSetIsRecordTableCellFocusActive(recordTableId);
-
   const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
-  const recordTableFocusPositionCallbackState =
-    useRecoilComponentCallbackStateV2(
-      recordTableFocusPositionComponentState,
-      recordTableId,
-    );
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -98,15 +92,9 @@ export const useSetRecordTableData = ({
 
         const recordIds = records.map((record) => record.id);
 
-        const currentFocusedCellPosition = snapshot
-          .getLoadable(recordTableFocusPositionCallbackState)
-          .getValue();
-
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          setIsRecordTableCellFocusActive({
-            isRecordTableFocusActive: false,
-            cellPosition: currentFocusedCellPosition,
-          });
+          unfocusRecordTableCell();
+          unfocusRecordTableRow();
           setRecordTableHoverPosition(null);
 
           if (hasUserSelectedAllRows) {
@@ -129,8 +117,8 @@ export const useSetRecordTableData = ({
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
-      recordTableFocusPositionCallbackState,
-      setIsRecordTableCellFocusActive,
+      unfocusRecordTableCell,
+      unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
     ],

@@ -7,6 +7,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
+import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useCallback } from 'react';
@@ -41,6 +42,7 @@ export const useCommandMenu = () => {
   );
 
   const openCommandMenu = useCallback(() => {
+    emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
     navigateCommandMenu({
       page: CommandMenuPages.Root,
