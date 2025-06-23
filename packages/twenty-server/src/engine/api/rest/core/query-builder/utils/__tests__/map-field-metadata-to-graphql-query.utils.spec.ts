@@ -52,17 +52,15 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     'field-currency-id': typedFieldCurrencyMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [typedFieldNumberMock.name]: typedFieldNumberMock,
-    [typedFieldTextMock.name]: typedFieldTextMock,
-    [typedFieldCurrencyMock.name]: typedFieldCurrencyMock,
-  };
-
   const typedObjectMetadataItem: ObjectMetadataItemWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [typedFieldNumberMock.name]: typedFieldNumberMock.id,
+      [typedFieldTextMock.name]: typedFieldTextMock.id,
+      [typedFieldCurrencyMock.name]: typedFieldCurrencyMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   const objectMetadataMapsMock: ObjectMetadataMaps = {

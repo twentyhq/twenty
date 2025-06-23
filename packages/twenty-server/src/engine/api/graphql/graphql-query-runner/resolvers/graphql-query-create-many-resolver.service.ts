@@ -19,6 +19,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -126,7 +127,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     fullPath: string;
     column: string;
   }[] {
-    return objectMetadataItemWithFieldMaps.fields
+    return Object.values(objectMetadataItemWithFieldMaps.fieldsById)
       .filter((field) => field.isUnique || field.name === 'id')
       .flatMap((field) => {
         const compositeType = compositeTypeDefinitions.get(field.type);
@@ -325,7 +326,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         records: structuredClone([record]),
         updatedFields: Object.keys(formattedPartialRecordToUpdate),
         authContext,
-        objectMetadataItem: objectMetadataItemWithFieldMaps,
+        objectMetadataItem: removeFieldMapsFromObjectMetadata(
+          objectMetadataItemWithFieldMaps,
+        ),
       });
     }
   }
@@ -368,7 +371,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     this.apiEventEmitterService.emitCreateEvents({
       records: structuredClone(formattedInsertedRecords),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: removeFieldMapsFromObjectMetadata(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
   }
 
@@ -445,11 +450,12 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   ) {
     let recordWithoutCreatedByUpdate = record;
 
-    if (
-      'createdBy' in record &&
-      objectMetadataItemWithFieldMaps.fieldsByName['createdBy']?.isCustom ===
-        false
-    ) {
+    const createdByFieldMetadataId =
+      objectMetadataItemWithFieldMaps.fieldIdByName['createdBy'];
+    const createdByFieldMetadata =
+      objectMetadataItemWithFieldMaps.fieldsById[createdByFieldMetadataId];
+
+    if ('createdBy' in record && createdByFieldMetadata?.isCustom === false) {
       const { createdBy: _createdBy, ...recordWithoutCreatedBy } = record;
 
       recordWithoutCreatedByUpdate = recordWithoutCreatedBy;

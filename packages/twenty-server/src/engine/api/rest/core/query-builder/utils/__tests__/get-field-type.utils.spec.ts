@@ -24,15 +24,13 @@ describe('getFieldType', () => {
     'field-number-id': completeFieldNumberMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldNumberMock.name]: completeFieldNumberMock,
-  };
-
   const mockObjectMetadataWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [completeFieldNumberMock.name]: completeFieldNumberMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   it('should get field type', () => {

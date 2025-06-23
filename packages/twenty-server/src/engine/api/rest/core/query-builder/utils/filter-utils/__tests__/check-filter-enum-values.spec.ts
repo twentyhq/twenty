@@ -25,15 +25,13 @@ describe('checkFilterEnumValues', () => {
     'field-select-id': completeFieldSelectMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldSelectMock.name]: completeFieldSelectMock,
-  };
-
   const mockObjectMetadataWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [completeFieldSelectMock.name]: completeFieldSelectMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   it('should check properly', () => {

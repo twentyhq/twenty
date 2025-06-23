@@ -7,6 +7,7 @@ import {
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { parseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 describe('parseFilter', () => {
   const completeFieldNumberMock: FieldMetadataInterface = {
@@ -34,16 +35,14 @@ describe('parseFilter', () => {
     'field-text-id': completeFieldTextMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldNumberMock.name]: completeFieldNumberMock,
-    [completeFieldTextMock.name]: completeFieldTextMock,
-  };
-
-  const mockObjectMetadataWithFieldMaps = {
+  const mockObjectMetadataWithFieldMaps: ObjectMetadataItemWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [completeFieldNumberMock.name]: completeFieldNumberMock.id,
+      [completeFieldTextMock.name]: completeFieldTextMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   it('should parse string filter test 1', () => {

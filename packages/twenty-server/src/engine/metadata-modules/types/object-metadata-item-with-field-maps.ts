@@ -3,7 +3,10 @@ import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metada
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
-export type ObjectMetadataItemWithFieldMaps = ObjectMetadataInterface & {
+export type ObjectMetadataItemWithFieldMaps = Omit<
+  ObjectMetadataInterface,
+  'fields'
+> & {
   fieldsById: FieldMetadataMap;
   fieldIdByJoinColumnName: Record<string, string>;
   fieldIdByName: Record<string, string>;

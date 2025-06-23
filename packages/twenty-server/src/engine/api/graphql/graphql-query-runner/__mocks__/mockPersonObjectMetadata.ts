@@ -24,11 +24,10 @@ export const mockPersonObjectMetadata = (
   labelIdentifierFieldMetadataId: '',
   imageIdentifierFieldMetadataId: '',
   workspaceId: '',
-  fields: [],
   indexMetadatas: [],
-  fieldsById: {},
-  fieldsByJoinColumnName: {},
-  fieldsByName: {
+  fieldIdByName: {},
+  fieldIdByJoinColumnName: {},
+  fieldsById: {
     name: {
       id: '',
       objectMetadataId: '',

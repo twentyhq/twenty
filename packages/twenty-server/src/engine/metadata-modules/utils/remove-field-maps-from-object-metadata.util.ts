@@ -5,10 +5,14 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const removeFieldMapsFromObjectMetadata = (
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-): ObjectMetadataInterface =>
-  omit(objectMetadata, [
-    'fieldsById',
-    'fieldsByName',
-    'fieldsByJoinColumnName',
-  ]);
+  objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
+): ObjectMetadataInterface => {
+  return {
+    ...omit(objectMetadataMapItem, [
+      'fieldsById',
+      'fieldIdByName',
+      'fieldIdByJoinColumnName',
+    ]),
+    fields: Object.values(objectMetadataMapItem.fieldsById),
+  };
+};

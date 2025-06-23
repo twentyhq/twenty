@@ -23,15 +23,13 @@ describe('checkFields', () => {
     'field-number-id': completeFieldNumberMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldNumberMock.name]: completeFieldNumberMock,
-  };
-
   const mockObjectMetadataWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [completeFieldNumberMock.name]: completeFieldNumberMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   it('should check field types', () => {
