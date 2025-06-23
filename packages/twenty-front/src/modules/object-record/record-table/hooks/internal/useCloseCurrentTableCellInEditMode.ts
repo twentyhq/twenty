@@ -21,7 +21,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
 
   return useRecoilCallback(
     ({ set }) => {
-      return async () => {
+      return () => {
         set(currentTableCellInEditModePositionState, null);
 
         goBackToPreviousDropdownFocusId();

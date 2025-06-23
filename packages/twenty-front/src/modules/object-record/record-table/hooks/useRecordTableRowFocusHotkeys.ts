@@ -15,27 +15,7 @@ export const useRecordTableRowFocusHotkeys = ({
   const { moveFocusedRow } = useRecordTableMoveFocusedRow(recordTableId);
 
   useHotkeysOnFocusedElement({
-    keys: [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
-    callback: () => {
-      moveFocusedRow('up');
-    },
-    focusId,
-    scope: hotkeyScope,
-    dependencies: [moveFocusedRow],
-  });
-
-  useHotkeysOnFocusedElement({
-    keys: [Key.ArrowDown],
-    callback: () => {
-      moveFocusedRow('down');
-    },
-    focusId,
-    scope: hotkeyScope,
-    dependencies: [moveFocusedRow],
-  });
-
-  useHotkeysOnFocusedElement({
-    keys: [Key.ArrowUp, 'k'],
+    keys: [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`, 'k'],
     callback: () => {
       moveFocusedRow('up');
     },
