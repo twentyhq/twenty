@@ -7,6 +7,7 @@ import {
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   computeDepthParameters,
@@ -29,10 +30,7 @@ type Properties = {
   [name: string]: Property;
 };
 
-type Example = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [name: string]: any;
-};
+type OpenApiExample = Record<string, FieldMetadataDefaultValue>;
 
 const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
   if (forResponse) {
@@ -93,11 +91,13 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
   }
 };
 
-const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
+const getSchemaComponentsExample = (
+  item: ObjectMetadataEntity,
+): OpenApiExample => {
   return item.fields.reduce((node, field) => {
     // If field is required
     if (!field.isNullable && field.defaultValue === null) {
-      node[field.name] = generateRandomFieldValue({ field });
+      return { ...node, [field.name]: generateRandomFieldValue({ field }) };
     }
 
     switch (field.type) {
@@ -106,9 +106,10 @@ const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
           return node;
         }
 
-        node[field.name] = `${camelToTitleCase(item.nameSingular)} name`;
-
-        return node;
+        return {
+          ...node,
+          [field.name]: `${camelToTitleCase(item.nameSingular)} name`,
+        };
       }
 
       case FieldMetadataType.EMAILS:
@@ -118,16 +119,17 @@ const getSchemaComponentsExample = (item: ObjectMetadataEntity): Example => {
       case FieldMetadataType.SELECT:
       case FieldMetadataType.MULTI_SELECT:
       case FieldMetadataType.PHONES: {
-        node[field.name] = generateRandomFieldValue({ field });
-
-        return node;
+        return {
+          ...node,
+          [field.name]: generateRandomFieldValue({ field }),
+        };
       }
 
       default: {
         return node;
       }
     }
-  }, {} as Example);
+  }, {} as OpenApiExample);
 };
 
 const getSchemaComponentsProperties = ({
@@ -149,12 +151,13 @@ const getSchemaComponentsProperties = ({
       isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
-      node[`${field.name}Id`] = {
-        type: 'string',
-        format: 'uuid',
+      return {
+        ...node,
+        [`${field.name}Id`]: {
+          type: 'string',
+          format: 'uuid',
+        },
       };
-
-      return node;
     }
 
     if (
@@ -377,7 +380,7 @@ const getSchemaComponentsProperties = ({
     }
 
     if (Object.keys(itemProperty).length) {
-      node[field.name] = itemProperty;
+      return { ...node, [field.name]: itemProperty };
     }
 
     return node;
@@ -423,7 +426,7 @@ const getSchemaComponentsRelationProperties = (
     }
 
     if (Object.keys(itemProperty).length) {
-      node[field.name] = itemProperty;
+      return { ...node, [field.name]: itemProperty };
     }
 
     return node;
