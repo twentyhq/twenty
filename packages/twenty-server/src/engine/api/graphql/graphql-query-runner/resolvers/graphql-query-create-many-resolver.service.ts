@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, InsertResult, ObjectLiteral } from 'typeorm';
+import { FindOperator, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -168,7 +168,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     }[],
   ): Promise<Partial<ObjectRecord>[]> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
-    const queryBuilder = executionArgs.repository.createQueryBuilder(
+    let queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
@@ -177,7 +177,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       conflictingFields,
     );
 
-    return queryBuilder.orWhere(whereConditions).getMany();
+    whereConditions.forEach((condition) => {
+      queryBuilder = queryBuilder.orWhere(condition);
+    });
+
+    return await queryBuilder.getMany();
   }
 
   private getValueFromPath(
@@ -202,23 +206,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Record<string, any> {
-    const whereConditions = {};
+  ): Record<string, FindOperator<string>>[] {
+    const whereConditions = [];
 
     for (const field of conflictingFields) {
       const fieldValues = records
-        .map((record) => this.getValueFromPath(record, field.fullPath))
+        .map(
+          (record) => this.getValueFromPath(record, field.fullPath) as string,
+        )
         .filter(Boolean);
 
+      //TODO : Adapt to composite constraint - https://github.com/twentyhq/core-team-issues/issues/1115
       if (fieldValues.length > 0) {
-        //TODO : Use one constraint only - id by default - https://github.com/twentyhq/core-team-issues/issues/1115
-        if (field.column === 'id') {
-          return { id: In(fieldValues) };
-        }
-
-        // @ts-expect-error legacy noImplicitAny
-        whereConditions[field.column] = In(fieldValues);
+        whereConditions.push({ [field.column]: In(fieldValues) });
       }
     }
 
