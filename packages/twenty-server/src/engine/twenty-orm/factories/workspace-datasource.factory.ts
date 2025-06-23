@@ -9,10 +9,6 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
   WorkspaceMetadataVersionException,
@@ -106,13 +102,9 @@ export class WorkspaceDatasourceFactory {
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
-    shouldFailIfMetadataNotFound = true,
   ): Promise<WorkspaceDataSource> {
     const cachedWorkspaceMetadataVersion =
-      await this.getWorkspaceMetadataVersionFromCache(
-        workspaceId,
-        shouldFailIfMetadataNotFound,
-      );
+      await this.getWorkspaceMetadataVersionFromCache(workspaceId);
 
     const { data: cachedFeatureFlagMap, version: cachedFeatureFlagMapVersion } =
       await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
@@ -162,18 +154,12 @@ export class WorkspaceDatasourceFactory {
 
           let cachedEntitySchemas: EntitySchema[];
 
-          const cachedObjectMetadataMaps =
-            await this.workspaceCacheStorageService.getObjectMetadataMaps(
-              workspaceId,
-              cachedWorkspaceMetadataVersion,
+          const { objectMetadataMaps: cachedObjectMetadataMaps } =
+            await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps(
+              {
+                workspaceId,
+              },
             );
-
-          if (!cachedObjectMetadataMaps) {
-            throw new WorkspaceMetadataCacheException(
-              `Object metadata collection not found for workspace ${workspaceId}`,
-              WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
-            );
-          }
 
           if (cachedEntitySchemaOptions) {
             cachedEntitySchemas = cachedEntitySchemaOptions.map(
@@ -356,27 +342,16 @@ export class WorkspaceDatasourceFactory {
 
   private async getWorkspaceMetadataVersionFromCache(
     workspaceId: string,
-    shouldFailIfMetadataNotFound = true,
   ): Promise<number> {
     let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
-      if (shouldFailIfMetadataNotFound) {
-        throw new WorkspaceMetadataVersionException(
-          `Metadata version not found while fetching datasource for workspace ${workspaceId}`,
-          WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-        );
-      } else {
-        await this.workspaceMetadataCacheService.recomputeMetadataCache({
-          workspaceId,
-          ignoreLock: !shouldFailIfMetadataNotFound,
-        });
-        latestWorkspaceMetadataVersion =
-          await this.workspaceCacheStorageService.getMetadataVersion(
-            workspaceId,
-          );
-      }
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId,
+      });
+      latestWorkspaceMetadataVersion =
+        await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
     }
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {

@@ -17,7 +17,6 @@ export class TwentyORMGlobalManager {
     workspaceEntity: Type<T>,
     options?: {
       shouldBypassPermissionChecks?: boolean;
-      shouldFailIfMetadataNotFound?: boolean;
     },
   ): Promise<WorkspaceRepository<T>>;
 
@@ -26,7 +25,6 @@ export class TwentyORMGlobalManager {
     objectMetadataName: string,
     options?: {
       shouldBypassPermissionChecks?: boolean;
-      shouldFailIfMetadataNotFound?: boolean;
     },
   ): Promise<WorkspaceRepository<T>>;
 
@@ -35,10 +33,8 @@ export class TwentyORMGlobalManager {
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      shouldFailIfMetadataNotFound?: boolean;
     } = {
       shouldBypassPermissionChecks: false,
-      shouldFailIfMetadataNotFound: true,
     },
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
@@ -54,7 +50,6 @@ export class TwentyORMGlobalManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
-      options.shouldFailIfMetadataNotFound,
     );
 
     const repository = workspaceDataSource.getRepository<T>(
@@ -65,18 +60,8 @@ export class TwentyORMGlobalManager {
     return repository;
   }
 
-  async getDataSourceForWorkspace({
-    workspaceId,
-    shouldFailIfMetadataNotFound = true,
-  }: {
-    workspaceId: string;
-    shouldFailIfMetadataNotFound?: boolean;
-  }) {
-    return await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      null,
-      shouldFailIfMetadataNotFound,
-    );
+  async getDataSourceForWorkspace({ workspaceId }: { workspaceId: string }) {
+    return await this.workspaceDataSourceFactory.create(workspaceId, null);
   }
 
   async destroyDataSourceForWorkspace(workspaceId: string) {

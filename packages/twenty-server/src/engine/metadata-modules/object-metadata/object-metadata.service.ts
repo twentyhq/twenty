@@ -36,6 +36,7 @@ import {
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -58,6 +59,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     private readonly remoteTableRelationsService: RemoteTableRelationsService,
     private readonly dataSourceService: DataSourceService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly searchVectorService: SearchVectorService,
@@ -89,6 +91,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const objectMetadataMaps =
+      await this.workspaceMetadataCacheService.getFreshObjectMetadataMaps({
+        workspaceId: objectMetadataInput.workspaceId,
+      });
+
     const lastDataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         objectMetadataInput.workspaceId,
@@ -214,7 +221,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId: objectMetadataInput.workspaceId,
-      ignoreLock: true,
     });
 
     return createdObjectMetadata;
@@ -395,7 +401,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
-      ignoreLock: true,
     });
 
     return objectMetadata;

@@ -21,13 +21,13 @@ import {
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 
 @Injectable()
 export class AccessTokenService {
@@ -78,9 +78,6 @@ export class AccessTokenService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
-          {
-            shouldFailIfMetadataNotFound: false,
-          },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

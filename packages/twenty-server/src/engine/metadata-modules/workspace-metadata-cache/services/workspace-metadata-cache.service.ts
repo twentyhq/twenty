@@ -14,6 +14,11 @@ import {
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
+type GetFreshObjectMetadataMapsResult = {
+  objectMetadataMaps: ObjectMetadataMaps;
+  metadataVersion: number;
+};
+
 @Injectable()
 export class WorkspaceMetadataCacheService {
   logger = new Logger(WorkspaceMetadataCacheService.name);
@@ -26,19 +31,11 @@ export class WorkspaceMetadataCacheService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async recomputeMetadataCache({
+  async getFreshObjectMetadataMaps({
     workspaceId,
-    ignoreLock = false,
   }: {
     workspaceId: string;
-    ignoreLock?: boolean;
-  }): Promise<
-    | {
-        recomputedObjectMetadataMaps: ObjectMetadataMaps;
-        recomputedMetadataVersion: number;
-      }
-    | undefined
-  > {
+  }): Promise<GetFreshObjectMetadataMapsResult> {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -52,68 +49,78 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    if (currentDatabaseVersion === currentCacheVersion) {
-      return;
-    }
+    const shouldRecompute =
+      !isDefined(currentCacheVersion) ||
+      currentCacheVersion !== currentDatabaseVersion;
 
-    if (!ignoreLock) {
-      const isAlreadyCaching =
-        await this.workspaceCacheStorageService.getObjectMetadataOngoingCachingLock(
-          workspaceId,
-          currentDatabaseVersion,
-        );
-
-      if (isAlreadyCaching) {
-        return;
-      }
-    }
-
-    if (currentCacheVersion !== undefined) {
-      this.workspaceCacheStorageService.flushVersionedMetadata(
-        workspaceId,
-        currentCacheVersion,
-      );
-    }
-
-    try {
-      await this.workspaceCacheStorageService.addObjectMetadataCollectionOngoingCachingLock(
+    const existingObjectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspaceId,
         currentDatabaseVersion,
       );
 
-      const objectMetadataItems = await this.objectMetadataRepository.find({
-        where: { workspaceId },
-        relations: [
-          'fields',
-          'indexMetadatas',
-          'indexMetadatas.indexFieldMetadatas',
-        ],
+    if (isDefined(existingObjectMetadataMaps) && !shouldRecompute) {
+      return {
+        objectMetadataMaps: existingObjectMetadataMaps,
+        metadataVersion: currentDatabaseVersion,
+      };
+    }
+
+    const { objectMetadataMaps, metadataVersion } =
+      await this.recomputeMetadataCache({
+        workspaceId,
       });
 
-      const freshObjectMetadataMaps =
-        generateObjectMetadataMaps(objectMetadataItems);
+    return {
+      objectMetadataMaps,
+      metadataVersion,
+    };
+  }
 
-      await this.workspaceCacheStorageService.setObjectMetadataMaps(
-        workspaceId,
-        currentDatabaseVersion,
-        freshObjectMetadataMaps,
-      );
+  async recomputeMetadataCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<GetFreshObjectMetadataMapsResult> {
+    const currentDatabaseVersion =
+      await this.getMetadataVersionFromDatabase(workspaceId);
 
-      await this.workspaceCacheStorageService.setMetadataVersion(
-        workspaceId,
-        currentDatabaseVersion,
-      );
-
-      return {
-        recomputedObjectMetadataMaps: freshObjectMetadataMaps,
-        recomputedMetadataVersion: currentDatabaseVersion,
-      };
-    } finally {
-      await this.workspaceCacheStorageService.removeObjectMetadataOngoingCachingLock(
-        workspaceId,
-        currentDatabaseVersion,
+    if (!isDefined(currentDatabaseVersion)) {
+      throw new WorkspaceMetadataVersionException(
+        'Metadata version not found in the database',
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
+
+    await this.workspaceCacheStorageService.flushVersionedMetadata(workspaceId);
+
+    const objectMetadataItems = await this.objectMetadataRepository.find({
+      where: { workspaceId },
+      relations: [
+        'fields',
+        'indexMetadatas',
+        'indexMetadatas.indexFieldMetadatas',
+      ],
+    });
+
+    const freshObjectMetadataMaps =
+      generateObjectMetadataMaps(objectMetadataItems);
+
+    await this.workspaceCacheStorageService.setObjectMetadataMaps(
+      workspaceId,
+      currentDatabaseVersion,
+      freshObjectMetadataMaps,
+    );
+
+    await this.workspaceCacheStorageService.setMetadataVersion(
+      workspaceId,
+      currentDatabaseVersion,
+    );
+
+    return {
+      objectMetadataMaps: freshObjectMetadataMaps,
+      metadataVersion: currentDatabaseVersion,
+    };
   }
 
   private async getMetadataVersionFromDatabase(

@@ -26,6 +26,7 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -37,7 +38,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -93,7 +93,6 @@ export abstract class GraphqlQueryBaseResolverService<
       const workspaceDataSource =
         await this.twentyORMGlobalManager.getDataSourceForWorkspace({
           workspaceId: workspace.id,
-          shouldFailIfMetadataNotFound: false,
         });
 
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
