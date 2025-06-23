@@ -2,9 +2,12 @@ import DataLoader from 'dataloader';
 
 import {
   FieldMetadataLoaderPayload,
+  IndexMetadataLoaderPayload,
   RelationLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export interface IDataloaders {
@@ -20,6 +23,11 @@ export interface IDataloaders {
 
   fieldMetadataLoader: DataLoader<
     FieldMetadataLoaderPayload,
-    FieldMetadataEntity[]
+    FieldMetadataDTO[]
+  >;
+
+  indexMetadataLoader: DataLoader<
+    IndexMetadataLoaderPayload,
+    IndexMetadataDTO[]
   >;
 }

@@ -31,4 +31,6 @@ export interface FieldMetadataInterface<
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
   isLabelSyncedWithName: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

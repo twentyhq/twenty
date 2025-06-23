@@ -93,7 +93,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -182,16 +181,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             objectMetadataItemWithFieldMaps.labelIdentifierFieldMetadataId,
           existingFieldMetadata,
         });
-
-        const viewsRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            fieldMetadataInput.workspaceId,
-            'view',
-          );
-
-        await viewsRepository.delete({
-          kanbanFieldMetadataId: id,
-        });
       }
 
       const updatableFieldInput =
@@ -248,6 +237,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (fieldMetadataInput.isActive === false) {
+        const viewsRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            fieldMetadataInput.workspaceId,
+            'view',
+          );
+
+        await viewsRepository.delete({
+          kanbanFieldMetadataId: id,
+        });
+      }
+
       if (
         updatedFieldMetadata.isActive &&
         isSelectOrMultiSelectFieldMetadata(updatedFieldMetadata) &&
@@ -298,6 +299,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );

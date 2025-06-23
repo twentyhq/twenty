@@ -50,6 +50,8 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isUnique: false,
       workspaceId: '',
       isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     'emails-id': {
       id: '',
@@ -66,6 +68,8 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isNullable: true,
       workspaceId: '',
       isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     'linkedinLink-id': {
       id: '',
@@ -84,6 +88,8 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isUnique: false,
       workspaceId: '',
       isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     'jobTitle-id': {
       id: '',
@@ -98,6 +104,8 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isUnique: false,
       workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   },
 });

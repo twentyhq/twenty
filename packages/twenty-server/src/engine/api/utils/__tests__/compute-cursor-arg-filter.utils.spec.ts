@@ -38,6 +38,8 @@ describe('computeCursorArgFilter', () => {
         objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       'age-id': {
         type: FieldMetadataType.NUMBER,
@@ -47,6 +49,8 @@ describe('computeCursorArgFilter', () => {
         objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       'fullname-id': {
         type: FieldMetadataType.FULL_NAME,
@@ -56,6 +60,8 @@ describe('computeCursorArgFilter', () => {
         objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     },
   } satisfies ObjectMetadataItemWithFieldMaps;

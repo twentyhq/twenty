@@ -19,6 +19,8 @@ describe('parseFilter', () => {
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
     isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const completeFieldTextMock: FieldMetadataInterface = {
@@ -30,6 +32,8 @@ describe('parseFilter', () => {
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
     isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -45,6 +49,7 @@ describe('parseFilter', () => {
       [completeFieldTextMock.name]: completeFieldTextMock.id,
     },
     fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should parse string filter test 1', () => {

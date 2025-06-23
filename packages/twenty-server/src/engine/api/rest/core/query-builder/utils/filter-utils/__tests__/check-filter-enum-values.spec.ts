@@ -20,6 +20,8 @@ describe('checkFilterEnumValues', () => {
     defaultValue: fieldSelectMock.defaultValue,
     options: fieldSelectMock.options,
     isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -33,6 +35,7 @@ describe('checkFilterEnumValues', () => {
       [completeFieldSelectMock.name]: completeFieldSelectMock.id,
     },
     fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should check properly', () => {

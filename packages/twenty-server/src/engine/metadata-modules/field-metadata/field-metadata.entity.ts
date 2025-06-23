@@ -17,7 +17,6 @@ import {
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
@@ -41,8 +40,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 ])
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
-> implements FieldMetadataInterface<T>
-{
+> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

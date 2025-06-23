@@ -18,6 +18,8 @@ describe('checkFields', () => {
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
     isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -31,6 +33,7 @@ describe('checkFields', () => {
       [completeFieldNumberMock.name]: completeFieldNumberMock.id,
     },
     fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should check field types', () => {

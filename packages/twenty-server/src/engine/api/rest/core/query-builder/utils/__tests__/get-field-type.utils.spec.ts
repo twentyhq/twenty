@@ -19,6 +19,8 @@ describe('getFieldType', () => {
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
     isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -32,6 +34,7 @@ describe('getFieldType', () => {
       [completeFieldNumberMock.name]: completeFieldNumberMock.id,
     },
     fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should get field type', () => {
