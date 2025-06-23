@@ -3,6 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -41,8 +42,10 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     })
     .filter(
       ({ objectMetadataItem }) =>
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-          ?.canReadObjectRecords,
+        getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          objectMetadataItem.id,
+        )?.canReadObjectRecords,
     );
 
   const filterPerMetadataItemArray =
