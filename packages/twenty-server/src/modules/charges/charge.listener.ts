@@ -11,7 +11,10 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 import { InterApiService } from './inter/services/inter-api.service';
-import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
+import {
+  ChargeRecurrence,
+  ChargeWorkspaceEntity,
+} from './standard-objects/charge.workspace-entity';
 
 @Injectable()
 export class ChargeEventListener {
@@ -109,31 +112,33 @@ export class ChargeEventListener {
         try {
           switch (chargeAction) {
             case 'issue':
-              this.logger.log(
-                `Emitindo cobrança para charge ${id.slice(0, 11)}`,
-              );
-
-              const response =
-                await this.interApiService.issueChargeAndStoreAttachment(
-                  workspaceId,
-                  attachmentRepository,
-                  {
-                    id: charge.id,
-                    authorId,
-                    seuNumero: id.slice(0, 8),
-                    valorNominal: price,
-                    dataVencimento,
-                    numDiasAgenda: 60,
-                    pagador: { ...cliente },
-                    mensagem: { linha1: '-' },
-                  },
+              if (charge.recurrence === ChargeRecurrence.NONE) {
+                this.logger.log(
+                  `Emitindo cobrança para charge ${id.slice(0, 11)}`,
                 );
 
-              charge.requestCode = response.codigoSolicitacao;
+                const response =
+                  await this.interApiService.issueChargeAndStoreAttachment(
+                    workspaceId,
+                    attachmentRepository,
+                    {
+                      id: charge.id,
+                      authorId,
+                      seuNumero: id.slice(0, 8),
+                      valorNominal: price,
+                      dataVencimento,
+                      numDiasAgenda: 60,
+                      pagador: { ...cliente },
+                      mensagem: { linha1: '-' },
+                    },
+                  );
 
-              this.logger.log(
-                `Cobrança emitida e attachment salvo para charge ${id}. Código: ${response.codigoSolicitacao}`,
-              );
+                charge.requestCode = response.codigoSolicitacao;
+
+                this.logger.log(
+                  `Cobrança emitida e attachment salvo para charge ${id}. Código: ${response.codigoSolicitacao}`,
+                );
+              }
               break;
 
             case 'cancel':

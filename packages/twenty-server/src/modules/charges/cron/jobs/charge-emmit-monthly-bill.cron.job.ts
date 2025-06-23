@@ -40,10 +40,26 @@ export class ChargeEmmitMonthlyBillCronJob {
         ChargeRecurrence.MONTHLY,
       );
 
-    for (const workspaceChargeMap of Object.entries(
+    const workspaceMonthlyChargesMapList = Object.entries(
       workspaceMonthlyChargesMap,
-    )) {
+    );
+
+    if (workspaceMonthlyChargesMapList.length === 0) {
+      this.logger.warn(`No monthly charges found to emmit`);
+
+      return;
+    }
+
+    this.logger.log(
+      `Found ${workspaceMonthlyChargesMapList.length} workspaces with monthly charges to emmit`,
+    );
+
+    for (const workspaceChargeMap of workspaceMonthlyChargesMapList) {
       const [workspaceId, workspaceCharges] = workspaceChargeMap;
+
+      this.logger.log(
+        `Found ${workspaceCharges.length} charges to emmit for workspace ${workspaceId}`,
+      );
 
       await Promise.all(
         workspaceCharges.map((chargeId) =>

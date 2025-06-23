@@ -17,12 +17,6 @@ import { ChargeRecurrence } from 'src/modules/charges/standard-objects/charge.wo
 // '0 0 1 1 *'
 export const CHARGE_EMMIT_YEARLY_BILL_CRON_PATTERN = '*/5 * * * *'; // Run every year on day 1 ad midnight
 
-const MOCK_YEARLY_CHARGE_IDS = [
-  'charge-yearly-1',
-  'charge-yearly-2',
-  'charge-yearly-3',
-];
-
 @Processor(MessageQueue.cronQueue)
 export class ChargeEmmitYearlyBillCronJob {
   private readonly logger = new Logger(ChargeEmmitYearlyBillCronJob.name);
@@ -46,9 +40,21 @@ export class ChargeEmmitYearlyBillCronJob {
         ChargeRecurrence.ANNUAL,
       );
 
-    for (const workspaceChargeMap of Object.entries(
+    const workspaceYearlyChargesMapList = Object.entries(
       workspaceYearlyChargesMap,
-    )) {
+    );
+
+    if (workspaceYearlyChargesMapList.length === 0) {
+      this.logger.warn(`No yearly charges found to emmit`);
+
+      return;
+    }
+
+    this.logger.log(
+      `Found ${workspaceYearlyChargesMapList.length} workspaces with yearly charges to emmit`,
+    );
+
+    for (const workspaceChargeMap of workspaceYearlyChargesMapList) {
       const [workspaceId, workspaceCharges] = workspaceChargeMap;
 
       await Promise.all(
