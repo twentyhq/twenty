@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, InsertResult, ObjectLiteral } from 'typeorm';
+import { FindOperator, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -119,6 +119,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return result;
   }
 
+  //TODO : Improve conflicting fields logic - unicity can be define on combination of fields - should be based on unique index not on field metadata
+  //TODO : https://github.com/twentyhq/core-team-issues/issues/1115
   private getConflictingFields(
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): {
@@ -175,7 +177,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       conflictingFields,
     );
 
-    return queryBuilder.orWhere(whereConditions).getMany();
+    whereConditions.forEach((condition) => {
+      queryBuilder.orWhere(condition);
+    });
+
+    return await queryBuilder.getMany();
   }
 
   private getValueFromPath(
@@ -200,18 +206,17 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Record<string, any> {
-    const whereConditions = {};
+  ): Record<string, FindOperator<string>>[] {
+    const whereConditions = [];
 
     for (const field of conflictingFields) {
       const fieldValues = records
         .map((record) => this.getValueFromPath(record, field.fullPath))
         .filter(Boolean);
 
+      //TODO : Adapt to composite constraint - https://github.com/twentyhq/core-team-issues/issues/1115
       if (fieldValues.length > 0) {
-        // @ts-expect-error legacy noImplicitAny
-        whereConditions[field.column] = In(fieldValues);
+        whereConditions.push({ [field.column]: In(fieldValues) });
       }
     }
 
