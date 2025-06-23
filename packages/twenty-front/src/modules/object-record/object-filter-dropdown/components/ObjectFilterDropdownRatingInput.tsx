@@ -54,7 +54,7 @@ export const ObjectFilterDropdownRatingInput = () => {
     objectFilterDropdownFilterValue,
   )
     ? convertRatingToRatingValue(Number(objectFilterDropdownFilterValue))
-    : RATING_VALUES[0];
+    : null;
 
   return (
     <StyledRatingInputContainer>
