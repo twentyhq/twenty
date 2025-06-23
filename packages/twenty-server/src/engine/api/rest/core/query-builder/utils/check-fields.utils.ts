@@ -9,7 +9,7 @@ export const checkFields = (
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   fieldNames: string[],
 ): void => {
-  const fieldMetadataNames = objectMetadataItem.fields
+  const fieldMetadataNames = Object.values(objectMetadataItem.fieldsById)
     .map((field) => {
       if (isCompositeFieldMetadataType(field.type)) {
         const compositeType = compositeTypeDefinitions.get(field.type);

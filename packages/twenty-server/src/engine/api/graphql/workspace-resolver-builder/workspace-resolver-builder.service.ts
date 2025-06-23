@@ -12,7 +12,7 @@ export class WorkspaceResolverBuilderService {
   constructor() {}
 
   shouldBuildResolver(
-    objectMetadata: ObjectMetadataInterface,
+    objectMetadata: Pick<ObjectMetadataInterface, 'duplicateCriteria'>,
     methodName: WorkspaceResolverBuilderMethodNames,
   ) {
     switch (methodName) {

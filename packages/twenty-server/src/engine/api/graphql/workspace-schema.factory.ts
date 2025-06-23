@@ -57,7 +57,7 @@ export class WorkspaceSchemaFactory {
     const objectMetadataCollection = Object.values(objectMetadataMaps.byId).map(
       (objectMetadataItem) => ({
         ...objectMetadataItem,
-        fields: objectMetadataItem.fields,
+        fields: Object.values(objectMetadataItem.fieldsById),
         indexes: objectMetadataItem.indexMetadatas,
       }),
     );

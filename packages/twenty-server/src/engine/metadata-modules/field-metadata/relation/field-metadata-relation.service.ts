@@ -8,7 +8,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -77,13 +77,15 @@ export class FieldMetadataRelationService {
       }
 
       return {
-        sourceObjectMetadata: removeFieldMapsFromObjectMetadata(
-          sourceObjectMetadata,
-        ) as ObjectMetadataEntity,
+        sourceObjectMetadata:
+          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+            sourceObjectMetadata,
+          ) as ObjectMetadataEntity,
         sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
-        targetObjectMetadata: removeFieldMapsFromObjectMetadata(
-          targetObjectMetadata,
-        ) as ObjectMetadataEntity,
+        targetObjectMetadata:
+          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+            targetObjectMetadata,
+          ) as ObjectMetadataEntity,
         targetFieldMetadata: targetFieldMetadata as FieldMetadataEntity,
       };
     });
