@@ -9,9 +9,8 @@ import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-faker.seed(1);
-
 describe('computeSchemaComponents', () => {
+  faker.seed(1);
   it('should compute schema components', () => {
     expect(
       computeSchemaComponents([
