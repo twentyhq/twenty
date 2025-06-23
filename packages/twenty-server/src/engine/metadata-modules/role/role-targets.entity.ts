@@ -38,20 +38,16 @@ export class RoleTargetsEntity {
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string;
 
-  @ManyToOne(
-    () => UserWorkspace,
-    (userWorkspace) => userWorkspace.roleTargets,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => UserWorkspace, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
 
   @Column({ nullable: true, type: 'uuid' })
   agentId: string;
 
-  @ManyToOne(() => AgentEntity, (agent) => agent.roleTargets, {
+  @ManyToOne(() => AgentEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'agentId' })
