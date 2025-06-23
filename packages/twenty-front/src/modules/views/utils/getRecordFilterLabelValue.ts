@@ -18,8 +18,6 @@ export const getRecordFilterLabelValue = (recordFilter: RecordFilter) => {
       case RecordFilterOperand.IsInFuture:
       case RecordFilterOperand.IsInPast:
         return operandLabelShort;
-      case RecordFilterOperand.IsRelative:
-        return `${operandLabelShort} ${recordFilter.displayValue}`;
       default:
         return `${operandLabelShort} ${recordFilter.displayValue}`;
     }
