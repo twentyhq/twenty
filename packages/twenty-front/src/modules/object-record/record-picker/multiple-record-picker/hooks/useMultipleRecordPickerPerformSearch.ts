@@ -367,7 +367,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
           false,
         );
       },
-    [client, performCombinedFindManyRecords],
+    [
+      client,
+      performCombinedFindManyRecords,
+      objectPermissionsByObjectMetadataId,
+    ],
   );
 
   return { performSearch };
