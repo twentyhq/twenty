@@ -12,25 +12,18 @@ const StyledRatingInputContainer = styled.div`
 
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
-): string => {
-  return rating.split('_')[1];
-};
+): string => rating.split('_')[1];
 
 export const convertGreaterThanRatingToArrayOfRatingValues = (
   greaterThanValue: number,
-) => {
-  return RATING_VALUES.filter((_, index) => index + 1 > greaterThanValue);
-};
+) => RATING_VALUES.filter((_, index) => index + 1 >= greaterThanValue);
 
 export const convertLessThanRatingToArrayOfRatingValues = (
   lessThanValue: number,
-) => {
-  return RATING_VALUES.filter((_, index) => index + 1 <= lessThanValue);
-};
+) => RATING_VALUES.filter((_, index) => index + 1 <= lessThanValue);
 
-export const convertRatingToRatingValue = (rating: number) => {
-  return `RATING_${rating}` as FieldRatingValue;
-};
+export const convertRatingToRatingValue = (rating: number) =>
+  `RATING_${rating}` as FieldRatingValue;
 
 export const ObjectFilterDropdownRatingInput = () => {
   const { applyObjectFilterDropdownFilterValue } =
