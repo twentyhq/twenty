@@ -6,11 +6,18 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableCellHotkeysEffect = () => {
   const { openTableCell } = useOpenRecordTableCellFromCell();
@@ -63,6 +70,33 @@ export const RecordTableCellHotkeysEffect = () => {
     }
   };
 
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const setHotkeyScope = useSetHotkeyScope();
+
+  const { restoreRecordTableRowFocusFromCellPosition } =
+    useFocusedRecordTableRow(recordTableId);
+
+  const { setIsFocusActiveForCurrentPosition } =
+    useSetIsRecordTableFocusActive(recordTableId);
+
+  const isRecordTableFocusActive = useRecoilComponentValueV2(
+    isRecordTableCellFocusActiveComponentState,
+  );
+
+  const handleEscape = () => {
+    if (isRecordTableFocusActive) {
+      restoreRecordTableRowFocusFromCellPosition();
+      setIsFocusActiveForCurrentPosition(false);
+    } else {
+      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
+        goto: true,
+        keyboardShortcutMenu: true,
+        searchRecords: true,
+      });
+    }
+  };
+
   useHotkeysOnFocusedElement({
     keys: [Key.Backspace, Key.Delete],
     callback: handleBackspaceOrDelete,
@@ -77,6 +111,14 @@ export const RecordTableCellHotkeysEffect = () => {
     focusId: cellFocusId,
     scope: TableHotkeyScope.TableFocus,
     dependencies: [handleEnter],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: cellFocusId,
+    scope: TableHotkeyScope.TableFocus,
+    dependencies: [handleEscape],
   });
 
   useHotkeysOnFocusedElement({
