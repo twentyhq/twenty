@@ -10,7 +10,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -71,12 +70,8 @@ export const RecordTableCellHotkeysEffect = () => {
   const { restoreRecordTableRowFocusFromCellPosition } =
     useFocusedRecordTableRow(recordTableId);
 
-  const { setIsFocusActiveForCurrentPosition } =
-    useSetIsRecordTableFocusActive(recordTableId);
-
   const handleEscape = () => {
     restoreRecordTableRowFocusFromCellPosition();
-    setIsFocusActiveForCurrentPosition(false);
   };
 
   useHotkeysOnFocusedElement({

@@ -1,23 +1,23 @@
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
-import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 
-export const useSetIsRecordTableFocusActive = (recordTableId?: string) => {
+export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
   const isRecordTableFocusActiveState = useRecoilComponentCallbackStateV2(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
 
-  const focusPositionState = useRecoilComponentCallbackStateV2(
-    recordTableFocusPositionComponentState,
-    recordTableId,
-  );
-
-  const setIsFocusActive = useRecoilCallback(
+  const setIsRecordTableCellFocusActive = useRecoilCallback(
     ({ set }) =>
-      (isRecordTableFocusActive: boolean, cellPosition: TableCellPosition) => {
+      ({
+        isRecordTableFocusActive,
+        cellPosition,
+      }: {
+        isRecordTableFocusActive: boolean;
+        cellPosition: TableCellPosition;
+      }) => {
         const cellId = `record-table-cell-${cellPosition.column}-${cellPosition.row}`;
 
         const cellElement = document.getElementById(cellId);
@@ -35,17 +35,7 @@ export const useSetIsRecordTableFocusActive = (recordTableId?: string) => {
     [isRecordTableFocusActiveState],
   );
 
-  const setIsFocusActiveForCurrentPosition = useRecoilCallback(
-    ({ snapshot }) =>
-      (isRecordTableFocusActive: boolean) => {
-        const currentPosition = snapshot
-          .getLoadable(focusPositionState)
-          .getValue();
-
-        setIsFocusActive(isRecordTableFocusActive, currentPosition);
-      },
-    [setIsFocusActive, focusPositionState],
-  );
-
-  return { setIsFocusActive, setIsFocusActiveForCurrentPosition };
+  return {
+    setIsRecordTableCellFocusActive,
+  };
 };

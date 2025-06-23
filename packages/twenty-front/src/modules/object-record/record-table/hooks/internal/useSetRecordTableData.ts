@@ -4,9 +4,10 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
+import { useSetIsRecordTableCellFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableCellFocusActive';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -44,13 +45,19 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const { setIsFocusActiveForCurrentPosition } =
-    useSetIsRecordTableFocusActive(recordTableId);
+  const { setIsRecordTableCellFocusActive } =
+    useSetIsRecordTableCellFocusActive(recordTableId);
 
   const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
+
+  const recordTableFocusPositionCallbackState =
+    useRecoilComponentCallbackStateV2(
+      recordTableFocusPositionComponentState,
+      recordTableId,
+    );
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -91,8 +98,15 @@ export const useSetRecordTableData = ({
 
         const recordIds = records.map((record) => record.id);
 
+        const currentFocusedCellPosition = snapshot
+          .getLoadable(recordTableFocusPositionCallbackState)
+          .getValue();
+
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          setIsFocusActiveForCurrentPosition(false);
+          setIsRecordTableCellFocusActive({
+            isRecordTableFocusActive: false,
+            cellPosition: currentFocusedCellPosition,
+          });
           setRecordTableHoverPosition(null);
 
           if (hasUserSelectedAllRows) {
@@ -115,7 +129,8 @@ export const useSetRecordTableData = ({
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
-      setIsFocusActiveForCurrentPosition,
+      recordTableFocusPositionCallbackState,
+      setIsRecordTableCellFocusActive,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
     ],

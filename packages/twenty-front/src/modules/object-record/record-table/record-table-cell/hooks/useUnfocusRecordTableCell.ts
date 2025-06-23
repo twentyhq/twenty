@@ -3,16 +3,12 @@ import { useRecoilCallback } from 'recoil';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { TableCellPosition } from '../../types/TableCellPosition';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
 
-export const useFocusRecordTableCell = (recordTableId?: string) => {
+export const useUnfocusRecordTableCell = (recordTableId?: string) => {
   const recordTableIdFromProps = useAvailableComponentInstanceIdOrThrow(
     RecordTableComponentInstanceContext,
     recordTableId,
@@ -26,13 +22,12 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
   const { setIsRecordTableCellFocusActive } =
     useSetIsRecordTableCellFocusActive(recordTableIdFromProps);
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const focusRecordTableCell = useRecoilCallback(
-    ({ set, snapshot }) => {
-      return (newPosition: TableCellPosition) => {
+  const unfocusRecordTableCell = useRecoilCallback(
+    ({ snapshot }) => {
+      return () => {
         const currentPosition = snapshot
           .getLoadable(focusPositionState)
           .getValue();
@@ -46,32 +41,9 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
           focusId: currentCellFocusId,
         });
 
-        set(focusPositionState, newPosition);
-
         setIsRecordTableCellFocusActive({
           isRecordTableFocusActive: false,
           cellPosition: currentPosition,
-        });
-        setIsRecordTableCellFocusActive({
-          isRecordTableFocusActive: true,
-          cellPosition: newPosition,
-        });
-
-        const cellFocusId = getRecordTableCellFocusId({
-          recordTableId: recordTableIdFromProps,
-          cellPosition: newPosition,
-        });
-
-        pushFocusItemToFocusStack({
-          focusId: cellFocusId,
-          component: {
-            type: FocusComponentType.RECORD_TABLE_CELL,
-            instanceId: cellFocusId,
-          },
-          hotkeyScope: {
-            scope: TableHotkeyScope.TableFocus,
-          },
-          memoizeKey: cellFocusId,
         });
       };
     },
@@ -80,9 +52,8 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
       recordTableIdFromProps,
       removeFocusItemFromFocusStackById,
       setIsRecordTableCellFocusActive,
-      pushFocusItemToFocusStack,
     ],
   );
 
-  return { focusRecordTableCell };
+  return { unfocusRecordTableCell };
 };
