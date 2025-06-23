@@ -1,6 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -11,6 +13,8 @@ import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/re
 import { remoteTableGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/remote-table/utils/remote-table-graphql-api-exception-handler.util';
 
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @Resolver()
 export class RemoteTableResolver {
   constructor(private readonly remoteTableService: RemoteTableService) {}

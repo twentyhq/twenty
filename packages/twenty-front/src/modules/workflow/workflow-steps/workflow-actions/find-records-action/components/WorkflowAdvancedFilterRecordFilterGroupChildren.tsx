@@ -16,7 +16,7 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 

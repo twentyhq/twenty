@@ -19,7 +19,7 @@ const StyledTbody = styled.tbody`
     tr:not(:last-child) td:nth-of-type(3) {
       // Last row is aggregate footer
       position: sticky;
-      left: 43px;
+      left: 39px;
       z-index: ${TABLE_Z_INDEX.cell.sticky};
       transition: transform 0.3s ease;
 

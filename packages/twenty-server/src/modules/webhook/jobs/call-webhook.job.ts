@@ -1,5 +1,4 @@
 import { HttpService } from '@nestjs/axios';
-import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
@@ -26,7 +25,6 @@ export type CallWebhookJobData = {
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
-  private readonly logger = new Logger(CallWebhookJob.name);
   constructor(
     private readonly httpService: HttpService,
     private readonly auditService: AuditService,

@@ -24,6 +24,8 @@ const mockCurrentUser = {
   canImpersonate: false,
   onboardingStatus: OnboardingStatus.COMPLETED,
   userVars: {},
+  firstName: 'fake-first-name',
+  lastName: 'fake-last-name',
 };
 
 const mockBilling: Billing = {

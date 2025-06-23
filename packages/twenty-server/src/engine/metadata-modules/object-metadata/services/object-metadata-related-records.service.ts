@@ -35,7 +35,7 @@ export class ObjectMetadataRelatedRecordsService {
       type: 'table',
       name: `All ${objectMetadata.labelPlural}`,
       key: 'INDEX',
-      icon: objectMetadata.icon,
+      icon: 'IconList',
     });
   }
 
