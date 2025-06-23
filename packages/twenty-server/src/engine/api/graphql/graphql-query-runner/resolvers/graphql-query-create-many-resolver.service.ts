@@ -19,7 +19,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -326,9 +326,10 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         records: structuredClone([record]),
         updatedFields: Object.keys(formattedPartialRecordToUpdate),
         authContext,
-        objectMetadataItem: removeFieldMapsFromObjectMetadata(
-          objectMetadataItemWithFieldMaps,
-        ),
+        objectMetadataItem:
+          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+            objectMetadataItemWithFieldMaps,
+          ),
       });
     }
   }
@@ -371,7 +372,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     this.apiEventEmitterService.emitCreateEvents({
       records: structuredClone(formattedInsertedRecords),
       authContext,
-      objectMetadataItem: removeFieldMapsFromObjectMetadata(
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
         objectMetadataItemWithFieldMaps,
       ),
     });

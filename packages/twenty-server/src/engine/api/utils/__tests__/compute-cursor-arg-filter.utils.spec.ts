@@ -6,33 +6,61 @@ import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-quer
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 
 describe('computeCursorArgFilter', () => {
-  const mockFieldMetadataMap = {
-    name: {
-      type: FieldMetadataType.TEXT,
-      id: 'name-id',
-      name: 'name',
-      label: 'Name',
-      objectMetadataId: 'object-id',
+  const objectMetadataItemWithFieldMaps = {
+    id: 'object-id',
+    workspaceId: 'workspace-id',
+    nameSingular: 'person',
+    namePlural: 'people',
+    isCustom: false,
+    isRemote: false,
+    labelSingular: 'Person',
+    labelPlural: 'People',
+    targetTableName: 'person',
+    indexMetadatas: [],
+    indexFieldMetadatas: [],
+    isSystem: false,
+    isActive: true,
+    isAuditLogged: false,
+    isSearchable: false,
+    fieldIdByJoinColumnName: {},
+    fieldIdByName: {
+      name: 'name-id',
+      age: 'age-id',
+      fullName: 'fullname-id',
     },
-    age: {
-      type: FieldMetadataType.NUMBER,
-      id: 'age-id',
-      name: 'age',
-      label: 'Age',
-      objectMetadataId: 'object-id',
-    },
-    fullName: {
-      type: FieldMetadataType.FULL_NAME,
-      id: 'fullname-id',
-      name: 'fullName',
-      label: 'Full Name',
-      objectMetadataId: 'object-id',
+    fieldsById: {
+      'name-id': {
+        type: FieldMetadataType.TEXT,
+        id: 'name-id',
+        name: 'name',
+        label: 'Name',
+        objectMetadataId: 'object-id',
+      },
+      'age-id': {
+        type: FieldMetadataType.NUMBER,
+        id: 'age-id',
+        name: 'age',
+        label: 'Age',
+        objectMetadataId: 'object-id',
+      },
+      'fullname-id': {
+        type: FieldMetadataType.FULL_NAME,
+        id: 'fullname-id',
+        name: 'fullName',
+        label: 'Full Name',
+        objectMetadataId: 'object-id',
+      },
     },
   };
 
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {
-      const result = computeCursorArgFilter({}, [], mockFieldMetadataMap, true);
+      const result = computeCursorArgFilter(
+        {},
+        [],
+        objectMetadataItemWithFieldMaps,
+        true,
+      );
 
       expect(result).toEqual([]);
     });
@@ -44,7 +72,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         true,
       );
 
@@ -58,7 +86,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         false,
       );
 
@@ -77,7 +105,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         true,
       );
 
@@ -105,7 +133,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         true,
       );
 
@@ -151,7 +179,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         true,
       );
 
@@ -180,7 +208,7 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        mockFieldMetadataMap,
+        objectMetadataItemWithFieldMaps,
         false,
       );
 
@@ -218,7 +246,12 @@ describe('computeCursorArgFilter', () => {
       const orderBy = [{ invalidField: OrderByDirection.AscNullsLast }];
 
       expect(() =>
-        computeCursorArgFilter(cursor, orderBy, mockFieldMetadataMap, true),
+        computeCursorArgFilter(
+          cursor,
+          orderBy,
+          objectMetadataItemWithFieldMaps,
+          true,
+        ),
       ).toThrow(GraphqlQueryRunnerException);
     });
 
@@ -227,7 +260,12 @@ describe('computeCursorArgFilter', () => {
       const orderBy = [{ age: OrderByDirection.AscNullsLast }];
 
       expect(() =>
-        computeCursorArgFilter(cursor, orderBy, mockFieldMetadataMap, true),
+        computeCursorArgFilter(
+          cursor,
+          orderBy,
+          objectMetadataItemWithFieldMaps,
+          true,
+        ),
       ).toThrow(GraphqlQueryRunnerException);
     });
   });

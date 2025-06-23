@@ -4,14 +4,14 @@ import { Request } from 'express';
 import isEmpty from 'lodash.isempty';
 import { In } from 'typeorm';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
   FormatResult,
   RestApiBaseHandler,
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
