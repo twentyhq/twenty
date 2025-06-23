@@ -7,8 +7,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -24,7 +22,6 @@ export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -157,108 +154,10 @@ export class PermissionsService {
       return true;
     }
 
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-        workspaceId,
-      );
+    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
-    if (isPermissionsV2Enabled) {
-      const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
-
-      return settingPermissions.some(
-        (settingPermission) => settingPermission.setting === setting,
-      );
-    } else {
-      return false;
-    }
-  }
-
-  public async userHasObjectRecordsPermission({
-    userWorkspaceId,
-    workspaceId,
-    requiredPermission,
-    isExecutedByApiKey,
-    objectMetadataId,
-  }: {
-    userWorkspaceId?: string;
-    workspaceId: string;
-    requiredPermission: PermissionsOnAllObjectRecords;
-    isExecutedByApiKey: boolean;
-    objectMetadataId: string;
-  }): Promise<boolean> {
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isPermissionsV2Enabled) {
-      throw new Error(
-        'This should not be called once Permissions V2 is enabled',
-      );
-    }
-
-    if (isExecutedByApiKey) {
-      return true;
-    }
-
-    if (!isDefined(userWorkspaceId)) {
-      throw new AuthException(
-        'Missing userWorkspaceId or apiKey in authContext',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    const roleIdOfUserWorkspace =
-      await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId,
-        workspaceId,
-      });
-
-    if (!isDefined(roleIdOfUserWorkspace)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-      );
-    }
-
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
-
-    const rolePermissionsForUserWorkspaceRole =
-      rolesPermissions[roleIdOfUserWorkspace];
-
-    const objectPermissionKey =
-      this.getObjectPermissionKeyForRequiredPermission(requiredPermission);
-
-    const objectPermissionValue =
-      rolePermissionsForUserWorkspaceRole[objectMetadataId]?.[
-        objectPermissionKey
-      ];
-
-    return objectPermissionValue === true;
-  }
-
-  private getObjectPermissionKeyForRequiredPermission(
-    requiredPermission: PermissionsOnAllObjectRecords,
-  ) {
-    switch (requiredPermission) {
-      case PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS:
-        return 'canRead';
-      case PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS:
-        return 'canUpdate';
-      case PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS:
-        return 'canSoftDelete';
-      case PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS:
-        return 'canDestroy';
-      default:
-        throw new PermissionsException(
-          PermissionsExceptionMessage.UNKNOWN_REQUIRED_PERMISSION,
-          PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION,
-        );
-    }
+    return settingPermissions.some(
+      (settingPermission) => settingPermission.setting === setting,
+    );
   }
 }
