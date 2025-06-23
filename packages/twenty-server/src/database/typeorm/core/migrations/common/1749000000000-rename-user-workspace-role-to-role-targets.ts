@@ -11,6 +11,10 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."userWorkspaceRole" ALTER COLUMN "userWorkspaceId" DROP NOT NULL`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "FK_role_targets_agent_id" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
