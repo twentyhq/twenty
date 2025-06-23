@@ -10,8 +10,12 @@ export class CaptchaService implements CaptchaDriver {
   constructor(@Inject(CAPTCHA_DRIVER) private driver: CaptchaDriver) {}
 
   async validate(token: string): Promise<CaptchaValidateResult> {
-    return {
-      success: true,
-    };
+    if (this.driver) {
+      return await this.driver.validate(token);
+    } else {
+      return {
+        success: true,
+      };
+    }
   }
 }
