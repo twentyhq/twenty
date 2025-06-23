@@ -2,6 +2,7 @@ import {
   ExecutionContext,
   UseFilters,
   UseGuards,
+  UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
 import {
@@ -33,6 +34,8 @@ import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/sig
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -74,7 +77,9 @@ const OriginHeader = createParamDecorator(
 );
 
 @Resolver(() => Workspace)
+@UsePipes(ResolverValidationPipe)
 @UseFilters(
+  PreventNestToAutoLogGraphqlErrorsFilter,
   GraphqlValidationExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
 )
