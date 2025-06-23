@@ -7,6 +7,7 @@ import {
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   computeDepthParameters,
@@ -20,12 +21,16 @@ import {
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.utils';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
 type Properties = {
   [name: string]: Property;
 };
+
+type OpenApiExample = Record<string, FieldMetadataDefaultValue>;
 
 const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
   if (forResponse) {
@@ -86,6 +91,47 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
   }
 };
 
+const getSchemaComponentsExample = (
+  item: ObjectMetadataEntity,
+): OpenApiExample => {
+  return item.fields.reduce((node, field) => {
+    // If field is required
+    if (!field.isNullable && field.defaultValue === null) {
+      return { ...node, [field.name]: generateRandomFieldValue({ field }) };
+    }
+
+    switch (field.type) {
+      case FieldMetadataType.TEXT: {
+        if (field.name !== 'name') {
+          return node;
+        }
+
+        return {
+          ...node,
+          [field.name]: `${camelToTitleCase(item.nameSingular)} name`,
+        };
+      }
+
+      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.LINKS:
+      case FieldMetadataType.CURRENCY:
+      case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
+      case FieldMetadataType.PHONES: {
+        return {
+          ...node,
+          [field.name]: generateRandomFieldValue({ field }),
+        };
+      }
+
+      default: {
+        return node;
+      }
+    }
+  }, {});
+};
+
 const getSchemaComponentsProperties = ({
   item,
   forResponse,
@@ -105,12 +151,13 @@ const getSchemaComponentsProperties = ({
       isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
-      node[`${field.name}Id`] = {
-        type: 'string',
-        format: 'uuid',
+      return {
+        ...node,
+        [`${field.name}Id`]: {
+          type: 'string',
+          format: 'uuid',
+        },
       };
-
-      return node;
     }
 
     if (
@@ -333,7 +380,7 @@ const getSchemaComponentsProperties = ({
     }
 
     if (Object.keys(itemProperty).length) {
-      node[field.name] = itemProperty;
+      return { ...node, [field.name]: itemProperty };
     }
 
     return node;
@@ -379,7 +426,7 @@ const getSchemaComponentsRelationProperties = (
     }
 
     if (Object.keys(itemProperty).length) {
-      node[field.name] = itemProperty;
+      return { ...node, [field.name]: itemProperty };
     }
 
     return node;
@@ -400,20 +447,23 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
 const computeSchemaComponent = ({
   item,
-  withRequiredFields,
   forResponse,
-  withRelations,
+  forUpdate,
 }: {
   item: ObjectMetadataEntity;
-  withRequiredFields: boolean;
   forResponse: boolean;
-  withRelations: boolean;
+  forUpdate: boolean;
 }): OpenAPIV3_1.SchemaObject => {
-  const result = {
+  const withRelations = forResponse && !forUpdate;
+
+  const withRequiredFields = !forResponse && !forUpdate;
+
+  const result: OpenAPIV3_1.SchemaObject = {
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties({ item, forResponse }),
-  } as OpenAPIV3_1.SchemaObject;
+    ...(!forResponse ? { example: getSchemaComponentsExample(item) } : {}),
+  };
 
   if (withRelations) {
     result.properties = {
@@ -442,23 +492,20 @@ export const computeSchemaComponents = (
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,
-        withRequiredFields: true,
         forResponse: false,
-        withRelations: false,
+        forUpdate: false,
       });
       schemas[capitalize(item.nameSingular) + 'ForUpdate'] =
         computeSchemaComponent({
           item,
-          withRequiredFields: false,
           forResponse: false,
-          withRelations: false,
+          forUpdate: true,
         });
       schemas[capitalize(item.nameSingular) + 'ForResponse'] =
         computeSchemaComponent({
           item,
-          withRequiredFields: false,
           forResponse: true,
-          withRelations: true,
+          forUpdate: false,
         });
 
       return schemas;
