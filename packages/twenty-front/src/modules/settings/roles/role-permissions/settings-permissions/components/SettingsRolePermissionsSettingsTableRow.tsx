@@ -2,13 +2,11 @@ import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
@@ -57,9 +55,6 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-  );
   const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
   const isSettingPermissionEnabled =
@@ -68,8 +63,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     ) ?? false;
 
   const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;
-  const isDisabled =
-    !isEditable || canUpdateAllSettings || !isPermissionsV2Enabled;
+  const isDisabled = !isEditable || canUpdateAllSettings;
 
   const handleChange = (value: boolean) => {
     const currentPermissions = settingsDraftRole.settingPermissions ?? [];

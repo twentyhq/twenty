@@ -73,12 +73,6 @@ export class FeatureFlagService {
         },
       );
 
-      if (keys.includes(FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED)) {
-        await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-          { workspaceId },
-        );
-      }
-
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
         { workspaceId },
       );
@@ -137,12 +131,6 @@ export class FeatureFlagService {
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
       { workspaceId },
     );
-
-    if (featureFlag === FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED) {
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        { workspaceId },
-      );
-    }
 
     return result;
   }
