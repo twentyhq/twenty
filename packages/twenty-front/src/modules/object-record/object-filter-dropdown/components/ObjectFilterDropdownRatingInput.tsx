@@ -5,6 +5,7 @@ import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledRatingInputContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
@@ -49,9 +50,11 @@ export const ObjectFilterDropdownRatingInput = () => {
     applyObjectFilterDropdownFilterValue(ratingValueConverted);
   };
 
-  const currentFilterValueConvertedToRatingValue = convertRatingToRatingValue(
-    Number(objectFilterDropdownFilterValue),
-  );
+  const currentFilterValueConvertedToRatingValue = isDefined(
+    objectFilterDropdownFilterValue,
+  )
+    ? convertRatingToRatingValue(Number(objectFilterDropdownFilterValue))
+    : RATING_VALUES[0];
 
   return (
     <StyledRatingInputContainer>
