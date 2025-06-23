@@ -1,6 +1,7 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   FieldMetadataSettings,
@@ -25,6 +26,11 @@ type Property = OpenAPIV3_1.SchemaObject;
 
 type Properties = {
   [name: string]: Property;
+};
+
+type Example = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [name: string]: any;
 };
 
 const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
@@ -84,6 +90,59 @@ const getFieldProperties = (field: FieldMetadataEntity): Property => {
       return { type: 'string' };
     }
   }
+};
+
+const getSchemaComponentsExample = ({
+  item,
+  forUpdate,
+}: {
+  item: ObjectMetadataEntity;
+  forUpdate: boolean;
+}): Example => {
+  return item.fields.reduce((node, field) => {
+    switch (field.type) {
+      case FieldMetadataType.TEXT: {
+        if (field.name !== 'name') {
+          return node;
+        }
+
+        node[field.name] = `${capitalize(item.nameSingular)} name`;
+
+        return node;
+      }
+      case FieldMetadataType.UUID: {
+        if (forUpdate) {
+          return node;
+        }
+
+        node[field.name] = v4();
+
+        return node;
+      }
+
+      case FieldMetadataType.EMAILS: {
+        node[field.name] = {
+          primaryEmail: 'johndoe@gmail.com',
+          additionalEmails: null,
+        };
+
+        return node;
+      }
+
+      case FieldMetadataType.FULL_NAME: {
+        node[field.name] = {
+          firstName: 'John',
+          lastName: 'Doe',
+        };
+
+        return node;
+      }
+
+      default: {
+        return node;
+      }
+    }
+  }, {} as Example);
 };
 
 const getSchemaComponentsProperties = ({
@@ -400,19 +459,24 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
 const computeSchemaComponent = ({
   item,
-  withRequiredFields,
   forResponse,
-  withRelations,
+  forUpdate,
 }: {
   item: ObjectMetadataEntity;
-  withRequiredFields: boolean;
   forResponse: boolean;
-  withRelations: boolean;
+  forUpdate: boolean;
 }): OpenAPIV3_1.SchemaObject => {
+  const withRelations = forResponse && !forUpdate;
+
+  const withRequiredFields = !forResponse && !forUpdate;
+
   const result = {
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties({ item, forResponse }),
+    ...(!forResponse
+      ? { example: getSchemaComponentsExample({ item, forUpdate }) }
+      : {}),
   } as OpenAPIV3_1.SchemaObject;
 
   if (withRelations) {
@@ -442,23 +506,20 @@ export const computeSchemaComponents = (
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,
-        withRequiredFields: true,
         forResponse: false,
-        withRelations: false,
+        forUpdate: false,
       });
       schemas[capitalize(item.nameSingular) + 'ForUpdate'] =
         computeSchemaComponent({
           item,
-          withRequiredFields: false,
           forResponse: false,
-          withRelations: false,
+          forUpdate: true,
         });
       schemas[capitalize(item.nameSingular) + 'ForResponse'] =
         computeSchemaComponent({
           item,
-          withRequiredFields: false,
           forResponse: true,
-          withRelations: true,
+          forUpdate: false,
         });
 
       return schemas;
