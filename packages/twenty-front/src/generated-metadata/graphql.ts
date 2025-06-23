@@ -120,6 +120,11 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean']['output'];
 };
 
+export type AssignRoleToAgentInput = {
+  agentId: Scalars['String']['input'];
+  roleId: Scalars['String']['input'];
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
@@ -988,6 +993,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
+  assignRoleToAgent: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -1034,6 +1040,7 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeRoleFromAgent: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1084,6 +1091,11 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAssignRoleToAgentArgs = {
+  input: AssignRoleToAgentInput;
 };
 
 
@@ -1298,6 +1310,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveRoleFromAgentArgs = {
+  input: RemoveRoleFromAgentInput;
 };
 
 
@@ -1721,6 +1738,8 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAgentRoles: Array<Role>;
+  getAgentsWithRole: Array<Agent>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
@@ -1803,6 +1822,16 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
+};
+
+
+export type QueryGetAgentRolesArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryGetAgentsWithRoleArgs = {
+  roleId: Scalars['String']['input'];
 };
 
 
@@ -1987,6 +2016,11 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
+export type RemoveRoleFromAgentInput = {
+  agentId: Scalars['String']['input'];
+  roleId: Scalars['String']['input'];
+};
+
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean']['output'];
@@ -1994,6 +2028,7 @@ export type ResendEmailVerificationTokenOutput = {
 
 export type Role = {
   __typename?: 'Role';
+  agents: Array<Agent>;
   canDestroyAllObjectRecords: Scalars['Boolean']['output'];
   canReadAllObjectRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean']['output'];
