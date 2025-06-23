@@ -15,6 +15,9 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
       return msg`Action`;
     case 'HTTP_REQUEST':
       return msg`HTTP Request`;
+    case 'AI_AGENT':
+      return msg`AI Agent`;
+
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }
