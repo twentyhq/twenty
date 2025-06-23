@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
-import { CronRemoveAllCommand } from 'src/database/commands/cron-remove-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
@@ -38,7 +37,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     DataSeedWorkspaceCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
-    CronRemoveAllCommand,
   ],
 })
 export class DatabaseCommandModule {}

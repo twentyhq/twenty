@@ -30,21 +30,65 @@ export class CronRegisterAllCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    try {
-      this.logger.log('Registering all background sync cron jobs...');
+    this.logger.log('Registering all background sync cron jobs...');
 
-      await this.messagingMessagesImportCronCommand.run();
-      await this.messagingMessageListFetchCronCommand.run();
-      await this.messagingOngoingStaleCronCommand.run();
-      await this.calendarEventListFetchCronCommand.run();
-      await this.calendarEventsImportCronCommand.run();
-      await this.calendarOngoingStaleCronCommand.run();
-      await this.cronTriggerCronCommand.run();
+    const commands = [
+      {
+        name: 'MessagingMessagesImport',
+        command: this.messagingMessagesImportCronCommand,
+      },
+      {
+        name: 'MessagingMessageListFetch',
+        command: this.messagingMessageListFetchCronCommand,
+      },
+      {
+        name: 'MessagingOngoingStale',
+        command: this.messagingOngoingStaleCronCommand,
+      },
+      {
+        name: 'CalendarEventListFetch',
+        command: this.calendarEventListFetchCronCommand,
+      },
+      {
+        name: 'CalendarEventsImport',
+        command: this.calendarEventsImportCronCommand,
+      },
+      {
+        name: 'CalendarOngoingStale',
+        command: this.calendarOngoingStaleCronCommand,
+      },
+      { name: 'CronTrigger', command: this.cronTriggerCronCommand },
+    ];
 
-      this.logger.log('Successfully registered all background sync cron jobs');
-    } catch (error) {
-      this.logger.error('Failed to register cron jobs:', error);
-      throw error;
+    let successCount = 0;
+    let failureCount = 0;
+    const failures: string[] = [];
+    const successes: string[] = [];
+
+    for (const { name, command } of commands) {
+      try {
+        this.logger.log(`Registering ${name} cron job...`);
+        await command.run();
+        this.logger.log(`Successfully registered ${name} cron job`);
+        successCount++;
+        successes.push(name);
+      } catch (error) {
+        this.logger.error(`Failed to register ${name} cron job:`, error);
+        failureCount++;
+        failures.push(name);
+      }
+    }
+
+    this.logger.log(
+      `Cron job registration completed: ${successCount} successful, ${failureCount} failed`,
+    );
+
+    if (failures.length > 0) {
+      this.logger.warn(`Failed commands: ${failures.join(', ')}`);
+    }
+
+    if (successCount > 0) {
+      this.logger.log(`Successful commands: ${successes.join(', ')}`);
     }
   }
 }
