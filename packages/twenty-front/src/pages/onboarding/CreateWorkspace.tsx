@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
@@ -16,6 +16,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
@@ -35,6 +36,21 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+enum PendingCreationLoaderStep {
+  None = 'none',
+  Step1 = 'step-1',
+  Step2 = 'step-2',
+  Step3 = 'step-3',
+}
+
+const StyledPendingCreationLoader = styled(motion.div)`
+  height: 318px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
@@ -43,6 +59,9 @@ export const CreateWorkspace = () => {
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
+  const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
+    PendingCreationLoaderStep.None,
+  );
 
   const validationSchema = z
     .object({
@@ -68,6 +87,16 @@ export const CreateWorkspace = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
+        setTimeout(() => {
+          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step1);
+        }, 1500);
+        setTimeout(() => {
+          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step2);
+        }, 3000);
+        setTimeout(() => {
+          setPendingCreationLoaderStep(PendingCreationLoaderStep.Step3);
+        }, 5000);
+
         const result = await activateWorkspace({
           variables: {
             input: {
@@ -84,6 +113,7 @@ export const CreateWorkspace = () => {
         await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
+        setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
         });
@@ -108,55 +138,86 @@ export const CreateWorkspace = () => {
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <Title noMarginTop>
-        <Trans>Create your workspace</Trans>
-      </Title>
-      <SubTitle>
-        <Trans>
-          A shared environment where you will be able to manage your customer
-          relations with your team.
-        </Trans>
-      </SubTitle>
-      <StyledContentContainer>
-        <StyledSectionContainer>
-          <H2Title title={t`Workspace logo`} />
-          <WorkspaceLogoUploader />
-        </StyledSectionContainer>
-        <StyledSectionContainer>
-          <H2Title
-            title={t`Workspace name`}
-            description={t`The name of your organization`}
-          />
-          <Controller
-            name="name"
-            control={control}
-            render={({
-              field: { onChange, onBlur, value },
-              fieldState: { error },
-            }) => (
-              <TextInputV2
-                autoFocus
-                value={value}
-                placeholder="Apple"
-                onBlur={onBlur}
-                onChange={onChange}
-                error={error?.message}
-                onKeyDown={handleKeyDown}
-                fullWidth
-              />
+      {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
+        <>
+          <StyledPendingCreationLoader>
+            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step1 && (
+              <>
+                <Title animate>
+                  <Loader color="gray" />
+                  <Trans>Setting up your database</Trans>
+                </Title>
+              </>
             )}
-          />
-        </StyledSectionContainer>
-      </StyledContentContainer>
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Continue`}
-          onClick={handleSubmit(onSubmit)}
-          disabled={!isValid || isSubmitting}
-          Icon={() => isSubmitting && <Loader />}
-          fullWidth
-        />
-      </StyledButtonContainer>
+            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step2 && (
+              <Title animate>
+                <Loader color="gray" />
+                <Trans>Creating your schema</Trans>
+              </Title>
+            )}
+            {pendingCreationLoaderStep === PendingCreationLoaderStep.Step3 && (
+              <Title animate>
+                <Loader color="gray" />
+                <Trans>Prefilling your workspace data</Trans>
+              </Title>
+            )}
+          </StyledPendingCreationLoader>
+        </>
+      )}
+      {pendingCreationLoaderStep === PendingCreationLoaderStep.None && (
+        <>
+          <Title noMarginTop>
+            <Trans>Create your workspace</Trans>
+          </Title>
+          <SubTitle>
+            <Trans>
+              A shared environment where you will be able to manage your
+              customer relations with your team.
+            </Trans>
+          </SubTitle>
+
+          <StyledContentContainer>
+            <StyledSectionContainer>
+              <H2Title title={t`Workspace logo`} />
+              <WorkspaceLogoUploader />
+            </StyledSectionContainer>
+            <StyledSectionContainer>
+              <H2Title
+                title={t`Workspace name`}
+                description={t`The name of your organization`}
+              />
+              <Controller
+                name="name"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <TextInputV2
+                    autoFocus
+                    value={value}
+                    placeholder="Apple"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    error={error?.message}
+                    onKeyDown={handleKeyDown}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledSectionContainer>
+          </StyledContentContainer>
+          <StyledButtonContainer>
+            <MainButton
+              title={t`Continue`}
+              onClick={handleSubmit(onSubmit)}
+              disabled={!isValid || isSubmitting}
+              Icon={() => isSubmitting && <Loader />}
+              fullWidth
+            />
+          </StyledButtonContainer>
+        </>
+      )}
     </Modal.Content>
   );
 };
