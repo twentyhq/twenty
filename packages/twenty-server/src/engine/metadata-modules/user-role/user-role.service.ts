@@ -47,7 +47,7 @@ export class UserRoleService {
       return;
     }
 
-    const newUserWorkspaceRole = await this.roleTargetsRepository.save({
+    const newRoleTarget = await this.roleTargetsRepository.save({
       roleId,
       userWorkspaceId,
       workspaceId,
@@ -56,7 +56,7 @@ export class UserRoleService {
     await this.roleTargetsRepository.delete({
       userWorkspaceId,
       workspaceId,
-      id: Not(newUserWorkspaceRole.id),
+      id: Not(newRoleTarget.id),
     });
 
     await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
@@ -99,7 +99,7 @@ export class UserRoleService {
       return new Map();
     }
 
-    const allUserWorkspaceRoles = await this.roleTargetsRepository.find({
+    const allRoleTargets = await this.roleTargetsRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         workspaceId,
@@ -111,20 +111,19 @@ export class UserRoleService {
       },
     });
 
-    if (!allUserWorkspaceRoles.length) {
+    if (!allRoleTargets.length) {
       return new Map();
     }
 
     const rolesMap = new Map<string, RoleEntity[]>();
 
     for (const userWorkspaceId of userWorkspaceIds) {
-      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
-        (userWorkspaceRole) =>
-          userWorkspaceRole.userWorkspaceId === userWorkspaceId,
+      const roleTargetsOfUserWorkspace = allRoleTargets.filter(
+        (roleTarget) => roleTarget.userWorkspaceId === userWorkspaceId,
       );
 
-      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
-        .map((userWorkspaceRole) => userWorkspaceRole.role)
+      const rolesOfUserWorkspace = roleTargetsOfUserWorkspace
+        .map((roleTarget) => roleTarget.role)
         .filter(isDefined);
 
       rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);

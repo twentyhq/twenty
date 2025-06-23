@@ -59,14 +59,14 @@ export class TwentyORMManager {
     let roleId: string | undefined;
 
     if (isDefined(userWorkspaceId)) {
-      const userWorkspaceRole = await this.roleTargetsRepository.findOne({
+      const roleTarget = await this.roleTargetsRepository.findOne({
         where: {
           userWorkspaceId,
-          workspaceId: workspaceId,
+          workspaceId,
         },
       });
 
-      roleId = userWorkspaceRole?.roleId;
+      roleId = roleTarget?.roleId;
     }
 
     const shouldBypassPermissionChecks = !!isExecutedByApiKey;
