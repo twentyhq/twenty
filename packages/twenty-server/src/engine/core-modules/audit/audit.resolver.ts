@@ -7,7 +7,7 @@ import {
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { CreateObjectEventInput } from 'src/engine/core-modules/audit/dtos/create-object-event.input';
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,7 +26,7 @@ import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(AuditExceptionFilter, GraphqlValidationExceptionFilter)
+@UseFilters(AuditExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 

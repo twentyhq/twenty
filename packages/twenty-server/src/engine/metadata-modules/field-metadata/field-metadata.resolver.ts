@@ -10,6 +10,7 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
   ForbiddenError,
@@ -40,14 +41,13 @@ import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mod
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
 @Resolver(() => FieldMetadataDTO)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
-  GraphqlValidationExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class FieldMetadataResolver {
   constructor(

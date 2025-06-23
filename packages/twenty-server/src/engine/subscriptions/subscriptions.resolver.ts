@@ -4,7 +4,7 @@ import { Args, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -14,7 +14,7 @@ import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input'
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(GraphqlValidationExceptionFilter)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class SubscriptionsResolver {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 

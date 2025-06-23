@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateDraftFromWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/create-draft-from-workflow-version-input';
 import { WorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version.dto';
@@ -23,7 +23,7 @@ import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-b
 )
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
-  GraphqlValidationExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class WorkflowVersionResolver {
   constructor(

@@ -8,7 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -35,7 +34,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
-  GraphqlValidationExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
 )
 export class ObjectMetadataResolver {

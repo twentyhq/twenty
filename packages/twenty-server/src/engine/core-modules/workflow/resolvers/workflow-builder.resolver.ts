@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ComputeStepOutputSchemaInput } from 'src/engine/core-modules/workflow/dtos/compute-step-output-schema-input.dto';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
@@ -27,7 +27,7 @@ import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-bu
 @UseFilters(
   WorkflowTriggerGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
-  GraphqlValidationExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class WorkflowBuilderResolver {
   constructor(

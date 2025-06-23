@@ -5,7 +5,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { UpdateLabPublicFeatureFlagInput } from 'src/engine/core-modules/lab/dtos/update-lab-public-feature-flag.input';
@@ -21,7 +21,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
-  GraphqlValidationExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UseGuards(SettingsPermissionsGuard(SettingPermissionType.WORKSPACE))
 export class LabResolver {
