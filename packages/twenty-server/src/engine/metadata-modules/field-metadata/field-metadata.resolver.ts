@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -10,6 +10,8 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
   ForbiddenError,
   ValidationError,
@@ -41,8 +43,12 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
 @Resolver(() => FieldMetadataDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
