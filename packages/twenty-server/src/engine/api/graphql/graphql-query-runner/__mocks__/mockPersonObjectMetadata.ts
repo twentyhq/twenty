@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-export const mockPersonObjectMetadata = (
+export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
 ): ObjectMetadataItemWithFieldMaps => ({
   id: '',
@@ -25,10 +25,15 @@ export const mockPersonObjectMetadata = (
   imageIdentifierFieldMetadataId: '',
   workspaceId: '',
   indexMetadatas: [],
-  fieldIdByName: {},
+  fieldIdByName: {
+    name: 'name-id',
+    emails: 'emails-id',
+    linkedinLink: 'linkedinLink-id',
+    jobTitle: 'jobTitle-id',
+  },
   fieldIdByJoinColumnName: {},
   fieldsById: {
-    name: {
+    'name-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.FULL_NAME,
@@ -44,7 +49,7 @@ export const mockPersonObjectMetadata = (
       isUnique: false,
       workspaceId: '',
     },
-    emails: {
+    'emails-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.EMAILS,
@@ -58,7 +63,7 @@ export const mockPersonObjectMetadata = (
       isCustom: false,
       workspaceId: '',
     },
-    linkedinLink: {
+    'linkedinLink-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.LINKS,
@@ -75,7 +80,7 @@ export const mockPersonObjectMetadata = (
       isUnique: false,
       workspaceId: '',
     },
-    jobTitle: {
+    'jobTitle-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.TEXT,

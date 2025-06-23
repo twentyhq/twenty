@@ -24,26 +24,26 @@ describe('QueryRunnerArgsFactory', () => {
       isCustom: true,
       nameSingular: 'testNumber',
       fieldsById: {
-        position: {
+        'position-id': {
           type: FieldMetadataType.POSITION,
           isCustom: true,
           name: 'position',
         },
-        testNumber: {
+        'testNumber-id': {
           type: FieldMetadataType.NUMBER,
           isCustom: true,
           name: 'testNumber',
         },
-        otherField: {
+        'otherField-id': {
           type: FieldMetadataType.TEXT,
           isCustom: true,
           name: 'otherField',
         },
       } as unknown as FieldMetadataMap,
       fieldIdByName: {
-        position: 'position',
-        testNumber: 'testNumber',
-        otherField: 'otherField',
+        position: 'position-id',
+        testNumber: 'testNumber-id',
+        otherField: 'otherField-id',
       },
       fieldIdByJoinColumnName: {},
     },
