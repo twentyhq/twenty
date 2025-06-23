@@ -57,6 +57,7 @@ describe('useResetFocusStackToFocusItem', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {
@@ -67,7 +68,7 @@ describe('useResetFocusStackToFocusItem', () => {
           instanceId: firstFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: firstFocusItem.memoizeKey,
       });
     });
 
@@ -79,7 +80,7 @@ describe('useResetFocusStackToFocusItem', () => {
           instanceId: secondFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: secondFocusItem.memoizeKey,
       });
     });
 
@@ -93,7 +94,7 @@ describe('useResetFocusStackToFocusItem', () => {
       result.current.resetFocusStackToFocusItem({
         focusStackItem: firstFocusItem,
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: firstFocusItem.memoizeKey,
       });
     });
 

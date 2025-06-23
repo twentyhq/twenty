@@ -29,8 +29,8 @@ export const useCloseRecordTableCellInGroup = () => {
     );
 
   const closeTableCellInGroup = useRecoilCallback(
-    () =>
-      ({ set }) => {
+    ({ set }) =>
+      () => {
         toggleClickOutside(true);
         setDragSelectionStartEnabled(true);
         closeCurrentTableCellInEditMode();
