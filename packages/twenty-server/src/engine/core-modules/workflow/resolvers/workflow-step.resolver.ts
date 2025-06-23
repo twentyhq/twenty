@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GraphqlValidationExceptionFilter } from 'src/engine/core-modules/graphql/filters/graphql-validation-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -17,6 +19,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Resolver()
@@ -34,6 +37,7 @@ export class WorkflowStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Mutation(() => WorkflowActionDTO)
@@ -42,6 +46,19 @@ export class WorkflowStepResolver {
     @Args('input')
     input: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
+    if (input.stepType === WorkflowActionType.AI_AGENT) {
+      const isAiEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_ENABLED,
+        workspaceId,
+      );
+
+      if (!isAiEnabled) {
+        throw new Error(
+          'AI features are not available in your current workspace. Please contact support to enable them.',
+        );
+      }
+    }
+
     return this.workflowVersionStepWorkspaceService.createWorkflowVersionStep({
       workspaceId,
       input,

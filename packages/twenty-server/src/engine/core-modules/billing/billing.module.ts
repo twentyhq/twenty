@@ -3,6 +3,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
@@ -41,6 +42,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,
+    AiModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,

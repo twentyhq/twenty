@@ -3,6 +3,13 @@ import { gql } from '@apollo/client';
 export const GET_CLIENT_CONFIG = gql`
   query GetClientConfig {
     clientConfig {
+      aiModels {
+        modelId
+        label
+        provider
+        inputCostPer1kTokensInCredits
+        outputCostPer1kTokensInCredits
+      }
       billing {
         isBillingEnabled
         billingUrl
