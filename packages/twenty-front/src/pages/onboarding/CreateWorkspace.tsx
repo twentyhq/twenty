@@ -44,7 +44,7 @@ enum PendingCreationLoaderStep {
 }
 
 const StyledPendingCreationLoader = styled(motion.div)`
-  height: 318px;
+  height: 388px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -89,10 +89,10 @@ export const CreateWorkspace = () => {
       try {
         setTimeout(() => {
           setPendingCreationLoaderStep(PendingCreationLoaderStep.Step1);
-        }, 1500);
+        }, 500);
         setTimeout(() => {
           setPendingCreationLoaderStep(PendingCreationLoaderStep.Step2);
-        }, 3000);
+        }, 2000);
         setTimeout(() => {
           setPendingCreationLoaderStep(PendingCreationLoaderStep.Step3);
         }, 5000);
@@ -142,12 +142,10 @@ export const CreateWorkspace = () => {
         <>
           <StyledPendingCreationLoader>
             {pendingCreationLoaderStep === PendingCreationLoaderStep.Step1 && (
-              <>
-                <Title animate>
-                  <Loader color="gray" />
-                  <Trans>Setting up your database</Trans>
-                </Title>
-              </>
+              <Title animate>
+                <Loader color="gray" />
+                <Trans>Setting up your database</Trans>
+              </Title>
             )}
             {pendingCreationLoaderStep === PendingCreationLoaderStep.Step2 && (
               <Title animate>
