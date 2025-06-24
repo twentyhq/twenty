@@ -399,23 +399,24 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
       logo: workspace.logo,
-      sso: workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspace['sso'],
-      ),
+      sso:
+        workspace.workspaceSSOIdentityProviders?.reduce(
+          (acc, identityProvider) =>
+            acc.concat(
+              identityProvider.status === 'Inactive'
+                ? []
+                : [
+                    {
+                      id: identityProvider.id,
+                      name: identityProvider.name,
+                      issuer: identityProvider.issuer,
+                      type: identityProvider.type,
+                      status: identityProvider.status,
+                    },
+                  ],
+            ),
+          [] as AvailableWorkspace['sso'],
+        ) ?? [],
     };
   }
 
