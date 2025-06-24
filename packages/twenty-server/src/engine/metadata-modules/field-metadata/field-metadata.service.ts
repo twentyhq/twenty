@@ -609,7 +609,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
 
         validateMetadataTargetLabelOrThrow(
-          relationCreationPayload?.targetFieldLabel,
+          relationCreationPayload.targetFieldLabel,
         );
 
         const objectMetadataTarget =
@@ -801,19 +801,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const targetFieldMetadataName = computeMetadataNameFromLabel(
       relationCreationPayload.targetFieldLabel,
     );
-
-    try {
-      validateMetadataNameOrThrow(targetFieldMetadataName);
-    } catch (error) {
-      if (error instanceof InvalidMetadataException) {
-        throw new FieldMetadataException(
-          error.message,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      throw error;
-    }
 
     const targetFieldMetadataToCreate =
       this.prepareCustomFieldMetadataForCreation({
