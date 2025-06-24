@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
@@ -608,23 +608,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return fieldMetadataInput;
   }
 
-  async resolveOverridableString(
-    fieldMetadata: FieldMetadataDTO,
+  resolveOverridableString(
+    fieldMetadata: Pick<
+      FieldMetadataDTO,
+      'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
+    >,
     labelKey: 'label' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
-  ): Promise<string> {
+  ): string {
     if (fieldMetadata.isCustom) {
-      return fieldMetadata[labelKey] ?? '';
-    }
-
-    if (!locale || locale === SOURCE_LOCALE) {
-      if (
-        fieldMetadata.standardOverrides &&
-        isDefined(fieldMetadata.standardOverrides[labelKey])
-      ) {
-        return fieldMetadata.standardOverrides[labelKey] as string;
-      }
-
       return fieldMetadata[labelKey] ?? '';
     }
 

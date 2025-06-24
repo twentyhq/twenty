@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import { isDefined } from 'class-validator';
 import { Plugin } from 'graphql-yoga';
 
@@ -20,8 +22,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     const localeCacheKey = isDefined(serverContext.req.headers['x-locale'])
       ? `:${locale}`
       : '';
+    const queryHash = createHash('sha256')
+      .update(serverContext.req.body.query)
+      .digest('hex');
 
-    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}:${queryHash}`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -3,6 +3,7 @@ import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -13,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -39,6 +41,8 @@ export const useOpenRelationToOneFieldInput = () => {
           );
         }
 
+        openSingleRecordPicker(recordPickerInstanceId);
+
         pushFocusItemToFocusStack({
           focusId: recordPickerInstanceId,
           component: {
@@ -50,7 +54,7 @@ export const useOpenRelationToOneFieldInput = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [pushFocusItemToFocusStack],
+    [openSingleRecordPicker, pushFocusItemToFocusStack],
   );
 
   return { openRelationToOneFieldInput };
