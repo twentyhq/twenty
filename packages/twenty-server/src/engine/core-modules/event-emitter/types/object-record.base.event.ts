@@ -13,6 +13,6 @@ export class ObjectRecordBaseEvent<T = object> {
   recordId: string;
   userId?: string;
   workspaceMemberId?: string;
-  objectMetadata: ObjectMetadataInterface;
+  objectMetadata: Omit<ObjectMetadataInterface, 'indexMetadatas'>;
   properties: Properties<T>;
 }

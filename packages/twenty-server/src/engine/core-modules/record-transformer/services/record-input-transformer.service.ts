@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -29,19 +27,11 @@ export class RecordInputTransformerService {
       return recordInput;
     }
 
-    const fieldMetadataByFieldName = objectMetadataMapItem.fields.reduce(
-      (acc, field) => {
-        acc[field.name] = field;
-
-        return acc;
-      },
-      {} as Record<string, FieldMetadataInterface>,
-    );
-
     let transformedEntries = {};
 
     for (const [key, value] of Object.entries(recordInput)) {
-      const fieldMetadata = fieldMetadataByFieldName[key];
+      const fieldMetadataId = objectMetadataMapItem.fieldIdByName[key];
+      const fieldMetadata = objectMetadataMapItem.fieldsById[fieldMetadataId];
 
       if (!fieldMetadata) {
         transformedEntries = { ...transformedEntries, [key]: value };

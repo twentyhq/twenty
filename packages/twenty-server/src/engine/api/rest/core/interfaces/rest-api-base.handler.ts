@@ -160,32 +160,34 @@ export abstract class RestApiBaseHandler {
 
     const relations: string[] = [];
 
-    objectMetadata.objectMetadataMapItem.fields.forEach((field) => {
-      if (field.type === FieldMetadataType.RELATION) {
-        if (
-          depth === MAX_DEPTH &&
-          isDefined(field.relationTargetObjectMetadataId)
-        ) {
-          const relationTargetObjectMetadata =
-            objectMetadata.objectMetadataMaps.byId[
-              field.relationTargetObjectMetadataId
-            ];
-          const depth2Relations = this.getRelations({
-            objectMetadata: {
-              objectMetadataMaps: objectMetadata.objectMetadataMaps,
-              objectMetadataMapItem: relationTargetObjectMetadata,
-            },
-            depth: 1,
-          });
+    Object.values(objectMetadata.objectMetadataMapItem.fieldsById).forEach(
+      (field) => {
+        if (field.type === FieldMetadataType.RELATION) {
+          if (
+            depth === MAX_DEPTH &&
+            isDefined(field.relationTargetObjectMetadataId)
+          ) {
+            const relationTargetObjectMetadata =
+              objectMetadata.objectMetadataMaps.byId[
+                field.relationTargetObjectMetadataId
+              ];
+            const depth2Relations = this.getRelations({
+              objectMetadata: {
+                objectMetadataMaps: objectMetadata.objectMetadataMaps,
+                objectMetadataMapItem: relationTargetObjectMetadata,
+              },
+              depth: 1,
+            });
 
-          depth2Relations.forEach((depth2Relation) => {
-            relations.push(`${field.name}.${depth2Relation}`);
-          });
-        } else {
-          relations.push(`${field.name}`);
+            depth2Relations.forEach((depth2Relation) => {
+              relations.push(`${field.name}.${depth2Relation}`);
+            });
+          } else {
+            relations.push(`${field.name}`);
+          }
         }
-      }
-    });
+      },
+    );
 
     return relations;
   }
@@ -305,9 +307,7 @@ export abstract class RestApiBaseHandler {
       objectMetadataMaps: ObjectMetadataMaps;
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
-    objectMetadataItemWithFieldsMaps:
-      | ObjectMetadataItemWithFieldMaps
-      | undefined;
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
     extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     const objectMetadataNameSingular =
@@ -321,17 +321,10 @@ export abstract class RestApiBaseHandler {
       objectMetadata,
     );
 
-    const fieldMetadataMapByName =
-      objectMetadataItemWithFieldsMaps?.fieldsByName || {};
-
-    const fieldMetadataMapByJoinColumnName =
-      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName || {};
-
     const isForwardPagination = !inputs.endingBefore;
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      fieldMetadataMapByName,
-      fieldMetadataMapByJoinColumnName,
+      objectMetadataItemWithFieldsMaps,
       objectMetadata.objectMetadataMaps,
     );
 
@@ -442,7 +435,7 @@ export abstract class RestApiBaseHandler {
       const cursorArgFilter = computeCursorArgFilter(
         this.parseCursor(cursor),
         inputs.orderBy || [],
-        objectMetadata.objectMetadataMapItem.fieldsByName,
+        objectMetadata.objectMetadataMapItem,
         isForwardPagination,
       );
 

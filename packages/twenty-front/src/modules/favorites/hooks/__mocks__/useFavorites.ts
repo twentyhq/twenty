@@ -1012,4 +1012,5 @@ export const mockWorkspaceMember = {
   createdAt: '',
   updatedAt: '',
   userId: '1',
+  userEmail: 'userEmail',
 };

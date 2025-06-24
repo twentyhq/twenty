@@ -23,40 +23,29 @@ describe('QueryRunnerArgsFactory', () => {
     objectMetadataItemWithFieldMaps: {
       isCustom: true,
       nameSingular: 'testNumber',
-      fields: [
-        {
+      fieldsById: {
+        'position-id': {
           type: FieldMetadataType.POSITION,
           isCustom: true,
           name: 'position',
         },
-        {
+        'testNumber-id': {
           type: FieldMetadataType.NUMBER,
           isCustom: true,
           name: 'testNumber',
         },
-        {
-          type: FieldMetadataType.TEXT,
-          isCustom: true,
-          name: 'otherField',
-        },
-      ],
-      fieldsByName: {
-        position: {
-          type: FieldMetadataType.POSITION,
-          isCustom: true,
-          name: 'position',
-        },
-        testNumber: {
-          type: FieldMetadataType.NUMBER,
-          isCustom: true,
-          name: 'testNumber',
-        },
-        otherField: {
+        'otherField-id': {
           type: FieldMetadataType.TEXT,
           isCustom: true,
           name: 'otherField',
         },
       } as unknown as FieldMetadataMap,
+      fieldIdByName: {
+        position: 'position-id',
+        testNumber: 'testNumber-id',
+        otherField: 'otherField-id',
+      },
+      fieldIdByJoinColumnName: {},
     },
   } as unknown as WorkspaceQueryRunnerOptions;
 

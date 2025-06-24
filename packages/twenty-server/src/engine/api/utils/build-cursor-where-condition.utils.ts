@@ -11,19 +11,19 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 type BuildCursorWhereConditionParams = {
   cursorKey: keyof ObjectRecord;
   cursorValue:
     | ObjectRecordCursorLeafScalarValue
     | ObjectRecordCursorLeafCompositeValue;
-  fieldMetadataMapByName: FieldMetadataMap;
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
   orderBy: ObjectRecordOrderBy;
   isForwardPagination: boolean;
   isEqualityCondition?: boolean;
@@ -32,12 +32,15 @@ type BuildCursorWhereConditionParams = {
 export const buildCursorWhereCondition = ({
   cursorKey,
   cursorValue,
-  fieldMetadataMapByName,
+  objectMetadataItemWithFieldMaps,
   orderBy,
   isForwardPagination,
   isEqualityCondition = false,
 }: BuildCursorWhereConditionParams): Record<string, unknown> => {
-  const fieldMetadata = fieldMetadataMapByName[cursorKey];
+  const fieldMetadataId =
+    objectMetadataItemWithFieldMaps.fieldIdByName[cursorKey];
+  const fieldMetadata =
+    objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(

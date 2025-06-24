@@ -63,7 +63,7 @@ export class WorkspaceMemberTranspiler {
     } = workspaceMemberEntity;
 
     const avatarUrl = this.generateSignedAvatarUrl({
-      workspaceId: userWorkspace.id,
+      workspaceId: userWorkspace.workspaceId,
       workspaceMember: {
         avatarUrl: avatarUrlFromEntity,
         id,

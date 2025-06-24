@@ -11,6 +11,7 @@ export type ObjectMetadataItem = Omit<
   | 'indexMetadatas'
   | 'labelIdentifierFieldMetadataId'
   | 'fieldsList'
+  | 'indexMetadataList'
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];

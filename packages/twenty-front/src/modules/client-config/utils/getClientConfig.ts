@@ -1,5 +1,5 @@
+import { ClientConfig } from '@/client-config/types/ClientConfig';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ClientConfig } from '~/generated/graphql';
 
 export const getClientConfig = async (): Promise<ClientConfig> => {
   const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/client-config`, {

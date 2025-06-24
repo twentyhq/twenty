@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { EntitySchemaRelationOptions } from 'typeorm';
 
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -17,12 +17,14 @@ export class EntitySchemaRelationFactory {
   constructor() {}
 
   async create(
-    fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchemaRelationMap> {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const fieldMetadataCollection = Object.values(fieldMetadataMapByName);
+    const fieldMetadataCollection = Object.values(
+      objectMetadataItemWithFieldMaps.fieldsById,
+    );
 
     for (const fieldMetadata of fieldMetadataCollection) {
       if (

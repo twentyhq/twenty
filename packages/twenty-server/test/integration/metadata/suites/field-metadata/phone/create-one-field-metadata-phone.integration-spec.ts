@@ -118,6 +118,23 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
       },
     },
     {
+      title: 'create primary phone field with empty strings in payload',
+      context: {
+        input: {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '' as CountryCode,
+          primaryPhoneCallingCode: '',
+          additionalPhones: null,
+        },
+        expected: {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '' as CountryCode,
+          primaryPhoneCallingCode: '',
+          additionalPhones: null,
+        },
+      },
+    },
+    {
       title: 'create additional phone field with number and other information',
       context: {
         input: {
@@ -306,7 +323,7 @@ const FAILING_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[]
 describe('Phone field metadata tests suite', () => {
   let createdObjectMetadataId: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const { data } = await forceCreateOneObjectMetadata({
       input: {
         nameSingular: 'myTestObject',
@@ -337,7 +354,7 @@ describe('Phone field metadata tests suite', () => {
     });
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataId },
     });

@@ -16,8 +16,11 @@ export const computeStandardFields = (
   )[],
   originalObjectMetadata: ObjectMetadataEntity,
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
-): ComputedPartialFieldMetadata[] => {
-  const fields: ComputedPartialFieldMetadata[] = [];
+): Omit<ComputedPartialFieldMetadata, 'createdAt' | 'updatedAt'>[] => {
+  const fields: Omit<
+    ComputedPartialFieldMetadata,
+    'createdAt' | 'updatedAt'
+  >[] = [];
 
   for (const partialFieldMetadata of standardFieldMetadataCollection) {
     // Relation from standard object to custom object
@@ -43,6 +46,8 @@ export const computeStandardFields = (
           ...rest,
           standardId: relationStandardId,
           defaultValue: null,
+          isNullable: true,
+          isLabelSyncedWithName: true,
         });
       }
     } else {
