@@ -14,13 +14,22 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { AppPath } from '@/types/AppPath';
+import { pdfjs } from 'react-pdf';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+import { getAppPath } from '~/utils/navigation/getAppPath';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -74,10 +83,13 @@ type AttachmentRowProps = {
   onPreview?: (attachment: Attachment) => void;
 };
 
+export const SIGNATURE_MODAL_ID = 'signature-modal';
+
 export const AttachmentRow = ({
   attachment,
   onPreview,
 }: AttachmentRowProps) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -152,6 +164,8 @@ export const AttachmentRow = ({
     }
   };
 
+  const signatureEnabled = attachment.type === 'TextDocument';
+
   return (
     <FieldContext.Provider
       value={
@@ -202,7 +216,18 @@ export const AttachmentRow = ({
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}
-            isSignatureEnabled={attachment.type === 'TextDocument'}
+            onSignature={
+              signatureEnabled
+                ? () => {
+                    navigate(
+                      getAppPath(AppPath.Signature, {
+                        attachmentId: attachment.id,
+                      }),
+                    );
+                  }
+                : undefined
+            }
+            signatureId={attachment.signatureId}
           />
         </StyledRightContent>
       </ActivityRow>

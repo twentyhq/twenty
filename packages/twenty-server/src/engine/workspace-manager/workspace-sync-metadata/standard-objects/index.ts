@@ -23,6 +23,7 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { PolicyWorkspaceEntity } from 'src/modules/policy/standard-objects/policy.workspace-entity';
 import { RabbitSignKeyWorkspaceEntity } from 'src/modules/rabbitsign/standard-objects/rabbitsignkey.workplace-entity';
+import { RabbitSignSignatureWorkspaceEntity } from 'src/modules/rabbitsign/standard-objects/rabbitsignsignature.workplace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -81,4 +82,5 @@ export const standardObjectMetadataDefinitions = [
   TaskTargetWorkspaceEntity,
   PolicyWorkspaceEntity,
   RabbitSignKeyWorkspaceEntity,
+  RabbitSignSignatureWorkspaceEntity,
 ];

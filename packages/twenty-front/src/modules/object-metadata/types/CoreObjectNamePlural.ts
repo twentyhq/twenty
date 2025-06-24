@@ -38,4 +38,5 @@ export enum CoreObjectNamePlural {
   MGA = 'mgas',
   POLICIES = 'policies',
   RABBIT_SIGN_KEYS = 'rabbitSignKeys',
+  RABBIT_SIGN_SIGNATURES = 'rabbitSignSignatures',
 }

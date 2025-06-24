@@ -7,6 +7,7 @@ export const getAppPath = <T extends AppPath>(
   to: T,
   params?: { [key in PathParam<T>]: string | null },
   queryParams?: Record<string, any>,
+  hash?: string,
 ) => {
   let path: string = to;
 
@@ -24,6 +25,10 @@ export const getAppPath = <T extends AppPath>(
     if (queryString !== '') {
       path += `?${queryString}`;
     }
+  }
+
+  if (isDefined(hash)) {
+    path += `#${hash.replace(/^#/, '')}`;
   }
 
   return path;

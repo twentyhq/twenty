@@ -55,6 +55,7 @@
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
+    "react-pdf": "^9.2.1",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"

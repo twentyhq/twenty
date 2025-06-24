@@ -27,6 +27,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { ModulesModule } from 'src/modules/modules.module';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: User;
@@ -67,7 +68,7 @@ export class GraphQLConfigService
 
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
-      include: [CoreEngineModule],
+      include: [CoreEngineModule, ModulesModule],
       conditionalSchema: async (context) => {
         let user: User | null | undefined;
         let workspace: Workspace | undefined;

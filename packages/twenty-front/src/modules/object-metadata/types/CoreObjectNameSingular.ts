@@ -39,4 +39,5 @@ export enum CoreObjectNameSingular {
   MGA = 'mga',
   POLICY = 'policy',
   RABBIT_SIGN_KEY = 'rabbitSignKey',
+  RABBIT_SIGN_SIGNATURE = 'rabbitSignSignature',
 }

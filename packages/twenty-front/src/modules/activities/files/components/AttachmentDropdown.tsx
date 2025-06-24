@@ -18,7 +18,8 @@ type AttachmentDropdownProps = {
   onDelete: () => void;
   onRename: () => void;
   scopeKey: string;
-  isSignatureEnabled?: boolean;
+  onSignature?: () => void;
+  signatureId: string | null;
 };
 
 export const AttachmentDropdown = ({
@@ -26,7 +27,8 @@ export const AttachmentDropdown = ({
   onDelete,
   onRename,
   scopeKey,
-  isSignatureEnabled = false,
+  onSignature,
+  signatureId,
 }: AttachmentDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
@@ -47,8 +49,8 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
-  const handleCreateSignature = () => {
-    console.log('create signature');
+  const handleNavigateSignaturePage = () => {
+    onSignature?.();
     closeDropdown();
   };
 
@@ -61,12 +63,11 @@ export const AttachmentDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer scrollable={false}>
-            {isSignatureEnabled && (
+            {Boolean(onSignature) && (
               <MenuItem
-                text="Create Signature"
+                text={signatureId ? 'View Signature' : 'Create Signature'}
                 LeftIcon={IconSignature}
-                onClick={handleCreateSignature}
-                disabled
+                onClick={handleNavigateSignaturePage}
               />
             )}
             <MenuItem

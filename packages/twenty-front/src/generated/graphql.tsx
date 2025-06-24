@@ -449,6 +449,20 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateOneRabbitSignSignatureInput = {
+  attachmentId: Scalars['String'];
+  filename: Scalars['String'];
+  signatureStatus: Scalars['String'];
+  signaturesData: Scalars['String'];
+  title: Scalars['String'];
+  workspaceMemberId: Scalars['String'];
+};
+
+export type CreateOneRabbitSignSignatureOutput = {
+  __typename?: 'CreateOneRabbitSignSignatureOutput';
+  id: Scalars['String'];
+};
+
 export type CreateRoleInput = {
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -923,6 +937,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createRabbitSignSignatureWithExternalCall: CreateOneRabbitSignSignatureOutput;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
@@ -1067,6 +1082,11 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateRabbitSignSignatureWithExternalCallArgs = {
+  input: CreateOneRabbitSignSignatureInput;
 };
 
 
@@ -2255,6 +2275,7 @@ export type UpdateWorkspaceInput = {
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['String']>;
   displayName?: InputMaybe<Scalars['String']>;
+  featureFlags?: InputMaybe<Array<Scalars['String']>>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -3010,6 +3031,13 @@ export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never
 
 
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+
+export type CreateRabbitSignSignatureWithExternalCallMutationVariables = Exact<{
+  input: CreateOneRabbitSignSignatureInput;
+}>;
+
+
+export type CreateRabbitSignSignatureWithExternalCallMutation = { __typename?: 'Mutation', createRabbitSignSignatureWithExternalCall: { __typename?: 'CreateOneRabbitSignSignatureOutput', id: string } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -5942,6 +5970,39 @@ export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
 export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
 export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
+export const CreateRabbitSignSignatureWithExternalCallDocument = gql`
+    mutation CreateRabbitSignSignatureWithExternalCall($input: CreateOneRabbitSignSignatureInput!) {
+  createRabbitSignSignatureWithExternalCall(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateRabbitSignSignatureWithExternalCallMutationFn = Apollo.MutationFunction<CreateRabbitSignSignatureWithExternalCallMutation, CreateRabbitSignSignatureWithExternalCallMutationVariables>;
+
+/**
+ * __useCreateRabbitSignSignatureWithExternalCallMutation__
+ *
+ * To run a mutation, you first call `useCreateRabbitSignSignatureWithExternalCallMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRabbitSignSignatureWithExternalCallMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRabbitSignSignatureWithExternalCallMutation, { data, loading, error }] = useCreateRabbitSignSignatureWithExternalCallMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateRabbitSignSignatureWithExternalCallMutation(baseOptions?: Apollo.MutationHookOptions<CreateRabbitSignSignatureWithExternalCallMutation, CreateRabbitSignSignatureWithExternalCallMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateRabbitSignSignatureWithExternalCallMutation, CreateRabbitSignSignatureWithExternalCallMutationVariables>(CreateRabbitSignSignatureWithExternalCallDocument, options);
+      }
+export type CreateRabbitSignSignatureWithExternalCallMutationHookResult = ReturnType<typeof useCreateRabbitSignSignatureWithExternalCallMutation>;
+export type CreateRabbitSignSignatureWithExternalCallMutationResult = Apollo.MutationResult<CreateRabbitSignSignatureWithExternalCallMutation>;
+export type CreateRabbitSignSignatureWithExternalCallMutationOptions = Apollo.BaseMutationOptions<CreateRabbitSignSignatureWithExternalCallMutation, CreateRabbitSignSignatureWithExternalCallMutationVariables>;
 export const OnDbEventDocument = gql`
     subscription OnDbEvent($input: OnDbEventInput!) {
   onDbEvent(input: $input) {

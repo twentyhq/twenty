@@ -69,4 +69,24 @@ describe('useNavigateApp', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/', options);
   });
+
+  it('should navigate with hash', () => {
+    const { result } = renderHook(() => useNavigateApp(), {
+      wrapper: Wrapper,
+    });
+
+    result.current(AppPath.Index, undefined, undefined, undefined, 'files');
+
+    expect(mockNavigate).toHaveBeenCalledWith('/#files', undefined);
+  });
+
+  it('should navigate with hash without # prefix', () => {
+    const { result } = renderHook(() => useNavigateApp(), {
+      wrapper: Wrapper,
+    });
+
+    result.current(AppPath.Index, undefined, undefined, undefined, '#files');
+
+    expect(mockNavigate).toHaveBeenCalledWith('/#files', undefined);
+  });
 });

@@ -2426,6 +2426,7 @@ export type UpdateWorkspaceInput = {
   customDomain?: InputMaybe<Scalars['String']['input']>;
   defaultRoleId?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
+  featureFlags?: InputMaybe<Array<Scalars['String']['input']>>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;

@@ -13,8 +13,9 @@ export const useNavigateApp = () => {
       replace?: boolean;
       state?: any;
     },
+    hash?: string,
   ) => {
-    const path = getAppPath(to, params, queryParams);
+    const path = getAppPath(to, params, queryParams, hash);
     return navigate(path, options);
   };
 };

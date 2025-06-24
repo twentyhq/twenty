@@ -65,6 +65,7 @@ export type FormSingleRecordPickerProps = {
   disabled?: boolean;
   testId?: string;
   VariablePicker?: VariablePickerComponent;
+  excludedRecordIds?: string[];
 };
 
 export const FormSingleRecordPicker = ({
@@ -75,6 +76,7 @@ export const FormSingleRecordPicker = ({
   disabled,
   testId,
   VariablePicker,
+  excludedRecordIds,
 }: FormSingleRecordPickerProps) => {
   const theme = useTheme();
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
