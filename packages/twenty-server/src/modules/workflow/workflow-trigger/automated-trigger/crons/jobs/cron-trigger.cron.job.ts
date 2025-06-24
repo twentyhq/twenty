@@ -40,11 +40,12 @@ export class CronTriggerCronJob {
   @Process(CronTriggerCronJob.name)
   @SentryCronMonitor(CronTriggerCronJob.name, CRON_TRIGGER_CRON_PATTERN)
   async handle() {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
+    const activeWorkspaces = await this.workspaceRepository
+      .createQueryBuilder('workspace')
+      .where('"workspace"."activationStatus" = :activationStatus', {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
+      })
+      .getMany();
 
     const now = new Date();
 
