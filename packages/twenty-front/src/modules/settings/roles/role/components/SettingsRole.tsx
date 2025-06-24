@@ -7,6 +7,7 @@ import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/compone
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
+import { SettingsRoleLabelContainerEffect } from '@/settings/roles/role/components/SettingsRoleLabelContainerEffect';
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -19,6 +20,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getOperationName } from '@apollo/client/utilities';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,6 +53,10 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canSoftDeleteAllObjectRecords',
   'canDestroyAllObjectRecords',
 ];
+
+const StyledUntitledRole = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const activeTabId = useRecoilComponentValueV2(
@@ -275,7 +281,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   return (
     <SubMenuTopBarContainer
-      title={<SettingsRoleLabelContainer roleId={roleId} />}
+      title={
+        <>
+          <SettingsRoleLabelContainer roleId={roleId} />
+          <SettingsRoleLabelContainerEffect roleId={roleId} />
+        </>
+      }
       links={[
         {
           children: 'Workspace',
@@ -286,14 +297,19 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           href: getSettingsPath(SettingsPath.Roles),
         },
         {
-          children: settingsDraftRole.label,
+          children:
+            isDefined(settingsDraftRole.label) &&
+            settingsDraftRole.label !== '' ? (
+              settingsDraftRole.label
+            ) : (
+              <StyledUntitledRole>{t`Untitled Role`}</StyledUntitledRole>
+            ),
         },
       ]}
       actionButton={
-        isRoleEditable &&
-        isDirty && (
+        isRoleEditable && isDirty ? (
           <SaveAndCancelButtons onSave={handleSave} onCancel={handleCancel} />
-        )
+        ) : null
       }
     >
       <SettingsPageContainer>
