@@ -1,7 +1,6 @@
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
-  isValidUuid,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -38,11 +37,7 @@ const validateMetadataIdentifierFieldMetadataIdOrThrow = ({
   );
 
   const validators: Array<Validator> = [
-    {
-      validator: ({ identifierFieldMetadataId }) =>
-        !isValidUuid(identifierFieldMetadataId),
-      label: 'identifierFieldMetadataId must be a valid uuid',
-    },
+    // TODO We should programmatically run the UpdateObjectPayload validation here
     {
       validator: ({ matchingFieldMetadata }) =>
         !isDefined(matchingFieldMetadata),
