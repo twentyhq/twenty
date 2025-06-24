@@ -3,7 +3,7 @@ import { act } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewType } from '@/views/types/ViewType';
@@ -61,7 +61,7 @@ describe('useOptionsDropdown', () => {
         {children}
       </ObjectOptionsDropdownContext.Provider>
     );
-    return renderHook(() => useOptionsDropdown(), { wrapper });
+    return renderHook(() => useObjectOptionsDropdown(), { wrapper });
   };
 
   it('provides closeDropdown functionality from the context', () => {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -24,7 +24,7 @@ import {
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
-  const { currentContentId, onContentChange } = useOptionsDropdown();
+  const { currentContentId, onContentChange } = useObjectOptionsDropdown();
 
   const hiddenRecordGroupIds = useRecoilComponentValueV2(
     hiddenRecordGroupIdsComponentSelector,

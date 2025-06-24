@@ -25,8 +25,8 @@ const mockResetContextStoreStates = jest.fn();
 const mockResetSelectedItem = jest.fn();
 const mockEmitRightDrawerCloseEvent = jest.fn();
 
-jest.mock('@/ui/layout/dropdown/hooks/useDropdownV2', () => ({
-  useDropdownV2: () => ({
+jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
+  useCloseDropdown: () => ({
     closeDropdown: mockCloseDropdown,
   }),
 }));

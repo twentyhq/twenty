@@ -1,5 +1,5 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -25,7 +25,7 @@ import {
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
-  const { onContentChange } = useOptionsDropdown();
+  const { onContentChange } = useObjectOptionsDropdown();
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();

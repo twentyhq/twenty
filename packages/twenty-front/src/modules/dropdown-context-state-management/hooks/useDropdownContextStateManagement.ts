@@ -4,7 +4,13 @@ import { RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-r
 import { useDropdown as useDropdownUi } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { Context, useCallback, useContext } from 'react';
 
-export const useDropdown = <
+/**
+ *
+ * @deprecated This hook is deprecated because it uses context instead of recoil and synchronous hooks like we do in the application
+ *
+ * TODO: refactor this generic way to handle multiple pages in a dropdown with state management and specific code paths in a dedicated module, instead of using context with generic union types.
+ */
+export const useDropdownContextStateManagement = <
   T extends
     | RecordBoardColumnHeaderAggregateDropdownContextValue
     | RecordTableColumnAggregateFooterDropdownContextValue
@@ -18,7 +24,7 @@ export const useDropdown = <
 
   if (!dropdownContext) {
     throw new Error(
-      `useDropdown must be used within a context provider (${context.Provider.name})`,
+      `useGenericContextStateManagement must be used within a context provider (${context.Provider.name})`,
     );
   }
   const dropdownId = dropdownContext.dropdownId;
