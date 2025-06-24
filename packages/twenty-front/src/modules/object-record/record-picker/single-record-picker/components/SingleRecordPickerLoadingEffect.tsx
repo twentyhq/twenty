@@ -1,4 +1,4 @@
-import { singleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowSkeletonComponentState';
+import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -10,12 +10,12 @@ export const SingleRecordPickerLoadingEffect = ({
 }) => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const setSingleRecordPickerShowSkeleton = useSetRecoilComponentStateV2(
-    singleRecordPickerShowSkeletonComponentState,
+  const setSingleRecordPickerShouldShowSkeleton = useSetRecoilComponentStateV2(
+    singleRecordPickerShouldShowSkeletonComponentState,
   );
 
   const debouncedShowPickerSearchSkeleton = useDebouncedCallback(() => {
-    setSingleRecordPickerShowSkeleton(true);
+    setSingleRecordPickerShouldShowSkeleton(true);
   }, 350);
 
   useEffect(() => {
@@ -26,14 +26,14 @@ export const SingleRecordPickerLoadingEffect = ({
         debouncedShowPickerSearchSkeleton();
       } else {
         debouncedShowPickerSearchSkeleton.cancel();
-        setSingleRecordPickerShowSkeleton(false);
+        setSingleRecordPickerShouldShowSkeleton(false);
       }
     }
   }, [
     loading,
     previousLoading,
     debouncedShowPickerSearchSkeleton,
-    setSingleRecordPickerShowSkeleton,
+    setSingleRecordPickerShouldShowSkeleton,
   ]);
 
   return null;

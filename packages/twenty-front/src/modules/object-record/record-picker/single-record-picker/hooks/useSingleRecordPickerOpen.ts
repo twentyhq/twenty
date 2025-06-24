@@ -1,5 +1,5 @@
-import { singleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowInitialLoadingComponentState';
-import { singleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowSkeletonComponentState';
+import { singleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowInitialLoadingComponentState';
+import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
 import { useRecoilCallback } from 'recoil';
 
 export const useSingleRecordPickerOpen = () => {
@@ -7,22 +7,24 @@ export const useSingleRecordPickerOpen = () => {
     ({ set }) =>
       (recordPickerComponentInstanceId: string) => {
         set(
-          singleRecordPickerShowInitialLoadingComponentState.atomFamily({
+          singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
             instanceId: recordPickerComponentInstanceId,
           }),
           true,
         );
         set(
-          singleRecordPickerShowSkeletonComponentState.atomFamily({
+          singleRecordPickerShouldShowSkeletonComponentState.atomFamily({
             instanceId: recordPickerComponentInstanceId,
           }),
           true,
         );
         setTimeout(() => {
           set(
-            singleRecordPickerShowInitialLoadingComponentState.atomFamily({
-              instanceId: recordPickerComponentInstanceId,
-            }),
+            singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
+              {
+                instanceId: recordPickerComponentInstanceId,
+              },
+            ),
             false,
           );
         }, 100);

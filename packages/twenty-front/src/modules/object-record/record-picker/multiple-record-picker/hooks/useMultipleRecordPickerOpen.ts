@@ -1,5 +1,5 @@
-import { multipleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowInitialLoadingComponentState';
-import { multipleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowSkeletonComponentState';
+import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
+import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { useRecoilCallback } from 'recoil';
 
 export const useMultipleRecordPickerOpen = () => {
@@ -7,22 +7,26 @@ export const useMultipleRecordPickerOpen = () => {
     ({ set }) =>
       (recordPickerComponentInstanceId: string) => {
         set(
-          multipleRecordPickerShowInitialLoadingComponentState.atomFamily({
-            instanceId: recordPickerComponentInstanceId,
-          }),
+          multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
+            {
+              instanceId: recordPickerComponentInstanceId,
+            },
+          ),
           true,
         );
         set(
-          multipleRecordPickerShowSkeletonComponentState.atomFamily({
+          multipleRecordPickerShouldShowSkeletonComponentState.atomFamily({
             instanceId: recordPickerComponentInstanceId,
           }),
           true,
         );
         setTimeout(() => {
           set(
-            multipleRecordPickerShowInitialLoadingComponentState.atomFamily({
-              instanceId: recordPickerComponentInstanceId,
-            }),
+            multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily(
+              {
+                instanceId: recordPickerComponentInstanceId,
+              },
+            ),
             false,
           );
         }, 100);

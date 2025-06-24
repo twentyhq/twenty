@@ -1,6 +1,6 @@
 import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
-import { multipleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowSkeletonComponentState';
+import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -15,7 +15,7 @@ export const MultipleRecordPickerLoadingEffect = () => {
   );
 
   const setMultipleRecordPickerShowSkeleton = useSetRecoilComponentStateV2(
-    multipleRecordPickerShowSkeletonComponentState,
+    multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
   const [multipleRecordPickerIsFetchingMore] = useRecoilComponentStateV2(

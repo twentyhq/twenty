@@ -1,9 +1,9 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const multipleRecordPickerShowInitialLoadingComponentState =
+export const multipleRecordPickerShouldShowInitialLoadingComponentState =
   createComponentStateV2<boolean>({
-    key: 'multipleRecordPickerShowInitialLoadingComponentState',
+    key: 'multipleRecordPickerShouldShowInitialLoadingComponentState',
     defaultValue: false,
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });

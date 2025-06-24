@@ -1,9 +1,9 @@
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const singleRecordPickerShowSkeletonComponentState =
+export const singleRecordPickerShouldShowSkeletonComponentState =
   createComponentStateV2<boolean>({
-    key: 'singleRecordPickerShowSkeletonComponentState',
+    key: 'singleRecordPickerShouldShowSkeletonComponentState',
     defaultValue: false,
     componentInstanceContext: SingleRecordPickerComponentInstanceContext,
   });
