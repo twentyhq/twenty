@@ -48,7 +48,6 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { validateMetadataTargetLabelOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-target-label.utils';
 import {
   computeMetadataNameFromLabel,
   validateNameAndLabelAreSyncOrThrow,
@@ -607,19 +606,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
           relationCreationPayload,
         );
-
-        validateMetadataTargetLabelOrThrow(
-          relationCreationPayload?.targetFieldLabel,
+        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+          relationCreationPayload.targetFieldLabel,
         );
+
+        validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
         const objectMetadataTarget =
           objectMetadataMaps.byId[
             relationCreationPayload.targetObjectMetadataId
           ];
-
-        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        );
 
         validateFieldNameAvailabilityOrThrow(
           computedMetadataNameFromLabel,
