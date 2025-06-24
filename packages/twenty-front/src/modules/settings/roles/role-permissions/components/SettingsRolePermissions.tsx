@@ -26,12 +26,10 @@ export const SettingsRolePermissions = ({
         roleId={roleId}
         isEditable={isEditable}
       />
-      {!isCreateMode && (
-        <SettingsRolePermissionsObjectLevelSection
-          roleId={roleId}
-          isEditable={isEditable}
-        />
-      )}
+      <SettingsRolePermissionsObjectLevelSection
+        roleId={roleId}
+        isEditable={isEditable}
+      />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}
         isEditable={isEditable}

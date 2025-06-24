@@ -3,21 +3,32 @@ import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
 import { SettingsRoleEditEffect } from '@/settings/roles/role/components/SettingsRoleEditEffect';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Navigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { settingsPersistedRoleFamilyState } from '~/modules/settings/roles/states/settingsPersistedRoleFamilyState';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsRoleEdit = () => {
   const { roleId } = useParams();
 
+  const persistedRole = useRecoilValue(
+    settingsPersistedRoleFamilyState(roleId ?? ''),
+  );
+
   if (!isDefined(roleId)) {
     return <Navigate to={getSettingsPath(SettingsPath.Roles)} />;
   }
+
+  const isCreateMode = !isDefined(persistedRole?.id);
+
+  console.log('isCreateMode', isCreateMode);
+  console.log('persistedRole', persistedRole?.id);
 
   return (
     <>
       <SettingsRolesQueryEffect />
       <SettingsRoleEditEffect roleId={roleId} />
-      <SettingsRole roleId={roleId} isCreateMode={false} />
+      <SettingsRole roleId={roleId} isCreateMode={isCreateMode} />
     </>
   );
 };
