@@ -194,6 +194,20 @@ export class RoleResolver {
     return true;
   }
 
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async removeRoleFromAgent(
+    @Args('agentId') agentId: string,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.agentRoleService.removeRoleFromAgent({
+      agentId,
+      workspaceId,
+    });
+
+    return true;
+  }
+
   @ResolveField('workspaceMembers', () => [WorkspaceMember])
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,

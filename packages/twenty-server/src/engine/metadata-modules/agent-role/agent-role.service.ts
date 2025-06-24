@@ -54,6 +54,30 @@ export class AgentRoleService {
     });
   }
 
+  public async removeRoleFromAgent({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+  }): Promise<void> {
+    const agent = await this.agentRepository.findOne({
+      where: { id: agentId, workspaceId },
+    });
+
+    if (!agent) {
+      throw new AgentException(
+        `Agent with id ${agentId} not found in workspace`,
+        AgentExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    await this.roleTargetsRepository.delete({
+      agentId,
+      workspaceId,
+    });
+  }
+
   private async validateAssignRoleInput({
     agentId,
     workspaceId,
