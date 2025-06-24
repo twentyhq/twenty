@@ -1485,10 +1485,20 @@ msgstr "Create your workspace"
 #~ msgid "Created"
 #~ msgstr "Created"
 
+#. js-lingui-id: fR16ki
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your data model..."
+msgstr "Creating your data model..."
+
 #. js-lingui-id: TlL0Pl
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Creating your schema"
-msgstr "Creating your schema"
+#~ msgid "Creating your schema"
+#~ msgstr "Creating your schema"
+
+#. js-lingui-id: YO4SdK
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your workspace"
+msgstr "Creating your workspace"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -4322,8 +4332,13 @@ msgstr "Portuguese — Portugal"
 
 #. js-lingui-id: /IZFIg
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Prefilling your workspace data"
-msgstr "Prefilling your workspace data"
+#~ msgid "Prefilling your workspace data"
+#~ msgstr "Prefilling your workspace data"
+
+#. js-lingui-id: /v6Rp9
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data..."
+msgstr "Prefilling your workspace data..."
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -5012,8 +5027,13 @@ msgstr "Set the name of your subdomain"
 
 #. js-lingui-id: oG3fDz
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Setting up your database"
-msgstr "Setting up your database"
+#~ msgid "Setting up your database"
+#~ msgstr "Setting up your database"
+
+#. js-lingui-id: dQsqpC
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database..."
+msgstr "Setting up your database..."
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx

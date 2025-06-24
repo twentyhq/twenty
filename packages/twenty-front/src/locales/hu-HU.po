@@ -1490,9 +1490,19 @@ msgstr "Hozza létre munkaterületét"
 #~ msgid "Created"
 #~ msgstr "Létrehozva"
 
+#. js-lingui-id: fR16ki
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your data model..."
+msgstr ""
+
 #. js-lingui-id: TlL0Pl
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Creating your schema"
+#~ msgid "Creating your schema"
+#~ msgstr ""
+
+#. js-lingui-id: YO4SdK
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your workspace"
 msgstr ""
 
 #. js-lingui-id: R3PLzn
@@ -4327,7 +4337,12 @@ msgstr "Portugál — Portugália"
 
 #. js-lingui-id: /IZFIg
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Prefilling your workspace data"
+#~ msgid "Prefilling your workspace data"
+#~ msgstr ""
+
+#. js-lingui-id: /v6Rp9
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data..."
 msgstr ""
 
 #. js-lingui-id: rdUucN
@@ -5017,7 +5032,12 @@ msgstr "Adja meg az aldomain nevét"
 
 #. js-lingui-id: oG3fDz
 #: src/pages/onboarding/CreateWorkspace.tsx
-msgid "Setting up your database"
+#~ msgid "Setting up your database"
+#~ msgstr ""
+
+#. js-lingui-id: dQsqpC
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database..."
 msgstr ""
 
 #. js-lingui-id: Tz0i8g
