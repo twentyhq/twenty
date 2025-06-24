@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { metrics } from '@opentelemetry/api';
+import { metrics, Attributes } from '@opentelemetry/api';
 
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
