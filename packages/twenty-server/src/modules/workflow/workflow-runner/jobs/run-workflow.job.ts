@@ -3,6 +3,8 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -13,8 +15,9 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -31,6 +34,7 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -95,6 +99,11 @@ export class RunWorkflowJob {
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
+
+    await this.incrementMetrics({
+      workflowRunId,
+      triggerType: workflowVersion.trigger.type,
+    });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
@@ -227,5 +236,37 @@ export class RunWorkflowJob {
         WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED,
       );
     }
+  }
+
+  private async incrementMetrics({
+    workflowRunId,
+    triggerType,
+  }: {
+    workflowRunId: string;
+    triggerType: string;
+  }) {
+    let key: MetricsKeys;
+
+    switch (triggerType) {
+      case WorkflowTriggerType.DATABASE_EVENT:
+        key = MetricsKeys.RunWorkflowJobDatabaseEventTrigger;
+        break;
+      case WorkflowTriggerType.CRON:
+        key = MetricsKeys.RunWorkflowJobCronTrigger;
+        break;
+      case WorkflowTriggerType.WEBHOOK:
+        key = MetricsKeys.RunWorkflowJobWebhookTrigger;
+        break;
+      case WorkflowTriggerType.MANUAL:
+        key = MetricsKeys.RunWorkflowJobManualTrigger;
+        break;
+      default:
+        throw new Error('Invalid trigger type');
+    }
+
+    await this.metricsService.incrementCounter({
+      key,
+      eventId: workflowRunId,
+    });
   }
 }
