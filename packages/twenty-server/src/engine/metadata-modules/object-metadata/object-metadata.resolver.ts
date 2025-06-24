@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
-import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -134,13 +133,14 @@ export class ObjectMetadataResolver {
   async fieldsList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<FieldMetadataDTO[]> {
     try {
       const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load(
         {
           objectMetadata,
           workspaceId: workspace.id,
+          locale: context.req.headers['x-locale'],
         },
       );
 

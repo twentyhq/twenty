@@ -55,30 +55,6 @@ export class FieldMetadataResolver {
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
 
-  @ResolveField(() => String, { nullable: true })
-  async label(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'label',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async description(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'description',
-      context.req.headers['x-locale'],
-    );
-  }
-
   @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
   async icon(
