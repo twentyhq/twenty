@@ -47,6 +47,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { validateMetadataTargetLabelOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-target-label.utils';
 import {
   computeMetadataNameFromLabel,
   validateNameAndLabelAreSyncOrThrow,
@@ -602,6 +603,50 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
           relationCreationPayload,
         );
+
+        try {
+          validateMetadataTargetLabelOrThrow(
+            relationCreationPayload?.targetFieldLabel,
+          );
+        } catch (error) {
+          if (error instanceof InvalidMetadataException) {
+            throw new FieldMetadataException(
+              error.message,
+              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            );
+          }
+          throw error;
+        }
+
+        try {
+          const { objectMetadataMaps } =
+            await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+              { workspaceId: fieldMetadataInput.workspaceId },
+            );
+
+          const objectMetadataTarget =
+            objectMetadataMaps.byId[
+              relationCreationPayload.targetObjectMetadataId
+            ];
+
+          const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+            relationCreationPayload.targetFieldLabel,
+          );
+
+          validateFieldNameAvailabilityOrThrow(
+            computedMetadataNameFromLabel,
+            objectMetadataTarget,
+          );
+        } catch (error) {
+          if (error instanceof InvalidMetadataException) {
+            throw new FieldMetadataException(
+              `Field Name "${relationCreationPayload.targetFieldLabel}" is not available, check that it is not duplicating another field's name on the target object.`,
+              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            );
+          }
+
+          throw error;
+        }
       }
     }
 
@@ -773,13 +818,28 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
+    const targetFieldMetadataName = computeMetadataNameFromLabel(
+      relationCreationPayload.targetFieldLabel,
+    );
+
+    try {
+      validateMetadataNameOrThrow(targetFieldMetadataName);
+    } catch (error) {
+      if (error instanceof InvalidMetadataException) {
+        throw new FieldMetadataException(
+          error.message,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      throw error;
+    }
+
     const targetFieldMetadataToCreate =
       this.prepareCustomFieldMetadataForCreation({
         objectMetadataId: relationCreationPayload.targetObjectMetadataId,
         type: FieldMetadataType.RELATION,
-        name: computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        ),
+        name: targetFieldMetadataName,
         label: relationCreationPayload.targetFieldLabel,
         icon: relationCreationPayload.targetFieldIcon,
         workspaceId: fieldMetadataForCreate.workspaceId,
