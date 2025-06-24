@@ -14,7 +14,7 @@ import {
 } from 'src/modules/charges/cron/jobs/charge-emmit-yearly-bill.cron.job';
 
 @Command({
-  name: 'cron:charge-emmit-recurrent-bills.cron.command',
+  name: 'cron:charge-emmit-recurrent-bills',
   description: 'Starts a cron job to check for expired Inter payments',
 })
 export class ChargeEmmitRecurrentBillsCronCommand extends CommandRunner {
