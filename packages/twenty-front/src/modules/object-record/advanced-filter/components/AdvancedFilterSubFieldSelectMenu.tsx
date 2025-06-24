@@ -94,7 +94,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     objectFilterDropdownSubMenuFieldType
-  ].subFields.map((subField) => subField.subFieldName);
+  ].subFields
+    .filter((subField) => subField.isFilterable === true)
+    .map((subField) => subField.subFieldName);
 
   const subFieldsAreFilterable =
     isDefined(fieldMetadataItemUsedInDropdown) &&
