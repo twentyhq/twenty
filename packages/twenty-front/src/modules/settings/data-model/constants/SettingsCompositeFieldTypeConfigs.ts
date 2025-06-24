@@ -25,11 +25,14 @@ import {
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+//TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
+
 type CompositeSubFieldConfig<T> = {
   subFieldName: keyof T;
   subFieldLabel: string;
   isImportable: boolean;
   isFilterable: boolean;
+  isIncludedInUniqueConstraint: boolean;
 };
 
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
@@ -54,6 +57,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .amountMicros,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'currencyCode',
@@ -62,6 +66,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .currencyCode,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -91,6 +96,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryEmail,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName: 'additionalEmails',
@@ -99,6 +105,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .additionalEmails,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -132,6 +139,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryLinkUrl,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName: 'primaryLinkLabel',
@@ -140,6 +148,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryLinkLabel,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'secondaryLinks',
@@ -148,6 +157,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .secondaryLinks,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -180,6 +190,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCallingCode,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'primaryPhoneCountryCode',
@@ -188,6 +199,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCountryCode,
         isImportable: true,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'primaryPhoneNumber',
@@ -196,6 +208,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneNumber,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName: 'additionalPhones',
@@ -204,6 +217,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .additionalPhones,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -244,6 +258,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .firstName,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName: 'lastName',
@@ -252,6 +267,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .lastName,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: true,
       },
     ],
     exampleValues: [
@@ -272,6 +288,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressStreet1,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressStreet2',
@@ -280,6 +297,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressStreet2,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressCity',
@@ -288,6 +306,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressCity,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressState',
@@ -296,6 +315,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressState,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressCountry',
@@ -304,6 +324,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressCountry,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressPostcode',
@@ -312,6 +333,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressPostcode,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressLat',
@@ -320,6 +342,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressLat,
         isImportable: false,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'addressLng',
@@ -328,6 +351,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .addressLng,
         isImportable: false,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -375,6 +399,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'name',
@@ -382,6 +407,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
         isImportable: true,
         isFilterable: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'workspaceMemberId',
@@ -390,6 +416,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .workspaceMemberId,
         isImportable: true,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'context',
@@ -397,6 +424,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
         isImportable: true,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
@@ -432,6 +460,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .blocknote,
         isImportable: false,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'markdown',
@@ -440,6 +469,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .markdown,
         isImportable: false,
         isFilterable: false,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [
