@@ -32,7 +32,7 @@ export class ResolverValidationPipe implements PipeTransform {
     const object = plainToInstance(metatype, value);
     const errors = await safeClassValidatorValidateWrapper(object);
     if (errors.length === 0) {
-      return value;
+      return object;
     }
 
     const errorMessage = this.formatErrorMessage(errors);
