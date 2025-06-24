@@ -24,7 +24,6 @@ const SettingsRolePermissionsWrapper = (
     <SettingsRolePermissions
       roleId={args.roleId}
       isEditable={args.isEditable}
-      isCreateMode={args.isCreateMode}
     />
   );
 };
@@ -42,7 +41,6 @@ export const Default: Story = {
   args: {
     roleId: '1',
     isEditable: true,
-    isCreateMode: false,
   },
 };
 
@@ -50,7 +48,6 @@ export const ReadOnly: Story = {
   args: {
     roleId: '1',
     isEditable: false,
-    isCreateMode: false,
   },
 };
 
@@ -58,6 +55,5 @@ export const PendingRole: Story = {
   args: {
     roleId: 'newRoleId',
     isEditable: true,
-    isCreateMode: true,
   },
 };
