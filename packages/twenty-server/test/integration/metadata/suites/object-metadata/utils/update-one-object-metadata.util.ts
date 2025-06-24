@@ -17,7 +17,6 @@ export const updateOneObjectMetadata = async ({
   });
 
   const response = await makeGraphqlAPIRequest(graphqlOperation);
-  console.log(response);
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
       response,

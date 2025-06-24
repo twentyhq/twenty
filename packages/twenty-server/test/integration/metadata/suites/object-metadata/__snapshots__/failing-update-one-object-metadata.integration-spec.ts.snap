@@ -1,12 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Object metadata creation should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "labelIdentifierFieldMetadataId validation failed: labelIdentifierFieldMetadataId must be a TEXT or FULL_NAME field metadata type id",
+  },
+]
+`;
+
 exports[`Object metadata creation should fail when labelIdentifier is not a known field metadata id 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "This label identifier does not exist",
+    "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
   },
 ]
 `;
@@ -15,10 +26,9 @@ exports[`Object metadata creation should fail when labelIdentifier is not a uuid
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "invalid input syntax for type uuid: "not-a-uuid"",
+    "message": "labelIdentifierFieldMetadataId validation failed: labelIdentifierFieldMetadataId must be a valid uuid",
   },
 ]
 `;

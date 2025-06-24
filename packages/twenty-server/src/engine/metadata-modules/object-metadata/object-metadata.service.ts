@@ -46,6 +46,7 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
+import { validateMetadataIdentifierFields } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
@@ -299,6 +300,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'The singular and plural names cannot be the same for an object',
       });
     }
+
+    validateMetadataIdentifierFields({
+      fieldMetadataItems: Object.values(existingObjectMetadata.fieldsById),
+      labelIdentifierFieldMetadataId:
+        inputPayload.labelIdentifierFieldMetadataId,
+      imageIdentifierFieldMetadataId:
+        inputPayload.imageIdentifierFieldMetadataId,
+    });
 
     const updatedObject = await super.updateOne(inputId, inputPayload);
 
