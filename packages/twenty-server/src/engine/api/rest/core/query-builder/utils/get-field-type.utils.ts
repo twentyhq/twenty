@@ -6,5 +6,8 @@ export const getFieldType = (
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   fieldName: string,
 ): FieldMetadataType | undefined => {
-  return objectMetadataItem.fieldsByName[fieldName]?.type;
+  const fieldMetadataId = objectMetadataItem.fieldIdByName[fieldName];
+  const field = objectMetadataItem.fieldsById[fieldMetadataId];
+
+  return field?.type;
 };

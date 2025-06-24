@@ -81,7 +81,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [role.id],
-      ignoreLock: true,
     });
 
     return role;
@@ -127,7 +126,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [input.id],
-      ignoreLock: true,
     });
 
     return { ...existingRole, ...updatedRole };
@@ -194,7 +192,6 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
-      ignoreLock: true,
     });
 
     return roleId;

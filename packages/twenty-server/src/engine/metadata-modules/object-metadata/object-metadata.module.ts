@@ -26,6 +26,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
@@ -59,6 +60,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         PermissionsModule,
         WorkspacePermissionsCacheModule,
         WorkspaceCacheStorageModule,
+        WorkspaceMetadataCacheModule,
       ],
       services: [
         ObjectMetadataService,

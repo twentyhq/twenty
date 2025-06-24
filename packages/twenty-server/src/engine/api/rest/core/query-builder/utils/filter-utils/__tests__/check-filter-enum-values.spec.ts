@@ -19,21 +19,23 @@ describe('checkFilterEnumValues', () => {
     isNullable: fieldSelectMock.isNullable,
     defaultValue: fieldSelectMock.defaultValue,
     options: fieldSelectMock.options,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
     'field-select-id': completeFieldSelectMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldSelectMock.name]: completeFieldSelectMock,
-  };
-
   const mockObjectMetadataWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [completeFieldSelectMock.name]: completeFieldSelectMock.id,
+    },
+    fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   it('should check properly', () => {

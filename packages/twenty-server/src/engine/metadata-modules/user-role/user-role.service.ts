@@ -62,7 +62,6 @@ export class UserRoleService {
     await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
       {
         workspaceId,
-        ignoreLock: true,
       },
     );
   }

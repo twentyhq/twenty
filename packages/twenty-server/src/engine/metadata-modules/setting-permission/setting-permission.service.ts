@@ -122,7 +122,6 @@ export class SettingPermissionService {
         {
           workspaceId,
           roleIds: [input.roleId],
-          ignoreLock: true,
         },
       );
     }

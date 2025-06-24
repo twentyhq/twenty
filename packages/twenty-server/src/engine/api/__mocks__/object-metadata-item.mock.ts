@@ -307,22 +307,34 @@ export const objectMetadataItemMock = {
 
 export const objectMetadataMapItemMock = {
   id: 'mockObjectId',
+  icon: 'Icon123',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
-  fields,
   fieldsById: fields.reduce((acc, field) => {
     // @ts-expect-error legacy noImplicitAny
     acc[field.id] = field;
 
     return acc;
   }, {}),
-  fieldsByName: fields.reduce((acc, field) => {
+  fieldIdByName: fields.reduce((acc, field) => {
     // @ts-expect-error legacy noImplicitAny
     acc[field.name] = field;
 
     return acc;
   }, {}),
-} as ObjectMetadataItemWithFieldMaps;
+  fieldIdByJoinColumnName: {},
+  labelSingular: 'Object',
+  labelPlural: 'Objects',
+  workspaceId: 'mockWorkspaceId',
+  isCustom: false,
+  isSystem: false,
+  targetTableName: '',
+  indexMetadatas: [],
+  isActive: true,
+  isRemote: false,
+  isAuditLogged: false,
+  isSearchable: false,
+} satisfies ObjectMetadataItemWithFieldMaps;
 
 export const objectMetadataMapsMock = {
   byId: {

@@ -21,7 +21,9 @@ export class StandardObjectFactory {
   private createObjectMetadata(
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
-  ): Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas'> | undefined {
+  ):
+    | Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas' | 'icon'>
+    | undefined {
     const workspaceEntityMetadataArgs =
       metadataArgsStorage.filterEntities(target);
 

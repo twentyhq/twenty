@@ -90,8 +90,7 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldsMaps.fieldsByName,
-      objectMetadataItemWithFieldsMaps.fieldsByJoinColumnName,
+      objectMetadataItemWithFieldsMaps,
       objectMetadataMaps,
     );
 

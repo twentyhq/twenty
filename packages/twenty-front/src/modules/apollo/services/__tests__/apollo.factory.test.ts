@@ -30,6 +30,7 @@ const mockWorkspaceMember = {
     lastName: 'Doe',
   },
   colorScheme: 'Light' as const,
+  userEmail: 'userEmail',
 };
 
 const mockWorkspace = {
@@ -200,6 +201,7 @@ describe('ApolloFactory', () => {
         lastName: 'Doe',
       },
       colorScheme: 'Light' as const,
+      userEmail: 'userEmail',
     };
 
     apolloFactory.updateWorkspaceMember(newWorkspaceMember);

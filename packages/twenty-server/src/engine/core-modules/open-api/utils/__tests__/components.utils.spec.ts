@@ -1,5 +1,6 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { faker } from '@faker-js/faker';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -9,6 +10,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
+  faker.seed(1);
   it('should compute schema components', () => {
     expect(
       computeSchemaComponents([
@@ -18,6 +20,36 @@ describe('computeSchemaComponents', () => {
 {
   "ObjectName": {
     "description": undefined,
+    "example": {
+      "fieldCurrency": {
+        "amountMicros": 284000000,
+        "currencyCode": "EUR",
+      },
+      "fieldEmails": {
+        "additionalEmails": null,
+        "primaryEmail": "mina.gutmann9@hotmail.com",
+      },
+      "fieldFullName": {
+        "firstName": "Shad",
+        "lastName": "Osinski",
+      },
+      "fieldLinks": {
+        "additionalLinks": [],
+        "primaryLinkLabel": "",
+        "primaryLinkUrl": "https://narrow-help.net/",
+      },
+      "fieldMultiSelect": [
+        "OPTION_1",
+      ],
+      "fieldNumber": 346.2151663160047,
+      "fieldPhones": {
+        "additionalPhones": [],
+        "primaryPhoneCallingCode": "+33",
+        "primaryPhoneCountryCode": "FR",
+        "primaryPhoneNumber": "06 10 20 30 40",
+      },
+      "fieldSelect": "OPTION_1",
+    },
     "properties": {
       "fieldActor": {
         "properties": {
@@ -444,6 +476,36 @@ describe('computeSchemaComponents', () => {
   },
   "ObjectNameForUpdate": {
     "description": undefined,
+    "example": {
+      "fieldCurrency": {
+        "amountMicros": 253000000,
+        "currencyCode": "EUR",
+      },
+      "fieldEmails": {
+        "additionalEmails": null,
+        "primaryEmail": "keegan_donnelly96@hotmail.com",
+      },
+      "fieldFullName": {
+        "firstName": "Shad",
+        "lastName": "Jones",
+      },
+      "fieldLinks": {
+        "additionalLinks": [],
+        "primaryLinkLabel": "",
+        "primaryLinkUrl": "https://unlawful-blowgun.biz",
+      },
+      "fieldMultiSelect": [
+        "OPTION_1",
+      ],
+      "fieldNumber": 692.6302930536448,
+      "fieldPhones": {
+        "additionalPhones": [],
+        "primaryPhoneCallingCode": "+33",
+        "primaryPhoneCountryCode": "FR",
+        "primaryPhoneNumber": "06 10 20 30 40",
+      },
+      "fieldSelect": "OPTION_1",
+    },
     "properties": {
       "fieldActor": {
         "properties": {
