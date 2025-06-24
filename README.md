@@ -4,8 +4,8 @@
 <p align="center">
   <a href="https://www.producthunt.com/products/twenty-crm">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/product-hunt-banner-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/product-hunt-banner-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/product-hunt-banner-light.png" />
       <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" alt="Companies view" />
     </picture>
   </a>
@@ -26,8 +26,8 @@
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="/packages/twenty-website/public/images/readme/github-cover-light.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/github-cover-dark.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/github-cover-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/github-cover-light.png" />
       <img src="./packages/twenty-website/public/images/readme/github-cover-light.png" alt="Cover" />
     </picture>
   </a>
@@ -70,8 +70,8 @@ Below are a few features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/views-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/views-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/views-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/views-light.png" />
       <img src="./packages/twenty-website/public/images/readme/views-light.png" alt="Companies Kanban Views" />
     </picture>
 </p>
@@ -80,8 +80,8 @@ Below are a few features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/data-model-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/data-model-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/data-model-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/data-model-light.png" />
       <img src="./packages/twenty-website/public/images/readme/data-model-light.png" alt="Setting Custom Objects" />
     </picture>
 </p>
@@ -90,8 +90,8 @@ Below are a few features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/permissions-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/permissions-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/permissions-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/permissions-light.png" />
       <img src="./packages/twenty-website/public/images/readme/permissions-light.png" alt="Permissions" />
     </picture>
 </p>
@@ -100,8 +100,8 @@ Below are a few features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/workflows-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/workflows-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/workflows-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/workflows-light.png" />
       <img src="./packages/twenty-website/public/images/readme/workflows-light.png" alt="Workflows" />
     </picture>
 </p>
@@ -110,8 +110,8 @@ Below are a few features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/plus-other-features-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/plus-other-features-light.png" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/plus-other-features-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/v1-launch-updates/packages/twenty-website/public/images/readme/plus-other-features-light.png" />
       <img src="./packages/twenty-website/public/images/readme/plus-other-features-light.png" alt="Other Features" />
     </picture>
 </p>
