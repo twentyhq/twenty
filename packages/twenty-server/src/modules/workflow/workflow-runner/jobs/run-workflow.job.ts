@@ -100,7 +100,7 @@ export class RunWorkflowJob {
       );
     }
 
-    await this.incrementMetrics({
+    await this.incrementTriggerMetrics({
       workflowRunId,
       triggerType: workflowVersion.trigger.type,
     });
@@ -231,6 +231,11 @@ export class RunWorkflowJob {
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.RunWorkflowJobThrottled,
+        eventId: workflowId,
+      });
+
       throw new WorkflowRunException(
         'Workflow execution rate limit exceeded',
         WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED,
@@ -238,7 +243,7 @@ export class RunWorkflowJob {
     }
   }
 
-  private async incrementMetrics({
+  private async incrementTriggerMetrics({
     workflowRunId,
     triggerType,
   }: {

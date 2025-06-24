@@ -10,4 +10,7 @@ export enum MetricsKeys {
   RunWorkflowJobCronTrigger = 'run-workflow-job/cron-trigger',
   RunWorkflowJobWebhookTrigger = 'run-workflow-job/webhook-trigger',
   RunWorkflowJobManualTrigger = 'run-workflow-job/manual-trigger',
+  RunWorkflowJobThrottled = 'run-workflow-job/throttled',
+  WorkflowRunCompleted = 'workflow-run/completed',
+  WorkflowRunFailed = 'workflow-run/failed',
 }
