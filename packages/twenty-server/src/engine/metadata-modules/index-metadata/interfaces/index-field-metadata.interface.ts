@@ -8,4 +8,6 @@ export interface IndexFieldMetadataInterface {
   fieldMetadata: FieldMetadataInterface;
   indexMetadata: IndexMetadataInterface;
   order: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

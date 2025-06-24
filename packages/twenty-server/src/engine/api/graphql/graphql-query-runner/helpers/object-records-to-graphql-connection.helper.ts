@@ -168,7 +168,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     const processedObjectRecord: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(objectRecord)) {
-      const fieldMetadata = objectMetadata.fieldsByName[key];
+      const fieldMetadataId = objectMetadata.fieldIdByName[key];
+      const fieldMetadata = objectMetadata.fieldsById[fieldMetadataId];
 
       if (!fieldMetadata) {
         processedObjectRecord[key] = value;

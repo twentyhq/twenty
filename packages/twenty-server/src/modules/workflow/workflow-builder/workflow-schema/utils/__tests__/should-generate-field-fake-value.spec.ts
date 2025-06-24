@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
 
 describe('shouldGenerateFieldFakeValue', () => {
@@ -10,7 +11,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       isActive: true,
       type: FieldMetadataType.TEXT,
       name: 'testField',
-    } as FieldMetadataEntity;
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as FieldMetadataInterface;
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
@@ -21,7 +24,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       isActive: true,
       type: FieldMetadataType.UUID,
       name: 'id',
-    } as FieldMetadataEntity;
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as FieldMetadataInterface;
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
@@ -32,7 +37,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       isActive: false,
       type: FieldMetadataType.TEXT,
       name: 'testField',
-    } as FieldMetadataEntity;
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as FieldMetadataInterface;
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(false);
   });
@@ -43,7 +50,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       isActive: true,
       type: FieldMetadataType.TEXT,
       name: 'testField',
-    } as FieldMetadataEntity;
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as FieldMetadataInterface;
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(false);
   });
@@ -54,7 +63,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       isActive: true,
       type: FieldMetadataType.RELATION,
       name: 'testField',
-    } as FieldMetadataEntity;
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as FieldMetadataInterface;
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(false);
   });

@@ -43,6 +43,7 @@ describe('useFindManyRecords', () => {
           name: { firstName: 'John', lastName: 'Connor' },
           locale: 'en',
           colorScheme: 'Light',
+          userEmail: 'userEmail',
         });
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);

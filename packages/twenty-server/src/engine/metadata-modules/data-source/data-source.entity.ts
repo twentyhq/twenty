@@ -1,11 +1,12 @@
 import {
   Column,
   CreateDateColumn,
+  DataSourceOptions,
   Entity,
+  Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  DataSourceOptions,
-  OneToMany,
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -13,6 +14,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 export type DataSourceType = DataSourceOptions['type'];
 
 @Entity('dataSource')
+@Index('IDX_DATA_SOURCE_WORKSPACE_ID_CREATED_AT', ['workspaceId', 'createdAt'])
 export class DataSourceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

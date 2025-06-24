@@ -60,6 +60,8 @@ const reservedKeywords = [
   'index',
   'relation',
   'relations',
+  'position',
+  'positions',
 ];
 
 export const validateMetadataNameIsNotReservedKeywordOrThrow = (

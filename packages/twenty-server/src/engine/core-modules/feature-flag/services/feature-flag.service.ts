@@ -73,17 +73,8 @@ export class FeatureFlagService {
         },
       );
 
-      if (keys.includes(FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED)) {
-        await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-          { workspaceId, ignoreLock: true },
-        );
-      }
-
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-        {
-          workspaceId,
-          ignoreLock: true,
-        },
+        { workspaceId },
       );
     }
   }
@@ -138,17 +129,8 @@ export class FeatureFlagService {
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-      {
-        workspaceId,
-        ignoreLock: true,
-      },
+      { workspaceId },
     );
-
-    if (featureFlag === FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED) {
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        { workspaceId, ignoreLock: true },
-      );
-    }
 
     return result;
   }

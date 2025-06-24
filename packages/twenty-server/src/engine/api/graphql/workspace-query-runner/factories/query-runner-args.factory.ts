@@ -19,12 +19,12 @@ import {
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;
@@ -44,14 +44,14 @@ export class QueryRunnerArgsFactory {
     resolverArgsType: ResolverArgsType,
   ) {
     const fieldMetadataMapByNameByName =
-      options.objectMetadataItemWithFieldMaps.fieldsByName;
+      options.objectMetadataItemWithFieldMaps.fieldsById;
 
-    const shouldBackfillPosition =
-      options.objectMetadataItemWithFieldMaps.fields.some(
-        (field) =>
-          field.type === FieldMetadataType.POSITION &&
-          field.name === 'position',
-      );
+    const shouldBackfillPosition = Object.values(
+      options.objectMetadataItemWithFieldMaps.fieldsById,
+    ).some(
+      (field) =>
+        field.type === FieldMetadataType.POSITION && field.name === 'position',
+    );
 
     switch (resolverArgsType) {
       case ResolverArgsType.CreateOne:
@@ -60,7 +60,6 @@ export class QueryRunnerArgsFactory {
           data: await this.overrideDataByFieldMetadata(
             (args as CreateOneResolverArgs).data,
             options,
-            fieldMetadataMapByNameByName,
             {
               argIndex: 0,
               shouldBackfillPosition,
@@ -72,15 +71,10 @@ export class QueryRunnerArgsFactory {
           ...args,
           data: await Promise.all(
             (args as CreateManyResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(
-                arg,
-                options,
-                fieldMetadataMapByNameByName,
-                {
-                  argIndex: index,
-                  shouldBackfillPosition,
-                },
-              ),
+              this.overrideDataByFieldMetadata(arg, options, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
             ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
@@ -91,7 +85,6 @@ export class QueryRunnerArgsFactory {
           data: await this.overrideDataByFieldMetadata(
             (args as UpdateOneResolverArgs).data,
             options,
-            fieldMetadataMapByNameByName,
             {
               argIndex: 0,
               shouldBackfillPosition: false,
@@ -103,12 +96,11 @@ export class QueryRunnerArgsFactory {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
             (args as UpdateManyResolverArgs).filter,
-            fieldMetadataMapByNameByName,
+            options.objectMetadataItemWithFieldMaps,
           ),
           data: await this.overrideDataByFieldMetadata(
             (args as UpdateManyResolverArgs).data,
             options,
-            fieldMetadataMapByNameByName,
             {
               argIndex: 0,
               shouldBackfillPosition: false,
@@ -120,7 +112,7 @@ export class QueryRunnerArgsFactory {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
             (args as FindOneResolverArgs).filter,
-            fieldMetadataMapByNameByName,
+            options.objectMetadataItemWithFieldMaps,
           ),
         };
       case ResolverArgsType.FindMany:
@@ -128,7 +120,7 @@ export class QueryRunnerArgsFactory {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
             (args as FindManyResolverArgs).filter,
-            fieldMetadataMapByNameByName,
+            options.objectMetadataItemWithFieldMaps,
           ),
         };
 
@@ -146,15 +138,10 @@ export class QueryRunnerArgsFactory {
           )) as string[],
           data: await Promise.all(
             (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(
-                arg,
-                options,
-                fieldMetadataMapByNameByName,
-                {
-                  argIndex: index,
-                  shouldBackfillPosition,
-                },
-              ),
+              this.overrideDataByFieldMetadata(arg, options, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
             ) ?? [],
           ),
         } satisfies FindDuplicatesResolverArgs;
@@ -166,7 +153,6 @@ export class QueryRunnerArgsFactory {
   private async overrideDataByFieldMetadata(
     data: Partial<ObjectRecord> | undefined,
     options: WorkspaceQueryRunnerOptions,
-    fieldMetadataMapByNameByName: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
   ): Promise<Partial<ObjectRecord>> {
     if (!isDefined(data)) {
@@ -184,7 +170,10 @@ export class QueryRunnerArgsFactory {
       data,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ).map(async ([key, value]): Promise<[string, any]> => {
-      const fieldMetadata = fieldMetadataMapByNameByName[key];
+      const fieldMetadataId =
+        options.objectMetadataItemWithFieldMaps.fieldIdByName[key];
+      const fieldMetadata =
+        options.objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
       if (!fieldMetadata) {
         return [key, value];
@@ -257,7 +246,7 @@ export class QueryRunnerArgsFactory {
 
   private overrideFilterByFieldMetadata(
     filter: ObjectRecordFilter | undefined,
-    fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
     if (!filter) {
       return;
@@ -278,7 +267,7 @@ export class QueryRunnerArgsFactory {
           acc[key] = this.transformFilterValueByType(
             key,
             value,
-            fieldMetadataMapByName,
+            objectMetadataItemWithFieldMaps,
           );
         }
 
@@ -293,9 +282,11 @@ export class QueryRunnerArgsFactory {
     key: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
-    const fieldMetadata = fieldMetadataMapByName[key];
+    const fieldMetadataId = objectMetadataItemWithFieldMaps.fieldIdByName[key];
+    const fieldMetadata =
+      objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
     if (!fieldMetadata) {
       return value;

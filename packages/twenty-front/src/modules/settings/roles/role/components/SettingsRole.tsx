@@ -18,7 +18,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -26,7 +25,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import {
-  FeatureFlagKey,
   Role,
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
@@ -60,10 +58,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-  );
-
   const navigateSettings = useNavigateSettings();
 
   const [createRole] = useCreateOneRoleMutation();
@@ -91,7 +85,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     return <></>;
   }
 
-  const isRoleEditable = isPermissionsV2Enabled && settingsDraftRole.isEditable;
+  const isRoleEditable = settingsDraftRole.isEditable;
 
   const tabs = [
     {

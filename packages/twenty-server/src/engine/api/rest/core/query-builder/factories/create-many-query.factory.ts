@@ -26,7 +26,7 @@ export class CreateManyQueryFactory {
       mutation Create${objectNamePlural}($data: [${objectNameSingular}CreateInput!]) {
         create${objectNamePlural}(data: $data) {
           id
-          ${objectMetadata.objectMetadataMapItem.fields
+          ${Object.values(objectMetadata.objectMetadataMapItem.fieldsById)
             .map((field) =>
               mapFieldMetadataToGraphqlQuery(
                 objectMetadata.objectMetadataMaps,
