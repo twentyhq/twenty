@@ -118,7 +118,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
       },
     },
     {
-      title: 'create primary phone field with empty payload 2',
+      title: 'create primary phone field with empty strings in payload',
       context: {
         input: {
           primaryPhoneNumber: '',
