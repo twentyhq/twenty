@@ -28,6 +28,7 @@ jobs:
         packages/twenty-server/**
         packages/twenty-emails/**
         packages/twenty-shared/**
+        .github/workflows/ci-breaking-changes.yaml
 
   api-breaking-changes:
     needs: changed-files-check
