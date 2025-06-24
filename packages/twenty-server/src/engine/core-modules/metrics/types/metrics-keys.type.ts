@@ -12,6 +12,7 @@ export enum MetricsKeys {
   GraphqlOperation403 = 'graphql-operation/403',
   GraphqlOperation404 = 'graphql-operation/404',
   GraphqlOperation500 = 'graphql-operation/500',
+  GraphqlOperationUnknown = 'graphql-operation/unknown',
   WorkflowRunStartedDatabaseEventTrigger = 'workflow-run/started/database-event-trigger',
   WorkflowRunStartedCronTrigger = 'workflow-run/started/cron-trigger',
   WorkflowRunStartedWebhookTrigger = 'workflow-run/started/webhook-trigger',

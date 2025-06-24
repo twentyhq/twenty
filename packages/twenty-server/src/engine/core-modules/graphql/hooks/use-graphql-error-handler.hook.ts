@@ -152,6 +152,10 @@ export const useGraphQLErrorHandlerHook = <
 
               if (metricKey) {
                 options.metricsService.incrementCounter({ key: metricKey });
+              } else {
+                options.metricsService.incrementCounter({
+                  key: MetricsKeys.GraphqlOperationUnknown,
+                });
               }
             });
 
