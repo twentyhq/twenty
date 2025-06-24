@@ -307,7 +307,8 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly: isFieldReadOnly,
+                  isReadOnly:
+                    fieldMetadataItem.name === 'deletedAt' || isFieldReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
