@@ -24,11 +24,11 @@ exports[`Object metadata creation should fail when namePlural is a reserved keyw
 
 exports[`Object metadata creation should fail when namePlural is an empty string 1`] = `"Input is too short: """`;
 
-exports[`Object metadata creation should fail when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+exports[`Object metadata creation should fail when namePlural is not camelCased 1`] = `"Not_Camel_Case should be in camelCase"`;
 
-exports[`Object metadata creation should fail when nameSingular contains only one char and whitespaces 1`] = `"Name should be in camelCase:      a        a    "`;
+exports[`Object metadata creation should fail when nameSingular contains only one char and whitespaces 1`] = `"     a        a     should be in camelCase"`;
 
-exports[`Object metadata creation should fail when nameSingular contains only whitespaces 1`] = `"Name should be in camelCase:                  "`;
+exports[`Object metadata creation should fail when nameSingular contains only whitespaces 1`] = `"                  should be in camelCase"`;
 
 exports[`Object metadata creation should fail when nameSingular has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
@@ -36,8 +36,8 @@ exports[`Object metadata creation should fail when nameSingular is a reserved ke
 
 exports[`Object metadata creation should fail when nameSingular is an empty string 1`] = `"Input is too short: """`;
 
-exports[`Object metadata creation should fail when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+exports[`Object metadata creation should fail when nameSingular is not camelCased 1`] = `"Not_Camel_Case should be in camelCase"`;
 
 exports[`Object metadata creation should fail when names are identical 1`] = `"The singular and plural names cannot be the same for an object"`;
 
-exports[`Object metadata creation should fail when names with whitespaces result to be identical 1`] = `"Name should be in camelCase:       fooBar               "`;
+exports[`Object metadata creation should fail when names with whitespaces result to be identical 1`] = `"      fooBar                should be in camelCase"`;
