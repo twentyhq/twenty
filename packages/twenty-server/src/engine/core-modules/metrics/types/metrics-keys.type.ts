@@ -6,14 +6,12 @@ export enum MetricsKeys {
   CalendarEventSyncJobFailedInsufficientPermissions = 'calendar-event-sync-job/failed-insufficient-permissions',
   CalendarEventSyncJobFailedUnknown = 'calendar-event-sync-job/failed-unknown',
   InvalidCaptcha = 'invalid-captcha',
-<<<<<<< HEAD
   GraphqlOperation200 = 'graphql-operation/200',
   GraphqlOperation400 = 'graphql-operation/400',
   GraphqlOperation401 = 'graphql-operation/401',
   GraphqlOperation403 = 'graphql-operation/403',
   GraphqlOperation404 = 'graphql-operation/404',
   GraphqlOperation500 = 'graphql-operation/500',
-=======
   WorkflowRunStartedDatabaseEventTrigger = 'workflow-run/started/database-event-trigger',
   WorkflowRunStartedCronTrigger = 'workflow-run/started/cron-trigger',
   WorkflowRunStartedWebhookTrigger = 'workflow-run/started/webhook-trigger',
@@ -21,5 +19,4 @@ export enum MetricsKeys {
   WorkflowRunCompleted = 'workflow-run/completed',
   WorkflowRunFailed = 'workflow-run/failed',
   WorkflowRunFailedThrottled = 'workflow-run/failed/throttled',
->>>>>>> main
 }
