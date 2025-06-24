@@ -8,7 +8,7 @@ exports[`validateObjectMetadataInputOrThrow should fail when namePlural is a res
 
 exports[`validateObjectMetadataInputOrThrow should fail when namePlural is an empty string 1`] = `"Input is too short: """`;
 
-exports[`validateObjectMetadataInputOrThrow should fail when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+exports[`validateObjectMetadataInputOrThrow should fail when namePlural is not camelCased 1`] = `"Not_Camel_Case should be in camelCase"`;
 
 exports[`validateObjectMetadataInputOrThrow should fail when nameSingular has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
@@ -16,4 +16,4 @@ exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is a r
 
 exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is an empty string 1`] = `"Input is too short: """`;
 
-exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is not camelCased 1`] = `"Not_Camel_Case should be in camelCase"`;
