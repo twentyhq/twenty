@@ -4604,8 +4604,8 @@ msgstr ""
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
-#~ msgid "Role name"
-#~ msgstr ""
+msgid "Role name"
+msgstr ""
 
 #. js-lingui-id: gF4nBH
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -5727,8 +5727,8 @@ msgstr ""
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-msgid "Untitled Role"
-msgstr ""
+#~ msgid "Untitled Role"
+#~ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
