@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata creation should fail when labelIdentifier is not a known field metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+    },
+    "message": "This label identifier does not exist",
+  },
+]
+`;
+
+exports[`Object metadata creation should fail when labelIdentifier is not a uuid 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "invalid input syntax for type uuid: "not-a-uuid"",
+  },
+]
+`;

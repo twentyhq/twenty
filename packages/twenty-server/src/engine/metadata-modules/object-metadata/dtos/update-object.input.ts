@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateNested
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -76,6 +77,7 @@ export class UpdateObjectPayload {
 @InputType()
 @BeforeUpdateOne(BeforeUpdateOneObject)
 export class UpdateOneObjectInput {
+  @ValidateNested()
   @Field(() => UpdateObjectPayload)
   update: UpdateObjectPayload;
 
