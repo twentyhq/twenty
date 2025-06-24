@@ -2,6 +2,7 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { FIND_ONE_AGENT } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/graphql/queries/findOneAgent';
 import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
+import { useRemoveRoleFromAgentMutation } from '~/generated/graphql';
 import { ASSIGN_ROLE_TO_AGENT } from '../graphql/mutations/assignRoleToAgent';
 
 export const useAgentRoleAssignment = (agentId: string) => {
@@ -26,10 +27,20 @@ export const useAgentRoleAssignment = (agentId: string) => {
     },
   });
   const [assignRoleToAgent] = useMutation(ASSIGN_ROLE_TO_AGENT);
+  const [removeRoleFromAgent] = useRemoveRoleFromAgentMutation();
 
   const handleRoleChange = async (roleId: string) => {
-    setSelectedRoleId(roleId);
-    await assignRoleToAgent({ variables: { input: { agentId, roleId } } });
+    if (roleId === '') {
+      await handleRoleRemove();
+    } else {
+      setSelectedRoleId(roleId);
+      await assignRoleToAgent({ variables: { input: { agentId, roleId } } });
+    }
+  };
+
+  const handleRoleRemove = async () => {
+    setSelectedRoleId(undefined);
+    await removeRoleFromAgent({ variables: { agentId } });
   };
 
   const rolesOptions =

@@ -160,10 +160,9 @@ export const WorkflowEditActionAiAgent = ({
           <Select
             dropdownId="select-agent-role"
             label={t`Assign Role`}
-            options={rolesOptions}
-            value={selectedRoleId}
+            options={[{ label: t`No role`, value: '' }, ...rolesOptions]}
+            value={selectedRoleId || ''}
             onChange={handleRoleChange}
-            emptyOption={{ label: t`Select a role`, value: '' }}
           />
         )}
       </WorkflowStepBody>
