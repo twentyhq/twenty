@@ -197,6 +197,7 @@ export class MessageImportExceptionHandlerService {
 
     this.exceptionHandlerService.captureExceptions([messageImportException], {
       additionalData: {
+        exception,
         messageChannelId: messageChannel.id,
       },
       workspace: { id: workspaceId },
