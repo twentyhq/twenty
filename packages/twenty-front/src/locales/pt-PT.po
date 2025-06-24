@@ -1069,6 +1069,11 @@ msgstr ""
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Escolha entre os protocolos OIDC e SAML"
 
+#. js-lingui-id: 2ZFG9X
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose between Short and Full"
+msgstr ""
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -2604,6 +2609,11 @@ msgstr "Nome"
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Esqueceu-se da sua palavra-passe?"
+
+#. js-lingui-id: kI1qVD
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Format"
+msgstr ""
 
 #. js-lingui-id: abDZwc
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
