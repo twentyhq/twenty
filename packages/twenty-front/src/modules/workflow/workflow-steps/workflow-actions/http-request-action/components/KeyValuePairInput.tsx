@@ -147,7 +147,7 @@ export const KeyValuePairInput = ({
                   onClick={() => handleRemovePair(pair.id)}
                   Icon={IconTrash}
                 />
-              ) : pairs.length > 1 ? (
+              ) : pairs.length > 1 && !readonly ? (
                 <StyledPlaceholder />
               ) : null}
             </StyledKeyValueContainer>
