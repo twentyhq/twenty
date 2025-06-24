@@ -694,5 +694,4 @@ describe('BeforeUpdateOneObject', () => {
 
     expect(result).toEqual(instance);
   });
-
 });
