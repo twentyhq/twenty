@@ -63,6 +63,11 @@ export class WorkspaceIndexComparator {
     );
 
     for (const difference of indexesDifferences) {
+      // TODO: This code prevent index updates, we need to handle them
+      if (difference.path.length > 1) {
+        continue;
+      }
+
       switch (difference.type) {
         case 'CREATE': {
           results.push({
