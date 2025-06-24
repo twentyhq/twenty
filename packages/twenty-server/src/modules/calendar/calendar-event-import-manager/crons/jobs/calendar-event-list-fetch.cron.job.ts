@@ -53,8 +53,8 @@ export class CalendarEventListFetchCronJob {
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const schemaName = this.workspaceDataSourceService.getSchemaName(
-            activeWorkspace.id,
-          );
+          activeWorkspace.id,
+        );
 
         const calendarChannels = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."calendarChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING}', '${CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING}')`,
