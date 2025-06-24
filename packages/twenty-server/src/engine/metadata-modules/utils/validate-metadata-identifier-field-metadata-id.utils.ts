@@ -1,14 +1,16 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
   isValidUuid,
 } from 'twenty-shared/utils';
+
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 type Validator = {
   validator: (args: {
@@ -17,6 +19,7 @@ type Validator = {
   }) => boolean;
   label: string;
 };
+
 type ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs = {
   identifierFieldMetadataId?: string;
   fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
@@ -58,16 +61,16 @@ const validateMetadataIdentifierFieldMetadataIdOrThrow = ({
   });
 };
 
-type ValidateMetadataFieldIdentifiersArgs = {
+type ValidateMetadataIdentifierFieldMetadataIdsArgs = {
   labelIdentifierFieldMetadataId: string | undefined;
   imageIdentifierFieldMetadataId: string | undefined;
   fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
 };
-export const validateMetadataIdentifierFields = ({
+export const validateMetadataIdentifierFieldMetadataIds = ({
   imageIdentifierFieldMetadataId,
   labelIdentifierFieldMetadataId,
   fieldMetadataItems,
-}: ValidateMetadataFieldIdentifiersArgs) => {
+}: ValidateMetadataIdentifierFieldMetadataIdsArgs) => {
   const fieldIdentifierToValidate: Array<{
     fieldIdentifier: string | undefined;
     customValidators?: Validator[];

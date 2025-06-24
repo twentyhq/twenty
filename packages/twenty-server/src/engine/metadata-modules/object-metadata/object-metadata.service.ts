@@ -43,10 +43,10 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
-import { validateMetadataIdentifierFields } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
@@ -301,7 +301,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
     }
 
-    validateMetadataIdentifierFields({
+    validateMetadataIdentifierFieldMetadataIds({
       fieldMetadataItems: Object.values(existingObjectMetadata.fieldsById),
       labelIdentifierFieldMetadataId:
         inputPayload.labelIdentifierFieldMetadataId,

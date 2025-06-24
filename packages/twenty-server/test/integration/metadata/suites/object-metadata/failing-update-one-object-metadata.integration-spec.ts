@@ -1,12 +1,12 @@
 import { EachTestingContext } from 'twenty-shared/testing';
-
-import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 type TestingRuntimeContext = {
   objectMetadataId: string;
@@ -41,6 +41,7 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
   ];
 
 const allTestsUseCases = [...labelIdentifierFailingTestsUseCase];
+
 describe('Object metadata creation should fail', () => {
   let objectMetadataId: string;
   let numberFieldMetadataId: string;
@@ -49,6 +50,7 @@ describe('Object metadata creation should fail', () => {
     const { data } = await forceCreateOneObjectMetadata({
       input: getMockCreateObjectInput(),
     });
+
     objectMetadataId = data.createOneObject.id;
 
     const {
@@ -62,6 +64,7 @@ describe('Object metadata creation should fail', () => {
         type: FieldMetadataType.NUMBER,
       },
     });
+
     numberFieldMetadataId = createOneField.id;
   });
 
