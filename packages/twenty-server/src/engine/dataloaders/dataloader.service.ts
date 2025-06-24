@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -37,6 +38,7 @@ export type RelationLoaderPayload = {
 export type FieldMetadataLoaderPayload = {
   workspaceId: string;
   objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
+  locale?: keyof typeof APP_LOCALES;
 };
 
 export type IndexMetadataLoaderPayload = {
@@ -140,11 +142,34 @@ export class DataloaderService {
           Object.values(objectMetadataMaps.byId[id].fieldsById).map(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
+              const overridesFieldToCompute = [
+                'icon',
+                'label',
+                'description',
+              ] as const satisfies (keyof FieldMetadataInterface)[];
+
+              const overrides = overridesFieldToCompute.reduce<
+                Partial<
+                  Record<(typeof overridesFieldToCompute)[number], string>
+                >
+              >(
+                (acc, field) => ({
+                  ...acc,
+                  [field]: this.fieldMetadataService.resolveOverridableString(
+                    fieldMetadata,
+                    field,
+                    dataLoaderParams[0].locale,
+                  ),
+                }),
+                {},
+              );
+
               return {
                 ...fieldMetadata,
                 createdAt: new Date(fieldMetadata.createdAt),
                 updatedAt: new Date(fieldMetadata.updatedAt),
                 workspaceId: workspaceId,
+                ...overrides,
               };
             },
           ),
