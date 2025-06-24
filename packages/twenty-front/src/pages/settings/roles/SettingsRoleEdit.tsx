@@ -21,9 +21,6 @@ export const SettingsRoleEdit = () => {
 
   const isCreateMode = !isDefined(persistedRole?.id);
 
-  console.log('isCreateMode', isCreateMode);
-  console.log('persistedRole', persistedRole?.id);
-
   return (
     <>
       <SettingsRolesQueryEffect />
