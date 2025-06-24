@@ -5,7 +5,6 @@ import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
@@ -25,16 +24,10 @@ import { AgentService } from './agent.service';
     AuditModule,
     FeatureFlagModule,
   ],
-  providers: [
-    AgentResolver,
-    AgentService,
-    AgentExecutionService,
-    AgentRoleService,
-  ],
+  providers: [AgentResolver, AgentService, AgentExecutionService],
   exports: [
     AgentService,
     AgentExecutionService,
-    AgentRoleService,
     TypeOrmModule.forFeature([AgentEntity], 'core'),
   ],
 })

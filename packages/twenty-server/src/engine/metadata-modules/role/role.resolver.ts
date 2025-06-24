@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -15,9 +16,12 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
+import { AssignRoleToAgentInput } from 'src/engine/metadata-modules/agent/dtos/assign-role-to-agent.input';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -55,6 +59,7 @@ export class RoleResolver {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
+    private readonly agentRoleService: AgentRoleService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -172,6 +177,21 @@ export class RoleResolver {
       workspaceId: workspace.id,
       input: upsertSettingPermissionsInput,
     });
+  }
+
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async assignRoleToAgent(
+    @Args('input') input: AssignRoleToAgentInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    await this.agentRoleService.assignRoleToAgent({
+      agentId: input.agentId,
+      roleId: input.roleId,
+      workspaceId,
+    });
+
+    return true;
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMember])
