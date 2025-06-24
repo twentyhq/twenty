@@ -2,7 +2,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportRowHook,
+} from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const spreadsheetImportGetUnicityRowHook = (
@@ -48,30 +51,37 @@ export const spreadsheetImportGetUnicityRowHook = (
     }
 
     uniqueConstraintFields.forEach((uniqueConstraint) => {
-      const uniqueConstraintRow = uniqueConstraint
-        .map((field) => row?.[field] || '')
-        .join('');
+      const rowUniqueValues = getUniqueValues(row, uniqueConstraint);
 
       const duplicateRows = table.filter(
-        (r) =>
-          uniqueConstraint.map((field) => r?.[field] || '').join('') ===
-          uniqueConstraintRow,
+        (r) => getUniqueValues(r, uniqueConstraint) === rowUniqueValues,
       );
 
-      if (duplicateRows.length > 1) {
-        uniqueConstraint.forEach((field) => {
-          if (isDefined(row[field])) {
-            addError(field, {
-              message: `This ${field} value already exists in your import data`,
-              level: 'error',
-            });
-          }
-        });
+      if (duplicateRows.length <= 1) {
+        return row;
       }
+
+      uniqueConstraint.forEach((field) => {
+        if (isDefined(row[field])) {
+          addError(field, {
+            message: `This ${field} value already exists in your import data`,
+            level: 'error',
+          });
+        }
+      });
     });
 
     return row;
   };
 
   return rowHook;
+};
+
+const getUniqueValues = (
+  row: ImportedStructuredRow<string>,
+  uniqueConstraint: string[],
+) => {
+  return uniqueConstraint
+    .map((field) => row?.[field]?.toString().trim().toLowerCase())
+    .join('');
 };
