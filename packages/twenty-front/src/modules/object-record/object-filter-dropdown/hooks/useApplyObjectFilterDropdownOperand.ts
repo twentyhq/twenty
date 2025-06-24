@@ -3,12 +3,18 @@ import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/obje
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
+import {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
@@ -87,6 +93,20 @@ export const useApplyObjectFilterDropdownOperand = () => {
         );
 
         recordFilterToUpsert.displayValue = displayValue;
+      } else if (newOperand === RecordFilterOperand.IsRelative) {
+        const defaultRelativeDate = {
+          direction: 'THIS' as VariableDateViewFilterValueDirection,
+          amount: 1,
+          unit: 'DAY' as VariableDateViewFilterValueUnit,
+        };
+
+        recordFilterToUpsert.value = computeVariableDateViewFilterValue(
+          defaultRelativeDate.direction,
+          defaultRelativeDate.amount,
+          defaultRelativeDate.unit,
+        );
+        recordFilterToUpsert.displayValue =
+          getRelativeDateDisplayValue(defaultRelativeDate);
       } else {
         recordFilterToUpsert.value = '';
         recordFilterToUpsert.displayValue = '';
