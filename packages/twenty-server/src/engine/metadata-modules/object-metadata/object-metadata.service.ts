@@ -34,6 +34,7 @@ import {
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -43,7 +44,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
-import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 

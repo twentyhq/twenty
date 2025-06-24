@@ -66,12 +66,10 @@ export const validateMetadataIdentifierFieldMetadataIds = ({
   labelIdentifierFieldMetadataId,
   fieldMetadataItems,
 }: ValidateMetadataIdentifierFieldMetadataIdsArgs) => {
-  const fieldIdentifierToValidate: Array<{
-    fieldIdentifier: string | undefined;
-    customValidators?: Validator[];
-  }> = [
-    {
-      fieldIdentifier: labelIdentifierFieldMetadataId,
+  if (isDefined(labelIdentifierFieldMetadataId)) {
+    validateMetadataIdentifierFieldMetadataIdOrThrow({
+      identifierFieldMetadataId: labelIdentifierFieldMetadataId,
+      fieldMetadataItems,
       customValidators: [
         {
           validator: ({ matchingFieldMetadata }) =>
@@ -81,17 +79,13 @@ export const validateMetadataIdentifierFieldMetadataIds = ({
             'identifierFieldMetadataId must be a TEXT or FULL_NAME field metadata type id',
         },
       ],
-    },
-    {
-      fieldIdentifier: imageIdentifierFieldMetadataId,
-    },
-  ];
+    });
+  }
 
-  fieldIdentifierToValidate.forEach(({ fieldIdentifier, customValidators }) =>
+  if (isDefined(imageIdentifierFieldMetadataId)) {
     validateMetadataIdentifierFieldMetadataIdOrThrow({
-      identifierFieldMetadataId: fieldIdentifier,
+      identifierFieldMetadataId: imageIdentifierFieldMetadataId,
       fieldMetadataItems,
-      customValidators,
-    }),
-  );
+    });
+  }
 };
