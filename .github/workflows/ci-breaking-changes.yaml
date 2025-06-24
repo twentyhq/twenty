@@ -462,23 +462,8 @@ jobs:
               ' rest-api-diff.json >> rest-api-diff.md
               
             elif [ "$different" = "true" ]; then
-              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed)"
-              
-              # Generate non-breaking changes report
-              echo "# REST API Changes" > rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "## Summary" >> rest-api-diff.md
-              
-              jq -r '
-                if (.newEndpoints | length) > 0 then
-                  "### ✅ New Endpoints (" + (.newEndpoints | length | tostring) + ")\n" +
-                  (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
-                else "" end,
-                if (.changedOperations | length) > 0 then
-                  "\n### 🔄 Changed Operations (" + (.changedOperations | length | tostring) + ")\n" +
-                  (.changedOperations | map("- " + .method + " " + .pathUrl + ": " + (.summary // "Modified operation")) | join("\n"))
-                else "" end
-              ' rest-api-diff.json >> rest-api-diff.md
+              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed) - no PR comment will be posted"
+              # Don't create markdown file for non-breaking changes to avoid PR comments
             else
               echo "✅ No changes detected in REST API"
               # Don't create diff file for no changes
