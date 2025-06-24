@@ -56,19 +56,6 @@ export class FieldMetadataResolver {
   ) {}
 
   @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
-  @ResolveField(() => String, { nullable: true })
-  async icon(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'icon',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
