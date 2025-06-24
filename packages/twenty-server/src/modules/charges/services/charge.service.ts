@@ -121,7 +121,7 @@ export class ChargeService {
       workspaceId,
       attachmentRepository,
       {
-        id: randomUUID().slice(0, 15),
+        id: charge.id,
         seuNumero: randomUUID().slice(0, 15),
         authorId: charge?.person?.id as string,
         dataVencimento: getNextBusinessDays(5),
