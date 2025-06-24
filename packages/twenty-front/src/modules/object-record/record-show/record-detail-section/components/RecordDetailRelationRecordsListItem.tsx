@@ -151,7 +151,9 @@ export const RecordDetailRelationRecordsListItem = ({
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !==
           relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
-        fieldMetadataItem.id !== relationFieldMetadataId,
+        fieldMetadataItem.id !== relationFieldMetadataId &&
+        fieldMetadataItem.name !== 'createdAt' &&
+        fieldMetadataItem.name !== 'deletedAt',
     )
     .sort();
 
@@ -307,8 +309,7 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly:
-                    fieldMetadataItem.name === 'deletedAt' || isFieldReadOnly,
+                  isReadOnly: isFieldReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
