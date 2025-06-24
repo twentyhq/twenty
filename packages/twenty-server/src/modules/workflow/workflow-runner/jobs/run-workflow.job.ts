@@ -232,7 +232,7 @@ export class RunWorkflowJob {
       );
     } catch (error) {
       await this.metricsService.incrementCounter({
-        key: MetricsKeys.RunWorkflowJobThrottled,
+        key: MetricsKeys.WorkflowRunFailedThrottled,
         eventId: workflowId,
       });
 
@@ -254,16 +254,16 @@ export class RunWorkflowJob {
 
     switch (triggerType) {
       case WorkflowTriggerType.DATABASE_EVENT:
-        key = MetricsKeys.RunWorkflowJobDatabaseEventTrigger;
+        key = MetricsKeys.WorkflowRunStartedDatabaseEventTrigger;
         break;
       case WorkflowTriggerType.CRON:
-        key = MetricsKeys.RunWorkflowJobCronTrigger;
+        key = MetricsKeys.WorkflowRunStartedCronTrigger;
         break;
       case WorkflowTriggerType.WEBHOOK:
-        key = MetricsKeys.RunWorkflowJobWebhookTrigger;
+        key = MetricsKeys.WorkflowRunStartedWebhookTrigger;
         break;
       case WorkflowTriggerType.MANUAL:
-        key = MetricsKeys.RunWorkflowJobManualTrigger;
+        key = MetricsKeys.WorkflowRunStartedManualTrigger;
         break;
       default:
         throw new Error('Invalid trigger type');
