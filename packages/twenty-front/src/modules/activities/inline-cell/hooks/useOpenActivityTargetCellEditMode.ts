@@ -101,7 +101,11 @@ export const useOpenActivityTargetCellEditMode = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [multipleRecordPickerPerformSearch, pushFocusItemToFocusStack],
+    [
+      multipleRecordPickerPerformSearch,
+      openMultipleRecordPicker,
+      pushFocusItemToFocusStack,
+    ],
   );
 
   return { openActivityTargetCellEditMode };

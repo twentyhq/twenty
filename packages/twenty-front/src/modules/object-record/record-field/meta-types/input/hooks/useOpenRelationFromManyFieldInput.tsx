@@ -109,7 +109,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [performSearch, pushFocusItemToFocusStack],
+    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
   );
 
   return { openRelationFromManyFieldInput };

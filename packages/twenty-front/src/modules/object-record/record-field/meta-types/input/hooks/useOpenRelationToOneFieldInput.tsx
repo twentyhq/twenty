@@ -54,7 +54,7 @@ export const useOpenRelationToOneFieldInput = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [pushFocusItemToFocusStack],
+    [openSingleRecordPicker, pushFocusItemToFocusStack],
   );
 
   return { openRelationToOneFieldInput };
