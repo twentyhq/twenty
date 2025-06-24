@@ -3,7 +3,7 @@ import { singleRecordPickerShowSkeletonComponentState } from '@/object-record/re
 import { useRecoilCallback } from 'recoil';
 
 export const useSingleRecordPickerOpen = () => {
-  const openRecordPicker = useRecoilCallback(
+  const openSingleRecordPicker = useRecoilCallback(
     ({ set }) =>
       (recordPickerComponentInstanceId: string) => {
         set(
@@ -31,6 +31,6 @@ export const useSingleRecordPickerOpen = () => {
   );
 
   return {
-    openRecordPicker,
+    openSingleRecordPicker,
   };
 };

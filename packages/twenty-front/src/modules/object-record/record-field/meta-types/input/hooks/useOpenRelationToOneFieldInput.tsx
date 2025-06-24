@@ -14,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { openRecordPicker } = useSingleRecordPickerOpen();
+  const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -41,7 +41,7 @@ export const useOpenRelationToOneFieldInput = () => {
           );
         }
 
-        openRecordPicker(recordPickerInstanceId);
+        openSingleRecordPicker(recordPickerInstanceId);
 
         pushFocusItemToFocusStack({
           focusId: recordPickerInstanceId,
