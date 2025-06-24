@@ -55,6 +55,10 @@ export class ResolverValidationPipe implements PipeTransform {
         return Object.values(error.constraints);
       }
 
+      if (error.children) {
+        return this.formatErrorMessage(error.children);
+      }
+
       return [];
     });
 
