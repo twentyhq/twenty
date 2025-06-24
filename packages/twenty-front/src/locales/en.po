@@ -4599,8 +4599,8 @@ msgstr "Revoked for this object"
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
-msgid "Role name"
-msgstr "Role name"
+#~ msgid "Role name"
+#~ msgstr "Role name"
 
 #. js-lingui-id: gF4nBH
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -5717,6 +5717,13 @@ msgstr "Unlimited contacts"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr "Untitled role"
+
+#. js-lingui-id: KmUc2w
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+msgid "Untitled Role"
+msgstr "Untitled Role"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
