@@ -66,6 +66,7 @@ export class RoleService {
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const role = await this.roleRepository.save({
+      id: input.id,
       label: input.label,
       description: input.description,
       icon: input.icon,
