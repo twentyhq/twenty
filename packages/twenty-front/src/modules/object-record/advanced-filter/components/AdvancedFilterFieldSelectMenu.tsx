@@ -154,7 +154,7 @@ export const AdvancedFilterFieldSelectMenu = ({
           <>
             <DropdownMenuSectionLabel
               label={t`Visible fields`}
-              isSubsectionLabel={true}
+              isSubsectionLabel
             />
             <DropdownMenuItemsContainer>
               {visibleColumnsFieldMetadataItems.map(
@@ -182,7 +182,7 @@ export const AdvancedFilterFieldSelectMenu = ({
             {visibleColumnsFieldMetadataItems.length > 0 && (
               <DropdownMenuSectionLabel
                 label={t`Hidden fields`}
-                isSubsectionLabel={true}
+                isSubsectionLabel
               />
             )}
             <DropdownMenuItemsContainer>

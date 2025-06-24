@@ -280,7 +280,7 @@ export const ObjectSortDropdownButton = () => {
               <>
                 <DropdownMenuSectionLabel
                   label={t`Visible fields`}
-                  isSubsectionLabel={true}
+                  isSubsectionLabel
                 />
                 <DropdownMenuItemsContainer>
                   {visibleFieldMetadataItems.map(
@@ -312,7 +312,7 @@ export const ObjectSortDropdownButton = () => {
               <>
                 <DropdownMenuSectionLabel
                   label={t`Hidden fields`}
-                  isSubsectionLabel={true}
+                  isSubsectionLabel
                 />
                 <DropdownMenuItemsContainer>
                   {hiddenFieldMetadataItems.map(
