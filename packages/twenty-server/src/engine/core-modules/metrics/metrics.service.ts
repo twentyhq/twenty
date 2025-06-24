@@ -16,7 +16,7 @@ export class MetricsService {
     shouldStoreInCache = true,
   }: {
     key: MetricsKeys;
-    eventId: string;
+    eventId?: string;
     attributes?: Attributes;
     shouldStoreInCache?: boolean;
   }) {
@@ -26,7 +26,7 @@ export class MetricsService {
 
     counter.add(1, attributes);
 
-    if (shouldStoreInCache) {
+    if (shouldStoreInCache && eventId) {
       this.metricsCacheService.updateCounter(key, [eventId]);
     }
   }
