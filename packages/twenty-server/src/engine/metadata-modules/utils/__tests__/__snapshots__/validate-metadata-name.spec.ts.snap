@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`validateMetadataNameOrThrow throw error when string is not in camel case 1`] = `"Name should be in camelCase: TestName"`;
+exports[`validateMetadataNameOrThrow throw error when string is not in camel case 1`] = `"TestName should be in camelCase"`;
 
-exports[`validateMetadataNameOrThrow throws error when starts with digits 1`] = `"Name should be in camelCase: 123string"`;
+exports[`validateMetadataNameOrThrow throws error when starts with digits 1`] = `"123string should be in camelCase"`;
 
 exports[`validateMetadataNameOrThrow throws error when string has non latin characters 1`] = `"String "בְרִבְרִ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
-exports[`validateMetadataNameOrThrow throws error when string has spaces 1`] = `"Name should be in camelCase: name with spaces"`;
+exports[`validateMetadataNameOrThrow throws error when string has spaces 1`] = `"name with spaces should be in camelCase"`;
 
 exports[`validateMetadataNameOrThrow throws error when string is a reserved word 1`] = `"The name "role" is not available"`;
 
@@ -14,4 +14,4 @@ exports[`validateMetadataNameOrThrow throws error when string is above 63 charac
 
 exports[`validateMetadataNameOrThrow throws error when string is empty 1`] = `"Input is too short: """`;
 
-exports[`validateMetadataNameOrThrow throws error when string starts with capital letter 1`] = `"Name should be in camelCase: StringStartingWithCapitalLetter"`;
+exports[`validateMetadataNameOrThrow throws error when string starts with capital letter 1`] = `"StringStartingWithCapitalLetter should be in camelCase"`;
