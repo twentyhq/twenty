@@ -31,11 +31,14 @@ export class ResolverValidationPipe implements PipeTransform {
 
     const object = plainToInstance(metatype, value);
     const errors = await safeClassValidatorValidateWrapper(object);
+
     if (errors.length === 0) {
-      return object;
+      // TODO shouldn't we return the object here ? As transpilation could bring mutations
+      return value;
     }
 
     const errorMessage = this.formatErrorMessage(errors);
+
     throw new UserInputError(errorMessage);
   }
 
