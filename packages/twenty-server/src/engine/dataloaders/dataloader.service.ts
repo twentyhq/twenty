@@ -142,33 +142,32 @@ export class DataloaderService {
           Object.values(objectMetadataMaps.byId[id].fieldsById).map(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
-              const icon = this.fieldMetadataService.resolveOverridableString(
-                fieldMetadata,
+              const overridesFieldToCompute = [
                 'icon',
-                dataLoaderParams[0].locale,
-              );
-
-              const label = this.fieldMetadataService.resolveOverridableString(
-                fieldMetadata,
                 'label',
-                dataLoaderParams[0].locale,
-              );
+                'description',
+              ] as const satisfies (keyof FieldMetadataInterface)[];
 
-              const description =
-                this.fieldMetadataService.resolveOverridableString(
+              const overrides = overridesFieldToCompute.reduce<
+                Partial<
+                  Record<(typeof overridesFieldToCompute)[number], string>
+                >
+              >((acc, field) => {
+                acc[field] = this.fieldMetadataService.resolveOverridableString(
                   fieldMetadata,
-                  'description',
+                  field,
                   dataLoaderParams[0].locale,
                 );
+
+                return acc;
+              }, {});
 
               return {
                 ...fieldMetadata,
                 createdAt: new Date(fieldMetadata.createdAt),
                 updatedAt: new Date(fieldMetadata.updatedAt),
                 workspaceId: workspaceId,
-                icon,
-                label,
-                description,
+                ...overrides,
               };
             },
           ),
