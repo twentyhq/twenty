@@ -6,4 +6,11 @@ export enum MetricsKeys {
   CalendarEventSyncJobFailedInsufficientPermissions = 'calendar-event-sync-job/failed-insufficient-permissions',
   CalendarEventSyncJobFailedUnknown = 'calendar-event-sync-job/failed-unknown',
   InvalidCaptcha = 'invalid-captcha',
+  WorkflowRunStartedDatabaseEventTrigger = 'workflow-run/started/database-event-trigger',
+  WorkflowRunStartedCronTrigger = 'workflow-run/started/cron-trigger',
+  WorkflowRunStartedWebhookTrigger = 'workflow-run/started/webhook-trigger',
+  WorkflowRunStartedManualTrigger = 'workflow-run/started/manual-trigger',
+  WorkflowRunCompleted = 'workflow-run/completed',
+  WorkflowRunFailed = 'workflow-run/failed',
+  WorkflowRunFailedThrottled = 'workflow-run/failed/throttled',
 }

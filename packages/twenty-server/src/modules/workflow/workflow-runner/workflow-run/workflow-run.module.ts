@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -13,6 +14,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     WorkflowCommonModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     RecordPositionModule,
+    MetricsModule,
   ],
   providers: [WorkflowRunWorkspaceService, ScopedWorkspaceContextFactory],
   exports: [WorkflowRunWorkspaceService],
