@@ -1,3 +1,4 @@
+import { DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW } from '@/object-record/object-filter-dropdown/constants/DateOperandsThatShouldBeInitializedWithNow';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -75,10 +76,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
         recordFilterToUpsert.type === 'DATE_TIME')
     ) {
       if (
-        recordFilterToUpsert.operand === RecordFilterOperand.Is ||
-        recordFilterToUpsert.operand === RecordFilterOperand.IsNot ||
-        recordFilterToUpsert.operand === RecordFilterOperand.IsAfter ||
-        recordFilterToUpsert.operand === RecordFilterOperand.IsBefore
+        DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW.includes(newOperand)
       ) {
         const newDateValue = new Date();
 
