@@ -12,13 +12,11 @@ const StyledRolePermissionsContainer = styled.div`
 type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
-  isCreateMode: boolean;
 };
 
 export const SettingsRolePermissions = ({
   roleId,
   isEditable,
-  isCreateMode,
 }: SettingsRolePermissionsProps) => {
   return (
     <StyledRolePermissionsContainer>
