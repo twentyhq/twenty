@@ -11,8 +11,10 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import {
   MessageImportExceptionHandlerService,
@@ -90,6 +92,11 @@ export class MessagingMessageListFetchJob {
           );
       } catch (error) {
         switch (error.code) {
+          case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+            );
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingMonitoringService.track({
@@ -99,15 +106,15 @@ export class MessagingMessageListFetchJob {
               messageChannelId: messageChannel.id,
               message: `${error.code}: ${error.reason ?? ''}`,
             });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+            );
           case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+            );
           default:
             throw error;
         }
