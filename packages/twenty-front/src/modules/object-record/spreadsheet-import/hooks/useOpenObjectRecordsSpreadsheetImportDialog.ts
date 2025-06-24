@@ -3,7 +3,7 @@ import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateM
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
-import { spreadsheetImportComputeUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
+import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
 import { SpreadsheetImportCreateRecordsBatchSize } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
@@ -89,7 +89,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       onAbortSubmit: () => {
         abortController.abort();
       },
-      rowHook: spreadsheetImportComputeUnicityRowHook(objectMetadataItem),
+      rowHook: spreadsheetImportGetUnicityRowHook(objectMetadataItem),
     });
   };
 

@@ -5,7 +5,7 @@ import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/con
 import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const spreadsheetImportComputeUnicityRowHook = (
+export const spreadsheetImportGetUnicityRowHook = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
   const uniqueConstraints = objectMetadataItem.indexMetadatas.filter(
@@ -62,7 +62,7 @@ export const spreadsheetImportComputeUnicityRowHook = (
         uniqueConstraint.forEach((field) => {
           if (isDefined(row[field])) {
             addError(field, {
-              message: `Duplicate import entry with same ${field}`,
+              message: `This ${field} value already exists in your import data`,
               level: 'error',
             });
           }
