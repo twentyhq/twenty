@@ -4604,8 +4604,8 @@ msgstr ""
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
-msgid "Role name"
-msgstr ""
+#~ msgid "Role name"
+#~ msgstr ""
 
 #. js-lingui-id: gF4nBH
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -5721,6 +5721,13 @@ msgstr "Rajattomat yhteystiedot"
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
+msgstr ""
+
+#. js-lingui-id: KmUc2w
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+msgid "Untitled Role"
 msgstr ""
 
 #. js-lingui-id: Y8zko3
