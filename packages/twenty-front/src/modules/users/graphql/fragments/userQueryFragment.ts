@@ -31,6 +31,7 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
+      onesignalAppId
       inviteHash
       allowImpersonation
       activationStatus

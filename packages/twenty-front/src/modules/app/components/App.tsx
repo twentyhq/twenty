@@ -1,5 +1,4 @@
 import { AppRouter } from '@/app/components/AppRouter';
-import { useOneSignal } from '@/app/hooks/useOneSignal';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -17,8 +16,6 @@ import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 initialI18nActivate();
 
 export const App = () => {
-  useOneSignal();
-
   return (
     <RecoilRoot>
       <AppErrorBoundary
