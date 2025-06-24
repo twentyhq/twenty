@@ -5,8 +5,8 @@ import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-pick
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowInitialLoadingComponentState';
-import { multipleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShowSkeletonComponentState';
+import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
+import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -75,21 +75,22 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
-  const multipleRecordPickerShowInitialLoading = useRecoilComponentValueV2(
-    multipleRecordPickerShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useRecoilComponentValueV2(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
-  const multipleRecordPickerShowSkeleton = useRecoilComponentValueV2(
-    multipleRecordPickerShowSkeletonComponentState,
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+    multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
   const searchHasNoResults = pickableRecordIds.length === 0;
 
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      {multipleRecordPickerShowInitialLoading ? (
+      {multipleRecordPickerShouldShowInitialLoading ? (
         <RecordPickerInitialLoadingEmptyContainer />
-      ) : multipleRecordPickerShowSkeleton ? (
+      ) : multipleRecordPickerShouldShowSkeleton ? (
         <RecordPickerLoadingSkeletonList />
       ) : searchHasNoResults ? (
         <RecordPickerNoRecordFoundMenuItem />

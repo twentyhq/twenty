@@ -10,8 +10,6 @@ import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { singleRecordPickerShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowInitialLoadingComponentState';
-import { singleRecordPickerShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShowSkeletonComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -25,6 +23,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { singleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowInitialLoadingComponentState';
+import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -86,12 +86,12 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShowSkeleton = useRecoilComponentValueV2(
-    singleRecordPickerShowSkeletonComponentState,
+  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+    singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShowInitialLoading = useRecoilComponentValueV2(
-    singleRecordPickerShowInitialLoadingComponentState,
+  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValueV2(
+    singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 
   const searchHasNoResults =
@@ -125,9 +125,9 @@ export const SingleRecordPickerMenuItems = ({
           />
         </SelectableListItem>
       )}
-      {singleRecordPickerShowInitialLoading ? (
+      {singleRecordPickerShouldShowInitialLoading ? (
         <RecordPickerInitialLoadingEmptyContainer />
-      ) : singleRecordPickerShowSkeleton ? (
+      ) : singleRecordPickerShouldShowSkeleton ? (
         <RecordPickerLoadingSkeletonList />
       ) : (
         recordsInDropdown?.map((record) => (
