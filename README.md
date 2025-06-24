@@ -26,9 +26,9 @@
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-light.png" />
-      <img src="./packages/twenty-docs/static/img/preview-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="/packages/twenty-website/public/images/readme/github-cover-light.png" />
+      <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/github-cover-dark.png" />
+      <img src="./packages/twenty-website/public/images/readme/github-cover-light.png" alt="Cover" />
     </picture>
   </a>
 </p>
@@ -54,7 +54,6 @@ We built Twenty for three reasons:
 <br />
 
 # What You Can Do With Twenty
-<!-- We're currently developing Twenty's beta version.   -->
 
 Please feel free to flag any specific needs you have by creating an issue.   
 
@@ -147,7 +146,3 @@ Below are a few features we have implemented to date:
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
 - Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
-
-
-
-
