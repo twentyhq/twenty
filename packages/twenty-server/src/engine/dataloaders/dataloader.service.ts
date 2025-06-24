@@ -152,15 +152,17 @@ export class DataloaderService {
                 Partial<
                   Record<(typeof overridesFieldToCompute)[number], string>
                 >
-              >((acc, field) => {
-                acc[field] = this.fieldMetadataService.resolveOverridableString(
-                  fieldMetadata,
-                  field,
-                  dataLoaderParams[0].locale,
-                );
-
-                return acc;
-              }, {});
+              >(
+                (acc, field) => ({
+                  ...acc,
+                  [field]: this.fieldMetadataService.resolveOverridableString(
+                    fieldMetadata,
+                    field,
+                    dataLoaderParams[0].locale,
+                  ),
+                }),
+                {},
+              );
 
               return {
                 ...fieldMetadata,
