@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { metrics } from '@opentelemetry/api';
+import { metrics, Attributes } from '@opentelemetry/api';
 
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -12,17 +12,19 @@ export class MetricsService {
   async incrementCounter({
     key,
     eventId,
+    attributes,
     shouldStoreInCache = true,
   }: {
     key: MetricsKeys;
     eventId?: string;
+    attributes?: Attributes;
     shouldStoreInCache?: boolean;
   }) {
     //TODO : Define meter name usage in monitoring
     const meter = metrics.getMeter('twenty-server');
     const counter = meter.createCounter(key);
 
-    counter.add(1);
+    counter.add(1, attributes);
 
     if (shouldStoreInCache && eventId) {
       this.metricsCacheService.updateCounter(key, [eventId]);
@@ -32,17 +34,19 @@ export class MetricsService {
   async batchIncrementCounter({
     key,
     eventIds,
+    attributes,
     shouldStoreInCache = true,
   }: {
     key: MetricsKeys;
     eventIds: string[];
+    attributes?: Attributes;
     shouldStoreInCache?: boolean;
   }) {
     //TODO : Define meter name usage in monitoring
     const meter = metrics.getMeter('twenty-server');
     const counter = meter.createCounter(key);
 
-    counter.add(eventIds.length);
+    counter.add(eventIds.length, attributes);
 
     if (shouldStoreInCache) {
       this.metricsCacheService.updateCounter(key, eventIds);
