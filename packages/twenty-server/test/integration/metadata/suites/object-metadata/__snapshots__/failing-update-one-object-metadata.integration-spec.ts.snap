@@ -6,7 +6,7 @@ exports[`Object metadata creation should fail when labelIdentifier is not a TEXT
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "labelIdentifierFieldMetadataId validation failed: labelIdentifierFieldMetadataId must be a TEXT or FULL_NAME field metadata type id",
+    "message": "labelIdentifierFieldMetadataId validation failed: it must be a TEXT or FULL_NAME field metadata type id",
   },
 ]
 `;
@@ -28,7 +28,7 @@ exports[`Object metadata creation should fail when labelIdentifier is not a uuid
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "labelIdentifierFieldMetadataId validation failed: labelIdentifierFieldMetadataId must be a valid uuid",
+    "message": "labelIdentifierFieldMetadataId must be a UUID",
   },
 ]
 `;

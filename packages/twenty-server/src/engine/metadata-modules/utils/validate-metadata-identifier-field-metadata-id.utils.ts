@@ -13,43 +13,30 @@ import {
 
 type Validator = {
   validator: (args: {
-    identifierFieldMetadataId: string;
+    fieldMetadataId: string;
     matchingFieldMetadata?: FieldMetadataEntity | FieldMetadataInterface;
   }) => boolean;
   label: string;
 };
 
 type ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs = {
-  identifierFieldMetadataId?: string;
+  fieldMetadataId: string;
   fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
-  customValidators?: Validator[];
+  validators: Validator[];
 };
-const validateMetadataIdentifierFieldMetadataIdOrThrow = ({
-  identifierFieldMetadataId,
+const validatorRunner = ({
+  fieldMetadataId,
   fieldMetadataItems,
-  customValidators,
+  validators,
 }: ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs): void => {
-  if (!isDefined(identifierFieldMetadataId)) {
-    return;
-  }
   const matchingFieldMetadata = fieldMetadataItems.find(
-    (fieldMetadata) => fieldMetadata.id === identifierFieldMetadataId,
+    (fieldMetadata) => fieldMetadata.id === fieldMetadataId,
   );
 
-  const validators: Array<Validator> = [
-    // TODO We should programmatically run the UpdateObjectPayload validation here
-    {
-      validator: ({ matchingFieldMetadata }) =>
-        !isDefined(matchingFieldMetadata),
-      label: 'related field metadata not found',
-    },
-    ...(customValidators ?? []),
-  ];
-
   validators.forEach(({ label, validator }) => {
-    if (validator({ identifierFieldMetadataId, matchingFieldMetadata })) {
+    if (validator({ fieldMetadataId, matchingFieldMetadata })) {
       throw new ObjectMetadataException(
-        `identifierFieldMetadataId validation failed: ${label}`,
+        label,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     }
@@ -66,26 +53,42 @@ export const validateMetadataIdentifierFieldMetadataIds = ({
   labelIdentifierFieldMetadataId,
   fieldMetadataItems,
 }: ValidateMetadataIdentifierFieldMetadataIdsArgs) => {
+  const isMatchingFieldMetadataDefined: Validator['validator'] = ({
+    matchingFieldMetadata,
+  }) => !isDefined(matchingFieldMetadata);
+
   if (isDefined(labelIdentifierFieldMetadataId)) {
-    validateMetadataIdentifierFieldMetadataIdOrThrow({
-      identifierFieldMetadataId: labelIdentifierFieldMetadataId,
+    validatorRunner({
+      fieldMetadataId: labelIdentifierFieldMetadataId,
       fieldMetadataItems,
-      customValidators: [
+      validators: [
+        {
+          validator: isMatchingFieldMetadataDefined,
+          label:
+            'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
+        },
         {
           validator: ({ matchingFieldMetadata }) =>
             isDefined(matchingFieldMetadata) &&
             !isLabelIdentifierFieldMetadataTypes(matchingFieldMetadata.type),
           label:
-            'identifierFieldMetadataId must be a TEXT or FULL_NAME field metadata type id',
+            'labelIdentifierFieldMetadataId validation failed: it must be a TEXT or FULL_NAME field metadata type id',
         },
       ],
     });
   }
 
   if (isDefined(imageIdentifierFieldMetadataId)) {
-    validateMetadataIdentifierFieldMetadataIdOrThrow({
-      identifierFieldMetadataId: imageIdentifierFieldMetadataId,
+    validatorRunner({
+      fieldMetadataId: imageIdentifierFieldMetadataId,
       fieldMetadataItems,
+      validators: [
+        {
+          validator: isMatchingFieldMetadataDefined,
+          label:
+            'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
+        },
+      ],
     });
   }
 };
