@@ -1,19 +1,20 @@
 import { Theme, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
+import { IconLock } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<{ theme: Theme }>`
   align-items: center;
-  display: flex;
+  display: inline-flex;
 
-  background: ${({ theme }) => theme.background.transparent.lighter};
+  background: ${({ theme }) => theme.background.transparent.light};
   color: ${({ theme }) => theme.font.color.tertiary};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => theme.spacing(1, 2)};
+  font-size: ${({ theme }) => theme.font.size.md};
+  padding: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
 
   border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 export const ForbiddenFieldDisplay = () => {
@@ -21,7 +22,8 @@ export const ForbiddenFieldDisplay = () => {
 
   return (
     <StyledContainer theme={theme}>
-      <Trans>Forbidden</Trans>
+      <IconLock size={theme.icon.size.sm} />
+      <Trans>Not shared</Trans>
     </StyledContainer>
   );
 };

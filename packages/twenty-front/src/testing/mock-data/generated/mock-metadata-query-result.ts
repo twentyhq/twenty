@@ -42,10 +42,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflow Runs",
           "description": "A workflow run",
           "icon": "IconHistoryToggle",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -561,10 +558,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Note Targets",
           "description": "A note target",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -1033,40 +1027,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Survey results",
           "description": null,
           "icon": "IconRulerMeasure",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "e5cc0d0e-515d-4ae4-bbd4-a2c76b394ff7",
-                  "createdAt": "2025-06-09T18:53:52.547Z",
-                  "updatedAt": "2025-06-09T18:53:52.547Z",
-                  "name": "IDX_e2a25535adda4544be555d3b6d8",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "d1c159f6-148a-4670-87eb-05fc7c824704",
-                          "createdAt": "2025-06-09T18:53:52.547Z",
-                          "updatedAt": "2025-06-09T18:53:52.547Z",
-                          "order": 0,
-                          "fieldMetadataId": "a4c055c6-df30-4cdf-9622-3d3db93b4337"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -1650,10 +1611,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "API Keys",
           "description": "An API key",
           "icon": "IconRobot",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -1835,10 +1793,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Filter Groups",
           "description": "(System) View Filter Groups",
           "icon": "IconFilterBolt",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -2092,10 +2047,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Timeline Activities",
           "description": "Aggregated / filtered event to be displayed on the timeline",
           "icon": "IconTimelineEvent",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -2940,10 +2892,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Threads",
           "description": "A group of related messages (e.g. email thread, chat thread)",
           "icon": "IconMessage",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -3110,10 +3059,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Groups",
           "description": "(System) View Groups",
           "icon": "IconTag",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -3366,40 +3312,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Rockets",
           "description": "A rocket",
           "icon": "IconRocket",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "960148fc-d043-415e-a71d-434cf3f614b9",
-                  "createdAt": "2025-06-09T18:53:50.917Z",
-                  "updatedAt": "2025-06-09T18:53:50.917Z",
-                  "name": "IDX_530792e4278e7696c4e3e3e55f8",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "54da1cce-c87c-4709-ab33-1b92e0b20e47",
-                          "createdAt": "2025-06-09T18:53:50.917Z",
-                          "updatedAt": "2025-06-09T18:53:50.917Z",
-                          "order": 0,
-                          "fieldMetadataId": "683ab4d4-70fb-4fc9-a765-e77755a8f30e"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -3839,10 +3752,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Participants",
           "description": "Message Participants",
           "icon": "IconUserCircle",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -4203,10 +4113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Views",
           "description": "(System) Views",
           "icon": "IconLayoutCollage",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -4952,10 +4859,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Favorites",
           "description": "A favorite that can be accessed from the left menu",
           "icon": "IconHeart",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -5795,10 +5699,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Favorite Folders",
           "description": "A Folder of favorites",
           "icon": "IconFolder",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -6007,10 +5908,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Attachments",
           "description": "An attachment",
           "icon": "IconFileImport",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -6642,10 +6540,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Channel Message Associations",
           "description": "Message Synced with a Message Channel",
           "icon": "IconMessage",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -6942,10 +6837,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Filters",
           "description": "(System) View Filters",
           "icon": "IconFilterBolt",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -7261,40 +7153,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Tasks",
           "description": "A task",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "4e92884d-139a-451d-8a1f-380078369a88",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_d01a000cf26e1225d894dc3d364",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "0338d40f-cbb0-4ee8-b024-fe66d623444e",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "27443165-8f25-4018-b1d6-f9f44e17efba"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -7852,10 +7711,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Task Targets",
           "description": "A task target",
           "icon": "IconCheckbox",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -8324,10 +8180,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar events",
           "description": "Calendar events",
           "icon": "IconCalendar",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -8798,10 +8651,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Blocklists",
           "description": "Blocklist",
           "icon": "IconForbid2",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -9002,69 +8852,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "People",
           "description": "A person",
           "icon": "IconUser",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "4d799743-3cb0-4112-a497-452d9c0e6cbf",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_bbd7aec1976fc684a0a5e4816c9",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "c8156533-4e84-44ff-a2f5-838588041df9",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "28abc54f-5d86-4d54-8e65-5b44b9249153"
-                        }
-                      }
-                    ]
-                  }
-                }
-              },
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "6d3629ae-2d71-4349-b94b-c2baf736a7f7",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_UNIQUE_87914cd3ce963115f8cb943e2ac",
-                  "indexWhereClause": null,
-                  "indexType": "BTREE",
-                  "isUnique": true,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "a33a4d19-3a59-4d01-bd82-787172be4c4f",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "d49dcd4e-9565-4a11-99ac-c6e278fc028b"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -10013,80 +9801,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Opportunities",
           "description": "An opportunity",
           "icon": "IconTargetArrow",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "517dbbfa-650d-4d6b-b7a6-35ff3c10637d",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_9f96d65260c4676faac27cb6bf3",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "815a1083-69db-486b-b175-22e80d0a99f2",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "e918212c-7546-4d09-a4f2-b1718976d451"
-                        }
-                      }
-                    ]
-                  }
-                }
-              },
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "5eaf9196-e14f-423c-97b6-5911a2ea6ef0",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_4f469d3a7ee08aefdc099836364",
-                  "indexWhereClause": null,
-                  "indexType": "BTREE",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "d1ceb012-d59c-4965-97d4-a8c8655e6cca",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "77fccf84-50d7-40d0-a097-564ceb3e8433"
-                        }
-                      },
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "0ebf386b-65ca-48a9-bfef-afb2d9df8c75",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 1,
-                          "fieldMetadataId": "5398e336-835f-467b-94da-4a8869456dfd"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -10735,40 +10450,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Pets",
           "description": null,
           "icon": "IconCat",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "42d09c88-b63a-4249-91bb-0db7fd653749",
-                  "createdAt": "2025-06-09T18:53:51.353Z",
-                  "updatedAt": "2025-06-09T18:53:51.353Z",
-                  "name": "IDX_82c02a6c94da4f260020dfb54b9",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "cd98958f-f90d-48b0-8697-73613103caa3",
-                          "createdAt": "2025-06-09T18:53:51.353Z",
-                          "updatedAt": "2025-06-09T18:53:51.353Z",
-                          "order": 0,
-                          "fieldMetadataId": "0306bb8e-b9c2-4ffe-9395-60a053110018"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -11688,10 +11370,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "WorkflowAutomatedTriggers",
           "description": "A workflow automated trigger",
           "icon": "IconSettingsAutomation",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -11924,69 +11603,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Companies",
           "description": "A company",
           "icon": "IconBuildingSkyscraper",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "7471efe7-2fa4-4496-8403-cf3d6e1f4d76",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_UNIQUE_2a32339058d0b6910b0834ddf81",
-                  "indexWhereClause": null,
-                  "indexType": "BTREE",
-                  "isUnique": true,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "1173c55d-3d5e-4c7a-9ea1-e1c2aca9c39b",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "a710c97a-565d-4868-be27-fa846be32021"
-                        }
-                      }
-                    ]
-                  }
-                }
-              },
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "f42775a0-8f04-4123-81f4-f080ef14ceb9",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_fb1f4905546cfc6d70a971c76f7",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "cbd8e127-c06a-4f2c-929f-bee3d2fe8b2c",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "d69d9ca9-df3f-400b-87c0-ef09fa250f0c"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -12860,10 +12477,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Connected Accounts",
           "description": "A connected account",
           "icon": "IconAt",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -13296,40 +12910,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Notes",
           "description": "A note",
           "icon": "IconNotes",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "d7aa0d37-d4e2-455f-bbb9-201c03e876dd",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_f20de8d7fc74a405e4083051275",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "53699c8e-22dc-4ade-a144-189162ac63b7",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "ac77bf26-535c-4c88-8735-97702866de25"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -13773,10 +13354,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Fields",
           "description": "(System) View Fields",
           "icon": "IconTag",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -14135,10 +13713,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflow Versions",
           "description": "A workflow version",
           "icon": "IconVersions",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -14585,10 +14160,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar event participants",
           "description": "Calendar event participants",
           "icon": "IconCalendar",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -14970,10 +14542,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workflows",
           "description": "A workflow",
           "icon": "IconSettingsAutomation",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -15460,40 +15029,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Workspace Members",
           "description": "A workspace member",
           "icon": "IconUserCircle",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": [
-              {
-                "__typename": "IndexEdge",
-                "node": {
-                  "__typename": "Index",
-                  "id": "827348bd-da39-40d9-85c8-09370b9ec58e",
-                  "createdAt": "2025-06-09T18:53:47.000Z",
-                  "updatedAt": "2025-06-09T18:53:47.000Z",
-                  "name": "IDX_e47451872f70c8f187a6b460ac7",
-                  "indexWhereClause": null,
-                  "indexType": "GIN",
-                  "isUnique": false,
-                  "indexFieldMetadatas": {
-                    "__typename": "IndexIndexFieldMetadatasConnection",
-                    "edges": [
-                      {
-                        "__typename": "IndexFieldEdge",
-                        "node": {
-                          "__typename": "IndexField",
-                          "id": "ebbf44cc-2880-4b99-b817-2851e131b13f",
-                          "createdAt": "2025-06-09T18:53:47.000Z",
-                          "updatedAt": "2025-06-09T18:53:47.000Z",
-                          "order": 0,
-                          "fieldMetadataId": "7e389f1a-c377-4846-92d9-3e38697ee198"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -16329,10 +15865,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Webhooks",
           "description": "A webhook",
           "icon": "IconRobot",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -16537,10 +16070,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Folders",
           "description": "Folder for Message Channel",
           "icon": "IconFolder",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -16751,10 +16281,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "View Sorts",
           "description": "(System) View Sorts",
           "icon": "IconArrowsSort",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -16965,10 +16492,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar Channel Event Associations",
           "description": "Calendar Channel Event Associations",
           "icon": "IconCalendar",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -17229,10 +16753,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Calendar Channels",
           "description": "Calendar Channels",
           "icon": "IconCalendar",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -17803,10 +17324,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Message Channels",
           "description": "Message Channels",
           "icon": "IconMessage",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",
@@ -18503,10 +18021,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "labelPlural": "Messages",
           "description": "A message sent or received through a messaging channel (email, chat, etc.)",
           "icon": "IconMessage",
-          "indexMetadatas": {
-            "__typename": "ObjectIndexMetadatasConnection",
-            "edges": []
-          },
+          "indexMetadataList": [],
           "fieldsList": [
             {
               "__typename": "Field",

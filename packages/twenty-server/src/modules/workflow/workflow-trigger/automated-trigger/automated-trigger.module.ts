@@ -19,6 +19,6 @@ import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trig
     CronTriggerCronJob,
     CronTriggerCronCommand,
   ],
-  exports: [AutomatedTriggerWorkspaceService],
+  exports: [AutomatedTriggerWorkspaceService, CronTriggerCronCommand],
 })
 export class AutomatedTriggerModule {}

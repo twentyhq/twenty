@@ -10,6 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -77,7 +78,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={320}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent

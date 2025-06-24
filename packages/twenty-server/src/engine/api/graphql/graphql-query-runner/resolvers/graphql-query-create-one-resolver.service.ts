@@ -14,6 +14,7 @@ import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -56,7 +57,9 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
     this.apiEventEmitterService.emitCreateEvents({
       records: structuredClone(upsertedRecords),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {

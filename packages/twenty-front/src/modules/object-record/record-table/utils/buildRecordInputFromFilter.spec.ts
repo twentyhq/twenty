@@ -229,6 +229,7 @@ describe('buildValueFromFilter', () => {
       dateFormat: null,
       timeFormat: null,
       timeZone: null,
+      userEmail: 'userEmail',
     };
 
     const testCases = [

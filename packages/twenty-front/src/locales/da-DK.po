@@ -1069,6 +1069,11 @@ msgstr ""
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Vælg mellem OIDC og SAML protokoller"
 
+#. js-lingui-id: 2ZFG9X
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose between Short and Full"
+msgstr ""
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -1484,6 +1489,11 @@ msgstr "Opret dit arbejdsområde"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "Created"
 #~ msgstr "Oprettet"
+
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your schema"
+msgstr ""
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2592,13 +2602,18 @@ msgstr "Fornavn"
 
 #. js-lingui-id: 7JBW66
 #: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
-msgid "Forbidden"
-msgstr ""
+#~ msgid "Forbidden"
+#~ msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Glemt din adgangskode?"
+
+#. js-lingui-id: kI1qVD
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Format"
+msgstr ""
 
 #. js-lingui-id: abDZwc
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
@@ -3929,6 +3944,7 @@ msgid "Not Found"
 msgstr "Ikke fundet"
 
 #. js-lingui-id: 51G4/+
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr ""
@@ -4308,6 +4324,11 @@ msgstr "Portugisisk — Portugal"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
+
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data"
+msgstr ""
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4993,6 +5014,11 @@ msgstr "Indstil navnet på dit brugerdefinerede domæne og konfigurer dine DNS-p
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Indstil navnet på dit underdomæne"
+
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database"
+msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx

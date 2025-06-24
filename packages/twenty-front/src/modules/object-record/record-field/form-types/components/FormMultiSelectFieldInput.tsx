@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
+import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -59,9 +60,7 @@ const StyledSelectInputContainer = styled.div`
   top: ${({ theme }) => theme.spacing(9)};
 `;
 
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
 

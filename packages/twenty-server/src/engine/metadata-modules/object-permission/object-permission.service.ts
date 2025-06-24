@@ -101,7 +101,6 @@ export class ObjectPermissionService {
         {
           workspaceId,
           roleIds: [input.roleId],
-          ignoreLock: true,
         },
       );
 

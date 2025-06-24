@@ -31,7 +31,7 @@ export class FindDuplicatesQueryFactory {
           }
           edges{
             node {
-                ${objectMetadata.objectMetadataMapItem.fields
+                ${Object.values(objectMetadata.objectMetadataMapItem.fieldsById)
                   .map((field) =>
                     mapFieldMetadataToGraphqlQuery(
                       objectMetadata.objectMetadataMaps,

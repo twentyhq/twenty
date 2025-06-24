@@ -183,13 +183,12 @@ export class DatabaseEventTriggerListener {
         workspaceId,
       );
 
-    const fieldsByJoinColumnName =
-      objectMetadataItemWithFieldsMaps.fieldsByJoinColumnName;
-
-    for (const [joinColumn, joinField] of Object.entries(
-      fieldsByJoinColumnName,
+    for (const [joinColumnName, joinFieldId] of Object.entries(
+      objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName,
     )) {
-      const joinRecordId = record[joinColumn];
+      const joinField =
+        objectMetadataItemWithFieldsMaps.fieldsById[joinFieldId];
+      const joinRecordId = record[joinColumnName];
       const relatedObjectMetadataId = joinField.relationTargetObjectMetadataId;
 
       if (!isDefined(relatedObjectMetadataId)) {

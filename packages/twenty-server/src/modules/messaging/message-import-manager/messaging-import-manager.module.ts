@@ -83,6 +83,11 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingCursorService,
     MessagingSendMessageService,
   ],
-  exports: [MessagingSendMessageService],
+  exports: [
+    MessagingSendMessageService,
+    MessagingMessageListFetchCronCommand,
+    MessagingMessagesImportCronCommand,
+    MessagingOngoingStaleCronCommand,
+  ],
 })
 export class MessagingImportManagerModule {}

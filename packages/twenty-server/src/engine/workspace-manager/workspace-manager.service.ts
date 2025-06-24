@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -194,10 +193,5 @@ export class WorkspaceManagerService {
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,
     });
-
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED],
-      workspaceId,
-    );
   }
 }
