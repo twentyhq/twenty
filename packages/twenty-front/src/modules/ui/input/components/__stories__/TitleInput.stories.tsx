@@ -11,7 +11,6 @@ const meta: Meta<typeof TitleInput> = {
     placeholder: 'Enter title',
     hotkeyScope: 'titleInput',
     sizeVariant: 'md',
-    instanceId: 'title-input-story',
   },
   argTypes: {
     hotkeyScope: { control: false },

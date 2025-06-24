@@ -114,7 +114,6 @@ export const WorkflowStepHeader = ({
             onClickOutside={saveTitle}
             onTab={saveTitle}
             onShiftTab={saveTitle}
-            instanceId="workflow-step-title"
           />
         </StyledHeaderTitle>
         <StyledHeaderType>{headerType}</StyledHeaderType>

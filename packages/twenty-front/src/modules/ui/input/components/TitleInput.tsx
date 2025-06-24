@@ -6,9 +6,7 @@ import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { titleInputComponentState } from '@/ui/input/states/titleInputComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -27,7 +25,6 @@ type InputProps = {
 
 export type TitleInputProps = {
   disabled?: boolean;
-  instanceId: string;
 } & InputProps;
 
 const StyledDiv = styled.div<{
@@ -145,18 +142,14 @@ export const TitleInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-  instanceId,
 }: TitleInputProps) => {
-  const [isTitleInputOpen, setIsTitleInputOpen] = useRecoilComponentStateV2(
-    titleInputComponentState,
-    instanceId,
-  );
+  const [isOpened, setIsOpened] = useState(false);
 
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   return (
     <>
-      {isTitleInputOpen ? (
+      {isOpened ? (
         <Input
           sizeVariant={sizeVariant}
           value={value}
@@ -168,7 +161,7 @@ export const TitleInput = ({
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
-          setIsOpened={setIsTitleInputOpen}
+          setIsOpened={setIsOpened}
         />
       ) : (
         <StyledDiv
@@ -176,7 +169,7 @@ export const TitleInput = ({
           disabled={disabled}
           onClick={() => {
             if (!disabled) {
-              setIsTitleInputOpen(true);
+              setIsOpened(true);
               setHotkeyScopeAndMemorizePreviousScope({
                 scope: hotkeyScope,
               });
