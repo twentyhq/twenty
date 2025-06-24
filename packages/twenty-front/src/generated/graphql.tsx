@@ -58,6 +58,7 @@ export type Agent = {
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: Maybe<Scalars['JSON']>;
+  roleId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -958,7 +959,6 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1204,11 +1204,6 @@ export type MutationImpersonateArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
-};
-
-
-export type MutationRemoveRoleFromAgentArgs = {
-  input: RemoveRoleFromAgentInput;
 };
 
 
@@ -1609,8 +1604,6 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAgentRoles: Array<Role>;
-  getAgentsWithRole: Array<Agent>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
@@ -1667,16 +1660,6 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryGetAgentRolesArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryGetAgentsWithRoleArgs = {
-  roleId: Scalars['String'];
 };
 
 
@@ -1825,11 +1808,6 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
-export type RemoveRoleFromAgentInput = {
-  agentId: Scalars['String'];
-  roleId: Scalars['String'];
-};
-
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
@@ -1837,7 +1815,6 @@ export type ResendEmailVerificationTokenOutput = {
 
 export type Role = {
   __typename?: 'Role';
-  agents: Array<Agent>;
   canDestroyAllObjectRecords: Scalars['Boolean'];
   canReadAllObjectRecords: Scalars['Boolean'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean'];
@@ -3137,6 +3114,13 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
 
+export type AssignRoleToAgentMutationVariables = Exact<{
+  input: AssignRoleToAgentInput;
+}>;
+
+
+export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
+
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
 }>;
@@ -3149,7 +3133,7 @@ export type FindOneAgentQueryVariables = Exact<{
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null } };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -6422,6 +6406,37 @@ export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export const AssignRoleToAgentDocument = gql`
+    mutation AssignRoleToAgent($input: AssignRoleToAgentInput!) {
+  assignRoleToAgent(input: $input)
+}
+    `;
+export type AssignRoleToAgentMutationFn = Apollo.MutationFunction<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
+
+/**
+ * __useAssignRoleToAgentMutation__
+ *
+ * To run a mutation, you first call `useAssignRoleToAgentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssignRoleToAgentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assignRoleToAgentMutation, { data, loading, error }] = useAssignRoleToAgentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAssignRoleToAgentMutation(baseOptions?: Apollo.MutationHookOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>(AssignRoleToAgentDocument, options);
+      }
+export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRoleToAgentMutation>;
+export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
+export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
 export const UpdateOneAgentDocument = gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
   updateOneAgent(input: $input) {
@@ -6469,6 +6484,7 @@ export const FindOneAgentDocument = gql`
     prompt
     modelId
     responseFormat
+    roleId
   }
 }
     `;

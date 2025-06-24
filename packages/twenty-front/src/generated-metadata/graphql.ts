@@ -66,6 +66,7 @@ export type Agent = {
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   responseFormat?: Maybe<Scalars['JSON']['output']>;
+  roleId?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1011,7 +1012,6 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeRoleFromAgent: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1281,11 +1281,6 @@ export type MutationImpersonateArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
-};
-
-
-export type MutationRemoveRoleFromAgentArgs = {
-  input: RemoveRoleFromAgentInput;
 };
 
 
@@ -1709,8 +1704,6 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAgentRoles: Array<Role>;
-  getAgentsWithRole: Array<Agent>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
@@ -1793,16 +1786,6 @@ export type QueryFindOneServerlessFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
-};
-
-
-export type QueryGetAgentRolesArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryGetAgentsWithRoleArgs = {
-  roleId: Scalars['String']['input'];
 };
 
 
@@ -1987,11 +1970,6 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
-export type RemoveRoleFromAgentInput = {
-  agentId: Scalars['String']['input'];
-  roleId: Scalars['String']['input'];
-};
-
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean']['output'];
@@ -1999,7 +1977,6 @@ export type ResendEmailVerificationTokenOutput = {
 
 export type Role = {
   __typename?: 'Role';
-  agents: Array<Agent>;
   canDestroyAllObjectRecords: Scalars['Boolean']['output'];
   canReadAllObjectRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean']['output'];
