@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodError, isDirty, z } from 'zod';
 
-import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -14,6 +13,7 @@ import { Select } from '@/ui/input/components/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useNavigate } from 'react-router-dom';
+import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -84,7 +84,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       getActiveFieldMetadataItems(objectMetadataItem)
         .filter(
           ({ id, type }) =>
-            LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(type) ||
+            isLabelIdentifierFieldMetadataTypes(type) ||
             objectMetadataItem.labelIdentifierFieldMetadataId === id,
         )
         .map<SelectOption<string | null>>((fieldMetadataItem) => ({
