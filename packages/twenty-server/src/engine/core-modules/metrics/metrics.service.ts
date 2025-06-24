@@ -15,7 +15,7 @@ export class MetricsService {
     shouldStoreInCache = true,
   }: {
     key: MetricsKeys;
-    eventId: string;
+    eventId?: string;
     shouldStoreInCache?: boolean;
   }) {
     //TODO : Define meter name usage in monitoring
@@ -24,7 +24,7 @@ export class MetricsService {
 
     counter.add(1);
 
-    if (shouldStoreInCache) {
+    if (shouldStoreInCache && eventId) {
       this.metricsCacheService.updateCounter(key, [eventId]);
     }
   }
