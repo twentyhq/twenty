@@ -1,5 +1,6 @@
 import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
@@ -12,7 +13,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
@@ -39,6 +39,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.InviteTeam,
     AppPath.PlanRequired,
     AppPath.PlanRequiredSuccess,
+    AppPath.BookCallDecision,
+    AppPath.BookCall,
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -60,7 +62,12 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
+    !someMatchingLocationOf([
+      AppPath.PlanRequired,
+      AppPath.PlanRequiredSuccess,
+      AppPath.BookCall,
+      AppPath.BookCallDecision,
+    ])
   ) {
     if (
       isMatchingLocation(location, AppPath.VerifyEmail) &&
@@ -71,13 +78,14 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.PlanRequired;
   }
 
-  if (
-    isWorkspaceSuspended &&
-    !isMatchingLocation(location, AppPath.SettingsCatchAll)
-  ) {
-    return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
-      SettingsPath.Billing
-    }`;
+  if (isWorkspaceSuspended) {
+    if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
+      return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+        SettingsPath.Billing
+      }`;
+    }
+
+    return;
   }
 
   if (
@@ -85,6 +93,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
       AppPath.PlanRequiredSuccess,
+      AppPath.BookCallDecision,
+      AppPath.BookCall,
     ])
   ) {
     return AppPath.CreateWorkspace;
@@ -109,6 +119,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(location, AppPath.InviteTeam)
   ) {
     return AppPath.InviteTeam;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
+    !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
+  ) {
+    return AppPath.BookCallDecision;
   }
 
   if (

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -21,6 +21,9 @@ export enum CalendarEventImportSyncStep {
 
 @Injectable()
 export class CalendarEventImportErrorHandlerService {
+  private readonly logger = new Logger(
+    CalendarEventImportErrorHandlerService.name,
+  );
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
@@ -167,11 +170,13 @@ export class CalendarEventImportErrorHandlerService {
       CalendarEventImportExceptionCode.UNKNOWN,
     );
 
+    this.logger.log(exception);
     this.exceptionHandlerService.captureExceptions(
       [calendarEventImportException],
       {
         additionalData: {
           calendarChannelId: calendarChannel.id,
+          exception,
         },
         workspace: {
           id: workspaceId,

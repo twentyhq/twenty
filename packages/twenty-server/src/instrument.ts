@@ -3,6 +3,7 @@ import process from 'process';
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import {
+  AggregationTemporality,
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
@@ -49,6 +50,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 }
 
 // Meter setup
+
 const meterProvider = new MeterProvider({
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
@@ -59,12 +61,17 @@ const meterProvider = new MeterProvider({
           }),
         ]
       : []),
-    new PeriodicExportingMetricReader({
-      exporter: new OTLPMetricExporter({
-        url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
-      }),
-      exportIntervalMillis: 10000,
-    }),
+    ...(meterDrivers.includes(MeterDriver.OpenTelemetry)
+      ? [
+          new PeriodicExportingMetricReader({
+            exporter: new OTLPMetricExporter({
+              url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
+              temporalityPreference: AggregationTemporality.DELTA,
+            }),
+            exportIntervalMillis: 10000,
+          }),
+        ]
+      : []),
   ],
 });
 

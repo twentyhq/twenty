@@ -94,12 +94,13 @@ const searchCurrentStepOutputSchema = ({
   }
 
   return {
-    variableLabel: isFullRecord
-      ? getDisplayedSubStepObjectLabel(currentSubStep)
-      : getDisplayedSubStepFieldLabel(
-          isSelectedFieldInNextKey ? nextKey : selectedField,
-          currentSubStep,
-        ),
+    variableLabel:
+      isFullRecord && isRecordOutputSchema(currentSubStep)
+        ? getDisplayedSubStepObjectLabel(currentSubStep)
+        : getDisplayedSubStepFieldLabel(
+            isSelectedFieldInNextKey ? nextKey : selectedField,
+            currentSubStep,
+          ),
     variablePathLabel,
   };
 };

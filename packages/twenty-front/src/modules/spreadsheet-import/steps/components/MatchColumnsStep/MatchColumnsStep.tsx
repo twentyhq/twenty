@@ -10,8 +10,6 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -77,7 +75,6 @@ export const MatchColumnsStep = <T extends string>({
   onError,
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
-  const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
   const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
@@ -131,10 +128,6 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Another column unselected', {
-                detailedMessage: 'Columns cannot duplicate',
-                variant: SnackBarVariant.Error,
-              });
               return setColumn(column);
             } else {
               return column;
@@ -143,15 +136,7 @@ export const MatchColumnsStep = <T extends string>({
         );
       }
     },
-    [
-      columns,
-      onRevertIgnore,
-      onIgnore,
-      fields,
-      setColumns,
-      data,
-      enqueueSnackBar,
-    ],
+    [columns, onRevertIgnore, onIgnore, fields, setColumns, data],
   );
 
   const handleContinue = useCallback(
@@ -262,6 +247,27 @@ export const MatchColumnsStep = <T extends string>({
       ),
   );
 
+  const onBackConfirmation = () => {
+    onBack?.();
+    setColumns([]);
+  };
+
+  const openRestartDialog = () => {
+    enqueueDialog({
+      title: t`Restart Import`,
+      message: t`You will lose all your mappings.`,
+      buttons: [
+        { title: t`Cancel` },
+        {
+          title: t`Restart`,
+          onClick: onBackConfirmation,
+          accent: 'danger',
+          role: 'confirm',
+        },
+      ],
+    });
+  };
+
   return (
     <>
       <StyledContent>
@@ -294,14 +300,12 @@ export const MatchColumnsStep = <T extends string>({
         </ScrollWrapper>
       </StyledContent>
       <StepNavigationButton
-        onClick={handleOnContinue}
+        onContinue={handleOnContinue}
         isLoading={isLoading}
-        title={t`Next Step`}
-        onBack={() => {
-          onBack?.();
-          setColumns([]);
-        }}
-        isNextDisabled={!hasMatchedColumns}
+        continueTitle={t`Next Step`}
+        backTitle={t`Restart Import`}
+        onBack={openRestartDialog}
+        isContinueDisabled={!hasMatchedColumns}
       />
     </>
   );

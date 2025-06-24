@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -22,6 +22,10 @@ export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
+  private readonly logger = new Logger(
+    ConnectedAccountRefreshTokensService.name,
+  );
+
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
@@ -88,8 +92,15 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
+      if (error?.name === 'AggregateError') {
+        this.logger.log(error.message);
+        this.logger.log(error.name);
+        this.logger.log(error?.errors);
+      } else {
+        this.logger.log(error);
+      }
       throw new ConnectedAccountRefreshAccessTokenException(
-        `Error refreshing tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} ${error?.response?.data?.error_description}`,
+        `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.message} ${error?.response?.data?.error_description}`,
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
       );
     }

@@ -1,5 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -11,7 +12,7 @@ import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -118,12 +119,13 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ],
   );
 
-  useScopedHotkeys(
-    ['ctrl+Enter,meta+Enter'],
-    handleOpenRecord,
-    AppHotkeyScope.CommandMenuOpen,
-    [handleOpenRecord],
-  );
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+Enter,meta+Enter'],
+    callback: handleOpenRecord,
+    focusId: SIDE_PANEL_FOCUS_ID,
+    scope: AppHotkeyScope.CommandMenuOpen,
+    dependencies: [handleOpenRecord],
+  });
 
   if (!isDefined(record)) {
     return null;

@@ -67,6 +67,12 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     CalendarOngoingStaleCronCommand,
     CalendarOngoingStaleJob,
   ],
-  exports: [CalendarEventsImportService, CalendarFetchEventsService],
+  exports: [
+    CalendarEventsImportService,
+    CalendarFetchEventsService,
+    CalendarEventListFetchCronCommand,
+    CalendarEventsImportCronCommand,
+    CalendarOngoingStaleCronCommand,
+  ],
 })
 export class CalendarEventImportManagerModule {}

@@ -1,7 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -9,6 +8,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
@@ -200,7 +200,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
               <>
                 {!triggerOptions.readonly &&
                   (isSystemObjectsOpen ? (
-                    <DropdownContent>
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
                       <DropdownMenuHeader
                         StartComponent={
                           <DropdownMenuHeaderLeftComponent
@@ -229,7 +231,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ) : (
-                    <DropdownContent>
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
                       <DropdownMenuSearchInput
                         autoFocus
                         value={searchInputValue}
@@ -261,7 +265,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                   ))}
               </>
             }
-            dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isUpdateEvent && (

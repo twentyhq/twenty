@@ -153,6 +153,7 @@ export class StandardFieldFactory {
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
+        isLabelSyncedWithName: true,
       },
     ];
   }
@@ -191,6 +192,7 @@ export class StandardFieldFactory {
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
+      isLabelSyncedWithName: true,
     });
 
     return fieldMetadataCollection;

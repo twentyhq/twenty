@@ -229,6 +229,7 @@ describe('buildValueFromFilter', () => {
       dateFormat: null,
       timeFormat: null,
       timeZone: null,
+      userEmail: 'userEmail',
     };
 
     const testCases = [
@@ -495,6 +496,17 @@ describe('buildValueFromFilter', () => {
         'MULTI_SELECT',
       );
       expect(buildValueFromFilter({ filter })).toBeUndefined();
+    });
+  });
+
+  describe('UUID field type', () => {
+    it('should return the value', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.Is,
+        'test-uuid',
+        'UUID',
+      );
+      expect(buildValueFromFilter({ filter })).toBe('test-uuid');
     });
   });
 });

@@ -4,11 +4,10 @@ import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/Dropd
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
@@ -47,9 +46,8 @@ export type DropdownProps = {
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
-    scope: string;
   };
-  dropdownHotkeyScope: HotkeyScope;
+  globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
   dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownOffset?: DropdownOffset;
@@ -66,7 +64,7 @@ export const Dropdown = ({
   dropdownComponents,
   hotkey,
   dropdownId,
-  dropdownHotkeyScope,
+  globalHotkeysConfig,
   dropdownPlacement = 'bottom-end',
   dropdownStrategy = 'absolute',
   dropdownOffset,
@@ -145,21 +143,14 @@ export const Dropdown = ({
   });
 
   const handleClickableComponentClick = useRecoilCallback(
-    ({ set }) =>
-      async (event: MouseEvent) => {
-        event.stopPropagation();
-        event.preventDefault();
+    () => async (event: MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
 
-        // TODO: refactor this when we have finished dropdown refactor with state and V1 + V2
-        set(
-          dropdownHotkeyComponentState({ scopeId: dropdownId }),
-          dropdownHotkeyScope,
-        );
-
-        toggleDropdown(dropdownHotkeyScope);
-        onClickOutside?.();
-      },
-    [dropdownId, dropdownHotkeyScope, onClickOutside, toggleDropdown],
+      toggleDropdown(globalHotkeysConfig);
+      onClickOutside?.();
+    },
+    [globalHotkeysConfig, onClickOutside, toggleDropdown],
   );
 
   return (
@@ -190,10 +181,9 @@ export const Dropdown = ({
               dropdownId={dropdownId}
               dropdownPlacement={placement}
               floatingUiRefs={refs}
-              hotkeyScope={dropdownHotkeyScope}
               hotkey={hotkey}
               onClickOutside={onClickOutside}
-              onHotkeyTriggered={toggleDropdown}
+              onHotkeyTriggered={onOpen}
               excludedClickOutsideIds={excludedClickOutsideIds}
               isDropdownInModal={isDropdownInModal}
             />

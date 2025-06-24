@@ -76,6 +76,7 @@ import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -86,7 +87,7 @@ export const useAuth = () => {
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const { origin } = useOrigin();
-
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -463,7 +464,7 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      signUp({
+      return signUp({
         variables: { email, password, captchaToken },
         onCompleted: async (data) => {
           handleSetAuthTokens(data.signUp.tokens);
@@ -500,7 +501,8 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-  }, [clearSession]);
+    await requestFreshCaptchaToken();
+  }, [clearSession, requestFreshCaptchaToken]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

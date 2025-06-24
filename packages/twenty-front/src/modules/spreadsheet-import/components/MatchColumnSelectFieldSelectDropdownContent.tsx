@@ -10,6 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -30,7 +31,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   onSelectSuggestedOption,
   onCancelSelect,
   onDoNotImportSelect,
-  options,
   suggestedOptions,
 }: {
   selectedValue: SelectOption | undefined;
@@ -40,9 +40,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   onSelectSuggestedOption: (selectedSuggestedOption: SelectOption) => void;
   onCancelSelect: () => void;
   onDoNotImportSelect: () => void;
-  options: readonly ReadonlyDeep<
-    SelectOption & { fieldMetadataTypeLabel?: string }
-  >[];
   suggestedOptions: readonly ReadonlyDeep<
     SelectOption & { fieldMetadataTypeLabel?: string }
   >[];
@@ -81,7 +78,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={320}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -121,7 +118,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                         key={option.value}
                         selected={selectedValue?.value === option.value}
                         onClick={() => handleSuggestedOptionClick(option)}
-                        disabled={option.disabled}
                         LeftIcon={option.Icon}
                         text={option.label}
                         contextualText={option.fieldMetadataTypeLabel}
@@ -140,10 +136,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 key={field.id}
                 selected={selectedValue?.value === field.name}
                 onClick={() => handleFieldClick(field)}
-                disabled={
-                  options.find((option) => option.value === field.name)
-                    ?.disabled && selectedValue?.value !== field.name
-                }
                 LeftIcon={getIcon(field.icon)}
                 text={field.label}
                 contextualText={getFieldMetadataTypeLabel(field.type)}

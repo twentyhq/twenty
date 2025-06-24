@@ -114,9 +114,9 @@ export const SelectHeaderStep = ({
         </StyledTableContainer>
       </Modal.Content>
       <StepNavigationButton
-        onClick={handleOnContinue}
+        onContinue={handleOnContinue}
         onBack={onBack}
-        title={t`Continue`}
+        continueTitle={t`Continue`}
         isLoading={isLoading}
       />
     </>

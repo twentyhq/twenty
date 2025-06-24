@@ -28,7 +28,7 @@ const StyledRtlLtr = styled.div`
 type SpreadSheetImportModalWrapperProps = {
   children: React.ReactNode;
   modalId: string;
-  onClose?: () => void;
+  onClose: () => void;
 };
 
 export const SpreadSheetImportModalWrapper = ({
@@ -44,6 +44,7 @@ export const SpreadSheetImportModalWrapper = ({
       modalId={modalId}
       isClosable={true}
       onClose={onClose}
+      shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
         <SpreadSheetImportModalCloseButton onClose={onClose} />

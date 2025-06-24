@@ -10,6 +10,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -58,8 +59,8 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   const fieldMetadataItemSettings =
     SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldMetadataItem.type];
 
-  const subFieldNamesThatExistInOptions = fieldMetadataItemSettings.subFields
-    .filter((subFieldName) => {
+  const subFieldsThatExistInOptions = fieldMetadataItemSettings.subFields
+    .filter(({ subFieldName }) => {
       const optionKey = getSubFieldOptionKey(fieldMetadataItem, subFieldName);
 
       const correspondingOption = options.find(
@@ -68,7 +69,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
 
       return isDefined(correspondingOption);
     })
-    .filter((subFieldName) =>
+    .filter(({ subFieldName }) =>
       getCompositeSubFieldLabel(
         fieldMetadataItem.type as CompositeFieldType,
         subFieldName,
@@ -78,7 +79,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
     );
 
   return (
-    <DropdownContent widthInPixels={320}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -96,7 +97,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {subFieldNamesThatExistInOptions.map((subFieldName) => (
+        {subFieldsThatExistInOptions.map(({ subFieldName }) => (
           <MenuItem
             key={subFieldName}
             onClick={() => handleSubFieldSelect(subFieldName)}

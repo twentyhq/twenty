@@ -1,16 +1,23 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import {
+  WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -26,7 +33,8 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -124,6 +132,25 @@ export const WorkflowDiagramCanvasBase = ({
   const workflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
   );
+  const workflowDiagramState = useRecoilComponentCallbackStateV2(
+    workflowDiagramComponentState,
+  );
+  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+    workflowDiagramComponentState,
+  );
+  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
+    workflowInsertStepIdsComponentState,
+  );
+  const workflowDiagramWaitingNodesDimensionsState =
+    useRecoilComponentCallbackStateV2(
+      workflowDiagramWaitingNodesDimensionsComponentState,
+    );
+  const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentStateV2(
+    workflowDiagramWaitingNodesDimensionsComponentState,
+  );
+
+  const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
+    useState<boolean>(false);
 
   const { nodes, edges } = useMemo(
     () =>
@@ -134,14 +161,7 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const { rightDrawerState } = useRightDrawerState();
-
-  const rightDrawerWidth = Number(
-    THEME_COMMON.rightDrawerWidth.replace('px', ''),
-  );
-
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
-    workflowDiagramComponentState,
-  );
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
@@ -164,65 +184,180 @@ export const WorkflowDiagramCanvasBase = ({
     reactflow.setNodes((nodes) =>
       nodes.map((node) => ({ ...node, selected: false })),
     );
+    setWorkflowInsertStepIds({
+      parentStepId: undefined,
+      nextStepId: undefined,
+    });
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
-      return;
-    }
+  const setFlowViewport = useRecoilCallback(
+    () =>
+      ({
+        rightDrawerState,
+        noAnimation,
+        workflowDiagramFlowInitialized,
+        isInRightDrawer,
+        workflowDiagram,
+      }: {
+        rightDrawerState: CommandMenuAnimationVariant;
+        noAnimation?: boolean;
+        workflowDiagramFlowInitialized: boolean;
+        isInRightDrawer: boolean;
+        workflowDiagram: WorkflowDiagram | undefined;
+      }) => {
+        if (
+          !isDefined(containerRef.current) ||
+          !workflowDiagramFlowInitialized
+        ) {
+          return;
+        }
 
-    const currentViewport = reactflow.getViewport();
+        const currentViewport = reactflow.getViewport();
+        const nodes = workflowDiagram?.nodes ?? [];
 
-    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+        const canComputeNodesBounds = nodes.every((node) =>
+          isDefined(node.measured),
+        );
 
-    let visibleRightDrawerWidth = 0;
-    if (rightDrawerState === 'normal') {
-      visibleRightDrawerWidth = rightDrawerWidth;
-    }
+        if (!canComputeNodesBounds) {
+          setWorkflowDiagramWaitingNodesDimensions(true);
+          return;
+        }
 
-    const viewportX =
-      (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
-      flowBounds.width / 2;
+        setWorkflowDiagramWaitingNodesDimensions(false);
 
-    reactflow.setViewport(
-      {
-        ...currentViewport,
-        x: viewportX - visibleRightDrawerWidth,
+        let visibleRightDrawerWidth = 0;
+        if (rightDrawerState === 'normal' && !isInRightDrawer) {
+          const rightDrawerWidth = Number(
+            THEME_COMMON.rightDrawerWidth.replace('px', ''),
+          );
+
+          visibleRightDrawerWidth = rightDrawerWidth;
+        }
+
+        const flowBounds = reactflow.getNodesBounds(nodes);
+        const viewportX =
+          (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
+          flowBounds.width / 2;
+
+        reactflow.setViewport(
+          {
+            ...currentViewport,
+            x: viewportX - visibleRightDrawerWidth,
+            zoom: defaultFitViewOptions.maxZoom,
+          },
+          { duration: noAnimation ? 0 : 300 },
+        );
       },
-      { duration: 300 },
-    );
-  }, [reactflow, rightDrawerState, rightDrawerWidth]);
+    [reactflow, setWorkflowDiagramWaitingNodesDimensions],
+  );
 
-  const handleNodesChanges = (changes: NodeChange<WorkflowDiagramNode>[]) => {
-    setWorkflowDiagram((diagram) => {
-      if (!isDefined(diagram)) {
-        return diagram;
-      }
+  const handleSetFlowViewportOnChange = useRecoilCallback(
+    ({ snapshot }) =>
+      ({
+        rightDrawerState,
+        workflowDiagramFlowInitialized,
+        isInRightDrawer,
+      }: {
+        rightDrawerState: CommandMenuAnimationVariant;
+        workflowDiagramFlowInitialized: boolean;
+        isInRightDrawer: boolean;
+      }) => {
+        setFlowViewport({
+          rightDrawerState,
+          isInRightDrawer,
+          workflowDiagramFlowInitialized,
+          workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
+        });
+      },
+    [setFlowViewport, workflowDiagramState],
+  );
 
-      return {
-        ...diagram,
-        nodes: applyNodeChanges(changes, diagram.nodes),
-      };
+  useEffect(() => {
+    handleSetFlowViewportOnChange({
+      rightDrawerState,
+      workflowDiagramFlowInitialized,
+      isInRightDrawer,
     });
-  };
+  }, [
+    handleSetFlowViewportOnChange,
+    isInRightDrawer,
+    rightDrawerState,
+    workflowDiagramFlowInitialized,
+  ]);
 
-  const handleInit = () => {
-    if (!isDefined(containerRef.current)) {
-      return;
-    }
+  const handleNodesChanges = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (changes: NodeChange<WorkflowDiagramNode>[]) => {
+        const workflowDiagram = getSnapshotValue(
+          snapshot,
+          workflowDiagramState,
+        );
+        let updatedWorkflowDiagram = workflowDiagram;
+        if (isDefined(workflowDiagram)) {
+          updatedWorkflowDiagram = {
+            ...workflowDiagram,
+            nodes: applyNodeChanges(changes, workflowDiagram.nodes),
+          };
+        }
 
-    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+        set(workflowDiagramState, updatedWorkflowDiagram);
 
-    reactflow.setViewport({
-      x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
-      y: 150,
-      zoom: defaultFitViewOptions.maxZoom,
-    });
+        const workflowDiagramWaitingNodesDimensions = getSnapshotValue(
+          snapshot,
+          workflowDiagramWaitingNodesDimensionsState,
+        );
+        if (!workflowDiagramWaitingNodesDimensions) {
+          return;
+        }
 
-    onInit?.();
-  };
+        setFlowViewport({
+          rightDrawerState,
+          noAnimation: true,
+          isInRightDrawer,
+          workflowDiagramFlowInitialized,
+          workflowDiagram: updatedWorkflowDiagram,
+        });
+      },
+    [
+      isInRightDrawer,
+      rightDrawerState,
+      setFlowViewport,
+      workflowDiagramFlowInitialized,
+      workflowDiagramState,
+      workflowDiagramWaitingNodesDimensionsState,
+    ],
+  );
+
+  const handleInit = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        if (!isDefined(containerRef.current)) {
+          return;
+        }
+
+        setFlowViewport({
+          rightDrawerState,
+          noAnimation: true,
+          isInRightDrawer,
+          workflowDiagramFlowInitialized: true,
+          workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
+        });
+
+        setWorkflowDiagramFlowInitialized(true);
+
+        onInit?.();
+      },
+    [
+      isInRightDrawer,
+      onInit,
+      rightDrawerState,
+      setFlowViewport,
+      workflowDiagramState,
+    ],
+  );
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -232,6 +367,7 @@ export const WorkflowDiagramCanvasBase = ({
         onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
+        defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodes={nodes}

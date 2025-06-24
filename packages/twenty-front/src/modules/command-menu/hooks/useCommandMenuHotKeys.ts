@@ -53,7 +53,7 @@ export const useCommandMenuHotKeys = () => {
       openRecordsSearchPage();
     },
     false,
-    AppHotkeyScope.KeyboardShortcutMenu,
+    AppHotkeyScope.SearchRecords,
     [openRecordsSearchPage],
     {
       ignoreModifiers: true,

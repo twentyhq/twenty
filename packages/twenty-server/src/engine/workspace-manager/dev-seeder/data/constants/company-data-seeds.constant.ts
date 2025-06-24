@@ -1,5 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type CompanyDataSeed = {
@@ -12,6 +10,7 @@ type CompanyDataSeed = {
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  accountOwnerId: string;
 };
 
 export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
@@ -24,6 +23,7 @@ export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'accountOwnerId',
 ];
 
 // prettier-ignore
@@ -638,9 +638,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 284571,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/google',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -650,9 +651,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redmond',
     employees: 226067,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microsoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -662,9 +664,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Menlo Park',
     employees: 119511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/meta',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -674,9 +677,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Houston',
     employees: 113151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slbglobal',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -686,9 +690,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 99625,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cisco',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -698,9 +703,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 90545,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uber-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -713,6 +719,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -722,9 +729,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chesterfield',
     employees: 35731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/amdocs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -737,6 +745,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -746,9 +755,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 24461,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/globallogic',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -761,6 +771,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -771,9 +782,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 20311,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/ss-c-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -786,6 +798,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -795,9 +808,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Raleigh',
     employees: 19945,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/red-hat',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -807,9 +821,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 19269,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsuite',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -819,9 +834,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Sunnyvale',
     employees: 18061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synopsys',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -831,9 +847,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Plano',
     employees: 17262,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/siemenssoftware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -843,9 +860,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cary',
     employees: 16287,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sas',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -858,6 +876,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -867,9 +886,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 15127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/broadcomsoftware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -879,9 +899,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 14593,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/autodesk',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -891,9 +912,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Verona',
     employees: 13765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/epic1979',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -906,6 +928,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -916,9 +939,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 13111,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/cloudsoftwaregroup',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -928,9 +952,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Stamford',
     employees: 12306,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pitney-bowes',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -940,9 +965,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Sunnyvale',
     employees: 11928,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/juniper-networks',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -955,6 +981,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -964,9 +991,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 10748,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/teradata',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -979,6 +1007,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -989,9 +1018,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 9377,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/cadence-design-systems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1005,6 +1035,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1017,6 +1048,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1026,9 +1058,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 9170,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/24-7-ai',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1042,6 +1075,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1051,9 +1085,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 8891,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/splunk',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1063,9 +1098,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 8860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/okta-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1078,6 +1114,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1087,9 +1124,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Richardson',
     employees: 8227,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/realpage',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1099,9 +1137,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Ny',
     employees: 8180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pro-freelance',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1111,9 +1150,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'South San Francisco',
     employees: 8145,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stripe',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1126,6 +1166,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1135,9 +1176,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 8063,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unity',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1147,9 +1189,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Pleasanton',
     employees: 7831,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/veeva-systems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1160,9 +1203,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 7761,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/nuance-communications',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1172,9 +1216,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 7687,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/freshworks-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1185,9 +1230,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 7586,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/seal-software-group',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1197,9 +1243,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 7557,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/docusign',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1209,9 +1256,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 7454,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nutanix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1221,9 +1269,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Menlo Park',
     employees: 7371,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/genesys',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1233,9 +1282,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 7305,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sapconcur',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1245,9 +1295,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 7233,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/joinsquare',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1257,9 +1308,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Monica',
     employees: 7219,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/snap-inc-co',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1272,6 +1324,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1281,9 +1334,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 7119,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ptcinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1293,9 +1347,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Canonsburg',
     employees: 7112,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ansys-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1305,9 +1360,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 7016,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aricent',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1320,6 +1376,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1329,9 +1386,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Birmingham',
     employees: 6902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shipt',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1341,9 +1399,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Englewood',
     employees: 6849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/csg-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1353,9 +1412,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 6721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/twilio-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1366,9 +1426,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 6718,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/veritas-technologies-llc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1378,9 +1439,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 6528,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/citrix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1394,6 +1456,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1403,9 +1466,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redlands',
     employees: 6463,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/esri',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1415,9 +1479,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Oklahoma City',
     employees: 6378,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycom',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1427,9 +1492,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 6297,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/roblox',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1439,9 +1505,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 6255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zendesk',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1451,9 +1518,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Jacksonville',
     employees: 6213,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/newfold',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1463,9 +1531,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 5850,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/informatica',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1475,9 +1544,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 5795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/get-cafe',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1490,6 +1560,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1502,6 +1573,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1511,9 +1583,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Goleta',
     employees: 5583,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/yardi',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1523,9 +1596,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 5470,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datadog',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1536,9 +1610,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 5310,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/epicor-software-corp',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1549,9 +1624,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 5262,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/hexagonassetlifecycleintelligence',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1561,9 +1637,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Scottsdale',
     employees: 5205,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blueyonder',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1576,6 +1653,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1588,6 +1666,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1600,6 +1679,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1609,9 +1689,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 5040,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/iac',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1621,9 +1702,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 5008,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/toast-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1633,9 +1715,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Exton',
     employees: 4862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bentley-systems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1645,9 +1728,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 4677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/profitboss',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1657,9 +1741,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Westborough',
     employees: 4661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eclinicalworks',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1669,9 +1754,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Southfield',
     employees: 4629,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altimetrik',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1681,9 +1767,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 4616,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ca-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1693,9 +1780,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Waltham',
     employees: 4502,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dynatrace',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1708,6 +1796,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1717,9 +1806,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 4484,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uipath',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1733,6 +1823,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1742,9 +1833,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 4472,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stealthstartup',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1757,6 +1849,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1766,9 +1859,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Houston',
     employees: 4316,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highradius',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1778,9 +1872,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 4311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avalara',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1791,9 +1886,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 4236,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/manhattan-associates',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1806,6 +1902,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1815,9 +1912,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Westlake',
     employees: 4166,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hyland-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1831,6 +1929,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1844,6 +1943,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1857,6 +1957,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1866,9 +1967,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Vancouver',
     employees: 3875,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zoominfo',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1881,6 +1983,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1890,9 +1993,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Ramon',
     employees: 3849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ge-digital',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1902,9 +2006,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Newark',
     employees: 3844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rms',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1914,9 +2019,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 3838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tableau-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1926,9 +2032,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Morrisville',
     employees: 3799,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/extreme-networks',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1941,6 +2048,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1950,9 +2058,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Aliso Viejo',
     employees: 3795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quest-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -1962,9 +2071,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 3788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/motive-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -1974,9 +2084,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 3774,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/retired-life',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -1986,9 +2097,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 3751,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dropbox',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2001,6 +2113,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2010,9 +2123,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 3694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/e2open',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2023,9 +2137,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 3596,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/altair-engineering',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2035,9 +2150,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Philadelphia',
     employees: 3574,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gopuff',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2047,9 +2163,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bozeman',
     employees: 3511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fico',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2062,6 +2179,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2074,6 +2192,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2086,6 +2205,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2095,9 +2215,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 3467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/discord',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2107,9 +2228,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bowie',
     employees: 3459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inovalon',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2120,9 +2242,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 3428,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/progress-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2132,9 +2255,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 3370,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rubrik-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2144,9 +2268,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Berkeley Heights',
     employees: 3367,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axtria',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2159,6 +2284,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2168,9 +2294,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Miami',
     employees: 3191,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kaseya',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2180,9 +2307,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Solon',
     employees: 3107,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mri-software-llc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2196,6 +2324,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2206,9 +2335,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 3089,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/cornerstone-ondemand',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2218,9 +2348,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 3061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reddit-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2230,9 +2361,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'South Jordan',
     employees: 3056,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ivanti',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2242,9 +2374,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 3007,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cloudera',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2255,9 +2388,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 3001,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/medidata-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2267,9 +2401,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Eatontown',
     employees: 2974,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/commvault',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2279,9 +2414,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Tampa',
     employees: 2937,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectwise',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2294,6 +2430,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2303,9 +2440,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Irvine',
     employees: 2916,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alteryx',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2315,9 +2453,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 2912,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mnc-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2327,9 +2466,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 2906,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/celonis',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2339,9 +2479,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 2889,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/attachmate',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2351,9 +2492,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Westford',
     employees: 2853,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netscout',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2363,9 +2505,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 2844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/confluent',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2375,9 +2518,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/samsara',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2387,9 +2531,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 2809,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/chetu-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2402,6 +2547,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2414,6 +2560,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2423,9 +2570,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Denver',
     employees: 2768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertafore',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2435,9 +2583,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2753,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asana',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2450,6 +2599,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2459,9 +2609,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cincinnati',
     employees: 2719,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycor',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2471,9 +2622,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lincoln',
     employees: 2709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hudl',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2486,6 +2638,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2495,9 +2648,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2636,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/new-relic-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2507,9 +2661,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alpharetta',
     employees: 2617,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aptean',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2519,9 +2674,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Dallas',
     employees: 2612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/o9solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2534,6 +2690,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2544,9 +2701,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2588,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/automation-anywhere',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2556,9 +2714,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Pleasanton',
     employees: 2579,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tekion',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2571,6 +2730,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2583,6 +2743,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2595,6 +2756,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2607,6 +2769,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2616,9 +2779,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirohq',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2628,9 +2792,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Irvine',
     employees: 2442,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kofax',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2640,9 +2805,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Addison',
     employees: 2438,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accolitedigital',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2652,9 +2818,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hashicorp',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2667,6 +2834,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2677,9 +2845,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2407,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/bottomline-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2692,6 +2861,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2701,9 +2871,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 2383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onetrust',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2713,9 +2884,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Pleasanton',
     employees: 2381,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/medallia-inc.',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2726,9 +2898,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2366,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/sailpoint-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2739,9 +2912,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2345,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/appian-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2751,9 +2925,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New Hyde Park',
     employees: 2335,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealertrack',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2763,9 +2938,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Barbara',
     employees: 2327,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/impactdotcom',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2775,9 +2951,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Knoxville',
     employees: 2286,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inhabit-iq',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2787,9 +2964,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 2282,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/symphonyai',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2800,9 +2978,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2282,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/ccc-intelligent-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2815,6 +2994,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2824,9 +3004,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'King Of Prussia',
     employees: 2265,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-inc.',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2836,9 +3017,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 2264,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prounlimited',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2851,6 +3033,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2860,9 +3043,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 2252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cohesity',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2872,9 +3056,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alameda',
     employees: 2244,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wind-river',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2887,6 +3072,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2899,6 +3085,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2909,9 +3096,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2215,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/diligent-board-member-services',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2924,6 +3112,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2933,9 +3122,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 2196,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forcepoint',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2945,9 +3135,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Detroit',
     employees: 2183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/compuware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -2957,9 +3148,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Leawood',
     employees: 2177,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsmart',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2973,6 +3165,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -2982,9 +3175,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Miami',
     employees: 2168,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aris-global',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -2995,9 +3189,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 2148,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/working-by-my-self',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3007,9 +3202,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 2140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/varonis',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3019,9 +3215,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 2125,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fever-up',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3031,9 +3228,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alpharetta',
     employees: 2081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agilysys',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3043,9 +3241,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 2057,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outsystems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3055,9 +3254,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lehi',
     employees: 2045,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/entratasoftware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3067,9 +3267,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 2044,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/verkada',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3079,9 +3280,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Morristown',
     employees: 2021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/majesco',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3091,9 +3293,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Wayne',
     employees: 2009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/boomi-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3106,6 +3309,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3115,9 +3319,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Glendale',
     employees: 1997,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/servicetitan',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3127,9 +3332,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1943,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sitecore',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3139,9 +3345,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'South San Francisco',
     employees: 1941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/successfactors',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3154,6 +3361,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3166,6 +3374,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3179,6 +3388,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3189,9 +3399,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1882,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/micros-systems-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3205,6 +3416,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3217,6 +3429,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3229,6 +3442,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3241,6 +3455,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3250,9 +3465,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Fairfax',
     employees: 1824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/3pillar-global',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3263,9 +3479,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1809,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/saama-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3275,9 +3492,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lehi',
     employees: 1794,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ancestry.com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3288,9 +3506,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1788,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/outcomes-by-insightsoftware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3300,9 +3519,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Duluth',
     employees: 1757,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ebix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3312,9 +3532,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 1746,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zuora',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3327,6 +3548,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3336,9 +3558,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Scottsdale',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axway',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3348,9 +3571,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Saint Petersburg',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/communitybrands',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3363,6 +3587,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3373,9 +3598,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1721,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/mozilla-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3385,9 +3611,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1706,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/semrush',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3400,6 +3627,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3412,6 +3640,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3421,9 +3650,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Danville',
     employees: 1691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infobeans',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3433,9 +3663,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Goleta',
     employees: 1688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appfolio-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3445,9 +3676,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Wilmington',
     employees: 1684,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sovos',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3460,6 +3692,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3472,6 +3705,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3481,9 +3715,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taboola',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3493,9 +3728,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Denver',
     employees: 1673,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/evercommerce',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3505,9 +3741,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Providence',
     employees: 1666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/virgin-pulse',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3517,9 +3754,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 1641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/houzz',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3529,9 +3767,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Charlotte',
     employees: 1639,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avidxchange-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3541,9 +3780,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planview',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3553,9 +3793,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 1632,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hackerrank',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3566,9 +3807,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1615,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/clearwateranalytics',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3578,9 +3820,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 1612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outreach-saas',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3590,9 +3833,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Burlington',
     employees: 1607,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/everbridge',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3602,9 +3846,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Princeton',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zycus',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3614,9 +3859,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bullhorn',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3626,9 +3872,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1603,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/liveperson',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3638,9 +3885,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 1601,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relativityhq',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3653,6 +3901,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3665,6 +3914,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3674,9 +3924,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1598,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/braze-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3689,6 +3940,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3701,6 +3953,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3710,9 +3963,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1587,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bazaarvoice',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3722,9 +3976,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1553,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appdynamics',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3735,9 +3990,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1548,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/mitchell-international',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3747,9 +4003,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1491,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/talkdesk',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3759,9 +4016,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Rockville',
     employees: 1481,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hsc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3771,9 +4029,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1478,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avature',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3783,9 +4042,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lake Forest',
     employees: 1476,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/anyone-home-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3798,6 +4058,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3807,9 +4068,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 1467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apptio',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3819,9 +4081,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 1464,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kms-technology',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3831,9 +4094,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Sunnyvale',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jfrog-ltd',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3843,9 +4107,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Naples',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asg',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3855,9 +4120,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 1457,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/seismic',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3868,9 +4134,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1452,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/modernizing-medicine',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3880,9 +4147,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Buffalo',
     employees: 1450,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acv-auctions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3892,9 +4160,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Burlington',
     employees: 1448,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cerence',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3904,9 +4173,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1446,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ridewithvia',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3916,9 +4186,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kingsoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -3928,9 +4199,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/modeln',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3940,9 +4212,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 1436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thoughtspot',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3953,9 +4226,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1431,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/employee-based-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3965,9 +4239,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Duluth',
     employees: 1428,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/beyondtrust',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -3977,9 +4252,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alviso',
     employees: 1426,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/metricstream',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -3989,9 +4265,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1425,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logmein',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4001,9 +4278,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1424,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/khoros',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4014,9 +4292,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1416,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/sprout-social-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4026,9 +4305,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Philadelphia',
     employees: 1415,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/odessa-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4038,9 +4318,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1404,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/enverus-energy',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4053,6 +4334,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4065,6 +4347,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4074,9 +4357,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Morrisville',
     employees: 1397,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/syncfusion',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4089,6 +4373,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4098,9 +4383,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Overland Park',
     employees: 1387,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wellsky',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4110,9 +4396,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tricentis',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4122,9 +4409,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taskrabbit',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4134,9 +4422,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Needham Heights',
     employees: 1372,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synitidata',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4146,9 +4435,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1360,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bigcommerce',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4158,9 +4448,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Richfield',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oeconnection',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4170,9 +4461,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calsoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4186,6 +4478,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4195,9 +4488,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1348,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planet-labs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4207,9 +4501,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1346,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/6sense',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4220,9 +4515,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1345,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/vitech-systems-group',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4232,9 +4528,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Portland',
     employees: 1344,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smarsh',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4247,6 +4544,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4256,9 +4554,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1340,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dataiku',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4271,6 +4570,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4280,9 +4580,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1328,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gainsight',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4292,9 +4593,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Gainesville',
     employees: 1322,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infotech-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4304,9 +4606,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Morrisville',
     employees: 1317,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jaggaer',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4316,9 +4619,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1304,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/checkr-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4328,9 +4632,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Centreville',
     employees: 1296,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/carfax',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4343,6 +4648,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4355,6 +4661,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4364,9 +4671,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lehi',
     employees: 1292,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/podium',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4376,9 +4684,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1290,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mendix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4388,9 +4697,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bedford',
     employees: 1289,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edbpostgres',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4401,9 +4711,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1288,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/onestream-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4413,9 +4724,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 1285,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rentsolutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4425,9 +4737,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Louisville',
     employees: 1273,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/waystar',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4437,9 +4750,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Westford',
     employees: 1267,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/2020spaces',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4449,9 +4763,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Charlotte',
     employees: 1261,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/isolved',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4461,9 +4776,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cambridge',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atg',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4473,9 +4789,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cast',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4485,9 +4802,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Dublin',
     employees: 1258,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oclc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4497,9 +4815,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mediaocean',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4509,9 +4828,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Raleigh',
     employees: 1252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bandwidth-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4522,9 +4842,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1252,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/hexagon-geospatial',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4534,9 +4855,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1248,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wishshopping',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4547,9 +4869,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1244,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/sagitec-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4559,9 +4882,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Greenwich',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zinniatm',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4571,9 +4895,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/curemd',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4583,9 +4908,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 1238,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/druva',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4599,6 +4925,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4611,6 +4938,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4623,6 +4951,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4636,6 +4965,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4645,9 +4975,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 1210,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wrike',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4660,6 +4991,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4672,6 +5004,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4684,6 +5017,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4693,9 +5027,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Malvern',
     employees: 1187,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cantaloupeinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4706,9 +5041,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1184,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/eagleview-technologies-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4719,9 +5055,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1183,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/literamicrosystems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4731,9 +5068,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/collibra',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4744,9 +5082,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1180,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/picsart-photo-studio',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4756,9 +5095,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Irvine',
     employees: 1180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calamp-corp',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4768,9 +5108,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Tempe',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ess',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4780,9 +5121,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/grafana-labs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4792,9 +5134,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Oakland',
     employees: 1176,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fivetran',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4807,6 +5150,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4819,6 +5163,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4831,6 +5176,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4840,9 +5186,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Corona Del Mar',
     employees: 1151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tebra',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4852,9 +5199,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Charleston',
     employees: 1148,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benefitfocus',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4864,9 +5212,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lake Saint Louis',
     employees: 1140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nisc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4876,9 +5225,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Eden Prairie',
     employees: 1138,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dell-compellent',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4891,6 +5241,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4900,9 +5251,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Denver',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/granicusinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4913,9 +5265,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1134,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/the-active-network',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4925,9 +5278,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acquia',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4937,9 +5291,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/walkme',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -4952,6 +5307,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -4961,9 +5317,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Charlottesville',
     employees: 1117,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/willowtreeapps',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4973,9 +5330,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Barbara',
     employees: 1113,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logicmonitor',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4985,9 +5343,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 1109,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jellysmack',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -4997,9 +5356,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'American Fork',
     employees: 1108,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/henry-schein-one',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5009,9 +5369,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Raleigh',
     employees: 1102,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prometheusgroup',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5021,9 +5382,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 1101,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atlashxm',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5036,6 +5398,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5048,6 +5411,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5058,9 +5422,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1090,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/charles-river-development',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5073,6 +5438,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5083,9 +5449,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1087,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/quotient-technology',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5095,9 +5462,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 1087,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sageintacct',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5107,9 +5475,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/plaid-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5122,6 +5491,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5131,9 +5501,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1072,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/upland-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5143,9 +5514,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1066,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zapier',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5155,9 +5527,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 1065,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wso2',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5167,9 +5540,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auctane',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5179,9 +5553,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salesloft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5191,9 +5566,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 1048,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rldatix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5204,9 +5580,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1048,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/blue-prism-limited',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5219,6 +5596,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5232,6 +5610,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5242,9 +5621,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1038,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/downey-unified-school-district',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5258,6 +5638,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5267,9 +5648,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 1036,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imanage',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5279,9 +5661,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Pleasanton',
     employees: 1032,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qasource',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5294,6 +5677,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5304,9 +5688,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 1022,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/talent-systems-llc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5316,9 +5701,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Minneapolis',
     employees: 1021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datasiteglobal',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5328,9 +5714,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Blue Bell',
     employees: 1017,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avasoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5340,9 +5727,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 1015,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datarobot',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5352,9 +5740,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Miami',
     employees: 1014,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/technisys',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5364,9 +5753,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/project-44',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5376,9 +5766,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Waltham',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imprivata',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5388,9 +5779,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webflow-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5400,9 +5792,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blend-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5412,9 +5805,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 1009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/egnyte',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5427,6 +5821,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5439,6 +5834,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5451,6 +5847,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5463,6 +5860,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5472,9 +5870,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mckinney',
     employees: 996,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/arbisoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5487,6 +5886,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5499,6 +5899,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5509,9 +5910,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 988,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/ultimate-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5522,9 +5924,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 987,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/homecare-homebase',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5534,9 +5937,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 984,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cs-disco-llc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5546,9 +5950,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 982,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highspot',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5559,9 +5964,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 981,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/sagent-lending-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5571,9 +5977,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apolloio',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5583,9 +5990,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Houston',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pas',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5596,9 +6004,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 981,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/wikimedia-foundation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5608,9 +6017,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 978,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nintex',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5623,6 +6033,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5632,9 +6043,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 977,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forgerock',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5645,9 +6057,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 975,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/trading-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5657,9 +6070,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Nashville',
     employees: 972,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kanini',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5669,9 +6083,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Burlington',
     employees: 962,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealer-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5681,9 +6096,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Pinehurst',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wbem-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5693,9 +6109,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kyriba',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5708,6 +6125,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5717,9 +6135,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 954,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumo-logic',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5729,9 +6148,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 949,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edifecs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5742,9 +6162,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 948,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/information-builders',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5754,9 +6175,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Los Angeles',
     employees: 941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/emburse',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5766,9 +6188,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cincinnati',
     employees: 940,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/constructconnect',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5781,6 +6204,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5793,6 +6217,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5802,9 +6227,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 936,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webos',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5814,9 +6240,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 934,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zenoti',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5829,6 +6256,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5841,6 +6269,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5851,9 +6280,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 926,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/frontline-education',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5863,9 +6293,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Westford',
     employees: 920,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aspect-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5875,9 +6306,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Roswell',
     employees: 919,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gogreyorange',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5887,9 +6319,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 918,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sirionlabs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5899,9 +6332,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Meridian',
     employees: 917,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/in-time-tec',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5911,9 +6345,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 910,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/operative',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5923,9 +6358,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Orlando',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kore-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5935,9 +6371,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/redisinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5947,9 +6384,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 907,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/addepar',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -5959,9 +6397,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tcpsoftware',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5971,9 +6410,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Wilmington',
     employees: 897,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tracelink',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -5983,9 +6423,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 895,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benchling',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -5998,6 +6439,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6007,9 +6449,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Oakland',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/turnitin',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6019,9 +6462,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/schr-dinger',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6032,9 +6476,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 879,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/egain-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6047,6 +6492,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6060,6 +6506,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6069,9 +6516,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Florence',
     employees: 874,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acs-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6081,9 +6529,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uniphore',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6093,9 +6542,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Belmont',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/folio3',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6105,9 +6555,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Burnsville',
     employees: 871,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mhcautomation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6118,9 +6569,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 865,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/xactly-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6133,6 +6585,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6142,9 +6595,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Frisco',
     employees: 862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microworkers.com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6157,6 +6611,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6166,9 +6621,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Bellevue',
     employees: 860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/akvelon',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6178,9 +6634,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Exton',
     employees: 856,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ipipeline',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6190,9 +6647,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Wellesley Hills',
     employees: 854,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salarydotcom',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6202,9 +6660,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 851,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pandadoc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6214,9 +6673,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Newport Beach',
     employees: 849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/msc-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6226,9 +6686,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/harnessinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6239,9 +6700,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 848,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/activecampaign-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6251,9 +6713,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/doximity',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6266,6 +6729,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6275,9 +6739,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 845,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lytxinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6287,9 +6752,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Raleigh',
     employees: 844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pendo-io',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6299,9 +6765,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mountain View',
     employees: 842,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workato',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6314,6 +6781,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6323,9 +6791,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Somerville',
     employees: 838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartbear',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6338,6 +6807,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6347,9 +6817,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 833,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/team-handshake',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6359,9 +6830,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Minneapolis',
     employees: 829,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navitaire',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6371,9 +6843,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 826,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onespan',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6386,6 +6859,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6395,9 +6869,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Mc Lean',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/id.me',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6411,6 +6886,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6420,9 +6896,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Wayne',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unilog-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6435,6 +6912,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6444,9 +6922,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Omaha',
     employees: 819,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/buildertrend',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6459,6 +6938,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6468,9 +6948,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 816,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thousandeyes',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6480,9 +6961,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 814,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/greenhouse-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6492,9 +6974,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 811,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exiger',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6507,6 +6990,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6516,9 +7000,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neo4j',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6531,6 +7016,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6540,9 +7026,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 805,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slice',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6553,9 +7040,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 803,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/amplitude-analytics',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6568,6 +7056,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6577,9 +7066,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 802,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/applovin',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6589,9 +7079,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Rockville',
     employees: 801,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xometry',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6604,6 +7095,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6613,9 +7105,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 793,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agora-lab-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6628,6 +7121,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6637,9 +7131,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cincinnati',
     employees: 789,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/patientpoint',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6652,6 +7147,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6661,9 +7157,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 787,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ninjaone',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6676,6 +7173,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6686,9 +7184,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 784,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/adobemarketoengage',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6698,9 +7197,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Salt Lake City',
     employees: 783,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mastercontrol',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6711,9 +7211,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 779,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/jumio-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6726,6 +7227,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6735,9 +7237,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Morrisville',
     employees: 777,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/channeladvisor',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6747,9 +7250,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Gainesville',
     employees: 776,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumtotal-systems',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6759,9 +7263,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Seattle',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/payscale',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6771,9 +7276,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Kennesaw',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskonnect-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6783,9 +7289,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 770,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskified',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6798,6 +7305,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6807,9 +7315,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stack-overflow',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6820,9 +7329,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 768,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/netwrix-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6832,9 +7342,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Addison',
     employees: 767,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/securonix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6844,9 +7355,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Spring',
     employees: 766,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/draupplatform',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6859,6 +7371,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6868,9 +7381,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mindtickle',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6880,9 +7394,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Roanoke',
     employees: 764,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omnitracs',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -6892,9 +7407,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 762,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/programmer',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6904,9 +7420,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alpharetta',
     employees: 761,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navis',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6916,9 +7433,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cerritos',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auditboard',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6928,9 +7446,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/algolia',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6940,9 +7459,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 754,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ymlco',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -6952,9 +7472,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 750,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bolt-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6964,9 +7485,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 745,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dandyofficial',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6976,9 +7498,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Princeton',
     employees: 743,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/diverselynx',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -6988,9 +7511,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cary',
     employees: 741,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jmp',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7003,6 +7527,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7012,9 +7537,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Somerset',
     employees: 740,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/labvantage',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7024,9 +7550,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 739,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exabeam',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7039,6 +7566,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7048,9 +7576,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Sunnyvale',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/clari',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7060,9 +7589,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/komodo-health',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7072,9 +7602,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 736,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7087,6 +7618,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7099,6 +7631,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7109,9 +7642,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 721,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/workforce-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7125,6 +7659,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7134,9 +7669,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chatsworth',
     employees: 712,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ddn-storage',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7146,9 +7682,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Broomfield',
     employees: 709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kpa-llc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7158,9 +7695,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Mateo',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lohika',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7170,9 +7708,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Nashville',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qualifacts',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7182,9 +7721,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Campbell',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/centric-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7194,9 +7734,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omdena',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7209,6 +7750,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7218,9 +7760,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aderant',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7231,9 +7774,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 704,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/python-software-foundation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7243,9 +7787,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Jose',
     employees: 703,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/opengov-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7256,9 +7801,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 702,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/denodo-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7268,9 +7814,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'El Segundo',
     employees: 698,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neogov',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7280,9 +7827,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Dallas',
     employees: 696,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-one',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7293,9 +7841,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 694,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/the-linux-foundation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7305,9 +7854,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Ramon',
     employees: 694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reputation-com',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7317,9 +7867,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alpharetta',
     employees: 691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relevantz',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7333,6 +7884,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7342,9 +7894,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/homebase-app',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7355,9 +7908,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 688,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/calypso-technology',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7368,9 +7922,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 686,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/viewpoint-construction-software',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7380,9 +7935,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Cambridge',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/devoinc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7392,9 +7948,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Phoenix',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webpt',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7407,6 +7964,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7416,9 +7974,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 683,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sisense',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7428,9 +7987,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Atlanta',
     employees: 681,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calendly',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7440,9 +8000,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Los Altos',
     employees: 677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/placer',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7455,6 +8016,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7465,9 +8027,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 672,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/coherent-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7477,9 +8040,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Campbell',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirantis',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7490,9 +8054,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 671,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/simplifyhealthcare',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7502,9 +8067,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Louisville',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jumpcloud',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7514,9 +8080,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Lafayette',
     employees: 667,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asap',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7529,6 +8096,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7538,9 +8106,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datastax',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7550,9 +8119,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'New York',
     employees: 665,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/foursquare',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7562,9 +8132,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lastpass',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7574,9 +8145,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/soci-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7587,9 +8159,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 662,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/stratus-technologies',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7599,9 +8172,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'South Jordan',
     employees: 661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/advancedmd',
-    createdBySource: 'MANUAL',
+    createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7611,9 +8185,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Sunnyvale',
     employees: 660,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/matterport',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7624,9 +8199,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 658,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/sra-samsungreasearchamerica',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7636,9 +8212,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Boston',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/creatioglobal',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7648,9 +8225,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Palo Alto',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/branch-metrics',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7660,9 +8238,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Alviso',
     employees: 655,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/versa-networks',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7675,6 +8254,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7684,9 +8264,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 653,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pdf-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7696,9 +8277,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Austin',
     employees: 652,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eso-solutions',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7708,9 +8290,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mural.co',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7720,9 +8303,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Chicago',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fourkites-inc',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7732,9 +8316,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Andover',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aras-corporation',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7744,9 +8329,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Redwood City',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/delphix',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7756,9 +8342,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Champaign',
     employees: 644,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wolfram-research',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7768,9 +8355,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Santa Clara',
     employees: 643,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eightfoldai',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7780,9 +8368,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Grand Rapids',
     employees: 641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quark',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7792,9 +8381,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Waltham',
     employees: 640,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectrn',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7805,9 +8395,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     employees: 638,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/revenue-solutions-inc-',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7817,9 +8408,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Parsippany',
     employees: 638,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/macrosoft',
-    createdBySource: 'MANUAL',
+    createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7829,9 +8421,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Scottsdale',
     employees: 637,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paradoxolivia',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -7844,6 +8437,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7853,9 +8447,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 635,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tealium',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7868,6 +8463,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7877,9 +8473,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Francisco',
     employees: 634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lattice-hq',
-    createdBySource: 'MANUAL',
+    createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   {
@@ -7889,9 +8486,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'San Diego',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tusimple',
-    createdBySource: 'MANUAL',
+    createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -7901,20 +8499,22 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     addressAddressCity: 'Rochester',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ceipal',
-    createdBySource: 'MANUAL',
+    createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
-    id: COMPANY_DATA_SEED_IDS.ID_600,
+    id: COMPANY_DATA_SEED_IDS.ID_599,
     name: 'RSD',
     domainNamePrimaryLinkUrl: 'rocketsoftware.com',
     addressAddressCity: 'Waltham',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rsd',
-    createdBySource: 'MANUAL',
+    createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 ];

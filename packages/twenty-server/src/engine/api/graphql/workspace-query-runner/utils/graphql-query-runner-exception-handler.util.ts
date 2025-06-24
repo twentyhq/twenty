@@ -28,6 +28,7 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD:
+    case GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
       throw error;
     default: {
       const _exhaustiveCheck: never = error.code;

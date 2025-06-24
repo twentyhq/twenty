@@ -9,7 +9,8 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 
-import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
@@ -142,6 +143,8 @@ export const RecordBoardCard = () => {
   const { openDropdown } = useDropdownV2();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+  const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -151,11 +154,14 @@ export const RecordBoardCard = () => {
       y: event.clientY,
     });
     openDropdown(actionMenuDropdownId, {
-      scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+      enableGlobalHotkeysWithModifiers: true,
+      enableGlobalHotkeysConflictingWithKeyboard: false,
     });
   };
 
   const handleCardClick = () => {
+    activateBoardCard({ rowIndex, columnIndex });
+    unfocusBoardCard();
     openRecordFromIndexView({ recordId });
   };
 

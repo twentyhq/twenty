@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -12,7 +12,6 @@ describe('DatabaseEventTriggerListener', () => {
   let listener: DatabaseEventTriggerListener;
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
-  let featureFlagService: jest.Mocked<FeatureFlagService>;
 
   const mockRepository = {
     find: jest.fn(),
@@ -27,10 +26,6 @@ describe('DatabaseEventTriggerListener', () => {
       add: jest.fn(),
     } as any;
 
-    featureFlagService = {
-      isFeatureEnabled: jest.fn().mockResolvedValue(true),
-    } as any;
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseEventTriggerListener,
@@ -41,10 +36,6 @@ describe('DatabaseEventTriggerListener', () => {
         {
           provide: MessageQueueService,
           useValue: messageQueueService,
-        },
-        {
-          provide: FeatureFlagService,
-          useValue: featureFlagService,
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -64,8 +55,26 @@ describe('DatabaseEventTriggerListener', () => {
                 },
               },
               objectMetadataItemWithFieldsMaps: {
-                fieldsByJoinColumnName: {},
-              },
+                id: 'test-object-metadata',
+                workspaceId: 'test-workspace',
+                nameSingular: 'testObject',
+                namePlural: 'testObjects',
+                labelSingular: 'Test Object',
+                labelPlural: 'Test Objects',
+                description: 'Test object for testing',
+                fieldIdByJoinColumnName: {},
+                fieldsById: {},
+                fieldIdByName: {},
+                indexMetadatas: [],
+                targetTableName: 'test_objects',
+                isSystem: false,
+                isCustom: false,
+                isActive: true,
+                isRemote: false,
+                isAuditLogged: true,
+                isSearchable: true,
+                icon: 'Icon123',
+              } satisfies ObjectMetadataItemWithFieldMaps,
             }),
           },
         },
@@ -107,6 +116,7 @@ describe('DatabaseEventTriggerListener', () => {
             updatedAt: new Date(),
             fields: [],
             indexMetadatas: [],
+            icon: 'Icon123',
           },
           properties: {
             updatedFields: ['field1', 'field2'],
@@ -301,14 +311,6 @@ describe('DatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
-    });
-
-    it('should ignore events when feature flag is disabled', async () => {
-      featureFlagService.isFeatureEnabled.mockResolvedValueOnce(false);
-
-      await listener.handleObjectRecordUpdateEvent(mockPayload);
-
-      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should handle multiple events in a batch', async () => {

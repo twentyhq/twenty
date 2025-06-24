@@ -54,7 +54,6 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
           />
           <Dropdown
             dropdownId={dropdownId}
-            dropdownHotkeyScope={{ scope: dropdownId }}
             clickableComponent={
               <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
             }

@@ -9,6 +9,10 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+jest.mock('src/engine/core-modules/ai/constants/ai-models.const', () => ({
+  AI_MODELS: [],
+}));
+
 describe('ClientConfigService', () => {
   let service: ClientConfigService;
   let twentyConfigService: TwentyConfigService;
@@ -78,6 +82,7 @@ describe('ClientConfigService', () => {
             MESSAGING_PROVIDER_GMAIL_ENABLED: true,
             CALENDAR_PROVIDER_GOOGLE_ENABLED: true,
             IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
+            CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
           };
 
           return mockValues[key];
@@ -106,6 +111,7 @@ describe('ClientConfigService', () => {
             },
           ],
         },
+        aiModels: [],
         authProviders: {
           google: true,
           magicLink: false,
@@ -145,6 +151,7 @@ describe('ClientConfigService', () => {
         isGoogleMessagingEnabled: true,
         isGoogleCalendarEnabled: true,
         isConfigVariablesInDbEnabled: false,
+        calendarBookingPageId: 'team/twenty/talk-to-us',
       });
     });
 
@@ -162,6 +169,7 @@ describe('ClientConfigService', () => {
 
       expect(result.debugMode).toBe(false);
       expect(result.canManageFeatureFlags).toBe(false);
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle missing captcha driver', async () => {
@@ -178,6 +186,7 @@ describe('ClientConfigService', () => {
 
       expect(result.captcha.provider).toBeUndefined();
       expect(result.captcha.siteKey).toBe('site-key');
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle missing support driver', async () => {
@@ -192,6 +201,7 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result.support.supportDriver).toBe(SupportDriver.NONE);
+      expect(result.aiModels).toEqual([]);
     });
 
     it('should handle billing enabled with feature flags', async () => {

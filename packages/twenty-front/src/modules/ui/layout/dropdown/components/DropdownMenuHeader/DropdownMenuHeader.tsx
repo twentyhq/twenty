@@ -22,6 +22,8 @@ const StyledHeader = styled.li`
     background: ${({ theme, onClick }) =>
       onClick ? theme.background.transparent.light : 'none'};
   }
+
+  flex-shrink: 0;
 `;
 
 const StyledChildrenWrapper = styled.span`

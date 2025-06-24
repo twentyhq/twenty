@@ -47,15 +47,15 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTable = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-`;
-
 const StyledSearchInput = styled(TextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
   }
+`;
+
+const StyledTable = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledTableRows = styled.div`
@@ -238,7 +238,6 @@ export const SettingsRoleAssignment = ({
         <StyledAssignToMemberContainer>
           <Dropdown
             dropdownId="role-member-select"
-            dropdownHotkeyScope={{ scope: 'roleAssignment' }}
             dropdownOffset={{ x: 0, y: 4 }}
             clickableComponent={
               <>

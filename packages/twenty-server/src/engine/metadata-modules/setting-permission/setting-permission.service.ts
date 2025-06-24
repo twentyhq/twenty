@@ -12,6 +12,7 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
 import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 export class SettingPermissionService {
   constructor(
@@ -21,6 +22,7 @@ export class SettingPermissionService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async upsertSettingPermissions({
@@ -115,6 +117,13 @@ export class SettingPermissionService {
       throw error;
     } finally {
       await queryRunner.release();
+
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+          roleIds: [input.roleId],
+        },
+      );
     }
   }
 

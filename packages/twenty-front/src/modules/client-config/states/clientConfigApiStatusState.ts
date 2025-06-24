@@ -1,5 +1,5 @@
+import { ClientConfig } from '@/client-config/types/ClientConfig';
 import { createState } from 'twenty-ui/utilities';
-import { ClientConfig } from '~/generated/graphql';
 
 type ClientConfigApiStatus = {
   isLoadedOnce: boolean;

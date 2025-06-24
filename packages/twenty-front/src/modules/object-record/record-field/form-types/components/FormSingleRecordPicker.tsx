@@ -10,6 +10,7 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -165,6 +166,7 @@ export const FormSingleRecordPicker = ({
             clickableComponentWidth={'100%'}
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             clickableComponent={
               <StyledFormSelectContainer
                 hasRightElement={isDefined(VariablePicker) && !disabled}
@@ -187,6 +189,7 @@ export const FormSingleRecordPicker = ({
             }
             dropdownComponents={
               <SingleRecordPicker
+                focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
                 emptyLabel={'No ' + objectNameSingular}
@@ -194,9 +197,9 @@ export const FormSingleRecordPicker = ({
                 onRecordSelected={handleRecordSelected}
                 objectNameSingular={objectNameSingular}
                 recordPickerInstanceId={dropdownId}
+                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
             }
-            dropdownHotkeyScope={{ scope: dropdownId }}
           />
         )}
         {isDefined(VariablePicker) && !disabled && (
