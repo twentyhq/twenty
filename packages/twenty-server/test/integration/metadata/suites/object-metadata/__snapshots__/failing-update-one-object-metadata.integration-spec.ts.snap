@@ -4,10 +4,9 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
+      "code": "BAD_USER_INPUT",
     },
-    "message": "(0 , _utils.isLabelIdentifierFieldMetadataTypes) is not a function",
+    "message": "labelIdentifierFieldMetadataId validation failed: it must be a TEXT or FULL_NAME field metadata type id",
   },
 ]
 `;
