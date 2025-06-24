@@ -16,9 +16,11 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
-import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
   MessageImportExceptionHandlerService,
@@ -80,6 +82,11 @@ export class MessagingMessagesImportService {
           );
       } catch (error) {
         switch (error.code) {
+          case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+            );
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
           case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingMonitoringService.track({
@@ -89,15 +96,15 @@ export class MessagingMessagesImportService {
               messageChannelId: messageChannel.id,
               message: `${error.code}: ${error.reason}`,
             });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+            );
           case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
+            throw new MessageImportDriverException(
+              error.message,
+              MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+            );
           default:
             this.logger.error(
               `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,

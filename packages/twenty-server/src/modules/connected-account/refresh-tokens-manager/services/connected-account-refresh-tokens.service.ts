@@ -93,9 +93,26 @@ export class ConnectedAccountRefreshTokensService {
       }
     } catch (error) {
       if (error?.name === 'AggregateError') {
-        this.logger.log(error.message);
-        this.logger.log(error.name);
+        const firstErrorCode = error?.errors?.[0]?.code;
+        const networkErrorCodes = [
+          'ENETUNREACH',
+          'ETIMEDOUT',
+          'ECONNABORTED',
+          'ERR_NETWORK',
+        ];
+        const isTemporaryNetworkError =
+          networkErrorCodes.includes(firstErrorCode);
+
+        this.logger.log(error?.message);
+        this.logger.log(firstErrorCode);
         this.logger.log(error?.errors);
+
+        if (isTemporaryNetworkError) {
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${firstErrorCode}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+          );
+        }
       } else {
         this.logger.log(error);
       }
