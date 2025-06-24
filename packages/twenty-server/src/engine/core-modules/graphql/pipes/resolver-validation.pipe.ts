@@ -10,6 +10,16 @@ import { ValidationError, validate } from 'class-validator';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
+const safeClassValidatorValidateWrapper = async (
+  object: object,
+): Promise<ValidationError[]> => {
+  try {
+    return await validate(object);
+  } catch (error) {
+    return [];
+  }
+};
+
 @Injectable()
 export class ResolverValidationPipe implements PipeTransform {
   async transform(value: unknown, metadata: ArgumentMetadata) {
@@ -20,21 +30,16 @@ export class ResolverValidationPipe implements PipeTransform {
     }
 
     const object = plainToInstance(metatype, value);
+    const errors = await safeClassValidatorValidateWrapper(object);
 
-    try {
-      const errors = await validate(object);
-
-      if (errors.length > 0) {
-        const errorMessage = this.formatErrorMessage(errors);
-
-        throw new UserInputError(errorMessage);
-      }
-    } catch (error) {
-      // If the element is not a class, we can't validate it
+    if (errors.length === 0) {
+      // TODO shouldn't we return the object here ? As transpilation could bring mutations
       return value;
     }
 
-    return value;
+    const errorMessage = this.formatErrorMessage(errors);
+
+    throw new UserInputError(errorMessage);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +53,10 @@ export class ResolverValidationPipe implements PipeTransform {
     const messages = errors.flatMap((error) => {
       if (error.constraints) {
         return Object.values(error.constraints);
+      }
+
+      if (error.children) {
+        return this.formatErrorMessage(error.children);
       }
 
       return [];
