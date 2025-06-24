@@ -8,6 +8,7 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
@@ -87,8 +88,12 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
       recordId,
     });
 
+  const { openSingleRecordPicker } = useSingleRecordPickerOpen();
+
   const handleOpenRelationPickerDropdown = () => {
     setSingleRecordPickerSearchFilter('');
+    openSingleRecordPicker(dropdownId);
+
     if (relationRecords.length > 0) {
       setSingleRecordPickerSelectedId(relationRecords[0]?.id);
     }
