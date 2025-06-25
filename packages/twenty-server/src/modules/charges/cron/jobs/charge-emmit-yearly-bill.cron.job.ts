@@ -14,8 +14,8 @@ import {
 import { ChargeService } from 'src/modules/charges/services/charge.service';
 import { ChargeRecurrence } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
-// '0 0 1 1 *'
-export const CHARGE_EMMIT_YEARLY_BILL_CRON_PATTERN = '*/15 * * * *'; // Run every year on day 1 ad midnight
+// '0 0 1 1 *' Run every year on day 1 ad midnight
+export const CHARGE_EMMIT_YEARLY_BILL_CRON_PATTERN = '0 12 */2 * *'; // Run every 2 days at noon
 
 @Processor(MessageQueue.cronQueue)
 export class ChargeEmmitYearlyBillCronJob {
