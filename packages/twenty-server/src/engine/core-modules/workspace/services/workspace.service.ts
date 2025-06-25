@@ -468,7 +468,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       version: extractVersionMajorMinorPatch(appVersion),
     });
 
-    await this.setupOneSignalApp(workspace.id);
+    await this.setupOneSignalApp(workspace.id).catch((error) =>
+      this.logger.log(
+        `Failed to setup onesignal app: \n${JSON.stringify(error)}`,
+      ),
+    );
 
     const stripeFeatureFlag = this.featureFlagRepository.create({
       key: FeatureFlagKey.IsStripeIntegrationEnabled,
