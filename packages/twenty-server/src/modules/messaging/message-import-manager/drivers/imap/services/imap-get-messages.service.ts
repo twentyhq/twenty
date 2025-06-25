@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ImapFlow } from 'imapflow';
-import { AddressObject, ParsedMail, simpleParser } from 'mailparser';
+import { AddressObject, ParsedMail } from 'mailparser';
 // @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
-import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
-import { findSentMailbox } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/find-sent-mailbox.util';
+import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
+import { MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
 import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -21,10 +20,7 @@ type AddressType = 'from' | 'to' | 'cc' | 'bcc';
 export class ImapGetMessagesService {
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
-  constructor(
-    private readonly imapClientProvider: ImapClientProvider,
-    private readonly imapHandleErrorService: ImapHandleErrorService,
-  ) {}
+  constructor(private readonly fetchByBatchService: ImapFetchByBatchService) {}
 
   async getMessages(
     messageIds: string[],
@@ -39,114 +35,50 @@ export class ImapGetMessagesService {
       return [];
     }
 
-    try {
-      const client = await this.imapClientProvider.getClient(connectedAccount);
-
-      const messages: MessageWithParticipants[] = [];
-
-      const mailboxes = ['INBOX'];
-
-      const sentFolder = await findSentMailbox(client, this.logger);
-
-      if (sentFolder) {
-        mailboxes.push(sentFolder);
-      }
-
-      for (const mailbox of mailboxes) {
-        try {
-          const lock = await client.getMailboxLock(mailbox);
-
-          try {
-            for (const messageId of messageIds) {
-              try {
-                const existingMessage = messages.find(
-                  (m) => m.externalId === messageId,
-                );
-
-                if (existingMessage) {
-                  continue;
-                }
-
-                const message = await this.fetchAndParseMessage(
-                  messageId,
-                  client,
-                  connectedAccount,
-                );
-
-                if (message) {
-                  messages.push(message);
-                  this.logger.log(
-                    `Found message ${messageId} in mailbox ${mailbox}`,
-                  );
-                }
-              } catch (messageError) {
-                this.handleSingleMessageError(messageError, messageId);
-              }
-            }
-          } finally {
-            lock.release();
-          }
-        } catch (error) {
-          this.logger.warn(
-            `Error accessing mailbox ${mailbox}: ${error.message}. Continuing with other mailboxes.`,
-          );
-        }
-      }
-
-      return messages;
-    } catch (error) {
-      this.logger.error(
-        `Error getting messages: ${error.message}`,
-        error.stack,
+    const { messageIdsByBatch, batchResults } =
+      await this.fetchByBatchService.fetchAllByBatches(
+        messageIds,
+        connectedAccount,
       );
-      throw error;
-    } finally {
-      await this.imapClientProvider.closeClient(connectedAccount.id);
-    }
+
+    this.logger.log(`IMAP fetch completed`);
+
+    const messages = batchResults.flatMap((batchResult, index) => {
+      return this.formatBatchResultAsMessages(
+        messageIdsByBatch[index],
+        batchResult,
+        connectedAccount,
+      );
+    });
+
+    return messages;
   }
 
-  private async fetchAndParseMessage(
-    messageId: string,
-    client: ImapFlow,
+  private formatBatchResultAsMessages(
+    messageIds: string[],
+    batchResults: MessageFetchResult[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
-  ): Promise<MessageWithParticipants | null> {
-    const results = await client.search({
-      header: {
-        'message-id': messageId,
-      },
-    });
+  ): MessageWithParticipants[] {
+    const messages = batchResults.map((result) => {
+      if (!result.parsed) {
+        this.logger.debug(
+          `Message ${result.messageId} could not be parsed - likely not found in current mailboxes`,
+        );
 
-    if (!results.length) {
-      this.logger.debug(
-        `Message with ID ${messageId} not found in current mailbox`,
+        return undefined;
+      }
+
+      return this.createMessageFromParsedMail(
+        result.parsed,
+        result.messageId,
+        connectedAccount,
       );
-
-      return null;
-    }
-
-    const seq = results[0];
-    const fetchResult = await client.fetchOne(seq.toString(), {
-      source: true,
-      envelope: true,
     });
 
-    if (!fetchResult) {
-      this.logger.debug(`Failed to fetch message with ID ${messageId}`);
-
-      return null;
-    }
-
-    const rawContent = fetchResult.source?.toString() || '';
-    const parsed = await simpleParser(rawContent);
-
-    return this.createMessageFromParsedMail(
-      parsed,
-      messageId,
-      connectedAccount,
-    );
+    return messages.filter(isDefined);
   }
 
   private createMessageFromParsedMail(
@@ -159,7 +91,6 @@ export class ImapGetMessagesService {
   ): MessageWithParticipants {
     const participants = this.extractAllParticipants(parsed);
     const attachments = this.extractAttachments(parsed);
-
     const threadId = this.extractThreadId(parsed);
 
     const fromAddresses = this.extractAddresses(
@@ -190,19 +121,49 @@ export class ImapGetMessagesService {
   }
 
   private extractThreadId(parsed: ParsedMail): string | null {
-    const references = parsed.references;
+    const { messageId, references, inReplyTo } = parsed;
 
-    if (references && references.length > 0) {
-      return references[0];
+    if (references && Array.isArray(references) && references.length > 0) {
+      const threadRoot = references[0].trim();
+
+      if (threadRoot && threadRoot.length > 0) {
+        return this.normalizeMessageId(threadRoot);
+      }
     }
-
-    const inReplyTo = parsed.inReplyTo;
 
     if (inReplyTo) {
-      return inReplyTo;
+      const cleanInReplyTo =
+        typeof inReplyTo === 'string'
+          ? inReplyTo.trim()
+          : String(inReplyTo).trim();
+
+      if (cleanInReplyTo && cleanInReplyTo.length > 0) {
+        return this.normalizeMessageId(cleanInReplyTo);
+      }
     }
 
-    return parsed.messageId || null;
+    if (messageId) {
+      return this.normalizeMessageId(messageId);
+    }
+
+    const timestamp = Date.now();
+    const randomSuffix = Math.random().toString(36).substring(2, 11);
+
+    return `thread-${timestamp}-${randomSuffix}`;
+  }
+
+  private normalizeMessageId(messageId: string): string {
+    const trimmedMessageId = messageId.trim();
+
+    if (
+      trimmedMessageId.includes('@') &&
+      !trimmedMessageId.startsWith('<') &&
+      !trimmedMessageId.endsWith('>')
+    ) {
+      return `<${trimmedMessageId}>`;
+    }
+
+    return trimmedMessageId;
   }
 
   private extractAllParticipants(parsed: ParsedMail) {
@@ -255,13 +216,5 @@ export class ImapGetMessagesService {
     return (parsed.attachments || []).map((attachment) => ({
       filename: attachment.filename || 'unnamed-attachment',
     }));
-  }
-
-  private handleSingleMessageError(error: Error, messageId: string): void {
-    this.logger.error(
-      `Error fetching message ${messageId}: ${error.message}`,
-      error.stack,
-    );
-    this.imapHandleErrorService.handleImapMessagesImportError(error, messageId);
   }
 }
