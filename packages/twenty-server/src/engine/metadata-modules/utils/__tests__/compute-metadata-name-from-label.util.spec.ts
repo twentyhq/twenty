@@ -51,7 +51,7 @@ describe('computeMetadataNameFromLabel', () => {
         expected: 'cafeCreme',
       },
     },
-        {
+    {
       title: 'should handle empty label',
       context: {
         input: '',
@@ -97,6 +97,7 @@ describe('computeMetadataNameFromLabel', () => {
   describe('successful cases', () => {
     it.each(successfulTestCases)('$title', ({ context }) => {
       const result = computeMetadataNameFromLabel(context.input);
+
       expect(result).toBe(context.expected);
     });
   });
@@ -108,4 +109,4 @@ describe('computeMetadataNameFromLabel', () => {
       );
     });
   });
-}); 
+});
