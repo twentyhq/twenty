@@ -13,6 +13,10 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconSettings, IconTool, useIcons } from 'twenty-ui/display';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import {
+  WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
+  WorkflowAiAgentTabId,
+} from '../constants/workflow-ai-agent-tabs';
 import { useAgentRoleAssignment } from '../hooks/useAgentRoleAssignment';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
 import { useAiAgentOutputSchema } from '../hooks/useAiAgentOutputSchema';
@@ -40,14 +44,6 @@ type WorkflowEditActionAiAgentProps = {
         onActionUpdate: (action: WorkflowAiAgentAction) => void;
       };
 };
-
-export enum WorkflowAiAgentTabId {
-  SETTINGS = 'settings',
-  TOOLS = 'tools',
-}
-
-const WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID =
-  'WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID';
 
 export const WorkflowEditActionAiAgent = ({
   action,
