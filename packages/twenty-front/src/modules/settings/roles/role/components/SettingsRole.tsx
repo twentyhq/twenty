@@ -112,7 +112,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const handleCancel = () => {
     if (isCreateMode) {
       navigateSettings(SettingsPath.Roles);
-    } else if (isDefined(settingsPersistedRole)) {
+      return;
+    }
+
+    if (isDefined(settingsPersistedRole)) {
       setSettingsDraftRole(settingsPersistedRole);
     }
   };
