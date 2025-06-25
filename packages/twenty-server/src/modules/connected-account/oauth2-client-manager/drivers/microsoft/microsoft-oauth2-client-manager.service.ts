@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   AuthProvider,
@@ -10,6 +10,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class MicrosoftOAuth2ClientManagerService {
+  private readonly logger = new Logger(
+    MicrosoftOAuth2ClientManagerService.name,
+  );
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   public async getOAuth2Client(refreshToken: string): Promise<Client> {
@@ -40,6 +43,14 @@ export class MicrosoftOAuth2ClientManagerService {
         );
 
         const data = await res.json();
+
+        if (!res.ok) {
+          this.logger.error(data);
+          this.logger.error(res);
+          throw new Error(
+            `MicrosoftOAuth2ClientManagerService ${res.status} error: ${res.statusText} ${JSON.stringify(data)}`,
+          );
+        }
 
         callback(null, data.access_token);
       } catch (error) {
