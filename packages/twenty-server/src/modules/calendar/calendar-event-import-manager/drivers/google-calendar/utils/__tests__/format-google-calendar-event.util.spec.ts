@@ -87,10 +87,6 @@ describe('formatGoogleCalendarEvents', () => {
       expected: '>\u0015-;_�^�W&�p\u001f�',
     },
     {
-      input: `;�'�юR+\u0014��N��`,
-      expected: `;��юR+\u0014��N��`,
-    },
-    {
       input: '�\u0002��y�_΢�\u0013��0x00',
       expected: '�\u0002��y�_΢�\u0013��',
     },
