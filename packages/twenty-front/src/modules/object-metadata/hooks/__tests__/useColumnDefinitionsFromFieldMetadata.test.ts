@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  BillingPaymentProviders,
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
@@ -38,11 +39,13 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
         id: '1',
         interval: SubscriptionInterval.Month,
         status: SubscriptionStatus.Active,
+        provider: BillingPaymentProviders.Stripe,
       },
       billingSubscriptions: [
         {
           id: '1',
           status: SubscriptionStatus.Active,
+          provider: BillingPaymentProviders.Stripe,
         },
       ],
     });

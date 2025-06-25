@@ -1,5 +1,5 @@
-import { Role, Workspace } from '~/generated/graphql';
 import { createState } from 'twenty-ui/utilities';
+import { Role, Workspace } from '~/generated/graphql';
 
 export type CurrentWorkspace = Pick<
   Workspace,
@@ -24,6 +24,7 @@ export type CurrentWorkspace = Pick<
   | 'workspaceUrls'
   | 'metadataVersion'
   | 'creatorEmail'
+  | 'onesignalAppId'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
 };

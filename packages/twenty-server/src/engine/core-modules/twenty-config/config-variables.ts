@@ -1126,6 +1126,10 @@ export class ConfigVariables {
 
   @IsString()
   @IsOptional()
+  ONESIGNAL_ORG_ID: string;
+
+  @IsString()
+  @IsOptional()
   ONESIGNAL_APP_ID: string;
 
   // Google Cloud Storage

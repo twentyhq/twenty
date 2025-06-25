@@ -150,6 +150,187 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
+  //TODO os consoles serão removidos após os testes
+  async setupOneSignalApp(workspaceId: string): Promise<Workspace> {
+    this.logger.log(
+      `🔧 Iniciando setupOneSignalApp para workspaceId: ${workspaceId}`,
+    );
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      this.logger.error(`❌ Workspace não encontrado para ID: ${workspaceId}`);
+      throw new Error('Workspace não encontrado');
+    }
+
+    this.logger.log(
+      `✅ Workspace encontrado: ${workspace.displayName} (${workspace.id})`,
+    );
+
+    if (workspace.onesignalAppId) {
+      this.logger.warn(
+        `⚠️ Workspace ${workspace.id} já possui integração OneSignal configurada. Ignorando criação.`,
+      );
+
+      return workspace;
+    }
+
+    const organizationApiKey =
+      this.twentyConfigService.get('ONESIGNAL_API_KEY');
+    const organizationId = this.twentyConfigService.get('ONESIGNAL_ORG_ID');
+
+    if (!organizationApiKey || !organizationId) {
+      this.logger.error(
+        '❌ Chaves da organização OneSignal não configuradas corretamente',
+      );
+      throw new Error('Chaves da organização OneSignal não configuradas');
+    }
+
+    if (!workspace.subdomain) {
+      this.logger.error(
+        `❌ Subdomínio não definido para workspace ${workspace.id}`,
+      );
+      throw new Error('Subdomínio do workspace não definido');
+    }
+
+    const chromeWebOrigin = this.domainManagerService.buildWorkspaceURL({
+      workspace,
+    });
+
+    this.logger.log(`🌐 chromeWebOrigin: ${chromeWebOrigin}`);
+
+    try {
+      this.logger.log(
+        '📡 Enviando requisição para criação do app OneSignal...',
+      );
+      const response = await fetch('https://api.onesignal.com/apps', {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${organizationApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: `App_${workspace.subdomain}`,
+          organization_id: organizationId,
+          chrome_web_origin: chromeWebOrigin,
+          chrome_web_default_notification_icon: 'DEFAULT_ICON',
+          site_name: `workspace_${workspace.subdomain}`,
+        }),
+      });
+
+      const responseBody = await response.json();
+
+      this.logger.log(
+        `🔍 Resposta da OneSignal API: ${JSON.stringify(responseBody)}`,
+      );
+
+      if (!response.ok || !responseBody?.id) {
+        const message =
+          responseBody?.errors?.[0] ||
+          responseBody?.message ||
+          'Erro desconhecido ao criar app OneSignal';
+
+        this.logger.error(`❌ Erro ao criar app OneSignal: ${message}`);
+        throw new Error(`Erro ao criar app OneSignal: ${message}`);
+      }
+
+      const onesignalAppId = responseBody.id;
+
+      this.logger.log(
+        `✅ App OneSignal criado com sucesso! ID: ${onesignalAppId}`,
+      );
+
+      workspace.onesignalAppId = onesignalAppId;
+      await this.workspaceRepository.save(workspace);
+
+      this.logger.log(
+        `💾 Workspace atualizado com App ID. Iniciando geração da API Key...`,
+      );
+
+      const updatedWorkspace =
+        await this.generateOneSignalAppToken(workspaceId);
+
+      return updatedWorkspace;
+    } catch (error) {
+      this.logger.error(
+        `🔥 Erro inesperado durante criação do App OneSignal para workspace ${workspace.id}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
+  }
+
+  //TODO os consoles serão removidos após os testes
+  async generateOneSignalAppToken(workspaceId: string): Promise<Workspace> {
+    this.logger.log(
+      `🔐 Iniciando geração de API Key para workspaceId: ${workspaceId}`,
+    );
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace || !workspace.onesignalAppId) {
+      throw new Error('Workspace inválido ou App ID ausente');
+    }
+
+    const organizationApiKey =
+      'os_v2_org_cm3aot5lszhvxcpudzm6jwvydvmot2u7xn4uinmq2iifjzcgecfhg63j7ardzlkgzazpvkz344hazhveuu7rnrpw25rwpvxgbbcujly';
+
+    try {
+      const response = await fetch(
+        `https://api.onesignal.com/apps/${workspace.onesignalAppId}/auth/tokens`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Key ${organizationApiKey}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            name: 'API-created-token',
+            ip_allowlist_mode: 'disabled',
+          }),
+        },
+      );
+
+      const responseBody = await response.json();
+
+      this.logger.log(
+        `🔍 Resposta da geração de token: ${JSON.stringify(responseBody)}`,
+      );
+
+      const formattedToken = responseBody?.formatted_token;
+
+      if (!response.ok || !formattedToken) {
+        const msg =
+          responseBody?.errors?.[0] ||
+          responseBody?.message ||
+          'Erro desconhecido ao gerar token do app OneSignal';
+
+        throw new Error(`Erro ao gerar token do app OneSignal: ${msg}`);
+      }
+
+      workspace.onesignalApiKey = formattedToken;
+
+      const saved = await this.workspaceRepository.save(workspace);
+
+      this.logger.log(
+        `🔐 Token salvo com sucesso no workspace: ${workspace.id}`,
+      );
+
+      return saved;
+    } catch (error) {
+      this.logger.error(
+        `🔥 Erro ao gerar token para App OneSignal do workspace ${workspace.id}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
@@ -287,6 +468,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       version: extractVersionMajorMinorPatch(appVersion),
     });
+
+    await this.setupOneSignalApp(workspace.id).catch((error) =>
+      this.logger.log(
+        `Failed to setup onesignal app: \n${JSON.stringify(error)}`,
+      ),
+    );
 
     const stripeFeatureFlag = this.featureFlagRepository.create({
       key: FeatureFlagKey.IsStripeIntegrationEnabled,

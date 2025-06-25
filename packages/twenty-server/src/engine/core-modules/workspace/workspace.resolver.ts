@@ -170,6 +170,22 @@ export class WorkspaceResolver {
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
+  async setupOneSignalApp(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Workspace> {
+    try {
+      return await this.workspaceService.setupOneSignalApp(workspace.id);
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Workspace)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }

@@ -190,6 +190,14 @@ export class Workspace {
   @Column({ type: 'int', nullable: true })
   pabxCompanyId?: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  onesignalAppId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  onesignalApiKey?: string | null;
+
   @Field(() => Number, { nullable: true })
   @Column({ type: 'int', nullable: true })
   pabxTrunkId?: number;
