@@ -3,6 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArchive,
   IconDotsVertical,
@@ -65,14 +66,14 @@ export const SettingsObjectFieldActiveActionDropdown = ({
               LeftIcon={isCustomField ? IconPencil : IconEye}
               onClick={handleEdit}
             />
-            {!!onSetAsLabelIdentifier && (
+            {isDefined(onSetAsLabelIdentifier) && (
               <MenuItem
                 text="Set as record text"
                 LeftIcon={IconTextSize}
                 onClick={handleSetAsLabelIdentifier}
               />
             )}
-            {!!onDeactivate && (
+            {isDefined(onDeactivate) && (
               <MenuItem
                 text="Deactivate"
                 LeftIcon={IconArchive}

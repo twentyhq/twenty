@@ -12,7 +12,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -39,118 +38,55 @@ export class WorkspacePermissionsCacheService {
     @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
-    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   async recomputeRolesPermissionsCache({
     workspaceId,
-    ignoreLock = false,
     roleIds,
   }: {
     workspaceId: string;
-    ignoreLock?: boolean;
     roleIds?: string[];
   }): Promise<void> {
-    const isAlreadyCaching =
-      await this.workspacePermissionsCacheStorageService.getRolesPermissionsOngoingCachingLock(
-        workspaceId,
-      );
+    let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
 
-    if (isAlreadyCaching) {
-      if (ignoreLock) {
-        this.logger.warn(
-          `RolesPermissions data is already being cached (workspace ${workspaceId}), ignoring lock`,
-        );
-      } else {
-        this.logger.warn(
-          `RolesPermissions data is already being cached (workspace ${workspaceId}), respecting lock and returning no data`,
-        );
-
-        return;
-      }
-    }
-
-    await this.workspacePermissionsCacheStorageService.addRolesPermissionsOngoingCachingLock(
-      workspaceId,
-    );
-
-    try {
-      let currentRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
-
-      if (roleIds) {
-        currentRolesPermissions =
-          await this.workspacePermissionsCacheStorageService.getRolesPermissions(
-            workspaceId,
-          );
-      }
-
-      const recomputedRolesPermissions =
-        await this.getObjectRecordPermissionsForRoles({
+    if (roleIds) {
+      currentRolesPermissions =
+        await this.workspacePermissionsCacheStorageService.getRolesPermissions(
           workspaceId,
-          roleIds,
-        });
-
-      const freshObjectRecordsPermissionsByRoleId = roleIds
-        ? { ...currentRolesPermissions, ...recomputedRolesPermissions }
-        : recomputedRolesPermissions;
-
-      await this.workspacePermissionsCacheStorageService.setRolesPermissions(
-        workspaceId,
-        freshObjectRecordsPermissionsByRoleId,
-      );
-    } finally {
-      await this.workspacePermissionsCacheStorageService.removeRolesPermissionsOngoingCachingLock(
-        workspaceId,
-      );
+        );
     }
+
+    const recomputedRolesPermissions =
+      await this.getObjectRecordPermissionsForRoles({
+        workspaceId,
+        roleIds,
+      });
+
+    const freshObjectRecordsPermissionsByRoleId = roleIds
+      ? { ...currentRolesPermissions, ...recomputedRolesPermissions }
+      : recomputedRolesPermissions;
+
+    await this.workspacePermissionsCacheStorageService.setRolesPermissions(
+      workspaceId,
+      freshObjectRecordsPermissionsByRoleId,
+    );
   }
 
   async recomputeUserWorkspaceRoleMapCache({
     workspaceId,
-    ignoreLock = false,
   }: {
     workspaceId: string;
-    ignoreLock?: boolean;
   }): Promise<void> {
     try {
-      const isAlreadyCaching =
-        await this.workspacePermissionsCacheStorageService.getUserWorkspaceRoleMapOngoingCachingLock(
+      const freshUserWorkspaceRoleMap =
+        await this.getUserWorkspaceRoleMapFromDatabase({
           workspaceId,
-        );
+        });
 
-      if (isAlreadyCaching) {
-        if (ignoreLock) {
-          this.logger.warn(
-            `UserWorkspaceRoleMap data is already being cached (workspace ${workspaceId}), ignoring lock`,
-          );
-        } else {
-          this.logger.warn(
-            `UserWorkspaceRoleMap data is already being cached (workspace ${workspaceId}), respecting lock and returning no data`,
-          );
-
-          return;
-        }
-      }
-
-      await this.workspacePermissionsCacheStorageService.addUserWorkspaceRoleMapOngoingCachingLock(
+      await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
         workspaceId,
+        freshUserWorkspaceRoleMap,
       );
-
-      try {
-        const freshUserWorkspaceRoleMap =
-          await this.getUserWorkspaceRoleMapFromDatabase({
-            workspaceId,
-          });
-
-        await this.workspacePermissionsCacheStorageService.setUserWorkspaceRoleMap(
-          workspaceId,
-          freshUserWorkspaceRoleMap,
-        );
-      } finally {
-        await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMapOngoingCachingLock(
-          workspaceId,
-        );
-      }
     } catch (error) {
       // Flush stale userWorkspaceRoleMap
       await this.workspacePermissionsCacheStorageService.removeUserWorkspaceRoleMap(

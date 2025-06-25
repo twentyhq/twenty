@@ -1,6 +1,6 @@
+import { ClientConfig } from '@/client-config/types/ClientConfig';
 import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { ClientConfig } from '~/generated/graphql';
 import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';
 import { getClientConfig } from '../utils/getClientConfig';
 

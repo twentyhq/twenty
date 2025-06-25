@@ -27,17 +27,13 @@ export enum WorkspaceCacheKeys {
   ORMEntitySchemas = 'orm:entity-schemas',
   GraphQLFeatureFlag = 'graphql:feature-flag',
   MetadataObjectMetadataMaps = 'metadata:object-metadata-maps',
-  MetadataObjectMetadataOngoingCachingLock = 'metadata:object-metadata-ongoing-caching-lock',
   MetadataVersion = 'metadata:workspace-metadata-version',
   FeatureFlagMap = 'feature-flag:feature-flag-map',
   FeatureFlagMapVersion = 'feature-flag:feature-flag-map-version',
-  FeatureFlagMapOngoingCachingLock = 'feature-flag-map-ongoing-caching-lock',
   MetadataPermissionsRolesPermissions = 'metadata:permissions:roles-permissions',
   MetadataPermissionsRolesPermissionsVersion = 'metadata:permissions:roles-permissions-version',
-  MetadataPermissionsRolesPermissionsOngoingCachingLock = 'metadata:permissions:roles-permissions-ongoing-caching-lock',
   MetadataPermissionsUserWorkspaceRoleMap = 'metadata:permissions:user-workspace-role-map',
   MetadataPermissionsUserWorkspaceRoleMapVersion = 'metadata:permissions:user-workspace-role-map-version',
-  MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock = 'metadata:permissions:user-workspace-role-map-ongoing-caching-lock',
 }
 
 const TTL_INFINITE = 0;
@@ -88,35 +84,6 @@ export class WorkspaceCacheStorageService {
   getMetadataVersion(workspaceId: string): Promise<number | undefined> {
     return this.cacheStorageService.get<number>(
       `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
-    );
-  }
-
-  addObjectMetadataCollectionOngoingCachingLock(
-    workspaceId: string,
-    metadataVersion: number,
-  ) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeObjectMetadataOngoingCachingLock(
-    workspaceId: string,
-    metadataVersion: number,
-  ) {
-    return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
-    );
-  }
-
-  getObjectMetadataOngoingCachingLock(
-    workspaceId: string,
-    metadataVersion: number,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
   }
 
@@ -252,59 +219,33 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  addFeatureFlagMapOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.FeatureFlagMapOngoingCachingLock}:${workspaceId}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeFeatureFlagsMapOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.FeatureFlagMapOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
-  getFeatureFlagsMapOngoingCachingLock(
-    workspaceId: string,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.FeatureFlagMapOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
   async flushVersionedMetadata(
     workspaceId: string,
-    metadataVersion: number,
+    metadataVersion?: number,
   ): Promise<void> {
+    const metadataVersionSuffix = isDefined(metadataVersion)
+      ? `${metadataVersion}`
+      : '*';
+
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersionSuffix}`,
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}:${metadataVersionSuffix}`,
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersionSuffix}`,
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersionSuffix}`,
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
-    );
-    await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersionSuffix}`,
     );
   }
 
-  async flush(
-    workspaceId: string,
-    metadataVersion: number | undefined,
-  ): Promise<void> {
-    if (isDefined(metadataVersion)) {
-      await this.flushVersionedMetadata(workspaceId, metadataVersion);
-    }
+  async flush(workspaceId: string, metadataVersion?: number): Promise<void> {
+    await this.flushVersionedMetadata(workspaceId, metadataVersion);
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissions}:${workspaceId}`,
@@ -312,10 +253,6 @@ export class WorkspaceCacheStorageService {
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsVersion}:${workspaceId}`,
-    );
-
-    await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
     );
 
     await this.cacheStorageService.del(
@@ -327,19 +264,11 @@ export class WorkspaceCacheStorageService {
     );
 
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
-    );
-
-    await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.FeatureFlagMap}:${workspaceId}`,
     );
 
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.FeatureFlagMapVersion}:${workspaceId}`,
-    );
-
-    await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.FeatureFlagMapOngoingCachingLock}:${workspaceId}`,
     );
   }
 }

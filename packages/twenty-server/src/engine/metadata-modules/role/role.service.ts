@@ -67,6 +67,7 @@ export class RoleService {
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const role = await this.roleRepository.save({
+      id: input.id,
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -82,7 +83,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [role.id],
-      ignoreLock: true,
     });
 
     return role;
@@ -128,7 +128,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [input.id],
-      ignoreLock: true,
     });
 
     return { ...existingRole, ...updatedRole };
@@ -195,7 +194,6 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
-      ignoreLock: true,
     });
 
     return roleId;

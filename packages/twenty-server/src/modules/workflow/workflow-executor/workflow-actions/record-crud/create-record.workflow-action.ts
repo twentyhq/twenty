@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
@@ -109,8 +110,8 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
       );
 
     const validObjectRecord = Object.fromEntries(
-      Object.entries(workflowActionInput.objectRecord).filter(
-        ([key]) => objectMetadataItemWithFieldsMaps.fieldsByName[key],
+      Object.entries(workflowActionInput.objectRecord).filter(([key]) =>
+        isDefined(objectMetadataItemWithFieldsMaps.fieldIdByName[key]),
       ),
     );
 

@@ -103,8 +103,10 @@ export class ProcessNestedRelationsV2Helper {
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
+    const sourceFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const sourceFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
 
     if (
       !isFieldMetadataInterfaceOfType(
@@ -219,8 +221,11 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
+    const targetFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const targetFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
       objectMetadataMaps,

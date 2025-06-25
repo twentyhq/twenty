@@ -106,7 +106,10 @@ export class IndexMetadataService {
 
   async recomputeIndexMetadataForObject(
     workspaceId: string,
-    updatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id'
+    >,
   ) {
     const indexesToRecompute = await this.indexMetadataRepository.find({
       where: {
@@ -232,7 +235,10 @@ export class IndexMetadataService {
 
   async createIndexRecomputeMigrations(
     workspaceId: string,
-    objectMetadata: ObjectMetadataEntity,
+    objectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id'
+    >,
     recomputedIndexes: {
       indexMetadata: IndexMetadataEntity;
       previousName: string;

@@ -2,7 +2,6 @@ import { getOperationName } from '@apollo/client/utilities';
 import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
 
 import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
-import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -15,11 +14,11 @@ import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
-import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
@@ -101,13 +100,6 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           track: { success: 1, __typename: 'TRACK_ANALYTICS' },
-        },
-      });
-    }),
-    graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          clientConfig: mockedClientConfig,
         },
       });
     }),

@@ -93,7 +93,6 @@ export abstract class GraphqlQueryBaseResolverService<
       const workspaceDataSource =
         await this.twentyORMGlobalManager.getDataSourceForWorkspace({
           workspaceId: workspace.id,
-          shouldFailIfMetadataNotFound: false,
         });
 
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
@@ -132,8 +131,7 @@ export abstract class GraphqlQueryBaseResolverService<
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(
-        objectMetadataItemWithFieldMaps.fieldsByName,
-        objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
+        objectMetadataItemWithFieldMaps,
         options.objectMetadataMaps,
       );
 

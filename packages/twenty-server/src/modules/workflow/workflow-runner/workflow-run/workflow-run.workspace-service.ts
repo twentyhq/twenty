@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -35,6 +37,7 @@ export class WorkflowRunWorkspaceService {
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async createWorkflowRun({
@@ -214,6 +217,14 @@ export class WorkflowRunWorkspaceService {
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
       updatedFields: ['status', 'endedAt', 'output'],
+    });
+
+    await this.metricsService.incrementCounter({
+      key:
+        status === WorkflowRunStatus.COMPLETED
+          ? MetricsKeys.WorkflowRunCompleted
+          : MetricsKeys.WorkflowRunFailed,
+      eventId: workflowRunId,
     });
   }
 

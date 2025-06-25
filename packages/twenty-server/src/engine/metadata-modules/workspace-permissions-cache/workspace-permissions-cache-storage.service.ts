@@ -64,28 +64,6 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  addRolesPermissionsOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeRolesPermissionsOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
-  getRolesPermissionsOngoingCachingLock(
-    workspaceId: string,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsRolesPermissionsOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
   async setUserWorkspaceRoleMap(
     workspaceId: string,
     userWorkspaceRoleMap: UserWorkspaceRoleMap,
@@ -128,31 +106,9 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  addUserWorkspaceRoleMapOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
-      true,
-      1_000 * 60, // 1 minute
-    );
-  }
-
-  removeUserWorkspaceRoleMapOngoingCachingLock(workspaceId: string) {
-    return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
-    );
-  }
-
   removeUserWorkspaceRoleMap(workspaceId: string) {
     return this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
-    );
-  }
-
-  getUserWorkspaceRoleMapOngoingCachingLock(
-    workspaceId: string,
-  ): Promise<boolean | undefined> {
-    return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
     );
   }
 }

@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
@@ -84,7 +85,9 @@ const StyledEmptyDropdownContent = styled.div`
 export const Empty: Story = {
   args: {
     dropdownComponents: (
-      <StyledEmptyDropdownContent data-testid="dropdown-content" />
+      <DropdownContent>
+        <StyledEmptyDropdownContent data-testid="dropdown-content" />
+      </DropdownContent>
     ),
   },
   play: async () => {
@@ -155,26 +158,28 @@ const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   return (
-    <>
-      {optionsMock.map((item) => (
-        <MenuItemSelectAvatar
-          key={item.id}
-          selected={selectedItem === item.id}
-          onClick={() => setSelectedItem(item.id)}
-          avatar={
-            hasAvatar ? (
-              <Avatar
-                placeholder="A"
-                avatarUrl={item.avatarUrl}
-                size="md"
-                type="squared"
-              />
-            ) : undefined
-          }
-          text={item.name}
-        />
-      ))}
-    </>
+    <DropdownContent>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {optionsMock.map((item) => (
+          <MenuItemSelectAvatar
+            key={item.id}
+            selected={selectedItem === item.id}
+            onClick={() => setSelectedItem(item.id)}
+            avatar={
+              hasAvatar ? (
+                <Avatar
+                  placeholder="A"
+                  avatarUrl={item.avatarUrl}
+                  size="md"
+                  type="squared"
+                />
+              ) : undefined
+            }
+            text={item.name}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };
 
@@ -184,31 +189,33 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   >({});
 
   return (
-    <>
-      {optionsMock.map((item) => (
-        <MenuItemMultiSelectAvatar
-          key={item.id}
-          selected={selectedItemsById[item.id]}
-          onSelectChange={(checked) =>
-            setSelectedItemsById((previous) => ({
-              ...previous,
-              [item.id]: checked,
-            }))
-          }
-          avatar={
-            hasAvatar ? (
-              <Avatar
-                placeholder="A"
-                avatarUrl={item.avatarUrl}
-                size="md"
-                type="squared"
-              />
-            ) : undefined
-          }
-          text={item.name}
-        />
-      ))}
-    </>
+    <DropdownContent>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {optionsMock.map((item) => (
+          <MenuItemMultiSelectAvatar
+            key={item.id}
+            selected={selectedItemsById[item.id]}
+            onSelectChange={(checked) =>
+              setSelectedItemsById((previous) => ({
+                ...previous,
+                [item.id]: checked,
+              }))
+            }
+            avatar={
+              hasAvatar ? (
+                <Avatar
+                  placeholder="A"
+                  avatarUrl={item.avatarUrl}
+                  size="md"
+                  type="squared"
+                />
+              ) : undefined
+            }
+            text={item.name}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };
 
@@ -227,7 +234,7 @@ export const WithHeaders: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
@@ -250,7 +257,7 @@ export const WithHeaders: Story = {
             <MenuItem key={item.id} text={item.name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: playInteraction,
@@ -260,13 +267,13 @@ export const SearchWithLoadingMenu: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuSearchInput value="query" autoFocus />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: async () => {
@@ -292,7 +299,7 @@ export const WithInput: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuInput value="Lorem ipsum" autoFocus />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
@@ -300,7 +307,7 @@ export const WithInput: Story = {
             <MenuItem key={name} text={name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: playInteraction,
@@ -309,11 +316,7 @@ export const WithInput: Story = {
 export const SelectableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    dropdownComponents: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeSelectableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    ),
+    dropdownComponents: <FakeSelectableMenuItemList hasAvatar />,
   },
   play: playInteraction,
 };
@@ -321,11 +324,7 @@ export const SelectableMenuItemWithAvatar: Story = {
 export const CheckableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    dropdownComponents: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeCheckableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    ),
+    dropdownComponents: <FakeCheckableMenuItemList hasAvatar />,
   },
   play: playInteraction,
 };
@@ -354,11 +353,9 @@ const ModalWithDropdown = () => {
               dropdownId="modal-dropdown-test"
               isDropdownInModal={true}
               dropdownComponents={
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  <div data-testid="dropdown-content">
-                    <FakeSelectableMenuItemList hasAvatar />
-                  </div>
-                </DropdownMenuItemsContainer>
+                <div data-testid="dropdown-content">
+                  <FakeSelectableMenuItemList hasAvatar />
+                </div>
               }
             />
           </div>

@@ -163,9 +163,13 @@ export class SearchService {
     const queryBuilder = entityManager.createQueryBuilder();
 
     const queryParser = new GraphqlQueryParser(
-      objectMetadataItem.fieldsByName,
-      objectMetadataItem.fieldsByJoinColumnName,
-      generateObjectMetadataMaps([objectMetadataItem]),
+      objectMetadataItem,
+      generateObjectMetadataMaps([
+        {
+          ...objectMetadataItem,
+          fields: Object.values(objectMetadataItem.fieldsById),
+        },
+      ]),
     );
 
     queryParser.applyFilterToBuilder(

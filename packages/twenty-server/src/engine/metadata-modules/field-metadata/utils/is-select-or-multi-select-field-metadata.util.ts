@@ -1,17 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export type SelectOrMultiSelectFieldMetadataEntity = FieldMetadataEntity<
   FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
 >;
 export const isSelectOrMultiSelectFieldMetadata = (
-  fieldMetadata: unknown,
+  fieldMetadata: FieldMetadataInterface,
 ): fieldMetadata is SelectOrMultiSelectFieldMetadataEntity => {
-  if (!(fieldMetadata instanceof FieldMetadataEntity)) {
-    return false;
-  }
-
   return [FieldMetadataType.SELECT, FieldMetadataType.MULTI_SELECT].includes(
     fieldMetadata.type,
   );

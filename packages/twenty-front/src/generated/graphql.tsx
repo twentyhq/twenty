@@ -338,34 +338,6 @@ export type ClientAiModelConfig = {
   provider: ModelProvider;
 };
 
-export type ClientConfig = {
-  __typename?: 'ClientConfig';
-  aiModels: Array<ClientAiModelConfig>;
-  analyticsEnabled: Scalars['Boolean'];
-  api: ApiConfig;
-  authProviders: AuthProviders;
-  billing: Billing;
-  calendarBookingPageId?: Maybe<Scalars['String']>;
-  canManageFeatureFlags: Scalars['Boolean'];
-  captcha: Captcha;
-  chromeExtensionId?: Maybe<Scalars['String']>;
-  debugMode: Scalars['Boolean'];
-  defaultSubdomain?: Maybe<Scalars['String']>;
-  frontDomain: Scalars['String'];
-  isAttachmentPreviewEnabled: Scalars['Boolean'];
-  isConfigVariablesInDbEnabled: Scalars['Boolean'];
-  isEmailVerificationRequired: Scalars['Boolean'];
-  isGoogleCalendarEnabled: Scalars['Boolean'];
-  isGoogleMessagingEnabled: Scalars['Boolean'];
-  isMicrosoftCalendarEnabled: Scalars['Boolean'];
-  isMicrosoftMessagingEnabled: Scalars['Boolean'];
-  isMultiWorkspaceEnabled: Scalars['Boolean'];
-  publicFeatureFlags: Array<PublicFeatureFlag>;
-  sentry: Sentry;
-  signInPrefilled: Scalars['Boolean'];
-  support: Support;
-};
-
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
@@ -1410,6 +1382,7 @@ export type Object = {
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  indexMetadataList: Array<Index>;
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
@@ -1609,7 +1582,6 @@ export type Query = {
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
-  clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
@@ -2820,11 +2792,6 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, freeTierQuantity: number, freeTrialQuantity: number, unitPriceCents: number, totalCostCents: number }> };
-
-export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, isAttachmentPreviewEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, isConfigVariablesInDbEnabled: boolean, calendarBookingPageId?: string | null, aiModels: Array<{ __typename?: 'ClientAIModelConfig', modelId: string, label: string, provider: ModelProvider, inputCostPer1kTokensInCredits: number, outputCostPer1kTokensInCredits: number }>, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: SupportDriver, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
@@ -4792,106 +4759,6 @@ export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
-export const GetClientConfigDocument = gql`
-    query GetClientConfig {
-  clientConfig {
-    aiModels {
-      modelId
-      label
-      provider
-      inputCostPer1kTokensInCredits
-      outputCostPer1kTokensInCredits
-    }
-    billing {
-      isBillingEnabled
-      billingUrl
-      trialPeriods {
-        duration
-        isCreditCardRequired
-      }
-    }
-    authProviders {
-      google
-      password
-      microsoft
-      sso {
-        id
-        name
-        type
-        status
-        issuer
-      }
-    }
-    signInPrefilled
-    isMultiWorkspaceEnabled
-    isEmailVerificationRequired
-    defaultSubdomain
-    frontDomain
-    debugMode
-    analyticsEnabled
-    isAttachmentPreviewEnabled
-    support {
-      supportDriver
-      supportFrontChatId
-    }
-    sentry {
-      dsn
-      environment
-      release
-    }
-    captcha {
-      provider
-      siteKey
-    }
-    api {
-      mutationMaximumAffectedRecords
-    }
-    chromeExtensionId
-    canManageFeatureFlags
-    publicFeatureFlags {
-      key
-      metadata {
-        label
-        description
-        imagePath
-      }
-    }
-    isMicrosoftMessagingEnabled
-    isMicrosoftCalendarEnabled
-    isGoogleMessagingEnabled
-    isGoogleCalendarEnabled
-    isConfigVariablesInDbEnabled
-    calendarBookingPageId
-  }
-}
-    `;
-
-/**
- * __useGetClientConfigQuery__
- *
- * To run a query within a React component, call `useGetClientConfigQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetClientConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetClientConfigQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetClientConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-      }
-export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-        }
-export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
-export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
-export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const SearchDocument = gql`
     query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   search(

@@ -1,6 +1,7 @@
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
@@ -19,6 +20,7 @@ type OpenActivityTargetCellEditModeProps = {
 export const useOpenActivityTargetCellEditMode = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
+  const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -70,6 +72,8 @@ export const useOpenActivityTargetCellEditMode = () => {
           '',
         );
 
+        openMultipleRecordPicker(recordPickerInstanceId);
+
         multipleRecordPickerPerformSearch({
           multipleRecordPickerInstanceId: recordPickerInstanceId,
           forceSearchFilter: '',
@@ -97,7 +101,11 @@ export const useOpenActivityTargetCellEditMode = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [multipleRecordPickerPerformSearch, pushFocusItemToFocusStack],
+    [
+      multipleRecordPickerPerformSearch,
+      openMultipleRecordPicker,
+      pushFocusItemToFocusStack,
+    ],
   );
 
   return { openActivityTargetCellEditMode };

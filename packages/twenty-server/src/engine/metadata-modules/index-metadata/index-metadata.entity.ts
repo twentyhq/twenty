@@ -80,5 +80,5 @@ export class IndexMetadataEntity {
     default: IndexType.BTREE,
     nullable: false,
   })
-  indexType?: IndexType;
+  indexType: IndexType;
 }

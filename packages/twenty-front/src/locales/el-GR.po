@@ -1069,6 +1069,11 @@ msgstr ""
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Επιλέξτε μεταξύ των πρωτοκόλλων OIDC και SAML"
 
+#. js-lingui-id: 2ZFG9X
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose between Short and Full"
+msgstr ""
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -1484,6 +1489,21 @@ msgstr "Δημιουργήστε το χώρο εργασίας σας"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "Created"
 #~ msgstr "Δημιουργήθηκε"
+
+#. js-lingui-id: fR16ki
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your data model..."
+msgstr ""
+
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Creating your schema"
+#~ msgstr ""
+
+#. js-lingui-id: YO4SdK
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your workspace"
+msgstr ""
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2592,13 +2612,18 @@ msgstr "Όνομα"
 
 #. js-lingui-id: 7JBW66
 #: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
-msgid "Forbidden"
-msgstr ""
+#~ msgid "Forbidden"
+#~ msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Ξεχάσατε τον κωδικό σας;"
+
+#. js-lingui-id: kI1qVD
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Format"
+msgstr ""
 
 #. js-lingui-id: abDZwc
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
@@ -3929,6 +3954,7 @@ msgid "Not Found"
 msgstr "Δεν Βρέθηκε"
 
 #. js-lingui-id: 51G4/+
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr ""
@@ -4308,6 +4334,16 @@ msgstr "Πορτογαλικά — Πορτογαλία"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
+
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Prefilling your workspace data"
+#~ msgstr ""
+
+#. js-lingui-id: /v6Rp9
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data..."
+msgstr ""
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4993,6 +5029,16 @@ msgstr "Ορίστε το όνομα του προσαρμοσμένου τομ�
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Ορίστε το όνομα του υποτομέα σας"
+
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Setting up your database"
+#~ msgstr ""
+
+#. js-lingui-id: dQsqpC
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database..."
+msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -5696,6 +5742,13 @@ msgstr "Απεριόριστες επαφές"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr ""
+
+#. js-lingui-id: KmUc2w
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+#~ msgid "Untitled Role"
+#~ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
