@@ -395,11 +395,9 @@ export class InterApiService {
         : error.message || 'Unknown error';
 
       if (isInterApiError) {
-        this.logger.error(
+        throw new Error(
           `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
         );
-
-        throw new Error(message);
       }
 
       throw new InternalServerErrorException(message, {
