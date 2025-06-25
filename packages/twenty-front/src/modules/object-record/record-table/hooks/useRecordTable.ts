@@ -12,7 +12,6 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 
-import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -20,7 +19,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
-import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 type useRecordTableProps = {
   recordTableId?: string;
@@ -94,10 +92,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
-  const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
-
-  const { move } = useRecordTableMove(recordTableId);
-
   const { selectAllRows } = useSelectAllRows(recordTableId);
 
   return {
@@ -106,11 +100,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,
-    move,
     selectAllRows,
     setOnColumnsChange,
     setIsRecordTableInitialLoading,
-    setFocusPosition,
     setHasUserSelectedAllRows,
     setOnToggleColumnSort,
   };
