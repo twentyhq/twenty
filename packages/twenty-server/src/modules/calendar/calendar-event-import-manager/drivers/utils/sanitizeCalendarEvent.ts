@@ -23,5 +23,5 @@ export const sanitizeCalendarEvent = <T extends Record<string, any>>(
 };
 
 const sanitizeString = (value: string): string => {
-  return value.replace('\u0000', '').replace('0x00', '').replace('\x7f', '');
+  return value.replace('\u0000', '').replace('\x00', '').replace('\x7f', '');
 };

@@ -87,12 +87,12 @@ describe('formatGoogleCalendarEvents', () => {
       expected: '>\u0015-;_�^�W&�p\u001f�',
     },
     {
-      input: '�\u0002��y�_΢�\u0013��0x00',
+      input: '�\u0002��y�_΢�\u0013��\x00',
       expected: '�\u0002��y�_΢�\u0013��',
     },
 
     {
-      input: 'del�\u0002��y�_΢�\u0013��0x00',
+      input: 'del�\u0002��y�_΢�\u0013��',
       expected: 'del�\u0002��y�_΢�\u0013��',
     },
   ];
