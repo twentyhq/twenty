@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -43,7 +43,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     onContentChange,
     resetContent,
     handleRecordGroupOrderChangeWithModal,
-  } = useOptionsDropdown();
+  } = useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
