@@ -922,7 +922,7 @@ msgstr ""
 msgid "Brief explanation of this output field"
 msgstr ""
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: HLCcj8
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using InsurOS, you agree to the"
 msgstr "Коришћењем InsurOS, слажете се са"
@@ -996,6 +996,11 @@ msgstr "Откажи план"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel your subscription"
 msgstr "Откажите претплату"
+
+#. js-lingui-id: HGJB7h
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Carriers"
+msgstr ""
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1262,6 +1267,11 @@ msgstr "Повежите се са Google"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Повежите се са Microsoft"
+
+#. js-lingui-id: TmTa/m
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Connect your {serviceName} account to create signatures"
+msgstr ""
 
 #. js-lingui-id: 9TzudL
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -2288,10 +2298,15 @@ msgstr "Грешка приликом поновног генерисања API 
 msgid "Error resending invitation"
 msgstr "Грешка у поновном слању позивнице"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr ""
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
@@ -2695,6 +2710,11 @@ msgstr "Набави претплату"
 msgid "Global"
 msgstr "Глобално"
 
+#. js-lingui-id: l2GlQ+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Carriers"
+msgstr ""
+
 #. js-lingui-id: mUbv8L
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
@@ -2703,6 +2723,11 @@ msgstr ""
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
+msgstr ""
+
+#. js-lingui-id: 3kZRFj
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to MGAs"
 msgstr ""
 
 #. js-lingui-id: BQE4ob
@@ -2719,6 +2744,11 @@ msgstr ""
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
+msgstr ""
+
+#. js-lingui-id: w0OkWI
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Policies"
 msgstr ""
 
 #. js-lingui-id: iS69s6
@@ -2988,6 +3018,11 @@ msgstr "Унос мора бити у camel case и не може почети �
 msgid "Input settings"
 msgstr "Подешавања уноса"
 
+#. js-lingui-id: nsLdct
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Input your {serviceName} API key below"
+msgstr ""
+
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
@@ -3217,6 +3252,18 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr "Канбан"
+
+#. js-lingui-id: wCSQOc
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key ID"
+msgstr ""
+
+#. js-lingui-id: AJGTWp
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key Secret"
+msgstr ""
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3509,6 +3556,11 @@ msgstr "Метаподаци"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "Генерисање датотеке метаподатака није успело"
+
+#. js-lingui-id: RJdTU8
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "MGAs"
+msgstr ""
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4317,6 +4369,11 @@ msgstr "Молимо вас да користите различита имен�
 msgid "Plural"
 msgstr "Множина"
 
+#. js-lingui-id: KF60Xw
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Policies"
+msgstr ""
+
 #. js-lingui-id: trnWaw
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Polish"
@@ -4665,6 +4722,7 @@ msgid "Russian"
 msgstr "Руски"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"

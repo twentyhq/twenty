@@ -922,10 +922,15 @@ msgstr ""
 msgid "Brief explanation of this output field"
 msgstr ""
 
+#. js-lingui-id: HLCcj8
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using InsurOS, you agree to the"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "En utilisant Twenty, vous acceptez les"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "En utilisant Twenty, vous acceptez les"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -996,6 +1001,11 @@ msgstr "Annuler le plan"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel your subscription"
 msgstr "Annuler votre abonnement"
+
+#. js-lingui-id: HGJB7h
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Carriers"
+msgstr ""
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1262,6 +1272,11 @@ msgstr "Se connecter avec Google"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Se connecter avec Microsoft"
+
+#. js-lingui-id: TmTa/m
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Connect your {serviceName} account to create signatures"
+msgstr ""
 
 #. js-lingui-id: 9TzudL
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -2288,10 +2303,15 @@ msgstr "Erreur lors de la régénération de la clé API : {err}"
 msgid "Error resending invitation"
 msgstr "Erreur lors de l'envoi de l'invitation"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr ""
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
@@ -2695,6 +2715,11 @@ msgstr "Obtenez votre abonnement"
 msgid "Global"
 msgstr "Global"
 
+#. js-lingui-id: l2GlQ+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Carriers"
+msgstr ""
+
 #. js-lingui-id: mUbv8L
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
@@ -2703,6 +2728,11 @@ msgstr ""
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
+msgstr ""
+
+#. js-lingui-id: 3kZRFj
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to MGAs"
 msgstr ""
 
 #. js-lingui-id: BQE4ob
@@ -2719,6 +2749,11 @@ msgstr ""
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
+msgstr ""
+
+#. js-lingui-id: w0OkWI
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Policies"
 msgstr ""
 
 #. js-lingui-id: iS69s6
@@ -2988,6 +3023,11 @@ msgstr "L'entrée doit être en camel case et ne peut pas commencer par un chiff
 msgid "Input settings"
 msgstr "Paramètres d'entrée"
 
+#. js-lingui-id: nsLdct
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Input your {serviceName} API key below"
+msgstr ""
+
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
@@ -3216,6 +3256,18 @@ msgstr ""
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
+msgstr ""
+
+#. js-lingui-id: wCSQOc
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key ID"
+msgstr ""
+
+#. js-lingui-id: AJGTWp
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key Secret"
 msgstr ""
 
 #. js-lingui-id: h6S9Yz
@@ -3509,6 +3561,11 @@ msgstr "Métadonnées"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "Échec de la génération du fichier des métadonnées"
+
+#. js-lingui-id: RJdTU8
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "MGAs"
+msgstr ""
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4317,6 +4374,11 @@ msgstr "Veuillez utiliser des noms différents pour vos champs source et destina
 msgid "Plural"
 msgstr "Pluriel"
 
+#. js-lingui-id: KF60Xw
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Policies"
+msgstr ""
+
 #. js-lingui-id: trnWaw
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Polish"
@@ -4665,6 +4727,7 @@ msgid "Russian"
 msgstr "Russe"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
