@@ -137,7 +137,6 @@ const StyledChevronIcon = styled.div`
 const StyledActionLinkContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const SignInUpGlobalScopeForm = () => {
@@ -254,7 +253,7 @@ export const SignInUpGlobalScopeForm = () => {
           </StyledWorkspaceContainer>
           <StyledActionLinkContainer>
             <ClickToActionLink onClick={signOut}>
-              <Trans>Sign out</Trans>
+              <Trans>Log out</Trans>
             </ClickToActionLink>
           </StyledActionLinkContainer>
         </>
