@@ -6,6 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllViewsOperationSignatureFactory';
+import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { View } from '@/views/types/View';
@@ -45,6 +46,7 @@ export const PrefetchRunViewQueryEffect = () => {
 
         if (!isDeeplyEqual(existingViews, views)) {
           set(prefetchViewsState, views);
+          set(arePrefetchViewsLoadedState, true);
         }
       },
     [],
