@@ -117,14 +117,8 @@ export class AgentRoleService {
       },
     });
 
-    if (existingRoleTarget) {
-      return {
-        roleToAssignIsSameAsCurrentRole: true,
-      };
-    }
-
     return {
-      roleToAssignIsSameAsCurrentRole: false,
+      roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
     };
   }
 }
