@@ -153,7 +153,7 @@ export class StandardFieldFactory {
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
-        isLabelSyncedWithName: true,
+        isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
       },
     ];
   }
