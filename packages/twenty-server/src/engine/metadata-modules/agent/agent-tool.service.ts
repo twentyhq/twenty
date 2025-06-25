@@ -5,10 +5,12 @@ import { ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 import {
   generateAgentToolUpdateZodSchema,
@@ -25,6 +27,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async generateToolsForAgent(
@@ -305,6 +308,13 @@ export class AgentToolService {
 
       const createdRecord = await repository.save(parameters);
 
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.CREATED,
+        records: [createdRecord],
+        workspaceId,
+      });
+
       return {
         success: true,
         record: createdRecord,
@@ -362,6 +372,22 @@ export class AgentToolService {
         where: { id: id as string },
       });
 
+      if (!updatedRecord) {
+        return {
+          success: false,
+          error: 'Failed to retrieve updated record',
+          message: `Failed to update ${objectName}: Could not retrieve updated record`,
+        };
+      }
+
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.UPDATED,
+        records: [updatedRecord],
+        workspaceId,
+        beforeRecords: [existingRecord],
+      });
+
       return {
         success: true,
         record: updatedRecord,
@@ -415,6 +441,13 @@ export class AgentToolService {
 
       await repository.softDelete(id as string);
 
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.DELETED,
+        records: [existingRecord],
+        workspaceId,
+      });
+
       return {
         success: true,
         message: `Successfully soft deleted ${objectName}`,
@@ -467,6 +500,13 @@ export class AgentToolService {
 
       await repository.remove(existingRecord);
 
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.DESTROYED,
+        records: [existingRecord],
+        workspaceId,
+      });
+
       return {
         success: true,
         message: `Successfully destroyed ${objectName}`,
@@ -478,5 +518,54 @@ export class AgentToolService {
         message: `Failed to destroy ${objectName}`,
       };
     }
+  }
+
+  private async emitDatabaseEvent({
+    objectName,
+    action,
+    records,
+    workspaceId,
+    beforeRecords,
+  }: {
+    objectName: string;
+    action: DatabaseEventAction;
+    records: Record<string, unknown>[];
+    workspaceId: string;
+    beforeRecords?: Record<string, unknown>[];
+  }) {
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          nameSingular: objectName,
+          isActive: true,
+        },
+        relations: ['fields'],
+      });
+
+    if (!objectMetadata) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectName,
+      action,
+      events: records.map((record) => {
+        const beforeRecord = beforeRecords?.find((r) => r.id === record.id);
+
+        return {
+          recordId: record.id as string,
+          objectMetadata,
+          properties: {
+            before: beforeRecord || undefined,
+            after:
+              action === DatabaseEventAction.DELETED ||
+              action === DatabaseEventAction.DESTROYED
+                ? undefined
+                : (record as Record<string, unknown>),
+          },
+        };
+      }),
+      workspaceId,
+    });
   }
 }
