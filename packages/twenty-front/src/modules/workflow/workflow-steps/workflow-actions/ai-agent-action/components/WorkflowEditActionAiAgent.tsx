@@ -56,8 +56,10 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: 'AI Agent',
     });
 
+  const agentId = action.settings.input.agentId;
+
   const { formValues, handleFieldChange, loading } = useAgentUpdateFormState({
-    agentId: action.settings.input.agentId,
+    agentId,
     readonly: actionOptions.readonly === true,
   });
 
@@ -77,7 +79,6 @@ export const WorkflowEditActionAiAgent = ({
     WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
   );
 
-  const agentId = action.settings.input.agentId;
   const { rolesOptions, selectedRoleId, handleRoleChange } =
     useAgentRoleAssignment(agentId);
 
