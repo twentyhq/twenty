@@ -52,6 +52,7 @@ const StyledForm = styled.form`
 `;
 
 const StyledWorkspaceContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
@@ -60,6 +61,14 @@ const StyledWorkspaceContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
   overflow: hidden;
   width: 100%;
+
+  > * {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
 `;
 
 const StyledWorkspaceItem = styled.div`
@@ -71,7 +80,6 @@ const StyledWorkspaceItem = styled.div`
   padding: 0;
   overflow: hidden;
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
   justify-content: space-between;
 
