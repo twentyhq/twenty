@@ -178,9 +178,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     const organizationApiKey =
-      'os_v2_org_cm3aot5lszhvxcpudzm6jwvydvmot2u7xn4uinmq2iifjzcgecfhg63j7ardzlkgzazpvkz344hazhveuu7rnrpw25rwpvxgbbcujly'; //TODO id para teste
-
-    const organizationId = '1336074f-ab96-4f5b-89f4-1e59e4dab81d'; //TODO id para testes
+      this.twentyConfigService.get('ONESIGNAL_API_KEY');
+    const organizationId = this.twentyConfigService.get('ONESIGNAL_ORG_ID');
 
     if (!organizationApiKey || !organizationId) {
       this.logger.error(
@@ -196,7 +195,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       throw new Error('Subdomínio do workspace não definido');
     }
 
-    const chromeWebOrigin = `https://${workspace.subdomain}.woulz.com.br`;
+    const chromeWebOrigin = this.domainManagerService.buildWorkspaceURL({
+      workspace,
+    });
 
     this.logger.log(`🌐 chromeWebOrigin: ${chromeWebOrigin}`);
 
