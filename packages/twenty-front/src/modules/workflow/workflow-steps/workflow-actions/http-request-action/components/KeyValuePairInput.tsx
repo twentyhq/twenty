@@ -25,11 +25,9 @@ const StyledPlaceholder = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
 `;
 
-const StyledFormTextFieldInputContainer = styled.div`
-  width: 100%;
-  .ProseMirror {
-    max-width: 180px;
-  }
+const StyledFormTextFieldInput = styled.div`
+  flex: 1;
+  max-width: 214px;
 `;
 
 export type KeyValuePair = {
@@ -124,7 +122,7 @@ export const KeyValuePairInput = ({
       <StyledContainer>
         {pairs.map((pair) => (
           <StyledKeyValueContainer key={pair.id}>
-            <StyledFormTextFieldInputContainer>
+            <StyledFormTextFieldInput>
               <FormTextFieldInput
                 placeholder={keyPlaceholder}
                 readonly={readonly}
@@ -134,8 +132,8 @@ export const KeyValuePairInput = ({
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
-            </StyledFormTextFieldInputContainer>
-            <StyledFormTextFieldInputContainer>
+            </StyledFormTextFieldInput>
+            <StyledFormTextFieldInput>
               <FormTextFieldInput
                 placeholder={valuePlaceholder}
                 readonly={readonly}
@@ -145,7 +143,7 @@ export const KeyValuePairInput = ({
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
-            </StyledFormTextFieldInputContainer>
+            </StyledFormTextFieldInput>
             {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
               <Button
                 onClick={() => handleRemovePair(pair.id)}
