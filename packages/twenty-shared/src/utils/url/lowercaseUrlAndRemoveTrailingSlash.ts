@@ -1,4 +1,4 @@
-export const lowercaseDomainAndRemoveTrailingSlash = (url: string) => {
+export const lowercaseUrlAndRemoveTrailingSlash = (url: string) => {
   try {
     return new URL(url).toString().replace(/\/$/, '');
   } catch {
