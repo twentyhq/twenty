@@ -778,6 +778,7 @@ export type Index = {
   __typename?: 'Index';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
+  indexFieldMetadataList: Array<IndexField>;
   indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
   indexType: IndexType;
   indexWhereClause?: Maybe<Scalars['String']>;
