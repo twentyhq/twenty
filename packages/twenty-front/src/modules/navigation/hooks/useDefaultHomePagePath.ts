@@ -97,7 +97,7 @@ export const useDefaultHomePagePath = () => {
           const view = getFirstView(lastVisitedObjectMetadataItemId);
 
           return {
-            view: view,
+            view,
             objectMetadataItem: lastVisitedObjectMetadataItem,
           };
         }
