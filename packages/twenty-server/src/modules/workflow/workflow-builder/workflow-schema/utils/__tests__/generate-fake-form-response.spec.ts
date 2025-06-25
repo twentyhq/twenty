@@ -91,7 +91,7 @@ describe('generateFakeFormResponse', () => {
         isLeaf: true,
         label: 'Date',
         type: FieldMetadataType.DATE,
-        value: '01/23/2025',
+        value: 'mm/dd/yyyy',
         icon: undefined,
       },
     });
