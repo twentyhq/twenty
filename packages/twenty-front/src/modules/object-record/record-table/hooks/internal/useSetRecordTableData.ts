@@ -4,7 +4,8 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
@@ -44,13 +45,13 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const { setIsFocusActiveForCurrentPosition } =
-    useSetIsRecordTableFocusActive(recordTableId);
-
   const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
+
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -92,7 +93,8 @@ export const useSetRecordTableData = ({
         const recordIds = records.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          setIsFocusActiveForCurrentPosition(false);
+          unfocusRecordTableCell();
+          unfocusRecordTableRow();
           setRecordTableHoverPosition(null);
 
           if (hasUserSelectedAllRows) {
@@ -115,7 +117,8 @@ export const useSetRecordTableData = ({
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
-      setIsFocusActiveForCurrentPosition,
+      unfocusRecordTableCell,
+      unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
     ],

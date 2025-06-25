@@ -44,6 +44,7 @@ describe('useResetFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {

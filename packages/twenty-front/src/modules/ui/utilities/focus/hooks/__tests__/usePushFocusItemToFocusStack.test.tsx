@@ -43,6 +43,7 @@ describe('usePushFocusItemToFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {
@@ -70,6 +71,7 @@ describe('usePushFocusItemToFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {
