@@ -77,23 +77,43 @@ describe('formatGoogleCalendarEvents', () => {
     );
   });
 
-  it('should sanitize a UCALID with improper exit char 0x00', () => {
-    const mockGoogleEventWithImproperUcalid: calendarV3.Schema$Event = {
-      ...mockGoogleEvent,
-      iCalUID: '\u0000eventStrange@google.com',
-    };
+  const testCases = [
+    {
+      input: '\u0000eventStrange@google.com',
+      expected: 'eventStrange@google.com',
+    },
+    {
+      input: '>\u0000\u0015-;_�^�W&�p\u001f�',
+      expected: '>\u0015-;_�^�W&�p\u001f�',
+    },
+    {
+      input: `;�'�юR+\u0014��N��`,
+      expected: `;��юR+\u0014��N��`,
+    },
+    {
+      input: '�\u0002��y�_΢�\u0013��0x00',
+      expected: '�\u0002��y�_΢�\u0013��',
+    },
 
-    const mockGoogleEventWithImproperUcalid2: calendarV3.Schema$Event = {
-      ...mockGoogleEvent,
-      iCalUID: '>\u0000\u0015-;_�^�W&�p\u001f�',
-    };
+    {
+      input: 'del�\u0002��y�_΢�\u0013��0x00',
+      expected: 'del�\u0002��y�_΢�\u0013��',
+    },
+  ];
 
-    const result = formatGoogleCalendarEvents([
-      mockGoogleEventWithImproperUcalid,
-      mockGoogleEventWithImproperUcalid2,
-    ]);
+  it.each(testCases)(
+    'should sanitize a UCALID with improper char: $input',
+    ({ input, expected }) => {
+      const mockGoogleEventWithImproperUcalid: calendarV3.Schema$Event = {
+        ...mockGoogleEvent,
+        iCalUID: input,
+      };
 
-    expect(result[0].iCalUID).toBe('eventStrange@google.com');
-    expect(result[1].iCalUID).toBe('>\u0015-;_�^�W&�p\u001f�');
-  });
+      const result = formatGoogleCalendarEvents([
+        mockGoogleEventWithImproperUcalid,
+      ]);
+
+      expect(result[0].iCalUID).toBe(expected);
+    },
+  );
 });
