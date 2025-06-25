@@ -1,16 +1,23 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 import https from 'https';
 import { URLSearchParams } from 'url';
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, isAxiosError } from 'axios';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { InterGetChargePDFResponse } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -21,8 +28,7 @@ import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 export class InterApiService {
   private readonly logger = new Logger(InterApiService.name);
 
-  private tokenCache: Map<string, { token: string; expiresAt: number }> =
-    new Map();
+  private readonly TOKEN_CACHE_TTL = 55 * 60 * 1000; // 55 minutes in ms
 
   private readonly baseUrl: string;
 
@@ -36,12 +42,10 @@ export class InterApiService {
     private interIntegrationRepository: Repository<InterIntegration>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleCharge)
+    private readonly cacheStorage: CacheStorageService,
   ) {
     this.baseUrl = this.twentyConfigService.get('INTER_BASE_URL');
-  }
-
-  private formatCertificate(input: string): string {
-    return input.replace(/\\n/g, '\n');
   }
 
   private async getIntegration(workspaceId: string): Promise<InterIntegration> {
@@ -79,16 +83,27 @@ export class InterApiService {
     });
   }
 
-  private async getAccessToken(
-    workspaceId: string,
-    scope: string,
-  ): Promise<string> {
+  private async getAccessToken({
+    scope,
+    workspaceId,
+    integrationId,
+  }: {
+    workspaceId: string;
+    integrationId: string;
+    scope: string;
+  }): Promise<string> {
     const now = Date.now();
-    const cacheKey = `${workspaceId}_${scope}`;
+    const cacheKey = `inter-api-token:${workspaceId}:${integrationId}:${scope}`;
 
-    const cached = this.tokenCache.get(cacheKey);
+    // Try to get from Redis-backed cache
+    const cached = await this.cacheStorage.get<{
+      token: string;
+      expiresAt: number;
+    }>(cacheKey);
 
     if (cached && now < cached.expiresAt) {
+      this.logger.log('Returning cached token from Redis');
+
       return cached.token;
     }
 
@@ -110,12 +125,16 @@ export class InterApiService {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
 
-      this.tokenCache.set(cacheKey, {
+      const tokenData = {
         token: response.data.access_token,
-        expiresAt: now + 55 * 60 * 1000, // 55 minutos
-      });
+        expiresAt: now + this.TOKEN_CACHE_TTL,
+      };
 
-      this.logger.log(`Access token for scope ${scope} retrieved successfully`);
+      await this.cacheStorage.set(cacheKey, tokenData, this.TOKEN_CACHE_TTL);
+
+      this.logger.log(
+        `Access token for scope ${scope} retrieved successfully and cached in Redis`,
+      );
 
       return response.data.access_token;
     } catch (error) {
@@ -129,12 +148,33 @@ export class InterApiService {
     }
   }
 
+  private formatCertificate(input: string): string {
+    return input.replace(/\\n/g, '\n');
+  }
+
+  private extractFullPathFromFilePath(path: string) {
+    /**
+     * Gets the path with a generated token and removes the token from it
+     * Expected input: "/charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf?token=eyJhbGciOiJ..."
+     * output: /charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf
+     */
+    const matchRegex = /([^?]+)/;
+
+    return path.match(matchRegex)?.[1];
+  }
+
+  // TODO: Not beeing used, either useit or remove.
   async issueCharge(
     workspaceId: string,
+    integrationId: string,
     data: ChargeData,
   ): Promise<ChargeResponse> {
     const integration = await this.getIntegration(workspaceId);
-    const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
+    const token = await this.getAccessToken({
+      workspaceId,
+      integrationId,
+      scope: this.SCOPES.WRITE,
+    });
 
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
 
@@ -168,7 +208,11 @@ export class InterApiService {
 
       const requestCode = response?.data?.codigoSolicitacao || '';
 
-      await this.getChargePdf(workspaceId, requestCode);
+      await this.getChargePdf({
+        integration,
+        workspaceId,
+        seuNumero: requestCode,
+      });
 
       return response?.data;
     } catch (error) {
@@ -186,7 +230,12 @@ export class InterApiService {
     cancelReason: string,
   ): Promise<void> {
     const integration = await this.getIntegration(workspaceId);
-    const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
+
+    const token = await this.getAccessToken({
+      workspaceId,
+      integrationId: integration.id,
+      scope: this.SCOPES.WRITE,
+    });
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
 
     try {
@@ -216,17 +265,22 @@ export class InterApiService {
     }
   }
 
-  async getChargePdf(workspaceId: string, seuNumero: string): Promise<string> {
-    if (!seuNumero) {
-      throw new Error('seuNumero is required to retrieve charge PDF');
-    }
+  async getChargePdf({
+    integration,
+    workspaceId,
+    seuNumero,
+  }: {
+    integration: InterIntegration;
+    workspaceId: string;
+    seuNumero: string;
+  }): Promise<string> {
+    const token = await this.getAccessToken({
+      workspaceId,
+      scope: this.SCOPES.READ,
+      integrationId: integration.id,
+    });
 
-    const integration = await this.getIntegration(workspaceId);
-    const token = await this.getAccessToken(workspaceId, this.SCOPES.READ);
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
-
-    this.logger.log('PDF - TOKENN INTER', token);
-    this.logger.log('PDF -SEU NUMERO INTER', seuNumero);
 
     try {
       const response = await axios.get<InterGetChargePDFResponse>(
@@ -269,7 +323,11 @@ export class InterApiService {
     );
 
     const integration = await this.getIntegration(workspaceId);
-    const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
+    const token = await this.getAccessToken({
+      workspaceId,
+      integrationId: integration.id,
+      scope: this.SCOPES.WRITE,
+    });
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
 
     const body = {
@@ -278,7 +336,7 @@ export class InterApiService {
       dataVencimento: data.dataVencimento,
       numDiasAgenda: data.numDiasAgenda,
       pagador: data.pagador,
-      mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
+      // mensagem: { linha1: data.mensagem?.linha1 ?? '-' },
     };
 
     try {
@@ -295,7 +353,11 @@ export class InterApiService {
       );
 
       const requestCode = response?.data?.codigoSolicitacao || '';
-      const pdfBuffer = await this.getChargePdf(workspaceId, requestCode);
+      const pdfBuffer = await this.getChargePdf({
+        workspaceId,
+        integration,
+        seuNumero: requestCode,
+      });
 
       const filename = `${randomUUID()}_boleto.pdf`;
       const folder = 'attachment';
@@ -326,22 +388,22 @@ export class InterApiService {
 
       return response.data;
     } catch (error) {
-      this.logger.error('Erro na emissão da cobrança e armazenamento do PDF:', {
-        message: error.message,
-        stack: error.stack,
+      const isInterApiError = isAxiosError(error);
+
+      const message = isInterApiError
+        ? error.response?.data
+        : error.message || 'Unknown error';
+
+      if (isInterApiError) {
+        throw new Error(
+          `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body, null, '\t')}\nError: ${JSON.stringify(message, null, '\t')}`,
+        );
+      }
+
+      throw new InternalServerErrorException(message, {
+        cause: error,
+        description: `Failed to issue charge and store attachment for workspace ${workspaceId} using: ${JSON.stringify(body)}`,
       });
-      throw error;
     }
-  }
-
-  extractFullPathFromFilePath(path: string) {
-    /**
-     * Gets the path with a generated token and removes the token from it
-     * Expected input: "/charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf?token=eyJhbGciOiJ..."
-     * output: /charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf
-     */
-    const matchRegex = /([^?]+)/;
-
-    return path.match(matchRegex)?.[1];
   }
 }

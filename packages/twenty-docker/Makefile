@@ -23,6 +23,9 @@ prod-sync-billing-plans:
 prod-start-billin-cron-subscription-check:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod cron:billing:check-inter-payment-expiration"
 
+prod-start-module-charge-recurrent-bills-cron:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod cron:charge-emmit-recurrent-bills"
+
 dev-seed-workspace:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:seed:dev"
 
