@@ -85,5 +85,5 @@ export interface WorkspaceRelationMetadataArgs {
    */
   readonly isActive?: boolean;
 
-  readonly isLabelSyncedWithName: boolean
+  readonly isLabelSyncedWithName: boolean;
 }

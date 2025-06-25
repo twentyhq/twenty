@@ -192,7 +192,8 @@ export class StandardFieldFactory {
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
-      isLabelSyncedWithName: workspaceRelationMetadataArgs.isLabelSyncedWithName,
+      isLabelSyncedWithName:
+        workspaceRelationMetadataArgs.isLabelSyncedWithName,
     });
 
     return fieldMetadataCollection;
