@@ -1,5 +1,6 @@
 import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { IconReload } from 'twenty-ui/display';
 import { GRAY_SCALE, THEME_DARK } from 'twenty-ui/theme';
@@ -98,7 +99,6 @@ const StyledIcon = styled(IconReload)`
 `;
 
 export const AppRootErrorFallback = ({
-  error,
   resetErrorBoundary,
   title = 'Sorry, something went wrong',
 }: AppRootErrorFallbackProps) => {
@@ -118,7 +118,9 @@ export const AppRootErrorFallback = ({
           </StyledImageContainer>
           <StyledEmptyTextContainer>
             <StyledEmptyTitle>{title}</StyledEmptyTitle>
-            <StyledEmptySubTitle>{error.message}</StyledEmptySubTitle>
+            <StyledEmptySubTitle>
+              {t`Please refresh the page.`}
+            </StyledEmptySubTitle>
           </StyledEmptyTextContainer>
           <StyledButton onClick={resetErrorBoundary}>
             <StyledIcon size={16} />

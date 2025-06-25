@@ -1,6 +1,8 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
+import { CustomError } from '@/error-handler/CustomError';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { isDefined } from 'twenty-shared/utils';
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -13,11 +15,18 @@ export const AppErrorBoundary = ({
   FallbackComponent,
   resetOnLocationChange = true,
 }: AppErrorBoundaryProps) => {
-  const handleError = async (error: Error, info: ErrorInfo) => {
+  const handleError = async (error: Error | CustomError, info: ErrorInfo) => {
     try {
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
         scope.setExtras({ info });
+        const errorHasCode = 'code' in error && isDefined(error.code);
+
+        const fingerprint = errorHasCode
+          ? (error.code as string)
+          : error.message;
+        scope.setFingerprint([fingerprint]);
+        error.name = error.message;
         return scope;
       });
     } catch (sentryError) {
