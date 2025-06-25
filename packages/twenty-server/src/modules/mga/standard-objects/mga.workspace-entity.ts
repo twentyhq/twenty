@@ -156,9 +156,6 @@ export class MGAWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   policies: Relation<PolicyWorkspaceEntity[]>;
 
-  @WorkspaceJoinColumn('policies')
-  policiesId: string;
-
   @WorkspaceRelation({
     standardId: MGA_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,

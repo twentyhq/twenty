@@ -18,7 +18,6 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
@@ -360,9 +359,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   managedPolicies: Relation<PolicyWorkspaceEntity[]>;
-
-  @WorkspaceJoinColumn('managedPolicies')
-  managedPoliciesIds: string[];
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
