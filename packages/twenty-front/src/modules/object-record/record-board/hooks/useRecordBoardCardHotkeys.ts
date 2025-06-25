@@ -1,29 +1,41 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
 export const useRecordBoardCardHotkeys = (focusId: string) => {
-  const { objectMetadataItem } = useContext(RecordBoardContext);
+  const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
   const { recordId, rowIndex, columnIndex } = useContext(
     RecordBoardCardContext,
   );
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
   const { activateBoardCard } = useActiveRecordBoardCard();
-  const { setRecordAsSelected } = useRecordBoardSelection();
+  const { setRecordAsSelected, resetRecordSelection } =
+    useRecordBoardSelection();
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const isRecordBoardCardSelected = useRecoilComponentFamilyValueV2(
     isRecordBoardCardSelectedComponentFamilyState,
     recordId,
   );
+
+  const selectedRecordIds = useRecoilComponentValueV2(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
+
+  const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
 
   const handleSelectCard = () => {
     setRecordAsSelected(recordId, !isRecordBoardCardSelected);
@@ -40,6 +52,13 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
       rowIndex,
       columnIndex,
     });
+  };
+
+  const handleEscape = () => {
+    unfocusBoardCard();
+    if (isAtLeastOneRecordSelected) {
+      resetRecordSelection();
+    }
   };
 
   useHotkeysOnFocusedElement({
@@ -60,5 +79,13 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     focusId,
     scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleOpenRecordInCommandMenu],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId,
+    scope: RecordIndexHotkeyScope.RecordIndex,
+    dependencies: [handleEscape],
   });
 };
