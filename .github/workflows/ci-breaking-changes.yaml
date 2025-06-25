@@ -28,6 +28,7 @@ jobs:
         packages/twenty-server/**
         packages/twenty-emails/**
         packages/twenty-shared/**
+        .github/workflows/ci-breaking-changes.yaml
 
   api-breaking-changes:
     needs: changed-files-check
@@ -462,23 +463,8 @@ jobs:
               ' rest-api-diff.json >> rest-api-diff.md
               
             elif [ "$different" = "true" ]; then
-              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed)"
-              
-              # Generate non-breaking changes report
-              echo "# REST API Changes" > rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "## Summary" >> rest-api-diff.md
-              
-              jq -r '
-                if (.newEndpoints | length) > 0 then
-                  "### ✅ New Endpoints (" + (.newEndpoints | length | tostring) + ")\n" +
-                  (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
-                else "" end,
-                if (.changedOperations | length) > 0 then
-                  "\n### 🔄 Changed Operations (" + (.changedOperations | length | tostring) + ")\n" +
-                  (.changedOperations | map("- " + .method + " " + .pathUrl + ": " + (.summary // "Modified operation")) | join("\n"))
-                else "" end
-              ' rest-api-diff.json >> rest-api-diff.md
+              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed) - no PR comment will be posted"
+              # Don't create markdown file for non-breaking changes to avoid PR comments
             else
               echo "✅ No changes detected in REST API"
               # Don't create diff file for no changes
@@ -522,13 +508,13 @@ jobs:
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST Metadata API"
               
-              # Generate breaking changes report
+              # Generate breaking changes report (only for breaking changes)
               echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
               echo "" >> rest-metadata-api-diff.md
               echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-metadata-api-diff.md
               echo "" >> rest-metadata-api-diff.md
               
-              # Parse and format the changes from Java openapi-diff
+              # Parse and format the changes from Java openapi-diff 
               jq -r '
                 if (.missingEndpoints | length) > 0 then
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
@@ -545,26 +531,10 @@ jobs:
               ' rest-metadata-api-diff.json >> rest-metadata-api-diff.md
 
             elif [ "$different" = "true" ]; then
-              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed)"
-              
-              # Generate non-breaking changes report
-              echo "# REST Metadata API Changes" > rest-metadata-api-diff.md
-              echo "" >> rest-metadata-api-diff.md
-              echo "## Summary" >> rest-metadata-api-diff.md
-              
-              jq -r '
-                if (.newEndpoints | length) > 0 then
-                  "### ✅ New Endpoints (" + (.newEndpoints | length | tostring) + ")\n" +
-                  (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
-                else "" end,
-                if (.changedOperations | length) > 0 then
-                  "\n### 🔄 Changed Operations (" + (.changedOperations | length | tostring) + ")\n" +
-                  (.changedOperations | map("- " + .method + " " + .pathUrl + ": " + (.summary // "Modified operation")) | join("\n"))
-                else "" end
-              ' rest-metadata-api-diff.json >> rest-metadata-api-diff.md
+              echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed) - no PR comment will be posted"
+              # Don't create markdown file for non-breaking changes to avoid PR comments
             else
               echo "✅ No changes detected in REST Metadata API"
-              # Don't create diff file for no changes
             fi
           else
             echo "⚠️ OpenAPI diff tool could not process the metadata API files"
@@ -675,7 +645,7 @@ jobs:
                 }
                 
                 // Check PR title for "breaking"
-                const prTitle = "${{ github.event.pull_request.title }}";
+                const prTitle = `${{ github.event.pull_request.title }}`;
                 const titleContainsBreaking = prTitle.toLowerCase().includes('breaking');
                 
                 if (hasBreakingChanges) {

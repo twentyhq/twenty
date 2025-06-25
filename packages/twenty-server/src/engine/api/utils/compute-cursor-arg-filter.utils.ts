@@ -9,13 +9,13 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { buildCursorWhereCondition } from 'src/engine/api/utils/build-cursor-where-condition.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const computeCursorArgFilter = (
   cursor: ObjectRecordCursor,
   orderBy: ObjectRecordOrderBy,
-  fieldMetadataMapByName: FieldMetadataMap,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   isForwardPagination = true,
 ): ObjectRecordFilter[] => {
   const cursorEntries = Object.entries(cursor)
@@ -42,7 +42,7 @@ export const computeCursorArgFilter = (
       buildCursorWhereCondition({
         cursorKey,
         cursorValue,
-        fieldMetadataMapByName,
+        objectMetadataItemWithFieldMaps,
         orderBy,
         isForwardPagination: true,
         isEqualityCondition: true,
@@ -51,7 +51,7 @@ export const computeCursorArgFilter = (
       buildCursorWhereCondition({
         cursorKey,
         cursorValue,
-        fieldMetadataMapByName,
+        objectMetadataItemWithFieldMaps,
         orderBy,
         isForwardPagination,
       }),

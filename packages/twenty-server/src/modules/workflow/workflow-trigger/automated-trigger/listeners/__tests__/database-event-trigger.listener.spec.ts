@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -54,8 +55,26 @@ describe('DatabaseEventTriggerListener', () => {
                 },
               },
               objectMetadataItemWithFieldsMaps: {
-                fieldsByJoinColumnName: {},
-              },
+                id: 'test-object-metadata',
+                workspaceId: 'test-workspace',
+                nameSingular: 'testObject',
+                namePlural: 'testObjects',
+                labelSingular: 'Test Object',
+                labelPlural: 'Test Objects',
+                description: 'Test object for testing',
+                fieldIdByJoinColumnName: {},
+                fieldsById: {},
+                fieldIdByName: {},
+                indexMetadatas: [],
+                targetTableName: 'test_objects',
+                isSystem: false,
+                isCustom: false,
+                isActive: true,
+                isRemote: false,
+                isAuditLogged: true,
+                isSearchable: true,
+                icon: 'Icon123',
+              } satisfies ObjectMetadataItemWithFieldMaps,
             }),
           },
         },
@@ -97,6 +116,7 @@ describe('DatabaseEventTriggerListener', () => {
             updatedAt: new Date(),
             fields: [],
             indexMetadatas: [],
+            icon: 'Icon123',
           },
           properties: {
             updatedFields: ['field1', 'field2'],

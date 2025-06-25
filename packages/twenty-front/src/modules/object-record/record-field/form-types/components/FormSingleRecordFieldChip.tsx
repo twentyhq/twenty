@@ -1,4 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import {
   RecordId,
   Variable,
@@ -12,9 +13,7 @@ const StyledRecordChip = styled(RecordChip)`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
+const StyledPlaceholder = styled(FormFieldPlaceholder)`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 

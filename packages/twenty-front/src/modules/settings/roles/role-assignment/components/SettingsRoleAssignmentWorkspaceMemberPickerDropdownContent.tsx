@@ -39,20 +39,25 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
 
   return (
     <>
-      {enrichedWorkspaceMembers.map((workspaceMember) => (
-        <MenuItemAvatar
-          key={workspaceMember.id}
-          onClick={() => onSelect(workspaceMember)}
-          avatar={{
-            type: 'rounded',
-            size: 'md',
-            placeholder: workspaceMember?.name.firstName ?? '',
-            placeholderColorSeed: workspaceMember?.id,
-            avatarUrl: workspaceMember?.avatarUrl,
-          }}
-          text={workspaceMember?.name.firstName ?? ''}
-        />
-      ))}
+      {enrichedWorkspaceMembers.map((workspaceMember) => {
+        const workspaceMemberFullName = `${workspaceMember?.name.firstName ?? ''} ${workspaceMember?.name.lastName ?? ''}`;
+
+        return (
+          <MenuItemAvatar
+            key={workspaceMember.id}
+            onClick={() => onSelect(workspaceMember)}
+            avatar={{
+              type: 'rounded',
+              size: 'md',
+              placeholder: workspaceMemberFullName,
+              placeholderColorSeed: workspaceMember.id,
+              avatarUrl: workspaceMember.avatarUrl,
+            }}
+            text={workspaceMemberFullName}
+            contextualText={workspaceMember.userEmail}
+          />
+        );
+      })}
     </>
   );
 };

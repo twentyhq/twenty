@@ -9,7 +9,12 @@ export type PartialFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = Omit<
   FieldMetadataInterface<T>,
-  'id' | 'label' | 'description' | 'objectMetadataId'
+  | 'id'
+  | 'label'
+  | 'description'
+  | 'objectMetadataId'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);

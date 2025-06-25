@@ -68,7 +68,7 @@ export const SettingsDomain = () => {
     currentWorkspaceState,
   );
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   const form = useForm<{
     subdomain: string;
@@ -141,6 +141,7 @@ export const SettingsDomain = () => {
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
         ) {
+          closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
           return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
@@ -203,45 +204,47 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSave)}>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...form}>
-        <SubMenuTopBarContainer
-          title={t`Domain`}
-          links={[
-            {
-              children: <Trans>Workspace</Trans>,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            {
-              children: <Trans>General</Trans>,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            { children: <Trans>Domain</Trans> },
-          ]}
-          actionButton={
-            <SaveAndCancelButtons
-              onCancel={() => navigate(SettingsPath.Workspace)}
-              isSaveDisabled={form.formState.isSubmitting}
-            />
-          }
-        >
-          <SettingsPageContainer>
-            <SettingsSubdomain />
-            <SettingsCustomDomain />
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
-        <ConfirmationModal
-          modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
-          title={t`Change subdomain?`}
-          subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
-          onConfirmClick={() => {
-            const values = form.getValues();
-            currentWorkspace &&
-              updateSubdomain(values.subdomain, currentWorkspace);
-          }}
-        />
-      </FormProvider>
-    </form>
+    <>
+      <form onSubmit={form.handleSubmit(handleSave)}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>
+          <SubMenuTopBarContainer
+            title={t`Domain`}
+            links={[
+              {
+                children: <Trans>Workspace</Trans>,
+                href: getSettingsPath(SettingsPath.Workspace),
+              },
+              {
+                children: <Trans>General</Trans>,
+                href: getSettingsPath(SettingsPath.Workspace),
+              },
+              { children: <Trans>Domain</Trans> },
+            ]}
+            actionButton={
+              <SaveAndCancelButtons
+                onCancel={() => navigate(SettingsPath.Workspace)}
+                isSaveDisabled={form.formState.isSubmitting}
+              />
+            }
+          >
+            <SettingsPageContainer>
+              <SettingsSubdomain />
+              <SettingsCustomDomain />
+            </SettingsPageContainer>
+          </SubMenuTopBarContainer>
+        </FormProvider>
+      </form>
+      <ConfirmationModal
+        modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+        title={t`Change subdomain?`}
+        subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
+        onConfirmClick={() => {
+          const values = form.getValues();
+          currentWorkspace &&
+            updateSubdomain(values.subdomain, currentWorkspace);
+        }}
+      />
+    </>
   );
 };

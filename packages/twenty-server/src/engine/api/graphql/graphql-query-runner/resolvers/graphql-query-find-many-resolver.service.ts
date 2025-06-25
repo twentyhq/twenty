@@ -80,7 +80,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
-        objectMetadataItemWithFieldMaps.fieldsByName,
+        objectMetadataItemWithFieldMaps,
         isForwardPagination,
       );
 

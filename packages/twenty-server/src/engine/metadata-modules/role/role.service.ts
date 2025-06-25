@@ -17,7 +17,6 @@ import {
   UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -28,8 +27,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -70,6 +67,7 @@ export class RoleService {
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const role = await this.roleRepository.save({
+      id: input.id,
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -85,7 +83,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [role.id],
-      ignoreLock: true,
     });
 
     return role;
@@ -131,7 +128,6 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [input.id],
-      ignoreLock: true,
     });
 
     return { ...existingRole, ...updatedRole };
@@ -198,7 +194,6 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
-      ignoreLock: true,
     });
 
     return roleId;

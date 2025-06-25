@@ -24,6 +24,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const typedFieldTextMock: FieldMetadataInterface = {
@@ -34,6 +37,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const typedFieldCurrencyMock: FieldMetadataInterface = {
@@ -44,6 +50,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldCurrencyMock.isNullable,
     defaultValue: fieldCurrencyMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -52,17 +61,16 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     'field-currency-id': typedFieldCurrencyMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [typedFieldNumberMock.name]: typedFieldNumberMock,
-    [typedFieldTextMock.name]: typedFieldTextMock,
-    [typedFieldCurrencyMock.name]: typedFieldCurrencyMock,
-  };
-
   const typedObjectMetadataItem: ObjectMetadataItemWithFieldMaps = {
     ...objectMetadataItemMock,
     fieldsById,
-    fieldsByName,
-    fieldsByJoinColumnName: {},
+    fieldIdByName: {
+      [typedFieldNumberMock.name]: typedFieldNumberMock.id,
+      [typedFieldTextMock.name]: typedFieldTextMock.id,
+      [typedFieldCurrencyMock.name]: typedFieldCurrencyMock.id,
+    },
+    fieldIdByJoinColumnName: {},
+    indexMetadatas: [],
   };
 
   const objectMetadataMapsMock: ObjectMetadataMaps = {
@@ -110,6 +118,10 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           name: 'toObjectMetadataName',
           label: 'Test Field',
           objectMetadataId: 'object-metadata-id',
+          isNullable: true,
+          isLabelSyncedWithName: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         };
 
         if (fieldMetadataType === FieldMetadataType.RELATION) {

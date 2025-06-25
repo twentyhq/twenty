@@ -140,7 +140,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
         const dataSource =
           await this.twentyORMGlobalManager.getDataSourceForWorkspace({
             workspaceId,
-            shouldFailIfMetadataNotFound: false,
           });
 
         await this.runOnWorkspace({

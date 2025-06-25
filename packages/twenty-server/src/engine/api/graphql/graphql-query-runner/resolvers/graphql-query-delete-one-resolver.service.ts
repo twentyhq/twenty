@@ -18,6 +18,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolverService<
@@ -60,7 +61,9 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
     this.apiEventEmitterService.emitDeletedEvents({
       records: structuredClone(formattedDeletedRecords),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {

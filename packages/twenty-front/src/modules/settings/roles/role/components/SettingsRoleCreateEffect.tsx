@@ -1,5 +1,6 @@
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
@@ -16,6 +17,11 @@ export const SettingsRoleCreateEffect = ({
   const setSettingsDraftRole = useSetRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
+
+  const setSettingsPersistedRole = useSetRecoilState(
+    settingsPersistedRoleFamilyState(roleId),
+  );
+
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
@@ -44,9 +50,16 @@ export const SettingsRoleCreateEffect = ({
       workspaceMembers: [],
     };
 
+    setSettingsPersistedRole(undefined);
     setSettingsDraftRole(newRole);
     setIsInitialized(true);
-  }, [isInitialized, roleId, setActiveTabId, setSettingsDraftRole]);
+  }, [
+    isInitialized,
+    roleId,
+    setActiveTabId,
+    setSettingsDraftRole,
+    setSettingsPersistedRole,
+  ]);
 
   return null;
 };
