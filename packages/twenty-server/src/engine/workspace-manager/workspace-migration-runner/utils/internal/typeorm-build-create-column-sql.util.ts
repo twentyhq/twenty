@@ -32,7 +32,7 @@ export const typeormBuildCreateColumnSql = ({
     columnSql += ' ' + column.type;
   }
 
-  if (column.isArray) columnSql += ' []';
+  if (column.isArray) columnSql += '[]';
 
   if (column.generatedType === 'STORED' && column.asExpression) {
     columnSql += ` GENERATED ALWAYS AS (${column.asExpression}) STORED`;
