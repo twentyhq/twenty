@@ -15,7 +15,7 @@ import { RecordBoardCardBody } from '@/object-record/record-board/record-board-c
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -140,22 +140,25 @@ export const RecordBoardCard = () => {
     ),
   );
 
-  const { openDropdown } = useDropdownV2();
+  const { openDropdown } = useOpenDropdown();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const handleActionMenuDropdown = (event: React.MouseEvent) => {
+  const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsCurrentCardSelected(true);
     setActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
-    openDropdown(actionMenuDropdownId, {
-      enableGlobalHotkeysWithModifiers: true,
-      enableGlobalHotkeysConflictingWithKeyboard: false,
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   };
 
@@ -185,7 +188,7 @@ export const RecordBoardCard = () => {
   return (
     <StyledBoardCardWrapper
       data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-      onContextMenu={handleActionMenuDropdown}
+      onContextMenu={handleContextMenuOpen}
     >
       <InView>
         <StyledBoardCard

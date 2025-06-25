@@ -10,6 +10,13 @@ import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysCo
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useCallback } from 'react';
 
+/**
+ *
+ * @deprecated This hook is deprecated, use a specific hook instead :
+ * - `useOpenDropdown`
+ * - `useCloseDropdown`
+ * - `useToggleDropdown`
+ */
 export const useDropdown = (dropdownId?: string) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
