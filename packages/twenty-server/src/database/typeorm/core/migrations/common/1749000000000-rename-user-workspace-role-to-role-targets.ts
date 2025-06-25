@@ -15,7 +15,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "FK_role_targets_agent_id" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "FK_8febe85bd7aac55de81b1c51140" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
@@ -51,7 +51,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspaceRole" DROP CONSTRAINT "FK_role_targets_agent_id"`,
+      `ALTER TABLE "core"."userWorkspaceRole" DROP CONSTRAINT "FK_8febe85bd7aac55de81b1c51140"`,
     );
 
     await queryRunner.query(
