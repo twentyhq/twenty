@@ -1286,7 +1286,7 @@ export type MutationPublishServerlessFunctionArgs = {
 
 
 export type MutationRemoveRoleFromAgentArgs = {
-  agentId: Scalars['String']['input'];
+  agentId: Scalars['UUID']['input'];
 };
 
 
