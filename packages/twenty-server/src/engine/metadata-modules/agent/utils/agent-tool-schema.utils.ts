@@ -19,6 +19,7 @@ export const generateAgentToolZodSchema = (
       field.name === 'updatedAt' ||
       field.name === 'deletedAt' ||
       field.name === 'searchVector' ||
+      field.name === 'createdBy' ||
       field.type === FieldMetadataType.TS_VECTOR
     ) {
       return;
@@ -64,6 +65,7 @@ export const generateAgentToolUpdateZodSchema = (
       field.name === 'updatedAt' ||
       field.name === 'deletedAt' ||
       field.name === 'searchVector' ||
+      field.name === 'createdBy' ||
       field.type === FieldMetadataType.TS_VECTOR
     ) {
       return;
@@ -160,26 +162,97 @@ const convertFieldToZodField = (
       );
     }
 
+    case FieldMetadataType.RATING: {
+      const enumValues =
+        field.options?.map((option: { value: string }) => option.value) || [];
+
+      return createBaseField(
+        z.enum(enumValues as [string, ...string[]]),
+        'Rating field',
+      );
+    }
+
     case FieldMetadataType.ARRAY:
       return createBaseField(z.array(z.string()), 'Array of strings');
 
     case FieldMetadataType.LINKS:
-      return createBaseField(z.string(), 'Links field (JSON string format)');
+      return createBaseField(
+        z.object({
+          primaryLinkLabel: z.string().optional(),
+          primaryLinkUrl: z.string().optional(),
+          secondaryLinks: z
+            .array(
+              z.object({
+                url: z.string().url().optional(),
+                label: z.string().optional(),
+              }),
+            )
+            .optional(),
+        }),
+        'Links field with primary and secondary links',
+      );
 
     case FieldMetadataType.CURRENCY:
-      return createBaseField(z.string(), 'Currency field');
+      return createBaseField(
+        z.object({
+          amountMicros: z.number().optional(),
+          currencyCode: z.string().optional(),
+        }),
+        'Currency field with amountMicros and currencyCode properties',
+      );
 
     case FieldMetadataType.FULL_NAME:
-      return createBaseField(z.string(), 'Full name field');
+      return createBaseField(
+        z.object({
+          firstName: z.string().optional(),
+          lastName: z.string().optional(),
+        }),
+        'Full name field with firstName and lastName properties',
+      );
 
     case FieldMetadataType.ADDRESS:
-      return createBaseField(z.string(), 'Address field (JSON string format)');
+      return createBaseField(
+        z.object({
+          addressStreet1: z.string().optional(),
+          addressStreet2: z.string().optional(),
+          addressCity: z.string().optional(),
+          addressPostcode: z.string().optional(),
+          addressState: z.string().optional(),
+          addressCountry: z.string().optional(),
+          addressLat: z.number().optional(),
+          addressLng: z.number().optional(),
+        }),
+        'Address field with street, city, state, country, and coordinates',
+      );
 
     case FieldMetadataType.EMAILS:
-      return createBaseField(z.string(), 'Emails field (JSON string format)');
+      return createBaseField(
+        z.object({
+          primaryEmail: z.string().optional(),
+          additionalEmails: z.array(z.string().email()).optional(),
+        }),
+        'Emails field with primaryEmail and additionalEmails properties',
+      );
 
     case FieldMetadataType.PHONES:
-      return createBaseField(z.string(), 'Phones field (JSON string format)');
+      return createBaseField(
+        z.object({
+          primaryPhoneCountryCode: z.string().optional(),
+          primaryPhoneCallingCode: z.string().optional(),
+          primaryPhoneNumber: z.string().optional(),
+          additionalPhones: z.array(z.string()).optional(),
+        }),
+        'Phones field with primary phone and additional phones properties',
+      );
+
+    case FieldMetadataType.RICH_TEXT_V2:
+      return createBaseField(
+        z.object({
+          blocknote: z.string().optional(),
+          markdown: z.string().optional(),
+        }),
+        'Rich text field with blocknote and markdown properties',
+      );
 
     case FieldMetadataType.RAW_JSON:
       return createBaseField(z.string(), 'Raw JSON field');
@@ -212,6 +285,7 @@ export const generateFindToolSchema = (
       field.name === 'updatedAt' ||
       field.name === 'deletedAt' ||
       field.name === 'searchVector' ||
+      field.name === 'createdBy' ||
       field.type === FieldMetadataType.TS_VECTOR
     ) {
       return;
@@ -220,6 +294,7 @@ export const generateFindToolSchema = (
     if (
       field.type === FieldMetadataType.TEXT ||
       field.type === FieldMetadataType.RICH_TEXT ||
+      field.type === FieldMetadataType.RICH_TEXT_V2 ||
       field.type === FieldMetadataType.FULL_NAME
     ) {
       schemaFields[field.name] = z
