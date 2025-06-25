@@ -137,20 +137,6 @@ export class AgentToolService {
           };
         }
 
-        if (canUpdate && !canRead) {
-          tools[`find_for_update_${objectMetadata.nameSingular}`] = {
-            description: `Find ${objectMetadata.nameSingular} records for update (returns minimal data: id and name only)`,
-            parameters: generateFindToolSchema(objectMetadata),
-            execute: async (parameters) => {
-              return this.findRecordsForUpdate(
-                objectMetadata.nameSingular,
-                parameters,
-                workspaceId,
-              );
-            },
-          };
-        }
-
         if (canUpdate) {
           tools[`update_${objectMetadata.nameSingular}`] = {
             description: `Update an existing ${objectMetadata.nameSingular}`,
@@ -386,58 +372,6 @@ export class AgentToolService {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to update ${objectName}`,
-      };
-    }
-  }
-
-  private async findRecordsForUpdate(
-    objectName: string,
-    parameters: Record<string, unknown>,
-    workspaceId: string,
-  ) {
-    try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
-
-      const { limit = 10, offset = 0, ...searchCriteria } = parameters;
-
-      const whereConditions: Record<string, unknown> = {};
-
-      Object.entries(searchCriteria).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          whereConditions[key] = value;
-        }
-      });
-
-      const records = await repository.find({
-        where: whereConditions,
-        take: limit as number,
-        skip: offset as number,
-        order: { createdAt: 'DESC' },
-      });
-
-      const minimalRecords = records.map((record: Record<string, unknown>) => ({
-        id: record.id,
-        name: record.name,
-      }));
-
-      return {
-        success: true,
-        records: minimalRecords,
-        count: minimalRecords.length,
-        message: `Found ${minimalRecords.length} ${objectName} records (minimal data for update operations)`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        message: `Failed to find ${objectName} records for update`,
       };
     }
   }
