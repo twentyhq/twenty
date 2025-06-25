@@ -61,6 +61,7 @@ const StyledForm = styled.form`
 
 export const SettingsIntegrationRabbitSign = () => {
   const { t } = useLingui();
+  const serviceName = 'RabbitSign';
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
@@ -148,11 +149,12 @@ export const SettingsIntegrationRabbitSign = () => {
       <SettingsPageContainer>
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
+          label={t`Connect your ${serviceName} account to create signatures`}
         />
         <Section>
           <H2Title
-            title={`${t`RabbitSign Integration`}`}
-            description={t`Connect your RabbitSign account to send/sync document signatures`}
+            title={t`${serviceName} Integration`}
+            description={t`Input your ${serviceName} API key below`}
           />
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <Controller
