@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "labelIdentifierFieldMetadataId validation failed: it must be a TEXT or FULL_NAME field metadata type id",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a uuid 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "labelIdentifierFieldMetadataId must be a UUID",
+  },
+]
+`;

@@ -34,6 +34,7 @@ import {
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -299,6 +300,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'The singular and plural names cannot be the same for an object',
       });
     }
+
+    validateMetadataIdentifierFieldMetadataIds({
+      fieldMetadataItems: Object.values(existingObjectMetadata.fieldsById),
+      labelIdentifierFieldMetadataId:
+        inputPayload.labelIdentifierFieldMetadataId,
+      imageIdentifierFieldMetadataId:
+        inputPayload.imageIdentifierFieldMetadataId,
+    });
 
     const updatedObject = await super.updateOne(inputId, inputPayload);
 

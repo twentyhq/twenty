@@ -2,7 +2,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +11,8 @@ export const useCloseDropdown = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const dropdownComponentInstanceIdFromContext =
     useAvailableComponentInstanceId(DropdownComponentInstanceContext);
@@ -44,9 +45,8 @@ export const useCloseDropdown = () => {
           .getValue();
 
         if (isDropdownOpen || isDropdownOpenLegacy) {
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId: dropdownComponentInstanceId,
-            memoizeKey: 'global',
           });
 
           goBackToPreviousDropdownFocusId();
@@ -67,7 +67,7 @@ export const useCloseDropdown = () => {
         }
       },
     [
-      removeFocusItemFromFocusStack,
+      removeFocusItemFromFocusStackById,
       goBackToPreviousDropdownFocusId,
       dropdownComponentInstanceIdFromContext,
     ],

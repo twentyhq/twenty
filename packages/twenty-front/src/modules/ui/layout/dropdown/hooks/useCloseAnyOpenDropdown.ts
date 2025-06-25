@@ -1,14 +1,15 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseAnyOpenDropdown = () => {
   const { closeDropdown } = useCloseDropdown();
 
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeAnyOpenDropdown = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -33,24 +34,22 @@ export const useCloseAnyOpenDropdown = () => {
 
         if (isDefined(activeDropdownFocusId)) {
           closeDropdown(activeDropdownFocusId);
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId: activeDropdownFocusId,
-            memoizeKey: 'global',
           });
         }
 
         if (thereIsOneNestedDropdownOpen) {
           closeDropdown(previousDropdownFocusId);
-          removeFocusItemFromFocusStack({
+          removeFocusItemFromFocusStackById({
             focusId: previousDropdownFocusId,
-            memoizeKey: 'global',
           });
         }
 
         set(previousDropdownFocusIdState, null);
         set(activeDropdownFocusIdState, null);
       },
-    [closeDropdown, removeFocusItemFromFocusStack],
+    [closeDropdown, removeFocusItemFromFocusStackById],
   );
 
   return { closeAnyOpenDropdown };
