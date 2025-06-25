@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -14,6 +15,7 @@ import {
   generateAgentToolZodSchema,
   generateFindToolSchema,
 } from './utils/agent-tool-schema.utils';
+import { isWorkflowRelatedObject } from './utils/is-workflow-related-object.util';
 
 @Injectable()
 export class AgentToolService {
@@ -21,6 +23,7 @@ export class AgentToolService {
     private readonly agentService: AgentService,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -53,14 +56,52 @@ export class AgentToolService {
 
       const tools: ToolSet = {};
 
-      roleWithPermissions.objectPermissions.forEach((permission) => {
-        if (permission.canUpdateObjectRecords) {
-          tools[`create_${permission.objectMetadata.nameSingular}`] = {
-            description: `Create a new ${permission.objectMetadata.nameSingular}`,
-            parameters: generateAgentToolZodSchema(permission.objectMetadata),
+      const allObjectMetadata =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
+          where: {
+            isActive: true,
+            isSystem: false,
+          },
+          relations: ['fields'],
+        });
+
+      const filteredObjectMetadata = allObjectMetadata.filter(
+        (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
+      );
+
+      const objectPermissionsMap = new Map(
+        roleWithPermissions.objectPermissions.map((permission) => [
+          permission.objectMetadataId,
+          permission,
+        ]),
+      );
+
+      filteredObjectMetadata.forEach((objectMetadata) => {
+        const objectPermission = objectPermissionsMap.get(objectMetadata.id);
+
+        const canCreate =
+          roleWithPermissions.canUpdateAllObjectRecords ||
+          (objectPermission?.canUpdateObjectRecords ?? false);
+        const canRead =
+          roleWithPermissions.canReadAllObjectRecords ||
+          (objectPermission?.canReadObjectRecords ?? false);
+        const canUpdate =
+          roleWithPermissions.canUpdateAllObjectRecords ||
+          (objectPermission?.canUpdateObjectRecords ?? false);
+        const canSoftDelete =
+          roleWithPermissions.canSoftDeleteAllObjectRecords ||
+          (objectPermission?.canSoftDeleteObjectRecords ?? false);
+        const canDestroy =
+          roleWithPermissions.canDestroyAllObjectRecords ||
+          (objectPermission?.canDestroyObjectRecords ?? false);
+
+        if (canCreate) {
+          tools[`create_${objectMetadata.nameSingular}`] = {
+            description: `Create a new ${objectMetadata.nameSingular}`,
+            parameters: generateAgentToolZodSchema(objectMetadata),
             execute: async (parameters) => {
               return this.createRecord(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
@@ -68,27 +109,27 @@ export class AgentToolService {
           };
         }
 
-        if (permission.canReadObjectRecords) {
-          tools[`find_${permission.objectMetadata.nameSingular}`] = {
-            description: `Find ${permission.objectMetadata.nameSingular} records by various criteria`,
-            parameters: generateFindToolSchema(permission.objectMetadata),
+        if (canRead) {
+          tools[`find_${objectMetadata.nameSingular}`] = {
+            description: `Find ${objectMetadata.nameSingular} records by various criteria`,
+            parameters: generateFindToolSchema(objectMetadata),
             execute: async (parameters) => {
               return this.findRecords(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
             },
           };
 
-          tools[`find_one_${permission.objectMetadata.nameSingular}`] = {
-            description: `Find a single ${permission.objectMetadata.nameSingular} record by ID`,
+          tools[`find_one_${objectMetadata.nameSingular}`] = {
+            description: `Find a single ${objectMetadata.nameSingular} record by ID`,
             parameters: z.object({
               id: z.string().describe('The ID of the record to find'),
             }),
             execute: async (parameters) => {
               return this.findOneRecord(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
@@ -96,16 +137,13 @@ export class AgentToolService {
           };
         }
 
-        if (
-          permission.canUpdateObjectRecords &&
-          !permission.canReadObjectRecords
-        ) {
-          tools[`find_for_update_${permission.objectMetadata.nameSingular}`] = {
-            description: `Find ${permission.objectMetadata.nameSingular} records for update (returns minimal data: id and name only)`,
-            parameters: generateFindToolSchema(permission.objectMetadata),
+        if (canUpdate && !canRead) {
+          tools[`find_for_update_${objectMetadata.nameSingular}`] = {
+            description: `Find ${objectMetadata.nameSingular} records for update (returns minimal data: id and name only)`,
+            parameters: generateFindToolSchema(objectMetadata),
             execute: async (parameters) => {
               return this.findRecordsForUpdate(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
@@ -113,15 +151,13 @@ export class AgentToolService {
           };
         }
 
-        if (permission.canUpdateObjectRecords) {
-          tools[`update_${permission.objectMetadata.nameSingular}`] = {
-            description: `Update an existing ${permission.objectMetadata.nameSingular}`,
-            parameters: generateAgentToolUpdateZodSchema(
-              permission.objectMetadata,
-            ),
+        if (canUpdate) {
+          tools[`update_${objectMetadata.nameSingular}`] = {
+            description: `Update an existing ${objectMetadata.nameSingular}`,
+            parameters: generateAgentToolUpdateZodSchema(objectMetadata),
             execute: async (parameters) => {
               return this.updateRecord(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
@@ -129,15 +165,15 @@ export class AgentToolService {
           };
         }
 
-        if (permission.canSoftDeleteObjectRecords) {
-          tools[`soft_delete_${permission.objectMetadata.nameSingular}`] = {
-            description: `Soft delete a ${permission.objectMetadata.nameSingular} record (marks as deleted but keeps data)`,
+        if (canSoftDelete) {
+          tools[`soft_delete_${objectMetadata.nameSingular}`] = {
+            description: `Soft delete a ${objectMetadata.nameSingular} record (marks as deleted but keeps data)`,
             parameters: z.object({
               id: z.string().describe('The ID of the record to delete'),
             }),
             execute: async (parameters) => {
               return this.softDeleteRecord(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
@@ -145,15 +181,15 @@ export class AgentToolService {
           };
         }
 
-        if (permission.canDestroyObjectRecords) {
-          tools[`destroy_${permission.objectMetadata.nameSingular}`] = {
-            description: `Permanently destroy a ${permission.objectMetadata.nameSingular} record (irreversible deletion)`,
+        if (canDestroy) {
+          tools[`destroy_${objectMetadata.nameSingular}`] = {
+            description: `Permanently destroy a ${objectMetadata.nameSingular} record (irreversible deletion)`,
             parameters: z.object({
               id: z.string().describe('The ID of the record to delete'),
             }),
             execute: async (parameters) => {
               return this.destroyRecord(
-                permission.objectMetadata.nameSingular,
+                objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
               );
