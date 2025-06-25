@@ -24,7 +24,7 @@ export const useDropdownContextStateManagement = <
 
   if (!dropdownContext) {
     throw new Error(
-      `useGenericContextStateManagement must be used within a context provider (${context.Provider.name})`,
+      `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
     );
   }
   const dropdownId = dropdownContext.dropdownId;
