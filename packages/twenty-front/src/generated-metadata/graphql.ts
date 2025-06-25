@@ -1438,6 +1438,7 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   sendMessage: Scalars['Boolean']['output'];
   sendTemplate: Scalars['Boolean']['output'];
+  setupOneSignalApp: Workspace;
   setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signUp: SignUpOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -2693,7 +2694,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QueryGetUserSoftfoneArgs = {
-  extNum: Scalars['String']['input'];
+  extNum?: InputMaybe<Scalars['String']['input']>;
   workspaceId: Scalars['ID']['input'];
 };
 
@@ -3710,6 +3711,8 @@ export type UpdateWorkspaceInput = {
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
+  onesignalApiKey?: InputMaybe<Scalars['String']['input']>;
+  onesignalAppId?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -3909,6 +3912,8 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   metadataVersion: Scalars['Float']['output'];
+  onesignalApiKey?: Maybe<Scalars['String']['output']>;
+  onesignalAppId?: Maybe<Scalars['String']['output']>;
   pabxCompanyId?: Maybe<Scalars['Float']['output']>;
   pabxDialingPlanId?: Maybe<Scalars['Float']['output']>;
   pabxTrunkId?: Maybe<Scalars['Float']['output']>;
