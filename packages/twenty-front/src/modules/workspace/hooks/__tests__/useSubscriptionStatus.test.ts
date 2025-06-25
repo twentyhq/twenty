@@ -9,6 +9,7 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
+  BillingPaymentProviders,
   SubscriptionStatus,
   WorkspaceActivationStatus,
 } from '~/generated/graphql';
@@ -50,6 +51,7 @@ describe('useSubscriptionStatus', () => {
           currentBillingSubscription: {
             id: v4(),
             status: subscriptionStatus,
+            provider: BillingPaymentProviders.Stripe,
           },
         });
       });

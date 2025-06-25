@@ -1027,7 +1027,8 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
-  InterCharge = 'InterCharge',
+  BillingSubscriptionBill = 'BillingSubscriptionBill',
+  ChargeBill = 'ChargeBill',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',

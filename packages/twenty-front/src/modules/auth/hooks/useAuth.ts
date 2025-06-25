@@ -305,6 +305,7 @@ export const useAuth = () => {
 
     setCurrentWorkspace(workspace);
 
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
@@ -439,12 +440,14 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isEmailVerificationRequired) {
         setSearchParams({ email });
         setSignInUpStep(SignInUpStep.EmailVerification);
         return null;
       }
 
+      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isMultiWorkspaceEnabled) {
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
