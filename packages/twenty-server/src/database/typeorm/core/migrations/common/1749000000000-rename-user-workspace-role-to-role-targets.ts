@@ -32,9 +32,29 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     await queryRunner.query(
       `ALTER INDEX "core"."IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID" RENAME TO "IDX_ROLE_TARGETS_WORKSPACE_ID"`,
     );
+
+    await queryRunner.query(
+      `CREATE INDEX "IDX_ROLE_TARGETS_AGENT_ID" ON "core"."roleTargets" ("agentId")`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE" UNIQUE ("userWorkspaceId", "roleId", "agentId")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP INDEX "core"."IDX_ROLE_TARGETS_AGENT_ID"`);
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE" UNIQUE ("userWorkspaceId", "roleId")`,
+    );
+
     await queryRunner.query(
       `ALTER TABLE "core"."roleTargets" RENAME TO "userWorkspaceRole"`,
     );
@@ -52,6 +72,10 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
 
     await queryRunner.query(
       `ALTER TABLE "core"."userWorkspaceRole" DROP CONSTRAINT "FK_8febe85bd7aac55de81b1c51140"`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."userWorkspaceRole" ALTER COLUMN "userWorkspaceId" SET NOT NULL`,
     );
 
     await queryRunner.query(
