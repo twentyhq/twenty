@@ -6,19 +6,14 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     id: role.id,
     label: role.label,
     canUpdateAllSettings: role.canUpdateAllSettings,
+    description: role.description,
+    icon: role.icon,
+    isEditable: role.isEditable,
     canReadAllObjectRecords: role.canReadAllObjectRecords,
     canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
-    description: role.description,
-    icon: role.icon,
-    workspaceId: role.workspaceId,
-    createdAt: role.createdAt,
-    updatedAt: role.updatedAt,
-    isEditable: role.isEditable,
     roleTargets: role.roleTargets,
-    objectPermissions: role.objectPermissions,
-    settingPermissions: role.settingPermissions,
   };
 };
 
