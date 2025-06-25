@@ -94,10 +94,8 @@ export const useDefaultHomePagePath = () => {
           );
 
         if (isDefined(lastVisitedObjectMetadataItem)) {
-          const view = getFirstView(lastVisitedObjectMetadataItemId);
-
           return {
-            view,
+            view: getFirstView(lastVisitedObjectMetadataItemId),
             objectMetadataItem: lastVisitedObjectMetadataItem,
           };
         }
@@ -128,7 +126,7 @@ export const useDefaultHomePagePath = () => {
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();
 
-    if (!isDefined(defaultObjectPathInfo?.objectMetadataItem)) {
+    if (!isDefined(defaultObjectPathInfo)) {
       return AppPath.NotFound;
     }
 
