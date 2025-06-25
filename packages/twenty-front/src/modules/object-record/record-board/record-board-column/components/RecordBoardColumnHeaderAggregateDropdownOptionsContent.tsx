@@ -1,4 +1,4 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import {
   RecordBoardColumnHeaderAggregateDropdownContext,
   RecordBoardColumnHeaderAggregateDropdownContextValue,
@@ -32,9 +32,11 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   title: string;
 }) => {
   const { onContentChange, closeDropdown, resetContent } =
-    useDropdown<RecordBoardColumnHeaderAggregateDropdownContextValue>({
-      context: RecordBoardColumnHeaderAggregateDropdownContext,
-    });
+    useDropdownContextStateManagement<RecordBoardColumnHeaderAggregateDropdownContextValue>(
+      {
+        context: RecordBoardColumnHeaderAggregateDropdownContext,
+      },
+    );
 
   useScopedHotkeys(
     [Key.Escape],
