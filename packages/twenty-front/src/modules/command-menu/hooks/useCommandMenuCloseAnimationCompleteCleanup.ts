@@ -14,7 +14,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -52,7 +52,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
 
-        emitRightDrawerCloseEvent();
+        emitSidePanelCloseEvent();
         set(isCommandMenuClosingState, false);
         set(
           activeTabIdComponentState.atomFamily({

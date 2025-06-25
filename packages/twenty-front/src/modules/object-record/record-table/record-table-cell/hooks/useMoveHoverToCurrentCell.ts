@@ -37,7 +37,6 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
         );
 
         if (
-          currentHotkeyScope.scope !== TableHotkeyScope.TableFocus &&
           currentHotkeyScope.scope !== TableHotkeyScope.CellEditMode &&
           currentHotkeyScope.scope !== AppHotkeyScope.CommandMenuOpen &&
           currentHotkeyScope.scope !== RecordIndexHotkeyScope.RecordIndex
