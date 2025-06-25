@@ -3,6 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
+import isEmpty from 'lodash.isempty';
 
 export const PromiseRejectionEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -23,6 +25,10 @@ export const PromiseRejectionEffect = () => {
         enqueueSnackBar(`${error.message}`, {
           variant: SnackBarVariant.Error,
         });
+      }
+
+      if (error instanceof ApolloError && !isEmpty(error.graphQLErrors)) {
+        event.preventDefault(); // do not send to sentry because already handled
       }
     },
     [enqueueSnackBar],
