@@ -1,12 +1,22 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import {
   ImportedStructuredRow,
   SpreadsheetImportRowHook,
 } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  isDefined,
+  lowercaseUrlAndRemoveTrailingSlash,
+} from 'twenty-shared/utils';
+
+type ColumnName = {
+  columnName: string;
+  fieldType: FieldMetadataType;
+};
 
 export const spreadsheetImportGetUnicityRowHook = (
   objectMetadataItem: ObjectMetadataItem,
@@ -15,8 +25,8 @@ export const spreadsheetImportGetUnicityRowHook = (
     (indexMetadata) => indexMetadata.isUnique,
   );
 
-  const uniqueConstraintFields = [
-    ['id'],
+  const uniqueConstraintsWithColumnNames: ColumnName[][] = [
+    [{ columnName: 'id', fieldType: FieldMetadataType.UUID }],
     ...uniqueConstraints.map((indexMetadata) =>
       indexMetadata.indexFieldMetadatas.flatMap((indexField) => {
         const field = objectMetadataItem.fields.find(
@@ -35,22 +45,28 @@ export const spreadsheetImportGetUnicityRowHook = (
             (subField) => subField.isIncludedInUniqueConstraint,
           );
 
-          return uniqueSubFields.map((subField) =>
-            getSubFieldOptionKey(field, subField.subFieldName),
-          );
+          return uniqueSubFields.map((subField) => ({
+            columnName: getSubFieldOptionKey(field, subField.subFieldName),
+            fieldType: field.type,
+          }));
         }
 
-        return [field.name];
+        return [{ columnName: field.name, fieldType: field.type }];
       }),
     ),
   ];
+
+  console.log(
+    'uniqueConstraintsWithColumnNames',
+    uniqueConstraintsWithColumnNames,
+  );
 
   const rowHook: SpreadsheetImportRowHook<string> = (row, addError, table) => {
     if (uniqueConstraints.length === 0) {
       return row;
     }
 
-    uniqueConstraintFields.forEach((uniqueConstraint) => {
+    uniqueConstraintsWithColumnNames.forEach((uniqueConstraint) => {
       const rowUniqueValues = getUniqueValues(row, uniqueConstraint);
 
       const duplicateRows = table.filter(
@@ -61,10 +77,10 @@ export const spreadsheetImportGetUnicityRowHook = (
         return row;
       }
 
-      uniqueConstraint.forEach((field) => {
-        if (isDefined(row[field])) {
-          addError(field, {
-            message: `This ${field} value already exists in your import data`,
+      uniqueConstraint.forEach(({ columnName }) => {
+        if (isDefined(row[columnName])) {
+          addError(columnName, {
+            message: `This ${columnName} value already exists in your import data`,
             level: 'error',
           });
         }
@@ -79,9 +95,24 @@ export const spreadsheetImportGetUnicityRowHook = (
 
 const getUniqueValues = (
   row: ImportedStructuredRow<string>,
-  uniqueConstraint: string[],
+  uniqueConstraint: ColumnName[],
 ) => {
   return uniqueConstraint
-    .map((field) => row?.[field]?.toString().trim().toLowerCase())
+    .map(({ columnName, fieldType }) => {
+      // need to ensure the primary email is processed before import as on server side
+      if (
+        fieldType === FieldMetadataType.LINKS &&
+        columnName.includes(
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+            .primaryLinkUrl,
+        )
+      ) {
+        return lowercaseUrlAndRemoveTrailingSlash(
+          row?.[columnName]?.toString().trim().toLowerCase() || '',
+        );
+      }
+
+      return row?.[columnName]?.toString().trim().toLowerCase();
+    })
     .join('');
 };
