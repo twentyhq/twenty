@@ -188,3 +188,46 @@ const convertFieldToZodField = (
       return createBaseField(z.string(), 'String field');
   }
 };
+
+export const generateFindToolSchema = (
+  objectMetadata: ObjectMetadataEntity,
+) => {
+  const schemaFields: Record<string, z.ZodTypeAny> = {
+    limit: z
+      .number()
+      .optional()
+      .describe('Maximum number of records to return (default: 10)')
+      .default(10),
+    offset: z
+      .number()
+      .optional()
+      .describe('Number of records to skip (default: 0)')
+      .default(0),
+  };
+
+  objectMetadata.fields.forEach((field: FieldMetadataEntity) => {
+    if (
+      field.name === 'id' ||
+      field.name === 'createdAt' ||
+      field.name === 'updatedAt' ||
+      field.name === 'deletedAt' ||
+      field.name === 'searchVector' ||
+      field.type === FieldMetadataType.TS_VECTOR
+    ) {
+      return;
+    }
+
+    if (
+      field.type === FieldMetadataType.TEXT ||
+      field.type === FieldMetadataType.RICH_TEXT ||
+      field.type === FieldMetadataType.FULL_NAME
+    ) {
+      schemaFields[field.name] = z
+        .string()
+        .optional()
+        .describe(`Search by ${field.name}`);
+    }
+  });
+
+  return z.object(schemaFields);
+};

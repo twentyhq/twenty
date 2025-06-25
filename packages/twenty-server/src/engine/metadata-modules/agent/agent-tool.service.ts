@@ -2,19 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ToolSet } from 'ai';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import {
   generateAgentToolUpdateZodSchema,
   generateAgentToolZodSchema,
+  generateFindToolSchema,
 } from './utils/agent-tool-schema.utils';
 
 @Injectable()
@@ -73,7 +71,7 @@ export class AgentToolService {
         if (permission.canReadObjectRecords) {
           tools[`find_${permission.objectMetadata.nameSingular}`] = {
             description: `Find ${permission.objectMetadata.nameSingular} records by various criteria`,
-            parameters: this.generateFindToolSchema(permission.objectMetadata),
+            parameters: generateFindToolSchema(permission.objectMetadata),
             execute: async (parameters) => {
               return this.findRecords(
                 permission.objectMetadata.nameSingular,
@@ -85,7 +83,9 @@ export class AgentToolService {
 
           tools[`find_one_${permission.objectMetadata.nameSingular}`] = {
             description: `Find a single ${permission.objectMetadata.nameSingular} record by ID`,
-            parameters: this.generateFindOneToolSchema(),
+            parameters: z.object({
+              id: z.string().describe('The ID of the record to find'),
+            }),
             execute: async (parameters) => {
               return this.findOneRecord(
                 permission.objectMetadata.nameSingular,
@@ -102,7 +102,7 @@ export class AgentToolService {
         ) {
           tools[`find_for_update_${permission.objectMetadata.nameSingular}`] = {
             description: `Find ${permission.objectMetadata.nameSingular} records for update (returns minimal data: id and name only)`,
-            parameters: this.generateFindToolSchema(permission.objectMetadata),
+            parameters: generateFindToolSchema(permission.objectMetadata),
             execute: async (parameters) => {
               return this.findRecordsForUpdate(
                 permission.objectMetadata.nameSingular,
@@ -132,7 +132,9 @@ export class AgentToolService {
         if (permission.canSoftDeleteObjectRecords) {
           tools[`soft_delete_${permission.objectMetadata.nameSingular}`] = {
             description: `Soft delete a ${permission.objectMetadata.nameSingular} record (marks as deleted but keeps data)`,
-            parameters: this.generateDeleteToolSchema(),
+            parameters: z.object({
+              id: z.string().describe('The ID of the record to delete'),
+            }),
             execute: async (parameters) => {
               return this.softDeleteRecord(
                 permission.objectMetadata.nameSingular,
@@ -146,7 +148,9 @@ export class AgentToolService {
         if (permission.canDestroyObjectRecords) {
           tools[`destroy_${permission.objectMetadata.nameSingular}`] = {
             description: `Permanently destroy a ${permission.objectMetadata.nameSingular} record (irreversible deletion)`,
-            parameters: this.generateDeleteToolSchema(),
+            parameters: z.object({
+              id: z.string().describe('The ID of the record to delete'),
+            }),
             execute: async (parameters) => {
               return this.destroyRecord(
                 permission.objectMetadata.nameSingular,
@@ -160,57 +164,8 @@ export class AgentToolService {
 
       return tools;
     } catch (error) {
-      console.error(`Error generating tools for agent ${agentId}:`, error);
-
       return {};
     }
-  }
-
-  private generateFindToolSchema(objectMetadata: ObjectMetadataEntity) {
-    const schemaFields: Record<string, z.ZodTypeAny> = {
-      limit: z
-        .number()
-        .optional()
-        .describe('Maximum number of records to return (default: 10)')
-        .default(10),
-      offset: z
-        .number()
-        .optional()
-        .describe('Number of records to skip (default: 0)')
-        .default(0),
-    };
-
-    objectMetadata.fields.forEach((field: FieldMetadataEntity) => {
-      if (
-        field.name === 'id' ||
-        field.name === 'createdAt' ||
-        field.name === 'updatedAt' ||
-        field.name === 'deletedAt' ||
-        field.name === 'searchVector' ||
-        field.type === FieldMetadataType.TS_VECTOR
-      ) {
-        return;
-      }
-
-      if (
-        field.type === FieldMetadataType.TEXT ||
-        field.type === FieldMetadataType.RICH_TEXT ||
-        field.type === FieldMetadataType.FULL_NAME
-      ) {
-        schemaFields[field.name] = z
-          .string()
-          .optional()
-          .describe(`Search by ${field.name}`);
-      }
-    });
-
-    return z.object(schemaFields);
-  }
-
-  private generateFindOneToolSchema() {
-    return z.object({
-      id: z.string().describe('The ID of the record to find'),
-    });
   }
 
   private async findRecords(
@@ -218,7 +173,6 @@ export class AgentToolService {
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ objectName, parameters, workspaceId });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -253,8 +207,6 @@ export class AgentToolService {
         message: `Found ${records.length} ${objectName} records`,
       };
     } catch (error) {
-      console.error(`Error finding ${objectName} records:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -268,7 +220,6 @@ export class AgentToolService {
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ objectName, parameters, workspaceId });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -307,8 +258,6 @@ export class AgentToolService {
         message: `Found ${objectName} record`,
       };
     } catch (error) {
-      console.error(`Error finding ${objectName} record:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -340,8 +289,6 @@ export class AgentToolService {
         message: `Successfully created ${objectName}`,
       };
     } catch (error) {
-      console.error(`Error creating ${objectName}:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -355,7 +302,6 @@ export class AgentToolService {
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ update: { objectName, parameters, workspaceId } });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -400,8 +346,6 @@ export class AgentToolService {
         message: `Successfully updated ${objectName}`,
       };
     } catch (error) {
-      console.error(`Error updating ${objectName}:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -415,7 +359,6 @@ export class AgentToolService {
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ objectName, parameters, workspaceId });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -455,8 +398,6 @@ export class AgentToolService {
         message: `Found ${minimalRecords.length} ${objectName} records (minimal data for update operations)`,
       };
     } catch (error) {
-      console.error(`Error finding ${objectName} records for update:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -465,18 +406,11 @@ export class AgentToolService {
     }
   }
 
-  private generateDeleteToolSchema() {
-    return z.object({
-      id: z.string().describe('The ID of the record to delete'),
-    });
-  }
-
   private async softDeleteRecord(
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ softDelete: { objectName, parameters, workspaceId } });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -516,8 +450,6 @@ export class AgentToolService {
         message: `Successfully soft deleted ${objectName}`,
       };
     } catch (error) {
-      console.error(`Error soft deleting ${objectName}:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -531,7 +463,6 @@ export class AgentToolService {
     parameters: Record<string, unknown>,
     workspaceId: string,
   ) {
-    console.log({ destroy: { objectName, parameters, workspaceId } });
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -571,8 +502,6 @@ export class AgentToolService {
         message: `Successfully destroyed ${objectName}`,
       };
     } catch (error) {
-      console.error(`Error destroying ${objectName}:`, error);
-
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
