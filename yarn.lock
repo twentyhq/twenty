@@ -50903,7 +50903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-pdf@npm:^9.0.0":
+"react-pdf@npm:^9.0.0, react-pdf@npm:^9.2.1":
   version: 9.2.1
   resolution: "react-pdf@npm:9.2.1"
   dependencies:
@@ -56507,6 +56507,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     optionator: "npm:^0.9.1"
+    react-pdf: "npm:^9.2.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
