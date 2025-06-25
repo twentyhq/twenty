@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { z } from 'zod';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -21,8 +21,9 @@ export const richTextV2CompositeType: CompositeType = {
   ],
 };
 
+// with import only markdown subfield is filled, then blocknote is undefined
 export const richTextV2ValueSchema = z.object({
-  blocknote: z.string().nullable(),
+  blocknote: z.string().nullable().optional(),
   markdown: z.string().nullable(),
 });
 
