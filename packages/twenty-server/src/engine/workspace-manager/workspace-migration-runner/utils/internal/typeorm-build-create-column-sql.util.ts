@@ -30,7 +30,7 @@ export const typeormBuildCreateColumnSql = ({
     })}"`;
     if (column.isArray) columnSql += ' array';
   } else {
-    columnSql += ' ' + column.type;
+    columnSql += ' ' + column.type + (column.isArray ? '[]' : '');
   }
 
   if (column.generatedType === 'STORED' && column.asExpression) {
