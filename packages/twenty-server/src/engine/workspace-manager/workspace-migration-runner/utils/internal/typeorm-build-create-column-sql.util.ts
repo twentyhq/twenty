@@ -28,10 +28,11 @@ export const typeormBuildCreateColumnSql = ({
       tableName: table.name,
       columnName: column.name,
     })}"`;
-    if (column.isArray) columnSql += ' array';
   } else {
-    columnSql += ' ' + column.type + (column.isArray ? '[]' : '');
+    columnSql += ' ' + column.type;
   }
+
+  if (column.isArray) columnSql += ' []';
 
   if (column.generatedType === 'STORED' && column.asExpression) {
     columnSql += ` GENERATED ALWAYS AS (${column.asExpression}) STORED`;
