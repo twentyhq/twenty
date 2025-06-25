@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -197,7 +198,7 @@ export class RoleResolver {
   @Mutation(() => Boolean)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async removeRoleFromAgent(
-    @Args('agentId') agentId: string,
+    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     await this.agentRoleService.removeRoleFromAgent({
