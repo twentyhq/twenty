@@ -117,7 +117,7 @@ export const AppRootErrorFallback = ({
             />
           </StyledImageContainer>
           <StyledEmptyTextContainer>
-            <StyledEmptyTitle>{title}</StyledEmptyTitle>
+            <StyledEmptyTitle>{t`${title}`}</StyledEmptyTitle>
             <StyledEmptySubTitle>
               {t`Please refresh the page.`}
             </StyledEmptySubTitle>

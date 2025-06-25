@@ -10,6 +10,12 @@ type AppErrorBoundaryProps = {
   resetOnLocationChange?: boolean;
 };
 
+const hasErrorCode = (
+  error: Error | CustomError,
+): error is CustomError & { code: string } => {
+  return 'code' in error && isDefined(error.code);
+};
+
 export const AppErrorBoundary = ({
   children,
   FallbackComponent,
@@ -20,11 +26,8 @@ export const AppErrorBoundary = ({
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
         scope.setExtras({ info });
-        const errorHasCode = 'code' in error && isDefined(error.code);
 
-        const fingerprint = errorHasCode
-          ? (error.code as string)
-          : error.message;
+        const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
         error.name = error.message;
         return scope;
