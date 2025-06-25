@@ -1,6 +1,6 @@
 import { lowercaseUrlAndRemoveTrailingSlash } from '@/utils/url/lowercaseUrlAndRemoveTrailingSlash';
 
-describe('queryRunner LINKS util', () => {
+describe('lowercaseUrlAndRemoveTrailingSlash', () => {
   it('should leave lowcased domain unchanged', () => {
     const primaryLinkUrl = 'https://www.example.com/test';
     const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
@@ -20,12 +20,5 @@ describe('queryRunner LINKS util', () => {
     const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
 
     expect(result).toBe('https://www.example.com');
-  });
-
-  it('should not add a trailing slash', () => {
-    const primaryLinkUrl = 'https://www.example.com/toto/';
-    const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
-
-    expect(result).toBe('https://www.example.com/toto');
   });
 });

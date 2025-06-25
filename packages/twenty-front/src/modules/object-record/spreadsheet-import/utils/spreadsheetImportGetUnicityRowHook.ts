@@ -56,11 +56,6 @@ export const spreadsheetImportGetUnicityRowHook = (
     ),
   ];
 
-  console.log(
-    'uniqueConstraintsWithColumnNames',
-    uniqueConstraintsWithColumnNames,
-  );
-
   const rowHook: SpreadsheetImportRowHook<string> = (row, addError, table) => {
     if (uniqueConstraints.length === 0) {
       return row;
