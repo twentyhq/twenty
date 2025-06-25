@@ -128,7 +128,7 @@ export const useDefaultHomePagePath = () => {
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();
 
-    if (!isDefined(defaultObjectPathInfo?.view?.id)) {
+    if (!isDefined(defaultObjectPathInfo?.objectMetadataItem)) {
       return AppPath.NotFound;
     }
 
