@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import {
   useAssignRoleToAgentMutation,
   useFindOneAgentQuery,
@@ -6,16 +6,16 @@ import {
   useRemoveRoleFromAgentMutation,
 } from '~/generated/graphql';
 
+import { selectedRoleState } from '../states/selectedRoleState';
+
 export const useAgentRoleAssignment = (agentId: string) => {
-  const [selectedRoleId, setSelectedRoleId] = useState<string | undefined>(
-    undefined,
-  );
+  const [selectedRole, setSelectedRole] = useRecoilState(selectedRoleState);
 
   useFindOneAgentQuery({
     variables: { id: agentId },
     skip: !agentId,
     onCompleted: (data) => {
-      setSelectedRoleId(data.findOneAgent.roleId);
+      setSelectedRole(data.findOneAgent.roleId);
     },
   });
 
@@ -27,13 +27,13 @@ export const useAgentRoleAssignment = (agentId: string) => {
     if (roleId === '') {
       await handleRoleRemove();
     } else {
-      setSelectedRoleId(roleId);
+      setSelectedRole(roleId);
       await assignRoleToAgent({ variables: { input: { agentId, roleId } } });
     }
   };
 
   const handleRoleRemove = async () => {
-    setSelectedRoleId(undefined);
+    setSelectedRole(undefined);
     await removeRoleFromAgent({ variables: { agentId } });
   };
 
@@ -44,7 +44,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
     })) || [];
 
   return {
-    selectedRoleId,
+    selectedRole,
     handleRoleChange,
     rolesOptions,
   };

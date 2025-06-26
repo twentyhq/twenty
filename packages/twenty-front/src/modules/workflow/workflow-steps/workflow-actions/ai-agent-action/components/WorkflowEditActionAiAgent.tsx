@@ -79,7 +79,7 @@ export const WorkflowEditActionAiAgent = ({
     WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
   );
 
-  const { rolesOptions, selectedRoleId, handleRoleChange } =
+  const { rolesOptions, selectedRole, handleRoleChange } =
     useAgentRoleAssignment(agentId);
 
   const tabs = [
@@ -158,7 +158,7 @@ export const WorkflowEditActionAiAgent = ({
             dropdownId="select-agent-role"
             label={t`Assign Role`}
             options={[{ label: t`No role`, value: '' }, ...rolesOptions]}
-            value={selectedRoleId || ''}
+            value={selectedRole || ''}
             onChange={handleRoleChange}
           />
         )}
