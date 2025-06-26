@@ -7,12 +7,14 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -22,6 +24,12 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+
 
 export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',
@@ -55,6 +63,14 @@ const WorkflowVersionStatusOptions: FieldMetadataComplexOption[] = [
     position: 3,
     color: 'gray',
   },
+];
+
+const TITLE_FIELD_NAME = 'title';
+const BODY_V2_FIELD_NAME = 'bodyV2';
+
+export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
+  { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
@@ -117,6 +133,22 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   position: number;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+       SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
+      ),
+    })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: string;
 
   // Relations
   @WorkspaceRelation({
