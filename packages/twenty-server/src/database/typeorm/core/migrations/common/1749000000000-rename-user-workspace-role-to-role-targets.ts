@@ -48,7 +48,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
       `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "FK_d5838ba43033ee6266d8928d7d7" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
-    queryRunner.query(
+    await queryRunner.query(
       `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (((("agentId" IS NOT NULL) AND ("userWorkspaceId" IS NULL)) OR (("agentId" IS NULL) AND ("userWorkspaceId" IS NOT NULL))))`,
     );
 
