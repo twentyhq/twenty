@@ -4,7 +4,7 @@ import {
 } from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
-import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
+import { FormPhoneNumberInput } from '@/object-record/record-field/form-types/components/FormPhoneNumberInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -42,11 +42,11 @@ export const FormPhoneFieldInput = ({
     });
   };
 
-  const handleNumberChange = (number: string | number | null) => {
+  const handleNumberChange = (number: string | null) => {
     onChange({
       primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
       primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
-      primaryPhoneNumber: number ? `${number}` : '',
+      primaryPhoneNumber: number ?? '',
     });
   };
 
@@ -60,7 +60,7 @@ export const FormPhoneFieldInput = ({
           onChange={handleCountryChange}
           readonly={readonly}
         />
-        <FormNumberFieldInput
+        <FormPhoneNumberInput
           label="Phone Number"
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}
