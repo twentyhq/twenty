@@ -32,6 +32,7 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
 
   override async runOnWorkspace({
     workspaceId,
+    options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Adding enqueued status to workflow run for workspace ${workspaceId}`,
@@ -64,6 +65,10 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
       this.logger.log(
         `Workflow run status field metadata options already contain enqueued status for workspace ${workspaceId}`,
       );
+    } else if (options.dryRun) {
+      this.logger.log(
+        `Would add enqueued status to workflow run status field metadata for workspace ${workspaceId}`,
+      );
     } else {
       workflowRunStatusFieldMetadataOptions.push({
         value: WorkflowRunStatus.ENQUEUED,
@@ -85,17 +90,23 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
 
-    try {
-      await mainDataSource.query(
-        `ALTER TYPE ${schemaName}."workflowRun_status_enum" ADD VALUE 'ENQUEUED'`,
-      );
+    if (options.dryRun) {
       this.logger.log(
-        `Enqueued status added to workflow run status enum for workspace ${workspaceId}`,
+        `Would try toadd enqueued status to workflow run status enum for workspace ${workspaceId}`,
       );
-    } catch (error) {
-      this.logger.error(
-        `Error adding enqueued status to workflow run status enum for workspace ${workspaceId}: ${error}`,
-      );
+    } else {
+      try {
+        await mainDataSource.query(
+          `ALTER TYPE ${schemaName}."workflowRun_status_enum" ADD VALUE 'ENQUEUED'`,
+        );
+        this.logger.log(
+          `Enqueued status added to workflow run status enum for workspace ${workspaceId}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Error adding enqueued status to workflow run status enum for workspace ${workspaceId}: ${error}`,
+        );
+      }
     }
   }
 }

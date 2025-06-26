@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CronWorkflowRunEnqueueCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-workflow-run-enqueue.cron.command';
@@ -15,6 +16,7 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
     TypeOrmModule.forFeature([Workspace], 'core'),
     MessageQueueModule,
     WorkspaceDataSourceModule,
+    MetricsModule,
   ],
   providers: [
     WorkflowRunQueueWorkspaceService,
