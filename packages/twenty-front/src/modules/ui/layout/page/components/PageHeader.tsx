@@ -18,7 +18,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -28,14 +28,9 @@ const StyledTopBarContainer = styled.div`
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: 0;
+  padding-left: ${({ isMobile, theme }) => (isMobile ? theme.spacing(3) : 0)};
   padding-right: ${({ theme }) => theme.spacing(3)};
   gap: ${({ theme }) => theme.spacing(2)};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    box-sizing: border-box;
-    padding: ${({ theme }) => theme.spacing(3)};
-  }
 `;
 
 const StyledLeftContainer = styled.div`
@@ -111,7 +106,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer className={className}>
+    <StyledTopBarContainer className={className} isMobile={isMobile}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
