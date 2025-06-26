@@ -4,6 +4,7 @@ import { RecordTableCellGrip } from '@/object-record/record-table/record-table-c
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
+import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -41,7 +42,12 @@ export const RecordTableRow = ({
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRowFocusActive && isFocused && <RecordTableRowHotkeyEffect />}
+      {isRowFocusActive && isFocused && (
+        <>
+          <RecordTableRowHotkeyEffect />
+          <RecordTableRowArrowKeysEffect />
+        </>
+      )}
       <RecordTableCellGrip />
       <RecordTableCellCheckbox />
       <RecordTableCells />

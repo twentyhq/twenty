@@ -1,4 +1,4 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
@@ -27,7 +27,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     onContentChange,
     resetContent,
     previousContentId,
-  } = useDropdown({
+  } = useDropdownContextStateManagement({
     context: RecordBoardColumnHeaderAggregateDropdownContext,
   });
 

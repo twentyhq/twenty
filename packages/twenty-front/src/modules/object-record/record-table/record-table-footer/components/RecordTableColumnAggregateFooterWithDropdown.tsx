@@ -1,4 +1,4 @@
-import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
+import { useDropdownContextCurrentContentId } from '@/dropdown-context-state-management/hooks/useDropdownContextCurrentContentId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent';
@@ -19,7 +19,7 @@ export const RecordTableColumnFooterWithDropdown = ({
   isFirstCell,
 }: RecordTableColumnFooterWithDropdownProps) => {
   const { currentContentId, handleContentChange, handleResetContent } =
-    useCurrentContentId<RecordTableFooterAggregateContentId>();
+    useDropdownContextCurrentContentId<RecordTableFooterAggregateContentId>();
 
   const { fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,

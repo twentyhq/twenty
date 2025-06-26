@@ -12,8 +12,8 @@ import { Title } from '@/auth/components/Title';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
-import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
+import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -22,6 +22,7 @@ import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useI
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
 
+import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
@@ -29,7 +30,6 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
-import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 
 const StandardContent = ({
   workspacePublicData,
@@ -55,7 +55,8 @@ const StandardContent = ({
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
-      {signInUpStep !== SignInUpStep.Password && <FooterNote />}
+      {signInUpStep !== SignInUpStep.Password &&
+        signInUpStep !== SignInUpStep.WorkspaceSelection && <FooterNote />}
     </Modal.Content>
   );
 };
