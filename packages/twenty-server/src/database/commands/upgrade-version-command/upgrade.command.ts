@@ -184,7 +184,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_110: VersionCommands = {
       beforeSyncMetadata: [
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
-        this.fixSchemaArrayTypeCommand
+        this.fixSchemaArrayTypeCommand,
       ],
       afterSyncMetadata: [],
     };
