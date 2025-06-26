@@ -7,6 +7,7 @@ import {
   ImportedStructuredRow,
   SpreadsheetImportRowHook,
 } from '@/spreadsheet-import/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -63,6 +64,10 @@ export const spreadsheetImportGetUnicityRowHook = (
 
     uniqueConstraintsWithColumnNames.forEach((uniqueConstraint) => {
       const rowUniqueValues = getUniqueValues(row, uniqueConstraint);
+
+      if (!isNonEmptyString(rowUniqueValues)) {
+        return row;
+      }
 
       const duplicateRows = table.filter(
         (r) => getUniqueValues(r, uniqueConstraint) === rowUniqueValues,
