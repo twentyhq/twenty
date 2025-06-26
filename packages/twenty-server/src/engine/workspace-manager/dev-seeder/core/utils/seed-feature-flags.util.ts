@@ -41,11 +41,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_IMAP_ENABLED,
         workspaceId: workspaceId,
         value: true,

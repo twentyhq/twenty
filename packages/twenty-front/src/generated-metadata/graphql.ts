@@ -30,6 +30,10 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AccountType = {
+  type: Scalars['String']['input'];
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -412,6 +416,32 @@ export type ConfigVariablesOutput = {
   groups: Array<ConfigVariablesGroupData>;
 };
 
+export type ConnectedImapSmtpCaldavAccount = {
+  __typename?: 'ConnectedImapSmtpCaldavAccount';
+  accountOwnerId: Scalars['String']['output'];
+  connectionParameters?: Maybe<ImapSmtpCaldavConnectionParameters>;
+  handle: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+};
+
+export type ConnectionParameters = {
+  host: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure?: InputMaybe<Scalars['Boolean']['input']>;
+  username: Scalars['String']['input'];
+};
+
+export type ConnectionParametersOutput = {
+  __typename?: 'ConnectionParametersOutput';
+  host: Scalars['String']['output'];
+  password: Scalars['String']['output'];
+  port: Scalars['Float']['output'];
+  secure?: Maybe<Scalars['Boolean']['output']>;
+  username: Scalars['String']['output'];
+};
+
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   modelId: Scalars['String']['input'];
@@ -662,6 +692,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
@@ -818,6 +849,18 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type ImapSmtpCaldavConnectionParameters = {
+  __typename?: 'ImapSmtpCaldavConnectionParameters';
+  CALDAV?: Maybe<ConnectionParametersOutput>;
+  IMAP?: Maybe<ConnectionParametersOutput>;
+  SMTP?: Maybe<ConnectionParametersOutput>;
+};
+
+export type ImapSmtpCaldavConnectionSuccess = {
+  __typename?: 'ImapSmtpCaldavConnectionSuccess';
+  success: Scalars['Boolean']['output'];
+};
 
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
@@ -1009,6 +1052,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1290,6 +1334,15 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveImapSmtpCaldavArgs = {
+  accountOwnerId: Scalars['String']['input'];
+  accountType: AccountType;
+  connectionParameters: ConnectionParameters;
+  handle: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1695,6 +1748,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1779,6 +1833,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
+  id: Scalars['String']['input'];
 };
 
 
