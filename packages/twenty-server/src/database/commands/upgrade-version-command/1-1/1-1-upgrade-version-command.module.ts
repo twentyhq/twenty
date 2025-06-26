@@ -34,7 +34,13 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceHealthModule,
     TypeORMModule,
   ],
-  providers: [FixUpdateStandardFieldsIsLabelSyncedWithName, FixSchemaArrayTypeCommand],
-  exports: [FixUpdateStandardFieldsIsLabelSyncedWithName, FixSchemaArrayTypeCommand],
+  providers: [
+    FixUpdateStandardFieldsIsLabelSyncedWithName,
+    FixSchemaArrayTypeCommand,
+  ],
+  exports: [
+    FixUpdateStandardFieldsIsLabelSyncedWithName,
+    FixSchemaArrayTypeCommand,
+  ],
 })
 export class V1_1_UpgradeVersionCommandModule {}
