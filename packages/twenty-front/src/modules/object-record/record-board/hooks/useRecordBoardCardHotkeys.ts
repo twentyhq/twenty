@@ -43,7 +43,7 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
 
   const handleOpenRecordInCommandMenu = () => {
     openRecordInCommandMenu({
-      recordId: recordId,
+      recordId,
       objectNameSingular: objectMetadataItem.nameSingular,
       isNewRecord: false,
     });

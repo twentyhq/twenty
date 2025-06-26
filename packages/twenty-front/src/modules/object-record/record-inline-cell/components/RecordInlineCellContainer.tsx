@@ -9,7 +9,7 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpenedEffect';
+import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
