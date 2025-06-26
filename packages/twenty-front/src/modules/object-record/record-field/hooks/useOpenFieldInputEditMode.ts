@@ -115,7 +115,7 @@ export const useOpenFieldInputEditMode = () => {
             fieldName: fieldDefinition.metadata.fieldName,
           }),
           component: {
-            type: FocusComponentType.OPEN_FIELD_INPUT,
+            type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: getFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,

@@ -46,7 +46,7 @@ export const useOpenRelationToOneFieldInput = () => {
         pushFocusItemToFocusStack({
           focusId: recordPickerInstanceId,
           component: {
-            type: FocusComponentType.OPEN_FIELD_INPUT,
+            type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordPickerInstanceId,
           },
           // TODO: Remove this once we've fully migrated away from hotkey scopes
