@@ -10,7 +10,6 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
@@ -21,6 +20,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { View } from '@/views/types/View';
 import { within } from '@storybook/test';
@@ -67,7 +67,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         viewGroups: [],
         viewSorts: [],
         kanbanFieldMetadataId: '',
-        kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+        kanbanAggregateOperation: AggregateOperations.COUNT,
         icon: '',
         kanbanAggregateOperationFieldMetadataId: '',
         position: 0,
@@ -97,6 +97,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       return (
         <RecordIndexContextProvider
           value={{
+            objectPermissionsByObjectMetadataId: {},
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
             objectNamePlural: CoreObjectNamePlural.Company,

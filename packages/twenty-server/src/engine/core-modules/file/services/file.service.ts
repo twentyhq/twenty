@@ -4,10 +4,17 @@ import { basename, dirname, extname } from 'path';
 import { Stream } from 'stream';
 
 import { v4 as uuidV4 } from 'uuid';
+import { buildSignedPath } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import {
+  FileTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class FileService {
@@ -30,27 +37,40 @@ export class FileService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  encodeFileToken(payloadToEncode: Record<string, any>) {
+  signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {
+    if (!isNonEmptyString(url)) {
+      return url;
+    }
+
+    return buildSignedPath({
+      path: url,
+      token: this.encodeFileToken({
+        filename: extractFilenameFromPath(url),
+        workspaceId,
+      }),
+    });
+  }
+
+  encodeFileToken(payloadToEncode: Omit<FileTokenJwtPayload, 'type' | 'sub'>) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
+
+    const payload: FileTokenJwtPayload = {
+      ...payloadToEncode,
+      sub: payloadToEncode.workspaceId,
+      type: JwtTokenTypeEnum.FILE,
+    };
+
     const secret = this.jwtWrapperService.generateAppSecret(
-      'FILE',
+      payload.type,
       payloadToEncode.workspaceId,
     );
 
-    const signedPayload = this.jwtWrapperService.sign(
-      {
-        ...payloadToEncode,
-      },
-      {
-        secret,
-        expiresIn: fileTokenExpiresIn,
-      },
-    );
-
-    return signedPayload;
+    return this.jwtWrapperService.sign(payload, {
+      secret,
+      expiresIn: fileTokenExpiresIn,
+    });
   }
 
   async deleteFile({

@@ -1,10 +1,20 @@
+import {
+  AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT,
+  AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT,
+} from '@/auth/graphql/fragments/authFragments';
+import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
+import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
   ${ROLE_FRAGMENT}
+  ${OBJECT_PERMISSION_FRAGMENT}
+  ${WORKSPACE_URLS_FRAGMENT}
+  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
+  ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -26,6 +36,9 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       settingsPermissions
       objectRecordsPermissions
+      objectPermissions {
+        ...ObjectPermissionFragment
+      }
     }
     currentWorkspace {
       id
@@ -45,8 +58,7 @@ export const USER_QUERY_FRAGMENT = gql`
       customDomain
       isCustomDomainEnabled
       workspaceUrls {
-        subdomainUrl
-        customUrl
+        ...WorkspaceUrlsFragment
       }
       featureFlags {
         key
@@ -63,6 +75,7 @@ export const USER_QUERY_FRAGMENT = gql`
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
+          quantity
           billingProduct {
             name
             description
@@ -78,24 +91,15 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         provider
+        metadata
       }
       workspaceMembersCount
       defaultRole {
         ...RoleFragment
       }
     }
-    workspaces {
-      workspace {
-        id
-        logo
-        displayName
-        subdomain
-        customDomain
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
-      }
+    availableWorkspaces {
+      ...AvailableWorkspacesFragment
     }
     userVars
   }

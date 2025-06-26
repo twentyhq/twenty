@@ -50,6 +50,7 @@ export const initialFavorites: Favorite[] = [
     key: mockId,
     labelIdentifier: 'favoriteLabel',
     avatarUrl: 'example.com',
+    company: { id: '5', name: 'Company Test 2' },
     avatarType: 'squared' as AvatarType,
     link: 'example.com',
     recordId: '1',
@@ -86,17 +87,17 @@ export const sortedFavorites = [
     __typename: 'Favorite',
   },
   {
-    id: '3',
-    position: 2,
-    key: '8f3b2121-f194-4ba4-9fbf-2d5a37126806',
-    labelIdentifier: 'favoriteLabel',
-    avatarUrl: 'example.com',
-    link: 'example.com',
-    recordId: '1',
+    __typename: 'Favorite',
     avatarType: 'squared',
+    avatarUrl: undefined,
     favoriteFolderId: '1',
     forWorkspaceMemberId: '1',
-    __typename: 'Favorite',
+    id: '3',
+    labelIdentifier: 'Company Test 2',
+    link: '/object/company/5',
+    objectNameSingular: 'company',
+    position: 2,
+    recordId: '5',
   },
 ];
 
@@ -137,7 +138,6 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
         employees
         id
         idealCustomerProfile
-        internalCompetitions
         introVideo {
           primaryLinkUrl
           primaryLinkLabel
@@ -186,6 +186,7 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
           firstName
           lastName
         }
+        position
         timeFormat
         timeZone
         updatedAt
@@ -197,6 +198,10 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
       note {
         __typename
         body
+        bodyV2 {
+          blocknote
+          markdown
+        }
         createdAt
         createdBy {
           source
@@ -347,6 +352,22 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
       }
       petId
       position
+      rocket {
+        __typename
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        id
+        name
+        position
+        updatedAt
+      }
+      rocketId
       surveyResult {
         __typename
         averageEstimatedNumberOfAtomsInTheUniverse
@@ -373,6 +394,10 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
         __typename
         assigneeId
         body
+        bodyV2 {
+          blocknote
+          markdown
+        }
         createdAt
         createdBy {
           source
@@ -403,6 +428,7 @@ const UPDATE_ONE_FAVORITE_MUTATION = gql`
         key
         name
         objectMetadataId
+        openRecordIn
         position
         type
         updatedAt
@@ -507,7 +533,6 @@ export const mocks = [
               employees
               id
               idealCustomerProfile
-              internalCompetitions
               introVideo {
                 primaryLinkUrl
                 primaryLinkLabel
@@ -556,6 +581,7 @@ export const mocks = [
                 firstName
                 lastName
               }
+              position
               timeFormat
               timeZone
               updatedAt
@@ -567,6 +593,10 @@ export const mocks = [
             note {
               __typename
               body
+              bodyV2 {
+                blocknote
+                markdown
+              }
               createdAt
               createdBy {
                 source
@@ -657,6 +687,65 @@ export const mocks = [
               }
             }
             personId
+            pet {
+              __typename
+              age
+              averageCostOfKibblePerMonth {
+                amountMicros
+                currencyCode
+              }
+              bio
+              birthday
+              comments
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
+              deletedAt
+              extraData
+              id
+              interestingFacts
+              isGoodWithKids
+              location {
+                addressStreet1
+                addressStreet2
+                addressCity
+                addressState
+                addressCountry
+                addressPostcode
+                addressLat
+                addressLng
+              }
+              makesOwnerThinkOf {
+                firstName
+                lastName
+              }
+              name
+              pictures {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              position
+              soundSwag
+              species
+              traits
+              updatedAt
+              vetEmail {
+                primaryEmail
+                additionalEmails
+              }
+              vetPhone {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                primaryPhoneCallingCode
+                additionalPhones
+              }
+            }
+            petId
             position
             rocket {
               __typename
@@ -674,10 +763,36 @@ export const mocks = [
               updatedAt
             }
             rocketId
+            surveyResult {
+              __typename
+              averageEstimatedNumberOfAtomsInTheUniverse
+              comments
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
+              deletedAt
+              id
+              name
+              participants
+              percentageOfCompletion
+              position
+              score
+              shortNotes
+              updatedAt
+            }
+            surveyResultId
             task {
               __typename
               assigneeId
               body
+              bodyV2 {
+                blocknote
+                markdown
+              }
               createdAt
               createdBy {
                 source
@@ -702,10 +817,13 @@ export const mocks = [
               icon
               id
               isCompact
+              kanbanAggregateOperation
+              kanbanAggregateOperationFieldMetadataId
               kanbanFieldMetadataId
               key
               name
               objectMetadataId
+              openRecordIn
               position
               type
               updatedAt
@@ -714,6 +832,12 @@ export const mocks = [
             workflow {
               __typename
               createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
               deletedAt
               id
               lastPublishedVersionId
@@ -725,6 +849,7 @@ export const mocks = [
             workflowId
             workflowRun {
               __typename
+              context
               createdAt
               createdBy {
                 source
@@ -887,4 +1012,5 @@ export const mockWorkspaceMember = {
   createdAt: '',
   updatedAt: '',
   userId: '1',
+  userEmail: 'userEmail',
 };

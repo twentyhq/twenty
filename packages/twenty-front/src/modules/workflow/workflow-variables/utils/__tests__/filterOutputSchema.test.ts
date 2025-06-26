@@ -1,4 +1,5 @@
 import { OutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { filterOutputSchema } from '../filterOutputSchema';
 
 describe('filterOutputSchema', () => {
@@ -85,9 +86,10 @@ describe('filterOutputSchema', () => {
       expect(filterOutputSchema(inputSchema, 'person')).toEqual(expectedSchema);
     });
 
-    it('should ignore leaf fields', () => {
+    it('should ignore leaf fields that are field metadata types', () => {
       const inputSchema = createRecordSchema('company', {
         name: { isLeaf: true, value: 'string' },
+        id: { isLeaf: true, type: FieldMetadataType.UUID },
         employee: {
           isLeaf: false,
           value: createRecordSchema('person'),
@@ -97,6 +99,7 @@ describe('filterOutputSchema', () => {
       const expectedSchema = {
         _outputSchemaType: 'RECORD',
         fields: {
+          name: { isLeaf: true, value: 'string' },
           employee: {
             isLeaf: false,
             value: createRecordSchema('person'),
@@ -117,6 +120,7 @@ describe('filterOutputSchema', () => {
       const inputSchema = createBaseSchema({
         field1: {
           isLeaf: true,
+          type: FieldMetadataType.TEXT,
           value: 'string',
         },
       });

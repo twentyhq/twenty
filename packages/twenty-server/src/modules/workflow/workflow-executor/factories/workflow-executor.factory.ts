@@ -6,9 +6,11 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { AiAgentWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
+import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
@@ -27,6 +29,8 @@ export class WorkflowExecutorFactory {
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
     private readonly formWorkflowAction: FormWorkflowAction,
     private readonly filterWorkflowAction: FilterWorkflowAction,
+    private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
+    private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowExecutor {
@@ -47,6 +51,10 @@ export class WorkflowExecutorFactory {
         return this.formWorkflowAction;
       case WorkflowActionType.FILTER:
         return this.filterWorkflowAction;
+      case WorkflowActionType.HTTP_REQUEST:
+        return this.httpRequestWorkflowAction;
+      case WorkflowActionType.AI_AGENT:
+        return this.aiAgentWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

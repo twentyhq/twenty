@@ -10,6 +10,7 @@ import {
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 describe('FilterInputFactory', () => {
   const completeFieldNumberMock: FieldMetadataInterface = {
@@ -20,6 +21,9 @@ describe('FilterInputFactory', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const completeFieldTextMock: FieldMetadataInterface = {
@@ -30,6 +34,9 @@ describe('FilterInputFactory', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const completeFieldCurrencyMock: FieldMetadataInterface = {
@@ -40,6 +47,9 @@ describe('FilterInputFactory', () => {
     objectMetadataId: 'object-metadata-id',
     isNullable: fieldCurrencyMock.isNullable,
     defaultValue: fieldCurrencyMock.defaultValue,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const fieldsById: FieldMetadataMap = {
@@ -48,16 +58,15 @@ describe('FilterInputFactory', () => {
     'field-currency-id': completeFieldCurrencyMock,
   };
 
-  const fieldsByName: FieldMetadataMap = {
-    [completeFieldNumberMock.name]: completeFieldNumberMock,
-    [completeFieldTextMock.name]: completeFieldTextMock,
-    [completeFieldCurrencyMock.name]: completeFieldCurrencyMock,
-  };
-
-  const objectMetadataMapItem = {
+  const objectMetadataMapItem: ObjectMetadataItemWithFieldMaps = {
     ...objectMetadataMapItemMock,
     fieldsById,
-    fieldsByName,
+    fieldIdByName: {
+      [completeFieldNumberMock.name]: completeFieldNumberMock.id,
+      [completeFieldTextMock.name]: completeFieldTextMock.id,
+      [completeFieldCurrencyMock.name]: completeFieldCurrencyMock.id,
+    },
+    fieldIdByJoinColumnName: {},
   };
 
   const objectMetadataMaps = {

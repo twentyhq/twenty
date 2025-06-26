@@ -3,7 +3,6 @@ import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metada
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 
 import { FieldMetadataInterface } from './field-metadata.interface';
-import { RelationMetadataInterface } from './relation-metadata.interface';
 
 export interface ObjectMetadataInterface {
   id: string;
@@ -14,9 +13,8 @@ export interface ObjectMetadataInterface {
   labelSingular: string;
   labelPlural: string;
   description?: string;
+  icon: string;
   targetTableName: string;
-  fromRelations: RelationMetadataInterface[];
-  toRelations: RelationMetadataInterface[];
   fields: FieldMetadataInterface[];
   indexMetadatas: IndexMetadataInterface[];
   isSystem: boolean;

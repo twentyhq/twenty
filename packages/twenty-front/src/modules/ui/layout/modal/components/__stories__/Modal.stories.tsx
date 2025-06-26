@@ -6,6 +6,7 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
+import { SetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -13,7 +14,7 @@ import { sleep } from '~/utils/sleep';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { Modal } from '../Modal';
 
-const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
+const initializeState = ({ set }: { set: SetRecoilState }) => {
   set(
     isModalOpenedComponentState.atomFamily({
       instanceId: 'modal-id',
@@ -43,6 +44,7 @@ const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     },
   ]);
 };

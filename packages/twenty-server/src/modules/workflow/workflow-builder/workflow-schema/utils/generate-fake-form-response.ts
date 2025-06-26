@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import {
   Leaf,
   Node,
@@ -12,12 +12,10 @@ import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workfl
 
 export const generateFakeFormResponse = async ({
   formMetadata,
-  workspaceId,
-  objectMetadataRepository,
+  objectMetadataMaps,
 }: {
   formMetadata: FormFieldMetadata[];
-  workspaceId: string;
-  objectMetadataRepository: Repository<ObjectMetadataEntity>;
+  objectMetadataMaps: ObjectMetadataMaps;
 }): Promise<Record<string, Leaf | Node>> => {
   const result = await Promise.all(
     formMetadata.map(async (formFieldMetadata) => {
@@ -26,19 +24,27 @@ export const generateFakeFormResponse = async ({
           return undefined;
         }
 
-        const objectMetadata = await objectMetadataRepository.findOneOrFail({
-          where: {
-            nameSingular: formFieldMetadata?.settings?.objectName,
-            workspaceId,
-          },
-          relations: ['fields'],
-        });
+        const objectMetadataItemWithFieldsMaps =
+          getObjectMetadataMapItemByNameSingular(
+            objectMetadataMaps,
+            formFieldMetadata?.settings?.objectName,
+          );
+
+        if (!objectMetadataItemWithFieldsMaps)
+          throw new Error(
+            `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
+          );
 
         return {
           [formFieldMetadata.name]: {
             isLeaf: false,
             label: formFieldMetadata.label,
-            value: generateFakeObjectRecord(objectMetadata),
+            value: generateFakeObjectRecord({
+              objectMetadataInfo: {
+                objectMetadataItemWithFieldsMaps,
+                objectMetadataMaps,
+              },
+            }),
           },
         };
       } else {
@@ -46,6 +52,7 @@ export const generateFakeFormResponse = async ({
           [formFieldMetadata.name]: generateFakeField({
             type: formFieldMetadata.type,
             label: formFieldMetadata.label,
+            value: formFieldMetadata.placeholder,
           }),
         };
       }

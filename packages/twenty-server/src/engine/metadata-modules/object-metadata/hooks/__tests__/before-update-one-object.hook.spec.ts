@@ -42,7 +42,7 @@ describe('BeforeUpdateOneObject', () => {
           },
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
           useValue: {
             findBy: jest.fn(),
           },
@@ -57,7 +57,7 @@ describe('BeforeUpdateOneObject', () => {
       ObjectMetadataService,
     );
     fieldMetadataRepository = module.get<Repository<FieldMetadataEntity>>(
-      getRepositoryToken(FieldMetadataEntity, 'metadata'),
+      getRepositoryToken(FieldMetadataEntity, 'core'),
     );
   });
 
@@ -656,34 +656,6 @@ describe('BeforeUpdateOneObject', () => {
     expect(result).toEqual(instance);
   });
 
-  it('should throw BadRequestException if label identifier field does not exist', async () => {
-    const labelIdentifierFieldId = 'nonexistent-field-id';
-    const instance: UpdateOneInputType<UpdateObjectPayloadForTest> = {
-      id: mockObjectId,
-      update: {
-        labelIdentifierFieldMetadataId: labelIdentifierFieldId,
-      },
-    };
-
-    const mockObject: Partial<ObjectMetadataEntity> = {
-      id: mockObjectId,
-      isCustom: true,
-    };
-
-    jest
-      .spyOn(objectMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockObject as ObjectMetadataEntity);
-
-    jest.spyOn(fieldMetadataRepository, 'findBy').mockResolvedValue([]);
-
-    await expect(
-      hook.run(instance as UpdateOneInputType<UpdateObjectPayload>, {
-        workspaceId: mockWorkspaceId,
-        locale: undefined,
-      }),
-    ).rejects.toThrow('This label identifier does not exist');
-  });
-
   it('should validate image identifier field correctly for custom objects', async () => {
     const imageIdentifierFieldId = 'image-field-id';
     const instance: UpdateOneInputType<UpdateObjectPayloadForTest> = {
@@ -721,33 +693,5 @@ describe('BeforeUpdateOneObject', () => {
     );
 
     expect(result).toEqual(instance);
-  });
-
-  it('should throw BadRequestException if image identifier field does not exist', async () => {
-    const imageIdentifierFieldId = 'nonexistent-field-id';
-    const instance: UpdateOneInputType<UpdateObjectPayloadForTest> = {
-      id: mockObjectId,
-      update: {
-        imageIdentifierFieldMetadataId: imageIdentifierFieldId,
-      },
-    };
-
-    const mockObject: Partial<ObjectMetadataEntity> = {
-      id: mockObjectId,
-      isCustom: true,
-    };
-
-    jest
-      .spyOn(objectMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockObject as ObjectMetadataEntity);
-
-    jest.spyOn(fieldMetadataRepository, 'findBy').mockResolvedValue([]);
-
-    await expect(
-      hook.run(instance as UpdateOneInputType<UpdateObjectPayload>, {
-        workspaceId: mockWorkspaceId,
-        locale: undefined,
-      }),
-    ).rejects.toThrow('This image identifier does not exist');
   });
 });

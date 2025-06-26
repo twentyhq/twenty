@@ -2,19 +2,20 @@ import { Key } from 'ts-key-enum';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerEditButton } from '@/views/view-picker/components/ViewPickerEditButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
+import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -38,21 +39,21 @@ export const ViewPickerContentEditMode = () => {
     viewPickerIsDirtyComponentState,
   );
 
-  const setHotkeyScope = useSetHotkeyScope();
-
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  useScopedHotkeys(
-    Key.Enter,
-    async () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: async () => {
       if (viewPickerIsPersisting) {
         return;
       }
 
       await updateViewFromCurrentState();
     },
-    ViewsHotkeyScope.ListDropdown,
-  );
+    focusId: VIEW_PICKER_DROPDOWN_ID,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
+  });
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
@@ -66,7 +67,7 @@ export const ViewPickerContentEditMode = () => {
   };
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -77,13 +78,11 @@ export const ViewPickerContentEditMode = () => {
       >
         Edit view
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <ViewPickerIconAndNameContainer>
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={viewPickerSelectedIcon}
-            onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
           />
           <TextInputV2
             value={viewPickerInputName}
@@ -101,6 +100,6 @@ export const ViewPickerContentEditMode = () => {
           <ViewPickerEditButton />
         </ViewPickerSaveButtonContainer>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

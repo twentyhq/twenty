@@ -239,6 +239,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Logout`,
           onClick: signOut,
           Icon: IconDoorEnter,
+          matchSubPages: false,
         },
       ],
     },

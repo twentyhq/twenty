@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow';
+import { SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { SettingsRolePermissionsObjectLevelPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
@@ -8,7 +9,6 @@ import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -44,16 +44,39 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   const objectLabel = objectMetadataItem.labelPlural;
 
   const updateObjectPermission = (
-    permissionKey: keyof ObjectPermission,
+    permissionKey: SettingsRoleObjectPermissionKey,
     value: boolean | null,
   ) => {
     setSettingsDraftRole((currentRole) => {
-      const updatedPermissions = currentRole.objectPermissions?.map((perm) => {
-        if (perm.objectMetadataId === objectMetadataItem.id) {
-          return { ...perm, [permissionKey]: value };
+      if (!currentRole.objectPermissions) {
+        return currentRole;
+      }
+
+      const updatedPermissions = currentRole.objectPermissions.map((perm) => {
+        if (perm.objectMetadataId !== objectMetadataItem.id) {
+          return perm;
         }
-        return perm;
+
+        const newPerms = { ...perm, [permissionKey]: value };
+
+        const isHigherPermission =
+          permissionKey === 'canUpdateObjectRecords' ||
+          permissionKey === 'canSoftDeleteObjectRecords' ||
+          permissionKey === 'canDestroyObjectRecords';
+
+        if (isHigherPermission && value !== false) {
+          newPerms.canReadObjectRecords = value;
+        }
+
+        if (permissionKey === 'canReadObjectRecords' && !value) {
+          newPerms.canUpdateObjectRecords = false;
+          newPerms.canSoftDeleteObjectRecords = false;
+          newPerms.canDestroyObjectRecords = false;
+        }
+
+        return newPerms;
       });
+
       return { ...currentRole, objectPermissions: updatedPermissions };
     });
   };
@@ -97,8 +120,8 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   return (
     <Section>
       <H2Title
-        title={t`Object-Level Permissions`}
-        description={t`Ability to interact with this specific object`}
+        title={t`Object-Level`}
+        description={t`Actions users can perform on this object`}
       />
       <StyledTable>
         <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader />

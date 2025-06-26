@@ -1,6 +1,7 @@
 import { EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -109,26 +110,27 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
             />
           }
           dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                text={'Edit'}
-                LeftIcon={IconPencil}
-                onClick={() => {
-                  setEditMode(true);
-                  closeDropdown();
-                }}
-              />
-              <MenuItem
-                text={'Delete'}
-                LeftIcon={IconTrash}
-                onClick={() => {
-                  onDelete();
-                  closeDropdown();
-                }}
-              />
-            </DropdownMenuItemsContainer>
+            <DropdownContent>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  text={'Edit'}
+                  LeftIcon={IconPencil}
+                  onClick={() => {
+                    setEditMode(true);
+                    closeDropdown();
+                  }}
+                />
+                <MenuItem
+                  text={'Delete'}
+                  LeftIcon={IconTrash}
+                  onClick={() => {
+                    onDelete();
+                    closeDropdown();
+                  }}
+                />
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
           }
-          dropdownHotkeyScope={{ scope: dropDownId }}
         />
       </TableCell>
     </StyledTableRow>

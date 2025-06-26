@@ -4,6 +4,7 @@ import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter
 
 const mockObjectMetadata: ObjectMetadataInterface = {
   id: '1',
+  icon: 'Icon123',
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',
@@ -11,8 +12,6 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   description: 'Test object metadata',
   targetTableName: 'test_table',
   workspaceId: '1',
-  fromRelations: [],
-  toRelations: [],
   fields: [],
   indexMetadatas: [],
   isSystem: false,

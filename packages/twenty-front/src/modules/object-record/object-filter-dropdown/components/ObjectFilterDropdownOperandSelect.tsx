@@ -3,7 +3,9 @@ import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filt
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -45,17 +47,19 @@ export const ObjectFilterDropdownOperandSelect = () => {
   };
 
   return (
-    <StyledDropdownMenuItemsContainer>
-      {operandsForFilterType.map((filterOperand, index) => (
-        <MenuItem
-          key={`select-filter-operand-${index}`}
-          onClick={() => {
-            handleOperandChange(filterOperand);
-            closeDropdown();
-          }}
-          text={getOperandLabel(filterOperand)}
-        />
-      ))}
-    </StyledDropdownMenuItemsContainer>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <StyledDropdownMenuItemsContainer>
+        {operandsForFilterType.map((filterOperand, index) => (
+          <MenuItem
+            key={`select-filter-operand-${index}`}
+            onClick={() => {
+              handleOperandChange(filterOperand);
+              closeDropdown();
+            }}
+            text={getOperandLabel(filterOperand)}
+          />
+        ))}
+      </StyledDropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };

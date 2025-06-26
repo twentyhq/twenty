@@ -9,6 +9,7 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
@@ -18,6 +19,7 @@ export const metadataModuleFactory = async (
   exceptionHandlerService: ExceptionHandlerService,
   dataloaderService: DataloaderService,
   cacheStorageService: CacheStorageService,
+  metricsService: MetricsService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -35,6 +37,7 @@ export const metadataModuleFactory = async (
         },
       }),
       useGraphQLErrorHandlerHook({
+        metricsService: metricsService,
         exceptionHandlerService,
       }),
       useCachedMetadata({
@@ -49,7 +52,7 @@ export const metadataModuleFactory = async (
     }),
   };
 
-  if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.development) {
+  if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT) {
     config.renderGraphiQL = () => {
       return renderApolloPlayground({ path: 'metadata' });
     };

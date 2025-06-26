@@ -8,7 +8,6 @@ import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-ru
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-connection.guard';
 import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-nested-record-array.guard';
@@ -19,10 +18,10 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -34,10 +33,7 @@ export class QueryResultGettersFactory {
   );
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly fileService: FileService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
@@ -49,20 +45,8 @@ export class QueryResultGettersFactory {
         'workspaceMember',
         new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
-      [
-        'note',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.featureFlagService,
-        ),
-      ],
-      [
-        'task',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.featureFlagService,
-        ),
-      ],
+      ['note', new ActivityQueryResultGetterHandler(this.fileService)],
+      ['task', new ActivityQueryResultGetterHandler(this.fileService)],
     ]);
   }
 
@@ -142,7 +126,9 @@ export class QueryResultGettersFactory {
     const relationFields = Object.keys(record)
       .map(
         (recordFieldName) =>
-          objectMetadataMapItem.fieldsByName[recordFieldName],
+          objectMetadataMapItem.fieldsById[
+            objectMetadataMapItem.fieldIdByName[recordFieldName]
+          ],
       )
       .filter(isDefined)
       .filter((fieldMetadata) =>
@@ -230,7 +216,7 @@ export class QueryResultGettersFactory {
 
   async create(
     result: QueryResultFieldValue,
-    objectMetadataItem: ObjectMetadataInterface,
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     workspaceId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

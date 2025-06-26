@@ -14,9 +14,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
@@ -25,16 +23,17 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
-import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
@@ -51,21 +50,20 @@ export type OpenTableCellArgs = {
   isNavigating: boolean;
 };
 
-export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
+export const useOpenRecordTableCellV2 = (recordTableId: string) => {
   const clickOutsideListenerIsActivatedState =
     useRecoilComponentCallbackStateV2(
       clickOutsideListenerIsActivatedComponentState,
       RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     );
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
     recordTableCellEditModePositionComponentState,
-    tableScopeId,
+    recordTableId,
   );
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const leaveTableFocus = useLeaveTableFocus(tableScopeId);
+  const leaveTableFocus = useLeaveTableFocus(recordTableId);
   const { toggleClickOutside } = useClickOutsideListener(
     FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
@@ -77,26 +75,24 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     viewableRecordNameSingularState,
   );
 
-  const navigate = useNavigate();
-
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
-
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { openFieldInput } = useOpenFieldInputEditMode();
 
   const { activateRecordTableRow, deactivateRecordTableRow } =
-    useActiveRecordTableRow(tableScopeId);
+    useActiveRecordTableRow(recordTableId);
 
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow(tableScopeId);
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   const setIsRowFocusActive = useSetRecoilComponentStateV2(
     isRecordTableRowFocusActiveComponentState,
-    tableScopeId,
+    recordTableId,
   );
 
-  const setFocusPosition = useSetRecordTableFocusPosition();
+  const { focusRecordTableCell } = useFocusRecordTableCell();
+
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -141,19 +137,12 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
             .getLoadable(recordIndexOpenRecordInState)
             .getValue();
 
-          if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
-            navigate(indexIdentifierUrl(recordId));
-          }
-
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-            openRecordInCommandMenu({
-              recordId,
-              objectNameSingular,
-            });
-
             activateRecordTableRow(cellPosition.row);
             unfocusRecordTableRow();
           }
+
+          openRecordFromIndexView({ recordId });
 
           return;
         }
@@ -168,7 +157,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         deactivateRecordTableRow();
 
-        setFocusPosition(cellPosition);
+        focusRecordTableCell(cellPosition);
 
         setIsRowFocusActive(false);
 
@@ -205,7 +194,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     [
       clickOutsideListenerIsActivatedState,
       deactivateRecordTableRow,
-      setFocusPosition,
+      focusRecordTableCell,
       setIsRowFocusActive,
       setDragSelectionStartEnabled,
       openFieldInput,
@@ -214,13 +203,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,
       leaveTableFocus,
-      navigate,
-      indexIdentifierUrl,
-      openRecordInCommandMenu,
       activateRecordTableRow,
       unfocusRecordTableRow,
       setViewableRecordId,
       setViewableRecordNameSingular,
+      openRecordFromIndexView,
     ],
   );
 

@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "pluginName": "nx/js/dependencies-and-lockfile",
+      "name": "ProcessDependenciesError"
+    }
+  ],
+  "computedAt": 1750972331517
+}

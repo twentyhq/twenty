@@ -5,14 +5,18 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import {
+  RecordTableContextProvider,
+  useRecordTableContextOrThrow,
+} from '@/object-record/record-table/contexts/RecordTableContext';
+import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -30,9 +34,12 @@ const InternalTableStateLoaderEffect = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const { recordTableId } = useRecordTableContextOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const { setRecordTableData } = useRecordTable();
+  const setRecordTableData = useSetRecordTableData({
+    recordTableId,
+  });
 
   const view = useMemo(() => {
     return {
@@ -47,7 +54,6 @@ const InternalTableStateLoaderEffect = ({
     loadRecordIndexStates(view, objectMetadataItem);
     setRecordTableData({
       records: getCompaniesMock(),
-      totalCount: getCompaniesMock().length,
     });
   }, [loadRecordIndexStates, objectMetadataItem, setRecordTableData, view]);
 
@@ -65,6 +71,8 @@ const InternalTableContextProviders = ({
     visibleTableColumnsComponentSelector,
   );
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   return (
     <RecordIndexContextProvider
       value={{
@@ -73,6 +81,7 @@ const InternalTableContextProviders = ({
         objectNamePlural: objectMetadataItem.namePlural,
         objectNameSingular: objectMetadataItem.nameSingular,
         objectMetadataItem: objectMetadataItem,
+        objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
       }}
     >
@@ -145,12 +154,12 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
                   instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                 }}
               >
-                <InternalTableStateLoaderEffect
-                  objectMetadataItem={objectMetadataItem}
-                />
                 <InternalTableContextProviders
                   objectMetadataItem={objectMetadataItem}
                 >
+                  <InternalTableStateLoaderEffect
+                    objectMetadataItem={objectMetadataItem}
+                  />
                   <Story />
                 </InternalTableContextProviders>
               </ActionMenuComponentInstanceContext.Provider>

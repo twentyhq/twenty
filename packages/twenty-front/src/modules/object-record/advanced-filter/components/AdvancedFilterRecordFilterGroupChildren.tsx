@@ -16,7 +16,6 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  overflow: hidden;
 `;
 
 type AdvancedFilterRecordFilterGroupChildrenProps = {

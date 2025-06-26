@@ -1,15 +1,17 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
+import { spreadsheetImportGetUnicityRowHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook';
+import { SpreadsheetImportCreateRecordsBatchSize } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
+import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { useSetRecoilState } from 'recoil';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -21,8 +23,17 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
   });
 
-  const { createManyRecords } = useCreateManyRecords({
+  const setCreatedRecordsProgress = useSetRecoilState(
+    spreadsheetImportCreatedRecordsProgressState,
+  );
+
+  const abortController = new AbortController();
+
+  const { batchCreateManyRecords } = useBatchCreateManyRecords({
     objectNameSingular,
+    mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
+    setBatchedRecordsCount: setCreatedRecordsProgress,
+    abortController,
   });
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
@@ -33,22 +44,20 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       'fields' | 'isOpen' | 'onClose'
     >,
   ) => {
-    const availableFieldMetadataItems = objectMetadataItem.fields
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.isActive &&
-          (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
-          fieldMetadataItem.name !== 'createdAt' &&
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-            fieldMetadataItem.relationDefinition?.direction ===
-              RelationDefinitionType.MANY_TO_ONE),
-      )
-      .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-        fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    //All fields that can be imported (included matchable and auto-filled)
+    const availableFieldMetadataItemsToImport =
+      spreadsheetImportFilterAvailableFieldMetadataItems(
+        objectMetadataItem.fields,
       );
 
-    const availableFields = buildAvailableFieldsForImport(
-      availableFieldMetadataItems,
+    const availableFieldMetadataItemsForMatching =
+      availableFieldMetadataItemsToImport.filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.type !== FieldMetadataType.ACTOR,
+      );
+
+    const availableFieldsForMatching = buildAvailableFieldsForImport(
+      availableFieldMetadataItemsForMatching,
     );
 
     openSpreadsheetImportDialog({
@@ -58,23 +67,29 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           const fieldMapping: Record<string, any> =
             buildRecordFromImportedStructuredRow({
               importedStructuredRow: record,
-              fields: availableFieldMetadataItems,
+              fields: availableFieldMetadataItemsToImport,
             });
 
           return fieldMapping;
         });
 
         try {
-          const upsert = true;
-          await createManyRecords(createInputs, upsert);
+          await batchCreateManyRecords({
+            recordsToCreate: createInputs,
+            upsert: true,
+          });
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,
           });
         }
       },
-      fields: availableFields,
-      availableFieldMetadataItems,
+      fields: availableFieldsForMatching,
+      availableFieldMetadataItems: availableFieldMetadataItemsToImport,
+      onAbortSubmit: () => {
+        abortController.abort();
+      },
+      rowHook: spreadsheetImportGetUnicityRowHook(objectMetadataItem),
     });
   };
 

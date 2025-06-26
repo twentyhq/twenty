@@ -15,6 +15,7 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
+import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,30 +71,27 @@ export const useLoadRecordIndexBoardColumn = ({
     recordBoardId,
   });
 
-  const recordIndexKanbanFieldMetadataFilter = {
-    [kanbanFieldMetadataItem.name]: isDefined(recordGroupDefinition?.value)
-      ? { in: [recordGroupDefinition.value] }
-      : { is: 'NULL' },
-  };
+  const recordIndexKanbanFieldMetadataFilterValue = isDefined(
+    recordGroupDefinition?.value,
+  )
+    ? { in: [recordGroupDefinition?.value] }
+    : { is: 'NULL' };
 
-  const filter = {
-    ...requestFilters,
-    ...recordIndexKanbanFieldMetadataFilter,
-  };
+  const combinedFilters = combineFilters([
+    requestFilters,
+    {
+      [kanbanFieldMetadataItem.name]: recordIndexKanbanFieldMetadataFilterValue,
+    },
+  ]);
 
-  const {
-    records,
-    loading,
-    fetchMoreRecords,
-    queryStateIdentifier,
-    hasNextPage,
-  } = useFindManyRecords({
-    objectNameSingular,
-    filter,
-    orderBy,
-    recordGqlFields,
-    limit: 10,
-  });
+  const { records, loading, fetchMoreRecords, queryIdentifier, hasNextPage } =
+    useFindManyRecords({
+      objectNameSingular,
+      filter: combinedFilters,
+      orderBy,
+      recordGqlFields,
+      limit: 10,
+    });
 
   useEffect(() => {
     setRecordIdsForColumn(columnId, records);
@@ -107,7 +105,7 @@ export const useLoadRecordIndexBoardColumn = ({
     records,
     loading,
     fetchMoreRecords,
-    queryStateIdentifier,
+    queryIdentifier,
     hasNextPage,
   };
 };

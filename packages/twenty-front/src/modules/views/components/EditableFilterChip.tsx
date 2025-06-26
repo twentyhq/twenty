@@ -1,12 +1,10 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
-import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
-import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
+import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui/display';
 
@@ -29,9 +27,6 @@ export const EditableFilterChip = ({
 
   const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
 
-  const operandLabelShort = getOperandLabelShort(recordFilter.operand);
-  const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
-
   const recordFilterSubFieldName = recordFilter.subFieldName;
 
   const subFieldLabel =
@@ -48,19 +43,19 @@ export const EditableFilterChip = ({
     ? `${recordFilter.label} / ${subFieldLabel}`
     : recordFilter.label;
 
-  const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
-
-  const labelKey = `${fieldNameLabel}${!operandIsEmptiness && !recordFilterIsEmpty ? operandLabelShort : operandIsEmptiness ? ` ${operandLabelShort}` : ''}`;
+  const labelKey = `${fieldNameLabel}`;
+  const labelValue = getRecordFilterLabelValue(recordFilter);
 
   return (
     <SortOrFilterChip
       key={recordFilter.id}
       testId={recordFilter.id}
       labelKey={labelKey}
-      labelValue={recordFilter.displayValue}
+      labelValue={labelValue}
       Icon={FieldMetadataItemIcon}
       onRemove={onRemove}
       onClick={onClick}
+      type="filter"
     />
   );
 };

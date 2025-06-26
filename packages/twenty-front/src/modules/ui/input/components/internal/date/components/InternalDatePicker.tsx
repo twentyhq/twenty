@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import ReactDatePicker from 'react-datepicker';
+import { lazy, Suspense, useContext } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
@@ -13,8 +15,8 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
@@ -276,6 +278,20 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
+const StyledDatePickerFallback = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: 300px;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)};
+  width: 280px;
+`;
+
 type DateTimePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
@@ -306,6 +322,8 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
+const ReactDatePicker = lazy(() => import('react-datepicker'));
+
 export const DateTimePicker = ({
   date,
   onChange,
@@ -322,6 +340,7 @@ export const DateTimePicker = ({
   const internalDate = date ?? new Date();
 
   const { timeZone } = useContext(UserContext);
+  const theme = useTheme();
 
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
@@ -452,51 +471,78 @@ export const DateTimePicker = ({
   return (
     <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
-        <ReactDatePicker
-          open={true}
-          selected={hasDate ? dateToUse : undefined}
-          selectedDates={selectedDates}
-          openToDate={hasDate ? dateToUse : new Date()}
-          disabledKeyboardNavigation
-          onChange={handleDateChange as any}
-          customInput={
-            <DateTimeInput
-              date={internalDate}
-              isDateTimeInput={isDateTimeInput}
-              onChange={onChange}
-              userTimezone={timeZone}
-            />
+        <Suspense
+          fallback={
+            <StyledDatePickerFallback>
+              <SkeletonTheme
+                baseColor={theme.background.tertiary}
+                highlightColor={theme.background.transparent.lighter}
+                borderRadius={4}
+              >
+                <Skeleton
+                  width={200}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                />
+                <Skeleton
+                  width={240}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+                />
+                <Skeleton
+                  width={220}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+                />
+                <Skeleton
+                  width={180}
+                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+                />
+              </SkeletonTheme>
+            </StyledDatePickerFallback>
           }
-          renderCustomHeader={({
-            prevMonthButtonDisabled,
-            nextMonthButtonDisabled,
-          }) =>
-            isRelative ? (
-              <RelativeDatePickerHeader
-                direction={relativeDate?.direction ?? 'PAST'}
-                amount={relativeDate?.amount}
-                unit={relativeDate?.unit ?? 'DAY'}
-                onChange={onRelativeDateChange}
-              />
-            ) : (
-              <AbsoluteDatePickerHeader
+        >
+          <ReactDatePicker
+            open={true}
+            selected={hasDate ? dateToUse : undefined}
+            selectedDates={selectedDates}
+            openToDate={hasDate ? dateToUse : new Date()}
+            disabledKeyboardNavigation
+            onChange={handleDateChange as any}
+            customInput={
+              <DateTimeInput
                 date={internalDate}
-                onChange={onChange}
-                onChangeMonth={handleChangeMonth}
-                onChangeYear={handleChangeYear}
-                onAddMonth={handleAddMonth}
-                onSubtractMonth={handleSubtractMonth}
-                prevMonthButtonDisabled={prevMonthButtonDisabled}
-                nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}
-                timeZone={timeZone}
-                hideInput={hideHeaderInput}
+                onChange={onChange}
               />
-            )
-          }
-          onSelect={handleDateSelect}
-          selectsMultiple={isRelative}
-        />
+            }
+            renderCustomHeader={({
+              prevMonthButtonDisabled,
+              nextMonthButtonDisabled,
+            }) =>
+              isRelative ? (
+                <RelativeDatePickerHeader
+                  direction={relativeDate?.direction ?? 'PAST'}
+                  amount={relativeDate?.amount}
+                  unit={relativeDate?.unit ?? 'DAY'}
+                  onChange={onRelativeDateChange}
+                />
+              ) : (
+                <AbsoluteDatePickerHeader
+                  date={internalDate}
+                  onChange={onChange}
+                  onChangeMonth={handleChangeMonth}
+                  onChangeYear={handleChangeYear}
+                  onAddMonth={handleAddMonth}
+                  onSubtractMonth={handleSubtractMonth}
+                  prevMonthButtonDisabled={prevMonthButtonDisabled}
+                  nextMonthButtonDisabled={nextMonthButtonDisabled}
+                  isDateTimeInput={isDateTimeInput}
+                  hideInput={hideHeaderInput}
+                />
+              )
+            }
+            onSelect={handleDateSelect}
+            selectsMultiple={isRelative}
+          />
+        </Suspense>
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>

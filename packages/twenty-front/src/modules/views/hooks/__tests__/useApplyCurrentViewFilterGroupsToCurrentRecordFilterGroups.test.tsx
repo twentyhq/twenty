@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
@@ -54,7 +54,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     viewGroups: [],
     viewSorts: [],
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -9,9 +8,10 @@ import { v4 } from 'uuid';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -48,10 +48,11 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly agentService: AgentService,
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
@@ -75,8 +76,10 @@ export class WorkflowVersionStepWorkspaceService {
       workspaceId,
     });
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -95,7 +98,8 @@ export class WorkflowVersionStepWorkspaceService {
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const existingSteps = workflowVersion.steps || [];
-    const updatedSteps = insertStep({
+
+    const { updatedSteps, updatedInsertedStep } = insertStep({
       existingSteps,
       insertedStep: enrichedNewStep,
       parentStepId,
@@ -106,7 +110,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedInsertedStep;
   }
 
   async updateWorkflowVersionStep({
@@ -119,8 +123,10 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
   }): Promise<WorkflowAction> {
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -175,8 +181,10 @@ export class WorkflowVersionStepWorkspaceService {
     stepIdToDelete: string;
   }): Promise<WorkflowActionDTO> {
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -280,9 +288,10 @@ export class WorkflowVersionStepWorkspaceService {
     response: object;
   }) {
     const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
-      );
+        workspaceId,
+      });
 
     const step = workflowRun.output?.flow?.steps?.find(
       (step) => step.id === stepId,
@@ -303,6 +312,7 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const enrichedResponse = await this.enrichFormStepResponse({
+      workspaceId,
       step,
       response,
     });
@@ -320,6 +330,7 @@ export class WorkflowVersionStepWorkspaceService {
     };
 
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workspaceId,
       workflowRunId,
       stepOutput: newStepOutput,
       context: updatedContext,
@@ -339,8 +350,16 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    // We don't enrich on the fly for code workflow action. OutputSchema is computed and updated when testing the serverless function
-    if (step.type === WorkflowActionType.CODE) {
+    // We don't enrich on the fly for code and HTTP request workflow actions.
+    // For code actions, OutputSchema is computed and updated when testing the serverless function.
+    // For HTTP requests and AI agent, OutputSchema is determined by the expamle response input
+    if (
+      [
+        WorkflowActionType.CODE,
+        WorkflowActionType.HTTP_REQUEST,
+        WorkflowActionType.AI_AGENT,
+      ].includes(step.type)
+    ) {
       return step;
     }
 
@@ -376,7 +395,19 @@ export class WorkflowVersionStepWorkspaceService {
           await this.serverlessFunctionService.deleteOneServerlessFunction({
             id: step.settings.input.serverlessFunctionId,
             workspaceId,
+            softDelete: false,
           });
+        }
+        break;
+      }
+      case WorkflowActionType.AI_AGENT: {
+        const agent = await this.agentService.findOneAgent(
+          step.settings.input.agentId,
+          workspaceId,
+        );
+
+        if (agent) {
+          await this.agentService.deleteOneAgent(agent.id, workspaceId);
         }
         break;
       }
@@ -541,22 +572,55 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
-            input: [
-              {
-                id: v4(),
-                name: 'company',
-                label: 'Company',
-                placeholder: 'Select a company',
-                type: FieldMetadataType.TEXT,
-              },
-              {
-                id: v4(),
-                name: 'number',
-                label: 'Number',
-                placeholder: '1000',
-                type: FieldMetadataType.NUMBER,
-              },
-            ],
+            input: [],
+          },
+        };
+      }
+      case WorkflowActionType.HTTP_REQUEST: {
+        return {
+          id: newStepId,
+          name: 'HTTP Request',
+          type: WorkflowActionType.HTTP_REQUEST,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              url: '',
+              method: 'GET',
+              headers: {},
+              body: {},
+            },
+          },
+        };
+      }
+      case WorkflowActionType.AI_AGENT: {
+        const newAgent = await this.agentService.createOneAgent(
+          {
+            name: 'AI Agent Workflow Step',
+            description: 'Created automatically for workflow step',
+            prompt: '',
+            modelId: 'gpt-4o',
+          },
+          workspaceId,
+        );
+
+        if (!isDefined(newAgent)) {
+          throw new WorkflowVersionStepException(
+            'Failed to create AI Agent Step',
+            WorkflowVersionStepExceptionCode.FAILURE,
+          );
+        }
+
+        return {
+          id: newStepId,
+          name: 'AI Agent',
+          type: WorkflowActionType.AI_AGENT,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              agentId: newAgent.id,
+            },
           },
         };
       }
@@ -569,9 +633,11 @@ export class WorkflowVersionStepWorkspaceService {
   }
 
   private async enrichFormStepResponse({
+    workspaceId,
     step,
     response,
   }: {
+    workspaceId: string;
     step: WorkflowFormAction;
     response: object;
   }) {
@@ -595,9 +661,12 @@ export class WorkflowVersionStepWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const repository = await this.twentyORMManager.getRepository(
-            field.settings.objectName,
-          );
+          const repository =
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              workspaceId,
+              field.settings.objectName,
+              { shouldBypassPermissionChecks: true },
+            );
 
           const record = await repository.findOne({
             // @ts-expect-error legacy noImplicitAny

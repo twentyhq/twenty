@@ -1,11 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer, ValidationError } from 'class-validator';
+import { useContainer } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
@@ -27,7 +26,7 @@ const bootstrap = async () => {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
-    snapshot: process.env.NODE_ENV === NodeEnvironment.development,
+    snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
           httpsOptions: {
@@ -42,10 +41,6 @@ const bootstrap = async () => {
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
-  // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
-  // // Apply context id strategy for durable trees
-  // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
-
   // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
@@ -54,22 +49,6 @@ const bootstrap = async () => {
 
   app.useGlobalFilters(new UnhandledExceptionFilter());
 
-  // Apply validation pipes globally
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      exceptionFactory: (errors) => {
-        const error = new ValidationError();
-
-        error.constraints = Object.assign(
-          {},
-          ...errors.map((error) => error.constraints),
-        );
-
-        return error;
-      },
-    }),
-  );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
   app.useBodyParser('urlencoded', {
     limit: settings.storage.maxFileSize,

@@ -1,9 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-
-import { checkFileFolder } from 'src/engine/core-modules/file/file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
+import {
+  FileTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
@@ -11,37 +13,40 @@ export class FilePathGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const fileFolder = checkFileFolder(request.params[0]);
-    const ignoreExpirationToken =
-      fileFolderConfigs[fileFolder].ignoreExpirationToken;
 
-    const query = request.query;
+    const { filename, fileSignature, ignoreExpirationToken } =
+      extractFileInfoFromRequest(request);
 
-    if (!query || !query['token']) {
+    if (!fileSignature) {
       return false;
     }
 
     try {
-      const payload = await this.jwtWrapperService.verifyWorkspaceToken(
-        query['token'],
-        'FILE',
+      const payload = await this.jwtWrapperService.verifyJwtToken(
+        fileSignature,
+        JwtTokenTypeEnum.FILE,
         ignoreExpirationToken ? { ignoreExpiration: true } : {},
       );
 
-      if (!payload.workspaceId) {
+      if (
+        !payload.workspaceId ||
+        !payload.filename ||
+        filename !== payload.filename
+      ) {
         return false;
       }
     } catch (error) {
       return false;
     }
 
-    const decodedPayload = await this.jwtWrapperService.decode(query['token'], {
-      json: true,
-    });
+    const decodedPayload = this.jwtWrapperService.decode<FileTokenJwtPayload>(
+      fileSignature,
+      {
+        json: true,
+      },
+    );
 
-    const workspaceId = decodedPayload?.['workspaceId'];
-
-    request.workspaceId = workspaceId;
+    request.workspaceId = decodedPayload.workspaceId;
 
     return true;
   }

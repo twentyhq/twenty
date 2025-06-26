@@ -2,13 +2,15 @@ import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
+  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
+`;
 
 const StyledName = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
@@ -29,7 +31,7 @@ const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIconContainer = styled.div`
@@ -53,15 +55,15 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
-  );
   const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
   const isSettingPermissionEnabled =
     settingsDraftRole.settingPermissions?.some(
       (settingPermission) => settingPermission.setting === permission.key,
     ) ?? false;
+
+  const isChecked = isSettingPermissionEnabled || canUpdateAllSettings;
+  const isDisabled = !isEditable || canUpdateAllSettings;
 
   const handleChange = (value: boolean) => {
     const currentPermissions = settingsDraftRole.settingPermissions ?? [];
@@ -88,8 +90,18 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     }
   };
 
+  const handleRowClick = () => {
+    if (isDisabled) return;
+    handleChange(!isChecked);
+  };
+
   return (
-    <TableRow key={permission.key} gridAutoColumns="3fr 4fr 24px">
+    <StyledTableRow
+      key={permission.key}
+      gridAutoColumns="3fr 4fr 24px"
+      onClick={handleRowClick}
+      isDisabled={isDisabled}
+    >
       <StyledPermissionCell>
         <StyledIconContainer>
           <permission.Icon
@@ -103,15 +115,13 @@ export const SettingsRolePermissionsSettingsTableRow = ({
       <StyledPermissionCell>
         <StyledDescription>{permission.description}</StyledDescription>
       </StyledPermissionCell>
-      <StyledCheckboxCell>
+      <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
         <Checkbox
-          checked={isSettingPermissionEnabled || canUpdateAllSettings}
-          disabled={
-            !isEditable || canUpdateAllSettings || !isPermissionsV2Enabled
-          }
+          checked={isChecked}
+          disabled={isDisabled}
           onChange={(event) => handleChange(event.target.checked)}
         />
       </StyledCheckboxCell>
-    </TableRow>
+    </StyledTableRow>
   );
 };

@@ -1,12 +1,14 @@
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 
 type OpenActivityTargetCellEditModeProps = {
@@ -18,8 +20,9 @@ type OpenActivityTargetCellEditModeProps = {
 export const useOpenActivityTargetCellEditMode = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
+  const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openActivityTargetCellEditMode = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -69,6 +72,8 @@ export const useOpenActivityTargetCellEditMode = () => {
           '',
         );
 
+        openMultipleRecordPicker(recordPickerInstanceId);
+
         multipleRecordPickerPerformSearch({
           multipleRecordPickerInstanceId: recordPickerInstanceId,
           forceSearchFilter: '',
@@ -84,11 +89,23 @@ export const useOpenActivityTargetCellEditMode = () => {
           ),
         });
 
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+        pushFocusItemToFocusStack({
+          focusId: recordPickerInstanceId,
+          component: {
+            type: FocusComponentType.DROPDOWN,
+            instanceId: recordPickerInstanceId,
+          },
+          hotkeyScope: {
+            scope: DropdownHotkeyScope.Dropdown,
+          },
+          memoizeKey: recordPickerInstanceId,
         });
       },
-    [multipleRecordPickerPerformSearch, setHotkeyScopeAndMemorizePreviousScope],
+    [
+      multipleRecordPickerPerformSearch,
+      openMultipleRecordPicker,
+      pushFocusItemToFocusStack,
+    ],
   );
 
   return { openActivityTargetCellEditMode };

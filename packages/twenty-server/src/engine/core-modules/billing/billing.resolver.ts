@@ -1,10 +1,11 @@
 /* @license Enterprise */
 
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import {
   BillingException,
@@ -29,6 +30,8 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToBaseProductDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-base-product-dto.util';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -49,7 +52,11 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -99,6 +106,7 @@ export class BillingResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
@@ -143,6 +151,7 @@ export class BillingResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     const currentSubscription =
@@ -193,6 +202,7 @@ export class BillingResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     const billingSubscription =
@@ -213,6 +223,17 @@ export class BillingResolver {
       subscription,
       baseProduct: formatBillingDatabaseProductToBaseProductDTO(baseProduct),
     };
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
+  async switchToEnterprisePlan(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.switchToEnterprisePlan(workspace);
+
+    return { success: true };
   }
 
   @Query(() => [BillingPlanOutput])
@@ -252,15 +273,20 @@ export class BillingResolver {
     workspaceId,
     userWorkspaceId,
     isExecutedByApiKey,
+    workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     isExecutedByApiKey: boolean;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+      (await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,
-      )
+      )) ||
+      workspaceActivationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspaceActivationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       return;
     }

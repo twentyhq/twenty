@@ -64,7 +64,7 @@ export const parseGoogleCalendarError = (error: {
         CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
     case 500:
-      if (reason === 'backendError') {
+      if (reason === 'backendError' || reason === 'internal_failure') {
         return new CalendarEventImportDriverException(
           message,
           CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,

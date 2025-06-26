@@ -15,6 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -54,9 +55,11 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
     );
 
     this.apiEventEmitterService.emitDestroyEvents({
-      records: deletedRecords,
+      records: structuredClone(deletedRecords),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -67,7 +70,7 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -8,14 +8,16 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -37,14 +39,20 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
-@UseGuards(SettingsPermissionsGuard(SettingPermissionType.ROLES))
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionsGuard(SettingPermissionType.ROLES),
+)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
   ) {}
@@ -55,6 +63,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => WorkspaceMember)
+  @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: Workspace,
     @Args('workspaceMemberId') workspaceMemberId: string,
@@ -109,8 +118,6 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
   ): Promise<RoleDTO> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-
     return await this.roleService.createRole({
       workspaceId: workspace.id,
       input: createRoleInput,
@@ -122,8 +129,6 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
   ): Promise<RoleDTO> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-
     const role = await this.roleService.updateRole({
       input: updateRoleInput,
       workspaceId: workspace.id,
@@ -137,8 +142,6 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('roleId') roleId: string,
   ): Promise<string> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-
     const deletedRoleId = await this.roleService.deleteRole(
       roleId,
       workspace.id,
@@ -153,8 +156,6 @@ export class RoleResolver {
     @Args('upsertObjectPermissionsInput')
     upsertObjectPermissionsInput: UpsertObjectPermissionsInput,
   ): Promise<ObjectPermissionDTO[]> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-
     return this.objectPermissionService.upsertObjectPermissions({
       workspaceId: workspace.id,
       input: upsertObjectPermissionsInput,
@@ -167,8 +168,6 @@ export class RoleResolver {
     @Args('upsertSettingPermissionsInput')
     upsertSettingPermissionsInput: UpsertSettingPermissionsInput,
   ): Promise<SettingPermissionDTO[]> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-
     return this.settingPermissionService.upsertSettingPermissions({
       workspaceId: workspace.id,
       input: upsertSettingPermissionsInput,
@@ -180,24 +179,12 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.userRoleService.getWorkspaceMembersAssignedToRole(
-      role.id,
-      workspace.id,
-    );
-  }
-
-  private async validatePermissionsV2EnabledOrThrow(workspace: Workspace) {
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+    const workspaceMembers =
+      await this.userRoleService.getWorkspaceMembersAssignedToRole(
+        role.id,
         workspace.id,
       );
 
-    if (!isPermissionsV2Enabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
-        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
-      );
-    }
+    return workspaceMembers;
   }
 }

@@ -3,7 +3,7 @@ import { createState } from 'twenty-ui/utilities';
 
 export type CurrentWorkspaceMember = Omit<
   WorkspaceMember,
-  'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename' | 'agentId'
+  'createdAt' | 'updatedAt' | 'userId' | '__typename' | 'userEmail' | 'agentId'
 >;
 
 export const currentWorkspaceMemberState =

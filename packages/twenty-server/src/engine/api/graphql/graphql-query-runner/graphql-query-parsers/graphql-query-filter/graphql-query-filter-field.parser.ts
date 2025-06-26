@@ -10,21 +10,16 @@ import {
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
-  private fieldMetadataMapByName: FieldMetadataMap;
-  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
+  private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
 
-  constructor(
-    fieldMetadataMapByName: FieldMetadataMap,
-    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
-  ) {
-    this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
+  constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
+    this.objectMetadataMapItem = objectMetadataMapItem;
   }
 
   public parse(
@@ -35,9 +30,12 @@ export class GraphqlQueryFilterFieldParser {
     filterValue: any,
     isFirst = false,
   ): void {
+    const fieldMetadataId =
+      this.objectMetadataMapItem.fieldIdByName[`${key}`] ||
+      this.objectMetadataMapItem.fieldIdByJoinColumnName[`${key}`];
+
     const fieldMetadata =
-      this.fieldMetadataMapByName[`${key}`] ||
-      this.fieldMetadataMapByJoinColumnName[`${key}`];
+      this.objectMetadataMapItem.fieldsById[fieldMetadataId];
 
     if (!fieldMetadata) {
       throw new Error(`Field metadata not found for field: ${key}`);
@@ -64,12 +62,12 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    const { sql, params } = computeWhereConditionParts(
+    const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
       key,
       value,
-    );
+    });
 
     if (isFirst) {
       queryBuilder.where(sql, params);
@@ -124,12 +122,12 @@ export class GraphqlQueryFilterFieldParser {
         );
       }
 
-      const { sql, params } = computeWhereConditionParts(
+      const { sql, params } = computeWhereConditionParts({
         operator,
         objectNameSingular,
-        fullFieldName,
+        key: fullFieldName,
         value,
-      );
+      });
 
       if (isFirst && index === 0) {
         queryBuilder.where(sql, params);

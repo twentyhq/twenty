@@ -14,14 +14,13 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
-import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
-import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
+import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
@@ -30,6 +29,7 @@ import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverl
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
+import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
@@ -212,6 +212,7 @@ export class ConfigVariables {
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   ACCESS_TOKEN_SECRET: string;
@@ -224,6 +225,15 @@ export class ConfigVariables {
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TokensDuration,
+    description: 'Duration for which the workspace agnostic token is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
@@ -303,7 +313,8 @@ export class ConfigVariables {
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
   })
-  EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
+  @CastToUpperSnakeCase()
+  EMAIL_DRIVER: EmailDriver = EmailDriver.LOGGER;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
@@ -351,14 +362,15 @@ export class ConfigVariables {
     options: Object.values(StorageDriverType),
   })
   @IsOptional()
-  STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
+  @CastToUpperSnakeCase()
+  STORAGE_TYPE: StorageDriverType = StorageDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Local path for storage when using local storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.LOCAL)
   STORAGE_LOCAL_PATH = '.local-storage';
 
   @ConfigVariablesMetadata({
@@ -366,7 +378,7 @@ export class ConfigVariables {
     description: 'S3 region for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsAWSRegion()
   STORAGE_S3_REGION: AwsRegion;
 
@@ -375,7 +387,7 @@ export class ConfigVariables {
     description: 'S3 bucket name for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   STORAGE_S3_NAME: string;
 
   @ConfigVariablesMetadata({
@@ -383,7 +395,7 @@ export class ConfigVariables {
     description: 'S3 endpoint for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
@@ -394,7 +406,7 @@ export class ConfigVariables {
       'S3 access key ID for authentication when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_ACCESS_KEY_ID: string;
 
@@ -405,7 +417,7 @@ export class ConfigVariables {
       'S3 secret access key for authentication when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
@@ -414,9 +426,11 @@ export class ConfigVariables {
     description: 'Type of serverless execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ServerlessDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
-  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
+  @CastToUpperSnakeCase()
+  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
@@ -440,7 +454,7 @@ export class ConfigVariables {
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsAWSRegion()
   SERVERLESS_LAMBDA_REGION: AwsRegion;
 
@@ -449,7 +463,7 @@ export class ConfigVariables {
     description: 'IAM role for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   SERVERLESS_LAMBDA_ROLE: string;
 
   @ConfigVariablesMetadata({
@@ -457,7 +471,7 @@ export class ConfigVariables {
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
@@ -467,7 +481,7 @@ export class ConfigVariables {
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
 
@@ -477,7 +491,7 @@ export class ConfigVariables {
     description: 'Secret access key for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
@@ -604,6 +618,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -627,6 +642,14 @@ export class ConfigVariables {
   CHROME_EXTENSION_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Page ID for Cal.com booking integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,
@@ -639,16 +662,19 @@ export class ConfigVariables {
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
+    isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
-    ExceptionHandlerDriver.Console;
+    ExceptionHandlerDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Levels of logging to be captured',
     type: ConfigVariableType.ARRAY,
-    options: ['log', 'error', 'warn', 'debug', 'verbose'],
+    options: ['log', 'error', 'warn', 'debug'],
+    isEnvOnly: true,
   })
   @CastToLogLevelArray()
   @IsOptional()
@@ -659,6 +685,7 @@ export class ConfigVariables {
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
+    isEnvOnly: true,
   })
   @CastToMeterDriverArray()
   @IsOptional()
@@ -668,6 +695,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.Metering,
     description: 'Endpoint URL for the OpenTelemetry collector',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   OTLP_COLLECTOR_ENDPOINT_URL: string;
@@ -677,9 +705,11 @@ export class ConfigVariables {
     description: 'Driver used for logging (only console for now)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
-  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
+  @CastToUpperSnakeCase()
+  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
@@ -688,7 +718,7 @@ export class ConfigVariables {
     isSensitive: true,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   SENTRY_DSN: string;
 
@@ -699,7 +729,7 @@ export class ConfigVariables {
     isSensitive: true,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   SENTRY_FRONT_DSN: string;
   @ConfigVariablesMetadata({
@@ -708,7 +738,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
@@ -720,7 +750,8 @@ export class ConfigVariables {
     options: Object.values(SupportDriver),
   })
   @IsOptional()
-  SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
+  @CastToUpperSnakeCase()
+  SUPPORT_DRIVER: SupportDriver = SupportDriver.NONE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SupportChatConfig,
@@ -728,7 +759,7 @@ export class ConfigVariables {
     description: 'Chat ID for the support front integration',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
   SUPPORT_FRONT_CHAT_ID: string;
 
   @ConfigVariablesMetadata({
@@ -737,7 +768,7 @@ export class ConfigVariables {
     description: 'HMAC key for the support front integration',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
   SUPPORT_FRONT_HMAC_KEY: string;
 
   @ConfigVariablesMetadata({
@@ -841,13 +872,16 @@ export class ConfigVariables {
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
     options: Object.values(NodeEnvironment),
+    isEnvOnly: true,
   })
-  NODE_ENV: NodeEnvironment = NodeEnvironment.production;
+  // @CastToUpperSnakeCase()
+  NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Port for the node server',
     type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -857,6 +891,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Base URL for the server',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -901,6 +936,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SSL,
     description: 'Path to the SSL key for enabling HTTPS in local development',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   SSL_KEY_PATH: string;
@@ -910,6 +946,7 @@ export class ConfigVariables {
     description:
       'Path to the SSL certificate for enabling HTTPS in local development',
     type: ConfigVariableType.STRING,
+    isEnvOnly: true,
   })
   @IsOptional()
   SSL_CERT_PATH: string;
@@ -942,11 +979,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Driver for the LLM chat model',
+    description: 'Driver for the AI chat model',
     type: ConfigVariableType.ENUM,
-    options: Object.values(LLMChatModelDriver),
+    options: Object.values(AiDriver),
+    isEnvOnly: true,
   })
-  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+  @CastToUpperSnakeCase()
+  AI_DRIVER: AiDriver;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -959,30 +998,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'Secret key for Langfuse integration',
+    description: 'API key for Anthropic integration',
     type: ConfigVariableType.STRING,
   })
-  LANGFUSE_SECRET_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Public key for Langfuse integration',
-    type: ConfigVariableType.STRING,
-  })
-  LANGFUSE_PUBLIC_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Driver for LLM tracing',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(LLMTracingDriver),
-  })
-  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
+  ANTHROPIC_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
   })
   @IsOptional()
   IS_MULTIWORKSPACE_ENABLED = false;
@@ -1036,7 +1061,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,
@@ -1051,8 +1076,10 @@ export class ConfigVariables {
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
+    isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   CAPTCHA_DRIVER?: CaptchaDriverType;
 
   @ConfigVariablesMetadata({

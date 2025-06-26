@@ -11,7 +11,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -19,10 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import {
-  FeatureFlagKey,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
@@ -68,15 +64,11 @@ export const SettingsDomain = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const isCustomDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCustomDomainEnabled,
-  );
-
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   const form = useForm<{
     subdomain: string;
@@ -149,6 +141,7 @@ export const SettingsDomain = () => {
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
         ) {
+          closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
           return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
@@ -211,45 +204,47 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSave)}>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...form}>
-        <SubMenuTopBarContainer
-          title={t`Domain`}
-          links={[
-            {
-              children: <Trans>Workspace</Trans>,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            {
-              children: <Trans>General</Trans>,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            { children: <Trans>Domain</Trans> },
-          ]}
-          actionButton={
-            <SaveAndCancelButtons
-              onCancel={() => navigate(SettingsPath.Workspace)}
-              isSaveDisabled={form.formState.isSubmitting}
-            />
-          }
-        >
-          <SettingsPageContainer>
-            <SettingsSubdomain />
-            {isCustomDomainEnabled && <SettingsCustomDomain />}
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
-        <ConfirmationModal
-          modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
-          title={t`Change subdomain?`}
-          subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
-          onConfirmClick={() => {
-            const values = form.getValues();
-            currentWorkspace &&
-              updateSubdomain(values.subdomain, currentWorkspace);
-          }}
-        />
-      </FormProvider>
-    </form>
+    <>
+      <form onSubmit={form.handleSubmit(handleSave)}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>
+          <SubMenuTopBarContainer
+            title={t`Domain`}
+            links={[
+              {
+                children: <Trans>Workspace</Trans>,
+                href: getSettingsPath(SettingsPath.Workspace),
+              },
+              {
+                children: <Trans>General</Trans>,
+                href: getSettingsPath(SettingsPath.Workspace),
+              },
+              { children: <Trans>Domain</Trans> },
+            ]}
+            actionButton={
+              <SaveAndCancelButtons
+                onCancel={() => navigate(SettingsPath.Workspace)}
+                isSaveDisabled={form.formState.isSubmitting}
+              />
+            }
+          >
+            <SettingsPageContainer>
+              <SettingsSubdomain />
+              <SettingsCustomDomain />
+            </SettingsPageContainer>
+          </SubMenuTopBarContainer>
+        </FormProvider>
+      </form>
+      <ConfirmationModal
+        modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+        title={t`Change subdomain?`}
+        subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
+        onConfirmClick={() => {
+          const values = form.getValues();
+          currentWorkspace &&
+            updateSubdomain(values.subdomain, currentWorkspace);
+        }}
+      />
+    </>
   );
 };

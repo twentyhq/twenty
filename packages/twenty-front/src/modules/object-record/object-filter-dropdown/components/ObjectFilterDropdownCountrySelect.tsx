@@ -5,9 +5,11 @@ import { getCountryFlagMenuItemAvatar } from '@/object-record/object-filter-drop
 import { turnCountryIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCountryIntoSelectableItem';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -18,13 +20,7 @@ import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 5;
 
-type ObjectFilterDropdownCountrySelectProps = {
-  dropdownWidth?: number;
-};
-
-export const ObjectFilterDropdownCountrySelect = ({
-  dropdownWidth,
-}: ObjectFilterDropdownCountrySelectProps) => {
+export const ObjectFilterDropdownCountrySelect = () => {
   const [searchText, setSearchText] = useState('');
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
@@ -101,7 +97,7 @@ export const ObjectFilterDropdownCountrySelect = ({
   const { t } = useLingui();
 
   return (
-    <>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -112,7 +108,7 @@ export const ObjectFilterDropdownCountrySelect = ({
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width={dropdownWidth ?? 200}>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
@@ -141,6 +137,6 @@ export const ObjectFilterDropdownCountrySelect = ({
         })}
         {showNoResult && <MenuItem text={t`No results`} />}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

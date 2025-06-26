@@ -4,13 +4,13 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
+import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
-  const setFocusPosition = useSetRecordTableFocusPosition(recordTableId);
+  const { focusRecordTableCell } = useFocusRecordTableCell(recordTableId);
 
   const focusPositionState = useRecoilComponentCallbackStateV2(
     recordTableFocusPositionComponentState,
@@ -33,12 +33,12 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
           newRowIndex = 0;
         }
 
-        setFocusPosition({
+        focusRecordTableCell({
           ...focusPosition,
           row: newRowIndex,
         });
       },
-    [focusPositionState, setFocusPosition],
+    [focusPositionState, focusRecordTableCell],
   );
 
   const moveDown = useRecoilCallback(
@@ -56,12 +56,12 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
           newRowIndex = allRecordIds.length - 1;
         }
 
-        setFocusPosition({
+        focusRecordTableCell({
           ...focusPosition,
           row: newRowIndex,
         });
       },
-    [recordIndexAllRecordIdsSelector, setFocusPosition, focusPositionState],
+    [recordIndexAllRecordIdsSelector, focusRecordTableCell, focusPositionState],
   );
 
   const numberOfTableColumnsSelector = useRecoilComponentCallbackStateV2(
@@ -101,12 +101,12 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
         }
 
         if (isNotLastColumn) {
-          setFocusPosition({
+          focusRecordTableCell({
             row: currentRowIndex,
             column: currentColumnIndex + 1,
           });
         } else if (isLastColumnButNotLastRow) {
-          setFocusPosition({
+          focusRecordTableCell({
             row: currentRowIndex + 1,
             column: 0,
           });
@@ -116,7 +116,7 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
       recordIndexAllRecordIdsSelector,
       focusPositionState,
       numberOfTableColumnsSelector,
-      setFocusPosition,
+      focusRecordTableCell,
     ],
   );
 
@@ -146,18 +146,18 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
         }
 
         if (isNotFirstColumn) {
-          setFocusPosition({
+          focusRecordTableCell({
             row: currentRowIndex,
             column: currentColumnIndex - 1,
           });
         } else if (isFirstColumnButNotFirstRow) {
-          setFocusPosition({
+          focusRecordTableCell({
             row: currentRowIndex - 1,
             column: numberOfTableColumns - 1,
           });
         }
       },
-    [numberOfTableColumnsSelector, focusPositionState, setFocusPosition],
+    [numberOfTableColumnsSelector, focusPositionState, focusRecordTableCell],
   );
 
   const moveFocus = (direction: MoveFocusDirection) => {
@@ -182,7 +182,6 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
     moveLeft,
     moveRight,
     moveUp,
-    setFocusPosition,
     moveFocus,
   };
 };

@@ -68,6 +68,7 @@ export const RecordBoardCardBody = ({
               },
               useUpdateRecord: useUpdateOneRecordHook,
               isDisplayModeFixHeight: true,
+              triggerEvent: 'CLICK',
             }}
           >
             <RecordFieldComponentInstanceContext.Provider

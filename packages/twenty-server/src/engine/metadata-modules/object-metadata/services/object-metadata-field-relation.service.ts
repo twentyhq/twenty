@@ -13,7 +13,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
@@ -33,41 +35,59 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 @Injectable()
 export class ObjectMetadataFieldRelationService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
   public async createRelationsAndForeignKeysMetadata(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'id' | 'nameSingular' | 'labelSingular'
+    >,
+    objectMetadataMaps: ObjectMetadataMaps,
   ) {
     const relatedObjectMetadataCollection = await Promise.all(
       DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
         async (relationObjectMetadataStandardId) =>
-          this.createRelationAndForeignKeyMetadata(
+          this.createRelationAndForeignKeyMetadata({
             workspaceId,
             sourceObjectMetadata,
             relationObjectMetadataStandardId,
-          ),
+            objectMetadataMaps,
+          }),
       ),
     );
 
     return relatedObjectMetadataCollection;
   }
 
-  private async createRelationAndForeignKeyMetadata(
-    workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
-    relationObjectMetadataStandardId: string,
-  ) {
-    const targetObjectMetadata =
-      await this.objectMetadataRepository.findOneByOrFail({
-        standardId: relationObjectMetadataStandardId,
-        workspaceId: workspaceId,
-        isCustom: false,
-      });
+  private async createRelationAndForeignKeyMetadata({
+    workspaceId,
+    sourceObjectMetadata,
+    relationObjectMetadataStandardId,
+    objectMetadataMaps,
+  }: {
+    workspaceId: string;
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'id' | 'nameSingular' | 'labelSingular'
+    >;
+    objectMetadataMaps: ObjectMetadataMaps;
+    relationObjectMetadataStandardId: string;
+  }) {
+    const targetObjectMetadata = Object.values(objectMetadataMaps.byId).find(
+      (objectMetadata) =>
+        objectMetadata.standardId === relationObjectMetadataStandardId,
+    );
+
+    if (!targetObjectMetadata) {
+      throw new Error(
+        `Target object metadata not found for standard ID: ${relationObjectMetadataStandardId}`,
+      );
+    }
 
     await this.createFieldMetadataRelation(
       workspaceId,
@@ -80,8 +100,11 @@ export class ObjectMetadataFieldRelationService {
 
   private async createFieldMetadataRelation(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'id' | 'nameSingular' | 'labelSingular'
+    >,
+    targetObjectMetadata: ObjectMetadataItemWithFieldMaps,
   ): Promise<FieldMetadataEntity<FieldMetadataType.RELATION>[]> {
     const sourceFieldMetadata = this.createSourceFieldMetadata(
       workspaceId,
@@ -119,7 +142,10 @@ export class ObjectMetadataFieldRelationService {
 
   public async updateRelationsAndForeignKeysMetadata(
     workspaceId: string,
-    updatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id' | 'labelSingular'
+    >,
   ): Promise<
     {
       targetObjectMetadata: ObjectMetadataEntity;
@@ -141,7 +167,10 @@ export class ObjectMetadataFieldRelationService {
 
   private async updateRelationAndForeignKeyMetadata(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'id' | 'isCustom' | 'labelSingular'
+    >,
     targetObjectMetadataStandardId: string,
   ) {
     const targetObjectMetadata =
@@ -226,8 +255,14 @@ export class ObjectMetadataFieldRelationService {
 
   private createSourceFieldMetadata(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'labelSingular' | 'id'
+    >,
+    targetObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'namePlural' | 'labelSingular'
+    >,
   ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
     const relationObjectMetadataNamePlural = targetObjectMetadata.namePlural;
 
@@ -261,8 +296,8 @@ export class ObjectMetadataFieldRelationService {
   }
 
   private updateSourceFieldMetadata(
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<ObjectMetadataEntity, 'labelSingular'>,
+    targetObjectMetadata: Pick<ObjectMetadataEntity, 'namePlural'>,
   ) {
     const relationObjectMetadataNamePlural = targetObjectMetadata.namePlural;
 
@@ -280,8 +315,14 @@ export class ObjectMetadataFieldRelationService {
 
   private createTargetFieldMetadata(
     workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'labelSingular' | 'id' | 'nameSingular'
+    >,
+    targetObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'namePlural' | 'labelSingular' | 'id' | 'nameSingular'
+    >,
   ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
     const customStandardFieldId =
       // @ts-expect-error legacy noImplicitAny
@@ -319,8 +360,14 @@ export class ObjectMetadataFieldRelationService {
   }
 
   private updateTargetFieldMetadata(
-    sourceObjectMetadata: ObjectMetadataEntity,
-    targetObjectMetadata: ObjectMetadataEntity,
+    sourceObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'labelSingular'
+    >,
+    targetObjectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'namePlural'
+    >,
   ) {
     const customStandardFieldId =
       // @ts-expect-error legacy noImplicitAny

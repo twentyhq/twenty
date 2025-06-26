@@ -6,62 +6,11 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('deleteOneObjectRecordsPermissions', () => {
-  describe('permissions V2 disabled', () => {
-    const personId = randomUUID();
-
-    beforeAll(async () => {
-      const createOnePersonRecordOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        data: {
-          id: personId,
-        },
-      });
-
-      await makeGraphqlAPIRequest(createOnePersonRecordOperation);
-    });
-
-    it('should throw a permission error when user does not have permission (guest role)', async () => {
-      const personId = randomUUID();
-      const graphqlOperation = deleteOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: personId,
-      });
-
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
-
-      expect(response.body.data).toStrictEqual({ deletePerson: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-      );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-    });
-
-    it('should delete an object record when user has permission (admin role)', async () => {
-      const deleteGraphqlOperation = deleteOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: personId,
-      });
-
-      const response = await makeGraphqlAPIRequest(deleteGraphqlOperation);
-
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.deletePerson).toBeDefined();
-      expect(response.body.data.deletePerson.id).toBe(personId);
-    });
-  });
-
   describe('permissions V2 enabled', () => {
     const personId = randomUUID();
 
@@ -75,24 +24,6 @@ describe('deleteOneObjectRecordsPermissions', () => {
       });
 
       await makeGraphqlAPIRequest(createOnePersonRecordOperation);
-
-      const enablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
-        true,
-      );
-
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
-    });
-
-    afterAll(async () => {
-      const disablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
-        false,
-      );
-
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {

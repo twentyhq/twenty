@@ -2,13 +2,14 @@ import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
+import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -16,7 +17,9 @@ import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -30,20 +33,24 @@ export const useCommandMenu = () => {
           set(isCommandMenuClosingState, true);
           set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
-          goBackToPreviousHotkeyScope(COMMAND_MENU_COMPONENT_INSTANCE_ID);
+          removeFocusItemFromFocusStackById({
+            focusId: SIDE_PANEL_FOCUS_ID,
+          });
         }
       },
-    [closeAnyOpenDropdown, goBackToPreviousHotkeyScope],
+    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById],
   );
 
   const openCommandMenu = useCallback(() => {
+    emitSidePanelOpenEvent();
+    closeAnyOpenDropdown();
     navigateCommandMenu({
       page: CommandMenuPages.Root,
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });
-  }, [navigateCommandMenu]);
+  }, [closeAnyOpenDropdown, navigateCommandMenu]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>

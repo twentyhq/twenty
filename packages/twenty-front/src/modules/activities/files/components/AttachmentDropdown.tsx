@@ -1,5 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconDotsVertical,
@@ -48,28 +50,28 @@ export const AttachmentDropdown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text="Download"
-            LeftIcon={IconDownload}
-            onClick={handleDownload}
-          />
-          <MenuItem
-            text="Rename"
-            LeftIcon={IconPencil}
-            onClick={handleRename}
-          />
-          <MenuItem
-            text="Delete"
-            accent="danger"
-            LeftIcon={IconTrash}
-            onClick={handleDelete}
-          />
-        </DropdownMenuItemsContainer>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text="Download"
+              LeftIcon={IconDownload}
+              onClick={handleDownload}
+            />
+            <MenuItem
+              text="Rename"
+              LeftIcon={IconPencil}
+              onClick={handleRename}
+            />
+            <MenuItem
+              text="Delete"
+              accent="danger"
+              LeftIcon={IconTrash}
+              onClick={handleDelete}
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
     />
   );
 };

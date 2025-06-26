@@ -2,15 +2,17 @@ import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,19 +23,21 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 type MultiSelectInputProps = {
   selectableListComponentInstanceId: string;
   values: FieldMultiSelectValue;
-  hotkeyScope: string;
+  focusId: string;
   onCancel?: () => void;
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
+  dropdownWidth?: number;
 };
 
 export const MultiSelectInput = ({
   selectableListComponentInstanceId,
   values,
   options,
-  hotkeyScope,
+  focusId,
   onCancel,
   onOptionSelected,
+  dropdownWidth,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -67,15 +71,16 @@ export const MultiSelectInput = ({
     }
   };
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: () => {
       onCancel?.();
       resetSelectedItem();
     },
-    hotkeyScope,
-    [onCancel, resetSelectedItem],
-  );
+    focusId,
+    scope: DEFAULT_CELL_SCOPE.scope,
+    dependencies: [onCancel, resetSelectedItem],
+  });
 
   useListenClickOutside({
     refs: [containerRef],
@@ -100,9 +105,14 @@ export const MultiSelectInput = ({
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
-      hotkeyScope={hotkeyScope}
+      focusId={focusId}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     >
-      <DropdownMenu data-select-disable ref={containerRef}>
+      <DropdownContent
+        ref={containerRef}
+        selectDisabled
+        widthInPixels={dropdownWidth}
+      >
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) =>
@@ -116,21 +126,29 @@ export const MultiSelectInput = ({
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.map((option) => {
             return (
-              <MenuItemMultiSelectTag
+              <SelectableListItem
                 key={option.value}
-                selected={values?.includes(option.value) || false}
-                text={option.label}
-                color={option.color ?? 'transparent'}
-                Icon={option.Icon ?? undefined}
-                onClick={() =>
-                  onOptionSelected(formatNewSelectedOptions(option.value))
-                }
-                isKeySelected={selectedItemId === option.value}
-              />
+                itemId={option.value}
+                onEnter={() => {
+                  onOptionSelected(formatNewSelectedOptions(option.value));
+                }}
+              >
+                <MenuItemMultiSelectTag
+                  key={option.value}
+                  selected={values?.includes(option.value) || false}
+                  text={option.label}
+                  color={option.color ?? 'transparent'}
+                  Icon={option.Icon ?? undefined}
+                  onClick={() =>
+                    onOptionSelected(formatNewSelectedOptions(option.value))
+                  }
+                  isKeySelected={selectedItemId === option.value}
+                />
+              </SelectableListItem>
             );
           })}
         </DropdownMenuItemsContainer>
-      </DropdownMenu>
+      </DropdownContent>
     </SelectableList>
   );
 };

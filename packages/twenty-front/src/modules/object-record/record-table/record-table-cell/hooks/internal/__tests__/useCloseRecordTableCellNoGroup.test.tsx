@@ -21,12 +21,6 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
-const setHotkeyScope = jest.fn();
-
-jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
-  useSetHotkeyScope: () => setHotkeyScope,
-}));
-
 const onColumnsChange = jest.fn();
 const recordTableId = 'scopeId';
 
@@ -95,6 +89,5 @@ describe('useCloseRecordTableCellNoGroup', () => {
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
     expect(result.current.currentTableCellInEditModePosition).toBe(null);
-    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus');
   });
 });

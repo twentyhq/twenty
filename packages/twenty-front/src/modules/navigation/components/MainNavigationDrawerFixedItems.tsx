@@ -10,7 +10,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useLingui } from '@lingui/react/macro';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   IconChartBar,
@@ -35,6 +35,8 @@ export const MainNavigationDrawerFixedItems = () => {
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
     navigationDrawerExpandedMemorizedState,
   );
+
+  const navigate = useNavigate();
 
   const { t } = useLingui();
   const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
@@ -71,6 +73,7 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSearch}
           onClick={openRecordsSearchPage}
           keyboard={['/']}
+          mouseUpNavigation={true}
         />
         <NavigationDrawerItem
           label={t`Settings`}
@@ -79,6 +82,7 @@ export const MainNavigationDrawerFixedItems = () => {
             setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
             setIsNavigationDrawerExpanded(true);
             setNavigationMemorizedUrl(location.pathname + location.search);
+            navigate(getSettingsPath(SettingsPath.ProfilePage));
           }}
           Icon={IconSettings}
         />

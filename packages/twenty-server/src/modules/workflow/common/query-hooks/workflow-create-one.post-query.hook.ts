@@ -17,10 +17,11 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook({
   key: `workflow.createOne`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowCreateOnePostQueryHook
   implements WorkspacePostQueryHookInstance
@@ -28,7 +29,7 @@ export class WorkflowCreateOnePostQueryHook
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
   ) {}
@@ -38,6 +39,10 @@ export class WorkflowCreateOnePostQueryHook
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const workflow = payload[0];
 
     const workflowVersionRepository =
@@ -51,7 +56,7 @@ export class WorkflowCreateOnePostQueryHook
         isCustom: false,
         nameSingular: 'workflowVersion',
       },
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
 
     const workflowVersionToCreate = await workflowVersionRepository.create({
@@ -66,7 +71,7 @@ export class WorkflowCreateOnePostQueryHook
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workflowVersion',
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
       },
     });
 
@@ -83,7 +88,7 @@ export class WorkflowCreateOnePostQueryHook
           },
         },
       ],
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 }

@@ -9,7 +9,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
@@ -23,6 +23,7 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
+import { DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -35,13 +36,13 @@ import { assertNever } from 'src/utils/assert';
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
@@ -62,17 +63,21 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId,
     payload,
     createdBy,
+    workflowRunId,
   }: {
     workflowVersionId: string;
     payload: object;
     createdBy: ActorMetadata;
+    workflowRunId?: string;
   }) {
-    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
+    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
       workflowVersionId,
-    );
+      workspaceId: this.getWorkspaceId(),
+    });
 
     return this.workflowRunnerWorkspaceService.run({
       workspaceId: this.getWorkspaceId(),
+      workflowRunId,
       workflowVersionId,
       payload,
       source: createdBy,
@@ -80,9 +85,12 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   async activateWorkflowVersion(workflowVersionId: string) {
+    const workspaceId = this.getWorkspaceId();
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        this.getWorkspaceId(),
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowVersionNullable = await workflowVersionRepository.findOne({
@@ -95,8 +103,10 @@ export class WorkflowTriggerWorkspaceService {
       );
 
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflow = await workflowRepository.findOne({
@@ -112,7 +122,10 @@ export class WorkflowTriggerWorkspaceService {
 
     assertVersionCanBeActivated(workflowVersion, workflow);
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: this.getWorkspaceId(),
+      });
     const queryRunner = workspaceDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -141,7 +154,10 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   async deactivateWorkflowVersion(workflowVersionId: string) {
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: this.getWorkspaceId(),
+      });
     const queryRunner = workspaceDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -149,8 +165,10 @@ export class WorkflowTriggerWorkspaceService {
 
     try {
       const workflowVersionRepository =
-        await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+          this.getWorkspaceId(),
           'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
       await this.performDeactivationSteps(
@@ -329,12 +347,13 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
-        const eventName = workflowVersion.trigger.settings.eventName;
+        const settings = workflowVersion.trigger
+          .settings as DatabaseEventTriggerSettings;
 
         await this.automatedTriggerWorkspaceService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.DATABASE_EVENT,
-          settings: { eventName },
+          settings,
           manager,
         });
 

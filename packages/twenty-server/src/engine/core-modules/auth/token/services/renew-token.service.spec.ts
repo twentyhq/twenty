@@ -3,11 +3,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 
 import { RenewTokenService } from './renew-token.service';
 
@@ -29,6 +31,12 @@ describe('RenewTokenService', () => {
           provide: AccessTokenService,
           useValue: {
             generateAccessToken: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceAgnosticTokenService,
+          useValue: {
+            generateWorkspaceAgnosticToken: jest.fn(),
           },
         },
         {
@@ -66,6 +74,7 @@ describe('RenewTokenService', () => {
       const mockNewRefreshToken = {
         token: 'new-refresh-token',
         expiresAt: new Date(),
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
       };
       const mockAppToken: Partial<AppToken> = {
         id: mockTokenId,
@@ -77,6 +86,8 @@ describe('RenewTokenService', () => {
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
         token: mockAppToken as AppToken,
+        authProvider: undefined,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest
@@ -100,14 +111,16 @@ describe('RenewTokenService', () => {
         { id: mockTokenId },
         { revokedAt: expect.any(Date) },
       );
-      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspaceId,
-      );
-      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspaceId,
-      );
+      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspaceId,
+      });
+      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith({
+        authProvider: undefined,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        userId: mockUser.id,
+        workspaceId: mockWorkspaceId,
+      });
     });
 
     it('should throw an error if refresh token is not provided', async () => {

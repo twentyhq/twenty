@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
@@ -122,7 +121,7 @@ export class StandardFieldFactory {
    * Create field metadata
    */
   private createFieldMetadata(
-    workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
+    _workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
     workspaceFieldMetadataArgs: WorkspaceFieldMetadataArgs,
     context: WorkspaceSyncContext,
   ): PartialFieldMetadata[] {
@@ -154,6 +153,7 @@ export class StandardFieldFactory {
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
+        isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
       },
     ];
   }
@@ -190,8 +190,10 @@ export class StandardFieldFactory {
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
       isNullable: true,
-      isUnique: workspaceRelationMetadataArgs.type === RelationType.ONE_TO_ONE,
+      isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
+      isLabelSyncedWithName:
+        workspaceRelationMetadataArgs.isLabelSyncedWithName,
     });
 
     return fieldMetadataCollection;

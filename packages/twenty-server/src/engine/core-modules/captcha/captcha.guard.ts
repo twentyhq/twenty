@@ -30,6 +30,7 @@ export class CaptchaGuard implements CanActivate {
       await this.metricsService.incrementCounter({
         key: MetricsKeys.InvalidCaptcha,
         eventId: token || '',
+        ...(result.error ? { attributes: { error: result.error } } : {}),
       });
 
       throw new BadRequestException(

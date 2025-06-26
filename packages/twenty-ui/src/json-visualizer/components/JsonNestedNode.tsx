@@ -25,12 +25,9 @@ const StyledLabelContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledElementsCount = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledElementsCount = styled.span<{ variant?: 'red' }>`
+  color: ${({ theme, variant }) =>
+    variant === 'red' ? theme.font.color.danger : theme.font.color.tertiary};
 `;
 
 const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
@@ -122,13 +119,25 @@ export const JsonNestedNode = ({
         <JsonArrow
           isOpen={isOpen}
           onClick={handleArrowClick}
-          variant={highlighting === 'partial-blue' ? 'blue' : undefined}
+          variant={
+            highlighting === 'partial-blue'
+              ? 'blue'
+              : highlighting === 'red'
+                ? highlighting
+                : undefined
+          }
         />
 
-        <JsonNodeLabel label={label} Icon={Icon} />
+        <JsonNodeLabel
+          label={label}
+          Icon={Icon}
+          highlighting={highlighting === 'red' ? highlighting : undefined}
+        />
 
         {renderElementsCount && (
-          <StyledElementsCount>
+          <StyledElementsCount
+            variant={highlighting === 'red' ? 'red' : undefined}
+          >
             {renderElementsCount(elements.length)}
           </StyledElementsCount>
         )}

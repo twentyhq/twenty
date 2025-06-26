@@ -4,7 +4,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 type BaseFieldMetadata = {
@@ -56,7 +56,12 @@ export type FieldDateMetadata = BaseFieldMetadata & {
   settings?: FieldDateMetadataSettings;
 };
 
-export type FieldNumberVariant = 'number' | 'percentage';
+export const FIELD_NUMBER_VARIANT = [
+  'number',
+  'percentage',
+  'shortNumber',
+] as const;
+export type FieldNumberVariant = (typeof FIELD_NUMBER_VARIANT)[number];
 
 export type FieldNumberMetadata = BaseFieldMetadata & {
   placeHolder: string;
@@ -79,7 +84,9 @@ export type FieldLinksMetadata = BaseFieldMetadata & {
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: null;
+  settings?: {
+    format: FieldCurrencyFormat | null;
+  };
 };
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
@@ -131,7 +138,8 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType?: RelationDefinitionType;
+  relationObjectMetadataId: string;
+  relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
   settings?: null;
@@ -205,6 +213,9 @@ export type FieldLinksValue = {
   primaryLinkUrl: string | null;
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
+
+export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
+export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;

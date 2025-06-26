@@ -1,13 +1,12 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,31 +38,24 @@ export const ViewBarRecordFilterEffect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    objectMetadataItem.id,
-  );
+  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
 
   useEffect(() => {
-    if (isDefined(currentView) && !hasInitializedCurrentRecordFilters) {
+    if (!hasInitializedCurrentRecordFilters && isDefined(currentView)) {
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
-      if (isDefined(currentView)) {
-        setCurrentRecordFilters(
-          mapViewFiltersToFilters(
-            currentView.viewFilters,
-            filterableFieldMetadataItems,
-          ),
-        );
+      setCurrentRecordFilters(
+        mapViewFiltersToRecordFilters(currentView.viewFilters),
+      );
 
-        setHasInitializedCurrentRecordFilters(true);
-      }
+      setHasInitializedCurrentRecordFilters(true);
     }
   }, [
     currentViewId,
     setCurrentRecordFilters,
-    filterableFieldMetadataItems,
+    mapViewFiltersToRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
     currentView,

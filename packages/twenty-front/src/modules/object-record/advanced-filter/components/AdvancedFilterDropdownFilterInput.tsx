@@ -16,11 +16,13 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 type AdvancedFilterDropdownFilterInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
   recordFilter: RecordFilter;
 };
 
@@ -30,7 +32,6 @@ export const AdvancedFilterDropdownFilterInput = ({
 }: AdvancedFilterDropdownFilterInputProps) => {
   const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
-    filterDropdownId,
   );
 
   const filterType = recordFilter.type;
@@ -52,28 +53,27 @@ export const AdvancedFilterDropdownFilterInput = ({
         <ObjectFilterDropdownDateInput />
       )}
       {filterType === 'RELATION' && (
-        <>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownRecordSelect recordFilterId={recordFilter.id} />
-        </>
+          <ObjectFilterDropdownRecordSelect
+            recordFilterId={recordFilter.id}
+            dropdownId={filterDropdownId}
+          />
+        </DropdownContent>
       )}
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
-          <>
-            <ObjectFilterDropdownSourceSelect />
-          </>
+          <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
         ) : (
-          <>
-            <ObjectFilterDropdownTextInput />
-          </>
+          <ObjectFilterDropdownTextInput />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-        <>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownOptionSelect />
-        </>
+          <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
+        </DropdownContent>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
       {filterType === 'CURRENCY' &&
@@ -82,9 +82,7 @@ export const AdvancedFilterDropdownFilterInput = ({
           'currencyCode',
           recordFilter.subFieldName,
         ) ? (
-          <>
-            <ObjectFilterDropdownCurrencySelect />
-          </>
+          <ObjectFilterDropdownCurrencySelect />
         ) : (
           <></>
         ))}

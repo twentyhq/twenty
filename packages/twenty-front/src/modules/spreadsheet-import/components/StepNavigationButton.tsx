@@ -1,45 +1,56 @@
 import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooter = styled(Modal.Footer)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   gap: ${({ theme }) => theme.spacing(2.5)};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(4)};
+  height: auto;
 `;
 
 type StepNavigationButtonProps = {
-  onClick: () => void;
-  title: string;
+  onContinue?: () => void;
+  continueTitle?: string;
+  isContinueDisabled?: boolean;
   isLoading?: boolean;
   onBack?: () => void;
+  backTitle?: string;
 };
 
 export const StepNavigationButton = ({
-  onClick,
-  title,
+  onContinue,
+  continueTitle = t`Continue`,
   isLoading,
   onBack,
+  backTitle = t`Back`,
+  isContinueDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooter>
       {!isUndefinedOrNull(onBack) && (
         <MainButton
           Icon={isLoading ? CircularProgressBar : undefined}
-          title="Back"
+          title={backTitle}
           onClick={!isLoading ? onBack : undefined}
           variant="secondary"
         />
       )}
-      <MainButton
-        Icon={isLoading ? CircularProgressBar : undefined}
-        title={title}
-        onClick={!isLoading ? onClick : undefined}
-        variant="primary"
-      />
+      {!isUndefinedOrNull(onContinue) && (
+        <MainButton
+          Icon={isLoading ? CircularProgressBar : undefined}
+          title={continueTitle}
+          onClick={!isLoading ? onContinue : undefined}
+          variant="primary"
+          disabled={isContinueDisabled}
+        />
+      )}
     </StyledFooter>
   );
 };

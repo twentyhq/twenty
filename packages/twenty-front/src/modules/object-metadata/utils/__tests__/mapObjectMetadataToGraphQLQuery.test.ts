@@ -30,6 +30,15 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
         avatarUrl: true,
         companyId: true,
       },
+      objectPermissionsByObjectMetadataId: {
+        [personObjectMetadataItem.id]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          objectMetadataId: personObjectMetadataItem.id,
+        },
+      },
     });
     expect(normalizeGQLQuery(res)).toEqual(
       normalizeGQLQuery(`{
@@ -124,6 +133,15 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: { company: { id: true }, id: true, name: true },
+      objectPermissionsByObjectMetadataId: {
+        [personObjectMetadataItem.id]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          objectMetadataId: personObjectMetadataItem.id,
+        },
+      },
     });
     expect(normalizeGQLQuery(res)).toEqual(
       normalizeGQLQuery(`{

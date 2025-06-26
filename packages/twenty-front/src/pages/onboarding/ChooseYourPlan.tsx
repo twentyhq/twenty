@@ -26,6 +26,7 @@ import {
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
 
+import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
 import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
 import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
@@ -87,6 +88,14 @@ export const ChooseYourPlan = () => {
 
   const onboardingPlanStep = useRecoilValue(onboardingPlanStepState);
 
+  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
+    verifyEmailNextPathState,
+  );
+
+  // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+  if (isDefined(verifyEmailNextPath)) {
+    setVerifyEmailNextPath(undefined);
+  }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
   const { billingPaymentProvidersMap } = useBillingPaymentProvidersMap();

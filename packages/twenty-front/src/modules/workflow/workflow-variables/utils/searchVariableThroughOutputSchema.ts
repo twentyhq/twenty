@@ -45,27 +45,42 @@ const searchCurrentStepOutputSchema = ({
   let nextKeyIndex = 0;
   let nextKey = path[nextKeyIndex];
   let variablePathLabel = stepOutputSchema.name;
+  let isSelectedFieldInNextKey = false;
+
+  const handleFieldNotFound = () => {
+    if (nextKeyIndex + 1 < path.length) {
+      // If the key is not found in the step, we handle the case where the path has been wrongly split
+      // For example, if there is a dot in the field name
+      nextKey = `${nextKey}.${path[nextKeyIndex + 1]}`;
+    } else {
+      // If we already reached the end of the path, we add the selected field to the next key
+      nextKey = `${nextKey}.${selectedField}`;
+      isSelectedFieldInNextKey = true;
+    }
+  };
 
   while (nextKeyIndex < path.length) {
     if (!isDefined(currentSubStep)) {
       break;
-    } else if (isRecordOutputSchema(currentSubStep)) {
+    }
+
+    if (isRecordOutputSchema(currentSubStep)) {
       const currentField = currentSubStep.fields[nextKey];
-      currentSubStep = currentField?.value;
-      nextKey = path[nextKeyIndex + 1];
-      variablePathLabel = `${variablePathLabel} > ${currentField?.label}`;
+      if (isDefined(currentField)) {
+        currentSubStep = currentField.value;
+        nextKey = path[nextKeyIndex + 1];
+        variablePathLabel = `${variablePathLabel} > ${currentField.label}`;
+      } else {
+        handleFieldNotFound();
+      }
     } else if (isBaseOutputSchema(currentSubStep)) {
       if (isDefined(currentSubStep[nextKey])) {
         const currentField = currentSubStep[nextKey];
-        currentSubStep = currentField?.value;
+        currentSubStep = currentField.value;
         nextKey = path[nextKeyIndex + 1];
-        variablePathLabel = `${variablePathLabel} > ${currentField?.label}`;
+        variablePathLabel = `${variablePathLabel} > ${currentField.label}`;
       } else {
-        // If the key is not found in the step, we handle the case where the path has been wrongly split
-        // For example, if there is a dot in the field name
-        if (nextKeyIndex + 1 < path.length) {
-          nextKey = `${nextKey}.${path[nextKeyIndex + 1]}`;
-        }
+        handleFieldNotFound();
       }
     }
     nextKeyIndex++;
@@ -79,9 +94,13 @@ const searchCurrentStepOutputSchema = ({
   }
 
   return {
-    variableLabel: isFullRecord
-      ? getDisplayedSubStepObjectLabel(currentSubStep)
-      : getDisplayedSubStepFieldLabel(selectedField, currentSubStep),
+    variableLabel:
+      isFullRecord && isRecordOutputSchema(currentSubStep)
+        ? getDisplayedSubStepObjectLabel(currentSubStep)
+        : getDisplayedSubStepFieldLabel(
+            isSelectedFieldInNextKey ? nextKey : selectedField,
+            currentSubStep,
+          ),
     variablePathLabel,
   };
 };

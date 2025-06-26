@@ -18,14 +18,16 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
-@Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
+@Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
   'nameSingular',
   'workspaceId',
 ])
-@Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
+@Unique('IDX_OBJECT_METADATA_NAME_PLURAL_WORKSPACE_ID_UNIQUE', [
+  'namePlural',
+  'workspaceId',
+])
 export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -105,24 +107,6 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     cascade: true,
   })
   indexMetadatas: Relation<IndexMetadataEntity[]>;
-
-  @OneToMany(
-    () => RelationMetadataEntity,
-    (relation: RelationMetadataEntity) => relation.fromObjectMetadata,
-    {
-      cascade: true,
-    },
-  )
-  fromRelations: Relation<RelationMetadataEntity[]>;
-
-  @OneToMany(
-    () => RelationMetadataEntity,
-    (relation: RelationMetadataEntity) => relation.toObjectMetadata,
-    {
-      cascade: true,
-    },
-  )
-  toRelations: Relation<RelationMetadataEntity[]>;
 
   @OneToMany(
     () => FieldMetadataEntity,

@@ -25,7 +25,6 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import {
@@ -33,6 +32,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -85,21 +85,19 @@ export class WorkspaceInvitationService {
     }
   }
 
-  async findInvitationByWorkspaceSubdomainAndUserEmail({
-    subdomain,
-    email,
-  }: {
-    subdomain: string;
-    email: string;
-  }) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
-        subdomain,
-      );
-
-    if (!workspace) return;
-
-    return await this.getOneWorkspaceInvitation(workspace.id, email);
+  async findInvitationsByEmail(email: string) {
+    return await this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .innerJoinAndSelect('appToken.workspace', 'workspace')
+      .where('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
+      })
+      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('appToken.deletedAt IS NULL')
+      .andWhere('appToken.expiresAt > :now', {
+        now: new Date(),
+      })
+      .getMany();
   }
 
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
@@ -213,7 +211,7 @@ export class WorkspaceInvitationService {
   async resendWorkspaceInvitation(
     appTokenId: string,
     workspace: Workspace,
-    sender: User,
+    sender: WorkspaceMemberWorkspaceEntity,
   ) {
     const appToken = await this.appTokenRepository.findOne({
       where: {
@@ -238,7 +236,7 @@ export class WorkspaceInvitationService {
   async sendInvitations(
     emails: string[],
     workspace: Workspace,
-    sender: User,
+    sender: WorkspaceMemberWorkspaceEntity,
     usePersonalInvitation = true,
   ): Promise<SendInvitationsOutput> {
     if (!workspace?.inviteHash) {
@@ -291,14 +289,13 @@ export class WorkspaceInvitationService {
             : {},
         });
 
-        // Todo: sender name and locale should come from workspace member not user!
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
           sender: {
-            email: sender.email,
-            firstName: sender.firstName,
-            lastName: sender.lastName,
+            email: sender.userEmail,
+            firstName: sender.name.firstName,
+            lastName: sender.name.lastName,
           },
           serverUrl: this.twentyConfigService.get('SERVER_URL'),
           locale: sender.locale as keyof typeof APP_LOCALES,
@@ -313,7 +310,7 @@ export class WorkspaceInvitationService {
         i18n.activate(sender.locale);
 
         await this.emailService.send({
-          from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
           subject: t`Join your team on Twenty`,
           text,
@@ -325,6 +322,11 @@ export class WorkspaceInvitationService {
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,
       value: false,
+    });
+
+    await this.onboardingService.setOnboardingBookOnboardingPending({
+      workspaceId: workspace.id,
+      value: true,
     });
 
     const result = invitationsPr.reduce<{

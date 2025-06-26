@@ -1,15 +1,16 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { useRecoilValue } from 'recoil';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Icon123,
@@ -26,7 +27,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     onContentChange,
     resetContent,
     previousContentId,
-  } = useDropdown({
+  } = useDropdownContextStateManagement({
     context: RecordBoardColumnHeaderAggregateDropdownContext,
   });
 
@@ -48,7 +49,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   if (!isDefined(aggregateOperation)) return <></>;
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -94,6 +95,6 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
           );
         })}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

@@ -10,16 +10,17 @@
     "command:prod": "node dist/src/command/command",
     "worker:prod": "node dist/src/queue-worker/queue-worker",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
-    "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
+    "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "clickhouse:migrate:prod": "node dist/src/database/clickHouse/migrations/run-migrations.js",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.12",
+    "@ai-sdk/openai": "^1.3.22",
+    "@blocknote/server-util": "^0.31.1",
     "@clickhouse/client": "^1.11.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
-    "@langchain/mistralai": "^0.0.24",
-    "@langchain/openai": "^0.1.3",
     "@lingui/core": "^5.1.2",
     "@monaco-editor/react": "^4.6.0",
     "@nestjs/cache-manager": "^2.2.1",
@@ -28,11 +29,14 @@
     "@nestjs/schedule": "^3.0.0",
     "@node-saml/passport-saml": "^5.0.0",
     "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.60.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.200.0",
     "@opentelemetry/sdk-metrics": "^2.0.0",
+    "@opentelemetry/sdk-node": "^0.202.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "@revertdotdev/revert-react": "^0.0.21",
-    "@sentry/nestjs": "^8.30.0",
+    "@sentry/nestjs": "^8.55.0",
+    "ai": "^4.3.16",
     "cache-manager": "^5.4.0",
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
@@ -43,8 +47,6 @@
     "handlebars": "^4.7.8",
     "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
-    "langchain": "^0.2.6",
-    "langfuse-langchain": "^3.11.2",
     "lodash.differencewith": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "lodash.omitby": "^4.6.0",
@@ -65,6 +67,7 @@
     "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
     "@nestjs/cli": "10.3.0",
     "@nx/js": "18.3.3",
@@ -89,7 +92,7 @@
     "typescript": "5.3.3"
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }

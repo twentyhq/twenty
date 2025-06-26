@@ -3,10 +3,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-export const mockPersonObjectMetadata = (
+export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
 ): ObjectMetadataItemWithFieldMaps => ({
   id: '',
+  icon: 'Icon123',
   standardId: '',
   nameSingular: 'person',
   namePlural: 'people',
@@ -21,17 +22,19 @@ export const mockPersonObjectMetadata = (
   isAuditLogged: true,
   isSearchable: true,
   duplicateCriteria: duplicateCriteria,
-  fromRelations: [],
-  toRelations: [],
   labelIdentifierFieldMetadataId: '',
   imageIdentifierFieldMetadataId: '',
   workspaceId: '',
-  fields: [],
   indexMetadatas: [],
-  fieldsById: {},
-  fieldsByJoinColumnName: {},
-  fieldsByName: {
-    name: {
+  fieldIdByName: {
+    name: 'name-id',
+    emails: 'emails-id',
+    linkedinLink: 'linkedinLink-id',
+    jobTitle: 'jobTitle-id',
+  },
+  fieldIdByJoinColumnName: {},
+  fieldsById: {
+    'name-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.FULL_NAME,
@@ -46,8 +49,11 @@ export const mockPersonObjectMetadata = (
       isNullable: true,
       isUnique: false,
       workspaceId: '',
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
-    emails: {
+    'emails-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.EMAILS,
@@ -59,9 +65,13 @@ export const mockPersonObjectMetadata = (
       },
       description: 'Contact’s Emails',
       isCustom: false,
+      isNullable: true,
       workspaceId: '',
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
-    linkedinLink: {
+    'linkedinLink-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.LINKS,
@@ -77,8 +87,11 @@ export const mockPersonObjectMetadata = (
       isNullable: true,
       isUnique: false,
       workspaceId: '',
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
-    jobTitle: {
+    'jobTitle-id': {
       id: '',
       objectMetadataId: '',
       type: FieldMetadataType.TEXT,
@@ -90,6 +103,9 @@ export const mockPersonObjectMetadata = (
       isNullable: false,
       isUnique: false,
       workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   },
 });

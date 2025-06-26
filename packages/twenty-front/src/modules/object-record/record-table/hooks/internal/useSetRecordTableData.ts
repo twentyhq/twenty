@@ -4,31 +4,28 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentFamilyCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (
-    entityCount?: number,
-    currentRecordGroupId?: string,
-  ) => void;
 };
 
 export const useSetRecordTableData = ({
   recordTableId,
-  onEntityCountChange,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentFamilyCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordTableId,
     );
@@ -38,7 +35,7 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -48,24 +45,22 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const { setIsFocusActiveForCurrentPosition } =
-    useSetIsRecordTableFocusActive(recordTableId);
-
   const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
+
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends ObjectRecord>({
         records,
         currentRecordGroupId,
-        totalCount,
       }: {
         records: T[];
         currentRecordGroupId?: string;
-        totalCount?: number;
       }) => {
         for (const record of records) {
           // TODO: refactor with scoped state later
@@ -98,7 +93,8 @@ export const useSetRecordTableData = ({
         const recordIds = records.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          setIsFocusActiveForCurrentPosition(false);
+          unfocusRecordTableCell();
+          unfocusRecordTableRow();
           setRecordTableHoverPosition(null);
 
           if (hasUserSelectedAllRows) {
@@ -115,17 +111,15 @@ export const useSetRecordTableData = ({
           } else {
             set(recordIndexAllRecordIdsSelector, recordIds);
           }
-
-          onEntityCountChange(totalCount, currentRecordGroupId);
         }
       },
     [
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
-      setIsFocusActiveForCurrentPosition,
+      unfocusRecordTableCell,
+      unfocusRecordTableRow,
       setRecordTableHoverPosition,
-      onEntityCountChange,
       isRowSelectedFamilyState,
     ],
   );

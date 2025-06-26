@@ -34,7 +34,6 @@ export const AdvancedFilterFieldSelectDropdownButton = ({
             recordFilterId={recordFilterId}
           />
         }
-        dropdownHotkeyScope={{ scope: advancedFilterFieldSelectDropdownId }}
         dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
         dropdownPlacement="bottom-start"
       />

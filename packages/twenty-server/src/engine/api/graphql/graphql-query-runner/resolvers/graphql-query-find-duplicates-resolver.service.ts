@@ -21,10 +21,10 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
@@ -56,8 +56,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     }
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldsMaps?.fieldsByName,
-      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName,
+      objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 

@@ -7,7 +7,7 @@ import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconUserPin } from 'twenty-ui/display';
+import { H2Title, IconUserPin, useIcons } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
   Role,
@@ -51,7 +51,19 @@ export const SettingsRoleDefaultRole = ({
     });
   };
 
+  const { getIcon } = useIcons();
+
   if (!currentWorkspace || !defaultRole) {
+    return null;
+  }
+
+  const options = roles.map((role) => ({
+    label: role.label,
+    value: role.id,
+    Icon: getIcon(role.icon) ?? IconUserPin,
+  }));
+
+  if (options.length === 0) {
     return null;
   }
 
@@ -71,10 +83,7 @@ export const SettingsRoleDefaultRole = ({
             selectSizeVariant="small"
             withSearchInput
             dropdownId="default-role-select"
-            options={roles.map((role) => ({
-              label: role.label,
-              value: role.id,
-            }))}
+            options={options}
             value={defaultRole?.id ?? ''}
             onChange={(value) =>
               updateDefaultRole(value as string, currentWorkspace)

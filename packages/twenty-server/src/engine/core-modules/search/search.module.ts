@@ -6,7 +6,7 @@ import { SearchService } from 'src/engine/core-modules/search/services/search.se
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
-  imports: [WorkspaceCacheStorageModule, FileModule],
+  imports: [FileModule, WorkspaceCacheStorageModule],
   providers: [SearchResolver, SearchService],
 })
 export class SearchModule {}

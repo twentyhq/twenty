@@ -16,6 +16,7 @@ export const parseGmailMessagesImportError = (
   const { code, errors } = error;
 
   const reason = errors?.[0]?.reason;
+  const originalMessage = errors?.[0]?.message;
   const message = `${errors?.[0]?.message} for message with externalId: ${messageExternalId}`;
 
   switch (code) {
@@ -27,6 +28,13 @@ export const parseGmailMessagesImportError = (
         );
       }
       if (reason === 'failedPrecondition') {
+        if (originalMessage.includes('Mail service not enabled')) {
+          return new MessageImportDriverException(
+            message,
+            MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          );
+        }
+
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
@@ -74,9 +82,14 @@ export const parseGmailMessagesImportError = (
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
+    case 503:
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+
     case 500:
     case 502:
-    case 503:
     case 504:
       if (reason === 'backendError') {
         return new MessageImportDriverException(

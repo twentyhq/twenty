@@ -19,7 +19,7 @@ export class LoggerModule extends ConfigurableModuleClass {
     const provider = {
       provide: LOGGER_DRIVER,
       useValue:
-        options.type === LoggerDriverType.Console
+        options.type === LoggerDriverType.CONSOLE
           ? new ConsoleLogger()
           : undefined,
     };
@@ -45,7 +45,7 @@ export class LoggerModule extends ConfigurableModuleClass {
         const logLevels = config.logLevels ?? [];
 
         const logger =
-          config?.type === LoggerDriverType.Console
+          config?.type === LoggerDriverType.CONSOLE
             ? new ConsoleLogger()
             : undefined;
 

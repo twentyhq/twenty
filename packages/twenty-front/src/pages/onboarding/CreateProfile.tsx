@@ -2,12 +2,13 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -83,6 +84,7 @@ export const CreateProfile = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -137,6 +139,7 @@ export const CreateProfile = () => {
         });
 
         setCurrentWorkspaceMember((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (isDefined(current)) {
             return {
               ...current,
@@ -151,6 +154,19 @@ export const CreateProfile = () => {
           }
           return current;
         });
+
+        setCurrentUser((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+          if (isDefined(current)) {
+            return {
+              ...current,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            };
+          }
+          return current;
+        });
+
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
@@ -163,6 +179,7 @@ export const CreateProfile = () => {
       setNextOnboardingStatus,
       enqueueSnackBar,
       setCurrentWorkspaceMember,
+      setCurrentUser,
       updateOneRecord,
     ],
   );

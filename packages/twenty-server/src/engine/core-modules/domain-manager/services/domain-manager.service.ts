@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
@@ -113,14 +112,6 @@ export class DomainManagerService {
     };
   };
 
-  async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
-    return subdomain
-      ? await this.workspaceRepository.findOne({
-          where: { subdomain },
-        })
-      : await this.getDefaultWorkspace();
-  }
-
   isDefaultSubdomain(subdomain: string) {
     return subdomain === this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
   }
@@ -128,10 +119,11 @@ export class DomainManagerService {
   computeRedirectErrorUrl(
     errorMessage: string,
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    pathname: string,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
-      pathname: '/verify',
+      pathname,
       searchParams: { errorMessage },
     });
 
@@ -158,12 +150,7 @@ export class DomainManagerService {
       );
     }
 
-    const foundWorkspace =
-      workspaces.length === 1
-        ? workspaces[0]
-        : workspaces.filter(
-            (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
-          )?.[0];
+    const foundWorkspace = workspaces[0];
 
     workspaceValidator.assertIsDefinedOrThrow(foundWorkspace);
 

@@ -47,6 +47,5 @@
   "files.associations": {
     ".cursorrules": "markdown"
   },
-  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}"
 }

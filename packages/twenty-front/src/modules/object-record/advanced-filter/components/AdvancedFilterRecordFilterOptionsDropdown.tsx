@@ -7,12 +7,13 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/input';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
@@ -73,16 +74,17 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
         />
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text="Remove rule"
-            onClick={handleRemove}
-            LeftIcon={IconTrash}
-            accent="danger"
-          />
-        </DropdownMenuItemsContainer>
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text="Remove rule"
+              onClick={handleRemove}
+              LeftIcon={IconTrash}
+              accent="danger"
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"
     />

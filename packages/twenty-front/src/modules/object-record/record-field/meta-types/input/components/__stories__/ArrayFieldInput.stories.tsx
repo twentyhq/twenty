@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, within } from '@storybook/test';
+import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -123,5 +123,41 @@ export const Default: Story = {
 
     const tag3Element = await canvas.findByText('tag3');
     expect(tag3Element).toBeVisible();
+  },
+};
+
+export const TrimInput: Story = {
+  args: {
+    value: ['tag1', 'tag2'],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const addButton = await canvas.findByText('Add Item');
+    await userEvent.click(addButton);
+
+    const input = await canvas.findByPlaceholderText('Enter value');
+    await userEvent.type(input, '  tag2  {enter}');
+
+    await waitFor(() => {
+      const tag2Elements = canvas.queryAllByText('tag2');
+      expect(tag2Elements).toHaveLength(2);
+    });
+
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: 'record-id' },
+          updateOneRecordInput: {
+            tags: [
+              'tag1',
+              'tag2',
+              'tag2', // The second tag2 is not trimmed, so it remains as a duplicate
+            ],
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };

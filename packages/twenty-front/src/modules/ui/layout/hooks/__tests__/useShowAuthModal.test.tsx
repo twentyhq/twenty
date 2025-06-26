@@ -43,10 +43,10 @@ const testCases = [
   { loc: AppPath.InviteTeam, res: true },
   { loc: AppPath.PlanRequired, res: true },
   { loc: AppPath.PlanRequiredSuccess, res: true },
+  { loc: AppPath.BookCallDecision, res: true },
+  { loc: AppPath.BookCall, res: true },
 
   { loc: AppPath.Index, res: false },
-  { loc: AppPath.TasksPage, res: false },
-  { loc: AppPath.OpportunitiesPage, res: false },
   { loc: AppPath.RecordIndexPage, res: false },
   { loc: AppPath.RecordShowPage, res: false },
   { loc: AppPath.SettingsCatchAll, res: false },

@@ -21,9 +21,15 @@ kvoip-postgres-on-docker:
 	docker exec kvoip_pg psql -U postgres -d postgres \
 		-c "CREATE DATABASE \"kvoip-v2_db\" WITH OWNER postgres;" \
 		-c "CREATE DATABASE \"kvoip-v2_db_test\" WITH OWNER postgres;"
+		
+DOCKER_NETWORK=twenty_network
+
+ensure-docker-network:
+	docker network inspect $(DOCKER_NETWORK) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK)
 
 postgres-on-docker:
-	docker run -d \
+	make ensure-docker-network
+	docker run -d --network $(DOCKER_NETWORK) \
 	--name twenty_pg \
 	-e POSTGRES_USER=postgres \
 	-e POSTGRES_PASSWORD=postgres \
@@ -41,7 +47,8 @@ postgres-on-docker:
 		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 
 redis-on-docker:
-	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
+	make ensure-docker-network
+	docker run -d --network $(DOCKER_NETWORK) --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
 
 clean-local-dev:
 	npx nx reset;
@@ -58,7 +65,27 @@ clean-local-dev:
 	rm -rf "./packages/twenty-ui/dist";
 	
 clickhouse-on-docker:
-	docker run -d --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=clickhousePassword clickhouse/clickhouse-server:latest \
+	make ensure-docker-network
+	docker run -d --network $(DOCKER_NETWORK) --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=devPassword clickhouse/clickhouse-server:latest \
 
-clean-stale-branches:
-	git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D
+grafana-on-docker:
+	make ensure-docker-network
+	docker run -d --network $(DOCKER_NETWORK) \
+	--name twenty_grafana \
+	-p 4000:3000 \
+	-e GF_SECURITY_ADMIN_USER=admin \
+	-e GF_SECURITY_ADMIN_PASSWORD=admin \
+	-e GF_INSTALL_PLUGINS=grafana-clickhouse-datasource \
+	-v $(PWD)/packages/twenty-docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources \
+	grafana/grafana-oss:latest
+
+opentelemetry-collector-on-docker:
+	make ensure-docker-network
+	docker run -d --network $(DOCKER_NETWORK) \
+	--name twenty_otlp_collector \
+	-p 4317:4317 \
+	-p 4318:4318 \
+	-p 13133:13133 \
+	-v $(PWD)/packages/twenty-docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml \
+	otel/opentelemetry-collector-contrib:latest \
+	--config /etc/otel-collector-config.yaml

@@ -1,53 +1,38 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
-import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
 import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
+@UsePipes(ResolverValidationPipe)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(ServerlessFunctionEntity, 'core')
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
-
-  async checkFeatureFlag(workspaceId: string) {
-    const isWorkflowEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKey.IsWorkflowEnabled,
-      value: true,
-    });
-
-    if (!isWorkflowEnabled) {
-      throw new ServerlessFunctionException(
-        `IS_WORKFLOW_ENABLED feature flag is not set to true for this workspace`,
-        ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID,
-      );
-    }
-  }
 
   @Query(() => ServerlessFunctionDTO)
   async findOneServerlessFunction(
@@ -55,11 +40,11 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
-      return await this.serverlessFunctionService.findOneOrFail({
-        id,
-        workspaceId,
+      return await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -71,8 +56,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.findManyServerlessFunctions({
         workspaceId,
       });
@@ -82,13 +65,8 @@ export class ServerlessFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  async getAvailablePackages(
-    @Args('input') { id }: ServerlessFunctionIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
+  async getAvailablePackages(@Args('input') { id }: ServerlessFunctionIdInput) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.getAvailablePackages(id);
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -101,8 +79,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.getServerlessFunctionSourceCode(
         workspaceId,
         input.id,
@@ -119,8 +95,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.deleteOneServerlessFunction({
         id: input.id,
         workspaceId,
@@ -137,8 +111,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.updateOneServerlessFunction(
         input,
         workspaceId,
@@ -155,8 +127,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
-
       return await this.serverlessFunctionService.createOneServerlessFunction(
         input,
         workspaceId,
@@ -172,7 +142,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
       const { id, payload, version } = input;
 
       return await this.serverlessFunctionService.executeOneServerlessFunction(
@@ -192,7 +161,6 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.checkFeatureFlag(workspaceId);
       const { id } = input;
 
       return await this.serverlessFunctionService.publishOneServerlessFunction(

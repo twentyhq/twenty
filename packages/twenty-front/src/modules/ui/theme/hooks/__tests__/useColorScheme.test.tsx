@@ -13,7 +13,10 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   }),
 }));
 
-const workspaceMember: MockWorkspaceMember = {
+const workspaceMember: Omit<
+  MockWorkspaceMember,
+  'createdAt' | 'updatedAt' | 'userId'
+> = {
   __typename: 'WorkspaceMember',
   id: 'id',
   name: {
@@ -22,10 +25,7 @@ const workspaceMember: MockWorkspaceMember = {
   },
   locale: 'en',
   colorScheme: 'System',
-  createdAt: '2023-12-18T09:51:19.645Z',
-  updatedAt: '2023-12-18T09:51:19.645Z',
-  userId: '20202020-7169-42cf-bc47-1cfef15264b8',
-  userEmail: 'jane.doe@twenty.com',
+  userEmail: 'userEmail',
 };
 
 describe('useColorScheme', () => {

@@ -1,188 +1,291 @@
 ---
-description: This rule will apply only when making language translations.
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
-
 # Translation Guidelines
 
-## Core Translation Principles
+## Internationalization (i18n) Overview
 
-Twenty uses Lingui for internationalization (i18n) and Crowdin for translation management. This document outlines our translation workflow and best practices.
+### Supported Languages
+- English (en) - Primary language
+- French (fr) - Secondary language
+- German (de) - Planned
+- Spanish (es) - Planned
+- Additional languages based on community contributions
 
-## Technology Stack
+### i18n Architecture
+- Use react-i18next for React components
+- Store translations in JSON files
+- Implement namespace-based organization
+- Support for interpolation and pluralization
 
-### Translation Tools
+## File Structure
 
-- **Framework**: @lingui/react
-- **Translation Management**: Crowdin
-- **Workflow**: GitHub Actions for automation
+### Translation Files
+```
+src/locales/
+├── en/                        # English translations
+│   ├── common.json           # Common UI strings
+│   ├── auth.json             # Authentication strings
+│   ├── dashboard.json        # Dashboard specific
+│   ├── forms.json            # Form labels and validation
+│   └── errors.json           # Error messages
+├── fr/                       # French translations
+│   ├── common.json
+│   ├── auth.json
+│   └── ...
+└── index.ts                  # i18n configuration
+```
 
-### Package Structure
+### Translation Keys
+- Use nested objects for organization
+- Follow consistent naming patterns
+- Include context in key names
+  ```json
+  {
+    "auth": {
+      "login": {
+        "title": "Sign In",
+        "email": "Email Address",
+        "password": "Password",
+        "submit": "Sign In",
+        "forgotPassword": "Forgot Password?"
+      },
+      "register": {
+        "title": "Create Account",
+        "confirmPassword": "Confirm Password"
+      }
+    }
+  }
+  ```
 
-Translation files are managed in multiple packages:
+## Translation Implementation
 
-- `twenty-front`: Frontend translations
-- `twenty-server`: Backend translations
-- `twenty-emails`: Email template translations
-
-## Translation Process
-
-### Adding New Strings
-
-#### Using Lingui Macros
-
-- Use `<Trans>` for components
-- Use `t` macro for strings outside JSX
-
+### React Components
+- Use useTranslation hook
+- Specify namespaces for better organization
+- Handle loading states properly
   ```typescript
-  // ✅ Correct - In JSX
-  import { Trans } from '@lingui/react/macro';
+  // ✅ Correct
+  import { useTranslation } from 'react-i18next';
 
-  const WelcomeMessage = () => (
-    <h1>
-      <Trans>Welcome to Twenty</Trans>
-    </h1>
-  );
+  const LoginForm = () => {
+    const { t } = useTranslation('auth');
 
-  // ✅ Correct - Outside JSX
-  import { t } from '@lingui/react/macro';
+    return (
+      <form>
+        <h1>{t('login.title')}</h1>
+        <input 
+          placeholder={t('login.email')}
+          type="email"
+        />
+        <input 
+          placeholder={t('login.password')}
+          type="password"
+        />
+        <button type="submit">
+          {t('login.submit')}
+        </button>
+      </form>
+    );
+  };
+  ```
 
-  const getMessage = () => {
-    return t`Welcome to Twenty`;
+### Interpolation
+- Use interpolation for dynamic content
+- Pass variables through t() function
+- Keep interpolation simple and readable
+  ```typescript
+  // ✅ Correct
+  const WelcomeMessage = ({ userName }: { userName: string }) => {
+    const { t } = useTranslation('common');
+    
+    return (
+      <h1>{t('welcome.message', { name: userName })}</h1>
+    );
   };
 
-  // ❌ Incorrect - Don't use raw strings
-  const WelcomeMessage = () => (
-    <h1>Welcome to Twenty</h1>
-  );
+  // Translation file
+  {
+    "welcome": {
+      "message": "Welcome back, {{name}}!"
+    }
+  }
   ```
 
-### String Guidelines
+### Pluralization
+- Handle singular/plural forms correctly
+- Use count-based pluralization
+- Support different plural rules per language
+  ```typescript
+  // ✅ Correct
+  const ItemCount = ({ count }: { count: number }) => {
+    const { t } = useTranslation('common');
+    
+    return (
+      <span>{t('items.count', { count })}</span>
+    );
+  };
 
-#### What to Translate
-
-- User interface text
-- Error messages
-- Notifications
-- Email content
-
-#### What Not to Translate
-
-- Variables
-- Test data/mocks
-
-### Translation Workflow
-
-#### 1. Extracting Translations
-
-- Automatically triggered on main branch changes
-- Can be manually triggered in GitHub Actions
-- Process:
-  ```bash
-  # Extract new strings
-  nx run twenty-front:lingui:extract
-  nx run twenty-server:lingui:extract
-  nx run twenty-emails:lingui:extract
+  // Translation file
+  {
+    "items": {
+      "count_one": "{{count}} item",
+      "count_other": "{{count}} items"
+    }
+  }
   ```
 
-#### 2. Translation Management
+## Translation Management
 
-- Translations are managed in Crowdin
-- Changes are synced every 2 hours
-- Process:
-  1. New strings are uploaded to Crowdin
-  2. Translators work on translations
-  3. Translations are pulled back to the repository
+### Adding New Strings
+1. Add English translation first
+2. Use descriptive keys that indicate context
+3. Include comments for translators when needed
+4. Test with long translations to ensure UI flexibility
+  ```json
+  {
+    "user": {
+      "profile": {
+        // Displayed in user profile header
+        "displayName": "Display Name",
+        // Used in forms when editing profile
+        "editDisplayName": "Edit Display Name",
+        // Confirmation message after profile update
+        "updateSuccess": "Profile updated successfully"
+      }
+    }
+  }
+  ```
 
-#### 3. Compiling Translations
+### Translation Validation
+- Use TypeScript for translation key validation
+- Implement automated checks for missing translations
+- Validate interpolation parameters
+  ```typescript
+  // ✅ Correct - Type-safe translations
+  type TranslationKey = 
+    | 'auth.login.title'
+    | 'auth.login.email'
+    | 'auth.login.password'
+    | 'common.welcome.message';
 
-- Happens automatically in CI/CD
-- Required before running the application
-  ```bash
-  # Compile translations
-  nx run twenty-front:lingui:compile
-  nx run twenty-server:lingui:compile
-  nx run twenty-emails:lingui:compile
+  const t = (key: TranslationKey, options?: any) => {
+    // Translation implementation
+  };
   ```
 
 ## Best Practices
 
-### String Management
-
-#### Use Placeholders
-
-- Use placeholders for dynamic content
-
-  ```typescript
+### Key Naming
+- Use descriptive, hierarchical keys
+- Avoid abbreviations
+- Group related translations
+- Keep keys consistent across languages
+  ```json
   // ✅ Correct
-  <Trans>Hello {userName},</Trans>
+  {
+    "dashboard": {
+      "header": {
+        "title": "Dashboard",
+        "subtitle": "Welcome to your workspace"
+      },
+      "actions": {
+        "createNew": "Create New",
+        "refresh": "Refresh Data",
+        "export": "Export"
+      }
+    }
+  }
 
-  // ❌ Incorrect - String concatenation
-  <Trans>Hello </Trans>{userName},
+  // ❌ Incorrect
+  {
+    "dash_title": "Dashboard",
+    "newBtn": "New",
+    "refreshData": "Refresh"
+  }
   ```
 
-#### Provide Context
+### String Guidelines
+- Write clear, concise text
+- Use consistent terminology
+- Consider character limits for UI elements
+- Avoid concatenating translated strings
+  ```json
+  // ✅ Correct
+  {
+    "user": {
+      "status": {
+        "online": "Online",
+        "offline": "Offline",
+        "away": "Away"
+      }
+    }
+  }
 
-- Lingui provides powerfulway to add context for translators but we don't use them as of today.
-
-### Code Organization
-
-#### Translation Files
-
-- Keep translation files organized by feature
-- Use consistent naming patterns
+  // ❌ Incorrect - Don't concatenate
+  {
+    "user": {
+      "statusPrefix": "User is ",
+      "statusOnline": "online"
+    }
+  }
   ```
-  src/
-  ├── locales/
-  │   ├── en/
-  │   │   ├── messages.po
-  │   │   └── messages.js
-  │   └── fr/
-  │       ├── messages.po
-  │       └── messages.js
+
+### Context Information
+- Provide context for translators
+- Include character limits when relevant
+- Explain when/where text appears
+- Note any technical constraints
+  ```json
+  {
+    "button": {
+      // Primary action button, max 20 characters
+      "save": "Save Changes",
+      // Secondary button in modal footer
+      "cancel": "Cancel",
+      // Destructive action, should sound cautious
+      "delete": "Delete Permanently"
+    }
+  }
   ```
+
+## Workflow
+
+### Development Process
+1. Develop features with English translations
+2. Use placeholder keys during development
+3. Finalize translation keys before feature completion
+4. Add translations to all supported languages
+5. Test with different language strings
+
+### Translation Updates
+1. Create translation tasks for new features
+2. Provide context and screenshots to translators
+3. Review translations for consistency
+4. Test UI with translated strings
+5. Update documentation when needed
 
 ### Quality Assurance
+- Review translations in context
+- Test with longest expected translations
+- Verify formatting with interpolation
+- Check for cultural appropriateness
+- Ensure accessibility with screen readers
 
-#### Strict Mode
+## Maintenance
 
-- Use --strict mode when compiling to identify missing translations
+### Regular Tasks
+- Review and update outdated translations
+- Check for unused translation keys
+- Maintain consistency across languages
+- Update translation documentation
+- Monitor for missing translations in new features
 
-#### Testing Translations
-
-- Test with different locales
-- Verify string interpolation
-- Check layout with different language lengths
-
-## Automation
-
-### GitHub Actions
-
-#### Pull Workflow
-
-- Runs every 2 hours
-- Downloads new translations from Crowdin
-- Creates PR if changes detected
-- Can be manually triggered with force pull option
-
-#### Push Workflow
-
-- Runs on main branch changes
-- Extracts and uploads new strings
-- Compiles translations
-- Creates PR with changes
-
-### Error Handling
-
-#### Missing Translations
-
-- Development: Shown in original language
-- Production: Falls back to default language
-- Strict mode in CI catches missing translations
-
-#### Compilation Errors
-
-- Addressed before merging
-- PR created for fixing missing translations
-- Automated testing in CI pipeline
+### Tools and Automation
+- Use automated translation validation
+- Implement missing translation detection
+- Set up continuous integration checks
+- Maintain translation coverage reports
+- Use translation management platforms when needed

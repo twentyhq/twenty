@@ -13,9 +13,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -26,6 +24,8 @@ import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useTheme } from '@emotion/react';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -50,6 +50,7 @@ export const WorkflowEditActionSendEmail = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendEmailProps) => {
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -197,10 +198,11 @@ export const WorkflowEditActionSendEmail = ({
     }
   });
 
-  const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Send Email',
+    });
 
   const navigate = useNavigateSettings();
 
@@ -245,6 +247,8 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('connectedAccountId', connectedAccountId);
             }}
             disabled={actionOptions.readonly}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <FormTextFieldInput
             label="Email"

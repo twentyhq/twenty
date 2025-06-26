@@ -3,7 +3,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import GraphQLJSON from 'graphql-type-json';
+import graphqlTypeJson from 'graphql-type-json';
 import Stripe from 'stripe';
 import {
   Column,
@@ -37,7 +37,7 @@ registerEnumType(ChargeType, {
 });
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
-@Index('IndexOnActiveSubscriptionPerWorkspace', ['workspaceId'], {
+@Index('IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
@@ -156,7 +156,7 @@ export class BillingSubscription {
   })
   currentPeriodStart: Date;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
 

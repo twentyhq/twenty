@@ -7,7 +7,6 @@ import {
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
   '4da0302d-358a-45cd-9973-9f92723ed3c1';
-export const RELATION_METADATA_ID = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
 export const queries = {
   deleteMetadataField: gql`
@@ -67,13 +66,6 @@ export const queries = {
           endCursor
         }
         totalCount
-      }
-    }
-  `,
-  deleteMetadataFieldRelation: gql`
-    mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
-      deleteOneRelation(input: { id: $idToDelete }) {
-        id
       }
     }
   `,
@@ -159,7 +151,10 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        hostname
+        customDomain
+        workspaceUrls {
+          ...WorkspaceUrlsFragment
+        }
         featureFlags {
           id
           key
@@ -184,6 +179,10 @@ export const queries = {
           logo
           displayName
           subdomain
+          customDomain
+          workspaceUrls {
+            ...WorkspaceUrlsFragment
+          }
         }
       }
       userVars
@@ -217,7 +216,7 @@ export const objectMetadataId = '25611fce-6637-4089-b0ca-91afeec95784';
 
 export const variables = {
   deleteMetadataField: { idToDelete: FIELD_METADATA_ID },
-  deleteMetadataFieldRelation: { idToDelete: RELATION_METADATA_ID },
+  deleteMetadataFieldRelation: { idToDelete: FIELD_RELATION_METADATA_ID },
   activateMetadataField: {
     idToUpdate: FIELD_METADATA_ID,
     updatePayload: { isActive: true },
@@ -324,7 +323,7 @@ export const responseData = {
         metadataVersion: 1,
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
-        defaultRole:  {
+        defaultRole: {
           id: 'default-role-id',
           label: 'Default Role',
           description: 'Default Role Description',
@@ -334,7 +333,7 @@ export const responseData = {
           canUpdateAllObjectRecords: true,
           canSoftDeleteAllObjectRecords: true,
           canDestroyAllObjectRecords: true,
-        }
+        },
       },
       currentBillingSubscription: null,
       billingSubscriptions: [],

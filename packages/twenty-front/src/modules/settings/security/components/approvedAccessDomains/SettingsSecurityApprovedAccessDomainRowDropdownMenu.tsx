@@ -2,6 +2,7 @@ import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedA
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
@@ -57,23 +58,23 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
-      dropdownHotkeyScope={{ scope: dropdownId }}
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            accent="danger"
-            LeftIcon={IconTrash}
-            text="Delete"
-            onClick={() => {
-              handleDeleteApprovedAccessDomain();
-              closeDropdown();
-            }}
-          />
-        </DropdownMenuItemsContainer>
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Delete"
+              onClick={() => {
+                handleDeleteApprovedAccessDomain();
+                closeDropdown();
+              }}
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
     />
   );

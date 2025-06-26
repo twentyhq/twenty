@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 
@@ -9,15 +9,6 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 )!;
 
 describe('generateFakeFormResponse', () => {
-  // @ts-expect-error legacy noImplicitAny
-  let objectMetadataRepository;
-
-  beforeEach(() => {
-    objectMetadataRepository = {
-      findOneOrFail: jest.fn().mockResolvedValue(companyMockObjectMetadataItem),
-    };
-  });
-
   it('should generate fake responses for a form schema', async () => {
     const schema: FormFieldMetadata[] = [
       {
@@ -50,11 +41,19 @@ describe('generateFakeFormResponse', () => {
       },
     ];
 
+    const mockObjectMetadataMaps = {
+      byId: {
+        [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
+      },
+      idByNameSingular: {
+        [companyMockObjectMetadataItem.nameSingular]:
+          companyMockObjectMetadataItem.id,
+      },
+    };
+
     const result = await generateFakeFormResponse({
       formMetadata: schema,
-      workspaceId: '1',
-      // @ts-expect-error legacy noImplicitAny
-      objectMetadataRepository,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -82,7 +81,7 @@ describe('generateFakeFormResponse', () => {
             isLeaf: true,
             label: 'Company',
             fieldIdName: 'id',
-            icon: undefined,
+            icon: 'test-company-icon',
             nameSingular: 'company',
             value: 'A company',
           },
@@ -92,7 +91,7 @@ describe('generateFakeFormResponse', () => {
         isLeaf: true,
         label: 'Date',
         type: FieldMetadataType.DATE,
-        value: '01/23/2025',
+        value: 'mm/dd/yyyy',
         icon: undefined,
       },
     });

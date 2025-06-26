@@ -25,7 +25,6 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
@@ -115,7 +114,9 @@ export class WorkspaceMetadataUpdaterService {
   private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
     return {
       ...field,
-      ...(field.type === FieldMetadataType.SELECT && field.options
+      ...((field.type === FieldMetadataType.SELECT ||
+        field.type === FieldMetadataType.MULTI_SELECT) &&
+      field.options
         ? {
             options: this.generateUUIDForNewSelectFieldOptions(
               field.options as FieldMetadataComplexOption[],
@@ -298,66 +299,6 @@ export class WorkspaceMetadataUpdaterService {
     if (uniqueIndexMetadataIds.length > 0) {
       await indexMetadataRepository.delete(uniqueIndexMetadataIds);
     }
-  }
-
-  async updateRelationMetadata(
-    manager: EntityManager,
-    storage: WorkspaceSyncStorage,
-  ): Promise<{
-    createdRelationMetadataCollection: RelationMetadataEntity[];
-    updatedRelationMetadataCollection: RelationMetadataEntity[];
-  }> {
-    const relationMetadataRepository = manager.getRepository(
-      RelationMetadataEntity,
-    );
-    const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
-
-    /**
-     * Create relation metadata
-     */
-    const createdRelationMetadataCollection =
-      await relationMetadataRepository.save(
-        storage.relationMetadataCreateCollection,
-      );
-
-    /**
-     * Update relation metadata
-     */
-
-    const updatedRelationMetadataCollection =
-      await relationMetadataRepository.save(
-        storage.relationMetadataUpdateCollection,
-      );
-
-    /**
-     * Delete relation metadata
-     */
-    if (storage.relationMetadataDeleteCollection.length > 0) {
-      await relationMetadataRepository.delete(
-        storage.relationMetadataDeleteCollection.map(
-          (relationMetadata) => relationMetadata.id,
-        ),
-      );
-    }
-
-    /**
-     * Delete related field metadata
-     */
-    const fieldMetadataDeleteCollectionOnlyRelation =
-      storage.fieldMetadataDeleteCollection.filter(
-        (field) => field.type === FieldMetadataType.RELATION,
-      );
-
-    if (fieldMetadataDeleteCollectionOnlyRelation.length > 0) {
-      await fieldMetadataRepository.delete(
-        fieldMetadataDeleteCollectionOnlyRelation.map((field) => field.id),
-      );
-    }
-
-    return {
-      createdRelationMetadataCollection,
-      updatedRelationMetadataCollection,
-    };
   }
 
   async updateIndexMetadata(

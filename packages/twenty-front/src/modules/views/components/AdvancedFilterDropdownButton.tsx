@@ -29,10 +29,8 @@ export const AdvancedFilterDropdownButton = () => {
       dropdownId={ADVANCED_FILTER_DROPDOWN_ID}
       clickableComponent={<AdvancedFilterChip />}
       dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
-      dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownWidth="100%"
       onOpen={handleOpenAdvancedFilterDropdown}
     />
   );

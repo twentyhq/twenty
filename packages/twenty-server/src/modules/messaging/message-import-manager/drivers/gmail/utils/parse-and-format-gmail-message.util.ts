@@ -40,11 +40,22 @@ export const parseAndFormatGmailMessage = (
     return null;
   }
 
+  const toParticipants = to ?? deliveredTo;
+
   const participants = [
-    ...formatAddressObjectAsParticipants(from, 'from'),
-    ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
-    ...formatAddressObjectAsParticipants(cc, 'cc'),
-    ...formatAddressObjectAsParticipants(bcc, 'bcc'),
+    ...(from
+      ? formatAddressObjectAsParticipants([{ address: from }], 'from')
+      : []),
+    ...(toParticipants
+      ? formatAddressObjectAsParticipants(
+          [{ address: toParticipants, name: '' }],
+          'to',
+        )
+      : []),
+    ...(cc ? formatAddressObjectAsParticipants([{ address: cc }], 'cc') : []),
+    ...(bcc
+      ? formatAddressObjectAsParticipants([{ address: bcc }], 'bcc')
+      : []),
   ];
 
   const textWithoutReplyQuotations = text
@@ -57,7 +68,7 @@ export const parseAndFormatGmailMessage = (
     subject: subject || '',
     messageThreadExternalId: threadId,
     receivedAt: new Date(parseInt(internalDate)),
-    direction: computeMessageDirection(from[0].address || '', connectedAccount),
+    direction: computeMessageDirection(from || '', connectedAccount),
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
     attachments,

@@ -6,13 +6,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 
 import { TypeORMService } from './typeorm.service';
 
-import { typeORMMetadataModuleOptions } from './metadata/metadata.datasource';
-
-const metadataTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
-  ...typeORMMetadataModuleOptions,
-  name: 'metadata',
-});
-
 const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
   ...typeORMCoreModuleOptions,
   name: 'core',
@@ -21,10 +14,6 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
 @Module({
   imports: [
     TwentyConfigModule,
-    TypeOrmModule.forRootAsync({
-      useFactory: metadataTypeORMFactory,
-      name: 'metadata',
-    }),
     TypeOrmModule.forRootAsync({
       useFactory: coreTypeORMFactory,
       name: 'core',

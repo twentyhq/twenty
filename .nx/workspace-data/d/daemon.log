@@ -1,0 +1,248 @@
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.013Z - Started listening on: /tmp/fc4ff0ac47a78b782e98/d.sock
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.017Z - [WATCHER]: Subscribed to changes within: /home/mind-developer/Projects/Kvoip/kvoip-v2 (native)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.026Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.027Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.034Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.045Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.063Z - Time taken for 'loadSpecifiedNxPlugins' 1.4494579999999928ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.246Z - Time taken for 'Load Nx Plugin: /home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/plugins/package-json' 198.530225ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.255Z - Time taken for 'Load Nx Plugin: /home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/plugins/js' 208.20782400000002ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.270Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.270Z - [REQUEST]: 
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.270Z - [REQUEST]: 
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.294Z - Time taken for 'loadDefaultNxPlugins' 215.658797ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:09.798Z - Time taken for 'build-project-configs' 418.8442360000001ms
+
+thread '<unnamed>' panicked at /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/swc_ecma_parser-0.137.16/src/lexer/state.rs:465:45:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+fatal runtime error: failed to initiate panic, error 5
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.516Z - Error detected when creating a project graph: Failed to create project graph. See above for errors
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.518Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.519Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.519Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 2473. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.519Z - Time taken for 'createDependencies' 1748.864121ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:11.522Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.921Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.921Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.922Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.923Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.923Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.927Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.928Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.929Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.929Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.947Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.949Z - Done responding to the client handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.949Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 14. Response time: 2.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:19.975Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.346Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.346Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.346Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.347Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.348Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.349Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.349Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.351Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.351Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.352Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.352Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.353Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.401Z - Established a connection. Number of open connections: 3
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.404Z - Closed a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.405Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.406Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.407Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.407Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.433Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.436Z - Done responding to the client handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.436Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 17. Response time: 3.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.468Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.628Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.630Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.630Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.631Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.632Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.632Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.633Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.633Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.635Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.635Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.636Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.636Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.637Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:20.999Z - Established a connection. Number of open connections: 3
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.000Z - Closed a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.000Z - Established a connection. Number of open connections: 3
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.002Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.002Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.003Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.003Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.009Z - Closed a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.643Z - Established a connection. Number of open connections: 3
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.645Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.646Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Failed to process project graph.
+    The "nx/js/dependencies-and-lockfile" plugin threw an error while creating dependencies: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+    Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+  Caused by: 
+      Error: Plugin worker nx/js/dependencies-and-lockfile exited unexpectedly with code null
+        at ChildProcess.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/project-graph/plugins/isolation/plugin-pool.js:219:37)
+        at ChildProcess.emit (node:events:524:28)
+        at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.647Z - Done responding to the client null
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.647Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.648Z - Closed a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.672Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.681Z - Done responding to the client handleContextFileData
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.683Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 22. Response time: 11.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.685Z - [WATCHER]: package.json was modified
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.699Z - [REQUEST]: Responding to the client. File watch changed
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.699Z - Done responding to the client File watch changed
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.699Z - Handled FILE-WATCH-CHANGED. Handling time: 0. Response time: 1.
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.699Z - [WATCHER]: Processing file changes in outputs
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.699Z - Time taken for 'changed-projects' 12.08359399999972ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.713Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.799Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.799Z - [REQUEST]: package.json
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.799Z - [REQUEST]: 
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.813Z - Time taken for 'hash changed files from watcher' 12.889296999999715ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.921Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.922Z - Established a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.922Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.922Z - Closed a connection. Number of open connections: 1
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.924Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.934Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.934Z - [REQUEST]: package.json
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.934Z - [REQUEST]: 
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:21.943Z - Time taken for 'hash changed files from watcher' 9.675325000000157ms
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:22.716Z - Established a connection. Number of open connections: 2
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:12:22.716Z - Closed a connection. Number of open connections: 1
+Creating project graph nodes with 3 plugins
+Creating project graph nodes with 3 plugins
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.428Z - [WATCHER]: Processing file changes in outputs
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.428Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.430Z - [WATCHER]: Stopping the watcher for /home/mind-developer/Projects/Kvoip/kvoip-v2 (sources)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.431Z - [WATCHER]: Stopping the watcher for /home/mind-developer/Projects/Kvoip/kvoip-v2 (outputs)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.431Z - Server stopped because: "NX_VERSION_CHANGED"
+node:internal/modules/cjs/loader:1235
+  throw err;
+  ^
+
+Error: Cannot find module '/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/daemon/server/start.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1232:15)
+    at Module._load (node:internal/modules/cjs/loader:1058:27)
+    at c._load (node:electron/js2c/node_init:2:16955)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:188:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v20.18.1
+[NX Daemon Server] - 2025-06-26T22:08:32.213Z - Started listening on: /tmp/fc4ff0ac47a78b782e98/d.sock
+[NX Daemon Server] - 2025-06-26T22:08:32.222Z - [WATCHER]: Subscribed to changes within: /home/mind-developer/Projects/Kvoip/kvoip-v2 (native)
+[NX Daemon Server] - 2025-06-26T22:08:32.235Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2025-06-26T22:08:32.280Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2025-06-26T22:08:32.281Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2025-06-26T22:08:32.317Z - [REQUEST]: Responding to the client with an error. Invalid payload from the client Unsupported payload sent to daemon server: {"type":"GET_CONTEXT_FILE_DATA"}
+Error: Unsupported payload sent to daemon server: {"type":"GET_CONTEXT_FILE_DATA"}
+    at handleMessage (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/daemon/server/server.js:102:104)
+    at /home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/daemon/server/server.js:45:15
+    at Socket.<anonymous> (/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/utils/consume-messages-from-socket.js:13:17)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+[NX Daemon Server] - 2025-06-26T22:08:32.319Z - Done responding to the client null
+[NX Daemon Server] - 2025-06-26T22:08:52.983Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2025-06-26T22:08:53.021Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2025-06-26T22:08:53.021Z - [REQUEST]: 
+[NX Daemon Server] - 2025-06-26T22:08:53.021Z - [REQUEST]: 
+thread '<unnamed>' panicked at /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/swc_ecma_parser-0.137.1/src/lexer/state.rs:469:45:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+fatal runtime error: failed to initiate panic, error 5

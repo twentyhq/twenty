@@ -5,12 +5,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { v4 } from 'uuid';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconPlus } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -57,15 +56,7 @@ export const SettingsWebhooks = () => {
                 title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={getSettingsPath(
-                  SettingsPath.DevelopersNewWebhookDetail,
-                  {
-                    webhookId: v4(),
-                  },
-                  {
-                    creationMode: true,
-                  },
-                )}
+                to={getSettingsPath(SettingsPath.NewWebhook)}
               />
             </StyledButtonContainer>
           </Section>

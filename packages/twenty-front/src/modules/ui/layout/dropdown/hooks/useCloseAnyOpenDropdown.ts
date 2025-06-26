@@ -1,14 +1,15 @@
-import { useCloseDropdownFromOutside } from '@/ui/layout/dropdown/hooks/useCloseDropdownFromOutside';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseAnyOpenDropdown = () => {
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+  const { closeDropdown } = useCloseDropdown();
 
-  const { closeDropdownFromOutside } = useCloseDropdownFromOutside();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeAnyOpenDropdown = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -32,19 +33,23 @@ export const useCloseAnyOpenDropdown = () => {
         const thereIsOneNestedDropdownOpen = isDefined(previousDropdownFocusId);
 
         if (isDefined(activeDropdownFocusId)) {
-          closeDropdownFromOutside(activeDropdownFocusId);
+          closeDropdown(activeDropdownFocusId);
+          removeFocusItemFromFocusStackById({
+            focusId: activeDropdownFocusId,
+          });
         }
 
         if (thereIsOneNestedDropdownOpen) {
-          closeDropdownFromOutside(previousDropdownFocusId);
+          closeDropdown(previousDropdownFocusId);
+          removeFocusItemFromFocusStackById({
+            focusId: previousDropdownFocusId,
+          });
         }
 
         set(previousDropdownFocusIdState, null);
         set(activeDropdownFocusIdState, null);
-
-        goBackToPreviousHotkeyScope();
       },
-    [closeDropdownFromOutside, goBackToPreviousHotkeyScope],
+    [closeDropdown, removeFocusItemFromFocusStackById],
   );
 
   return { closeAnyOpenDropdown };

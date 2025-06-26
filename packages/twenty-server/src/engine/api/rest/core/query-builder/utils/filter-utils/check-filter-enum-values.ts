@@ -18,7 +18,8 @@ export const checkFilterEnumValues = (
   ) {
     return;
   }
-  const field = objectMetadataItem.fieldsByName[fieldName];
+  const fieldMetadataId = objectMetadataItem.fieldIdByName[fieldName];
+  const field = objectMetadataItem.fieldsById[fieldMetadataId];
 
   const values = /^\[.*\]$/.test(value)
     ? value.slice(1, -1).split(',')

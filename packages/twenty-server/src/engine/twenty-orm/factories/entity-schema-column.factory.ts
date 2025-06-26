@@ -12,7 +12,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   TwentyORMException,
@@ -26,10 +26,14 @@ type EntitySchemaColumnMap = {
 
 @Injectable()
 export class EntitySchemaColumnFactory {
-  create(fieldMetadataMapByName: FieldMetadataMap): EntitySchemaColumnMap {
+  create(
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = Object.values(fieldMetadataMapByName);
+    const fieldMetadataCollection = Object.values(
+      objectMetadataItemWithFieldMaps.fieldsById,
+    );
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;

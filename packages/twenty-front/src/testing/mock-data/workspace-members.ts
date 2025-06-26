@@ -8,7 +8,7 @@ export type MockWorkspaceMember = Omit<
 
 export const mockWorkspaceMembers: MockWorkspaceMember[] = [
   {
-    id: '20202020-1553-45c6-a028-5a9064cce07f',
+    id: '20202020-463f-435b-828c-107e007a2711',
     name: {
       firstName: 'Jane',
       lastName: 'Doe',
@@ -50,6 +50,7 @@ export const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
       dateFormat,
       timeFormat,
       timeZone,
+      userEmail,
     }) => ({
       id,
       locale,
@@ -59,5 +60,6 @@ export const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
       dateFormat,
       timeFormat,
       timeZone,
+      userEmail,
     }),
   );

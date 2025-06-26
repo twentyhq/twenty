@@ -1,9 +1,12 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Avatar,
@@ -62,6 +65,16 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 
+  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+
+  const enrichedWorkspaceMembers = role.workspaceMembers
+    .map((workspaceMember) =>
+      currentWorkspaceMembers.find(
+        (member) => member.id === workspaceMember.id,
+      ),
+    )
+    .filter(isDefined);
+
   return (
     <StyledTableRow
       key={role.id}
@@ -85,7 +98,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       </TableCell>
       <TableCell align={'right'}>
         <StyledAvatarGroup>
-          {role.workspaceMembers.slice(0, 5).map((workspaceMember) => (
+          {enrichedWorkspaceMembers.slice(0, 5).map((workspaceMember) => (
             <React.Fragment key={workspaceMember.id}>
               <div id={`avatar-${workspaceMember.id}`}>
                 <Avatar
@@ -111,11 +124,8 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableCell align={'left'}>
         <StyledAssignedText>{role.workspaceMembers.length}</StyledAssignedText>
       </TableCell>
-      <TableCell align={'right'}>
-        <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
-        />
+      <TableCell align={'right'} color={theme.font.color.tertiary}>
+        <IconChevronRight size={theme.icon.size.md} />
       </TableCell>
     </StyledTableRow>
   );

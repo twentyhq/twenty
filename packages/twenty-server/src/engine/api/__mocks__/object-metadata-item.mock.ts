@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -87,10 +89,19 @@ export const fieldRelationMock = {
   id: 'fieldRelationId',
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
-  fromRelationMetadata: {
-    toObjectMetadata: {
-      nameSingular: 'toObjectMetadataName',
-    },
+  settings: {
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'fieldRelationId',
+    onDelete: 'CASCADE',
+  },
+  relationTargetObjectMetadata: {
+    id: 'relationTargetObjectId',
+    nameSingular: 'relationTargetObject',
+    namePlural: 'relationTargetObjects',
+  },
+  relationTargetFieldMetadata: {
+    id: 'relationTargetFieldId',
+    name: 'relationTargetField',
   },
   isNullable: true,
   defaultValue: null,
@@ -296,22 +307,34 @@ export const objectMetadataItemMock = {
 
 export const objectMetadataMapItemMock = {
   id: 'mockObjectId',
+  icon: 'Icon123',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
-  fields,
   fieldsById: fields.reduce((acc, field) => {
     // @ts-expect-error legacy noImplicitAny
     acc[field.id] = field;
 
     return acc;
   }, {}),
-  fieldsByName: fields.reduce((acc, field) => {
+  fieldIdByName: fields.reduce((acc, field) => {
     // @ts-expect-error legacy noImplicitAny
     acc[field.name] = field;
 
     return acc;
   }, {}),
-} as ObjectMetadataItemWithFieldMaps;
+  fieldIdByJoinColumnName: {},
+  labelSingular: 'Object',
+  labelPlural: 'Objects',
+  workspaceId: 'mockWorkspaceId',
+  isCustom: false,
+  isSystem: false,
+  targetTableName: '',
+  indexMetadatas: [],
+  isActive: true,
+  isRemote: false,
+  isAuditLogged: false,
+  isSearchable: false,
+} satisfies ObjectMetadataItemWithFieldMaps;
 
 export const objectMetadataMapsMock = {
   byId: {

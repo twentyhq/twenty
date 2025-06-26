@@ -11,6 +11,7 @@ export const getActionIconColorOrThrow = ({
 }) => {
   switch (actionType) {
     case 'CODE':
+    case 'HTTP_REQUEST':
       return theme.color.orange;
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
@@ -20,6 +21,8 @@ export const getActionIconColorOrThrow = ({
       return theme.font.color.tertiary;
     case 'SEND_EMAIL':
       return theme.color.blue;
+    case 'AI_AGENT':
+      return theme.color.pink;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

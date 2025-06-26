@@ -6,6 +6,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
@@ -99,7 +100,7 @@ describe('GoogleAPIsService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -112,6 +113,16 @@ describe('GoogleAPIsService', () => {
           provide: ResetCalendarChannelService,
           useValue: {
             resetCalendarChannels: jest.fn(),
+          },
+        },
+        {
+          provide: GoogleAPIScopesService,
+          useValue: {
+            getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent:
+              jest.fn().mockResolvedValue({
+                scopes: [],
+                isValid: true,
+              }),
           },
         },
         {

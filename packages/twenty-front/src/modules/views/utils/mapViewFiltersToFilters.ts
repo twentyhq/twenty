@@ -3,6 +3,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewFilter } from '../types/ViewFilter';
 
@@ -26,6 +27,10 @@ export const mapViewFiltersToFilters = (
         availableFieldMetadataItem.type,
       );
 
+      const label = isSystemSearchVectorField(availableFieldMetadataItem.name)
+        ? 'Search'
+        : availableFieldMetadataItem.label;
+
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
@@ -34,7 +39,7 @@ export const mapViewFiltersToFilters = (
         operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
-        label: availableFieldMetadataItem.label,
+        label,
         type: filterType,
         subFieldName: viewFilter.subFieldName,
       } satisfies RecordFilter;

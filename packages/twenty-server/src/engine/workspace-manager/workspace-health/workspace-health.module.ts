@@ -7,7 +7,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
-import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
@@ -31,9 +30,8 @@ import { WorkspaceFixService } from './services/workspace-fix.service';
     DatabaseStructureService,
     ObjectMetadataHealthService,
     FieldMetadataHealthService,
-    RelationMetadataHealthService,
     WorkspaceFixService,
   ],
-  exports: [WorkspaceHealthService],
+  exports: [WorkspaceHealthService, DatabaseStructureService],
 })
 export class WorkspaceHealthModule {}

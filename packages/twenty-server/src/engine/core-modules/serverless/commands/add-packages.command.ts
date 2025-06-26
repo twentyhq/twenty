@@ -1,13 +1,13 @@
 import { Logger } from '@nestjs/common';
 
+import { execFile } from 'child_process';
 import * as fs from 'fs/promises';
 import { resolve } from 'path';
 import { promisify } from 'util';
-import { exec } from 'child_process';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 @Command({
   name: 'serverless:add-packages',
@@ -40,7 +40,6 @@ export class AddPackagesCommand extends CommandRunner {
     );
 
     const currentVersion = await this.getLastLayerVersion();
-
     const newVersion = currentVersion + 1;
 
     const currentVersionFolder = `${layersFolder}/${currentVersion}`;
@@ -76,7 +75,7 @@ export class AddPackagesCommand extends CommandRunner {
   }
 
   private async addToGit(folderPath: string) {
-    await execPromise(`git add ${folderPath}`);
+    await execFilePromise('git', ['add', folderPath]);
   }
 
   private async cleanPackageInstallation(folderPath: string) {
@@ -95,7 +94,7 @@ export class AddPackagesCommand extends CommandRunner {
       for (const packageName of packages) {
         this.logger.log(`- adding '${packageName}'...`);
         try {
-          await execPromise(`yarn add ${packageName}`, {
+          await execFilePromise('yarn', ['add', packageName], {
             cwd: folderPath,
           });
         } catch (error) {

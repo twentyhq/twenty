@@ -1,0 +1,751 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with an invalid default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with an unknown default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Label must not contain a comma",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option id",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option position",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty multi-select default values array 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "If defined default value must contain at least one value",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with empty string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with invalid multi-select default value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with invalid option id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with non stringified array default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with not a string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with not a string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "label.includes is not a function",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with null id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is required",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with null label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label is required",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with null value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value is required",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with only white spaces defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with only white spaces id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with only white spaces label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with only white spaces value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with too long defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with too long id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with too long label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with too long value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label is required",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value is required",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with unknown default value and no options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value "'OPTION_42'" must be one of the option values",
+  },
+]
+`;
+
+exports[`Update field metadata MULTI_SELECT tests suite Update should fail with unknown multi-select default values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with an invalid default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with an unknown default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value "'OPTION_424242'" must be one of the option values",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Label must not contain a comma",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option id",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option position",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with empty string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with empty string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with empty string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with empty string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with invalid option id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with not a string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be a stringified array",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with not a string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "label.includes is not a function",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with null id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is required",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with null label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label is required",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with null value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value is required",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with only white spaces defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with only white spaces id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with only white spaces label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with only white spaces value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "" is beneath 1 character",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with too long defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with too long id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with too long label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with too long value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option label is required",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option value is required",
+  },
+]
+`;
+
+exports[`Update field metadata SELECT tests suite Update should fail with unknown default value and no options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value "'OPTION_42'" must be one of the option values",
+  },
+]
+`;

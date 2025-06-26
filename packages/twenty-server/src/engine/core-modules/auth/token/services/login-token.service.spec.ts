@@ -19,7 +19,7 @@ describe('LoginTokenService', () => {
           useValue: {
             generateAppSecret: jest.fn(),
             sign: jest.fn(),
-            verifyWorkspaceToken: jest.fn(),
+            verifyJwtToken: jest.fn(),
             decode: jest.fn(),
           },
         },
@@ -69,7 +69,7 @@ describe('LoginTokenService', () => {
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: email, workspaceId },
+        { sub: email, workspaceId, type: 'LOGIN' },
         { secret: mockSecret, expiresIn: mockExpiresIn },
       );
     });
@@ -81,7 +81,7 @@ describe('LoginTokenService', () => {
       const mockEmail = 'test@example.com';
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
       jest
         .spyOn(jwtWrapperService, 'decode')
@@ -90,7 +90,7 @@ describe('LoginTokenService', () => {
       const result = await service.verifyLoginToken(mockToken);
 
       expect(result).toEqual({ sub: mockEmail });
-      expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',
       );
@@ -103,7 +103,7 @@ describe('LoginTokenService', () => {
       const mockToken = 'invalid-token';
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockRejectedValue(new Error('Invalid token'));
 
       await expect(service.verifyLoginToken(mockToken)).rejects.toThrow();

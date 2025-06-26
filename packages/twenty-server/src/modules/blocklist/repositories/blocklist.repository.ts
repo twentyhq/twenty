@@ -1,46 +1,46 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 
 @Injectable()
 export class BlocklistRepository {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   public async getById(
     id: string,
     workspaceId: string,
   ): Promise<BlocklistWorkspaceEntity | null> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const blocklistItems =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "id" = $1`,
-        [id],
+    const blockListRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
+        BlocklistWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    if (!blocklistItems || blocklistItems.length === 0) {
-      return null;
-    }
-
-    return blocklistItems[0];
+    return blockListRepository.findOneBy({
+      id,
+    });
   }
 
   public async getByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<BlocklistWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const blockListRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        BlocklistWorkspaceEntity,
+      );
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "workspaceMemberId" = $1`,
-      [workspaceMemberId],
-      workspaceId,
-    );
+    return blockListRepository.find({
+      where: {
+        workspaceMemberId,
+      },
+    });
   }
 }

@@ -8,7 +8,7 @@ import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
-export const FIRST_TH_WIDTH = '9px';
+export const FIRST_TH_WIDTH = '10px';
 
 const StyledTableHead = styled.thead`
   cursor: pointer;
@@ -40,7 +40,7 @@ const StyledTableHead = styled.thead`
 
     th:nth-of-type(3) {
       position: sticky;
-      left: 43px;
+      left: 39px;
       z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
 

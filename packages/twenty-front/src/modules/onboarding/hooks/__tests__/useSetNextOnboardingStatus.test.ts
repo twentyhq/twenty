@@ -44,6 +44,7 @@ const renderHooks = (
         ? {
             id: v4(),
             status: SubscriptionStatus.Active,
+            metadata: {},
             provider: BillingPaymentProviders.Stripe,
           }
         : undefined,

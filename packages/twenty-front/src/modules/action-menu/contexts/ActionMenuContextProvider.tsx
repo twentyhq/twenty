@@ -6,10 +6,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ActionMenuContextProvider = ({
   children,
@@ -19,10 +17,6 @@ export const ActionMenuContextProvider = ({
 }: Omit<ActionMenuContextType, 'actions'> & {
   children: React.ReactNode;
 }) => {
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
@@ -39,7 +33,7 @@ export const ActionMenuContextProvider = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.WorkflowRun ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.WorkflowVersion;
 
-  if (isWorkflowEnabled && isDefined(objectMetadataItem) && isWorkflowObject) {
+  if (isDefined(objectMetadataItem) && isWorkflowObject) {
     return (
       <ActionMenuContextProviderWorkflowObjects
         isInRightDrawer={isInRightDrawer}
@@ -53,7 +47,6 @@ export const ActionMenuContextProvider = ({
   }
 
   if (
-    isWorkflowEnabled &&
     isDefined(objectMetadataItem) &&
     (actionMenuType === 'command-menu' ||
       actionMenuType === 'command-menu-show-page-action-menu-dropdown')

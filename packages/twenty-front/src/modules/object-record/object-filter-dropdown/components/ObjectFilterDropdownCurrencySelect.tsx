@@ -2,12 +2,13 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
-import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -95,7 +96,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     searchText !== '';
 
   return (
-    <>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -106,7 +107,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width="auto">
+      <DropdownMenuItemsContainer hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
@@ -115,17 +116,8 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              text={item.name}
+              avatar={item.AvatarIcon && <item.AvatarIcon size="16" />}
             />
           );
         })}
@@ -137,22 +129,13 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              text={item.name}
+              avatar={item.AvatarIcon && <item.AvatarIcon size="16" />}
             />
           );
         })}
         {showNoResult && <MenuItem text={t`No results`} />}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

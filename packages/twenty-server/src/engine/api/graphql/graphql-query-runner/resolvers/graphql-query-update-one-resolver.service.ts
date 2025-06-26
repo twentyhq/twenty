@@ -18,6 +18,7 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -74,14 +75,6 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: formattedExistingRecords,
-      records: formattedUpdatedRecords,
-      updatedFields: Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
-    });
-
     if (formattedUpdatedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -90,16 +83,27 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     }
 
     const updatedRecord = formattedUpdatedRecords[0];
+    const existingRecord = formattedExistingRecords[0];
+
+    this.apiEventEmitterService.emitUpdateEvents({
+      existingRecords: structuredClone(formattedExistingRecords),
+      records: structuredClone(formattedUpdatedRecords),
+      updatedFields: Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: [updatedRecord],
+        parentObjectRecords: [existingRecord, updatedRecord],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

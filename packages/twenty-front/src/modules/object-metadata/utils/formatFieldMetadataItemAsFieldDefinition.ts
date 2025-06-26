@@ -18,24 +18,22 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
   showLabel,
   labelWidth,
 }: FieldMetadataItemAsFieldDefinitionProps): FieldDefinition<FieldMetadata> => {
-  const relationObjectMetadataItem =
-    field.relationDefinition?.targetObjectMetadata;
+  const relationObjectMetadataItem = field.relation?.targetObjectMetadata;
 
-  const relationFieldMetadataId =
-    field.relationDefinition?.targetFieldMetadata.id;
+  const relationFieldMetadataId = field.relation?.targetFieldMetadata.id;
 
   const fieldDefintionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
-    relationType: field.relationDefinition?.direction,
+    relationType: field.relation?.type,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular:
       relationObjectMetadataItem?.nameSingular ?? '',
     relationObjectMetadataNamePlural:
       relationObjectMetadataItem?.namePlural ?? '',
+    relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
-    targetFieldMetadataName:
-      field.relationDefinition?.targetFieldMetadata?.name ?? '',
+    targetFieldMetadataName: field.relation?.targetFieldMetadata?.name ?? '',
     options: field.options,
     settings: field.settings,
     isNullable: field.isNullable,

@@ -2,8 +2,6 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -33,6 +31,8 @@ import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-f
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -41,10 +41,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.mainDataSource = new DataSource({
       url: twentyConfigService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging:
-        twentyConfigService.get('NODE_ENV') === NodeEnvironment.development
-          ? ['query', 'error']
-          : ['error'],
+      logging: twentyConfigService.getLoggingConfig(),
       schema: 'core',
       entities: [
         User,
@@ -75,6 +72,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         StripeIntegration,
         FocusNfeIntegration,
         ChatbotFlow,
+        AgentEntity,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
