@@ -12,8 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('roleTargets')
@@ -43,20 +41,8 @@ export class RoleTargetsEntity {
   @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string;
 
-  @ManyToOne(() => UserWorkspace, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'userWorkspaceId' })
-  userWorkspace: Relation<UserWorkspace>;
-
   @Column({ nullable: true, type: 'uuid' })
   agentId: string;
-
-  @ManyToOne(() => AgentEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'agentId' })
-  agent: Relation<AgentEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
