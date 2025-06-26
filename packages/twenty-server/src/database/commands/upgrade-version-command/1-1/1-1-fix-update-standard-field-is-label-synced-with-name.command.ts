@@ -14,7 +14,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 @Command({
   name: 'upgrade:1-1:fix-update-standard-fields-is-label-synced-with-name',
-  description: 'Deduplicate fields where we want to setup the index back on',
+  description:
+    'Fix isLabelSyncedWithName property for standard fields to match actual label-name synchronization state',
 })
 export class FixUpdateStandardFieldsIsLabelSyncedWithName extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
