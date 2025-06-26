@@ -52,6 +52,7 @@ export const generateFakeFormResponse = async ({
           [formFieldMetadata.name]: generateFakeField({
             type: formFieldMetadata.type,
             label: formFieldMetadata.label,
+            value: formFieldMetadata.placeholder,
           }),
         };
       }

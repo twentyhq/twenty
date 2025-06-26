@@ -121,7 +121,7 @@ export class StandardFieldFactory {
    * Create field metadata
    */
   private createFieldMetadata(
-    workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
+    _workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
     workspaceFieldMetadataArgs: WorkspaceFieldMetadataArgs,
     context: WorkspaceSyncContext,
   ): PartialFieldMetadata[] {
@@ -153,7 +153,7 @@ export class StandardFieldFactory {
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
-        isLabelSyncedWithName: true,
+        isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
       },
     ];
   }
@@ -192,7 +192,8 @@ export class StandardFieldFactory {
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
-      isLabelSyncedWithName: true,
+      isLabelSyncedWithName:
+        workspaceRelationMetadataArgs.isLabelSyncedWithName,
     });
 
     return fieldMetadataCollection;
