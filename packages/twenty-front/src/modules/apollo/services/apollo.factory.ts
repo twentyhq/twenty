@@ -192,7 +192,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                           scope.setFingerprint(fingerPrint);
                         }
 
-                        captureException(error); // Sentry excepts a JS error
+                        captureException(error); // Sentry expects a JS error
                       });
                     })
                     .catch((sentryError) => {
