@@ -23,6 +23,7 @@ import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
+  response: string;
   object: object;
   usage: {
     promptTokens: number;
@@ -135,13 +136,6 @@ export class AgentExecutionService {
         'AgentExecution',
       );
 
-      if (textResponse.toolCalls && textResponse.toolCalls.length > 0) {
-        this.logger.log(
-          `Agent ${agent.id} tool calls: ${JSON.stringify(textResponse.toolCalls)}`,
-          'AgentExecution',
-        );
-      }
-
       this.logger.log(
         `Agent ${agent.id} usage: ${JSON.stringify(textResponse.usage)}`,
         'AgentExecution',
@@ -159,6 +153,7 @@ export class AgentExecutionService {
       });
 
       return {
+        response: textResponse.text,
         object: output.object,
         usage: {
           promptTokens:
