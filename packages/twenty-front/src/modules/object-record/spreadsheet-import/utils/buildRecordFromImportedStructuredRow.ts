@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
+import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { parsePhoneNumberWithError } from 'libphonenumber-js';
@@ -18,23 +18,14 @@ type BuildRecordFromImportedStructuredRowArgs = {
 };
 
 const buildCompositeFieldRecord = (
-  fieldName: string,
+  field: FieldMetadataItem,
   importedStructuredRow: ImportedStructuredRow<any>,
-  compositeFieldConfig: Record<
-    string,
-    {
-      labelKey: string;
-      transform?: (value: any) => any;
-    }
-  >,
+  compositeFieldConfig: Record<string, ((value: any) => any) | undefined>,
 ): Record<string, any> | undefined => {
   const compositeFieldRecord = Object.entries(compositeFieldConfig).reduce(
-    (
-      acc,
-      [compositeFieldKey, { labelKey: compositeFieldLabelKey, transform }],
-    ) => {
+    (acc, [compositeFieldKey, transform]) => {
       const value =
-        importedStructuredRow[`${compositeFieldLabelKey} (${fieldName})`];
+        importedStructuredRow[getSubFieldOptionKey(field, compositeFieldKey)];
 
       return isDefined(value)
         ? { ...acc, [compositeFieldKey]: transform?.(value) || value }
@@ -108,123 +99,49 @@ export const buildRecordFromImportedStructuredRow = ({
 
   const recordToBuild: Record<string, any> = {};
 
-  const {
-    ADDRESS: {
-      addressCity: addressCityLabel,
-      addressCountry: addressCountryLabel,
-      addressPostcode: addressPostcodeLabel,
-      addressState: addressStateLabel,
-      addressStreet1: addressStreet1Label,
-      addressStreet2: addressStreet2Label,
-    },
-    CURRENCY: {
-      amountMicros: amountMicrosLabel,
-      currencyCode: currencyCodeLabel,
-    },
-    FULL_NAME: { firstName: firstNameLabel, lastName: lastNameLabel },
-    LINKS: {
-      primaryLinkUrl: primaryLinkUrlLabel,
-      primaryLinkLabel: primaryLinkLabelLabel,
-      secondaryLinks: secondaryLinksLabel,
-    },
-    EMAILS: {
-      primaryEmail: primaryEmailLabel,
-      additionalEmails: additionalEmailsLabel,
-    },
-    PHONES: {
-      primaryPhoneNumber: primaryPhoneNumberLabel,
-      primaryPhoneCountryCode: primaryPhoneCountryCodeLabel,
-      primaryPhoneCallingCode: primaryPhoneCallingCodeLabel,
-      additionalPhones: additionalPhonesLabel,
-    },
-    RICH_TEXT_V2: { blocknote: blocknoteLabel, markdown: markdownLabel },
-  } = COMPOSITE_FIELD_SUB_FIELD_LABELS;
-
-  const COMPOSITE_FIELD_CONFIGS = {
+  const COMPOSITE_FIELD_TRANSFORM_CONFIGS = {
     [FieldMetadataType.CURRENCY]: {
-      amountMicros: {
-        labelKey: amountMicrosLabel,
-        transform: (value: any) =>
-          convertCurrencyAmountToCurrencyMicros(Number(value)),
-      },
-      currencyCode: { labelKey: currencyCodeLabel },
+      amountMicros: (value: any) =>
+        convertCurrencyAmountToCurrencyMicros(Number(value)),
+      currencyCode: undefined,
     },
-
     [FieldMetadataType.ADDRESS]: {
-      addressStreet1: {
-        labelKey: addressStreet1Label,
-        transform: castToString,
-      },
-      addressStreet2: {
-        labelKey: addressStreet2Label,
-        transform: castToString,
-      },
-      addressCity: { labelKey: addressCityLabel, transform: castToString },
-      addressPostcode: {
-        labelKey: addressPostcodeLabel,
-        transform: castToString,
-      },
-      addressState: { labelKey: addressStateLabel, transform: castToString },
-      addressCountry: {
-        labelKey: addressCountryLabel,
-        transform: castToString,
-      },
+      addressStreet1: castToString,
     },
-
+    addressStreet2: castToString,
+    addressCity: castToString,
+    addressPostcode: castToString,
+    addressState: castToString,
+    addressCountry: castToString,
     [FieldMetadataType.LINKS]: {
-      primaryLinkLabel: {
-        labelKey: primaryLinkLabelLabel,
-        transform: castToString,
-      },
-      primaryLinkUrl: {
-        labelKey: primaryLinkUrlLabel,
-        transform: castToString,
-      },
-      secondaryLinks: {
-        labelKey: secondaryLinksLabel,
-        transform: linkArrayJSONSchema.parse,
-      },
+      primaryLinkLabel: castToString,
+      primaryLinkUrl: castToString,
+      secondaryLinks: linkArrayJSONSchema.parse,
     },
 
     [FieldMetadataType.PHONES]: {
-      primaryPhoneCountryCode: {
-        labelKey: primaryPhoneCountryCodeLabel,
-        transform: castToString,
-      },
-      primaryPhoneNumber: {
-        labelKey: primaryPhoneNumberLabel,
-        transform: castToString,
-      },
-      primaryPhoneCallingCode: {
-        labelKey: primaryPhoneCallingCodeLabel,
-        transform: castToString,
-      },
-      additionalPhones: {
-        labelKey: additionalPhonesLabel,
-        transform: phoneArrayJSONSchema.parse,
-      },
+      primaryPhoneCountryCode: castToString,
+      primaryPhoneNumber: castToString,
+      primaryPhoneCallingCode: castToString,
+      additionalPhones: phoneArrayJSONSchema.parse,
     },
 
     [FieldMetadataType.RICH_TEXT_V2]: {
-      blocknote: { labelKey: blocknoteLabel, transform: castToString },
-      markdown: { labelKey: markdownLabel, transform: castToString },
+      blocknote: castToString,
+      markdown: castToString,
     },
 
     [FieldMetadataType.EMAILS]: {
-      primaryEmail: { labelKey: primaryEmailLabel, transform: castToString },
-      additionalEmails: {
-        labelKey: additionalEmailsLabel,
-        transform: stringArrayJSONSchema.parse,
-      },
+      primaryEmail: castToString,
+      additionalEmails: stringArrayJSONSchema.parse,
     },
-
     [FieldMetadataType.FULL_NAME]: {
-      firstName: { labelKey: firstNameLabel },
-      lastName: { labelKey: lastNameLabel },
+      firstName: undefined,
+      lastName: undefined,
     },
     [FieldMetadataType.ACTOR]: {
-      source: { labelKey: 'source', transform: () => 'IMPORT' },
-      context: { labelKey: 'context', transform: () => ({}) },
+      source: () => 'IMPORT',
+      context: () => ({}),
     },
   };
 
@@ -239,9 +156,9 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.FULL_NAME: {
         const compositeData = buildCompositeFieldRecord(
-          field.name,
+          field,
           importedStructuredRow,
-          COMPOSITE_FIELD_CONFIGS[field.type],
+          COMPOSITE_FIELD_TRANSFORM_CONFIGS[field.type],
         );
         if (isDefined(compositeData)) {
           recordToBuild[field.name] = compositeData;
@@ -250,9 +167,9 @@ export const buildRecordFromImportedStructuredRow = ({
       }
       case FieldMetadataType.PHONES: {
         const compositeData = buildCompositeFieldRecord(
-          field.name,
+          field,
           importedStructuredRow,
-          COMPOSITE_FIELD_CONFIGS[field.type],
+          COMPOSITE_FIELD_TRANSFORM_CONFIGS[field.type],
         );
         if (!isDefined(compositeData)) {
           break;
@@ -261,13 +178,15 @@ export const buildRecordFromImportedStructuredRow = ({
 
         // To meet backend requirements, handle case where user provides only a primaryPhoneNumber without calling code
         const primaryPhoneNumber =
-          importedStructuredRow[`${primaryPhoneNumberLabel} (${field.name})`];
+          importedStructuredRow[
+            getSubFieldOptionKey(field, 'primaryPhoneNumber')
+          ];
 
         if (
           isDefined(primaryPhoneNumber) &&
           !isDefined(
             importedStructuredRow[
-              `${primaryPhoneCallingCodeLabel} (${field.name})`
+              getSubFieldOptionKey(field, 'primaryPhoneCountryCode')
             ],
           )
         ) {
