@@ -3,12 +3,14 @@ import { FieldActorForInputValue } from '@/object-record/record-field/types/Fiel
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { parsePhoneNumberWithError } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type BuildRecordFromImportedStructuredRowArgs = {
   importedStructuredRow: ImportedStructuredRow<any>;
@@ -235,7 +237,6 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.LINKS:
       case FieldMetadataType.RICH_TEXT_V2:
       case FieldMetadataType.EMAILS:
-      case FieldMetadataType.PHONES:
       case FieldMetadataType.FULL_NAME: {
         const compositeData = buildCompositeFieldRecord(
           field.name,
@@ -244,6 +245,50 @@ export const buildRecordFromImportedStructuredRow = ({
         );
         if (isDefined(compositeData)) {
           recordToBuild[field.name] = compositeData;
+        }
+        break;
+      }
+      case FieldMetadataType.PHONES: {
+        const compositeData = buildCompositeFieldRecord(
+          field.name,
+          importedStructuredRow,
+          COMPOSITE_FIELD_CONFIGS[field.type],
+        );
+        if (!isDefined(compositeData)) {
+          break;
+        }
+        recordToBuild[field.name] = compositeData;
+
+        // To meet backend requirements, handle case where user provides only a primaryPhoneNumber without calling code
+        const primaryPhoneNumber =
+          importedStructuredRow[`${primaryPhoneNumberLabel} (${field.name})`];
+
+        if (
+          isDefined(primaryPhoneNumber) &&
+          !isDefined(
+            importedStructuredRow[
+              `${primaryPhoneCallingCodeLabel} (${field.name})`
+            ],
+          )
+        ) {
+          try {
+            const {
+              number: parsedNumber,
+              countryCallingCode: parsedCountryCallingCode,
+            } = parsePhoneNumberWithError(primaryPhoneNumber as string);
+            recordToBuild[field.name] = {
+              primaryPhoneNumber: parsedNumber,
+              primaryPhoneCountryCode: parsedCountryCallingCode,
+            };
+          } catch {
+            recordToBuild[field.name] = {
+              primaryPhoneNumber,
+              primaryPhoneCallingCode:
+                stripSimpleQuotesFromString(
+                  field?.defaultValue?.primaryPhoneCallingCode,
+                ) || '+1',
+            };
+          }
         }
         break;
       }
