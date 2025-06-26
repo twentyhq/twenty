@@ -306,3 +306,19 @@ export const generateFindToolSchema = (
 
   return z.object(schemaFields);
 };
+
+export const generateBulkDeleteToolSchema = () => {
+  return z.object({
+    filter: z
+      .object({
+        id: z
+          .object({
+            in: z
+              .array(z.string().uuid())
+              .describe('Array of record IDs to delete'),
+          })
+          .describe('Filter to select records to delete'),
+      })
+      .describe('Filter criteria to select records for bulk delete'),
+  });
+};

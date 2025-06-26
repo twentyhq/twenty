@@ -15,6 +15,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import {
   generateAgentToolUpdateZodSchema,
   generateAgentToolZodSchema,
+  generateBulkDeleteToolSchema,
   generateFindToolSchema,
 } from './utils/agent-tool-schema.utils';
 import { isWorkflowRelatedObject } from './utils/is-workflow-related-object.util';
@@ -168,6 +169,18 @@ export class AgentToolService {
               );
             },
           };
+
+          tools[`soft_delete_many_${objectMetadata.nameSingular}`] = {
+            description: `Soft delete multiple ${objectMetadata.nameSingular} records by IDs (marks as deleted but keeps data)`,
+            parameters: generateBulkDeleteToolSchema(),
+            execute: async (parameters) => {
+              return this.softDeleteManyRecords(
+                objectMetadata.nameSingular,
+                parameters,
+                workspaceId,
+              );
+            },
+          };
         }
 
         if (canDestroy) {
@@ -178,6 +191,18 @@ export class AgentToolService {
             }),
             execute: async (parameters) => {
               return this.destroyRecord(
+                objectMetadata.nameSingular,
+                parameters,
+                workspaceId,
+              );
+            },
+          };
+
+          tools[`destroy_many_${objectMetadata.nameSingular}`] = {
+            description: `Permanently destroy multiple ${objectMetadata.nameSingular} records by IDs (irreversible deletion)`,
+            parameters: generateBulkDeleteToolSchema(),
+            execute: async (parameters) => {
+              return this.destroyManyRecords(
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
@@ -516,6 +541,150 @@ export class AgentToolService {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to destroy ${objectName}`,
+      };
+    }
+  }
+
+  private async softDeleteManyRecords(
+    objectName: string,
+    parameters: Record<string, unknown>,
+    workspaceId: string,
+  ) {
+    try {
+      const repository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          objectName,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+      const { filter } = parameters;
+
+      if (!filter || typeof filter !== 'object' || !('id' in filter)) {
+        return {
+          success: false,
+          error: 'Filter with record IDs is required for bulk soft delete',
+          message: `Failed to soft delete many ${objectName}: Filter with record IDs is required`,
+        };
+      }
+
+      const filterObj = filter as Record<string, unknown>;
+      const idFilter = filterObj.id as Record<string, unknown>;
+      const recordIds = idFilter.in as string[];
+
+      if (!Array.isArray(recordIds) || recordIds.length === 0) {
+        return {
+          success: false,
+          error: 'At least one record ID is required for bulk soft delete',
+          message: `Failed to soft delete many ${objectName}: At least one record ID is required`,
+        };
+      }
+
+      const existingRecords = await repository.find({
+        where: { id: { in: recordIds } },
+      });
+
+      if (existingRecords.length === 0) {
+        return {
+          success: false,
+          error: 'No records found to soft delete',
+          message: `Failed to soft delete many ${objectName}: No records found with the provided IDs`,
+        };
+      }
+
+      await repository.softDelete({ id: { in: recordIds } });
+
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.DELETED,
+        records: existingRecords,
+        workspaceId,
+      });
+
+      return {
+        success: true,
+        count: existingRecords.length,
+        message: `Successfully soft deleted ${existingRecords.length} ${objectName} records`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        message: `Failed to soft delete many ${objectName}`,
+      };
+    }
+  }
+
+  private async destroyManyRecords(
+    objectName: string,
+    parameters: Record<string, unknown>,
+    workspaceId: string,
+  ) {
+    try {
+      const repository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          objectName,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+      const { filter } = parameters;
+
+      if (!filter || typeof filter !== 'object' || !('id' in filter)) {
+        return {
+          success: false,
+          error: 'Filter with record IDs is required for bulk destroy',
+          message: `Failed to destroy many ${objectName}: Filter with record IDs is required`,
+        };
+      }
+
+      const filterObj = filter as Record<string, unknown>;
+      const idFilter = filterObj.id as Record<string, unknown>;
+      const recordIds = idFilter.in as string[];
+
+      if (!Array.isArray(recordIds) || recordIds.length === 0) {
+        return {
+          success: false,
+          error: 'At least one record ID is required for bulk destroy',
+          message: `Failed to destroy many ${objectName}: At least one record ID is required`,
+        };
+      }
+
+      const existingRecords = await repository.find({
+        where: { id: { in: recordIds } },
+      });
+
+      if (existingRecords.length === 0) {
+        return {
+          success: false,
+          error: 'No records found to destroy',
+          message: `Failed to destroy many ${objectName}: No records found with the provided IDs`,
+        };
+      }
+
+      await repository.delete({ id: { in: recordIds } });
+
+      await this.emitDatabaseEvent({
+        objectName,
+        action: DatabaseEventAction.DESTROYED,
+        records: existingRecords,
+        workspaceId,
+      });
+
+      return {
+        success: true,
+        count: existingRecords.length,
+        message: `Successfully destroyed ${existingRecords.length} ${objectName} records`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        message: `Failed to destroy many ${objectName}`,
       };
     }
   }
