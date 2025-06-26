@@ -18,19 +18,18 @@ export const generateAgentToolZodSchema = (
       return;
     }
 
-    if (field.type === FieldMetadataType.RELATION) {
-      if (
-        isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-        field.settings?.relationType === RelationType.MANY_TO_ONE
-      ) {
-        const fieldName = `${field.name}Id`;
+    if (
+      field.type === FieldMetadataType.RELATION &&
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE
+    ) {
+      const fieldName = `${field.name}Id`;
 
-        schemaFields[fieldName] = z
-          .string()
-          .uuid()
-          .nullable()
-          .describe(field.description || `ID of the related ${field.name}`);
-      }
+      schemaFields[fieldName] = z
+        .string()
+        .uuid()
+        .nullable()
+        .describe(field.description || `ID of the related ${field.name}`);
 
       return;
     }
@@ -57,20 +56,19 @@ export const generateAgentToolUpdateZodSchema = (
       return;
     }
 
-    if (field.type === FieldMetadataType.RELATION) {
-      if (
-        isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-        field.settings?.relationType === RelationType.MANY_TO_ONE
-      ) {
-        const fieldName = `${field.name}Id`;
+    if (
+      field.type === FieldMetadataType.RELATION &&
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE
+    ) {
+      const fieldName = `${field.name}Id`;
 
-        schemaFields[fieldName] = z
-          .string()
-          .uuid()
-          .nullable()
-          .optional()
-          .describe(field.description || `ID of the related ${field.name}`);
-      }
+      schemaFields[fieldName] = z
+        .string()
+        .uuid()
+        .nullable()
+        .optional()
+        .describe(field.description || `ID of the related ${field.name}`);
 
       return;
     }
