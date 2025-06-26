@@ -13,8 +13,8 @@ import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuCl
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -27,7 +27,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
   const { resetContextStoreStates } = useResetContextStoreStates();
 
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
   const commandMenuCloseAnimationCompleteCleanup = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -52,7 +52,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
 
-        emitRightDrawerCloseEvent();
+        emitSidePanelCloseEvent();
         set(isCommandMenuClosingState, false);
         set(
           activeTabIdComponentState.atomFamily({

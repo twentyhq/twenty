@@ -47,6 +47,12 @@ export const useRequestFreshCaptchaToken = () => {
                 action: 'submit',
               })
               .then((token: string) => {
+                // TODO remove this log once debugged
+                // eslint-disable-next-line no-console
+                console.log(
+                  'Google Recaptcha token generated at',
+                  new Date().toISOString(),
+                );
                 setCaptchaToken(token);
                 setIsRequestingCaptchaToken(false);
               });

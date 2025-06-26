@@ -11,7 +11,6 @@ export class ScopedWorkspaceContextFactory {
 
   public create(): {
     workspaceId: string | null;
-    workspaceMetadataVersion: number | null;
     userWorkspaceId: string | null;
     isExecutedByApiKey: boolean;
   } {
@@ -22,13 +21,9 @@ export class ScopedWorkspaceContextFactory {
       this.request?.['params']?.['workspaceId'] ||
       // @ts-expect-error legacy noImplicitAny
       this.request?.['workspace']?.['id']; // rest api
-    const workspaceMetadataVersion: number | undefined =
-      // @ts-expect-error legacy noImplicitAny
-      this.request?.['req']?.['workspaceMetadataVersion'];
 
     return {
       workspaceId: workspaceId ?? null,
-      workspaceMetadataVersion: workspaceMetadataVersion ?? null,
       userWorkspaceId:
         // @ts-expect-error legacy noImplicitAny
         this.request?.['req']?.['userWorkspaceId'] ??

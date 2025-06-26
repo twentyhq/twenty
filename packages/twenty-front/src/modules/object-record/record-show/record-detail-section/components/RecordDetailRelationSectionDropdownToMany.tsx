@@ -7,6 +7,7 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
@@ -71,6 +72,8 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
+  const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
+
   const handleCloseRelationPickerDropdown = useCallback(() => {
     setMultipleRecordPickerSearchFilter('');
   }, [setMultipleRecordPickerSearchFilter]);
@@ -98,6 +101,8 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
         isMatchingSearchFilter: true,
       })),
     );
+
+    openMultipleRecordPicker(dropdownId);
 
     multipleRecordPickerPerformSearch({
       multipleRecordPickerInstanceId: dropdownId,

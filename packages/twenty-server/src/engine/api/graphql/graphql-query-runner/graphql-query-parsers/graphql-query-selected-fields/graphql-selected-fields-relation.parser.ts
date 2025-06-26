@@ -32,11 +32,13 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       this.objectMetadataMaps,
     );
 
-    const targetFields = targetObjectMetadata.fieldsByName;
     const fieldParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
     );
-    const relationAccumulator = fieldParser.parse(fieldValue, targetFields);
+    const relationAccumulator = fieldParser.parse(
+      fieldValue,
+      targetObjectMetadata,
+    );
 
     accumulator.select[fieldKey] = {
       id: true,

@@ -4,15 +4,23 @@ import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdo
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useCallback } from 'react';
 
+/**
+ *
+ * @deprecated This hook is deprecated, use a specific hook instead :
+ * - `useOpenDropdown`
+ * - `useCloseDropdown`
+ * - `useToggleDropdown`
+ */
 export const useDropdown = (dropdownId?: string) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const { scopeId, isDropdownOpenState, dropdownPlacementState } =
     useDropdownStates({ dropdownScopeId: dropdownId });
@@ -34,16 +42,15 @@ export const useDropdown = (dropdownId?: string) => {
     if (isDropdownOpen) {
       setIsDropdownOpen(false);
       goBackToPreviousDropdownFocusId();
-      removeFocusItemFromFocusStack({
+      removeFocusItemFromFocusStackById({
         focusId: dropdownId ?? scopeId,
-        memoizeKey: 'global',
       });
     }
   }, [
     isDropdownOpen,
     setIsDropdownOpen,
     goBackToPreviousDropdownFocusId,
-    removeFocusItemFromFocusStack,
+    removeFocusItemFromFocusStackById,
     dropdownId,
     scopeId,
   ]);
@@ -63,7 +70,6 @@ export const useDropdown = (dropdownId?: string) => {
           globalHotkeysConfig,
           // TODO: Remove this once we've fully migrated away from hotkey scopes
           hotkeyScope: { scope: 'dropdown' } as HotkeyScope,
-          memoizeKey: 'global',
         });
       }
     },

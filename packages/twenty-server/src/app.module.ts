@@ -19,6 +19,7 @@ import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graph
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
@@ -50,7 +51,7 @@ const MIGRATED_REST_METHODS = [
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [GraphQLConfigModule],
+      imports: [GraphQLConfigModule, MetricsModule],
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,

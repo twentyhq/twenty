@@ -992,6 +992,14 @@ export class ConfigVariables {
   OPENAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Anthropic integration',
+    type: ConfigVariableType.STRING,
+  })
+  ANTHROPIC_API_KEY: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

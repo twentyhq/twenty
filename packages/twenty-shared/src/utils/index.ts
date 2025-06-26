@@ -25,6 +25,7 @@ export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
 export { isDefined } from './validation/isDefined';
+export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export { isValidLocale } from './validation/isValidLocale';
 export { isValidUuid } from './validation/isValidUuid';
 export { isValidVariable } from './validation/isValidVariable';

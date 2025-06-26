@@ -28,7 +28,7 @@ export const prefillPeople = async (
       'createdByWorkspaceMemberId',
       'createdByName',
       'phonesPrimaryPhoneNumber',
-      'phonesPrimaryPhoneCountryCode',
+      'phonesPrimaryPhoneCallingCode',
       'companyId',
     ])
     .orIgnore()
@@ -44,8 +44,8 @@ export const prefillPeople = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
-        phonesPrimaryPhoneNumber: '1234567890',
-        phonesPrimaryPhoneCountryCode: '+1',
+        phonesPrimaryPhoneNumber: '123456789',
+        phonesPrimaryPhoneCallingCode: '+1',
         companyId: AIRBNB_ID,
       },
       {
@@ -59,8 +59,8 @@ export const prefillPeople = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
-        phonesPrimaryPhoneNumber: '5551234567',
-        phonesPrimaryPhoneCountryCode: '+1',
+        phonesPrimaryPhoneNumber: '555123456',
+        phonesPrimaryPhoneCallingCode: '+1',
         companyId: ANTHROPIC_ID,
       },
       {
@@ -75,7 +75,7 @@ export const prefillPeople = async (
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '987625341',
-        phonesPrimaryPhoneCountryCode: '+1',
+        phonesPrimaryPhoneCallingCode: '+1',
         companyId: STRIPE_ID,
       },
       {
@@ -89,8 +89,8 @@ export const prefillPeople = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
-        phonesPrimaryPhoneNumber: '09882261',
-        phonesPrimaryPhoneCountryCode: '+1',
+        phonesPrimaryPhoneNumber: '098822619',
+        phonesPrimaryPhoneCallingCode: '+1',
         companyId: FIGMA_ID,
       },
       {
@@ -104,8 +104,8 @@ export const prefillPeople = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
-        phonesPrimaryPhoneNumber: '88226173',
-        phonesPrimaryPhoneCountryCode: '+1',
+        phonesPrimaryPhoneNumber: '882261739',
+        phonesPrimaryPhoneCallingCode: '+1',
         companyId: NOTION_ID,
       },
     ])

@@ -9,7 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -74,7 +74,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ActionMenuComponentInstanceContext,
   );
 
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
   const handleOpenRecord = useRecoilCallback(
     ({ snapshot, reset }) =>

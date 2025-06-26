@@ -11,7 +11,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -48,7 +48,7 @@ export const RecordIndexActionMenuDropdown = () => {
   );
 
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(

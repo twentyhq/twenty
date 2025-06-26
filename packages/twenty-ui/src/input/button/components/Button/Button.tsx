@@ -293,7 +293,9 @@ const StyledButton = styled('button', {
                   }`
                 : 'none'};
               color: ${!inverted
-                ? theme.font.color.danger
+                ? !disabled
+                  ? theme.font.color.danger
+                  : theme.color.red20
                 : theme.font.color.inverted};
               &:hover {
                 background: ${!inverted

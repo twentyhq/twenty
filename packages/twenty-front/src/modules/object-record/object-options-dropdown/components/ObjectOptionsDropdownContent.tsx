@@ -7,10 +7,10 @@ import { ObjectOptionsDropdownMenuContent } from '@/object-record/object-options
 import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent';
 import { ObjectOptionsDropdownRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent';
 import { ObjectOptionsDropdownRecordGroupSortContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 
 export const ObjectOptionsDropdownContent = () => {
-  const { currentContentId } = useOptionsDropdown();
+  const { currentContentId } = useObjectOptionsDropdown();
 
   switch (currentContentId) {
     case 'layout':

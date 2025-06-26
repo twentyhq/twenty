@@ -71,6 +71,24 @@ describe('generateFakeField', () => {
       );
     });
 
+    it('should handle custom value', () => {
+      const result = generateFakeField({
+        type: FieldMetadataType.TEXT,
+        label: 'Text Field',
+        value: 'Test value',
+      });
+
+      expect(result).toEqual({
+        isLeaf: true,
+        type: FieldMetadataType.TEXT,
+        icon: undefined,
+        label: 'Text Field',
+        value: 'Test value',
+      });
+
+      expect(generateFakeValueSpy).not.toHaveBeenCalled();
+    });
+
     it('should generate a leaf node for NUMBER type with icon', () => {
       generateFakeValueSpy.mockReturnValueOnce(42);
 

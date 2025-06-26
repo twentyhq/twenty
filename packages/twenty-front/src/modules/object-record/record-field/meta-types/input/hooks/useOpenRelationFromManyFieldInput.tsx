@@ -4,6 +4,7 @@ import {
   FieldRelationFromManyValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -17,6 +18,7 @@ import { useRecoilCallback } from 'recoil';
 
 export const useOpenRelationFromManyFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
+  const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -57,6 +59,8 @@ export const useOpenRelationFromManyFieldInput = () => {
         if (!objectMetadataItem) {
           return;
         }
+
+        openMultipleRecordPicker(recordPickerInstanceId);
 
         const pickableMorphItems: RecordPickerPickableMorphItem[] =
           fieldValue.map((record) => {
@@ -105,7 +109,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           memoizeKey: recordPickerInstanceId,
         });
       },
-    [performSearch, pushFocusItemToFocusStack],
+    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
   );
 
   return { openRelationFromManyFieldInput };

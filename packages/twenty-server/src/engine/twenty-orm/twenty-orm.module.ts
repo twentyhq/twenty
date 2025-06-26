@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -22,7 +23,7 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, UserWorkspaceRoleEntity],
+      [ObjectMetadataEntity, UserWorkspaceRoleEntity, Workspace],
       'core',
     ),
     DataSourceModule,

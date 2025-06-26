@@ -24,6 +24,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/anthropic@npm:^1.2.12":
+  version: 1.2.12
+  resolution: "@ai-sdk/anthropic@npm:1.2.12"
+  dependencies:
+    "@ai-sdk/provider": "npm:1.1.3"
+    "@ai-sdk/provider-utils": "npm:2.2.8"
+  peerDependencies:
+    zod: ^3.0.0
+  checksum: 10c0/da13e1ed3c03efe207dbb0fd5fe9f399e4119e6687ec1096418a33a7eeea3c5f912a51c74b185bba3c203b15ee0c1b9cdf649711815ff8e769e31af266ac00fb
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/openai@npm:^1.3.22":
   version: 1.3.22
   resolution: "@ai-sdk/openai@npm:1.3.22"
@@ -56734,6 +56746,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@ai-sdk/anthropic": "npm:^1.2.12"
     "@ai-sdk/openai": "npm:^1.3.22"
     "@blocknote/server-util": "npm:^0.31.1"
     "@clickhouse/client": "npm:^1.11.0"

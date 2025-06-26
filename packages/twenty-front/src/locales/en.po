@@ -395,6 +395,11 @@ msgstr "Add option"
 msgid "Add or remove users"
 msgstr "Add or remove users"
 
+#. js-lingui-id: 7YdkgZ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Add Output Field"
+msgstr "Add Output Field"
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -487,6 +492,21 @@ msgstr "Advanced:"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
 msgstr "Afrikaans"
+
+#. js-lingui-id: MnmJG1
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "AI Agent"
+msgstr "AI Agent"
+
+#. js-lingui-id: kNfr85
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "AI Model"
+msgstr "AI Model"
+
+#. js-lingui-id: QwgquD
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "AI Response Schema"
+msgstr "AI Response Schema"
 
 #. js-lingui-id: N40H+G
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -882,6 +902,16 @@ msgstr "Book onboarding"
 msgid "Book your onboarding"
 msgstr "Book your onboarding"
 
+#. js-lingui-id: bOwPjT
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Boolean"
+msgstr "Boolean"
+
+#. js-lingui-id: qDsMss
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Brief explanation of this output field"
+msgstr "Brief explanation of this output field"
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
@@ -1034,6 +1064,11 @@ msgstr "Choose a Workspace"
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Choose between OIDC and SAML protocols"
 
+#. js-lingui-id: 2ZFG9X
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose between Short and Full"
+msgstr "Choose between Short and Full"
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -1073,6 +1108,11 @@ msgstr "Clear the field or \"X\" to revert to environment/default value."
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
 msgstr "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+
+#. js-lingui-id: RFmRvm
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Click on \"Add Output Field\" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps."
+msgstr "Click on \"Add Output Field\" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps."
 
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -1445,6 +1485,21 @@ msgstr "Create your workspace"
 #~ msgid "Created"
 #~ msgstr "Created"
 
+#. js-lingui-id: fR16ki
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your data model..."
+msgstr "Creating your data model..."
+
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Creating your schema"
+#~ msgstr "Creating your schema"
+
+#. js-lingui-id: YO4SdK
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your workspace"
+msgstr "Creating your workspace"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -1561,6 +1616,7 @@ msgid "Database configuration is currently disabled."
 msgstr "Database configuration is currently disabled."
 
 #. js-lingui-id: mYGY3B
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -1811,9 +1867,15 @@ msgstr "Deleted records"
 msgid "Descending"
 msgstr "Descending"
 
+#. js-lingui-id: g+5exC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Describe what you want the AI to do..."
+msgstr "Describe what you want the AI to do..."
+
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
@@ -1945,6 +2007,11 @@ msgstr "Dutch"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
 msgstr "E.g. backoffice integration"
+
+#. js-lingui-id: GhTFTJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "e.g., summary, status, count"
+msgstr "e.g., summary, status, count"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -2464,6 +2531,11 @@ msgstr "Feature Flags & Impersonation"
 msgid "Field name"
 msgstr "Field name"
 
+#. js-lingui-id: fV7qkH
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Field Name"
+msgstr "Field Name"
+
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -2535,13 +2607,18 @@ msgstr "First Name"
 
 #. js-lingui-id: 7JBW66
 #: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
-msgid "Forbidden"
-msgstr "Forbidden"
+#~ msgid "Forbidden"
+#~ msgstr "Forbidden"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Forgot your password?"
+
+#. js-lingui-id: kI1qVD
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Format"
+msgstr "Format"
 
 #. js-lingui-id: abDZwc
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
@@ -2905,6 +2982,11 @@ msgstr "Input settings"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
 msgstr "Instances"
+
+#. js-lingui-id: g+29+d
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Instructions for AI"
+msgstr "Instructions for AI"
 
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
@@ -3270,6 +3352,7 @@ msgstr "Loading..."
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
 msgstr "Log out"
 
@@ -3655,6 +3738,11 @@ msgstr "New SSO provider"
 msgid "Next Step"
 msgstr "Next Step"
 
+#. js-lingui-id: QNbLNQ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No AI models available"
+msgstr "No AI models available"
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
@@ -3862,6 +3950,7 @@ msgid "Not Found"
 msgstr "Not Found"
 
 #. js-lingui-id: 51G4/+
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr "Not shared"
@@ -3882,6 +3971,7 @@ msgid "Notes"
 msgstr "Notes"
 
 #. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Number"
 msgstr "Number"
@@ -4040,6 +4130,11 @@ msgstr "Other workspaces"
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
 msgstr "Our team can help you set up your workspace to match your specific needs and workflows."
+
+#. js-lingui-id: xvfn7l
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Output Field {fieldNumber}"
+msgstr "Output Field {fieldNumber}"
 
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -4235,6 +4330,16 @@ msgstr "Portuguese — Portugal"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
+
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Prefilling your workspace data"
+#~ msgstr "Prefilling your workspace data"
+
+#. js-lingui-id: /v6Rp9
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data..."
+msgstr "Prefilling your workspace data..."
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4921,6 +5026,16 @@ msgstr "Set the name of your custom domain and configure your DNS records."
 msgid "Set the name of your subdomain"
 msgstr "Set the name of your subdomain"
 
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Setting up your database"
+#~ msgstr "Setting up your database"
+
+#. js-lingui-id: dQsqpC
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database..."
+msgstr "Setting up your database..."
+
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
@@ -5299,9 +5414,9 @@ msgid "Test Workflow"
 msgstr "Test Workflow"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
-#~ msgid "Text"
-#~ msgstr "Text"
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Text"
+msgstr "Text"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
@@ -5623,6 +5738,13 @@ msgstr "Unlimited contacts"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr "Untitled role"
+
+#. js-lingui-id: KmUc2w
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+#~ msgid "Untitled Role"
+#~ msgstr "Untitled Role"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -6067,6 +6189,11 @@ msgstr "You are not allowed to create records for this object"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
 #~ msgstr "You do not have access to impersonate users."
+
+#. js-lingui-id: cdk3eC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
+msgstr "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
