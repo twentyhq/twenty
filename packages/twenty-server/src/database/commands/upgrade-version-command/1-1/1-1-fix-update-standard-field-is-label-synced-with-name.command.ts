@@ -10,6 +10,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -24,6 +25,7 @@ export class FixUpdateStandardFieldsIsLabelSyncedWithName extends ActiveOrSuspen
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -60,6 +62,11 @@ export class FixUpdateStandardFieldsIsLabelSyncedWithName extends ActiveOrSuspen
       this.logger.log(`Updated isLabelSyncedMetadata for field ${field.id}`);
     }
 
+    if (!options.dryRun && updatedFields > 0) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+    }
     this.logger.log(
       `Updated ${updatedFields} field.s for workspace ${workspaceId}`,
     );
