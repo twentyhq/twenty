@@ -45,7 +45,7 @@ export const SentryInitEffect = () => {
               browserTracingIntegration({}),
               replayIntegration(),
               globalHandlersIntegration({
-                onunhandledrejection: false,
+                onunhandledrejection: false, // handled in SentryInitEffect
               }),
             ],
             tracePropagationTargets: [
