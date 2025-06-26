@@ -20,7 +20,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
-import { IMAP_SMTP_CALDAVAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
+import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Resolver()
@@ -32,7 +32,7 @@ export class ImapSmtpCaldavResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
-    private readonly imapSmtpCaldavApisService: IMAP_SMTP_CALDAVAPIService,
+    private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}

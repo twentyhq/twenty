@@ -7,7 +7,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-import { IMAP_SMTP_CALDAVAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
+import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { IMAP_SMTP_CALDAVAPIService } from 'src/modules/connected-account/servic
     TwentyORMModule,
     FeatureFlagModule,
   ],
-  providers: [IMAP_SMTP_CALDAVAPIService],
-  exports: [IMAP_SMTP_CALDAVAPIService],
+  providers: [ImapSmtpCalDavAPIService],
+  exports: [ImapSmtpCalDavAPIService],
 })
 export class IMAPAPIsModule {}
