@@ -23,8 +23,10 @@ import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
-  textResponse: string;
-  structuredOutput: object;
+  result: {
+    textResponse: string;
+    structuredOutput?: object;
+  };
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -124,6 +126,13 @@ export class AgentExecutionService {
         maxSteps: AGENT_CONFIG.MAX_STEPS,
       });
 
+      if (Object.keys(schema).length === 0) {
+        return {
+          result: { textResponse: textResponse.text },
+          usage: textResponse.usage,
+        };
+      }
+
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: this.getModel(agent.modelId, provider),
@@ -136,8 +145,10 @@ export class AgentExecutionService {
       });
 
       return {
-        textResponse: textResponse.text,
-        structuredOutput: output.object,
+        result: {
+          textResponse: textResponse.text,
+          structuredOutput: output.object,
+        },
         usage: {
           promptTokens:
             (textResponse.usage?.promptTokens ?? 0) +
