@@ -387,6 +387,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
+  rabbitSignSignatures: '20202020-6d1e-51ac-b13b-621633238d11',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
 };
 
@@ -560,6 +561,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   managedPolicies: '20202020-4d1e-41ac-b13b-621631298d55',
   rabbitSignKeys: '20202020-5d1e-41ac-b13b-621631298d55',
   rabbitSignSignatures: '20202020-6d1e-41ac-b13b-621631298d51',
+  rabbitSignSigners: '20202020-6d1f-41ac-b13b-621631298c52',
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
@@ -650,9 +652,19 @@ export const RABBIT_SIGN_KEY_STANDARD_FIELD_IDS = {
 
 export const RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS = {
   title: '20202020-9d1e-51ac-b13b-621631298d55',
+  message: '20202020-1d1e-51ac-b13b-621631298d75',
   signatureStatus: '20202020-1d1e-51ac-b13b-621631298d65',
   workspaceMember: '20202020-7d0e-51ac-b13b-621631298d75',
   attachment: '20202020-5d1e-51ac-b13b-621633238d85',
+  folderId: '20202020-5d1e-51ac-b13b-621633238c25',
+  signers: '20202020-6d1e-51ac-b13b-621633234c86',
+};
+
+export const RABBIT_SIGN_SIGNER_STANDARD_FIELD_IDS = {
+  status: '20202020-6d1e-51ac-b13b-621633238d13',
+  signingOrder: '20202020-6d1e-51ac-b13b-621633238d14',
+  signature: '20202020-6d1e-51ac-b13b-621633238d15',
+  person: '20202020-6d1e-51ac-b13b-621633238d16',
 };
 
 export const STANDARD_OBJECT_FIELD_IDS = {
@@ -701,4 +713,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   policy: POLICY_STANDARD_FIELD_IDS,
   rabbitSignKey: RABBIT_SIGN_KEY_STANDARD_FIELD_IDS,
   rabbitSignSignature: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS,
+  rabbitSignSigner: RABBIT_SIGN_SIGNER_STANDARD_FIELD_IDS,
 };

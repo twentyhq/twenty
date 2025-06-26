@@ -318,7 +318,7 @@ export const DocumentSignatureEditor = ({
           renderAnnotationLayer={false}
         >
           {signatures
-            .filter((signature) => signature.pageIndex === pageNumber - 1)
+            .filter((signature) => signature.page_index === pageNumber - 1)
             .map((signature) => {
               const signee = signees.find((s) => s.id === signature.signee_id);
               if (!signee) return null;
@@ -373,7 +373,7 @@ export const DocumentSignatureEditor = ({
                       {
                         MapSignatureTypeToIcon[
                           Number(
-                            signature.fieldType + 1,
+                            signature.field_type + 1,
                           ) as keyof typeof MapSignatureTypeToIcon
                         ]
                       }

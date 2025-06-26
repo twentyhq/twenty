@@ -32,10 +32,11 @@ export const useCreateSignature = () => {
       variables: {
         input: {
           title: formValues.title,
+          message: formValues.message,
           signatureStatus: 'PROCESSING',
           workspaceMemberId: currentWorkspaceMember.id,
-          filename: formValues.filename,
-          attachmentId: formValues.attachmentId,
+          filename: formValues.file_name,
+          attachmentId: formValues.attachment_id,
           signaturesData: signaturesJson,
         },
       },

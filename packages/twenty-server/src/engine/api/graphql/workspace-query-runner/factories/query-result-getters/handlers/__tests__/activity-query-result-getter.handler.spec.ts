@@ -28,6 +28,8 @@ const baseNote = {
   favorites: [],
   searchVector: '',
   deletedAt: null,
+  policy: null,
+  policyId: null,
 } satisfies NoteWorkspaceEntity;
 
 const baseTask = {

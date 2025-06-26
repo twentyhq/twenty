@@ -38,6 +38,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { RabbitSignSignerWorkspaceEntity } from 'src/modules/rabbitsign/standard-objects/rabbitsignsigner.workplace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -289,6 +290,19 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.rabbitSignSignatures,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`RabbitSign Signatures`,
+    description: msg`RabbitSign signatures where this person is a signer`,
+    icon: 'IconSignature',
+    inverseSideTarget: () => RabbitSignSignerWorkspaceEntity,
+    inverseSideFieldKey: 'person',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  rabbitSignSignatures: Relation<RabbitSignSignerWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.searchVector,

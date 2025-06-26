@@ -5,10 +5,12 @@ import { createHash } from 'crypto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { RabbitSignKeyService } from 'src/modules/rabbitsign/rabbitsignkey.service';
+import { RabbitSignSignerService } from './rabbitsignsigner.service';
 import { RabbitSignSignatureWorkspaceEntity } from './standard-objects/rabbitsignsignature.workplace-entity';
 
 interface RabbitSignSignatureRequest {
   title: string;
+  message: string;
   pdfBuffer: Buffer;
   signers: Array<{
     email: string;
@@ -30,6 +32,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly rabbitSignKeyService: RabbitSignKeyService,
+    private readonly rabbitSignSignerService: RabbitSignSignerService,
   ) {
     super(null as any);
   }
@@ -98,6 +101,8 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
           // You might want to store additional info like folder ID
         }
       );
+      console.log('banana')
+      console.log('result', result);
 
       return {
         ...signatureRecord,
@@ -130,7 +135,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     const rabbitSignKey = await this.rabbitSignKeyService.getRabbitSignKeyForWorkspace(workspaceMemberId, workspaceId);
 
     const { keyId, keySecret } = rabbitSignKey;
-    const { title, pdfBuffer, signers } = signatureRequest;
+    const { title, message, pdfBuffer, signers } = signatureRequest;
 
     // Step 1: Get upload URL
     const path1 = '/api/v1/upload-url';
@@ -182,7 +187,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     const body2 = {
       folder: {
         title: title,
-        summary: 'Sent via API',
+        summary: message,
         docInfo: [
           {
             url: uploadUrl,
@@ -210,6 +215,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
   async createSignatureWithExternalCall(input: {
     title: string;
+    message: string;
     workspaceMemberId: string;
     workspaceId: string;
     attachmentId: string;
@@ -217,6 +223,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     signers?: Array<{
       email: string;
       name: string;
+      signeeId: string;
       signaturePosition: {
         x: number;
         y: number;
@@ -252,33 +259,117 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     try {
       // Step 2: Call external API if we have the required data
+      let result;
       if (input.pdfBuffer && input.signers) {
-        await this.createRabbitSignSignatureExternally(
+        result = await this.createRabbitSignSignatureExternally(
           signatureRecord.id,
           input.workspaceMemberId,
           input.workspaceId,
           {
             title: input.title,
+            message: input.message,
             pdfBuffer: input.pdfBuffer,
             signers: input.signers,
           },
         );
+
+        // Step 3: Create signer records
+        if (input.signers) {
+          const signersData = input.signers.map((signer, index) => ({
+            personId: signer.signeeId,
+            status: 'NOTIFIED', // Initial status when signature is sent
+            signingOrder: index + 1,
+          }));
+
+          await this.rabbitSignSignerService.createSigners(
+            input.workspaceId,
+            signatureRecord.id,
+            signersData,
+          );
+        }
       }
 
-      // Step 3: Update status
+      // Step 4: Update status
       await rabbitSignSignatureRepository.update(
         { id: signatureRecord.id },
-        { signatureStatus: 'SENT_FOR_SIGNATURE' }
+        { 
+          signatureStatus: 'SENT_FOR_SIGNATURE',
+          folderId: result?.folderId,
+        },
       );
 
       return signatureRecord;
     } catch (error) {
-      // Step 4: Update status on failure
+      // Step 5: Update status on failure
       await rabbitSignSignatureRepository.update(
         { id: signatureRecord.id },
         { signatureStatus: 'FAILED' }
       );
       throw error;
     }
+  }
+
+  async updateSignatureFromRabbitSignData(
+    workspaceId: string,
+    signatureId: string,
+    rabbitSignData: {
+      folderId: string;
+      creatorEmail: string;
+      title: string;
+      summary: string;
+      folderStatus: string;
+      signers: Array<{
+        email: string;
+        name: string;
+        status: string;
+        signingOrder: number;
+      }>;
+      ccList: any[];
+      creationTimeUtc: string;
+      downloadUrl: string;
+    },
+  ) {
+    const rabbitSignSignatureRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSignature',
+      );
+
+    // First, update the signers
+    await this.rabbitSignSignerService.updateSignersFromRabbitSignData(
+      workspaceId,
+      signatureId,
+      rabbitSignData,
+    );
+
+    // Check if all signers have signed
+    const allSignersSigned = rabbitSignData.signers.every(signer => 
+      signer.status === 'SIGNED'
+    );
+
+    // Only update signature status if all signers have signed
+    if (allSignersSigned) {
+      await rabbitSignSignatureRepository.update(
+        { id: signatureId },
+        {
+          folderId: rabbitSignData.folderId,
+          signatureStatus: 'COMPLETED', // or whatever status you want for fully signed
+        },
+      );
+    }
+  }
+
+  async findSignatureByFolderId(workspaceId: string, folderId: string): Promise<string | null> {
+    const rabbitSignSignatureRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSignature',
+      );
+
+    const signature = await rabbitSignSignatureRepository.findOne({
+      where: { folderId },
+    });
+
+    return signature?.id || null;
   }
 }

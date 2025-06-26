@@ -10,6 +10,10 @@ export class CreateOneRabbitSignSignatureInput {
 
   @Field(() => String)
   @IsString()
+  message: string;
+
+  @Field(() => String)
+  @IsString()
   workspaceMemberId: string;
 
   @Field(() => String)

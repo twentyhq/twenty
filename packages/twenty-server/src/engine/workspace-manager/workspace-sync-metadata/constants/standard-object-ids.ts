@@ -55,4 +55,5 @@ export const STANDARD_OBJECT_IDS = {
   policy: '20202020-0001-0001-0001-000000000001',
   rabbitSignSignature: '20202020-9a1c-4c3d-9e2f-1a2b3c5d5e6f',
   rabbitSignKey: '20202020-7bc2-4797-9df9-def8d11f7aff',
+  rabbitSignSigner: '20202020-8bc3-4898-9ef0-ef9e22f1cff0',
 };

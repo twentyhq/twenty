@@ -225,8 +225,8 @@ export const CreateSignatureFormItems = ({
       y: 50, // Default position from top
       width,
       height,
-      pageIndex: currentPageIndex,
-      fieldType,
+      page_index: currentPageIndex,
+      field_type: fieldType,
       signee_id: selectedSigneeId,
       index: maxIndex + 1,
     };
@@ -276,8 +276,8 @@ export const CreateSignatureFormItems = ({
         order_enabled: formValues.order_enabled,
         additional_receiver_ids: formValues.additional_receiver_ids,
         additional_receiver_emails: formValues.additional_receiver_emails,
-        filename: attachment.fullPath,
-        attachmentId: attachment.id,
+        file_name: attachment.fullPath,
+        attachment_id: attachment.id,
         signatures: formValues.signatures,
       });
 

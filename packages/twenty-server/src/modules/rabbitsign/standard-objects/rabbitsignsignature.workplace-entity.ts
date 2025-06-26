@@ -14,6 +14,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { RabbitSignSignerWorkspaceEntity } from './rabbitsignsigner.workplace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.rabbitSignSignature,
@@ -35,12 +36,29 @@ export class RabbitSignSignatureWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.message,
+    type: FieldMetadataType.TEXT,
+    label: msg`Message`,
+    description: msg`The message of the RabbitSignature request`,
+  })
+  message: string;
+
+  @WorkspaceField({
     standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signatureStatus,
     type: FieldMetadataType.TEXT,
     label: msg`Signature Status`,
     description: msg`The status of the RabbitSignature request`,
   })
   signatureStatus: string;
+
+  @WorkspaceField({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.folderId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Folder ID`,
+    description: msg`RabbitSign Folder ID`,
+    icon: 'IconFolder',
+  })
+  folderId: string;
 
   // Relations
   @WorkspaceRelation({
@@ -72,4 +90,16 @@ export class RabbitSignSignatureWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workspaceMember')
   workspaceMemberId: string;
+
+  @WorkspaceRelation({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Signers`,
+    description: msg`The signers for this signature request`,
+    icon: 'IconUsers',
+    inverseSideTarget: () => RabbitSignSignerWorkspaceEntity,
+    inverseSideFieldKey: 'signature',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  signers: Relation<RabbitSignSignerWorkspaceEntity[]>;
 }

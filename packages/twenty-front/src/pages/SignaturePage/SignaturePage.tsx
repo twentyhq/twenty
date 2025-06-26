@@ -98,8 +98,8 @@ const formSchema = z.object({
         y: z.number(),
         width: z.number(),
         height: z.number(),
-        pageIndex: z.number(),
-        fieldType: z.number(),
+        page_index: z.number(),
+        field_type: z.number(),
         signee_id: z.string(),
         index: z.number(),
       }),
@@ -110,8 +110,8 @@ const formSchema = z.object({
   additional_receiver_ids: z.array(z.string()).default([]),
   additional_receiver_emails: z.array(z.string().email()).default([]),
   selected_signee_id: z.union([z.string(), z.undefined()]),
-  filename: z.string(),
-  attachmentId: z.string(),
+  file_name: z.string(),
+  attachment_id: z.string(),
 });
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
@@ -206,8 +206,8 @@ export const SignaturePage = ({
       additional_receiver_ids: [],
       additional_receiver_emails: [],
       selected_signee_id: person?.id,
-      filename: attachment.fullPath,
-      attachmentId: attachment.id,
+      file_name: attachment.fullPath,
+      attachment_id: attachment.id,
     },
   });
 
