@@ -15,7 +15,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceDataSourceModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceHealthModule,
-    WorkspaceDataSourceModule,
     TypeORMModule,
   ],
   providers: [FixSchemaArrayTypeCommand],
