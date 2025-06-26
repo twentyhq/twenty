@@ -283,19 +283,23 @@ export class AgentToolService {
     const whereConditions: Record<string, unknown> = {};
 
     Object.entries(searchCriteria).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        if (typeof value === 'object' && !Array.isArray(value)) {
-          const filterCondition = this.parseFilterCondition(
-            value as Record<string, unknown>,
-          );
-
-          if (filterCondition !== null) {
-            whereConditions[key] = filterCondition;
-          }
-        } else {
-          whereConditions[key] = value;
-        }
+      if (value === undefined || value === null || value === '') {
+        return;
       }
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        const filterCondition = this.parseFilterCondition(
+          value as Record<string, unknown>,
+        );
+
+        if (filterCondition !== null) {
+          whereConditions[key] = filterCondition;
+        }
+
+        return;
+      }
+
+      whereConditions[key] = value;
     });
 
     return whereConditions;
@@ -376,7 +380,7 @@ export class AgentToolService {
       }
 
       const record = await repository.findOne({
-        where: { id: id as string },
+        where: { id },
       });
 
       if (!record) {
@@ -465,7 +469,7 @@ export class AgentToolService {
       }
 
       const existingRecord = await repository.findOne({
-        where: { id: id as string },
+        where: { id },
       });
 
       if (!existingRecord) {
@@ -538,7 +542,7 @@ export class AgentToolService {
       }
 
       const existingRecord = await repository.findOne({
-        where: { id: id as string },
+        where: { id },
       });
 
       if (!existingRecord) {
@@ -549,7 +553,7 @@ export class AgentToolService {
         };
       }
 
-      await repository.softDelete(id as string);
+      await repository.softDelete(id);
 
       await this.emitDatabaseEvent({
         objectName,
@@ -597,7 +601,7 @@ export class AgentToolService {
       }
 
       const existingRecord = await repository.findOne({
-        where: { id: id as string },
+        where: { id },
       });
 
       if (!existingRecord) {
@@ -655,9 +659,8 @@ export class AgentToolService {
         };
       }
 
-      const filterObj = filter as Record<string, unknown>;
-      const idFilter = filterObj.id as Record<string, unknown>;
-      const recordIds = idFilter.in as string[];
+      const idFilter = filter.id as Record<string, unknown>;
+      const recordIds = idFilter.in;
 
       if (!Array.isArray(recordIds) || recordIds.length === 0) {
         return {
@@ -727,8 +730,7 @@ export class AgentToolService {
         };
       }
 
-      const filterObj = filter as Record<string, unknown>;
-      const idFilter = filterObj.id as Record<string, unknown>;
+      const idFilter = filter.id as Record<string, unknown>;
       const recordIds = idFilter.in as string[];
 
       if (!Array.isArray(recordIds) || recordIds.length === 0) {
