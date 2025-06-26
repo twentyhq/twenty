@@ -7,7 +7,6 @@ import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTa
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationToOneFieldInput';
-import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldMetadata,
@@ -76,7 +75,7 @@ export const useOpenFieldInputEditMode = () => {
           });
 
           openActivityTargetCellEditMode({
-            recordPickerInstanceId: getRelationFromManyFieldInputInstanceId({
+            recordPickerInstanceId: getFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
             }),
@@ -111,16 +110,16 @@ export const useOpenFieldInputEditMode = () => {
         }
 
         pushFocusItemToFocusStack({
-          focusId: getFieldInputInstanceId(
+          focusId: getFieldInputInstanceId({
             recordId,
-            fieldDefinition.metadata.fieldName,
-          ),
+            fieldName: fieldDefinition.metadata.fieldName,
+          }),
           component: {
             type: FocusComponentType.OPEN_FIELD_INPUT,
-            instanceId: getFieldInputInstanceId(
+            instanceId: getFieldInputInstanceId({
               recordId,
-              fieldDefinition.metadata.fieldName,
-            ),
+              fieldName: fieldDefinition.metadata.fieldName,
+            }),
           },
           hotkeyScope: {
             scope: DEFAULT_CELL_SCOPE.scope,
@@ -148,10 +147,10 @@ export const useOpenFieldInputEditMode = () => {
     recordId: string;
   }) => {
     removeFocusItemFromFocusStackById({
-      focusId: getFieldInputInstanceId(
+      focusId: getFieldInputInstanceId({
         recordId,
-        fieldDefinition.metadata.fieldName,
-      ),
+        fieldName: fieldDefinition.metadata.fieldName,
+      }),
     });
   };
 
