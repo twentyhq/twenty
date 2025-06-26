@@ -23,7 +23,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { IMAP_SMTP_CALDEVModule } from 'src/engine/core-modules/imap-connection/imap-connection.module';
+import { IMAP_SMTP_CALDEVModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LoggerModule } from 'src/engine/core-modules/logger/logger.module';
 import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.module-factory';

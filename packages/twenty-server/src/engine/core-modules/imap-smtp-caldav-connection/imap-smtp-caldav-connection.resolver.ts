@@ -6,14 +6,14 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedIMAP_SMTP_CALDEVAccount } from 'src/engine/core-modules/imap-connection/dtos/imap-connected-account.dto';
-import { IMAP_SMTP_CALDEVConnectionSuccess } from 'src/engine/core-modules/imap-connection/dtos/imap-connection-success.dto';
+import { ConnectedIMAP_SMTP_CALDEVAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
+import { IMAP_SMTP_CALDEVConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import {
   AccountType,
   ConnectionParameters,
-} from 'src/engine/core-modules/imap-connection/dtos/imap-connection.dto';
-import { IMAP_SMTP_CALDEVValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
-import { IMAP_SMTP_CALDEVService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { IMAP_SMTP_CALDEVValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
+import { IMAP_SMTP_CALDEVService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';

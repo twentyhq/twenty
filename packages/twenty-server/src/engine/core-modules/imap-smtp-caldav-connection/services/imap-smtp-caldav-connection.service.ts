@@ -7,7 +7,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import {
   AccountType,
   ConnectionParameters,
-} from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 

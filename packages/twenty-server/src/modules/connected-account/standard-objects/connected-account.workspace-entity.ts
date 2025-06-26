@@ -8,7 +8,7 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';

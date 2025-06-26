@@ -4,7 +4,7 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 interface ImapClientInstance {

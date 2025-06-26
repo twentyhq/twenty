@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { IMAP_SMTP_CALDEVValidatorService } from './imap-connection-validator.service';
+import { IMAP_SMTP_CALDEVValidatorService } from './imap-smtp-caldav-connection-validator.service';
 
 @Module({
   providers: [IMAP_SMTP_CALDEVValidatorService],

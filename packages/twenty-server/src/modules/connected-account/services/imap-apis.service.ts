@@ -10,7 +10,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import {
   AccountType,
   ConnectionParameters,
-} from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';

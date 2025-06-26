@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { IMAP_SMTP_CALDEVConnectionParameters } from 'src/engine/core-modules/imap-connection/dtos/imap-connection.dto';
+import { IMAP_SMTP_CALDEVConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 
 @ObjectType()
 export class ConnectedIMAP_SMTP_CALDEVAccount {
