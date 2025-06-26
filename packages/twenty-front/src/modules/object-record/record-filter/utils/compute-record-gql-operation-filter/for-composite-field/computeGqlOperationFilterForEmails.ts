@@ -4,6 +4,7 @@ import {
   RecordGqlOperationFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
+import { CustomError } from '@/error-handler/CustomError';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
@@ -80,13 +81,17 @@ export const computeGqlOperationFilterForEmails = ({
               ],
             };
           default:
-            throw new Error(
+            throw new CustomError(
               `Unknown operand ${recordFilter.operand} for ${correspondingFieldMetadataItem.type} filter`,
+              'UNKNOWN_OPERAND_FOR_FILTER',
             );
         }
       }
       default: {
-        throw new Error(`Unknown subfield name ${subFieldName}`);
+        throw new CustomError(
+          `Unknown subfield name ${subFieldName}`,
+          'UNKNOWN_SUBFIELD_NAME',
+        );
       }
     }
   }
