@@ -6,7 +6,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/product-hunt-banner-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/product-hunt-banner-light.png" />
-      <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" alt="Product Hung Banner" />
+      <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" alt="Product Hunt Banner" />
     </picture>
   </a>
 </p>
