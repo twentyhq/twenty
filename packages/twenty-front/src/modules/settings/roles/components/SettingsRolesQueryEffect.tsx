@@ -3,17 +3,11 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { Role, useGetRolesQuery } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const SettingsRolesQueryEffect = () => {
-  const { data, loading } = useGetRolesQuery({
-    fetchPolicy: 'network-only',
-  });
-
   const setSettingsRolesIsLoading = useSetRecoilState(
     settingsRolesIsLoadingState,
   );
@@ -48,17 +42,17 @@ export const SettingsRolesQueryEffect = () => {
     [],
   );
 
-  useEffect(() => {
-    setSettingsRolesIsLoading(loading);
-    if (!loading) {
+  const { data, loading } = useGetRolesQuery({
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
       const roles = data?.getRoles;
-      if (!isDefined(roles)) {
-        return;
+      if (roles) {
+        populateRoles(roles);
       }
+    },
+  });
 
-      populateRoles(roles);
-    }
-  }, [data, loading, populateRoles, setSettingsRolesIsLoading]);
+  setSettingsRolesIsLoading(loading);
 
   return null;
 };

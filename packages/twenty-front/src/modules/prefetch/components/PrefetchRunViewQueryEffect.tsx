@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -11,7 +10,6 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -28,13 +26,6 @@ export const PrefetchRunViewQueryEffect = () => {
     objectMetadataItem: objectMetadataItems.find(
       (item) => item.nameSingular === CoreObjectNameSingular.View,
     ),
-  });
-
-  const { records } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: findAllViewsOperationSignature.variables.filter,
-    recordGqlFields: findAllViewsOperationSignature.fields,
-    skip: !currentUser || !isWorkspaceActive,
   });
 
   const setPrefetchViewsState = useRecoilCallback(
@@ -54,11 +45,17 @@ export const PrefetchRunViewQueryEffect = () => {
 
   const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
 
-  useEffect(() => {
-    if (isDefined(records) && !isPersistingViewFields) {
-      setPrefetchViewsState(records as View[]);
-    }
-  }, [isPersistingViewFields, records, setPrefetchViewsState]);
+  useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.View,
+    filter: findAllViewsOperationSignature.variables.filter,
+    recordGqlFields: findAllViewsOperationSignature.fields,
+    skip: !currentUser || !isWorkspaceActive,
+    onCompleted: (data) => {
+      if (!isPersistingViewFields) {
+        setPrefetchViewsState(data as View[]);
+      }
+    },
+  });
 
   return <></>;
 };

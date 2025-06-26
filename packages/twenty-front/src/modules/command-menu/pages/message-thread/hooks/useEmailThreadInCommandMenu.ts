@@ -115,15 +115,12 @@ export const useEmailThreadInCommandMenu = () => {
         messageExternalId: true,
       },
       skip: !lastMessageId || !isMessagesFetchComplete,
+      onCompleted: (data) => {
+        if (data.length > 0) {
+          setLastMessageChannelId(data[0].messageChannelId);
+        }
+      },
     });
-
-  useEffect(() => {
-    if (messageChannelMessageAssociationData.length > 0) {
-      setLastMessageChannelId(
-        messageChannelMessageAssociationData[0].messageChannelId,
-      );
-    }
-  }, [messageChannelMessageAssociationData]);
 
   const { records: messageChannelData, loading: messageChannelLoading } =
     useFindManyRecords<MessageChannel>({

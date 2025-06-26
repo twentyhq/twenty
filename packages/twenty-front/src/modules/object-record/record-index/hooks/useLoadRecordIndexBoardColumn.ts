@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -91,15 +90,11 @@ export const useLoadRecordIndexBoardColumn = ({
       orderBy,
       recordGqlFields,
       limit: 10,
+      onCompleted: (data) => {
+        setRecordIdsForColumn(columnId, data);
+        upsertRecordsInStore(data);
+      },
     });
-
-  useEffect(() => {
-    setRecordIdsForColumn(columnId, records);
-  }, [records, setRecordIdsForColumn, columnId]);
-
-  useEffect(() => {
-    upsertRecordsInStore(records);
-  }, [records, upsertRecordsInStore]);
 
   return {
     records,
