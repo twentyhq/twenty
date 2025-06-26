@@ -7,6 +7,7 @@ import {
   ImportedStructuredRow,
   SpreadsheetImportRowHook,
 } from '@/spreadsheet-import/types';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -14,7 +15,7 @@ import {
   lowercaseUrlAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
 
-type ColumnName = {
+type Column = {
   columnName: string;
   fieldType: FieldMetadataType;
 };
@@ -26,7 +27,7 @@ export const spreadsheetImportGetUnicityRowHook = (
     (indexMetadata) => indexMetadata.isUnique,
   );
 
-  const uniqueConstraintsWithColumnNames: ColumnName[][] = [
+  const uniqueConstraintsWithColumnNames: Column[][] = [
     [{ columnName: 'id', fieldType: FieldMetadataType.UUID }],
     ...uniqueConstraints.map((indexMetadata) =>
       indexMetadata.indexFieldMetadatas.flatMap((indexField) => {
@@ -80,7 +81,7 @@ export const spreadsheetImportGetUnicityRowHook = (
       uniqueConstraint.forEach(({ columnName }) => {
         if (isDefined(row[columnName])) {
           addError(columnName, {
-            message: `This ${columnName} value already exists in your import data`,
+            message: t`This ${columnName} value already exists in your import data`,
             level: 'error',
           });
         }
@@ -95,11 +96,11 @@ export const spreadsheetImportGetUnicityRowHook = (
 
 const getUniqueValues = (
   row: ImportedStructuredRow<string>,
-  uniqueConstraint: ColumnName[],
+  uniqueConstraint: Column[],
 ) => {
   return uniqueConstraint
     .map(({ columnName, fieldType }) => {
-      // need to ensure the primary email is processed before import as on server side
+      // need to ensure the primary link url is processed before import as on server side
       if (
         fieldType === FieldMetadataType.LINKS &&
         columnName.includes(
@@ -108,7 +109,7 @@ const getUniqueValues = (
         )
       ) {
         return lowercaseUrlAndRemoveTrailingSlash(
-          row?.[columnName]?.toString().trim().toLowerCase() || '',
+          row?.[columnName]?.toString().trim() || '',
         );
       }
 
