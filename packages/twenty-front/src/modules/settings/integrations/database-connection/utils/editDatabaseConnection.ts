@@ -5,8 +5,8 @@ import { z } from 'zod';
 
 import { CustomError } from '@/error-handler/CustomError';
 import {
-    settingsIntegrationPostgreSQLConnectionFormSchema,
-    settingsIntegrationStripeConnectionFormSchema,
+  settingsIntegrationPostgreSQLConnectionFormSchema,
+  settingsIntegrationStripeConnectionFormSchema,
 } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { RemoteServer } from '~/generated-metadata/graphql';
 
