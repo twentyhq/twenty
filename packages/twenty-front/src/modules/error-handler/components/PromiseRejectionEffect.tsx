@@ -34,7 +34,7 @@ export const PromiseRejectionEffect = () => {
       }
 
       if (error.name === 'ApolloError' && !isEmpty(error.graphQLErrors)) {
-        return;
+        return; // already handled by apolloLink
       }
 
       try {
