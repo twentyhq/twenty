@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -33,6 +33,8 @@ export interface AgentExecutionResult {
 
 @Injectable()
 export class AgentExecutionService {
+  private readonly logger = new Logger(AgentExecutionService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
@@ -115,6 +117,11 @@ export class AgentExecutionService {
         agent.workspaceId,
       );
 
+      this.logger.log(
+        `Available tools for agent ${agent.id}: ${Object.keys(tools).join(', ')}`,
+        'AgentExecution',
+      );
+
       const textResponse = await generateText({
         system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
         model: this.getModel(agent.modelId, provider),
@@ -122,6 +129,23 @@ export class AgentExecutionService {
         tools,
         maxSteps: AGENT_CONFIG.MAX_STEPS,
       });
+
+      this.logger.log(
+        `Agent ${agent.id} text response: ${textResponse.text}`,
+        'AgentExecution',
+      );
+
+      if (textResponse.toolCalls && textResponse.toolCalls.length > 0) {
+        this.logger.log(
+          `Agent ${agent.id} tool calls: ${JSON.stringify(textResponse.toolCalls)}`,
+          'AgentExecution',
+        );
+      }
+
+      this.logger.log(
+        `Agent ${agent.id} usage: ${JSON.stringify(textResponse.usage)}`,
+        'AgentExecution',
+      );
 
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
