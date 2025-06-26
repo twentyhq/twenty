@@ -2,7 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ToolSet } from 'ai';
-import { Repository } from 'typeorm';
+import {
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { z } from 'zod';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -239,7 +249,43 @@ export class AgentToolService {
 
       Object.entries(searchCriteria).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          whereConditions[key] = value;
+          if (typeof value === 'object' && !Array.isArray(value)) {
+            const filterValue = value as Record<string, unknown>;
+
+            if ('eq' in filterValue) {
+              whereConditions[key] = filterValue.eq;
+            } else if ('neq' in filterValue) {
+              whereConditions[key] = Not(filterValue.neq);
+            } else if ('gt' in filterValue) {
+              whereConditions[key] = MoreThan(filterValue.gt);
+            } else if ('gte' in filterValue) {
+              whereConditions[key] = MoreThanOrEqual(filterValue.gte);
+            } else if ('lt' in filterValue) {
+              whereConditions[key] = LessThan(filterValue.lt);
+            } else if ('lte' in filterValue) {
+              whereConditions[key] = LessThanOrEqual(filterValue.lte);
+            } else if ('in' in filterValue) {
+              whereConditions[key] = In(filterValue.in as unknown[]);
+            } else if ('like' in filterValue) {
+              whereConditions[key] = Like(filterValue.like as string);
+            } else if ('ilike' in filterValue) {
+              whereConditions[key] = Like(filterValue.ilike as string);
+            } else if ('startsWith' in filterValue) {
+              whereConditions[key] = Like(`${filterValue.startsWith}%`);
+            } else if ('is' in filterValue) {
+              if (filterValue.is === 'NULL') {
+                whereConditions[key] = IsNull();
+              } else if (filterValue.is === 'NOT_NULL') {
+                whereConditions[key] = Not(IsNull());
+              }
+            } else if ('isEmptyArray' in filterValue) {
+              whereConditions[key] = [];
+            } else if ('containsIlike' in filterValue) {
+              whereConditions[key] = Like(`%${filterValue.containsIlike}%`);
+            }
+          } else {
+            whereConditions[key] = value;
+          }
         }
       });
 
