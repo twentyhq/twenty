@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -190,6 +191,6 @@ export const ConfigVariableDatabaseInput = ({
       );
 
     default:
-      throw new Error(`Unsupported type: ${type}`);
+      throw new CustomError(`Unsupported type: ${type}`, 'UNSUPPORTED_TYPE');
   }
 };

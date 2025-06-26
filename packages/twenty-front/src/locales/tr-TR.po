@@ -134,6 +134,11 @@ msgstr ""
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr ""
 
+#. js-lingui-id: pDgeaz
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "{title}"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -4275,6 +4280,12 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "Please enter a valid URL"
 #~ msgstr "Geçerli bir URL giriniz"
+
+#. js-lingui-id: CjNkdJ
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
+msgid "Please refresh the page."
+msgstr ""
 
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx

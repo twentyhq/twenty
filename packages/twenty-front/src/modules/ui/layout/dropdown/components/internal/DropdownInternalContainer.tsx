@@ -2,6 +2,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -10,6 +11,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   FloatingPortal,
@@ -67,8 +69,7 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const { isDropdownOpen, closeDropdown, setDropdownPlacement } =
-    useDropdown(dropdownId);
+  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
@@ -82,6 +83,12 @@ export const DropdownInternalContainer = ({
     dropdownId,
   );
 
+  const setDropdownPlacement = useSetRecoilComponentStateV2(
+    dropdownPlacementComponentStateV2,
+    dropdownId,
+  );
+
+  // TODO: remove this useEffect
   useEffect(() => {
     setDropdownPlacement(dropdownPlacement);
   }, [dropdownPlacement, setDropdownPlacement]);
