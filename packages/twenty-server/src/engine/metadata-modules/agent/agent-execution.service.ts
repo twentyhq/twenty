@@ -23,8 +23,8 @@ import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
-  response: string;
-  object: object;
+  textResponse: string;
+  structuredOutput: object;
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -153,8 +153,8 @@ export class AgentExecutionService {
       });
 
       return {
-        response: textResponse.text,
-        object: output.object,
+        textResponse: textResponse.text,
+        structuredOutput: output.object,
         usage: {
           promptTokens:
             (textResponse.usage?.promptTokens ?? 0) +
