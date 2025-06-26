@@ -1,9 +1,8 @@
-import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
-import { FIND_ONE_AGENT } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/graphql/queries/findOneAgent';
-import { useQuery } from '@apollo/client';
 import { useState } from 'react';
 import {
   useAssignRoleToAgentMutation,
+  useFindOneAgentQuery,
+  useGetRolesQuery,
   useRemoveRoleFromAgentMutation,
 } from '~/generated/graphql';
 
@@ -12,7 +11,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
     undefined,
   );
 
-  useQuery(FIND_ONE_AGENT, {
+  useFindOneAgentQuery({
     variables: { id: agentId },
     skip: !agentId,
     onCompleted: (data) => {
@@ -20,14 +19,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
     },
   });
 
-  const { data: rolesData } = useQuery(GET_ROLES, {
-    onCompleted: (data) => {
-      const agentRole = data.getRoles.find((role: any) =>
-        role.agentIds?.includes(agentId),
-      );
-      agentRole && setSelectedRoleId(agentRole.id);
-    },
-  });
+  const { data: rolesData } = useGetRolesQuery();
   const [assignRoleToAgent] = useAssignRoleToAgentMutation();
   const [removeRoleFromAgent] = useRemoveRoleFromAgentMutation();
 
