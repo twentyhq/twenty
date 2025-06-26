@@ -1,4 +1,5 @@
 import { calendar_v3 as calendarV3 } from 'googleapis';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -77,39 +78,48 @@ describe('formatGoogleCalendarEvents', () => {
     );
   });
 
-  const testCases = [
+  const testCases: EachTestingContext<{ input: string; expected: string }>[] = [
     {
-      input: '\u0000eventStrange@google.com',
-      expected: 'eventStrange@google.com',
+      title: 'should sanitize a UCALID with \u0000',
+      context: {
+        input: '\u0000eventStrange@google.com',
+        expected: 'eventStrange@google.com',
+      },
     },
     {
-      input: '>\u0000\u0015-;_�^�W&�p\u001f�',
-      expected: '>\u0015-;_�^�W&�p\u001f�',
+      title: 'should sanitize a UCALID with \u0000',
+      context: {
+        input: '>\u0000\u0015-;_�^�W&�p\u001f�',
+        expected: '>\u0015-;_�^�W&�p\u001f�',
+      },
     },
     {
-      input: '�\u0002��y�_΢�\u0013��\x00',
-      expected: '�\u0002��y�_΢�\u0013��',
+      title: 'should sanitize a UCALID with \x00',
+      context: {
+        input: '�\u0002��y�_΢�\u0013��\x00',
+        expected: '�\u0002��y�_΢�\u0013��',
+      },
     },
 
     {
-      input: 'del�\u0002��y�_΢�\u0013��',
-      expected: 'del�\u0002��y�_΢�\u0013��',
+      title: 'should sanitize a UCALID with del',
+      context: {
+        input: 'del�\u0002��y�_΢�\u0013��',
+        expected: 'del�\u0002��y�_΢�\u0013��',
+      },
     },
   ];
 
-  it.each(testCases)(
-    'should sanitize a UCALID with improper char: $input',
-    ({ input, expected }) => {
-      const mockGoogleEventWithImproperUcalid: calendarV3.Schema$Event = {
-        ...mockGoogleEvent,
-        iCalUID: input,
-      };
+  it.each(testCases)('$title', ({ context }) => {
+    const mockGoogleEventWithImproperUcalid: calendarV3.Schema$Event = {
+      ...mockGoogleEvent,
+      iCalUID: context.input,
+    };
 
-      const result = formatGoogleCalendarEvents([
-        mockGoogleEventWithImproperUcalid,
-      ]);
+    const result = formatGoogleCalendarEvents([
+      mockGoogleEventWithImproperUcalid,
+    ]);
 
-      expect(result[0].iCalUID).toBe(expected);
-    },
-  );
+    expect(result[0].iCalUID).toBe(context.expected);
+  });
 });
