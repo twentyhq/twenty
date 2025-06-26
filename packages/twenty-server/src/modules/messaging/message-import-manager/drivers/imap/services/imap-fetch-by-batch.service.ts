@@ -15,10 +15,8 @@ import {
 
 type ConnectedAccount = Pick<
   ConnectedAccountWorkspaceEntity,
-  'id' | 'provider' | 'handle' | 'handleAliases'
-> & {
-  connectionParameters: Record<string, unknown> | null;
-};
+  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+>;
 
 type FetchAllResult = {
   messageIdsByBatch: string[][];
@@ -66,6 +64,8 @@ export class ImapFetchByBatchService {
         ImapFetchByBatchService.BATCH_LIMIT,
       );
 
+      let processedCount = 0;
+
       for (const batch of batches) {
         const batchResult = await this.fetchBatchWithRetry(
           batch,
@@ -75,6 +75,11 @@ export class ImapFetchByBatchService {
 
         batchResults.push(batchResult);
         messageIdsByBatch.push(batch);
+
+        processedCount += batch.length;
+        this.logger.log(
+          `Fetched ${processedCount}/${messageIds.length} messages`,
+        );
       }
 
       return { messageIdsByBatch, batchResults };

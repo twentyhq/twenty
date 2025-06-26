@@ -1,20 +1,15 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { useGetConnectedImapAccountQuery } from '~/generated/graphql';
+import { useGetConnectedImap_Smtp_CaldevAccountQuery } from '~/generated/graphql';
 
 export const useConnectedIMAPAccount = (
   connectedAccountId: string | undefined,
 ) => {
-  const { data, loading, error } = useGetConnectedImapAccountQuery({
+  const { data, loading, error } = useGetConnectedImap_Smtp_CaldevAccountQuery({
     variables: { id: connectedAccountId ?? '' },
     skip: !connectedAccountId,
   });
 
-  const isImapAccount =
-    data?.getConnectedImapAccount?.provider === ConnectedAccountProvider.IMAP;
-
   return {
-    connectedAccount: data?.getConnectedImapAccount,
-    isImapAccount,
+    connectedAccount: data?.getConnectedIMAP_SMTP_CALDEVAccount,
     loading,
     error,
   };

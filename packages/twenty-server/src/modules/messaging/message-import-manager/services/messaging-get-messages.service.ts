@@ -47,7 +47,7 @@ export class MessagingGetMessagesService {
           messageIds,
           connectedAccount,
         );
-      case ConnectedAccountProvider.IMAP:
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return this.imapGetMessagesService.getMessages(
           messageIds,
           connectedAccount,

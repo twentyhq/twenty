@@ -12,6 +12,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -44,6 +45,7 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
 const ALLOWED_REPLY_PROVIDERS = [
   ConnectedAccountProvider.GOOGLE,
   ConnectedAccountProvider.MICROSOFT,
+  ConnectedAccountProvider.IMAP_SMTP_CALDAV,
 ];
 
 export const CommandMenuMessageThreadPage = () => {
@@ -63,6 +65,7 @@ export const CommandMenuMessageThreadPage = () => {
     messageChannelLoading,
     connectedAccountProvider,
     lastMessageExternalId,
+    connectedAccountConnectionParameters,
   } = useEmailThreadInCommandMenu();
 
   useEffect(() => {
@@ -89,10 +92,13 @@ export const CommandMenuMessageThreadPage = () => {
       connectedAccountHandle &&
       connectedAccountProvider &&
       ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
+      (connectedAccountProvider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+        isDefined(connectedAccountConnectionParameters?.SMTP)) &&
       lastMessage &&
       messageThreadExternalId != null
     );
   }, [
+    connectedAccountConnectionParameters,
     connectedAccountHandle,
     connectedAccountProvider,
     lastMessage,
@@ -114,8 +120,8 @@ export const CommandMenuMessageThreadPage = () => {
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
         window.open(url, '_blank');
         break;
-      case ConnectedAccountProvider.IMAP:
-        throw new Error('IMAP account provider not supported');
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        throw new Error('Account provider not supported');
       case null:
         throw new Error('Account provider not provided');
       default:

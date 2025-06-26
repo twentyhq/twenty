@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
@@ -22,7 +23,8 @@ export class MessagingAccountAuthenticationService {
     workspaceId: string,
   ): Promise<void> {
     if (
-      messageChannel.connectedAccount.provider === ConnectedAccountProvider.IMAP
+      messageChannel.connectedAccount.provider ===
+      ConnectedAccountProvider.IMAP_SMTP_CALDAV
     ) {
       await this.validateImapCredentials(messageChannel, workspaceId);
 
@@ -42,7 +44,10 @@ export class MessagingAccountAuthenticationService {
     workspaceId: string,
     messageChannelId: string,
   ): Promise<void> {
-    if (connectedAccount.provider === ConnectedAccountProvider.IMAP) {
+    if (
+      connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      isDefined(connectedAccount.connectionParameters?.IMAP)
+    ) {
       await this.validateImapCredentialsForConnectedAccount(
         connectedAccount,
         workspaceId,
@@ -84,7 +89,9 @@ export class MessagingAccountAuthenticationService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    if (!messageChannel.connectedAccount.connectionParameters) {
+    if (
+      !isDefined(messageChannel.connectedAccount.connectionParameters?.IMAP)
+    ) {
       await this.messagingMonitoringService.track({
         eventName: 'message_list_fetch_job.error.missing_imap_credentials',
         workspaceId,

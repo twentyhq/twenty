@@ -6,11 +6,14 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedImapAccount } from 'src/engine/core-modules/imap-connection/dtos/imap-connected-account.dto';
-import { ImapConnectionSuccess } from 'src/engine/core-modules/imap-connection/dtos/imap-connection-success.dto';
-import { ImapConnectionValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
-import { ImapConnectionService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
-import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import { ConnectedIMAP_SMTP_CALDEVAccount } from 'src/engine/core-modules/imap-connection/dtos/imap-connected-account.dto';
+import { IMAP_SMTP_CALDEVConnectionSuccess } from 'src/engine/core-modules/imap-connection/dtos/imap-connection-success.dto';
+import {
+  AccountType,
+  ConnectionParameters,
+} from 'src/engine/core-modules/imap-connection/dtos/imap-connection.dto';
+import { IMAP_SMTP_CALDEVValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
+import { IMAP_SMTP_CALDEVService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -23,53 +26,60 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { IMAPAPIsService } from 'src/modules/connected-account/services/imap-apis.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessagingMessageListFetchJob,
-  MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Resolver()
 @UseFilters(
   GraphqlValidationExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
 )
-export class ImapConnectionResolver {
+export class IMAP_SMTP_CALDEVResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly imapConnectionService: ImapConnectionService,
+    private readonly mailConnectionService: IMAP_SMTP_CALDEVService,
     private readonly imapApisService: IMAPAPIsService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly imapConnectionValidatorService: ImapConnectionValidatorService,
+    private readonly mailConnectionValidatorService: IMAP_SMTP_CALDEVValidatorService,
   ) {}
 
-  private async checkIfImapFeatureEnabled(workspaceId: string): Promise<void> {
-    const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_IMAP_ENABLED,
-      workspaceId,
-    );
+  private async checkIfFeatureEnabled(
+    workspaceId: string,
+    accountType: AccountType,
+  ): Promise<void> {
+    if (accountType.type === 'IMAP') {
+      const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_IMAP_ENABLED,
+        workspaceId,
+      );
 
-    if (!isImapEnabled) {
+      if (!isImapEnabled) {
+        throw new UserInputError(
+          'IMAP feature is not enabled for this workspace',
+        );
+      }
+    }
+
+    if (accountType.type === 'SMTP') {
       throw new UserInputError(
-        'IMAP feature is not enabled for this workspace',
+        'SMTP feature is not enabled for this workspace',
+      );
+    }
+
+    if (accountType.type === 'CALDAV') {
+      throw new UserInputError(
+        'CALDAV feature is not enabled for this workspace',
       );
     }
   }
 
-  @Query(() => ConnectedImapAccount)
+  @Query(() => ConnectedIMAP_SMTP_CALDEVAccount)
   @UseGuards(WorkspaceAuthGuard)
-  async getConnectedImapAccount(
+  async getConnectedIMAP_SMTP_CALDEVAccount(
     @Args('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ConnectedImapAccount> {
-    await this.checkIfImapFeatureEnabled(workspace.id);
-
+  ): Promise<ConnectedIMAP_SMTP_CALDEVAccount> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspace.id,
@@ -77,111 +87,55 @@ export class ImapConnectionResolver {
       );
 
     const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id, provider: ConnectedAccountProvider.IMAP },
+      where: { id, provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV },
     });
 
     if (!connectedAccount) {
-      throw new UserInputError('Connected IMAP account not found');
+      throw new UserInputError(
+        `Connected mail account with ID ${id} not found`,
+      );
     }
 
     return {
       id: connectedAccount.id,
       handle: connectedAccount.handle,
       provider: connectedAccount.provider,
-      connectionParameters:
-        connectedAccount.connectionParameters as unknown as ImapConnectionParams,
+      connectionParameters: connectedAccount.connectionParameters,
       accountOwnerId: connectedAccount.accountOwnerId,
     };
   }
 
-  @Mutation(() => ImapConnectionSuccess)
+  @Mutation(() => IMAP_SMTP_CALDEVConnectionSuccess)
   @UseGuards(WorkspaceAuthGuard)
-  async saveImapConnection(
+  async saveIMAP_SMTP_CALDEV(
     @Args('accountOwnerId') accountOwnerId: string,
     @Args('handle') handle: string,
-    @Args('host') host: string,
-    @Args('port') port: number,
-    @Args('secure') secure: boolean,
-    @Args('password') password: string,
+    @Args('accountType') accountType: AccountType,
+    @Args('connectionParameters')
+    connectionParameters: ConnectionParameters,
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { nullable: true }) id?: string,
-  ): Promise<ImapConnectionSuccess> {
-    await this.checkIfImapFeatureEnabled(workspace.id);
+  ): Promise<IMAP_SMTP_CALDEVConnectionSuccess> {
+    await this.checkIfFeatureEnabled(workspace.id, accountType);
 
-    const connectionParams =
-      this.imapConnectionValidatorService.validateImapConnectionParams({
-        host,
-        port,
-        secure,
-        password,
-        handle,
-      });
-
-    await this.imapConnectionService.testConnection({
-      handle,
-      host,
-      port,
-      secure,
-      password,
-    });
-
-    if (!id) {
-      await this.imapApisService.setupIMAPAccount({
-        handle,
-        workspaceMemberId: accountOwnerId,
-        workspaceId: workspace.id,
-        connectionParams,
-      });
-    }
-
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspace.id,
-        'connectedAccount',
+    const validatedParams =
+      this.mailConnectionValidatorService.validateProtocolConnectionParams(
+        connectionParameters,
       );
 
-    await connectedAccountRepository.update(
-      { id },
-      {
-        handle,
-        provider: ConnectedAccountProvider.IMAP,
-        connectionParameters: connectionParams,
-      },
+    await this.mailConnectionService.testIMAP_SMTP_CALDEV(
+      validatedParams,
+      accountType.type,
     );
 
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspace.id,
-        'messageChannel',
-      );
-
-    const messageChannels = await messageChannelRepository.find({
-      where: { connectedAccountId: id },
+    await this.imapApisService.setupConnectedAccount({
+      handle,
+      workspaceMemberId: accountOwnerId,
+      workspaceId: workspace.id,
+      connectionParams: validatedParams,
+      accountType: accountType.type,
+      connectedAccountId: id,
     });
-
-    if (messageChannels.length > 0) {
-      await messageChannelRepository.update(
-        { connectedAccountId: id },
-        {
-          syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-          syncStatus: null,
-          syncCursor: '',
-          syncStageStartedAt: null,
-        },
-      );
-
-      if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
-        for (const messageChannel of messageChannels) {
-          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-            MessagingMessageListFetchJob.name,
-            {
-              workspaceId: workspace.id,
-              messageChannelId: messageChannel.id,
-            },
-          );
-        }
-      }
-    }
 
     return {
       success: true,

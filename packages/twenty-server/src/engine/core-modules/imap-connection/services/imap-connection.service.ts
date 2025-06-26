@@ -4,29 +4,32 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import {
+  AccountType,
+  ConnectionParameters,
+} from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class ImapConnectionService {
-  private readonly logger = new Logger(ImapConnectionService.name);
+export class IMAP_SMTP_CALDEVService {
+  private readonly logger = new Logger(IMAP_SMTP_CALDEVService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async testConnection(params: ImapConnectionParams): Promise<boolean> {
-    if (!params.host || !params.handle || !params.password) {
+  async testImapConnection(params: ConnectionParameters): Promise<boolean> {
+    if (!params.host || !params.username || !params.password) {
       throw new UserInputError('Missing required IMAP connection parameters');
     }
 
     const client = new ImapFlow({
       host: params.host,
       port: params.port,
-      secure: params.secure,
+      secure: params.secure ?? true,
       auth: {
-        user: params.handle,
+        user: params.username,
         pass: params.password,
       },
       logger: false,
@@ -41,7 +44,7 @@ export class ImapConnectionService {
       const mailboxes = await client.list();
 
       this.logger.log(
-        `Connection successful. Found ${mailboxes.length} mailboxes.`,
+        `IMAP connection successful. Found ${mailboxes.length} mailboxes.`,
       );
 
       return true;
@@ -53,13 +56,13 @@ export class ImapConnectionService {
 
       if (error.authenticationFailed) {
         throw new UserInputError(
-          'Authentication failed. Please check your credentials.',
+          'IMAP authentication failed. Please check your credentials.',
         );
       }
 
       if (error.code === 'ECONNREFUSED') {
         throw new UserInputError(
-          `Connection refused. Please verify server and port.`,
+          `IMAP connection refused. Please verify server and port.`,
         );
       }
 
@@ -71,7 +74,40 @@ export class ImapConnectionService {
     }
   }
 
-  async getImapConnection(
+  async testSmtpConnection(params: ConnectionParameters): Promise<boolean> {
+    this.logger.log('SMTP connection testing not yet implemented', params);
+
+    return true;
+  }
+
+  async testCaldavConnection(params: ConnectionParameters): Promise<boolean> {
+    this.logger.log('CALDAV connection testing not yet implemented', params);
+
+    return true;
+  }
+
+  async testIMAP_SMTP_CALDEV(
+    params: ConnectionParameters,
+    accountType: AccountType,
+  ): Promise<boolean> {
+    if (accountType === 'IMAP') {
+      return this.testImapConnection(params);
+    }
+
+    if (accountType === 'SMTP') {
+      return this.testSmtpConnection(params);
+    }
+
+    if (accountType === 'CALDAV') {
+      return this.testCaldavConnection(params);
+    }
+
+    throw new UserInputError(
+      'Invalid account type. Must be one of: IMAP, SMTP, CALDAV',
+    );
+  }
+
+  async getIMAP_SMTP_CALDEV(
     workspaceId: string,
     connectionId: string,
   ): Promise<ConnectedAccountWorkspaceEntity | null> {
@@ -84,7 +120,7 @@ export class ImapConnectionService {
     const connectedAccount = await connectedAccountRepository.findOne({
       where: {
         id: connectionId,
-        provider: ConnectedAccountProvider.IMAP,
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
       },
     });
 

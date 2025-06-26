@@ -1,9 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class ImapConnectionSuccess {
-  @Field(() => Boolean, {
-    description: 'Boolean that confirms query was dispatched',
-  })
+export class IMAP_SMTP_CALDEVConnectionSuccess {
+  @Field(() => Boolean)
   success: boolean;
 }

@@ -2,8 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 interface ImapClientInstance {
@@ -21,7 +22,7 @@ export class ImapClientProvider {
   async getClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'connectionParameters'
+      'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
   ): Promise<ImapFlow> {
     const cacheKey = `${connectedAccount.id}`;
@@ -34,21 +35,24 @@ export class ImapClientProvider {
       }
     }
 
-    if (connectedAccount.provider !== ConnectedAccountProvider.IMAP) {
+    if (
+      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+      !isDefined(connectedAccount.connectionParameters?.IMAP)
+    ) {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    const connectionParameters: ImapConnectionParams =
-      (connectedAccount.connectionParameters as unknown as ImapConnectionParams) ||
+    const connectionParameters: IMAP_SMTP_CALDEVParams =
+      (connectedAccount.connectionParameters as unknown as IMAP_SMTP_CALDEVParams) ||
       {};
 
     const client = new ImapFlow({
-      host: connectionParameters.host || '',
-      port: connectionParameters.port || 993,
-      secure: connectionParameters.secure,
+      host: connectionParameters.IMAP?.host || '',
+      port: connectionParameters.IMAP?.port || 993,
+      secure: connectionParameters.IMAP?.secure,
       auth: {
-        user: connectionParameters.handle,
-        pass: connectionParameters.password || '',
+        user: connectedAccount.handle,
+        pass: connectionParameters.IMAP?.password || '',
       },
       logger: false,
       tls: {

@@ -80,7 +80,7 @@ export class MessagingGetMessageListService {
           folders,
         );
       }
-      case ConnectedAccountProvider.IMAP: {
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         const fullMessageList =
           await this.imapGetMessageListService.getFullMessageList(
             messageChannel.connectedAccount,
@@ -120,7 +120,7 @@ export class MessagingGetMessageListService {
           messageChannel.connectedAccount,
           messageChannel,
         );
-      case ConnectedAccountProvider.IMAP: {
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         const messageList =
           await this.imapGetMessageListService.getPartialMessageList(
             messageChannel.connectedAccount,

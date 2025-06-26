@@ -1,5 +1,8 @@
-import { MessageChannelVisibility } from '~/generated/graphql';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectionParameters,
+  MessageChannelVisibility,
+} from '~/generated/graphql';
 
 export enum MessageChannelContactAutoCreationPolicy {
   SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',
@@ -40,6 +43,12 @@ export type MessageChannel = {
   connectedAccount?: {
     id: string;
     provider: ConnectedAccountProvider;
+    // TODO: Replace with singular type
+    connectionParameters?: {
+      IMAP?: ConnectionParameters;
+      SMTP?: ConnectionParameters;
+      CALDAV?: ConnectionParameters;
+    };
   };
   __typename: 'MessageChannel';
 };

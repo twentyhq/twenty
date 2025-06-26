@@ -93,7 +93,7 @@ export class MessagingSendMessageService {
         await microsoftClient.api(`/me/messages/${response.id}/send`).post({});
         break;
       }
-      case ConnectedAccountProvider.IMAP: {
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         throw new Error('IMAP provider does not support sending messages');
       }
       default:

@@ -3,27 +3,27 @@ import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import { ConnectionParameters } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 
 @Injectable()
-export class ImapConnectionValidatorService {
-  private readonly imapConnectionSchema = z.object({
-    handle: z.string().min(1, 'Handle is required'),
-    host: z.string().min(1, 'IMAP server is required'),
+export class IMAP_SMTP_CALDEVValidatorService {
+  private readonly protocolConnectionSchema = z.object({
+    host: z.string().min(1, 'Host is required'),
     port: z.number().int().positive('Port must be a positive number'),
-    secure: z.boolean(),
+    username: z.string().min(1, 'Username is required'),
     password: z.string().min(1, 'Password is required'),
+    secure: z.boolean().optional(),
   });
 
-  validateImapConnectionParams(
-    customParams: ImapConnectionParams,
-  ): z.infer<typeof this.imapConnectionSchema> {
-    if (!customParams) {
-      throw new UserInputError('IMAP connection parameters are required');
+  validateProtocolConnectionParams(
+    params: ConnectionParameters,
+  ): ConnectionParameters {
+    if (!params) {
+      throw new UserInputError('Protocol connection parameters are required');
     }
 
     try {
-      return this.imapConnectionSchema.parse(customParams);
+      return this.protocolConnectionSchema.parse(params);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessages = error.errors
@@ -31,11 +31,11 @@ export class ImapConnectionValidatorService {
           .join(', ');
 
         throw new UserInputError(
-          `IMAP connection validation failed: ${errorMessages}`,
+          `Protocol connection validation failed: ${errorMessages}`,
         );
       }
 
-      throw new UserInputError('IMAP connection validation failed');
+      throw new UserInputError('Protocol connection validation failed');
     }
   }
 }

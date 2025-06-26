@@ -7,7 +7,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { useSaveImapConnectionMutation } from '~/generated/graphql';
+import {
+  ConnectionParameters,
+  useSaveImap_Smtp_CaldevMutation,
+} from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '~/modules/auth/states/currentWorkspaceState';
@@ -40,7 +43,7 @@ export const useImapConnectionForm = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [saveImapConnection, { loading: saveLoading }] =
-    useSaveImapConnectionMutation();
+    useSaveImap_Smtp_CaldevMutation();
 
   const resolver = zodResolver(imapConnectionFormSchema);
 
@@ -52,7 +55,7 @@ export const useImapConnectionForm = ({
     password: initialData?.password || '',
   };
 
-  const formMethods = useForm<ImapConnectionFormValues>({
+  const formMethods = useForm<ConnectionParameters & { handle: string }>({
     mode: 'onSubmit',
     resolver,
     defaultValues,
@@ -63,7 +66,9 @@ export const useImapConnectionForm = ({
   const canSave = isValid && !isSubmitting;
   const loading = saveLoading;
 
-  const handleSave = async (formValues: ImapConnectionFormValues) => {
+  const handleSave = async (
+    formValues: ConnectionParameters & { handle: string },
+  ) => {
     if (!currentWorkspace?.id) {
       enqueueSnackBar('Workspace ID is missing', {
         variant: SnackBarVariant.Error,
@@ -90,7 +95,21 @@ export const useImapConnectionForm = ({
       };
 
       await saveImapConnection({
-        variables,
+        variables: {
+          accountOwnerId: variables.accountOwnerId,
+          handle: variables.handle,
+          accountType: {
+            type: 'IMAP',
+          },
+          connectionParameters: {
+            host: variables.host,
+            port: variables.port,
+            secure: variables.secure,
+            password: variables.password,
+            username: variables.handle,
+          },
+          ...(variables.id ? { id: variables.id } : {}),
+        },
       });
 
       enqueueSnackBar(

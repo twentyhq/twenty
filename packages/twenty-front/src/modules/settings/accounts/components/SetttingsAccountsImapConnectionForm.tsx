@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { ImapConnectionParams } from '~/generated/graphql';
+import { ConnectionParameters } from '~/generated/graphql';
 
 const StyledFormContainer = styled.form`
   display: flex;
@@ -15,9 +15,9 @@ const StyledFormContainer = styled.form`
 `;
 
 type SetttingsAccountsImapConnectionFormProps = {
-  control: Control<ImapConnectionParams>;
+  control: Control<ConnectionParameters & { handle: string }>;
   isEditing: boolean;
-  defaultValues?: Partial<ImapConnectionParams>;
+  defaultValues?: Partial<ConnectionParameters & { handle: string }>;
 };
 
 export const SetttingsAccountsImapConnectionForm = ({

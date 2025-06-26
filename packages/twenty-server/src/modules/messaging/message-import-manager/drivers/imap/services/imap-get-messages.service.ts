@@ -26,10 +26,8 @@ export class ImapGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'handle' | 'handleAliases'
-    > & {
-      connectionParameters: Record<string, unknown> | null;
-    },
+      'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+    >,
   ): Promise<MessageWithParticipants[]> {
     if (!messageIds.length) {
       return [];

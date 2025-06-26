@@ -6,9 +6,11 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
+import {
+  AccountType,
+  ConnectionParameters,
+} from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -41,22 +43,21 @@ export class IMAPAPIsService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async setupIMAPAccount(input: {
+  async setupConnectedAccount(input: {
     handle: string;
     workspaceMemberId: string;
     workspaceId: string;
-    connectionParams: ImapConnectionParams;
+    accountType: AccountType;
+    connectionParams: ConnectionParameters;
+    connectedAccountId?: string;
   }) {
-    const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_IMAP_ENABLED,
-      input.workspaceId,
-    );
-
-    if (!isImapEnabled) {
-      throw new Error('IMAP feature is not enabled for this workspace');
-    }
-
-    const { handle, workspaceId, workspaceMemberId, connectionParams } = input;
+    const {
+      handle,
+      workspaceId,
+      workspaceMemberId,
+      connectionParams,
+      connectedAccountId,
+    } = input;
 
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
@@ -64,12 +65,17 @@ export class IMAPAPIsService {
         'connectedAccount',
       );
 
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { handle, accountOwnerId: workspaceMemberId },
-    });
+    const connectedAccount = connectedAccountId
+      ? await connectedAccountRepository.findOne({
+          where: { id: connectedAccountId },
+        })
+      : await connectedAccountRepository.findOne({
+          where: { handle, accountOwnerId: workspaceMemberId },
+        });
 
     const existingAccountId = connectedAccount?.id;
-    const newOrExistingConnectedAccountId = existingAccountId ?? v4();
+    const newOrExistingConnectedAccountId =
+      existingAccountId ?? connectedAccountId ?? v4();
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
@@ -88,13 +94,9 @@ export class IMAPAPIsService {
           {
             id: newOrExistingConnectedAccountId,
             handle,
-            provider: ConnectedAccountProvider.IMAP,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
             connectionParameters: {
-              handle: connectionParams.handle,
-              host: connectionParams.host,
-              port: connectionParams.port,
-              secure: connectionParams.secure,
-              password: connectionParams.password,
+              [input.accountType]: connectionParams,
             },
             accountOwnerId: workspaceMemberId,
           },
@@ -158,11 +160,8 @@ export class IMAPAPIsService {
           },
           {
             connectionParameters: {
-              handle: connectionParams.handle,
-              host: connectionParams.host,
-              port: connectionParams.port,
-              secure: connectionParams.secure,
-              password: connectionParams.password,
+              ...connectedAccount.connectionParameters,
+              [input.accountType]: connectionParams,
             },
           },
         );

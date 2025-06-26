@@ -30,6 +30,10 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AccountType = {
+  type: Scalars['String']['input'];
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -414,13 +418,30 @@ export type ConfigVariablesOutput = {
   groups: Array<ConfigVariablesGroupData>;
 };
 
-export type ConnectedImapAccount = {
-  __typename?: 'ConnectedImapAccount';
+export type ConnectedImap_Smtp_CaldevAccount = {
+  __typename?: 'ConnectedIMAP_SMTP_CALDEVAccount';
   accountOwnerId: Scalars['String']['output'];
-  connectionParameters?: Maybe<ImapConnectionParams>;
+  connectionParameters?: Maybe<Imap_Smtp_CaldevConnectionParameters>;
   handle: Scalars['String']['output'];
   id: Scalars['String']['output'];
   provider: Scalars['String']['output'];
+};
+
+export type ConnectionParameters = {
+  host: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure?: InputMaybe<Scalars['Boolean']['input']>;
+  username: Scalars['String']['input'];
+};
+
+export type ConnectionParametersOutput = {
+  __typename?: 'ConnectionParametersOutput';
+  host: Scalars['String']['output'];
+  password: Scalars['String']['output'];
+  port: Scalars['Float']['output'];
+  secure?: Maybe<Scalars['Boolean']['output']>;
+  username: Scalars['String']['output'];
 };
 
 export type CreateAppTokenInput = {
@@ -819,25 +840,23 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
+export type Imap_Smtp_CaldevConnectionParameters = {
+  __typename?: 'IMAP_SMTP_CALDEVConnectionParameters';
+  CALDAV?: Maybe<ConnectionParametersOutput>;
+  IMAP?: Maybe<ConnectionParametersOutput>;
+  SMTP?: Maybe<ConnectionParametersOutput>;
+  handle: Scalars['String']['output'];
+};
+
+export type Imap_Smtp_CaldevConnectionSuccess = {
+  __typename?: 'IMAP_SMTP_CALDEVConnectionSuccess';
+  success: Scalars['Boolean']['output'];
+};
+
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
-
-export type ImapConnectionParams = {
-  __typename?: 'ImapConnectionParams';
-  handle: Scalars['String']['output'];
-  host: Scalars['String']['output'];
-  password: Scalars['String']['output'];
-  port: Scalars['Float']['output'];
-  secure: Scalars['Boolean']['output'];
-};
-
-export type ImapConnectionSuccess = {
-  __typename?: 'ImapConnectionSuccess';
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
-};
 
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
@@ -1022,7 +1041,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
-  saveImapConnection: ImapConnectionSuccess;
+  saveIMAP_SMTP_CALDEV: Imap_Smtp_CaldevConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1296,14 +1315,12 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
-export type MutationSaveImapConnectionArgs = {
+export type MutationSaveImap_Smtp_CaldevArgs = {
   accountOwnerId: Scalars['String']['input'];
+  accountType: AccountType;
+  connectionParameters: ConnectionParameters;
   handle: Scalars['String']['input'];
-  host: Scalars['String']['input'];
   id?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  port: Scalars['Float']['input'];
-  secure: Scalars['Boolean']['input'];
 };
 
 
@@ -1702,7 +1719,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
-  getConnectedImapAccount: ConnectedImapAccount;
+  getConnectedIMAP_SMTP_CALDEVAccount: ConnectedImap_Smtp_CaldevAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1785,7 +1802,7 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
-export type QueryGetConnectedImapAccountArgs = {
+export type QueryGetConnectedImap_Smtp_CaldevAccountArgs = {
   id: Scalars['String']['input'];
 };
 

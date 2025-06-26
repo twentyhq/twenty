@@ -25,7 +25,7 @@ const PROVIDORS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
-    [ConnectedAccountProvider.IMAP]: IconMail,
+    [ConnectedAccountProvider.IMAP_SMTP_CALDAV]: IconMail,
     default: IconMail,
   },
   CALENDAR: {

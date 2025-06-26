@@ -20,7 +20,7 @@ export class ImapGetMessageListService {
   async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'connectionParameters'
+      'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     try {
@@ -81,7 +81,7 @@ export class ImapGetMessageListService {
   async getPartialMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'connectionParameters'
+      'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
     syncCursor?: string,
   ): Promise<{ messageExternalIds: string[]; nextSyncCursor: string }> {

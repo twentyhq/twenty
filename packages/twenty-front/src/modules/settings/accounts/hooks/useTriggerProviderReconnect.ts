@@ -15,7 +15,7 @@ export const useTriggerProviderReconnect = () => {
       accountId?: string,
       options?: Parameters<typeof triggerApisOAuth>[1],
     ) => {
-      if (provider === ConnectedAccountProvider.IMAP) {
+      if (provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
         if (!accountId) {
           navigate(SettingsPath.NewImapConnection);
           return;

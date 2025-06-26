@@ -1,15 +1,21 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class ImapConnectionParams {
+@InputType()
+export class AccountType {
   @Field(() => String)
-  handle: string;
+  type: 'IMAP' | 'SMTP' | 'CALDAV';
+}
 
+@InputType()
+export class ConnectionParameters {
   @Field(() => String)
   host: string;
 
   @Field(() => Number)
   port: number;
+
+  @Field(() => String)
+  username: string;
 
   /**
    * Note: This field is stored in plain text in the database.
@@ -19,6 +25,36 @@ export class ImapConnectionParams {
   @Field(() => String)
   password: string;
 
-  @Field(() => Boolean)
-  secure: boolean;
+  @Field(() => Boolean, { nullable: true })
+  secure?: boolean;
+}
+
+@ObjectType()
+export class ConnectionParametersOutput {
+  @Field(() => String)
+  host: string;
+
+  @Field(() => Number)
+  port: number;
+
+  @Field(() => String)
+  username: string;
+
+  @Field(() => String)
+  password: string;
+
+  @Field(() => Boolean, { nullable: true })
+  secure?: boolean;
+}
+
+@ObjectType()
+export class IMAP_SMTP_CALDEVConnectionParameters {
+  @Field(() => ConnectionParametersOutput, { nullable: true })
+  IMAP?: ConnectionParametersOutput;
+
+  @Field(() => ConnectionParametersOutput, { nullable: true })
+  SMTP?: ConnectionParametersOutput;
+
+  @Field(() => ConnectionParametersOutput, { nullable: true })
+  CALDAV?: ConnectionParametersOutput;
 }
