@@ -4,15 +4,16 @@ import { useRecoilValue } from 'recoil';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
   padding-right: ${({ theme }) => theme.spacing(2)};
+  min-height: ${PAGE_BAR_MIN_HEIGHT}px;
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
