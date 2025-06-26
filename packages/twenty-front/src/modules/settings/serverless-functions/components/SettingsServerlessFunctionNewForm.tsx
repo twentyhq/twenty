@@ -18,6 +18,8 @@ export const SettingsServerlessFunctionNewForm = ({
   formValues: ServerlessFunctionNewFormValues;
   onChange: (key: string) => (value: string) => void;
 }) => {
+  const descriptionTextAreaInstanceId = `${formValues.name}-description`;
+
   return (
     <Section>
       <H2Title title="About" description="Name and set your function" />
@@ -30,6 +32,8 @@ export const SettingsServerlessFunctionNewForm = ({
           onChange={onChange('name')}
         />
         <TextArea
+          instanceId={descriptionTextAreaInstanceId}
+          focusId={descriptionTextAreaInstanceId}
           placeholder="Description"
           minRows={4}
           value={formValues.description}

@@ -123,6 +123,8 @@ export const SettingsDataModelObjectAboutForm = ({
     });
   };
 
+  const descriptionTextAreaInstanceId = `${objectMetadataItem?.id}-description`;
+
   return (
     <>
       <StyledInputsContainer>
@@ -210,6 +212,8 @@ export const SettingsDataModelObjectAboutForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <TextArea
+            instanceId={descriptionTextAreaInstanceId}
+            focusId={descriptionTextAreaInstanceId}
             placeholder={t`Write a description`}
             minRows={4}
             value={value ?? undefined}

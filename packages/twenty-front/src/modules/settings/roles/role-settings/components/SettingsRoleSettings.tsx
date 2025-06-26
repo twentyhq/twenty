@@ -42,6 +42,8 @@ export const SettingsRoleSettings = ({
 
   const { openModal } = useModal();
 
+  const descriptionTextAreaInstanceId = `${roleId}-description`;
+
   return (
     <>
       <Section>
@@ -73,6 +75,8 @@ export const SettingsRoleSettings = ({
           />
         </StyledInputsContainer>
         <TextArea
+          instanceId={descriptionTextAreaInstanceId}
+          focusId={descriptionTextAreaInstanceId}
           minRows={4}
           placeholder={t`Write a description`}
           value={settingsDraftRole.description || ''}

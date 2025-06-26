@@ -115,6 +115,8 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
 
+  const descriptionTextAreaInstanceId = `${webhookId}-description`;
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
@@ -177,6 +179,8 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
+                  instanceId={descriptionTextAreaInstanceId}
+                  focusId={descriptionTextAreaInstanceId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
