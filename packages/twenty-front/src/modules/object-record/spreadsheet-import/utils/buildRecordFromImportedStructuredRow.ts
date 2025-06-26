@@ -233,9 +233,9 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.LINKS:
-      case FieldMetadataType.PHONES:
       case FieldMetadataType.RICH_TEXT_V2:
       case FieldMetadataType.EMAILS:
+      case FieldMetadataType.PHONES:
       case FieldMetadataType.FULL_NAME: {
         const compositeData = buildCompositeFieldRecord(
           field.name,
