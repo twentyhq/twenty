@@ -2,7 +2,7 @@ import { FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 import { SetttingsAccountsImapConnectionForm } from '@/settings/accounts/components/SetttingsAccountsImapConnectionForm';
-import { useConnectedIMAPAccount } from '@/settings/accounts/hooks/useConnectedIMAPAccount';
+import { useConnectedImapSmtpCaldavAccount } from '@/settings/accounts/hooks/useConnectedImapSmtpCaldavAccount';
 import { useImapConnectionForm } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -28,7 +28,7 @@ export const SettingsAccountsEditImapConnection = () => {
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
   const { connectedAccount, loading: accountLoading } =
-    useConnectedIMAPAccount(connectedAccountId);
+    useConnectedImapSmtpCaldavAccount(connectedAccountId);
 
   const initialData = {
     handle: connectedAccount?.handle || '',

@@ -1,6 +1,6 @@
 import { useGetConnectedImap_Smtp_CaldevAccountQuery } from '~/generated/graphql';
 
-export const useConnectedIMAPAccount = (
+export const useConnectedImapSmtpCaldavAccount = (
   connectedAccountId: string | undefined,
 ) => {
   const { data, loading, error } = useGetConnectedImap_Smtp_CaldevAccountQuery({

@@ -14,17 +14,13 @@ import {
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { IMAP_SMTP_CALDEVValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { IMAP_SMTP_CALDEVService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
-import { IMAPAPIsService } from 'src/modules/connected-account/services/imap-apis.service';
+import { IMAP_SMTP_CALDAVAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Resolver()
@@ -35,11 +31,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 export class IMAP_SMTP_CALDEVResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly mailConnectionService: IMAP_SMTP_CALDEVService,
-    private readonly imapApisService: IMAPAPIsService,
-    private readonly twentyConfigService: TwentyConfigService,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly ImapSmtpCaldavConnectionService: IMAP_SMTP_CALDEVService,
+    private readonly imapSmtpCaldavApisService: IMAP_SMTP_CALDAVAPIService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly mailConnectionValidatorService: IMAP_SMTP_CALDEVValidatorService,
   ) {}
@@ -123,12 +116,12 @@ export class IMAP_SMTP_CALDEVResolver {
         connectionParameters,
       );
 
-    await this.mailConnectionService.testIMAP_SMTP_CALDEV(
+    await this.ImapSmtpCaldavConnectionService.testIMAP_SMTP_CALDEV(
       validatedParams,
       accountType.type,
     );
 
-    await this.imapApisService.setupConnectedAccount({
+    await this.imapSmtpCaldavApisService.setupConnectedAccount({
       handle,
       workspaceMemberId: accountOwnerId,
       workspaceId: workspace.id,

@@ -31,7 +31,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()
-export class IMAPAPIsService {
+export class IMAP_SMTP_CALDAVAPIService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)

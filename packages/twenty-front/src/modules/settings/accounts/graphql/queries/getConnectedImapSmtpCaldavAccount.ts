@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const GET_CONNECTED_IMAP_ACCOUNT = gql`
+export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
   query GetConnectedIMAP_SMTP_CALDEVAccount($id: String!) {
     getConnectedIMAP_SMTP_CALDEVAccount(id: $id) {
       id
