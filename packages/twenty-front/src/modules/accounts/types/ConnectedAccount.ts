@@ -1,6 +1,6 @@
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { ConnectionParameters } from '~/generated-metadata/graphql';
 import { MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
@@ -15,11 +15,6 @@ export type ConnectedAccount = {
   messageChannels: MessageChannel[];
   calendarChannels: CalendarChannel[];
   scopes: string[] | null;
-  // TODO: Replace with singular type
-  connectionParameters?: {
-    IMAP?: ConnectionParameters;
-    SMTP?: ConnectionParameters;
-    CALDAV?: ConnectionParameters;
-  };
+  connectionParameters?: ImapSmtpCaldavAccount;
   __typename: 'ConnectedAccount';
 };
