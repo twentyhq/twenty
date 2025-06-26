@@ -142,9 +142,9 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-       SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
-      ),
-    })
+      SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
+    ),
+  })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })

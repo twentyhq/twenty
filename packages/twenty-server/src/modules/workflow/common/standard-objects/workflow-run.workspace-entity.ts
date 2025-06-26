@@ -193,9 +193,9 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-       SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
-      ),
-    })
+      SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
+    ),
+  })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })

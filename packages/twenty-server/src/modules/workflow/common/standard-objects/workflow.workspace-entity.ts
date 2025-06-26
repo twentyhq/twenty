@@ -126,8 +126,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
       SEARCH_FIELDS_FOR_WORKFLOWS,
-     ),
-    })
+    ),
+  })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
