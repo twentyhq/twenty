@@ -54,7 +54,7 @@ export class BaseGraphQLError extends GraphQLError {
 
     // if no name provided, use the default. defineProperty ensures that it stays non-enumerable
     if (!this.name) {
-      Object.defineProperty(this, 'name', { value: 'ApolloError' });
+      Object.defineProperty(this, 'name', { value: 'GraphQLError' });
     }
 
     if (extensions?.extensions) {

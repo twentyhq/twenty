@@ -2,6 +2,7 @@ import { Decorator } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { CustomError } from '@/error-handler/CustomError';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -103,7 +104,10 @@ export const getFieldDecorator =
     );
 
     if (!isDefined(objectMetadataItem)) {
-      throw new Error(`Object ${objectNameSingular} not found`);
+      throw new CustomError(
+        `Object ${objectNameSingular} not found`,
+        'OBJECT_NOT_FOUND',
+      );
     }
 
     if (!isDefined(fieldMetadataItem)) {

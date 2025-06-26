@@ -8,7 +8,8 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import {
   RouterDecorator,
@@ -38,10 +39,9 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           );
 
           set(
-            extractComponentState(
-              isDropdownOpenComponentState,
-              'action-menu-dropdown-story-action-menu',
-            ),
+            isDropdownOpenComponentStateV2.atomFamily({
+              instanceId: 'action-menu-dropdown-story-action-menu',
+            }),
             true,
           );
         }}

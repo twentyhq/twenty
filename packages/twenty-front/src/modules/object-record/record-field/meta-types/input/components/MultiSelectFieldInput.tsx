@@ -18,10 +18,10 @@ export const MultiSelectFieldInput = ({
       selectableListComponentInstanceId={
         SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
       }
-      focusId={getFieldInputInstanceId(
+      focusId={getFieldInputInstanceId({
         recordId,
-        fieldDefinition.metadata.fieldName,
-      )}
+        fieldName: fieldDefinition.metadata.fieldName,
+      })}
       options={fieldDefinition.metadata.options}
       onCancel={onCancel}
       onOptionSelected={persistField}

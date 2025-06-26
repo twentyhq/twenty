@@ -3,10 +3,10 @@ import { useRelationField } from '../../hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
-import { getRelationToOneFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationToOneFieldInputInstanceId';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
@@ -29,7 +29,7 @@ export const RelationToOneFieldInput = ({
 
   const persistField = usePersistField();
 
-  const recordPickerInstanceId = getRelationToOneFieldInputInstanceId({
+  const recordPickerInstanceId = getFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition.metadata.fieldName,
   });
