@@ -32,6 +32,6 @@ import { WorkspaceFixService } from './services/workspace-fix.service';
     FieldMetadataHealthService,
     WorkspaceFixService,
   ],
-  exports: [WorkspaceHealthService],
+  exports: [WorkspaceHealthService, DatabaseStructureService],
 })
 export class WorkspaceHealthModule {}
