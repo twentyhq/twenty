@@ -245,49 +245,7 @@ export class AgentToolService {
 
       const { limit = 10, offset = 0, ...searchCriteria } = parameters;
 
-      const whereConditions: Record<string, unknown> = {};
-
-      Object.entries(searchCriteria).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          if (typeof value === 'object' && !Array.isArray(value)) {
-            const filterValue = value as Record<string, unknown>;
-
-            if ('eq' in filterValue) {
-              whereConditions[key] = filterValue.eq;
-            } else if ('neq' in filterValue) {
-              whereConditions[key] = Not(filterValue.neq);
-            } else if ('gt' in filterValue) {
-              whereConditions[key] = MoreThan(filterValue.gt);
-            } else if ('gte' in filterValue) {
-              whereConditions[key] = MoreThanOrEqual(filterValue.gte);
-            } else if ('lt' in filterValue) {
-              whereConditions[key] = LessThan(filterValue.lt);
-            } else if ('lte' in filterValue) {
-              whereConditions[key] = LessThanOrEqual(filterValue.lte);
-            } else if ('in' in filterValue) {
-              whereConditions[key] = In(filterValue.in as unknown[]);
-            } else if ('like' in filterValue) {
-              whereConditions[key] = Like(filterValue.like as string);
-            } else if ('ilike' in filterValue) {
-              whereConditions[key] = Like(filterValue.ilike as string);
-            } else if ('startsWith' in filterValue) {
-              whereConditions[key] = Like(`${filterValue.startsWith}%`);
-            } else if ('is' in filterValue) {
-              if (filterValue.is === 'NULL') {
-                whereConditions[key] = IsNull();
-              } else if (filterValue.is === 'NOT_NULL') {
-                whereConditions[key] = Not(IsNull());
-              }
-            } else if ('isEmptyArray' in filterValue) {
-              whereConditions[key] = [];
-            } else if ('containsIlike' in filterValue) {
-              whereConditions[key] = Like(`%${filterValue.containsIlike}%`);
-            }
-          } else {
-            whereConditions[key] = value;
-          }
-        }
-      });
+      const whereConditions = this.buildWhereConditions(searchCriteria);
 
       const records = await repository.find({
         where: whereConditions,
@@ -309,6 +267,79 @@ export class AgentToolService {
         message: `Failed to find ${objectName} records`,
       };
     }
+  }
+
+  private buildWhereConditions(
+    searchCriteria: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const whereConditions: Record<string, unknown> = {};
+
+    Object.entries(searchCriteria).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          const filterCondition = this.parseFilterCondition(
+            value as Record<string, unknown>,
+          );
+
+          if (filterCondition !== null) {
+            whereConditions[key] = filterCondition;
+          }
+        } else {
+          whereConditions[key] = value;
+        }
+      }
+    });
+
+    return whereConditions;
+  }
+
+  private parseFilterCondition(filterValue: Record<string, unknown>): unknown {
+    if ('eq' in filterValue) {
+      return filterValue.eq;
+    }
+    if ('neq' in filterValue) {
+      return Not(filterValue.neq);
+    }
+    if ('gt' in filterValue) {
+      return MoreThan(filterValue.gt);
+    }
+    if ('gte' in filterValue) {
+      return MoreThanOrEqual(filterValue.gte);
+    }
+    if ('lt' in filterValue) {
+      return LessThan(filterValue.lt);
+    }
+    if ('lte' in filterValue) {
+      return LessThanOrEqual(filterValue.lte);
+    }
+    if ('in' in filterValue) {
+      return In(filterValue.in as string[]);
+    }
+    if ('like' in filterValue) {
+      return Like(filterValue.like as string);
+    }
+    if ('ilike' in filterValue) {
+      return Like(filterValue.ilike as string);
+    }
+    if ('startsWith' in filterValue) {
+      return Like(`${filterValue.startsWith}%`);
+    }
+    if ('is' in filterValue) {
+      if (filterValue.is === 'NULL') {
+        return IsNull();
+      }
+      if (filterValue.is === 'NOT_NULL') {
+        return Not(IsNull());
+      }
+    }
+    if ('isEmptyArray' in filterValue) {
+      return [];
+    }
+    if ('containsIlike' in filterValue) {
+      return Like(`%${filterValue.containsIlike}%`);
+    }
+
+    return null;
   }
 
   private async findOneRecord(
