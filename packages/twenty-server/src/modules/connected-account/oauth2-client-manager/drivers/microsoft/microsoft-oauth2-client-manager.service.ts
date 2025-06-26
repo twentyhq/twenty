@@ -7,6 +7,10 @@ import {
 } from '@microsoft/microsoft-graph-client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 
 @Injectable()
 export class MicrosoftOAuth2ClientManagerService {
@@ -45,10 +49,21 @@ export class MicrosoftOAuth2ClientManagerService {
         const data = await res.json();
 
         if (!res.ok) {
-          this.logger.error(data);
+          if (data) {
+            const accessTokenSliced = data?.access_token?.slice(0, 10);
+            const refreshTokenSliced = data?.refresh_token?.slice(0, 10);
+
+            delete data.access_token;
+            delete data.refresh_token;
+            this.logger.error(data);
+            this.logger.error(`accessTokenSliced: ${accessTokenSliced}`);
+            this.logger.error(`refreshTokenSliced: ${refreshTokenSliced}`);
+          }
+
           this.logger.error(res);
-          throw new Error(
-            `MicrosoftOAuth2ClientManagerService ${res.status} error: ${res.statusText} ${JSON.stringify(data)}`,
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `MicrosoftOAuth2ClientManagerService ${res.status} error: ${res.statusText}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
           );
         }
 
