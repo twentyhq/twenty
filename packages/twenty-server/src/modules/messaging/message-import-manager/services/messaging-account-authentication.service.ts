@@ -7,8 +7,10 @@ import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/con
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
 @Injectable()
@@ -122,6 +124,11 @@ export class MessagingAccountAuthenticationService {
       return accessToken;
     } catch (error) {
       switch (error.code) {
+        case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+          );
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
           await this.messagingMonitoringService.track({
@@ -131,15 +138,15 @@ export class MessagingAccountAuthenticationService {
             messageChannelId,
             message: `${error.code}: ${error.reason ?? ''}`,
           });
-          throw {
-            code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-            message: error.message,
-          };
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          );
         case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-          throw {
-            code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-            message: error.message,
-          };
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+          );
         default:
           throw error;
       }
