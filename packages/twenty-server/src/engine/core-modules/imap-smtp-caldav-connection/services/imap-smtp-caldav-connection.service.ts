@@ -12,8 +12,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class IMAP_SMTP_CALDEVService {
-  private readonly logger = new Logger(IMAP_SMTP_CALDEVService.name);
+export class ImapSmtpCaldavService {
+  private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -86,7 +86,7 @@ export class IMAP_SMTP_CALDEVService {
     return true;
   }
 
-  async testIMAP_SMTP_CALDEV(
+  async testImapSmtpCaldav(
     params: ConnectionParameters,
     accountType: AccountType,
   ): Promise<boolean> {
@@ -107,7 +107,7 @@ export class IMAP_SMTP_CALDEVService {
     );
   }
 
-  async getIMAP_SMTP_CALDEV(
+  async getImapSmtpCaldav(
     workspaceId: string,
     connectionId: string,
   ): Promise<ConnectedAccountWorkspaceEntity | null> {

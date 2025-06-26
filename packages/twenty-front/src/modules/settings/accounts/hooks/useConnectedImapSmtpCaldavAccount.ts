@@ -1,15 +1,15 @@
-import { useGetConnectedImap_Smtp_CaldevAccountQuery } from '~/generated/graphql';
+import { useGetConnectedImapSmtpCaldavAccountQuery } from '~/generated/graphql';
 
 export const useConnectedImapSmtpCaldavAccount = (
   connectedAccountId: string | undefined,
 ) => {
-  const { data, loading, error } = useGetConnectedImap_Smtp_CaldevAccountQuery({
+  const { data, loading, error } = useGetConnectedImapSmtpCaldavAccountQuery({
     variables: { id: connectedAccountId ?? '' },
     skip: !connectedAccountId,
   });
 
   return {
-    connectedAccount: data?.getConnectedIMAP_SMTP_CALDEVAccount,
+    connectedAccount: data?.getConnectedImapSmtpCaldavAccount,
     loading,
     error,
   };

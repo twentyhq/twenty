@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { IMAP_SMTP_CALDEVValidatorService } from './imap-smtp-caldav-connection-validator.service';
+import { ImapSmtpCaldavValidatorService } from './imap-smtp-caldav-connection-validator.service';
 
 @Module({
-  providers: [IMAP_SMTP_CALDEVValidatorService],
-  exports: [IMAP_SMTP_CALDEVValidatorService],
+  providers: [ImapSmtpCaldavValidatorService],
+  exports: [ImapSmtpCaldavValidatorService],
 })
-export class IMAP_SMTP_CALDEVValidatorModule {}
+export class ImapSmtpCaldavValidatorModule {}

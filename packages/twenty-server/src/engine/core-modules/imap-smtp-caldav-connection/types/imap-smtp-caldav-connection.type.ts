@@ -8,7 +8,7 @@ export type ConnectionParameters = {
 
 export type AccountType = 'IMAP' | 'SMTP' | 'CALDAV';
 
-export type IMAP_SMTP_CALDEVParams = {
+export type ImapSmtpCaldavParams = {
   handle: string;
   IMAP?: ConnectionParameters;
   SMTP?: ConnectionParameters;

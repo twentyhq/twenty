@@ -48,7 +48,7 @@ export class ConnectionParametersOutput {
 }
 
 @ObjectType()
-export class IMAP_SMTP_CALDEVConnectionParameters {
+export class ImapSmtpCaldavConnectionParameters {
   @Field(() => ConnectionParametersOutput, { nullable: true })
   IMAP?: ConnectionParametersOutput;
 

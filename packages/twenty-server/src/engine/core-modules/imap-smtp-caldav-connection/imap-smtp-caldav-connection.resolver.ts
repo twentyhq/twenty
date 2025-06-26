@@ -6,14 +6,14 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedIMAP_SMTP_CALDEVAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
-import { IMAP_SMTP_CALDEVConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
+import { ConnectedImapSmtpCaldavAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
+import { ImapSmtpCaldavConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import {
   AccountType,
   ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { IMAP_SMTP_CALDEVValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
-import { IMAP_SMTP_CALDEVService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
+import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
+import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,13 +28,13 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
   GraphqlValidationExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
 )
-export class IMAP_SMTP_CALDEVResolver {
+export class ImapSmtpCaldavResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly ImapSmtpCaldavConnectionService: IMAP_SMTP_CALDEVService,
+    private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: IMAP_SMTP_CALDAVAPIService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly mailConnectionValidatorService: IMAP_SMTP_CALDEVValidatorService,
+    private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
   private async checkIfFeatureEnabled(
@@ -67,12 +67,12 @@ export class IMAP_SMTP_CALDEVResolver {
     }
   }
 
-  @Query(() => ConnectedIMAP_SMTP_CALDEVAccount)
+  @Query(() => ConnectedImapSmtpCaldavAccount)
   @UseGuards(WorkspaceAuthGuard)
-  async getConnectedIMAP_SMTP_CALDEVAccount(
+  async getConnectedImapSmtpCaldavAccount(
     @Args('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ConnectedIMAP_SMTP_CALDEVAccount> {
+  ): Promise<ConnectedImapSmtpCaldavAccount> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspace.id,
@@ -98,9 +98,9 @@ export class IMAP_SMTP_CALDEVResolver {
     };
   }
 
-  @Mutation(() => IMAP_SMTP_CALDEVConnectionSuccess)
+  @Mutation(() => ImapSmtpCaldavConnectionSuccess)
   @UseGuards(WorkspaceAuthGuard)
-  async saveIMAP_SMTP_CALDEV(
+  async saveImapSmtpCaldav(
     @Args('accountOwnerId') accountOwnerId: string,
     @Args('handle') handle: string,
     @Args('accountType') accountType: AccountType,
@@ -108,7 +108,7 @@ export class IMAP_SMTP_CALDEVResolver {
     connectionParameters: ConnectionParameters,
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { nullable: true }) id?: string,
-  ): Promise<IMAP_SMTP_CALDEVConnectionSuccess> {
+  ): Promise<ImapSmtpCaldavConnectionSuccess> {
     await this.checkIfFeatureEnabled(workspace.id, accountType);
 
     const validatedParams =
@@ -116,7 +116,7 @@ export class IMAP_SMTP_CALDEVResolver {
         connectionParameters,
       );
 
-    await this.ImapSmtpCaldavConnectionService.testIMAP_SMTP_CALDEV(
+    await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav(
       validatedParams,
       accountType.type,
     );

@@ -6,7 +6,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 @Injectable()
-export class IMAP_SMTP_CALDEVValidatorService {
+export class ImapSmtpCaldavValidatorService {
   private readonly protocolConnectionSchema = z.object({
     host: z.string().min(1, 'Host is required'),
     port: z.number().int().positive('Port must be a positive number'),

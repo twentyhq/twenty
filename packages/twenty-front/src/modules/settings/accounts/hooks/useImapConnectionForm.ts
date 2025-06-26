@@ -9,7 +9,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import {
   ConnectionParameters,
-  useSaveImap_Smtp_CaldevMutation,
+  useSaveImapSmtpCaldavMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
@@ -43,7 +43,7 @@ export const useImapConnectionForm = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [saveImapConnection, { loading: saveLoading }] =
-    useSaveImap_Smtp_CaldevMutation();
+    useSaveImapSmtpCaldavMutation();
 
   const resolver = zodResolver(imapConnectionFormSchema);
 

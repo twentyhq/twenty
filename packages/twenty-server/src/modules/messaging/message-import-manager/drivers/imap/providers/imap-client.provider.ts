@@ -4,7 +4,7 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { IMAP_SMTP_CALDEVParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 interface ImapClientInstance {
@@ -42,8 +42,8 @@ export class ImapClientProvider {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    const connectionParameters: IMAP_SMTP_CALDEVParams =
-      (connectedAccount.connectionParameters as unknown as IMAP_SMTP_CALDEVParams) ||
+    const connectionParameters: ImapSmtpCaldavParams =
+      (connectedAccount.connectionParameters as unknown as ImapSmtpCaldavParams) ||
       {};
 
     const client = new ImapFlow({

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class IMAP_SMTP_CALDEVConnectionSuccess {
+export class ImapSmtpCaldavConnectionSuccess {
   @Field(() => Boolean)
   success: boolean;
 }

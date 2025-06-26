@@ -2,10 +2,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { IMAP_SMTP_CALDEVConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { ImapSmtpCaldavConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 
 @ObjectType()
-export class ConnectedIMAP_SMTP_CALDEVAccount {
+export class ConnectedImapSmtpCaldavAccount {
   @Field(() => String)
   id: string;
 
@@ -18,6 +18,6 @@ export class ConnectedIMAP_SMTP_CALDEVAccount {
   @Field(() => String)
   accountOwnerId: string;
 
-  @Field(() => IMAP_SMTP_CALDEVConnectionParameters, { nullable: true })
-  connectionParameters: IMAP_SMTP_CALDEVConnectionParameters | null;
+  @Field(() => ImapSmtpCaldavConnectionParameters, { nullable: true })
+  connectionParameters: ImapSmtpCaldavConnectionParameters | null;
 }
