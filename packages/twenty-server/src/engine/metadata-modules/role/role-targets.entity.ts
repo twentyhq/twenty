@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -19,6 +20,10 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 @Unique('IDX_ROLE_TARGETS_UNIQUE', ['userWorkspaceId', 'roleId', 'agentId'])
 @Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
 @Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
+@Check(
+  'CHK_role_targets_either_agent_or_user',
+  '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL)',
+)
 export class RoleTargetsEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
