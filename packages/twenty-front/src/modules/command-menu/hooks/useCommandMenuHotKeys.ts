@@ -77,6 +77,11 @@ export const useCommandMenuHotKeys = () => {
         return;
       }
 
+      // Don't handle backspace when editing rich text (notes/tasks)
+      if (commandMenuPage === CommandMenuPages.EditRichText) {
+        return;
+      }
+
       if (
         commandMenuPage === CommandMenuPages.Root &&
         !(
