@@ -46,6 +46,7 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
         where: {
           workspaceId,
           type: FieldMetadataType.ARRAY,
+          isCustom: true,
         },
         relations: ['object'],
       });
