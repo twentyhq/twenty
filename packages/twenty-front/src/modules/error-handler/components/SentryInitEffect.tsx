@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -6,6 +5,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { ApolloError } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -45,6 +47,18 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (
+              event,
+              hint: { originalException?: ApolloError | any },
+            ) => {
+              if (
+                hint.originalException?.name === 'ApolloError' &&
+                !isEmpty(hint.originalException?.graphQLErrors)
+              ) {
+                return null; // filter out ApolloError created from graphQL errors as they are handled by apolloLink
+              }
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
