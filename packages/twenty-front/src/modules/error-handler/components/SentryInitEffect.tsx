@@ -5,9 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
-import { ApolloError } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
-import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -32,14 +30,24 @@ export const SentryInitEffect = () => {
         setIsSentryInitializing(true);
 
         try {
-          const { init, browserTracingIntegration, replayIntegration } =
-            await import('@sentry/react');
+          const {
+            init,
+            browserTracingIntegration,
+            replayIntegration,
+            globalHandlersIntegration,
+          } = await import('@sentry/react');
 
           init({
             environment: sentryConfig?.environment ?? undefined,
             release: sentryConfig?.release ?? undefined,
             dsn: sentryConfig?.dsn,
-            integrations: [browserTracingIntegration({}), replayIntegration()],
+            integrations: [
+              browserTracingIntegration({}),
+              replayIntegration(),
+              globalHandlersIntegration({
+                onunhandledrejection: false,
+              }),
+            ],
             tracePropagationTargets: [
               'localhost:3001',
               REACT_APP_SERVER_BASE_URL,
@@ -47,18 +55,6 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
-            beforeSend: (
-              event,
-              hint: { originalException?: ApolloError | any },
-            ) => {
-              if (
-                hint.originalException?.name === 'ApolloError' &&
-                !isEmpty(hint.originalException?.graphQLErrors)
-              ) {
-                return null; // filter out ApolloError created from graphQL errors as they are handled by apolloLink
-              }
-              return event;
-            },
           });
 
           setIsSentryInitialized(true);

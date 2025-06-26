@@ -170,9 +170,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                         const fingerPrint: string[] = [];
                         if (isDefined(graphQLError.extensions)) {
                           scope.setExtra('extensions', graphQLError.extensions);
-                          fingerPrint.push(
-                            graphQLError.extensions.code as string,
-                          );
+                          if (isDefined(graphQLError.extensions.code)) {
+                            fingerPrint.push(
+                              graphQLError.extensions.code as string,
+                            );
+                          }
                         }
 
                         if (isDefined(operation.operationName)) {
