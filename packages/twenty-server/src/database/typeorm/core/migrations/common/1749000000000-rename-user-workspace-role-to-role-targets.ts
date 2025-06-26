@@ -19,7 +19,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL))`,
+      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (((("agentId" IS NOT NULL) AND ("userWorkspaceId" IS NULL)) OR (("agentId" IS NULL) AND ("userWorkspaceId" IS NOT NULL))))`,
     );
 
     await queryRunner.query(
@@ -48,8 +48,8 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
       `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "FK_d5838ba43033ee6266d8928d7d7" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
-    await queryRunner.query(
-      `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL))`,
+    queryRunner.query(
+      `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (((("agentId" IS NOT NULL) AND ("userWorkspaceId" IS NULL)) OR (("agentId" IS NULL) AND ("userWorkspaceId" IS NOT NULL))))`,
     );
 
     await queryRunner.query(
@@ -81,7 +81,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL))`,
+      `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "CHK_role_targets_either_agent_or_user" CHECK (((("agentId" IS NOT NULL) AND ("userWorkspaceId" IS NULL)) OR (("agentId" IS NULL) AND ("userWorkspaceId" IS NOT NULL))))`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."userWorkspaceRole" ADD CONSTRAINT "FK_0b70755f23a3705f1bea0ddc7d4" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
