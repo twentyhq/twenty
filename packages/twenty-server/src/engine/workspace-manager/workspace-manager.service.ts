@@ -142,7 +142,7 @@ export class WorkspaceManagerService {
     await this.roleTargetsRepository.delete({
       workspaceId,
     });
-    this.logger.log(`workspace ${workspaceId} user workspace role deleted`);
+    this.logger.log(`workspace ${workspaceId} role targets deleted`);
 
     await this.roleRepository.delete({
       workspaceId,
@@ -160,11 +160,6 @@ export class WorkspaceManagerService {
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
     this.logger.log(`workspace ${workspaceId} schema deleted`);
-
-    await this.roleTargetsRepository.delete({
-      workspaceId,
-    });
-    this.logger.log(`workspace ${workspaceId} role targets deleted`);
   }
 
   private async initPermissions({
