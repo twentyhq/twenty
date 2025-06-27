@@ -1,6 +1,8 @@
-import { RelationType } from "src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface";
-import { ObjectMetadataItemWithFieldMaps } from "src/engine/metadata-modules/types/object-metadata-item-with-field-maps";
-import { FieldMetadataType } from "twenty-shared/types";
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const OPPORTUNITY_WITH_FIELDS_MAPS = {
   id: 'b28fec06-6e2c-42f6-a83c-cc58d776af88',
