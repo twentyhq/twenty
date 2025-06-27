@@ -107,12 +107,12 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     [FieldMetadataType.ADDRESS]: {
       addressStreet1: castToString,
+      addressStreet2: castToString,
+      addressCity: castToString,
+      addressPostcode: castToString,
+      addressState: castToString,
+      addressCountry: castToString,
     },
-    addressStreet2: castToString,
-    addressCity: castToString,
-    addressPostcode: castToString,
-    addressState: castToString,
-    addressCountry: castToString,
     [FieldMetadataType.LINKS]: {
       primaryLinkLabel: castToString,
       primaryLinkUrl: castToString,
