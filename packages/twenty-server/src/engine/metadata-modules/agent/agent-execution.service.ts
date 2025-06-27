@@ -11,10 +11,8 @@ import {
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
-import {
-  AGENT_CONFIG,
-  AGENT_SYSTEM_PROMPTS,
-} from 'src/engine/metadata-modules/agent/constants/agent.const';
+import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
+import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';

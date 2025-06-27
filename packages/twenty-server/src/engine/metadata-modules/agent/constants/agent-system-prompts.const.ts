@@ -62,8 +62,4 @@ Guidelines:
 - Preserve the context and meaning from the original execution results
 - Ensure the output is clean, well-formatted, and ready for workflow consumption
 - Pay special attention to any data returned from tool executions (database queries, record creation, etc.)`,
-} as const;
-
-export const AGENT_CONFIG = {
-  MAX_STEPS: 10,
-} as const;
+};
