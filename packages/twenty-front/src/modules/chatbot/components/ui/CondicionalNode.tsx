@@ -164,12 +164,6 @@ function CondicionalNode({
           </StyledOptionsContainer>
         </StyledLogicNodeWrapper>
       </StyledDiv>
-      <Handle
-        id={'a'}
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
     </BaseNode>
   );
 }
