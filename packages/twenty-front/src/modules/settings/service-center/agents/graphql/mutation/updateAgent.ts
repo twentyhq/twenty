@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const UPDATE_AGENT = gql`
-  mutation UpdateAgent($updateInput: UpdateAgentInput!) {
+  mutation UpdateAgent($updateInput: UpdateWorkspaceAgentInput!) {
     updateAgent(updateInput: $updateInput) {
       id
       isAdmin
