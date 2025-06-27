@@ -160,6 +160,7 @@ export const WorkflowEditActionAiAgent = ({
             options={[{ label: t`No role`, value: '' }, ...rolesOptions]}
             value={selectedRole || ''}
             onChange={handleRoleChange}
+            disabled={actionOptions.readonly}
           />
         )}
       </WorkflowStepBody>
