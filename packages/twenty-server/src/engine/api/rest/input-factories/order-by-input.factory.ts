@@ -82,7 +82,10 @@ export class OrderByInputFactory {
       result = [...result, ...resultFields];
     }
 
-    checkFields(objectMetadata.objectMetadataMapItem, Object.keys(result));
+    checkFields(
+      objectMetadata.objectMetadataMapItem,
+      result.flatMap((fields) => Object.keys(fields)),
+    );
 
     return this.addDefaultOrderById(result);
   }
