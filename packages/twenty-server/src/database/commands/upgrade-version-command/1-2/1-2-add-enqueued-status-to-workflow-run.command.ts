@@ -92,7 +92,7 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
 
     if (options.dryRun) {
       this.logger.log(
-        `Would try toadd enqueued status to workflow run status enum for workspace ${workspaceId}`,
+        `Would try to add enqueued status to workflow run status enum for workspace ${workspaceId}`,
       );
     } else {
       try {
