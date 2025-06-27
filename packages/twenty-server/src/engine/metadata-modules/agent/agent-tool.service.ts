@@ -246,7 +246,7 @@ export class AgentToolService {
           { roleId },
         );
 
-      const { limit = 10, offset = 0, ...searchCriteria } = parameters;
+      const { limit = 100, offset = 0, ...searchCriteria } = parameters;
 
       const whereConditions = this.buildWhereConditions(searchCriteria);
 
@@ -283,12 +283,20 @@ export class AgentToolService {
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) {
-        const filterCondition = this.parseFilterCondition(
+        const nestedConditions = this.buildNestedWhereConditions(
           value as Record<string, unknown>,
         );
 
-        if (filterCondition !== null) {
-          whereConditions[key] = filterCondition;
+        if (Object.keys(nestedConditions).length > 0) {
+          whereConditions[key] = nestedConditions;
+        } else {
+          const filterCondition = this.parseFilterCondition(
+            value as Record<string, unknown>,
+          );
+
+          if (filterCondition !== null) {
+            whereConditions[key] = filterCondition;
+          }
         }
 
         return;
@@ -298,6 +306,39 @@ export class AgentToolService {
     });
 
     return whereConditions;
+  }
+
+  private buildNestedWhereConditions(
+    nestedValue: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const nestedConditions: Record<string, unknown> = {};
+
+    Object.entries(nestedValue).forEach(([nestedKey, nestedFieldValue]) => {
+      if (
+        nestedFieldValue === undefined ||
+        nestedFieldValue === null ||
+        nestedFieldValue === ''
+      ) {
+        return;
+      }
+
+      if (
+        typeof nestedFieldValue === 'object' &&
+        !Array.isArray(nestedFieldValue)
+      ) {
+        const filterCondition = this.parseFilterCondition(
+          nestedFieldValue as Record<string, unknown>,
+        );
+
+        if (filterCondition !== null) {
+          nestedConditions[nestedKey] = filterCondition;
+        }
+      } else {
+        nestedConditions[nestedKey] = nestedFieldValue;
+      }
+    });
+
+    return nestedConditions;
   }
 
   private parseFilterCondition(filterValue: Record<string, unknown>): unknown {

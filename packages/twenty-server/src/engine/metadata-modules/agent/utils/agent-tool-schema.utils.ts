@@ -26,8 +26,8 @@ export const generateFindToolSchema = (
   const schemaProperties: Record<string, JSONSchema7Definition> = {
     limit: {
       type: 'number',
-      description: 'Maximum number of records to return (default: 10)',
-      default: 10,
+      description: 'Maximum number of records to return (default: 100)',
+      default: 100,
     },
     offset: {
       type: 'number',
