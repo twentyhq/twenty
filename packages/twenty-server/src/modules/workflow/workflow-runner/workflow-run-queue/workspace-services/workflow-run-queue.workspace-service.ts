@@ -18,29 +18,42 @@ export class WorkflowRunQueueWorkspaceService {
     workspaceId: string,
     newlyEnqueuedCount = 1,
   ): Promise<void> {
-    const key = getWorkflowRunQueuedCountCacheKey(workspaceId);
+    const currentCount =
+      await this.getCurrentWorkflowRunQueuedCount(workspaceId);
 
-    const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
-
-    await this.cacheStorage.set(key, currentCount + newlyEnqueuedCount);
+    await this.cacheStorage.set(
+      getWorkflowRunQueuedCountCacheKey(workspaceId),
+      currentCount + newlyEnqueuedCount,
+    );
   }
 
   async decreaseWorkflowRunQueuedCount(
     workspaceId: string,
-    decrementedCount = 1,
+    removedFromQueueCount = 1,
   ): Promise<void> {
-    const key = getWorkflowRunQueuedCountCacheKey(workspaceId);
+    const currentCount =
+      await this.getCurrentWorkflowRunQueuedCount(workspaceId);
 
-    const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
-
-    await this.cacheStorage.set(key, currentCount - decrementedCount);
+    await this.cacheStorage.set(
+      getWorkflowRunQueuedCountCacheKey(workspaceId),
+      currentCount - removedFromQueueCount,
+    );
   }
 
   async getRemainingRunsToEnqueueCount(workspaceId: string): Promise<number> {
+    const currentCount =
+      await this.getCurrentWorkflowRunQueuedCount(workspaceId);
+
+    return this.WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+  }
+
+  private async getCurrentWorkflowRunQueuedCount(
+    workspaceId: string,
+  ): Promise<number> {
     const key = getWorkflowRunQueuedCountCacheKey(workspaceId);
 
     const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
 
-    return this.WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+    return Math.max(0, currentCount);
   }
 }

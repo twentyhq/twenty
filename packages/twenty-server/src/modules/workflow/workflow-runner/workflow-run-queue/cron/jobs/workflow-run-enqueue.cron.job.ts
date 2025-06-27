@@ -13,8 +13,12 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   RunWorkflowJob,
   RunWorkflowJobData,
@@ -35,6 +39,7 @@ export class WorkflowRunEnqueueJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(WorkflowRunEnqueueJob.name)
@@ -53,6 +58,8 @@ export class WorkflowRunEnqueueJob {
       await this.workspaceDataSourceService.connectToMainDataSource();
 
     for (const activeWorkspace of activeWorkspaces) {
+      let enqueuedWorkflowRunCount = 0;
+
       try {
         const remainingWorkflowRunCount =
           await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCount(
@@ -67,8 +74,9 @@ export class WorkflowRunEnqueueJob {
           activeWorkspace.id,
         );
 
+        // Using raw query to avoid storing repository in cache
         const workflowRuns = await mainDataSource.query(
-          `SELECT * FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY createdAt ASC`,
+          `SELECT * FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
         );
 
         const workflowRunsToEnqueueCount = Math.min(
@@ -80,10 +88,12 @@ export class WorkflowRunEnqueueJob {
           continue;
         }
 
-        await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
-          activeWorkspace.id,
-          workflowRunsToEnqueueCount,
-        );
+        const workflowRunRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            activeWorkspace.id,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
         for (
           let runIndex = 0;
@@ -100,9 +110,11 @@ export class WorkflowRunEnqueueJob {
             },
           );
 
-          await mainDataSource.query(
-            `UPDATE ${schemaName}."workflowRun" SET status = '${WorkflowRunStatus.ENQUEUED}' WHERE id = '${workflowRunId}'`,
-          );
+          await workflowRunRepository.update(workflowRunId, {
+            status: WorkflowRunStatus.ENQUEUED,
+          });
+
+          enqueuedWorkflowRunCount++;
         }
       } catch (error) {
         this.logger.error(
@@ -114,6 +126,13 @@ export class WorkflowRunEnqueueJob {
           key: MetricsKeys.WorkflowRunFailedToEnqueue,
           eventId: activeWorkspace.id,
         });
+      } finally {
+        if (enqueuedWorkflowRunCount > 0) {
+          await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
+            activeWorkspace.id,
+            enqueuedWorkflowRunCount,
+          );
+        }
       }
     }
   }
