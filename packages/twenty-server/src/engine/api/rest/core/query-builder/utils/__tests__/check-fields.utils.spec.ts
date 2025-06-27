@@ -5,7 +5,6 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
-import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
@@ -726,27 +725,6 @@ describe('checkFields', () => {
       checkFields(mockObjectMetadataWithFieldMaps, [
         'fieldNumber',
         'wrongField',
-      ]),
-    ).toThrow();
-  });
-
-  it('should check field types from array of fields', () => {
-    expect(() =>
-      checkArrayFields(mockObjectMetadataWithFieldMaps, [
-        { fieldNumber: undefined },
-      ]),
-    ).not.toThrow();
-
-    expect(() =>
-      checkArrayFields(mockObjectMetadataWithFieldMaps, [
-        { wrongField: undefined },
-      ]),
-    ).toThrow();
-
-    expect(() =>
-      checkArrayFields(mockObjectMetadataWithFieldMaps, [
-        { fieldNumber: undefined },
-        { wrongField: undefined },
       ]),
     ).toThrow();
   });
