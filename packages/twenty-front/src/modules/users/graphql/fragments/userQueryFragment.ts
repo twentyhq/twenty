@@ -42,6 +42,10 @@ export const USER_QUERY_FRAGMENT = gql`
     }
     currentWorkspace {
       id
+      twoFactorAuthenticationPolicy {
+        level
+        providers
+      }
       displayName
       logo
       inviteHash

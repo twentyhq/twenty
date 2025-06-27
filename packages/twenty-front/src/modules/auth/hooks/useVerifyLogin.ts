@@ -3,20 +3,19 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AuthToken } from '~/generated/graphql';
 
 export const useVerifyLogin = () => {
   const { enqueueSnackBar } = useSnackBar();
   const navigate = useNavigateApp();
   const { getAuthTokensFromLoginToken } = useAuth();
-  const { t } = useLingui();
 
-  const verifyLoginToken = async (loginToken: string) => {
+  const verifyLoginToken = async (loginToken: AuthToken['token']) => {
     try {
       await getAuthTokensFromLoginToken(loginToken);
-    } catch (error) {
-      enqueueSnackBar(t`Authentication failed`, {
+    } catch (error: any) {
+      enqueueSnackBar(error?.message, {
         variant: SnackBarVariant.Error,
       });
       navigate(AppPath.SignInUp);

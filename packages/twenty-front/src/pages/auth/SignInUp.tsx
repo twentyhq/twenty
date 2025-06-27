@@ -30,6 +30,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { SignInUpTwoFactorAuthenticationProvisioning } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
+import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 
 const StandardContent = ({
   workspacePublicData,
@@ -55,7 +57,12 @@ const StandardContent = ({
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
-      {signInUpStep !== SignInUpStep.Password && <FooterNote />}
+      { ![
+          SignInUpStep.Password, 
+          SignInUpStep.TwoFactorAuthenticationProvision, 
+          SignInUpStep.TwoFactorAuthenticationVerification
+        ].includes(signInUpStep) 
+        && <FooterNote />}
     </Modal.Content>
   );
 };
@@ -87,6 +94,14 @@ export const SignInUp = () => {
 
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {
       return t`Choose a Workspace`;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
+      return t`Setup your 2FA`
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
+      return t`Verify code from the app`
     }
 
     const workspaceName = !isDefined(workspacePublicData?.displayName)
@@ -122,6 +137,19 @@ export const SignInUp = () => {
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
     }
+
+    if (
+      signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision
+    ) {
+      return <SignInUpTwoFactorAuthenticationProvisioning/>
+    }
+
+    if (
+      signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification
+    ) {
+      return <SignInUpTOTPVerification/>
+    }
+
     if (isDefined(workspacePublicData) && isOnAWorkspace) {
       return (
         <>

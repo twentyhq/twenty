@@ -56,4 +56,6 @@ export const mockedClientConfig: ClientConfig = {
   isGoogleCalendarEnabled: true,
   isAttachmentPreviewEnabled: true,
   isConfigVariablesInDbEnabled: false,
+  isTwoFactorAuthenticationEnabled: false,
+  isTwoFactorAuthenticationGloballyEnforced: false
 };

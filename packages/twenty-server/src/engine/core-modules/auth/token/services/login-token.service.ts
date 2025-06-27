@@ -11,6 +11,9 @@ import {
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 
 @Injectable()
 export class LoginTokenService {
@@ -23,12 +26,14 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
     authProvider?: AuthProviderEnum,
+    pending2FA: boolean = true
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
       authProvider,
+      pending2FA
     };
 
     const secret = this.jwtWrapperService.generateAppSecret(
@@ -53,6 +58,7 @@ export class LoginTokenService {
     sub: string;
     workspaceId: string;
     authProvider: AuthProviderEnum;
+    pending2FA: boolean;
   }> {
     await this.jwtWrapperService.verifyJwtToken(
       loginToken,

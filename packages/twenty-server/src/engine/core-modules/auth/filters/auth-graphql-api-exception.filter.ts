@@ -35,6 +35,11 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception.message, {
           subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
         });
+      case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION:
+      case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION:
+        throw new ForbiddenError(exception.message, {
+          subCode: exception.code
+        });
       case AuthExceptionCode.UNAUTHENTICATED:
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:

@@ -63,6 +63,8 @@ import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
+import { TwoFactorMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorMethodModule } from '../two-factor-authentication/two-factor-authentication.module';
 
 @Module({
   imports: [
@@ -74,6 +76,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
+    UserWorkspaceModule,
     TypeOrmModule.forFeature(
       [
         Workspace,
@@ -83,12 +86,12 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
         UserWorkspace,
+        TwoFactorMethod
       ],
       'core',
     ),
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     HttpModule,
-    UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
@@ -101,6 +104,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MetricsModule,
     PermissionsModule,
     UserRoleModule,
+    TwoFactorMethodModule
   ],
   controllers: [
     GoogleAuthController,

@@ -2,6 +2,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { TwoFactorAuthenticationProviders } from 'twenty-shared/workspace';
+import { TwoFactorMethod } from '../../two-factor-authentication/entities/two-factor-authentication-method.entity';
 
 export type AuthContext = {
   user?: User | null | undefined;
@@ -21,11 +23,18 @@ export enum JwtTokenTypeEnum {
   API_KEY = 'API_KEY',
   POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
+  TWO_FACTOR_AUTHENTICATION_REQUIRED = 'TWO_FACTOR_AUTHENTICATION_REQUIRED'
 }
 
 type CommonPropertiesJwtPayload = {
   sub: string;
 };
+
+export type TwoFactorAuthenticationRequiredJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.TWO_FACTOR_AUTHENTICATION_REQUIRED,
+  workspaceId: string;
+  userId: string;
+}
 
 export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.FILE;
@@ -41,6 +50,7 @@ export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
   authProvider?: AuthProviderEnum;
+  pending2FA?: boolean
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -98,4 +108,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | PostgresProxyTokenJwtPayload
-  | RemoteServerTokenJwtPayload;
+  | RemoteServerTokenJwtPayload
+  | TwoFactorAuthenticationRequiredJwtPayload;
