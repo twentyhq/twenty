@@ -17,17 +17,17 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
-  getUrlHostnameOrThrow,
-  isDefined,
-  isValidUrl,
+    getUrlHostnameOrThrow,
+    isDefined,
+    isValidUrl,
 } from 'twenty-shared/utils';
 import {
-  H2Title,
-  IconBox,
-  IconNorthStar,
-  IconPlus,
-  IconTrash,
-  useIcons,
+    H2Title,
+    IconBox,
+    IconNorthStar,
+    IconPlus,
+    IconTrash,
+    useIcons,
 } from 'twenty-ui/display';
 import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -115,6 +115,10 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
 
+  const descriptionTextAreaId = `${webhookId}-description`;
+  const targetUrlTextInputId = `${webhookId}-target-url`;
+  const secretTextInputId = `${webhookId}-secret`;
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
@@ -156,6 +160,7 @@ export const SettingsDevelopersWebhookForm = ({
               }) => {
                 return (
                   <TextInput
+                    inputId={targetUrlTextInputId}
                     placeholder={t`https://example.com/webhook`}
                     value={value}
                     onChange={onChange}
@@ -177,6 +182,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
+                  textAreaId={descriptionTextAreaId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
@@ -242,6 +248,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextInput
+                  inputId={secretTextInputId}
                   placeholder={t`Secret (optional)`}
                   value={value || ''}
                   onChange={onChange}

@@ -7,6 +7,7 @@ import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldVal
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -166,6 +167,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
         openFieldInput({
           fieldDefinition,
           recordId,
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
         });
 
         setCurrentTableCellInEditModePosition(cellPosition);
@@ -174,11 +176,11 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
-          fieldComponentInstanceId: getRecordFieldInputId(
+          fieldComponentInstanceId: getRecordFieldInputId({
             recordId,
-            fieldDefinition.metadata.fieldName,
-            'record-table-cell',
-          ),
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+          }),
         });
 
         toggleClickOutside(false);

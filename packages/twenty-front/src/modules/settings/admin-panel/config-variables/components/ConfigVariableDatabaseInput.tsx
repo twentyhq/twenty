@@ -60,6 +60,8 @@ export const ConfigVariableDatabaseInput = ({
     onChange(newValues);
   };
 
+  const jsonArrayTextAreaId = `${label}-json-array`;
+
   switch (type) {
     case ConfigVariableType.BOOLEAN:
       return (
@@ -134,6 +136,7 @@ export const ConfigVariableDatabaseInput = ({
             />
           ) : (
             <TextArea
+              textAreaId={jsonArrayTextAreaId}
               label={label}
               value={
                 Array.isArray(value)

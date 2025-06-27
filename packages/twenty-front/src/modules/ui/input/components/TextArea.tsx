@@ -2,14 +2,17 @@ import styled from '@emotion/styled';
 import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { RGBA } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
 export type TextAreaProps = {
+  textAreaId: string;
   label?: string;
   disabled?: boolean;
   minRows?: number;
@@ -69,6 +72,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 export const TextArea = ({
+  textAreaId,
   label,
   disabled,
   placeholder,
@@ -83,19 +87,26 @@ export const TextArea = ({
 
   const inputId = useId();
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
-    setHotkeyScopeAndMemorizePreviousScope({
-      scope: InputHotkeyScope.TextInput,
+    pushFocusItemToFocusStack({
+      focusId: textAreaId,
+      component: {
+        type: FocusComponentType.TEXT_AREA,
+        instanceId: textAreaId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+      hotkeyScope: { scope: InputHotkeyScope.TextInput },
     });
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
-    goBackToPreviousHotkeyScope();
+    removeFocusItemFromFocusStackById({ focusId: textAreaId });
     onBlur?.();
   };
 

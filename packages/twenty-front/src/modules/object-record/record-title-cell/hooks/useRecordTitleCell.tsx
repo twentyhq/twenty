@@ -3,10 +3,12 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,10 +17,9 @@ export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
@@ -33,16 +34,26 @@ export const useRecordTitleCell = () => {
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
+            getRecordFieldInputId({
+              recordId,
+              fieldName: fieldMetadataId,
+              prefix: containerType,
+            }),
           ),
           false,
         );
 
-        goBackToPreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
+        removeFocusItemFromFocusStackById({
+          focusId: getRecordFieldInputId({
+            recordId,
+            fieldName: fieldMetadataId,
+            prefix: containerType,
+          }),
+        });
 
         goBackToPreviousDropdownFocusId();
       },
-    [goBackToPreviousDropdownFocusId, goBackToPreviousHotkeyScope],
+    [goBackToPreviousDropdownFocusId, removeFocusItemFromFocusStackById],
   );
 
   const initFieldInputDraftValue = useInitDraftValueV2();
@@ -61,23 +72,50 @@ export const useRecordTitleCell = () => {
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         if (isDefined(customEditHotkeyScopeForField)) {
-          setHotkeyScopeAndMemorizePreviousScope({
-            scope: customEditHotkeyScopeForField.scope,
-            customScopes: customEditHotkeyScopeForField.customScopes,
+          pushFocusItemToFocusStack({
+            focusId: getRecordFieldInputId({
+              recordId,
+              fieldName: fieldMetadataId,
+              prefix: containerType,
+            }),
+            component: {
+              type: FocusComponentType.OPENED_FIELD_INPUT,
+              instanceId: getRecordFieldInputId({
+                recordId,
+                fieldName: fieldMetadataId,
+                prefix: containerType,
+              }),
+            },
+            hotkeyScope: customEditHotkeyScopeForField,
             memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
           });
         } else {
-          setHotkeyScopeAndMemorizePreviousScope({
-            scope: TitleInputHotkeyScope.TitleInput,
+          pushFocusItemToFocusStack({
+            focusId: getRecordFieldInputId({
+              recordId,
+              fieldName: fieldMetadataId,
+              prefix: containerType,
+            }),
+            component: {
+              type: FocusComponentType.OPENED_FIELD_INPUT,
+              instanceId: getRecordFieldInputId({
+                recordId,
+                fieldName: fieldMetadataId,
+                prefix: containerType,
+              }),
+            },
+            hotkeyScope: {
+              scope: TitleInputHotkeyScope.TitleInput,
+            },
             memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
           });
         }
 
-        const recordTitleCellId = getRecordTitleCellId(
+        const recordTitleCellId = getRecordFieldInputId({
           recordId,
-          fieldMetadataId,
-          containerType,
-        );
+          fieldName: fieldMetadataId,
+          prefix: containerType,
+        });
         set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
 
         const recordIndexFieldDefinitions = snapshot
@@ -98,7 +136,7 @@ export const useRecordTitleCell = () => {
           fieldComponentInstanceId: recordTitleCellId,
         });
       },
-    [initFieldInputDraftValue, setHotkeyScopeAndMemorizePreviousScope],
+    [initFieldInputDraftValue, pushFocusItemToFocusStack],
   );
 
   return {

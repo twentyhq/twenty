@@ -7,6 +7,7 @@ export enum FocusComponentType {
   RECORD_TABLE = 'record-table',
   RECORD_TABLE_ROW = 'record-table-row',
   RECORD_TABLE_CELL = 'record-table-cell',
-  RECORD_BOARD = 'record-board',
+  TEXT_AREA = 'text-area',
+  TEXT_INPUT = 'text-input',
   RECORD_BOARD_CARD = 'record-board-card',
 }

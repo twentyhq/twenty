@@ -6,13 +6,15 @@ import {
   MultiItemBaseInput,
   MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -79,7 +81,17 @@ export const MultiItemFieldInput = <T,>({
     listenerId: hotkeyScope,
   });
 
-  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
+  const inputId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
+  useHotkeysOnFocusedElement({
+    focusId: inputId,
+    keys: [Key.Escape],
+    callback: handleDropdownClose,
+    scope: hotkeyScope,
+    dependencies: [handleDropdownClose],
+  });
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -184,6 +196,10 @@ export const MultiItemFieldInput = <T,>({
     onPersist(updatedItems);
   };
 
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
   return (
     <DropdownContent ref={containerRef}>
       {!!items.length && (
@@ -204,6 +220,7 @@ export const MultiItemFieldInput = <T,>({
       )}
       {isInputDisplayed || !items.length ? (
         <MultiItemBaseInput
+          inputId={instanceId}
           autoFocus
           placeholder={placeholder}
           value={inputValue}

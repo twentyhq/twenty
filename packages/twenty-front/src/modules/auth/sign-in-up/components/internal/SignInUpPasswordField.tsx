@@ -46,6 +46,7 @@ export const SignInUpPasswordField = ({
         }) => (
           <StyledInputContainer>
             <TextInput
+              inputId="sign-in-up-password"
               autoFocus
               value={value}
               type="password"

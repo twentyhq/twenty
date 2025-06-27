@@ -123,10 +123,10 @@ export const RecordInlineCellContainer = () => {
   };
 
   const theme = useTheme();
-  const labelId = `label-${getRecordFieldInputId(
+  const labelId = `label-${getRecordFieldInputId({
     recordId,
-    fieldDefinition?.metadata?.fieldName,
-  )}`;
+    fieldName: fieldDefinition?.metadata?.fieldName,
+  })}`;
 
   return (
     <StyledInlineCellBaseContainer

@@ -20,6 +20,8 @@ type CalendarEventDetailsProps = {
   calendarEvent: CalendarEvent;
 };
 
+const INPUT_ID_PREFIX = 'calendar-event-details';
+
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   align-items: flex-start;
@@ -111,10 +113,14 @@ export const CalendarEventDetails = ({
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: getRecordFieldInputId(calendarEvent.id, fieldName),
+            instanceId: getRecordFieldInputId({
+              recordId: calendarEvent.id,
+              fieldName,
+              prefix: INPUT_ID_PREFIX,
+            }),
           }}
         >
-          <RecordInlineCell readonly />
+          <RecordInlineCell inputIdPrefix={INPUT_ID_PREFIX} />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>
