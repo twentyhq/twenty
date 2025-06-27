@@ -35,7 +35,6 @@ export const checkFields = (
         ].flat();
       }
 
-      // Or could read the joinColumn thing
       if (isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION)) {
         return field.settings?.joinColumnName;
       }
