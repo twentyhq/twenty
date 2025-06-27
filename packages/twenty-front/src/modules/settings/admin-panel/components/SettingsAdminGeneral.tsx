@@ -157,6 +157,7 @@ export const SettingsAdminGeneral = () => {
 
           <StyledContainer>
             <TextInput
+              textInputId="admin-user-lookup"
               value={userIdentifier}
               onChange={setUserIdentifier}
               onInputEnter={handleSearch}

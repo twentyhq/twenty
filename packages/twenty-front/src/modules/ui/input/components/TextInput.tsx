@@ -6,11 +6,14 @@ import {
   TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from 'twenty-shared/utils';
 
 export type TextInputProps = TextInputV2ComponentProps & {
+  textInputId: string;
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
@@ -19,6 +22,7 @@ export type TextInputProps = TextInputV2ComponentProps & {
 };
 
 export const TextInput = ({
+  textInputId,
   onFocus,
   onBlur,
   onInputEnter,
@@ -45,18 +49,25 @@ export const TextInput = ({
     }
   }, [autoSelectOnMount]);
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
     setIsFocused(true);
 
     if (!disableHotkeys) {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: InputHotkeyScope.TextInput,
+      pushFocusItemToFocusStack({
+        focusId: textInputId,
+        component: {
+          type: FocusComponentType.TEXT_INPUT,
+          instanceId: textInputId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+        hotkeyScope: { scope: InputHotkeyScope.TextInput },
       });
     }
   };
@@ -66,7 +77,7 @@ export const TextInput = ({
     setIsFocused(false);
 
     if (!disableHotkeys) {
-      goBackToPreviousHotkeyScope();
+      removeFocusItemFromFocusStackById({ focusId: textInputId });
     }
   };
 

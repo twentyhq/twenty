@@ -5,8 +5,8 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
 import { IconCopy, IconLink } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -34,7 +34,12 @@ export const WorkspaceInviteLink = ({
   return (
     <StyledContainer data-chromatic="ignore">
       <StyledLinkContainer>
-        <TextInput value={inviteLink} disabled fullWidth />
+        <TextInput
+          textInputId="workspace-invite-link"
+          value={inviteLink}
+          disabled
+          fullWidth
+        />
       </StyledLinkContainer>
       <Button
         Icon={IconLink}

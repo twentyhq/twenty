@@ -56,9 +56,12 @@ export const ApiKeyNameInput = ({
     return debouncedUpdate.cancel;
   }, [debouncedUpdate, apiKeyName]);
 
+  const nameTextInputId = `${apiKeyId}-name`;
+
   return (
     <StyledComboInputContainer>
       <TextInput
+        textInputId={nameTextInputId}
         placeholder="E.g. backoffice integration"
         onChange={onNameUpdate}
         fullWidth

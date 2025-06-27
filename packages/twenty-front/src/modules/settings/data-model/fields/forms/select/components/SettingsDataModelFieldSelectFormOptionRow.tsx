@@ -103,6 +103,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInput
+          textInputId={`select-option-value-${option.id}`}
           value={option.value}
           onChange={(input) =>
             onChange({
@@ -137,6 +138,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
+        textInputId={`select-option-label-${option.id}`}
         value={option.label}
         onChange={(label) => {
           const optionNameHasBeenEdited = !(

@@ -106,6 +106,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         <Section>
           <H2Title title={t`Name`} description={t`Name of your API key`} />
           <TextInput
+            textInputId="api-key-new-name"
             placeholder={t`E.g. backoffice integration`}
             value={formValues.name}
             onKeyDown={(e) => {

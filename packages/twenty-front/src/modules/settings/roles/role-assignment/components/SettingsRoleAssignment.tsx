@@ -207,6 +207,7 @@ export const SettingsRoleAssignment = ({
         />
         <StyledSearchContainer>
           <StyledSearchInput
+            textInputId="role-assignment-member-search"
             value={searchFilter}
             onChange={handleSearchChange}
             placeholder={t`Search an assigned team member...`}

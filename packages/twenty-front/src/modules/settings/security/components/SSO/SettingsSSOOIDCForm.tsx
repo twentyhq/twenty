@@ -7,10 +7,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconCopy } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -55,6 +55,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
+                textInputId="sso-oidc-authorized-uri"
                 readOnly={true}
                 label={t`Authorized URI`}
                 value={authorizedUrl}
@@ -80,6 +81,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
+                textInputId="sso-oidc-redirection-uri"
                 readOnly={true}
                 label={t`Redirection URI`}
                 value={redirectionUrl}
@@ -115,6 +117,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
+                textInputId="sso-oidc-client-id"
                 autoComplete="off"
                 label={t`Client ID`}
                 value={value}
@@ -129,6 +132,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
+                textInputId="sso-oidc-client-secret"
                 autoComplete="off"
                 type="password"
                 label={t`Client Secret`}
@@ -144,6 +148,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
+                textInputId="sso-oidc-issuer"
                 autoComplete="off"
                 label={t`Issuer URI`}
                 value={value}

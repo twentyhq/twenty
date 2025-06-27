@@ -12,8 +12,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 const MAX_ROWS = 5;
 
 export type TextAreaProps = {
-  focusId: string;
-  instanceId: string;
+  textAreaId: string;
   label?: string;
   disabled?: boolean;
   minRows?: number;
@@ -73,8 +72,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 export const TextArea = ({
-  instanceId,
-  focusId,
+  textAreaId,
   label,
   disabled,
   placeholder,
@@ -95,10 +93,10 @@ export const TextArea = ({
 
   const handleFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
     pushFocusItemToFocusStack({
-      focusId,
+      focusId: textAreaId,
       component: {
         type: FocusComponentType.TEXT_AREA,
-        instanceId,
+        instanceId: textAreaId,
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -108,7 +106,7 @@ export const TextArea = ({
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
-    removeFocusItemFromFocusStackById({ focusId });
+    removeFocusItemFromFocusStackById({ focusId: textAreaId });
     onBlur?.();
   };
 

@@ -117,6 +117,7 @@ export const SettingsDataModelFieldDateForm = ({
           defaultValue={initialCustomUnicodeDateFormat}
           render={({ field: { onChange, value } }) => (
             <StyledTextInput
+              textInputId="custom-date-format-input"
               placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
               value={value}
               onChange={(value) => onChange(value)}

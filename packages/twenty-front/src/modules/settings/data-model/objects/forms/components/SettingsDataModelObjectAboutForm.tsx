@@ -123,7 +123,9 @@ export const SettingsDataModelObjectAboutForm = ({
     });
   };
 
-  const descriptionTextAreaInstanceId = `${objectMetadataItem?.id}-description`;
+  const descriptionTextAreaId = `${objectMetadataItem?.id}-description`;
+  const labelSingularTextInputId = `${objectMetadataItem?.id}-label-singular`;
+  const labelPluralTextInputId = `${objectMetadataItem?.id}-label-plural`;
 
   return (
     <>
@@ -152,6 +154,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              textInputId={labelSingularTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelSingular?.message}
@@ -183,6 +186,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              textInputId={labelPluralTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelPlural?.message}
@@ -212,8 +216,7 @@ export const SettingsDataModelObjectAboutForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <TextArea
-            instanceId={descriptionTextAreaInstanceId}
-            focusId={descriptionTextAreaInstanceId}
+            textAreaId={descriptionTextAreaId}
             placeholder={t`Write a description`}
             minRows={4}
             value={value ?? undefined}
@@ -268,6 +271,7 @@ export const SettingsDataModelObjectAboutForm = ({
                       }) => (
                         <>
                           <TextInput
+                            textInputId={`${objectMetadataItem?.id}-${fieldName}`}
                             label={label}
                             placeholder={placeholder}
                             value={value}

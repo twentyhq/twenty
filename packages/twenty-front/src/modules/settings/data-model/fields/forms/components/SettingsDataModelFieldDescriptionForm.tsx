@@ -29,7 +29,7 @@ export const SettingsDataModelFieldDescriptionForm = ({
   const { control } =
     useFormContext<SettingsDataModelFieldDescriptionFormValues>();
 
-  const descriptionTextAreaInstanceId = `${fieldMetadataItem?.id}-description`;
+  const descriptionTextAreaId = `${fieldMetadataItem?.id}-description`;
 
   return (
     <Controller
@@ -38,8 +38,7 @@ export const SettingsDataModelFieldDescriptionForm = ({
       defaultValue={fieldMetadataItem?.description}
       render={({ field: { onChange, value } }) => (
         <TextArea
-          instanceId={descriptionTextAreaInstanceId}
-          focusId={descriptionTextAreaInstanceId}
+          textAreaId={descriptionTextAreaId}
           placeholder={t`Write a description`}
           minRows={4}
           value={value ?? undefined}

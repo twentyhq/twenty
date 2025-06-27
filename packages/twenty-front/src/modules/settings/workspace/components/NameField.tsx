@@ -7,10 +7,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
+import { isDefined } from 'twenty-shared/utils';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { logError } from '~/utils/logError';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -88,6 +88,7 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
+        textInputId="workspace-name"
         label={t`Name`}
         value={displayName}
         onChange={setDisplayName}

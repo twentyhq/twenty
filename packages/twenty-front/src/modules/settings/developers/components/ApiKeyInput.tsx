@@ -6,8 +6,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
 import { IconCopy } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput value={apiKey} fullWidth />
+        <TextInput textInputId="api-key-display" value={apiKey} fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}

@@ -115,7 +115,9 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
 
-  const descriptionTextAreaInstanceId = `${webhookId}-description`;
+  const descriptionTextAreaId = `${webhookId}-description`;
+  const targetUrlTextInputId = `${webhookId}-target-url`;
+  const secretTextInputId = `${webhookId}-secret`;
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -158,6 +160,7 @@ export const SettingsDevelopersWebhookForm = ({
               }) => {
                 return (
                   <TextInput
+                    textInputId={targetUrlTextInputId}
                     placeholder={t`https://example.com/webhook`}
                     value={value}
                     onChange={onChange}
@@ -179,8 +182,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
-                  instanceId={descriptionTextAreaInstanceId}
-                  focusId={descriptionTextAreaInstanceId}
+                  textAreaId={descriptionTextAreaId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
@@ -246,6 +248,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextInput
+                  textInputId={secretTextInputId}
                   placeholder={t`Secret (optional)`}
                   value={value || ''}
                   onChange={onChange}

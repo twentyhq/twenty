@@ -148,6 +148,7 @@ export const generateColumns = <T extends string>(
           default:
             component = (
               <TextInput
+                textInputId={`validation-${column.key}-${row.__index}`}
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
                   onRowChange({ ...row, [columnKey]: value });
