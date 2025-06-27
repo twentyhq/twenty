@@ -19,6 +19,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -39,6 +40,7 @@ export class AgentToolService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   async generateToolsForAgent(
@@ -52,19 +54,27 @@ export class AgentToolService {
         return {};
       }
 
-      const roleWithPermissions = await this.roleRepository.findOne({
+      const role = await this.roleRepository.findOne({
         where: {
           id: agent.roleId,
           workspaceId,
         },
-        relations: [
-          'objectPermissions',
-          'objectPermissions.objectMetadata',
-          'objectPermissions.objectMetadata.fields',
-        ],
       });
 
-      if (!roleWithPermissions) {
+      if (!role) {
+        return {};
+      }
+
+      const { data: rolesPermissions } =
+        await this.workspacePermissionsCacheService.getRolesPermissionsFromCache(
+          {
+            workspaceId,
+          },
+        );
+
+      const objectPermissions = rolesPermissions[agent.roleId];
+
+      if (!objectPermissions) {
         return {};
       }
 
@@ -83,33 +93,14 @@ export class AgentToolService {
         (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
       );
 
-      const objectPermissionsMap = new Map(
-        roleWithPermissions.objectPermissions.map((permission) => [
-          permission.objectMetadataId,
-          permission,
-        ]),
-      );
-
       filteredObjectMetadata.forEach((objectMetadata) => {
-        const objectPermission = objectPermissionsMap.get(objectMetadata.id);
+        const objectPermission = objectPermissions[objectMetadata.id];
 
-        const canCreate =
-          roleWithPermissions.canUpdateAllObjectRecords ||
-          (objectPermission?.canUpdateObjectRecords ?? false);
-        const canRead =
-          roleWithPermissions.canReadAllObjectRecords ||
-          (objectPermission?.canReadObjectRecords ?? false);
-        const canUpdate =
-          roleWithPermissions.canUpdateAllObjectRecords ||
-          (objectPermission?.canUpdateObjectRecords ?? false);
-        const canSoftDelete =
-          roleWithPermissions.canSoftDeleteAllObjectRecords ||
-          (objectPermission?.canSoftDeleteObjectRecords ?? false);
-        const canDestroy =
-          roleWithPermissions.canDestroyAllObjectRecords ||
-          (objectPermission?.canDestroyObjectRecords ?? false);
+        if (!objectPermission) {
+          return;
+        }
 
-        if (canCreate) {
+        if (objectPermission.canUpdate) {
           tools[`create_${objectMetadata.nameSingular}`] = {
             description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
             parameters: generateAgentToolZodSchema(objectMetadata),
@@ -121,9 +112,21 @@ export class AgentToolService {
               );
             },
           };
+
+          tools[`update_${objectMetadata.nameSingular}`] = {
+            description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
+            parameters: generateAgentToolUpdateZodSchema(objectMetadata),
+            execute: async (parameters) => {
+              return this.updateRecord(
+                objectMetadata.nameSingular,
+                parameters,
+                workspaceId,
+              );
+            },
+          };
         }
 
-        if (canRead) {
+        if (objectPermission.canRead) {
           tools[`find_${objectMetadata.nameSingular}`] = {
             description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination. Returns an array of matching records with their full data.`,
             parameters: generateFindToolSchema(objectMetadata),
@@ -153,21 +156,7 @@ export class AgentToolService {
           };
         }
 
-        if (canUpdate) {
-          tools[`update_${objectMetadata.nameSingular}`] = {
-            description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-            parameters: generateAgentToolUpdateZodSchema(objectMetadata),
-            execute: async (parameters) => {
-              return this.updateRecord(
-                objectMetadata.nameSingular,
-                parameters,
-                workspaceId,
-              );
-            },
-          };
-        }
-
-        if (canSoftDelete) {
+        if (objectPermission.canSoftDelete) {
           tools[`soft_delete_${objectMetadata.nameSingular}`] = {
             description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
             parameters: z.object({
@@ -197,7 +186,7 @@ export class AgentToolService {
           };
         }
 
-        if (canDestroy) {
+        if (objectPermission.canDestroy) {
           tools[`destroy_${objectMetadata.nameSingular}`] = {
             description: `Permanently delete a ${objectMetadata.labelSingular} record from the database. This action is irreversible and completely removes all data. Use with extreme caution - consider soft delete for temporary removal.`,
             parameters: z.object({

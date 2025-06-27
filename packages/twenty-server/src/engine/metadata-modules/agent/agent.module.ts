@@ -8,6 +8,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 import { AgentExecutionService } from './agent-execution.service';
 import { AgentToolService } from './agent-tool.service';
@@ -26,6 +27,7 @@ import { AgentService } from './agent.service';
     AuditModule,
     FeatureFlagModule,
     ObjectMetadataModule,
+    WorkspacePermissionsCacheModule,
   ],
   providers: [
     AgentResolver,
