@@ -1,3 +1,4 @@
+import { workflowAiAgentSelectedRoleState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentSelectedRoleState';
 import { useRecoilState } from 'recoil';
 import {
   useAssignRoleToAgentMutation,
@@ -6,16 +7,15 @@ import {
   useRemoveRoleFromAgentMutation,
 } from '~/generated/graphql';
 
-import { selectedRoleState } from '../states/selectedRoleState';
-
 export const useAgentRoleAssignment = (agentId: string) => {
-  const [selectedRole, setSelectedRole] = useRecoilState(selectedRoleState);
+  const [workflowAiAgentSelectedRole, setWorkflowAiAgentSelectedRole] =
+    useRecoilState(workflowAiAgentSelectedRoleState);
 
   useFindOneAgentQuery({
     variables: { id: agentId },
     skip: !agentId,
     onCompleted: (data) => {
-      setSelectedRole(data.findOneAgent.roleId);
+      setWorkflowAiAgentSelectedRole(data.findOneAgent.roleId);
     },
   });
 
@@ -27,13 +27,13 @@ export const useAgentRoleAssignment = (agentId: string) => {
     if (roleId === '') {
       await handleRoleRemove();
     } else {
-      setSelectedRole(roleId);
+      setWorkflowAiAgentSelectedRole(roleId);
       await assignRoleToAgent({ variables: { agentId, roleId } });
     }
   };
 
   const handleRoleRemove = async () => {
-    setSelectedRole(undefined);
+    setWorkflowAiAgentSelectedRole(undefined);
     await removeRoleFromAgent({ variables: { agentId } });
   };
 
@@ -44,7 +44,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
     })) || [];
 
   return {
-    selectedRole,
+    selectedRole: workflowAiAgentSelectedRole,
     handleRoleChange,
     rolesOptions,
   };
