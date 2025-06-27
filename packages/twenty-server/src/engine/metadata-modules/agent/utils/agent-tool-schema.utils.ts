@@ -1,6 +1,6 @@
 import { jsonSchema } from 'ai';
+import { JSONSchema7Definition } from 'json-schema';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { z } from 'zod';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -23,17 +23,17 @@ export const getRecordInputSchema = (objectMetadata: ObjectMetadataEntity) => {
 export const generateFindToolSchema = (
   objectMetadata: ObjectMetadataEntity,
 ) => {
-  const schemaFields: Record<string, z.ZodTypeAny> = {
-    limit: z
-      .number()
-      .optional()
-      .describe('Maximum number of records to return (default: 10)')
-      .default(10),
-    offset: z
-      .number()
-      .optional()
-      .describe('Number of records to skip (default: 0)')
-      .default(0),
+  const schemaProperties: Record<string, JSONSchema7Definition> = {
+    limit: {
+      type: 'number',
+      description: 'Maximum number of records to return (default: 10)',
+      default: 10,
+    },
+    offset: {
+      type: 'number',
+      description: 'Number of records to skip (default: 0)',
+      default: 0,
+    },
   };
 
   objectMetadata.fields.forEach((field: FieldMetadataEntity) => {
@@ -41,485 +41,671 @@ export const generateFindToolSchema = (
       return;
     }
 
-    const filterSchema = generateFieldFilterSchema(field);
+    const filterSchema = generateFieldFilterJsonSchema(field);
 
     if (filterSchema) {
-      schemaFields[field.name] = filterSchema;
+      schemaProperties[field.name] = filterSchema;
     }
   });
 
-  return z.object(schemaFields);
+  return jsonSchema({
+    type: 'object',
+    properties: schemaProperties,
+  });
 };
 
-const generateFieldFilterSchema = (
+const generateFieldFilterJsonSchema = (
   field: FieldMetadataEntity,
-): z.ZodTypeAny | null => {
+): JSONSchema7Definition | null => {
   switch (field.type) {
     case FieldMetadataType.UUID:
-      return z
-        .object({
-          eq: z.string().uuid().optional().describe('Equals'),
-          neq: z.string().uuid().optional().describe('Not equals'),
-          in: z
-            .array(z.string().uuid())
-            .optional()
-            .describe('In array of values'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (UUID field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (UUID field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            format: 'uuid',
+            description: 'Equals',
+          },
+          neq: {
+            type: 'string',
+            format: 'uuid',
+            description: 'Not equals',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+              format: 'uuid',
+            },
+            description: 'In array of values',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
 
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.RICH_TEXT_V2:
-      return z
-        .object({
-          eq: z.string().optional().describe('Equals'),
-          neq: z.string().optional().describe('Not equals'),
-          in: z.array(z.string()).optional().describe('In array of values'),
-          like: z
-            .string()
-            .optional()
-            .describe('Case-sensitive pattern match (use % for wildcards)'),
-          ilike: z
-            .string()
-            .optional()
-            .describe('Case-insensitive pattern match (use % for wildcards)'),
-          startsWith: z.string().optional().describe('Starts with'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (text field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (text field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            description: 'Equals',
+          },
+          neq: {
+            type: 'string',
+            description: 'Not equals',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            description: 'In array of values',
+          },
+          like: {
+            type: 'string',
+            description: 'Case-sensitive pattern match (use % for wildcards)',
+          },
+          ilike: {
+            type: 'string',
+            description: 'Case-insensitive pattern match (use % for wildcards)',
+          },
+          startsWith: {
+            type: 'string',
+            description: 'Starts with',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
 
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.POSITION:
-      return z
-        .object({
-          eq: z.number().optional().describe('Equals'),
-          neq: z.number().optional().describe('Not equals'),
-          gt: z.number().optional().describe('Greater than'),
-          gte: z.number().optional().describe('Greater than or equal'),
-          lt: z.number().optional().describe('Less than'),
-          lte: z.number().optional().describe('Less than or equal'),
-          in: z.array(z.number()).optional().describe('In array of values'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (number field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (number field)`,
+        properties: {
+          eq: {
+            type: 'number',
+            description: 'Equals',
+          },
+          neq: {
+            type: 'number',
+            description: 'Not equals',
+          },
+          gt: {
+            type: 'number',
+            description: 'Greater than',
+          },
+          gte: {
+            type: 'number',
+            description: 'Greater than or equal',
+          },
+          lt: {
+            type: 'number',
+            description: 'Less than',
+          },
+          lte: {
+            type: 'number',
+            description: 'Less than or equal',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+            description: 'In array of values',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
 
     case FieldMetadataType.BOOLEAN:
-      return z
-        .object({
-          eq: z.boolean().optional().describe('Equals'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (boolean field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (boolean field)`,
+        properties: {
+          eq: {
+            type: 'boolean',
+            description: 'Equals',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
 
     case FieldMetadataType.DATE_TIME:
     case FieldMetadataType.DATE:
-      return z
-        .object({
-          eq: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Equals (ISO datetime string)'),
-          neq: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Not equals (ISO datetime string)'),
-          gt: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Greater than (ISO datetime string)'),
-          gte: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Greater than or equal (ISO datetime string)'),
-          lt: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Less than (ISO datetime string)'),
-          lte: z
-            .string()
-            .datetime()
-            .optional()
-            .describe('Less than or equal (ISO datetime string)'),
-          in: z
-            .array(z.string().datetime())
-            .optional()
-            .describe('In array of values (ISO datetime strings)'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (date field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (date field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Equals (ISO datetime string)',
+          },
+          neq: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Not equals (ISO datetime string)',
+          },
+          gt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Greater than (ISO datetime string)',
+          },
+          gte: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Greater than or equal (ISO datetime string)',
+          },
+          lt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Less than (ISO datetime string)',
+          },
+          lte: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Less than or equal (ISO datetime string)',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+              format: 'date-time',
+            },
+            description: 'In array of values (ISO datetime strings)',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
 
     case FieldMetadataType.SELECT: {
       const enumValues =
         field.options?.map((option: { value: string }) => option.value) || [];
 
-      return z
-        .object({
-          eq: z
-            .enum(enumValues as [string, ...string[]])
-            .optional()
-            .describe('Equals'),
-          neq: z
-            .enum(enumValues as [string, ...string[]])
-            .optional()
-            .describe('Not equals'),
-          in: z
-            .array(z.enum(enumValues as [string, ...string[]]))
-            .optional()
-            .describe('In array of values'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (select field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (select field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            enum: enumValues,
+            description: 'Equals',
+          },
+          neq: {
+            type: 'string',
+            enum: enumValues,
+            description: 'Not equals',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: enumValues,
+            },
+            description: 'In array of values',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
     }
 
     case FieldMetadataType.MULTI_SELECT: {
       const enumValues =
         field.options?.map((option: { value: string }) => option.value) || [];
 
-      return z
-        .object({
-          in: z
-            .array(z.enum(enumValues as [string, ...string[]]))
-            .optional()
-            .describe('Contains any of these values'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-          isEmptyArray: z.boolean().optional().describe('Is empty array'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (multi-select field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (multi-select field)`,
+        properties: {
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: enumValues,
+            },
+            description: 'Contains any of these values',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+          isEmptyArray: {
+            type: 'boolean',
+            description: 'Is empty array',
+          },
+        },
+      };
     }
 
     case FieldMetadataType.RATING: {
       const enumValues =
         field.options?.map((option: { value: string }) => option.value) || [];
 
-      return z
-        .object({
-          eq: z
-            .enum(enumValues as [string, ...string[]])
-            .optional()
-            .describe('Equals'),
-          in: z
-            .array(z.enum(enumValues as [string, ...string[]]))
-            .optional()
-            .describe('In array of values'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (rating field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (rating field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            enum: enumValues,
+            description: 'Equals',
+          },
+          in: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: enumValues,
+            },
+            description: 'In array of values',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
     }
 
     case FieldMetadataType.ARRAY:
-      return z
-        .object({
-          containsIlike: z
-            .string()
-            .optional()
-            .describe('Contains case-insensitive substring'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-          isEmptyArray: z.boolean().optional().describe('Is empty array'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (array field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (array field)`,
+        properties: {
+          containsIlike: {
+            type: 'string',
+            description: 'Contains case-insensitive substring',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+          isEmptyArray: {
+            type: 'boolean',
+            description: 'Is empty array',
+          },
+        },
+      };
 
     case FieldMetadataType.CURRENCY:
-      return z
-        .object({
-          amountMicros: z
-            .object({
-              eq: z.number().optional().describe('Amount equals'),
-              neq: z.number().optional().describe('Amount not equals'),
-              gt: z.number().optional().describe('Amount greater than'),
-              gte: z
-                .number()
-                .optional()
-                .describe('Amount greater than or equal'),
-              lt: z.number().optional().describe('Amount less than'),
-              lte: z.number().optional().describe('Amount less than or equal'),
-              in: z
-                .array(z.number())
-                .optional()
-                .describe('Amount in array of values'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Amount is null or not null'),
-            })
-            .optional()
-            .describe('Filter by amount'),
-          currencyCode: z
-            .object({
-              eq: z.string().optional().describe('Currency code equals'),
-              neq: z.string().optional().describe('Currency code not equals'),
-              in: z
-                .array(z.string())
-                .optional()
-                .describe('Currency code in array of values'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Currency code is null or not null'),
-            })
-            .optional()
-            .describe('Filter by currency code'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (currency field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (currency field)`,
+        properties: {
+          amountMicros: {
+            type: 'object',
+            description: 'Filter by amount',
+            properties: {
+              eq: {
+                type: 'number',
+                description: 'Amount equals',
+              },
+              neq: {
+                type: 'number',
+                description: 'Amount not equals',
+              },
+              gt: {
+                type: 'number',
+                description: 'Amount greater than',
+              },
+              gte: {
+                type: 'number',
+                description: 'Amount greater than or equal',
+              },
+              lt: {
+                type: 'number',
+                description: 'Amount less than',
+              },
+              lte: {
+                type: 'number',
+                description: 'Amount less than or equal',
+              },
+              in: {
+                type: 'array',
+                items: {
+                  type: 'number',
+                },
+                description: 'Amount in array of values',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Amount is null or not null',
+              },
+            },
+          },
+          currencyCode: {
+            type: 'object',
+            description: 'Filter by currency code',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'Currency code equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'Currency code not equals',
+              },
+              in: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+                description: 'Currency code in array of values',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Currency code is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.FULL_NAME:
-      return z
-        .object({
-          firstName: z
-            .object({
-              eq: z.string().optional().describe('First name equals'),
-              neq: z.string().optional().describe('First name not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('First name case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('First name case-insensitive pattern match'),
-              startsWith: z
-                .string()
-                .optional()
-                .describe('First name starts with'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('First name is null or not null'),
-            })
-            .optional()
-            .describe('Filter by first name'),
-          lastName: z
-            .object({
-              eq: z.string().optional().describe('Last name equals'),
-              neq: z.string().optional().describe('Last name not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Last name case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('Last name case-insensitive pattern match'),
-              startsWith: z
-                .string()
-                .optional()
-                .describe('Last name starts with'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Last name is null or not null'),
-            })
-            .optional()
-            .describe('Filter by last name'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (full name field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (full name field)`,
+        properties: {
+          firstName: {
+            type: 'object',
+            description: 'Filter by first name',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'First name equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'First name not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'First name case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'First name case-insensitive pattern match',
+              },
+              startsWith: {
+                type: 'string',
+                description: 'First name starts with',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'First name is null or not null',
+              },
+            },
+          },
+          lastName: {
+            type: 'object',
+            description: 'Filter by last name',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'Last name equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'Last name not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'Last name case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'Last name case-insensitive pattern match',
+              },
+              startsWith: {
+                type: 'string',
+                description: 'Last name starts with',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Last name is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.ADDRESS:
-      return z
-        .object({
-          addressStreet1: z
-            .object({
-              eq: z.string().optional().describe('Street 1 equals'),
-              neq: z.string().optional().describe('Street 1 not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Street 1 case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('Street 1 case-insensitive pattern match'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Street 1 is null or not null'),
-            })
-            .optional()
-            .describe('Filter by street 1'),
-          addressCity: z
-            .object({
-              eq: z.string().optional().describe('City equals'),
-              neq: z.string().optional().describe('City not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('City case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('City case-insensitive pattern match'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('City is null or not null'),
-            })
-            .optional()
-            .describe('Filter by city'),
-          addressCountry: z
-            .object({
-              eq: z.string().optional().describe('Country equals'),
-              neq: z.string().optional().describe('Country not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Country case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('Country case-insensitive pattern match'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Country is null or not null'),
-            })
-            .optional()
-            .describe('Filter by country'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (address field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (address field)`,
+        properties: {
+          addressStreet1: {
+            type: 'object',
+            description: 'Filter by street 1',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'Street 1 equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'Street 1 not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'Street 1 case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'Street 1 case-insensitive pattern match',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Street 1 is null or not null',
+              },
+            },
+          },
+          addressCity: {
+            type: 'object',
+            description: 'Filter by city',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'City equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'City not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'City case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'City case-insensitive pattern match',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'City is null or not null',
+              },
+            },
+          },
+          addressCountry: {
+            type: 'object',
+            description: 'Filter by country',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'Country equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'Country not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'Country case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'Country case-insensitive pattern match',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Country is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.EMAILS:
-      return z
-        .object({
-          primaryEmail: z
-            .object({
-              eq: z
-                .string()
-                .email()
-                .optional()
-                .describe('Primary email equals'),
-              neq: z
-                .string()
-                .email()
-                .optional()
-                .describe('Primary email not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Primary email case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('Primary email case-insensitive pattern match'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Primary email is null or not null'),
-            })
-            .optional()
-            .describe('Filter by primary email'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (emails field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (emails field)`,
+        properties: {
+          primaryEmail: {
+            type: 'object',
+            description: 'Filter by primary email',
+            properties: {
+              eq: {
+                type: 'string',
+                format: 'email',
+                description: 'Primary email equals',
+              },
+              neq: {
+                type: 'string',
+                format: 'email',
+                description: 'Primary email not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'Primary email case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'Primary email case-insensitive pattern match',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Primary email is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.PHONES:
-      return z
-        .object({
-          primaryPhoneNumber: z
-            .object({
-              eq: z.string().optional().describe('Primary phone number equals'),
-              neq: z
-                .string()
-                .optional()
-                .describe('Primary phone number not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Primary phone number case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe(
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (phones field)`,
+        properties: {
+          primaryPhoneNumber: {
+            type: 'object',
+            description: 'Filter by primary phone number',
+            properties: {
+              eq: {
+                type: 'string',
+                description: 'Primary phone number equals',
+              },
+              neq: {
+                type: 'string',
+                description: 'Primary phone number not equals',
+              },
+              like: {
+                type: 'string',
+                description:
+                  'Primary phone number case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description:
                   'Primary phone number case-insensitive pattern match',
-                ),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Primary phone number is null or not null'),
-            })
-            .optional()
-            .describe('Filter by primary phone number'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (phones field)`);
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Primary phone number is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.LINKS:
-      return z
-        .object({
-          primaryLinkUrl: z
-            .object({
-              eq: z
-                .string()
-                .url()
-                .optional()
-                .describe('Primary link URL equals'),
-              neq: z
-                .string()
-                .url()
-                .optional()
-                .describe('Primary link URL not equals'),
-              like: z
-                .string()
-                .optional()
-                .describe('Primary link URL case-sensitive pattern match'),
-              ilike: z
-                .string()
-                .optional()
-                .describe('Primary link URL case-insensitive pattern match'),
-              is: z
-                .enum(['NULL', 'NOT_NULL'])
-                .optional()
-                .describe('Primary link URL is null or not null'),
-            })
-            .optional()
-            .describe('Filter by primary link URL'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (links field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (links field)`,
+        properties: {
+          primaryLinkUrl: {
+            type: 'object',
+            description: 'Filter by primary link URL',
+            properties: {
+              eq: {
+                type: 'string',
+                format: 'uri',
+                description: 'Primary link URL equals',
+              },
+              neq: {
+                type: 'string',
+                format: 'uri',
+                description: 'Primary link URL not equals',
+              },
+              like: {
+                type: 'string',
+                description: 'Primary link URL case-sensitive pattern match',
+              },
+              ilike: {
+                type: 'string',
+                description: 'Primary link URL case-insensitive pattern match',
+              },
+              is: {
+                type: 'string',
+                enum: ['NULL', 'NOT_NULL'],
+                description: 'Primary link URL is null or not null',
+              },
+            },
+          },
+        },
+      };
 
     case FieldMetadataType.RELATION:
       if (
@@ -528,86 +714,123 @@ const generateFieldFilterSchema = (
       ) {
         const fieldName = `${field.name}Id`;
 
-        return z
-          .object({
-            eq: z
-              .string()
-              .uuid()
-              .optional()
-              .describe('Related record ID equals'),
-            neq: z
-              .string()
-              .uuid()
-              .optional()
-              .describe('Related record ID not equals'),
-            in: z
-              .array(z.string().uuid())
-              .optional()
-              .describe('Related record ID in array of values'),
-            is: z
-              .enum(['NULL', 'NOT_NULL'])
-              .optional()
-              .describe('Related record ID is null or not null'),
-          })
-          .optional()
-          .describe(`Filter by ${fieldName} (relation field)`);
+        return {
+          type: 'object',
+          description: `Filter by ${fieldName} (relation field)`,
+          properties: {
+            eq: {
+              type: 'string',
+              format: 'uuid',
+              description: 'Related record ID equals',
+            },
+            neq: {
+              type: 'string',
+              format: 'uuid',
+              description: 'Related record ID not equals',
+            },
+            in: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
+              description: 'Related record ID in array of values',
+            },
+            is: {
+              type: 'string',
+              enum: ['NULL', 'NOT_NULL'],
+              description: 'Related record ID is null or not null',
+            },
+          },
+        };
       }
 
       return null;
 
     case FieldMetadataType.RAW_JSON:
-      return z
-        .object({
-          eq: z.string().optional().describe('Raw JSON equals'),
-          neq: z.string().optional().describe('Raw JSON not equals'),
-          like: z
-            .string()
-            .optional()
-            .describe('Raw JSON case-sensitive pattern match'),
-          ilike: z
-            .string()
-            .optional()
-            .describe('Raw JSON case-insensitive pattern match'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Raw JSON is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (raw JSON field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (raw JSON field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            description: 'Raw JSON equals',
+          },
+          neq: {
+            type: 'string',
+            description: 'Raw JSON not equals',
+          },
+          like: {
+            type: 'string',
+            description: 'Raw JSON case-sensitive pattern match',
+          },
+          ilike: {
+            type: 'string',
+            description: 'Raw JSON case-insensitive pattern match',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Raw JSON is null or not null',
+          },
+        },
+      };
 
     default:
-      return z
-        .object({
-          eq: z.string().optional().describe('Equals'),
-          neq: z.string().optional().describe('Not equals'),
-          like: z.string().optional().describe('Case-sensitive pattern match'),
-          ilike: z
-            .string()
-            .optional()
-            .describe('Case-insensitive pattern match'),
-          is: z
-            .enum(['NULL', 'NOT_NULL'])
-            .optional()
-            .describe('Is null or not null'),
-        })
-        .optional()
-        .describe(`Filter by ${field.name} (string field)`);
+      return {
+        type: 'object',
+        description: `Filter by ${field.name} (string field)`,
+        properties: {
+          eq: {
+            type: 'string',
+            description: 'Equals',
+          },
+          neq: {
+            type: 'string',
+            description: 'Not equals',
+          },
+          like: {
+            type: 'string',
+            description: 'Case-sensitive pattern match',
+          },
+          ilike: {
+            type: 'string',
+            description: 'Case-insensitive pattern match',
+          },
+          is: {
+            type: 'string',
+            enum: ['NULL', 'NOT_NULL'],
+            description: 'Is null or not null',
+          },
+        },
+      };
   }
 };
 
 export const generateBulkDeleteToolSchema = () => {
-  return z.object({
-    filter: z
-      .object({
-        id: z
-          .object({
-            in: z
-              .array(z.string().uuid())
-              .describe('Array of record IDs to delete'),
-          })
-          .describe('Filter to select records to delete'),
-      })
-      .describe('Filter criteria to select records for bulk delete'),
+  return jsonSchema({
+    type: 'object',
+    properties: {
+      filter: {
+        type: 'object',
+        description: 'Filter criteria to select records for bulk delete',
+        properties: {
+          id: {
+            type: 'object',
+            description: 'Filter to select records to delete',
+            properties: {
+              in: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'uuid',
+                },
+                description: 'Array of record IDs to delete',
+              },
+            },
+          },
+        },
+      },
+    },
   });
 };
