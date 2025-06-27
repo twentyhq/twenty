@@ -9,7 +9,7 @@ import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isDefined } from 'twenty-shared/utils';
 
 export type TextInputProps = TextInputV2ComponentProps & {
@@ -81,44 +81,47 @@ export const TextInput = ({
     }
   };
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      if (!isFocused) {
-        return;
-      }
+  const handleEscape = () => {
+    if (!isFocused) {
+      return;
+    }
+    if (isDefined(inputRef) && 'current' in inputRef) {
+      inputRef.current?.blur();
+      setIsFocused(false);
+    }
+  };
 
-      if (isDefined(inputRef) && 'current' in inputRef) {
-        inputRef.current?.blur();
-        setIsFocused(false);
-      }
-    },
-    InputHotkeyScope.TextInput,
-    [inputRef, isFocused],
-    {
+  const handleEnter = () => {
+    if (!isFocused) {
+      return;
+    }
+    onInputEnter?.();
+    if (isDefined(inputRef) && 'current' in inputRef) {
+      setIsFocused(false);
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: textInputId,
+    scope: InputHotkeyScope.TextInput,
+    dependencies: [handleEscape],
+    options: {
       preventDefault: false,
     },
-  );
+  });
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      if (!isFocused) {
-        return;
-      }
-
-      onInputEnter?.();
-
-      if (isDefined(inputRef) && 'current' in inputRef) {
-        setIsFocused(false);
-      }
-    },
-    InputHotkeyScope.TextInput,
-    [inputRef, isFocused, onInputEnter],
-    {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: handleEnter,
+    focusId: textInputId,
+    scope: InputHotkeyScope.TextInput,
+    dependencies: [handleEnter],
+    options: {
       preventDefault: false,
     },
-  );
+  });
 
   return (
     <TextInputV2
