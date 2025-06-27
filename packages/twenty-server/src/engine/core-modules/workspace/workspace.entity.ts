@@ -23,7 +23,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { TwoFactorPolicy } from 'src/engine/core-modules/two-factor-method/two-factor-policy.entity';
+import { TwoFactorPolicy } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-policy.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',

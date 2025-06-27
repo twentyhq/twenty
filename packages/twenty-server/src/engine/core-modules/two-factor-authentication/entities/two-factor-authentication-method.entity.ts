@@ -1,9 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,6 +14,12 @@ import {
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
+export enum TwoFactorAuthenticationProviders {
+  TOTP = 'TOTP',
+  HOTP = 'HOTP'
+}
+
+@Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorMethod', schema: 'core' })
 @ObjectType()
 export class TwoFactorMethod {
@@ -34,6 +41,16 @@ export class TwoFactorMethod {
   )
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  context: { status: string, secret: string, timestep: string } | null;
+
+  @Field(() => TwoFactorAuthenticationProviders)
+  @Column({
+    type: 'enum',
+    enum: TwoFactorAuthenticationProviders,
+  })
+  strategy: TwoFactorAuthenticationProviders;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
