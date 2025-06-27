@@ -5548,6 +5548,11 @@ msgstr "Probléma merült fel"
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "Ezek csak a szerver értékei. Győződjön meg róla, hogy a munkakörnyezetben ugyanazok a változók és értékek vannak beállítva, ez szükséges az aszinkron feladatokhoz, mint például az e-mailek szinkronizálása."
 
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
+
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
