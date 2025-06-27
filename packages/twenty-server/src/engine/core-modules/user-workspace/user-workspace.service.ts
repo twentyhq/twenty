@@ -6,6 +6,7 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -368,14 +369,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
       if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
 
-      const [_, subFolder, filename] =
-        await this.fileService.copyFileFromWorkspaceToWorkspace(
-          userWorkspace.workspaceId,
-          userWorkspace.defaultAvatarUrl,
-          workspaceId,
-        );
+      try {
+        const [_, subFolder, filename] =
+          await this.fileService.copyFileFromWorkspaceToWorkspace(
+            userWorkspace.workspaceId,
+            userWorkspace.defaultAvatarUrl,
+            workspaceId,
+          );
 
-      return `${subFolder}/${filename}`;
+        return `${subFolder}/${filename}`;
+      } catch (error) {
+        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+          return;
+        }
+        throw error;
+      }
     }
 
     if (!isDefined(pictureUrl)) return;
