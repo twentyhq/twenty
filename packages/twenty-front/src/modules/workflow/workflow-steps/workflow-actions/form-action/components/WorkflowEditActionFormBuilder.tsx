@@ -100,7 +100,7 @@ const StyledFieldContainer = styled.div<{
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  cursor: text;
 
   ${({ readonly, theme }) =>
     !readonly &&
@@ -255,10 +255,11 @@ export const WorkflowEditActionFormBuilder = ({
                   isDragDisabled={actionOptions.readonly}
                   isInsideScrollableContainer
                   disableDraggingBackground
+                  disableDragHandleOnItem
                   draggableComponentStyles={{
                     marginBottom: theme.spacing(4),
                   }}
-                  itemComponent={({ isDragging }) => {
+                  itemComponent={({ isDragging, dragHandleProps }) => {
                     const showButtons =
                       !actionOptions.readonly &&
                       (isFieldSelected(field.id) ||
@@ -277,6 +278,7 @@ export const WorkflowEditActionFormBuilder = ({
                           <StyledLightGripIconButton
                             Icon={IconGripVertical}
                             aria-label={t`Reorder field`}
+                            {...dragHandleProps}
                           />
                         )}
 

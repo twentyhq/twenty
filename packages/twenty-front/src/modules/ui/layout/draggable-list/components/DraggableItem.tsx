@@ -8,10 +8,11 @@ type DraggableItemProps = {
   index: number;
   itemComponent:
     | JSX.Element
-    | ((props: { isDragging: boolean }) => JSX.Element);
+    | ((props: { isDragging: boolean; dragHandleProps?: any }) => JSX.Element);
   isInsideScrollableContainer?: boolean;
   draggableComponentStyles?: React.CSSProperties;
   disableDraggingBackground?: boolean;
+  disableDragHandleOnItem?: boolean;
 };
 
 export const DraggableItem = ({
@@ -22,6 +23,7 @@ export const DraggableItem = ({
   isInsideScrollableContainer,
   draggableComponentStyles,
   disableDraggingBackground,
+  disableDragHandleOnItem = false,
 }: DraggableItemProps) => {
   const theme = useTheme();
 
@@ -42,7 +44,7 @@ export const DraggableItem = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
             // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided.dragHandleProps}
+            {...(disableDragHandleOnItem ? {} : draggableProvided.dragHandleProps)}
             style={{
               ...draggableComponentStyles,
               ...draggableStyle,
@@ -61,6 +63,7 @@ export const DraggableItem = ({
             {isFunction(itemComponent)
               ? itemComponent({
                   isDragging,
+                  ...(disableDragHandleOnItem ? { dragHandleProps: draggableProvided.dragHandleProps } : {}),
                 })
               : itemComponent}
           </div>

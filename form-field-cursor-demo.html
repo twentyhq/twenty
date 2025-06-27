@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Field Cursor Fix - Issue #12518</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .issue-link {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #666;
+    }
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .demo-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .demo-section h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-icon {
+      font-size: 24px;
+    }
+    .form-container {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-field {
+      margin-bottom: 15px;
+    }
+    .form-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    .draggable-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+    }
+    .drag-handle {
+      cursor: grab;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      color: #999;
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    .field-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    /* Before - Wrong cursor */
+    .before .draggable-field {
+      cursor: grab;
+    }
+    .before .field-input {
+      cursor: grab; /* This is the problem! */
+    }
+    
+    /* After - Correct cursor */
+    .after .draggable-field {
+      cursor: default;
+    }
+    .after .field-input {
+      cursor: text; /* This is correct! */
+    }
+    
+    .cursor-indicator {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+    .cursor-grab {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .cursor-text {
+      background: #d1fae5;
+      color: #059669;
+    }
+    
+    .explanation {
+      background: #f0f9ff;
+      border: 1px solid #0284c7;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 20px;
+      color: #0c4a6e;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .test-instructions {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #78350f;
+    }
+    
+    .test-instructions h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    
+    .test-instructions ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🖱️ Form Field Cursor Fix Demo</h1>
+  <p class="issue-link">Issue #12518: Form fields use drag cursor instead of text cursor</p>
+  
+  <div class="test-instructions">
+    <h3>🧪 How to Test:</h3>
+    <ol>
+      <li>Hover over the form fields in both sections</li>
+      <li>Notice the cursor type when hovering over the input fields</li>
+      <li>Try clicking and typing in the fields</li>
+      <li>The drag handle (⋮⋮) should always show a grab cursor</li>
+    </ol>
+  </div>
+  
+  <div class="demo-container">
+    <div class="demo-section before">
+      <h2>
+        <span class="status-icon">❌</span>
+        Before (Incorrect Behavior)
+      </h2>
+      
+      <div class="form-container">
+        <h3>Workflow Form Builder</h3>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="text" class="field-input" placeholder="Enter your name" value="John Doe">
+            <span class="cursor-indicator cursor-grab">grab cursor</span>
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="email" class="field-input" placeholder="Enter your email" value="john@example.com">
+            <span class="cursor-indicator cursor-grab">grab cursor</span>
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="tel" class="field-input" placeholder="Enter phone number" value="+1 234-567-8900">
+            <span class="cursor-indicator cursor-grab">grab cursor</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="explanation">
+        <strong>Problem:</strong> The entire form field shows a grab cursor (👊) because dragHandleProps are applied to the whole container. This makes it difficult to select and edit text.
+      </div>
+    </div>
+    
+    <div class="demo-section after">
+      <h2>
+        <span class="status-icon">✅</span>
+        After (Correct Behavior)
+      </h2>
+      
+      <div class="form-container">
+        <h3>Workflow Form Builder</h3>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="text" class="field-input" placeholder="Enter your name" value="John Doe">
+            <span class="cursor-indicator cursor-text">text cursor</span>
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="email" class="field-input" placeholder="Enter your email" value="john@example.com">
+            <span class="cursor-indicator cursor-text">text cursor</span>
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <div class="draggable-field">
+            <div class="drag-handle">⋮⋮</div>
+            <input type="tel" class="field-input" placeholder="Enter phone number" value="+1 234-567-8900">
+            <span class="cursor-indicator cursor-text">text cursor</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="explanation">
+        <strong>Solution:</strong> The grab cursor (👊) only appears on the drag handle icon. Input fields show the proper text cursor (I-beam), making text selection and editing intuitive.
+      </div>
+    </div>
+  </div>
+  
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <h2>🔧 Technical Details</h2>
+    <p>The fix involves:</p>
+    <ol>
+      <li><strong>DraggableItem component:</strong> Added <code>disableDragHandleOnItem</code> prop to prevent applying dragHandleProps to the entire container</li>
+      <li><strong>WorkflowEditActionFormBuilder:</strong> Pass dragHandleProps only to the grip icon button, not the entire form field</li>
+      <li><strong>Cursor styles:</strong> Changed form field cursor from <code>pointer</code> to <code>text</code> for better UX</li>
+    </ol>
+    
+    <p style="margin-top: 20px; color: #666;">
+      This ensures drag-and-drop functionality remains intact while providing the expected cursor behavior for form inputs.
+    </p>
+  </div>
+</body>
+</html>
