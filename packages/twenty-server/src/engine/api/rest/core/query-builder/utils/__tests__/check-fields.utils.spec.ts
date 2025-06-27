@@ -44,8 +44,6 @@ describe('checkFields', () => {
     {
       title: 'should accept composite field',
       context: {
-        // I don't understand how this could work in the graphql API
-        // This doesnot need to be formatted as field.subField ?
         fields: ['source'],
       },
     },
