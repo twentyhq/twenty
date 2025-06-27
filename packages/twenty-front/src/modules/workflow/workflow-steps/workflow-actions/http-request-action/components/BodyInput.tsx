@@ -7,11 +7,11 @@ import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
+import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
+import { shouldDisplayRawJsonByDefault } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/shouldDisplayRawJsonByDefault';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import styled from '@emotion/styled';
-import { isArray, isObject, isString, isUndefined } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { parseJson } from 'twenty-shared/utils';
 import { IconFileText, IconKey } from 'twenty-ui/display';
@@ -35,10 +35,6 @@ type BodyInputProps = {
   readonly?: boolean;
 };
 
-const removeVariablesFromJson = (json: string): string => {
-  return json.replaceAll(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX, 'null');
-};
-
 export const BodyInput = ({
   defaultValue,
   onChange,
@@ -48,33 +44,15 @@ export const BodyInput = ({
     ? (parseJson<JsonValue>(defaultValue) ?? {})
     : defaultValue;
 
-  const [isRawJson, setIsRawJson] = useState<boolean>(() => {
-    const defaultValueParsedWithoutVariables: JsonValue | undefined = isString(
-      defaultValue,
-    )
-      ? (parseJson<JsonValue>(removeVariablesFromJson(defaultValue)) ?? {})
-      : defaultValue;
-
-    return isUndefined(defaultValueParsedWithoutVariables)
-      ? false
-      : ((isObject(defaultValueParsedWithoutVariables) ||
-          Array.isArray(defaultValueParsedWithoutVariables)) &&
-          hasNonStringValues(defaultValueParsedWithoutVariables)) ||
-          !(
-            isObject(defaultValueParsedWithoutVariables) ||
-            isArray(defaultValueParsedWithoutVariables)
-          );
-  });
+  const [isRawJson, setIsRawJson] = useState(
+    shouldDisplayRawJsonByDefault(defaultValue),
+  );
   const [jsonString, setJsonString] = useState<string | null>(
     isString(defaultValue)
       ? defaultValue
       : JSON.stringify(defaultValue, null, 2),
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
-
-  const isValidJsonWithVariables = (value: string) => {
-    JSON.parse(removeVariablesFromJson(value));
-  };
 
   const validateJson = (value: string | null): boolean => {
     if (!value?.trim()) {
@@ -83,7 +61,7 @@ export const BodyInput = ({
     }
 
     try {
-      isValidJsonWithVariables(value);
+      parseHttpJsonBodyWithoutVariablesOrThrow(value);
 
       setErrorMessage(undefined);
       return true;
@@ -108,7 +86,7 @@ export const BodyInput = ({
     }
 
     try {
-      isValidJsonWithVariables(value);
+      parseHttpJsonBodyWithoutVariablesOrThrow(value);
 
       onChange(value);
     } catch {
