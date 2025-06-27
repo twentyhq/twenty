@@ -200,7 +200,7 @@ describe('Core REST API Find Many endpoint', () => {
   it('should support filtering on a relation field id', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?filter=companyId[in]:["525c282e-030a-4a3e-90a0-d8aad0d33a93"]',
+      path: `/people?filter=companyId[in]:["${TEST_COMPANY_1_ID}"]`,
     }).expect(200);
 
     const filteredPeople = response.body.data.people;
@@ -208,10 +208,10 @@ describe('Core REST API Find Many endpoint', () => {
     expect(filteredPeople.length).toBeGreaterThan(0);
   });
 
-  it.only('should fail to filter on a relation field name', async () => {
+  it('should fail to filter on a relation field name', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?filter=company[in]:["525c282e-030a-4a3e-90a0-d8aad0d33a93"]',
+      path: `/people?filter=company[in]:["${TEST_COMPANY_1_ID}"]`,
     });
 
     expect(response.body).toMatchInlineSnapshot(`
