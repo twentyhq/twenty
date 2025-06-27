@@ -1,6 +1,7 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import {
@@ -73,14 +74,16 @@ export const RecordBoardCardBody = ({
           >
             <RecordFieldComponentInstanceContext.Provider
               value={{
-                instanceId: getRecordFieldInputId(
+                instanceId: getRecordFieldInputId({
                   recordId,
-                  fieldDefinition.metadata.fieldName,
-                  'record-board-card',
-                ),
+                  fieldName: fieldDefinition.metadata.fieldName,
+                  prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+                }),
               }}
             >
-              <RecordInlineCell />
+              <RecordInlineCell
+                inputIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
+              />
             </RecordFieldComponentInstanceContext.Provider>
           </FieldContext.Provider>
         </StopPropagationContainer>

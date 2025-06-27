@@ -7,6 +7,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
@@ -71,11 +72,11 @@ const DateFieldInputWithContext = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId(
-          recordId ?? '',
-          'Date',
-          'record-table-cell',
-        ),
+        instanceId: getRecordFieldInputId({
+          recordId: recordId ?? '',
+          fieldName: 'Date',
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        }),
       }}
     >
       <FieldContext.Provider

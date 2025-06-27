@@ -18,7 +18,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -68,24 +67,15 @@ const RelationToOneFieldInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: getFieldInputInstanceId({
-        recordId: '123',
-        fieldName: 'Relation',
-      }),
+      focusId: 'relation-to-one-field-input',
       component: {
         type: FocusComponentType.DROPDOWN,
-        instanceId: getFieldInputInstanceId({
-          recordId: '123',
-          fieldName: 'Relation',
-        }),
+        instanceId: 'relation-to-one-field-input',
       },
       hotkeyScope: {
         scope: DropdownHotkeyScope.Dropdown,
       },
-      memoizeKey: getFieldInputInstanceId({
-        recordId: '123',
-        fieldName: 'Relation',
-      }),
+      memoizeKey: 'relation-to-one-field-input',
     });
   }, [pushFocusItemToFocusStack]);
 

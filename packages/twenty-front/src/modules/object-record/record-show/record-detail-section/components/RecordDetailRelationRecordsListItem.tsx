@@ -314,14 +314,14 @@ export const RecordDetailRelationRecordsListItem = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId(
-                      relationRecord.id,
-                      fieldMetadataItem.name,
-                      'record-detail',
-                    ),
+                    instanceId: getRecordFieldInputId({
+                      recordId: relationRecord.id,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: 'record-detail',
+                    }),
                   }}
                 >
-                  <RecordInlineCell />
+                  <RecordInlineCell inputIdPrefix="record-detail" />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),

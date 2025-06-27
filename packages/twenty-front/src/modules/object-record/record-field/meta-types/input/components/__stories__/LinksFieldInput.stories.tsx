@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -77,11 +78,11 @@ const LinksInputWithContext = ({
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getRecordFieldInputId(
-            recordId ?? '',
-            'Links',
-            'record-table-cell',
-          ),
+          instanceId: getRecordFieldInputId({
+            recordId: recordId ?? '',
+            fieldName: 'Links',
+            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+          }),
         }}
       >
         <FieldContext.Provider

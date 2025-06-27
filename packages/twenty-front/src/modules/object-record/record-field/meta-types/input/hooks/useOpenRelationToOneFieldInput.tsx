@@ -2,10 +2,10 @@ import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -18,10 +18,19 @@ export const useOpenRelationToOneFieldInput = () => {
 
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
-      ({ fieldName, recordId }: { fieldName: string; recordId: string }) => {
-        const recordPickerInstanceId = getFieldInputInstanceId({
+      ({
+        fieldName,
+        recordId,
+        prefix,
+      }: {
+        fieldName: string;
+        recordId: string;
+        prefix?: string;
+      }) => {
+        const recordPickerInstanceId = getRecordFieldInputId({
           recordId,
           fieldName,
+          prefix,
         });
         const fieldValue = snapshot
           .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(

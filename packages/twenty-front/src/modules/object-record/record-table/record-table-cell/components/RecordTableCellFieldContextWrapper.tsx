@@ -1,5 +1,6 @@
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -24,11 +25,11 @@ export const RecordTableCellFieldContextWrapper = ({
     return null;
   }
 
-  const instanceId = getRecordFieldInputId(
+  const instanceId = getRecordFieldInputId({
     recordId,
-    columnDefinition.metadata.fieldName,
-    'record-table-cell',
-  );
+    fieldName: columnDefinition.metadata.fieldName,
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: {

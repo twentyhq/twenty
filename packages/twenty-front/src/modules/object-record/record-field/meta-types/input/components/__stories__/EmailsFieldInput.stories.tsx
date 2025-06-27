@@ -8,6 +8,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -66,11 +67,11 @@ const EmailInputWithContext = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId(
+        instanceId: getRecordFieldInputId({
           recordId,
-          'emails',
-          'record-table-cell',
-        ),
+          fieldName: 'emails',
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        }),
       }}
     >
       <FieldContext.Provider
