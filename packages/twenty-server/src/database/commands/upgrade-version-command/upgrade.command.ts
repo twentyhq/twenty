@@ -21,6 +21,8 @@ import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/up
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
 import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
+import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
+import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -135,6 +137,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 0.55 Commands
     protected readonly deduplicateIndexedFieldsCommand: DeduplicateIndexedFieldsCommand,
+
+    // 1.1 Commands
+    protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
+    protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
   ) {
     super(
       workspaceRepository,
@@ -175,12 +181,21 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [],
     };
 
+    const commands_110: VersionCommands = {
+      beforeSyncMetadata: [
+        this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
+        this.fixSchemaArrayTypeCommand,
+      ],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
       '0.55.0': commands_055,
       '0.60.0': commands_060,
       '1.0.0': commands_100,
+      '1.1.0': commands_110,
     };
   }
 

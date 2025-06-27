@@ -467,7 +467,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
             .markdown,
-        isImportable: false,
+        isImportable: true,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },

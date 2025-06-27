@@ -1,6 +1,6 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+
 import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -33,13 +33,6 @@ export const useOpenDropdown = () => {
         if (!isDefined(dropdownComponentInstanceId)) {
           throw new Error('Dropdown component instance ID is not defined');
         }
-
-        set(
-          isDropdownOpenComponentState({
-            scopeId: dropdownComponentInstanceId,
-          }),
-          true,
-        );
 
         set(
           isDropdownOpenComponentStateV2.atomFamily({

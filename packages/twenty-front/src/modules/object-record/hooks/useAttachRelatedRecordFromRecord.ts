@@ -1,5 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 
+import { CustomError } from '@/error-handler/CustomError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -33,8 +34,9 @@ export const useAttachRelatedRecordFromRecord = ({
     fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
 
   if (!relatedRecordObjectNameSingular) {
-    throw new Error(
+    throw new CustomError(
       `Could not find record related to ${recordObjectNameSingular}`,
+      'RELATED_RECORD_NOT_FOUND',
     );
   }
   const { objectMetadataItem: relatedObjectMetadataItem } =
@@ -46,7 +48,10 @@ export const useAttachRelatedRecordFromRecord = ({
     fieldOnObject?.relation?.targetFieldMetadata.name;
 
   if (!fieldOnRelatedObject) {
-    throw new Error(`Missing target field for ${fieldNameOnRecordObject}`);
+    throw new CustomError(
+      `Missing target field for ${fieldNameOnRecordObject}`,
+      'MISSING_TARGET_FIELD',
+    );
   }
 
   const { updateOneRecord } = useUpdateOneRecord({
