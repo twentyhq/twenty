@@ -50,15 +50,17 @@ const AddressInputWithContext = ({
     setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
+  const inputId = getRecordFieldInputId({
+    recordId: recordId ?? '',
+    fieldName: 'Address',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
+
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getRecordFieldInputId({
-            recordId: recordId ?? '',
-            fieldName: 'Address',
-            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-          }),
+          instanceId: inputId,
         }}
       >
         <FieldContext.Provider
@@ -81,6 +83,7 @@ const AddressInputWithContext = ({
         >
           <AddressValueSetterEffect value={value} />
           <AddressInput
+            inputId={inputId}
             onEnter={onEnter}
             onEscape={onEscape}
             onClickOutside={onClickOutside}
