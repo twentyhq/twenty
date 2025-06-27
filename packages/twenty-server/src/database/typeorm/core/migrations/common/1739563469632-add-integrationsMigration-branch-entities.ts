@@ -19,7 +19,7 @@ export class AddIntegrationsMigrationBranchEntities1739563469632
       `CREATE TABLE "core"."inbox" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "integrationType" "core"."inbox_integrationtype_enum" NOT NULL DEFAULT 'whatsapp', "whatsappIntegrationId" uuid, "workspaceId" uuid, CONSTRAINT "PK_ab7abc299fab4bb4f965549c819" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."agent" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "memberId" character varying NOT NULL, "isAdmin" boolean NOT NULL DEFAULT false, "isActive" boolean NOT NULL DEFAULT true, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "workspaceId" uuid, CONSTRAINT "PK_1000e989398c5d4ed585cf9a46f" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."workspaceAgent" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "memberId" character varying NOT NULL, "isAdmin" boolean NOT NULL DEFAULT false, "isActive" boolean NOT NULL DEFAULT true, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "workspaceId" uuid, CONSTRAINT "PK_1000e989398c5d4ed585cf9a46f" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."sector" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "icon" character varying NOT NULL DEFAULT '', "name" character varying NOT NULL, "topics" jsonb, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "workspaceId" uuid, CONSTRAINT "PK_668b2ea8a2f534425407732f3ab" PRIMARY KEY ("id"))`,
@@ -55,19 +55,19 @@ export class AddIntegrationsMigrationBranchEntities1739563469632
       `ALTER TABLE "core"."inbox" ADD CONSTRAINT "FK_1b1e0eb2a0d0ca0a6e822685135" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."workspaceAgent" ADD CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."sector" ADD CONSTRAINT "FK_dfc8d6ca50978b7070e4fd0bc5f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentSectors" ADD CONSTRAINT "FK_1881105c19d856bd8a6584927df" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE "core"."agentSectors" ADD CONSTRAINT "FK_1881105c19d856bd8a6584927df" FOREIGN KEY ("agentId") REFERENCES "core"."workspaceAgent"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."agentSectors" ADD CONSTRAINT "FK_38087e38dbfd5622ef7c25b6dae" FOREIGN KEY ("sectorId") REFERENCES "core"."sector"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentInboxes" ADD CONSTRAINT "FK_026ec88fe86e63746eff660903e" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE "core"."agentInboxes" ADD CONSTRAINT "FK_026ec88fe86e63746eff660903e" FOREIGN KEY ("agentId") REFERENCES "core"."workspaceAgent"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."agentInboxes" ADD CONSTRAINT "FK_8f880c98aefa6e4d00b22312df2" FOREIGN KEY ("inboxId") REFERENCES "core"."inbox"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -91,7 +91,7 @@ export class AddIntegrationsMigrationBranchEntities1739563469632
       `ALTER TABLE "core"."sector" DROP CONSTRAINT "FK_dfc8d6ca50978b7070e4fd0bc5f"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1"`,
+      `ALTER TABLE "core"."workspaceAgent" DROP CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."inbox" DROP CONSTRAINT "FK_1b1e0eb2a0d0ca0a6e822685135"`,
@@ -120,7 +120,7 @@ export class AddIntegrationsMigrationBranchEntities1739563469632
     );
     await queryRunner.query(`DROP TABLE "core"."agentSectors"`);
     await queryRunner.query(`DROP TABLE "core"."sector"`);
-    await queryRunner.query(`DROP TABLE "core"."agent"`);
+    await queryRunner.query(`DROP TABLE "core"."workspaceAgent"`);
     await queryRunner.query(`DROP TABLE "core"."inbox"`);
     await queryRunner.query(`DROP TYPE "core"."inbox_integrationtype_enum"`);
     await queryRunner.query(`DROP TABLE "core"."whatsappIntegration"`);
