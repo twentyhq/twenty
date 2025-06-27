@@ -40,6 +40,7 @@ describe('ClientConfigController', () => {
       const mockClientConfig = {
         billing: {
           isBillingEnabled: true,
+          isBillingSwitchPlanIntervalEnabled: true,
           billingUrl: 'https://billing.example.com',
           trialPeriods: [
             {
@@ -97,6 +98,7 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         calendarBookingPageId: undefined,
+        isChatbotEnabled: true,
       };
 
       jest

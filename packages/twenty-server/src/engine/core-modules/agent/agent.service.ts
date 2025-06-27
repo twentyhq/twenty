@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
-import { CreateAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
-import { UpdateAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
+import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
+import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -15,8 +15,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 export class AgentService {
   constructor(
-    @InjectRepository(Agent, 'core')
-    private readonly agentRepository: Repository<Agent>,
+    @InjectRepository(WorkspaceAgent, 'core')
+    private readonly agentRepository: Repository<WorkspaceAgent>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(Sector, 'core')
@@ -28,7 +28,9 @@ export class AgentService {
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async create(createInput: CreateAgentInput): Promise<Agent> {
+  async create(
+    createInput: CreateWorkspaceAgentInput,
+  ): Promise<WorkspaceAgent> {
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: createInput.workspaceId,
@@ -65,7 +67,7 @@ export class AgentService {
     return await this.agentRepository.save(createdAgent);
   }
 
-  async findAll(workspaceId: string): Promise<Agent[]> {
+  async findAll(workspaceId: string): Promise<WorkspaceAgent[]> {
     return await this.agentRepository.find({
       where: { workspace: { id: workspaceId } },
       relations: ['workspace', 'sectors', 'inboxes'],
@@ -75,14 +77,16 @@ export class AgentService {
     });
   }
 
-  async findById(agentId: string): Promise<Agent | null> {
+  async findById(agentId: string): Promise<WorkspaceAgent | null> {
     return await this.agentRepository.findOne({
       where: { id: agentId },
       relations: ['workspace', 'sectors', 'inboxes'],
     });
   }
 
-  async update(updateInput: UpdateAgentInput): Promise<Agent> {
+  async update(
+    updateInput: UpdateWorkspaceAgentInput,
+  ): Promise<WorkspaceAgent> {
     const agent = await this.agentRepository.findOne({
       where: { id: updateInput.id },
       relations: ['workspace', 'sectors', 'inboxes'],

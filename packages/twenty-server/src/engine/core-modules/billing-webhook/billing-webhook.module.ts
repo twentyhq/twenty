@@ -10,6 +10,7 @@ import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webh
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -44,6 +45,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
         BillingProduct,
         BillingPrice,
         BillingMeter,
+        BillingCharge,
         BillingEntitlement,
         Workspace,
         UserWorkspace,

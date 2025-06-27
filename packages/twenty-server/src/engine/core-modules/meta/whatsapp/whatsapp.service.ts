@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InternalServerErrorException, Logger} from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,7 +18,7 @@ import {
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
@@ -47,8 +47,8 @@ export class WhatsappService {
     private readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector, 'core')
     private sectorRepository: Repository<Sector>,
-    @InjectRepository(Agent, 'core')
-    private agentRepository: Repository<Agent>,
+    @InjectRepository(WorkspaceAgent, 'core')
+    private agentRepository: Repository<WorkspaceAgent>,
     private readonly firebaseService: FirebaseService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

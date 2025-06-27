@@ -6,7 +6,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
@@ -26,7 +26,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [WhatsappIntegration, Workspace, Inbox, Sector, Agent],
+          [WhatsappIntegration, Workspace, Inbox, Sector, WorkspaceAgent],
           'core',
         ),
         TypeORMModule,

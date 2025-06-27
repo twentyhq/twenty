@@ -5,6 +5,7 @@ import https from 'https';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 import { PabxServiceInterface } from 'src/engine/core-modules/telephony/interfaces/pabx.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import {
   CreateDialingPlanInput,
@@ -17,7 +18,6 @@ import {
   ListCommonArgs,
   ListExtentionsArgs,
 } from 'src/engine/core-modules/telephony/types/pabx.type';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -28,17 +28,17 @@ export class PabxService implements PabxServiceInterface {
   constructor(private readonly environmentService: TwentyConfigService) {
     const PABX_ENV = this.environmentService.get('PABX_ENV');
     const PABX_URL =
-      PABX_ENV === NodeEnvironment.production
+      PABX_ENV === NodeEnvironment.PRODUCTION
         ? this.environmentService.get('PABX_URL')
         : this.environmentService.get('PABX_TEST_URL');
 
     const PABX_USER =
-      PABX_ENV === NodeEnvironment.production
+      PABX_ENV === NodeEnvironment.PRODUCTION
         ? this.environmentService.get('PABX_USER')
         : this.environmentService.get('PABX_TEST_USER');
 
     const PABX_TOKEN =
-      PABX_ENV === NodeEnvironment.production
+      PABX_ENV === NodeEnvironment.PRODUCTION
         ? this.environmentService.get('PABX_TOKEN')
         : this.environmentService.get('PABX_TEST_TOKEN');
 

@@ -1,4 +1,4 @@
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SUPPORT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -59,7 +59,7 @@ export const supportAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         position: 3,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+        aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
       },
       {
         fieldMetadataId:
@@ -69,7 +69,7 @@ export const supportAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
         position: 4,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
+        aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
       },
     ],
   };

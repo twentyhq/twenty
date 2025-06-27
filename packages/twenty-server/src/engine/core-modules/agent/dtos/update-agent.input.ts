@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class UpdateAgentInput {
+export class UpdateWorkspaceAgentInput {
   @Field()
   @IsNotEmpty()
   @IsString()

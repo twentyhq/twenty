@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
-import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/inter-webhook-subscription.service';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
@@ -89,13 +88,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     // TODO: This is not the optimal solution, find a way to import InterModule here instead.
     InterInstanceService,
     InterService,
-    InterWebhookSubscriptionService,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
+    BillingPlanService,
   ],
 })
 export class BillingModule {}

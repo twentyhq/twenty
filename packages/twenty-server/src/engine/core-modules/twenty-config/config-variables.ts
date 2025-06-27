@@ -1232,7 +1232,7 @@ export class ConfigVariables {
   @ValidateIf(
     (data: ConfigVariables) =>
       !!data.PABX_ENV &&
-      [NodeEnvironment.development, NodeEnvironment.test].includes(
+      [NodeEnvironment.DEVELOPMENT, NodeEnvironment.TEST].includes(
         data.PABX_ENV,
       ),
   )
@@ -1247,7 +1247,7 @@ export class ConfigVariables {
   @ValidateIf(
     (data: ConfigVariables) =>
       !!data.PABX_ENV &&
-      [NodeEnvironment.development, NodeEnvironment.test].includes(
+      [NodeEnvironment.DEVELOPMENT, NodeEnvironment.TEST].includes(
         data.PABX_ENV,
       ),
   )
@@ -1263,7 +1263,7 @@ export class ConfigVariables {
   @ValidateIf(
     (data: ConfigVariables) =>
       !!data.PABX_ENV &&
-      [NodeEnvironment.development, NodeEnvironment.test].includes(
+      [NodeEnvironment.DEVELOPMENT, NodeEnvironment.TEST].includes(
         data.PABX_ENV,
       ),
   )
@@ -1277,7 +1277,7 @@ export class ConfigVariables {
   })
   @ValidateIf(
     (data: ConfigVariables) =>
-      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.PRODUCTION,
   )
   @IsString()
   PABX_URL: string;
@@ -1289,7 +1289,7 @@ export class ConfigVariables {
   })
   @ValidateIf(
     (data: ConfigVariables) =>
-      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.PRODUCTION,
   )
   @IsString()
   PABX_USER: string;
@@ -1302,7 +1302,7 @@ export class ConfigVariables {
   })
   @ValidateIf(
     (data: ConfigVariables) =>
-      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.PRODUCTION,
   )
   @IsString()
   PABX_TOKEN: string;
@@ -1324,7 +1324,7 @@ export class ConfigVariables {
   @ValidateIf(
     (data: ConfigVariables) =>
       !!data.FOCUS_NFE_ENCRYPTION_KEY &&
-      data.FOCUS_NFE_ENCRYPTION_KEY === NodeEnvironment.production,
+      data.FOCUS_NFE_ENCRYPTION_KEY === NodeEnvironment.PRODUCTION,
   )
   @IsString()
   FOCUS_NFE_ENCRYPTION_KEY: string;

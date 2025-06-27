@@ -19,8 +19,8 @@ import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'agent', schema: 'core' })
-@ObjectType('Agent')
-export class Agent {
+@ObjectType('WorkspaceAgent')
+export class WorkspaceAgent {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

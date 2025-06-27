@@ -255,7 +255,7 @@ export class InterService {
     const fileFolder = FileFolder.BillingSubscriptionBill;
 
     // TODO: Check if there is are any existing files for this workspace and remove them before uploading a new one
-    const { path } = await this.fileUploadService.uploadFile({
+    const { files } = await this.fileUploadService.uploadFile({
       file: Buffer.from(response.data.pdf, 'base64'),
       fileFolder,
       workspaceId,
@@ -263,7 +263,9 @@ export class InterService {
       mimeType: 'application/pdf',
     });
 
-    return path;
+    files[0].path;
+
+    return files[0].path;
   }
 
   async getAccountBalance(integration: InterIntegration) {

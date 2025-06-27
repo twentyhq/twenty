@@ -1,21 +1,21 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/core-modules/agent/agent.service';
-import { CreateAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
-import { UpdateAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
+import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
+import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard)
-@Resolver(() => Agent)
+@Resolver(() => WorkspaceAgent)
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}
 
-  @Mutation(() => Agent)
+  @Mutation(() => WorkspaceAgent)
   async createAgent(
-    @Args('createInput') createInput: CreateAgentInput,
-  ): Promise<Agent> {
+    @Args('createInput') createInput: CreateWorkspaceAgentInput,
+  ): Promise<WorkspaceAgent> {
     const workspaceMember = await this.agentService.getWorkspaceMemberById(
       createInput.workspaceId,
       createInput.memberId,
@@ -40,22 +40,24 @@ export class AgentResolver {
     return agent;
   }
 
-  @Query(() => [Agent])
+  @Query(() => [WorkspaceAgent])
   async agentsByWorkspace(
     @Args('workspaceId') workspaceId: string,
-  ): Promise<Agent[]> {
+  ): Promise<WorkspaceAgent[]> {
     return await this.agentService.findAll(workspaceId);
   }
 
-  @Query(() => Agent)
-  async agentById(@Args('agentId') agentId: string): Promise<Agent | null> {
+  @Query(() => WorkspaceAgent)
+  async agentById(
+    @Args('agentId') agentId: string,
+  ): Promise<WorkspaceAgent | null> {
     return await this.agentService.findById(agentId);
   }
 
-  @Mutation(() => Agent)
+  @Mutation(() => WorkspaceAgent)
   async updateAgent(
-    @Args('updateInput') updateInput: UpdateAgentInput,
-  ): Promise<Agent> {
+    @Args('updateInput') updateInput: UpdateWorkspaceAgentInput,
+  ): Promise<WorkspaceAgent> {
     return await this.agentService.update(updateInput);
   }
 
@@ -64,7 +66,7 @@ export class AgentResolver {
     return await this.agentService.toggleStatus(agentId);
   }
 
-  @Mutation(() => Agent)
+  @Mutation(() => WorkspaceAgent)
   async deleteAgent(@Args('agentId') agentId: string): Promise<boolean> {
     return await this.agentService.delete(agentId);
   }

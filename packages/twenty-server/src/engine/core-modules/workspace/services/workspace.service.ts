@@ -476,7 +476,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     const stripeFeatureFlag = this.featureFlagRepository.create({
-      key: FeatureFlagKey.IsStripeIntegrationEnabled,
+      key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
       workspaceId: workspace.id,
       value: true,
     });

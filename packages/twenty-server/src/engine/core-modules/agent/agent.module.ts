@@ -5,7 +5,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
 import { AgentResolver } from 'src/engine/core-modules/agent/agent.resolver';
 import { AgentService } from 'src/engine/core-modules/agent/agent.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
@@ -21,7 +21,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [Agent, Workspace, Sector, Inbox],
+          [WorkspaceAgent, Workspace, Sector, Inbox],
           'core',
         ),
         TypeORMModule,

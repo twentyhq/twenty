@@ -2,7 +2,7 @@ import { Injectable, Type } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { EntityManager, ObjectLiteral, Repository } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -80,21 +80,5 @@ export class TwentyORMManager {
     }
 
     return this.workspaceDataSourceFactory.create(workspaceId);
-  }
-
-  async getEntityManager(): Promise<EntityManager> {
-    const { workspaceId, workspaceMetadataVersion } =
-      this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      workspaceMetadataVersion,
-    );
-
-    return workspaceDataSource.manager;
   }
 }

@@ -22,7 +22,6 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
-import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/inter-webhook-subscription.service';
 import {
   BillingException,
   BillingExceptionCode,
@@ -50,7 +49,6 @@ export class BillingWebhookController {
     private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
-    private readonly interWebhookSubscriptionService: InterWebhookSubscriptionService,
   ) {}
 
   @Post(['billing/webhooks', 'webhooks/stripe', 'webhooks/inter'])
@@ -169,7 +167,7 @@ export class BillingWebhookController {
       // TODO: Investigate best blocking strategy when inter = receive
       // case InterChargeStatus.A_RECEBER:
       case InterChargeStatus.RECEBIDO:
-        return await this.interWebhookSubscriptionService.processInterEvent(
+        return await this.billingWebhookSubscriptionService.processInterEvent(
           seuNumero,
           situacao,
         );

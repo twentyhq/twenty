@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
@@ -66,7 +66,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         TwoFactorMethod,
         WhatsappIntegration,
         Sector,
-        Agent,
+        WorkspaceAgent,
         InterIntegration,
         Inbox,
         StripeIntegration,

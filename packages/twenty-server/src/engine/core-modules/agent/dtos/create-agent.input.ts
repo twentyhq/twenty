@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class CreateAgentInput {
+export class CreateWorkspaceAgentInput {
   @Field(() => ID)
   @IsString()
   memberId: string;
