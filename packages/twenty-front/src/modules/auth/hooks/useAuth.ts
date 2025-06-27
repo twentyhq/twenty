@@ -464,19 +464,27 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      return signUp({
+      const signUpResult = await signUp({
         variables: { email, password, captchaToken },
-        onCompleted: async (data) => {
-          handleSetAuthTokens(data.signUp.tokens);
-          const { user } = await loadCurrentUser();
-
-          if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
-            return createWorkspace();
-          }
-
-          setSignInUpStep(SignInUpStep.WorkspaceSelection);
-        },
       });
+
+      if (isDefined(signUpResult.errors)) {
+        throw signUpResult.errors;
+      }
+
+      if (!signUpResult.data?.signUp) {
+        throw new Error('No signUp result');
+      }
+
+      handleSetAuthTokens(signUpResult.data.signUp.tokens);
+
+      const { user } = await loadCurrentUser();
+
+      if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
+        return await createWorkspace({ newTab: false });
+      }
+
+      setSignInUpStep(SignInUpStep.WorkspaceSelection);
     },
     [
       handleSetAuthTokens,

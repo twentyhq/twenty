@@ -11,7 +11,7 @@ export const useSignUpInNewWorkspace = () => {
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const createWorkspace = () => {
+  const createWorkspace = ({ newTab } = { newTab: true }) => {
     signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
         return await redirectToWorkspaceDomain(
@@ -20,7 +20,7 @@ export const useSignUpInNewWorkspace = () => {
           {
             loginToken: data.signUpInNewWorkspace.loginToken.token,
           },
-          '_blank',
+          newTab ? '_blank' : '_self',
         );
       },
       onError: (error: Error) => {
