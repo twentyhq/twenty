@@ -1,13 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   CountryCallingCode,
-  CountryCode,
-  getCountries,
-  getCountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import {
+  getCountryCodesForCallingCode,
   isDefined,
+  isValidCountryCode,
   parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
@@ -20,8 +19,6 @@ import {
   AdditionalPhoneMetadata,
   PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
-
-const ALL_COUNTRIES_CODE = getCountries();
 
 export type PhonesFieldGraphQLInput =
   | Partial<
@@ -36,22 +33,6 @@ type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
 
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
-
-const isValidCountryCode = (input: string): input is CountryCode => {
-  return ALL_COUNTRIES_CODE.includes(input as unknown as CountryCode);
-};
-
-const getCountryCodesForCallingCode = (callingCode: string) => {
-  const cleanCallingCode = callingCode.startsWith('+')
-    ? callingCode.slice(1)
-    : callingCode;
-
-  return ALL_COUNTRIES_CODE.filter((country) => {
-    const countryCallingCode = getCountryCallingCode(country);
-
-    return countryCallingCode === cleanCallingCode;
-  });
-};
 
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,

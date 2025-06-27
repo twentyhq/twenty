@@ -33,3 +33,5 @@ export { isValidLocale } from './validation/isValidLocale';
 export { isValidUuid } from './validation/isValidUuid';
 export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
+export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
+export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
