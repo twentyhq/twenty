@@ -18,7 +18,7 @@ import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity({ name: 'agent', schema: 'core' })
+@Entity({ name: 'workspaceAgent', schema: 'core' })
 @ObjectType('WorkspaceAgent')
 export class WorkspaceAgent {
   @IDField(() => UUIDScalarType)

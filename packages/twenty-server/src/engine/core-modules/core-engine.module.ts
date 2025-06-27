@@ -5,7 +5,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
-import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { aiModuleFactory } from 'src/engine/core-modules/ai/ai.module-factory';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -54,6 +53,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
+import { AgentModule } from 'src/engine/core-modules/workspace-agent/workspace-agent.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';

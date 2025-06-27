@@ -1,10 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
-import { AgentService } from 'src/engine/core-modules/agent/agent.service';
-import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
-import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
+import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/workspace-agent/dtos/create-agent.input';
+import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/workspace-agent/dtos/update-agent.input';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
+import { AgentService } from 'src/engine/core-modules/workspace-agent/workspace-agent.service';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard)

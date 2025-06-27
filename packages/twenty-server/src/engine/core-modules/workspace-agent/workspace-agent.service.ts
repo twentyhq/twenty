@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { WorkspaceAgent } from 'src/engine/core-modules/agent/agent.entity';
-import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
-import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
+import { CreateWorkspaceAgentInput } from 'src/engine/core-modules/workspace-agent/dtos/create-agent.input';
+import { UpdateWorkspaceAgentInput } from 'src/engine/core-modules/workspace-agent/dtos/update-agent.input';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
