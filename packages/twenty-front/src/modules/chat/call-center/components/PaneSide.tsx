@@ -34,6 +34,8 @@ const StyledChatsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(2)} 0;
   max-width: 300px;
+  height: 80dvh;
+  overflow-y: scroll;
 `;
 
 export const PaneSide = () => {
@@ -115,9 +117,11 @@ export const PaneSide = () => {
             tabs={tabs}
           />
         </StyledTabListContainer>
-        <StyledChatsContainer>{renderWhatsappChats()}</StyledChatsContainer>
+        <StyledChatsContainer>
+          {renderWhatsappChats()}
+          <ResolvedChats />
+        </StyledChatsContainer>
       </div>
-      <ResolvedChats />
     </StyledPaneSideContainer>
   );
 };
