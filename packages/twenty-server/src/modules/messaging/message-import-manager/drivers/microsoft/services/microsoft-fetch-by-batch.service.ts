@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
+import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
@@ -52,6 +57,12 @@ export class MicrosoftFetchByBatchService {
 
         batchResponses.push(batchResponse);
       } catch (error) {
+        if (isAccessTokenRefreshingError(error?.body)) {
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+          );
+        }
         this.microsoftHandleErrorService.handleMicrosoftMessageFetchByBatchError(
           error,
         );

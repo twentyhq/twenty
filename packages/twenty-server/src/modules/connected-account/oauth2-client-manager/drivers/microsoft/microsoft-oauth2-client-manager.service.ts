@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   AuthProvider,
@@ -7,9 +7,13 @@ import {
 } from '@microsoft/microsoft-graph-client';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 
 @Injectable()
 export class MicrosoftOAuth2ClientManagerService {
+  private readonly logger = new Logger(
+    MicrosoftOAuth2ClientManagerService.name,
+  );
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   public async getOAuth2Client(refreshToken: string): Promise<Client> {
@@ -40,6 +44,24 @@ export class MicrosoftOAuth2ClientManagerService {
         );
 
         const data = await res.json();
+
+        if (!res.ok) {
+          if (data) {
+            const accessTokenSliced = data?.access_token?.slice(0, 10);
+            const refreshTokenSliced = data?.refresh_token?.slice(0, 10);
+
+            delete data.access_token;
+            delete data.refresh_token;
+            this.logger.error(data);
+            this.logger.error(`accessTokenSliced: ${accessTokenSliced}`);
+            this.logger.error(`refreshTokenSliced: ${refreshTokenSliced}`);
+          }
+
+          this.logger.error(res);
+          throw new Error(
+            `${MicrosoftOAuth2ClientManagerService.name} error: ${ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED}`,
+          );
+        }
 
         callback(null, data.access_token);
       } catch (error) {

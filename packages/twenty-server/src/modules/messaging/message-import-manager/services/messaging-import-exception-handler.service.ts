@@ -60,6 +60,7 @@ export class MessageImportExceptionHandlerService {
         case MessageNetworkExceptionCode.ECONNRESET:
         case MessageNetworkExceptionCode.ETIMEDOUT:
         case MessageNetworkExceptionCode.ERR_NETWORK:
+        case MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE:
           await this.handleTemporaryException(
             syncStep,
             messageChannel,

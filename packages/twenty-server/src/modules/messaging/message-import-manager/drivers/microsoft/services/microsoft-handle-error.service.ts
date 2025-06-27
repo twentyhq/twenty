@@ -70,6 +70,13 @@ export class MicrosoftHandleErrorService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public handleMicrosoftGetMessagesError(error: any): void {
+    if (
+      error instanceof MessageImportDriverException &&
+      error.code === MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE
+    ) {
+      throw error;
+    }
+
     if (!error.statusCode) {
       throw new MessageImportDriverException(
         `Microsoft Graph API unknown error: ${error}`,

@@ -18,6 +18,7 @@ import {
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
+import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import {
   GetFullMessageListForFoldersResponse,
   GetFullMessageListResponse,
@@ -79,6 +80,12 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
+        if (isAccessTokenRefreshingError(error?.body)) {
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+          );
+        }
         this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
           error,
         );
@@ -97,6 +104,12 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
+      if (isAccessTokenRefreshingError(error?.body)) {
+        throw new MessageImportDriverException(
+          error.message,
+          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+        );
+      }
       this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
         error,
       );
@@ -204,6 +217,12 @@ export class MicrosoftGetMessageListService {
       })
       .get()
       .catch((error) => {
+        if (isAccessTokenRefreshingError(error?.body)) {
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+          );
+        }
         this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
           error,
         );
@@ -226,6 +245,12 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
+      if (isAccessTokenRefreshingError(error?.body)) {
+        throw new MessageImportDriverException(
+          error.message,
+          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+        );
+      }
       this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
         error,
       );
