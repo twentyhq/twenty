@@ -24,10 +24,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 import {
-  generateAgentToolUpdateZodSchema,
-  generateAgentToolZodSchema,
   generateBulkDeleteToolSchema,
   generateFindToolSchema,
+  getRecordInputSchema,
 } from './utils/agent-tool-schema.utils';
 import { isWorkflowRelatedObject } from './utils/is-workflow-related-object.util';
 
@@ -103,7 +102,7 @@ export class AgentToolService {
         if (objectPermission.canUpdate) {
           tools[`create_${objectMetadata.nameSingular}`] = {
             description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-            parameters: generateAgentToolZodSchema(objectMetadata),
+            parameters: getRecordInputSchema(objectMetadata),
             execute: async (parameters) => {
               return this.createRecord(
                 objectMetadata.nameSingular,
@@ -115,7 +114,7 @@ export class AgentToolService {
 
           tools[`update_${objectMetadata.nameSingular}`] = {
             description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-            parameters: generateAgentToolUpdateZodSchema(objectMetadata),
+            parameters: getRecordInputSchema(objectMetadata),
             execute: async (parameters) => {
               return this.updateRecord(
                 objectMetadata.nameSingular,

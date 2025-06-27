@@ -1,3 +1,4 @@
+import { jsonSchema } from 'ai';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -6,42 +7,17 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-export const generateAgentToolZodSchema = (
-  objectMetadata: ObjectMetadataEntity,
-): z.ZodObject<Record<string, z.ZodTypeAny>> => {
-  const schemaFields: Record<string, z.ZodTypeAny> = {};
-
-  objectMetadata.fields.forEach((field) => {
-    if (shouldExcludeFieldFromAgentToolSchema(field)) {
-      return;
-    }
-
-    if (
-      field.type === FieldMetadataType.RELATION &&
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings?.relationType === RelationType.MANY_TO_ONE
-    ) {
-      const fieldName = `${field.name}Id`;
-
-      schemaFields[fieldName] = z
-        .string()
-        .uuid()
-        .nullable()
-        .describe(field.description || `ID of the related ${field.name}`);
-
-      return;
-    }
-
-    const zodField = convertFieldToZodField(field);
-
-    if (zodField) {
-      schemaFields[field.name] = zodField;
-    }
+export const getRecordInputSchema = (objectMetadata: ObjectMetadataEntity) => {
+  return jsonSchema({
+    type: 'object',
+    properties: convertObjectMetadataToSchemaProperties({
+      item: objectMetadata,
+      forResponse: false,
+    }),
   });
-
-  return z.object(schemaFields);
 };
 
 export const generateAgentToolUpdateZodSchema = (
