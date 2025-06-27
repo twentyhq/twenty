@@ -9,9 +9,13 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import styled from '@emotion/styled';
+import { isArray, isObject, isString, isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
+import { parseJson } from 'twenty-shared/utils';
 import { IconFileText, IconKey } from 'twenty-ui/display';
+import { JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 const StyledContainer = styled.div`
@@ -26,9 +30,13 @@ const StyledSelectDropdown = styled(Select)`
 
 type BodyInputProps = {
   label?: string;
-  defaultValue?: HttpRequestBody;
-  onChange: (value?: HttpRequestBody) => void;
+  defaultValue?: HttpRequestBody | string;
+  onChange: (value?: string) => void;
   readonly?: boolean;
+};
+
+const removeVariablesFromJson = (json: string): string => {
+  return json.replaceAll(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX, 'null');
 };
 
 export const BodyInput = ({
@@ -36,13 +44,37 @@ export const BodyInput = ({
   onChange,
   readonly,
 }: BodyInputProps) => {
-  const [isRawJson, setIsRawJson] = useState<boolean>(() =>
-    hasNonStringValues(defaultValue),
-  );
+  const defaultValueParsed = isString(defaultValue)
+    ? (parseJson<JsonValue>(defaultValue) ?? {})
+    : defaultValue;
+
+  const [isRawJson, setIsRawJson] = useState<boolean>(() => {
+    const defaultValueParsedWithoutVariables: JsonValue | undefined = isString(
+      defaultValue,
+    )
+      ? (parseJson<JsonValue>(removeVariablesFromJson(defaultValue)) ?? {})
+      : defaultValue;
+
+    return isUndefined(defaultValueParsedWithoutVariables)
+      ? false
+      : ((isObject(defaultValueParsedWithoutVariables) ||
+          Array.isArray(defaultValueParsedWithoutVariables)) &&
+          hasNonStringValues(defaultValueParsedWithoutVariables)) ||
+          !(
+            isObject(defaultValueParsedWithoutVariables) ||
+            isArray(defaultValueParsedWithoutVariables)
+          );
+  });
   const [jsonString, setJsonString] = useState<string | null>(
-    JSON.stringify(defaultValue, null, 2),
+    isString(defaultValue)
+      ? defaultValue
+      : JSON.stringify(defaultValue, null, 2),
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+
+  const isValidJsonWithVariables = (value: string) => {
+    JSON.parse(removeVariablesFromJson(value));
+  };
 
   const validateJson = (value: string | null): boolean => {
     if (!value?.trim()) {
@@ -51,7 +83,8 @@ export const BodyInput = ({
     }
 
     try {
-      JSON.parse(value);
+      isValidJsonWithVariables(value);
+
       setErrorMessage(undefined);
       return true;
     } catch (e) {
@@ -61,7 +94,7 @@ export const BodyInput = ({
   };
 
   const handleKeyValueChange = (value: Record<string, string>) => {
-    onChange(value);
+    onChange(JSON.stringify(value, null, 2));
     setErrorMessage(undefined);
   };
 
@@ -75,8 +108,9 @@ export const BodyInput = ({
     }
 
     try {
-      const parsed = JSON.parse(value);
-      onChange(parsed);
+      isValidJsonWithVariables(value);
+
+      onChange(value);
     } catch {
       // Do nothing, validation will happen on blur
     }
@@ -121,7 +155,7 @@ export const BodyInput = ({
           />
         ) : (
           <KeyValuePairInput
-            defaultValue={defaultValue as Record<string, string>}
+            defaultValue={defaultValueParsed as Record<string, string>}
             onChange={handleKeyValueChange}
             readonly={readonly}
             keyPlaceholder="Property name"
