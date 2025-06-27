@@ -24413,6 +24413,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/psl@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@types/psl@npm:1.1.3"
+  checksum: 10c0/8719bac618613a2f47d4d2088742c2c01c00fd8d6fe92a3ed474aad83f7199ff53c813d8eee678768d816b02fc94c6e1f0cb4bce2e512efd0bcb3af2524ae5a6
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:*, @types/qs@npm:^6.9.5":
   version: 6.9.15
   resolution: "@types/qs@npm:6.9.15"
@@ -56556,6 +56563,7 @@ __metadata:
     "@types/lodash.uniqby": "npm:^4.7.9"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/openid-client": "npm:^3.7.0"
+    "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^18.2.39"
     "@types/unzipper": "npm:^0"
     ai: "npm:^4.3.16"
