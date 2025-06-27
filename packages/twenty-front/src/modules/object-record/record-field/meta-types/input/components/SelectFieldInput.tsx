@@ -6,7 +6,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -50,15 +50,16 @@ export const SelectFieldInput = ({
     resetSelectedItem();
   };
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onCancel?.();
       resetSelectedItem();
     },
-    DEFAULT_CELL_SCOPE.scope,
-    [onCancel, resetSelectedItem],
-  );
+    scope: DEFAULT_CELL_SCOPE.scope,
+    focusId: instanceId,
+    dependencies: [onCancel, resetSelectedItem],
+  });
 
   const optionIds = [
     `No ${fieldDefinition.label}`,

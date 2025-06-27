@@ -12,7 +12,7 @@ import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
@@ -81,7 +81,17 @@ export const MultiItemFieldInput = <T,>({
     listenerId: hotkeyScope,
   });
 
-  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
+  const inputId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
+  useHotkeysOnFocusedElement({
+    focusId: inputId,
+    keys: [Key.Escape],
+    callback: handleDropdownClose,
+    scope: hotkeyScope,
+    dependencies: [handleDropdownClose],
+  });
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
