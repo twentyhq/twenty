@@ -4,13 +4,18 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const checkFields = (
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   fieldNames: string[],
 ): void => {
-  const fieldMetadataNames = Object.values(objectMetadataItem.fieldsById)
-    .map((field) => {
+  const fieldMetadataNames: string[] = Object.values(
+    objectMetadataItem.fieldsById,
+  )
+    .flatMap((field) => {
       if (isCompositeFieldMetadataType(field.type)) {
         const compositeType = compositeTypeDefinitions.get(field.type);
 
@@ -29,9 +34,14 @@ export const checkFields = (
         ].flat();
       }
 
+      // Or could read the joinColumn thing
+      if (isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION)) {
+        return field.settings?.joinColumnName;
+      }
+
       return field.name;
     })
-    .flat();
+    .filter(isDefined);
 
   for (const fieldName of fieldNames) {
     if (!fieldMetadataNames.includes(fieldName)) {
