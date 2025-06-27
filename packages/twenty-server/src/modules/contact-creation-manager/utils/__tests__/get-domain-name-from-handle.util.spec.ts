@@ -1,6 +1,6 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { getDomainNameFromHandle } from '../get-domain-name-from-handle.util';
+import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 
 type GetDomainNameFromHandleTestCase = EachTestingContext<{
   input: string;
@@ -70,4 +70,4 @@ describe('getDomainNameFromHandle', () => {
   test.each(testCases)('$title', ({ context: { input, expected } }) => {
     expect(getDomainNameFromHandle(input)).toBe(expected);
   });
-}); 
+});

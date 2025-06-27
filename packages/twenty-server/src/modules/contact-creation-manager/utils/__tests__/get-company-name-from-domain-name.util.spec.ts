@@ -1,6 +1,6 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { getCompanyNameFromDomainName } from '../get-company-name-from-domain-name.util';
+import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 
 type GetCompanyNameFromDomainNameTestCase = EachTestingContext<{
   input: string;
@@ -24,7 +24,8 @@ describe('getCompanyNameFromDomainName', () => {
       },
     },
     {
-      title: 'should extract and capitalize company name from multiple subdomains',
+      title:
+        'should extract and capitalize company name from multiple subdomains',
       context: {
         input: 'test.app.twenty.dev',
         expected: 'Twenty',
@@ -56,4 +57,4 @@ describe('getCompanyNameFromDomainName', () => {
   test.each(testCases)('$title', ({ context: { input, expected } }) => {
     expect(getCompanyNameFromDomainName(input)).toBe(expected);
   });
-}); 
+});
