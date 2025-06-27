@@ -13,7 +13,7 @@ registerEnumType(TwoFactorAuthenticationProviders, {
 });
 
 @ObjectType('TwoFactorPolicy')
-export class TwoFactorPolicy {
+export class TwoFactorAuthenticationPolicy {
     @Field(() => TwoFactorAuthenticationPolicyEnforcement)
     level: TwoFactorAuthenticationPolicyEnforcement
     

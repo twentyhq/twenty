@@ -7,7 +7,10 @@ import {
   IsString,
   IsUUID,
   Matches,
+  IsJSON
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { TwoFactorAuthenticationPolicy } from '../../two-factor-authentication/entities/two-factor-authentication-policy.entity';
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -185,6 +188,10 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isPasswordAuthEnabled?: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  twoFactorAuthenticationPolicy?: TwoFactorAuthenticationPolicy;
 
   @Field({ nullable: true })
   @IsUUID()
