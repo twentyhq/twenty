@@ -28,7 +28,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
       await handleRoleRemove();
     } else {
       setSelectedRole(roleId);
-      await assignRoleToAgent({ variables: { input: { agentId, roleId } } });
+      await assignRoleToAgent({ variables: { agentId, roleId } });
     }
   };
 

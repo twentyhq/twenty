@@ -113,11 +113,6 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean'];
 };
 
-export type AssignRoleToAgentInput = {
-  agentId: Scalars['String'];
-  roleId: Scalars['String'];
-};
-
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -1010,7 +1005,8 @@ export type MutationActivateWorkspaceArgs = {
 
 
 export type MutationAssignRoleToAgentArgs = {
-  input: AssignRoleToAgentInput;
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
@@ -3121,7 +3117,8 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
 
 export type AssignRoleToAgentMutationVariables = Exact<{
-  input: AssignRoleToAgentInput;
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -6420,8 +6417,8 @@ export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useU
 export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
 export const AssignRoleToAgentDocument = gql`
-    mutation AssignRoleToAgent($input: AssignRoleToAgentInput!) {
-  assignRoleToAgent(input: $input)
+    mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
+  assignRoleToAgent(agentId: $agentId, roleId: $roleId)
 }
     `;
 export type AssignRoleToAgentMutationFn = Apollo.MutationFunction<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
@@ -6439,7 +6436,8 @@ export type AssignRoleToAgentMutationFn = Apollo.MutationFunction<AssignRoleToAg
  * @example
  * const [assignRoleToAgentMutation, { data, loading, error }] = useAssignRoleToAgentMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      agentId: // value for 'agentId'
+ *      roleId: // value for 'roleId'
  *   },
  * });
  */

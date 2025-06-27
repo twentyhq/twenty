@@ -22,7 +22,6 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
-import { AssignRoleToAgentInput } from 'src/engine/metadata-modules/agent/dtos/assign-role-to-agent.input';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -183,12 +182,13 @@ export class RoleResolver {
   @Mutation(() => Boolean)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async assignRoleToAgent(
-    @Args('input') input: AssignRoleToAgentInput,
+    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     await this.agentRoleService.assignRoleToAgent({
-      agentId: input.agentId,
-      roleId: input.roleId,
+      agentId,
+      roleId,
       workspaceId,
     });
 

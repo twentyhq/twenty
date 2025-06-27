@@ -121,11 +121,6 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean']['output'];
 };
 
-export type AssignRoleToAgentInput = {
-  agentId: Scalars['String']['input'];
-  roleId: Scalars['String']['input'];
-};
-
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
@@ -1067,7 +1062,8 @@ export type MutationActivateWorkspaceArgs = {
 
 
 export type MutationAssignRoleToAgentArgs = {
-  input: AssignRoleToAgentInput;
+  agentId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID']['input'];
 };
 
 
