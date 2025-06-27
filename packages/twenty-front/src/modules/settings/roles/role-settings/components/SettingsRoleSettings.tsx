@@ -63,7 +63,7 @@ export const SettingsRoleSettings = ({
             />
           </StyledInputContainer>
           <TextInput
-            textInputId={nameTextInputId}
+            inputId={nameTextInputId}
             value={settingsDraftRole.label}
             fullWidth
             onChange={(value: string) => {

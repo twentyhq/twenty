@@ -55,7 +55,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                textInputId="sso-oidc-authorized-uri"
+                inputId="sso-oidc-authorized-uri"
                 readOnly={true}
                 label={t`Authorized URI`}
                 value={authorizedUrl}
@@ -81,7 +81,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                textInputId="sso-oidc-redirection-uri"
+                inputId="sso-oidc-redirection-uri"
                 readOnly={true}
                 label={t`Redirection URI`}
                 value={redirectionUrl}
@@ -117,7 +117,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                textInputId="sso-oidc-client-id"
+                inputId="sso-oidc-client-id"
                 autoComplete="off"
                 label={t`Client ID`}
                 value={value}
@@ -132,7 +132,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                textInputId="sso-oidc-client-secret"
+                inputId="sso-oidc-client-secret"
                 autoComplete="off"
                 type="password"
                 label={t`Client Secret`}
@@ -148,7 +148,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                textInputId="sso-oidc-issuer"
+                inputId="sso-oidc-issuer"
                 autoComplete="off"
                 label={t`Issuer URI`}
                 value={value}

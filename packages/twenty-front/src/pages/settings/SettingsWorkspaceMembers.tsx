@@ -26,15 +26,15 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconMail,
-  IconReload,
-  IconSearch,
-  IconTrash,
-  Status,
-  TooltipDelay,
+    AppTooltip,
+    Avatar,
+    H2Title,
+    IconMail,
+    IconReload,
+    IconSearch,
+    IconTrash,
+    Status,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -212,7 +212,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <StyledSearchContainer>
             <StyledSearchInput
-              textInputId="workspace-members-search"
+              inputId="workspace-members-search"
               value={searchFilter}
               onChange={handleSearchChange}
               placeholder={t`Search a team member...`}

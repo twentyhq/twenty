@@ -13,7 +13,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { isDefined } from 'twenty-shared/utils';
 
 export type TextInputProps = TextInputV2ComponentProps & {
-  textInputId: string;
+  inputId: string;
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
@@ -22,7 +22,7 @@ export type TextInputProps = TextInputV2ComponentProps & {
 };
 
 export const TextInput = ({
-  textInputId,
+  inputId,
   onFocus,
   onBlur,
   onInputEnter,
@@ -59,10 +59,10 @@ export const TextInput = ({
 
     if (!disableHotkeys) {
       pushFocusItemToFocusStack({
-        focusId: textInputId,
+        focusId: inputId,
         component: {
           type: FocusComponentType.TEXT_INPUT,
-          instanceId: textInputId,
+          instanceId: inputId,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -77,7 +77,7 @@ export const TextInput = ({
     setIsFocused(false);
 
     if (!disableHotkeys) {
-      removeFocusItemFromFocusStackById({ focusId: textInputId });
+      removeFocusItemFromFocusStackById({ focusId: inputId });
     }
   };
 
@@ -104,7 +104,7 @@ export const TextInput = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: handleEscape,
-    focusId: textInputId,
+    focusId: inputId,
     scope: InputHotkeyScope.TextInput,
     dependencies: [handleEscape],
     options: {
@@ -115,7 +115,7 @@ export const TextInput = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: handleEnter,
-    focusId: textInputId,
+    focusId: inputId,
     scope: InputHotkeyScope.TextInput,
     dependencies: [handleEnter],
     options: {

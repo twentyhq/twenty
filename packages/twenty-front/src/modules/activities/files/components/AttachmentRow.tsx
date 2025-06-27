@@ -7,8 +7,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  FieldContext,
-  GenericFieldContextType,
+    FieldContext,
+    GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
@@ -165,7 +165,7 @@ export const AttachmentRow = ({
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
-              textInputId={`attachment-${attachment.id}-name`}
+              inputId={`attachment-${attachment.id}-name`}
               value={attachmentFileName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}

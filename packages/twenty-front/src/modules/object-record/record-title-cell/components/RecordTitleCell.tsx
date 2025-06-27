@@ -71,6 +71,7 @@ export const RecordTitleCell = ({
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
+        inputId={`${recordId}-${fieldDefinition.metadata.fieldName}`}
         onEnter={handleEnter}
         onEscape={handleEscape}
         onTab={handleTab}

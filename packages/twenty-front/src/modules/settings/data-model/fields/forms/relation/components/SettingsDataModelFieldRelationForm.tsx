@@ -187,7 +187,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationFieldMetadataItem.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              textInputId="relation-field-label"
+              inputId="relation-field-label"
               disabled={disableFieldEdition}
               placeholder={t`Field name`}
               value={value}

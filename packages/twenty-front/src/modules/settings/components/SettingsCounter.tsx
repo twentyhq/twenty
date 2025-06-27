@@ -77,7 +77,7 @@ export const SettingsCounter = ({
         disabled={disabled}
       />
       <StyledTextInput
-        textInputId="settings-counter-input"
+        inputId="settings-counter-input"
         name="counter"
         fullWidth
         value={value.toString()}

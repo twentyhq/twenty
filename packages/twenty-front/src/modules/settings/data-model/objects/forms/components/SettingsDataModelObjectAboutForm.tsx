@@ -13,10 +13,10 @@ import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
-  IconInfoCircle,
-  IconRefresh,
-  TooltipDelay,
+    AppTooltip,
+    IconInfoCircle,
+    IconRefresh,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { StringKeyOf } from 'type-fest';
@@ -154,7 +154,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
-              textInputId={labelSingularTextInputId}
+              inputId={labelSingularTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelSingular?.message}
@@ -186,7 +186,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
-              textInputId={labelPluralTextInputId}
+              inputId={labelPluralTextInputId}
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
               noErrorHelper={true}
               error={errors.labelPlural?.message}
@@ -271,7 +271,7 @@ export const SettingsDataModelObjectAboutForm = ({
                       }) => (
                         <>
                           <TextInput
-                            textInputId={`${objectMetadataItem?.id}-${fieldName}`}
+                            inputId={`${objectMetadataItem?.id}-${fieldName}`}
                             label={label}
                             placeholder={placeholder}
                             value={value}

@@ -26,7 +26,7 @@ export const SettingsServerlessFunctionNewForm = ({
       <H2Title title="About" description="Name and set your function" />
       <StyledInputsContainer>
         <TextInput
-          textInputId={nameTextInputId}
+          inputId={nameTextInputId}
           placeholder="Name"
           fullWidth
           autoFocusOnMount

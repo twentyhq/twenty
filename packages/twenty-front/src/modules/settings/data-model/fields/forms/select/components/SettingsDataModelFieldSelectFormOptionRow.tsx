@@ -10,12 +10,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
-  ColorSample,
-  IconCheck,
-  IconDotsVertical,
-  IconGripVertical,
-  IconTrash,
-  IconX,
+    ColorSample,
+    IconCheck,
+    IconDotsVertical,
+    IconGripVertical,
+    IconTrash,
+    IconX,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
@@ -103,7 +103,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       />
       <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInput
-          textInputId={`select-option-value-${option.id}`}
+          inputId={`select-option-value-${option.id}`}
           value={option.value}
           onChange={(input) =>
             onChange({
@@ -138,7 +138,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
-        textInputId={`select-option-label-${option.id}`}
+        inputId={`select-option-label-${option.id}`}
         value={option.label}
         onChange={(label) => {
           const optionNameHasBeenEdited = !(

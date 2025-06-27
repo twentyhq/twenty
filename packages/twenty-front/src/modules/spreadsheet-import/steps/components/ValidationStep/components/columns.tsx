@@ -4,8 +4,8 @@ import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
+    ImportedStructuredRow,
+    SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -148,7 +148,7 @@ export const generateColumns = <T extends string>(
           default:
             component = (
               <TextInput
-                textInputId={`validation-${column.key}-${row.__index}`}
+                inputId={`validation-${column.key}-${row.__index}`}
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
                   onRowChange({ ...row, [columnKey]: value });

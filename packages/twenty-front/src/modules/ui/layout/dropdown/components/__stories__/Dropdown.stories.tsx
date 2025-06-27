@@ -300,7 +300,11 @@ export const WithInput: Story = {
   args: {
     dropdownComponents: (
       <DropdownContent>
-        <DropdownMenuInput value="Lorem ipsum" autoFocus />
+        <DropdownMenuInput
+          inputId="dropdown-menu-input"
+          value="Lorem ipsum"
+          autoFocus
+        />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsMock.map(({ name }) => (

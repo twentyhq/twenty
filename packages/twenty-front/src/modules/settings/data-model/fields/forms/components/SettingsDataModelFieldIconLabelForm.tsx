@@ -15,10 +15,10 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
-  IconInfoCircle,
-  IconRefresh,
-  TooltipDelay,
+    AppTooltip,
+    IconInfoCircle,
+    IconRefresh,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
@@ -136,7 +136,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              textInputId={labelTextInputId}
+              inputId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
               onChange={(value) => {
@@ -171,7 +171,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     render={({ field: { onChange, value } }) => (
                       <>
                         <TextInput
-                          textInputId={nameTextInputId}
+                          inputId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}
                           value={value}

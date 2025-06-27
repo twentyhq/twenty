@@ -129,7 +129,7 @@ export const SettingsIntegrationDatabaseConnectionForm = ({
           render={({ field: { onChange, value } }) => {
             return (
               <TextInput
-                textInputId={`${databaseKey}-${name}`}
+                inputId={`${databaseKey}-${name}`}
                 autoComplete="new-password" // Disable autocomplete
                 label={label}
                 value={value}

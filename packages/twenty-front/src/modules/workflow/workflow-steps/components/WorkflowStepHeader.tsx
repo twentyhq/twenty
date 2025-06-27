@@ -101,6 +101,7 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
+            inputId="workflow-step-title-input"
             disabled={disabled}
             sizeVariant="md"
             value={title}

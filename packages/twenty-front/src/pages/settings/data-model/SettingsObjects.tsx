@@ -4,8 +4,8 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsObjectMetadataItemTableRow,
-  StyledObjectTableRow,
+    SettingsObjectMetadataItemTableRow,
+    StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
@@ -24,10 +24,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSearch,
+    H2Title,
+    IconChevronRight,
+    IconPlus,
+    IconSearch,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -170,7 +170,7 @@ export const SettingsObjects = () => {
             <H2Title title={t`Existing objects`} />
 
             <StyledSearchInput
-              textInputId="settings-objects-search"
+              inputId="settings-objects-search"
               LeftIcon={IconSearch}
               placeholder={t`Search for an object...`}
               value={searchTerm}
