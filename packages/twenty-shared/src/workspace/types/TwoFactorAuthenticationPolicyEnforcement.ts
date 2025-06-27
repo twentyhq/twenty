@@ -1,7 +1,7 @@
-export enum TwoFactorAuthenticationPolicyEnforcement {
-  OPTIONAL = 'optional',
-  ENFORCED = 'enforced',
-  CONDITIONAL = 'conditional'
+export enum TwoFactorAuthenticationPolicyEnforcement {    
+  OPTIONAL = 'OPTIONAL',
+  ENFORCED = 'ENFORCED',
+  CONDITIONAL = 'CONDITIONAL'
 }
 
 export enum TwoFactorAuthenticationProviders {
