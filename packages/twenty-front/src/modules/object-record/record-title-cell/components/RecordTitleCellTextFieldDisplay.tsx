@@ -2,8 +2,10 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -32,7 +34,11 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.tertiary};
 `);
 
-export const RecordTitleCellSingleTextDisplayMode = () => {
+export const RecordTitleCellSingleTextDisplayMode = ({
+  containerType,
+}: {
+  containerType: string;
+}) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
@@ -42,13 +48,28 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
 
   const { openInlineCell } = useInlineCell();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   return (
     <StyledDiv
       onClick={() => {
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: TitleInputHotkeyScope.TitleInput,
+        pushFocusItemToFocusStack({
+          focusId: getRecordFieldInputId({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: containerType,
+          }),
+          component: {
+            type: FocusComponentType.OPENED_FIELD_INPUT,
+            instanceId: getRecordFieldInputId({
+              recordId,
+              fieldName: fieldDefinition.metadata.fieldName,
+              prefix: containerType,
+            }),
+          },
+          hotkeyScope: {
+            scope: TitleInputHotkeyScope.TitleInput,
+          },
           memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
         openInlineCell();
