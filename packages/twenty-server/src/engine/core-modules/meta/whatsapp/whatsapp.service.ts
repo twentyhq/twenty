@@ -32,6 +32,7 @@ import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity';
 
@@ -43,6 +44,8 @@ export class WhatsappService {
   constructor(
     @InjectRepository(WhatsappIntegration, 'core')
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
+    @InjectRepository(Workspace, 'core')
+    private workspaceRepository: Repository<Workspace>,
     private readonly environmentService: TwentyConfigService,
     private readonly googleStorageService: GoogleStorageService,
     @InjectRepository(Sector, 'core')
@@ -502,6 +505,7 @@ export class WhatsappService {
     }
   }
 
+  // TODO: Move this logic to use worker cron jobs
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleChatsWaitingStatus() {
     const chatsQuery = query(
@@ -513,6 +517,15 @@ export class WhatsappService {
 
     snapshot.forEach(async (docSnapshot) => {
       const waDoc = docSnapshot.data() as WhatsappDocument;
+
+      const workspaceExists = await this.workspaceRepository.findOne({
+        where: {
+          id: waDoc.workspaceId,
+        },
+      });
+
+      if (!workspaceExists) return;
+
       const clientName = waDoc.client.name;
 
       if (waDoc.lastMessage.from !== clientName) return;
