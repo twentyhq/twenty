@@ -108,6 +108,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -120,6 +121,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -134,6 +136,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -150,6 +153,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -168,6 +172,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -180,6 +185,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -200,6 +206,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -212,6 +219,7 @@ export class AgentToolService {
                 objectMetadata.nameSingular,
                 parameters,
                 workspaceId,
+                agent.roleId as string,
               );
             },
           };
@@ -228,15 +236,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { limit = 10, offset = 0, ...searchCriteria } = parameters;
@@ -346,15 +353,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { id } = parameters;
@@ -397,15 +403,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const createdRecord = await repository.save(parameters);
@@ -435,15 +440,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { id, ...updateData } = parameters;
@@ -508,15 +512,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { id } = parameters;
@@ -567,15 +570,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { id } = parameters;
@@ -626,15 +628,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { filter } = parameters;
@@ -697,15 +698,14 @@ export class AgentToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
+    roleId: string,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          {
-            shouldBypassPermissionChecks: true,
-          },
+          { roleId },
         );
 
       const { filter } = parameters;
