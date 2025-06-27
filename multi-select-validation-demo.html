@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Select Duplicate Validation Fix - Issue #12674</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .issue-link {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #666;
+    }
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .demo-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .demo-section h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-icon {
+      font-size: 24px;
+    }
+    .form-container {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-container h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 8px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .drag-handle {
+      color: #999;
+      cursor: grab;
+      padding: 4px;
+    }
+    .color-sample {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+    }
+    .option-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .option-input.error {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+    .error-message {
+      color: #dc2626;
+      font-size: 12px;
+      margin-top: 4px;
+      margin-left: 40px;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+    .add-option-btn {
+      width: 100%;
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .add-option-btn:hover {
+      background: #e9ecef;
+    }
+    .save-button {
+      padding: 10px 20px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .save-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .explanation {
+      background: #f0f9ff;
+      border: 1px solid #0284c7;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 20px;
+      color: #0c4a6e;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .test-instructions {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #78350f;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Multi-Select Duplicate Validation Demo</h1>
+  <p class="issue-link">Issue #12674: Missing Error message when creating Multi-Select field</p>
+  
+  <div class="test-instructions">
+    <h3>🧪 How to Test:</h3>
+    <ol>
+      <li>Try entering duplicate option labels (e.g., "Option 1" in multiple fields)</li>
+      <li>Notice the difference in error feedback between Before/After</li>
+      <li>In the "After" section, you should see red borders and error messages</li>
+      <li>Try to save - it should be disabled when there are validation errors</li>
+    </ol>
+  </div>
+  
+  <div class="demo-container">
+    <div class="demo-section">
+      <h2>
+        <span class="status-icon">❌</span>
+        Before (No Error Feedback)
+      </h2>
+      
+      <div class="form-container">
+        <h3>Multi-Select Field Options</h3>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #1976d2;"></div>
+          <input type="text" class="option-input" value="Option 1" readonly>
+        </div>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #388e3c;"></div>
+          <input type="text" class="option-input" value="Option 1" readonly>
+        </div>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #f57c00;"></div>
+          <input type="text" class="option-input" value="Option 3" readonly>
+        </div>
+        
+        <button class="add-option-btn">
+          <span>+</span> Add option
+        </button>
+        
+        <button class="save-button">Save Field</button>
+      </div>
+      
+      <div class="explanation">
+        <strong>Problem:</strong> Users can enter duplicate option labels like "Option 1" appearing twice. When they try to save, the form fails silently with no feedback about what's wrong.
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>
+        <span class="status-icon">✅</span>
+        After (Clear Error Messages)
+      </h2>
+      
+      <div class="form-container">
+        <h3>Multi-Select Field Options</h3>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #1976d2;"></div>
+          <input type="text" class="option-input error" value="Option 1" readonly>
+        </div>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #388e3c;"></div>
+          <input type="text" class="option-input error" value="Option 1" readonly>
+        </div>
+        <div class="error-message show">Options must have unique values</div>
+        
+        <div class="option-row">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="color-sample" style="background: #f57c00;"></div>
+          <input type="text" class="option-input" value="Option 3" readonly>
+        </div>
+        
+        <button class="add-option-btn">
+          <span>+</span> Add option
+        </button>
+        
+        <button class="save-button" disabled>Save Field</button>
+      </div>
+      
+      <div class="explanation">
+        <strong>Solution:</strong> When users enter duplicate values, the input fields show red borders and a clear error message appears. The save button is disabled until the validation error is resolved.
+      </div>
+    </div>
+  </div>
+  
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <h2>🔧 Technical Implementation</h2>
+    <p>The fix involves:</p>
+    <ol>
+      <li><strong>Form State Access:</strong> Added <code>formState: { errors }</code> to useFormContext in SettingsDataModelFieldSelectForm</li>
+      <li><strong>Error Propagation:</strong> Pass validation errors from parent form to SettingsDataModelFieldSelectFormOptionRow component</li>
+      <li><strong>UI Feedback:</strong> Display error messages on TextInput components using the existing <code>error</code> prop</li>
+      <li><strong>Validation Schema:</strong> The existing Zod schema already validates for unique option values</li>
+    </ol>
+    
+    <p style="margin-top: 20px; color: #666;">
+      The validation logic was already present - we just needed to connect the error messages to the user interface.
+    </p>
+  </div>
+</body>
+</html>

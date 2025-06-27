@@ -127,6 +127,7 @@ export const SettingsDataModelFieldSelectForm = ({
     setValue: setFormValue,
     watch: watchFormValue,
     getValues,
+    formState: { errors },
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const handleDragEnd = (
@@ -318,6 +319,7 @@ export const SettingsDataModelFieldSelectForm = ({
                               handleRemoveOptionAsDefault(option.value)
                             }
                             onInputEnter={handleInputEnter}
+                            error={errors.options?.message}
                           />
                         }
                       />

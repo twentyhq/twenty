@@ -32,6 +32,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onInputEnter?: () => void;
   option: FieldMetadataItemOption;
   isNewRow?: boolean;
+  error?: string;
 };
 
 const StyledRow = styled.div`
@@ -76,6 +77,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onInputEnter,
   option,
   isNewRow,
+  error,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
 
@@ -155,6 +157,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         onInputEnter={handleInputEnter}
         autoFocusOnMount={isNewRow}
         autoSelectOnMount={isNewRow}
+        error={error}
       />
       <Dropdown
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
