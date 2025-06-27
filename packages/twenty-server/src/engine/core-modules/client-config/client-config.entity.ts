@@ -147,4 +147,10 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isConfigVariablesInDbEnabled: boolean;
+
+  @Field(() => Boolean)
+  isTwoFactorAuthenticationEnabled: boolean;
+  
+  @Field(() => Boolean)
+  isTwoFactorAuthenticationGloballyEnforced: boolean;
 }
