@@ -35,7 +35,7 @@
 
 <br />
 
-# Installation 
+# Installationn
 
 See:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
