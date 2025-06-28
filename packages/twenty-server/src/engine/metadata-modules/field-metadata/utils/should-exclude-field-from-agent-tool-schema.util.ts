@@ -16,5 +16,5 @@ export const shouldExcludeFieldFromAgentToolSchema = (
     excludedFieldNames.push('id');
   }
 
-  return excludedFieldNames.includes(field.name);
+  return excludedFieldNames.includes(field.name) || field.isSystem;
 };
