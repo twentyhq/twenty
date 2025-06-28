@@ -93,7 +93,7 @@ module.exports = {
           },
         ],
         'simple-import-sort/imports': 'off',
-        'unicorn/filename-case': 'off',
+        'unicorn/filename-case': 'off', // WARNING: Disabling this rule can lead to issues on case-sensitive file systems (e.g., Linux) if file names have inconsistent casing.
         'prefer-arrow/prefer-arrow-functions': 'off',
         '@nx/workspace-max-consts-per-file': 'off',
         '@nx/workspace-inject-workspace-repository': 'warn',

@@ -18,10 +18,10 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": true, // WARNING: Despite this setting, 'any' is extensively used throughout the codebase, reducing type safety and clarity.
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "forceConsistentCasingInFileNames": false, // WARNING: Setting this to false can lead to issues on case-sensitive file systems (e.g., Linux) if file names have inconsistent casing.
+    "noFallthroughCasesInSwitch": false, // WARNING: The extensive use of try...catch blocks suggests potential inconsistencies in error handling. Review these implementations to ensure errors are not silently ignored or mishandled.
     "resolveJsonModule": true,
     "types": ["jest", "node"],
     "paths": {
