@@ -12,7 +12,8 @@
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
     "clickhouse:migrate:prod": "node dist/src/database/clickHouse/migrations/run-migrations.js",
-    "typeorm": "../../node_modules/typeorm/.bin/typeorm"
+    "typeorm": "../../node_modules/typeorm/.bin/typeorm",
+    "// Script Note": "Consider using locally installed binaries (e.g., `./node_modules/.bin/ts-node`) instead of `npx` for improved consistency across environments."
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.12",
@@ -57,6 +58,7 @@
     "openid-client": "^5.7.0",
     "otplib": "^12.0.1",
     "passport": "^0.7.0",
+    "// Dependency Conflict Note": "There is a known conflict between 'passport@^0.7.0' and '@nestjs/passport', which expects older versions of passport. This may require updating @nestjs/passport or finding a compatible passport version."
     "psl": "^1.9.0",
     "redis": "^4.7.0",
     "ts-morph": "^24.0.0",
@@ -65,6 +67,7 @@
     "unzipper": "^0.12.3",
     "zod-to-json-schema": "^3.23.1"
   },
+  "// Patched Dependencies Note": "This project uses patched versions of some dependencies. Be aware that this may introduce maintenance challenges and potential compatibility issues with future upstream updates.",
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
@@ -87,6 +90,7 @@
     "@types/react": "^18.2.39",
     "@types/unzipper": "^0",
     "rimraf": "^5.0.5",
+    "// Cross-Platform Note": "The 'rimraf' package is used for file deletion. Ensure that scripts utilizing it are compatible with all target operating systems, especially Windows, to avoid issues similar to 'rm -rf'."
     "twenty-emails": "workspace:*",
     "twenty-shared": "workspace:*",
     "typescript": "5.3.3"
@@ -95,5 +99,6 @@
     "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
-  }
+  },
+  "// Note": "This project prefers Yarn for dependency management. Using npm might lead to unexpected issues due to dependency resolution."
 }
