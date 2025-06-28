@@ -1,6 +1,5 @@
 export interface ObjectRecord {
   id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
   createdAt: string;
   updatedAt: string;
@@ -8,7 +7,6 @@ export interface ObjectRecord {
 }
 
 export type ObjectRecordFilter = Partial<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Property in keyof ObjectRecord]: any;
 }>;
 

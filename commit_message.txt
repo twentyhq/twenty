@@ -1,1 +1,1 @@
-docs: Add comments to twenty-server configs highlighting coding issues
+fix(types): Improve type safety in date utility functions
