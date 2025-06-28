@@ -1,1 +1,1 @@
-docs: Add comments to twenty-server package.json highlighting potential issues
+docs: Add comments to twenty-server configs highlighting coding issues
