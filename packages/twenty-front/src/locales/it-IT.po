@@ -5548,6 +5548,11 @@ msgstr "C'è stato un problema"
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "Questi sono solo i valori del server. Assicurati che il tuo ambiente di lavoro abbia le stesse variabili e valori, questo è necessario per attività asincrone come la sincronizzazione delle email."
 
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
+
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
