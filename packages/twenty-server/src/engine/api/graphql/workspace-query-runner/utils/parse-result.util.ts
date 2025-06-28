@@ -4,11 +4,9 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/utils/composite-field-metadata.util';
 
 export const handleCompositeKey = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result: any,
+  result: Record<string, unknown>,
   key: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
+  value: unknown,
 ): void => {
   const parsedFieldKey = parseCompositeFieldKey(key);
 
@@ -24,9 +22,7 @@ export const handleCompositeKey = (
   result[parsedFieldKey.parentFieldName][parsedFieldKey.childFieldName] = value;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseResult = (obj: any): any => {
+export const parseResult = (obj: unknown): unknown => {
   if (obj === null || typeof obj !== 'object' || typeof obj === 'function') {
     return obj;
   }
@@ -35,8 +31,7 @@ export const parseResult = (obj: any): any => {
     return obj.map((item) => parseResult(item));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result: any = {};
+  const result: Record<string, unknown> = {};
 
   for (const key in obj) {
     // eslint-disable-next-line no-prototype-builtins
