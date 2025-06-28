@@ -253,6 +253,7 @@ export class ObjectMetadataMigrationService {
     );
 
     const relationFieldsToDelete = [
+      ...relationFields,
       ...relationFields.flatMap((relation) =>
         relation && relation.relationTargetFieldMetadata
           ? [relation.relationTargetFieldMetadata]

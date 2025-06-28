@@ -482,9 +482,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         },
       );
-      await this.objectMetadataRelatedRecordsService.createObjectRelatedRecords(
-        cacheObject,
-      );
 
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
