@@ -37,7 +37,10 @@ export class WorkspaceMigrationRunnerService {
     transactionQueryRunner: QueryRunner,
   ): Promise<WorkspaceMigrationTableAction[]> {
     const pendingMigrations =
-      await this.workspaceMigrationService.getPendingMigrations(workspaceId);
+      await this.workspaceMigrationService.getPendingMigrations(
+        workspaceId,
+        transactionQueryRunner,
+      );
 
     if (pendingMigrations.length === 0) {
       return [];

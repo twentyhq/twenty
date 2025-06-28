@@ -9,6 +9,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   FindManyOptions,
   FindOneOptions,
+  In,
   QueryRunner,
   Repository,
 } from 'typeorm';
@@ -36,7 +37,6 @@ import {
   validateObjectMetadataInputLabelsOrThrow,
   validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
-import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
@@ -61,7 +61,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
-    private readonly remoteTableRelationsService: RemoteTableRelationsService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -426,66 +425,75 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let cacheObject: ObjectMetadataItemWithFieldMaps;
 
     try {
       const objectMetadataRepository =
         queryRunner.manager.getRepository(ObjectMetadataEntity);
       const fieldMetadataRepository =
         queryRunner.manager.getRepository(FieldMetadataEntity);
-      const { objectMetadataMaps } =
-        await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-          { workspaceId },
-        );
 
-      cacheObject = objectMetadataMaps.byId[input.id];
-      if (!cacheObject) {
+      const objectMetadata = await objectMetadataRepository.findOne({
+        relations: [
+          'fields',
+          'fields.object',
+          'fields.relationTargetFieldMetadata',
+          'fields.relationTargetFieldMetadata.object',
+        ],
+        where: {
+          id: input.id,
+          workspaceId,
+        },
+      });
+
+      if (!objectMetadata) {
         throw new ObjectMetadataException(
           'Object does not exist',
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
-      if (cacheObject.isRemote) {
+
+      if (objectMetadata.isRemote) {
         throw new Error('Remote objects are not supported yet');
       } else {
         await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
-          cacheObject,
+          objectMetadata,
           workspaceId,
           queryRunner,
         );
       }
-      await this.objectMetadataRelatedRecordsService.deleteObjectViews(
-        cacheObject,
-        workspaceId,
-      );
+
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         workspaceId,
         queryRunner,
       );
-      const fieldMetadataIds = Object.values(cacheObject.fieldsById).map(
-        (field) => field.id,
-      );
-      const relationMetadataIds = Object.values(cacheObject.fieldsById)
+
+      const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
+      const relationMetadataIds = objectMetadata.fields
         .map((field) => field.relationTargetFieldMetadata?.id)
         .filter(isDefined);
 
-      await fieldMetadataRepository.delete(
-        fieldMetadataIds.concat(relationMetadataIds as string[]),
+      await fieldMetadataRepository.delete({
+        id: In(fieldMetadataIds.concat(relationMetadataIds)),
+      });
+
+      await objectMetadataRepository.delete(objectMetadata.id);
+
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
       );
-      await objectMetadataRepository.delete(cacheObject.id);
 
-      await queryRunner.commitTransaction();
-
-      // After commit, do non-transactional work
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
         },
       );
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      await this.objectMetadataRelatedRecordsService.deleteObjectViews(
+        objectMetadata,
         workspaceId,
       );
+
+      return objectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
@@ -494,12 +502,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } finally {
       await queryRunner.release();
     }
-
-    return {
-      ...cacheObject,
-      fields: [],
-      indexMetadatas: [],
-    };
   }
 
   public async findOneWithinWorkspace(

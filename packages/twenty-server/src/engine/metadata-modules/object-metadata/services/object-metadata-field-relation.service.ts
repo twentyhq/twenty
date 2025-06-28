@@ -156,15 +156,13 @@ export class ObjectMetadataFieldRelationService {
   public async updateRelationsAndForeignKeysMetadata(
     workspaceId: string,
     updatedObjectMetadata: Pick<
-      ObjectMetadataItemWithFieldMaps,
+      ObjectMetadataEntity,
       'nameSingular' | 'isCustom' | 'id' | 'labelSingular'
     >,
     queryRunner?: QueryRunner,
   ): Promise<
     {
-      targetObjectMetadata:
-        | ObjectMetadataEntity
-        | ObjectMetadataItemWithFieldMaps;
+      targetObjectMetadata: ObjectMetadataEntity;
       targetFieldMetadata: FieldMetadataEntity;
       sourceFieldMetadata: FieldMetadataEntity;
     }[]
@@ -185,7 +183,7 @@ export class ObjectMetadataFieldRelationService {
   private async updateRelationAndForeignKeyMetadata(
     workspaceId: string,
     sourceObjectMetadata: Pick<
-      ObjectMetadataItemWithFieldMaps,
+      ObjectMetadataEntity,
       'nameSingular' | 'id' | 'isCustom' | 'labelSingular'
     >,
     targetObjectMetadataStandardId: string,

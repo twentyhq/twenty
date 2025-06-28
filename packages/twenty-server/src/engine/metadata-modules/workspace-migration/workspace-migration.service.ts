@@ -23,8 +23,13 @@ export class WorkspaceMigrationService {
    */
   public async getPendingMigrations(
     workspaceId: string,
+    queryRunner?: QueryRunner,
   ): Promise<WorkspaceMigrationEntity[]> {
-    const pendingMigrations = await this.workspaceMigrationRepository.find({
+    const workspaceMigrationRepository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
+      : this.workspaceMigrationRepository;
+
+    const pendingMigrations = await workspaceMigrationRepository.find({
       order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
