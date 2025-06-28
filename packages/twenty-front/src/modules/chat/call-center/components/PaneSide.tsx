@@ -28,12 +28,13 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
-const StyledChatsContainer = styled.div`
+const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(2)} 0;
-  max-width: 300px;
+  height: 80dvh;
+  overflow-y: ${({ isScrollable }) => (isScrollable ? 'scroll' : 'unset')};
 `;
 
 export const PaneSide = () => {
@@ -63,6 +64,12 @@ export const PaneSide = () => {
       incomingMessages: unreadTabMessages?.unreadAbandoned,
     },
   ];
+
+  const nonResolvedWhatsappChats = whatsappChats.filter(
+    (chat) => chat.status !== statusEnum.Resolved,
+  );
+
+  const isScrollable = nonResolvedWhatsappChats.length > 5;
 
   const renderWhatsappChats = () => {
     return whatsappChats.map((chat: any) => {
@@ -115,9 +122,11 @@ export const PaneSide = () => {
             tabs={tabs}
           />
         </StyledTabListContainer>
-        <StyledChatsContainer>{renderWhatsappChats()}</StyledChatsContainer>
+        <StyledChatsContainer isScrollable={isScrollable}>
+          {renderWhatsappChats()}
+          <ResolvedChats />
+        </StyledChatsContainer>
       </div>
-      <ResolvedChats />
     </StyledPaneSideContainer>
   );
 };

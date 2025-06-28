@@ -38,12 +38,6 @@ export const initialNodes: Node[] = [
     data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 500, y: 300 },
   },
-  {
-    id: '5',
-    type: 'addNode',
-    data: {},
-    position: { x: 200, y: 400 },
-  },
 ];
 
 export const initialEdges: Edge[] = [
@@ -57,11 +51,5 @@ export const initialEdges: Edge[] = [
     source: '2',
     target: '3',
     sourceHandle: 'b-1',
-  },
-  {
-    id: 'xy-edge__2-5',
-    source: '2',
-    target: '5',
-    sourceHandle: 'a',
   },
 ];
