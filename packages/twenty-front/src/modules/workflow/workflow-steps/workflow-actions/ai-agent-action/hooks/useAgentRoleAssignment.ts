@@ -38,7 +38,7 @@ export const useAgentRoleAssignment = (agentId: string) => {
   };
 
   const rolesOptions =
-    rolesData?.getRoles?.map((role: any) => ({
+    rolesData?.getRoles?.map((role) => ({
       label: role.label,
       value: role.id,
     })) || [];
