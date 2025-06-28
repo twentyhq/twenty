@@ -12,7 +12,6 @@ import {
 } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationIndexAction,
@@ -42,7 +41,7 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     isUnique: boolean;
     isCustom: boolean;
@@ -123,7 +122,7 @@ export class IndexMetadataService {
   async recomputeIndexMetadataForObject(
     workspaceId: string,
     updatedObjectMetadata: Pick<
-      ObjectMetadataItemWithFieldMaps,
+      ObjectMetadataEntity,
       'nameSingular' | 'isCustom' | 'id'
     >,
     queryRunner?: QueryRunner,
@@ -179,7 +178,7 @@ export class IndexMetadataService {
 
   async deleteIndexMetadata(
     workspaceId: string,
-    objectMetadata: ObjectMetadataItemWithFieldMaps,
+    objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
     queryRunner?: QueryRunner,
   ) {
@@ -231,7 +230,7 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     isUnique: boolean;
     _isCustom: boolean;
@@ -273,7 +272,7 @@ export class IndexMetadataService {
   async createIndexRecomputeMigrations(
     workspaceId: string,
     objectMetadata: Pick<
-      ObjectMetadataItemWithFieldMaps,
+      ObjectMetadataEntity,
       'nameSingular' | 'isCustom' | 'id'
     >,
     recomputedIndexes: {

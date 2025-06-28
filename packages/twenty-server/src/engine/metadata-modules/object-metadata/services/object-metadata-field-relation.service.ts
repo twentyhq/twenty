@@ -53,38 +53,35 @@ export class ObjectMetadataFieldRelationService {
     const relatedObjectMetadataCollection = await Promise.all(
       DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
         async (relationObjectMetadataStandardId) =>
-          this.createRelationAndForeignKeyMetadata(
-            {
-              workspaceId,
-              sourceObjectMetadata,
-              relationObjectMetadataStandardId,
-              objectMetadataMaps,
-            },
+          this.createRelationAndForeignKeyMetadata({
+            workspaceId,
+            sourceObjectMetadata,
+            relationObjectMetadataStandardId,
+            objectMetadataMaps,
             queryRunner,
-          ),
+          }),
       ),
     );
 
     return relatedObjectMetadataCollection;
   }
 
-  private async createRelationAndForeignKeyMetadata(
-    {
-      workspaceId,
-      sourceObjectMetadata,
-      relationObjectMetadataStandardId,
-      objectMetadataMaps,
-    }: {
-      workspaceId: string;
-      sourceObjectMetadata: Pick<
-        ObjectMetadataItemWithFieldMaps,
-        'id' | 'nameSingular' | 'labelSingular'
-      >;
-      objectMetadataMaps: ObjectMetadataMaps;
-      relationObjectMetadataStandardId: string;
-    },
-    queryRunner?: QueryRunner,
-  ) {
+  private async createRelationAndForeignKeyMetadata({
+    workspaceId,
+    sourceObjectMetadata,
+    relationObjectMetadataStandardId,
+    objectMetadataMaps,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    sourceObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'id' | 'nameSingular' | 'labelSingular'
+    >;
+    objectMetadataMaps: ObjectMetadataMaps;
+    relationObjectMetadataStandardId: string;
+    queryRunner?: QueryRunner;
+  }) {
     const targetObjectMetadata = Object.values(objectMetadataMaps.byId).find(
       (objectMetadata) =>
         objectMetadata.standardId === relationObjectMetadataStandardId,

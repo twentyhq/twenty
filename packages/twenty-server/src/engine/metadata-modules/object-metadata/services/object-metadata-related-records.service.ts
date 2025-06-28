@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -14,7 +13,7 @@ export class ObjectMetadataRelatedRecordsService {
   ) {}
 
   public async createObjectRelatedRecords(
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps,
+    objectMetadata: ObjectMetadataEntity,
   ) {
     const view = await this.createView(objectMetadata);
 
@@ -23,7 +22,7 @@ export class ObjectMetadataRelatedRecordsService {
   }
 
   private async createView(
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps,
+    objectMetadata: ObjectMetadataEntity,
   ): Promise<ViewWorkspaceEntity> {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
@@ -41,7 +40,7 @@ export class ObjectMetadataRelatedRecordsService {
   }
 
   private async createViewFields(
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps,
+    objectMetadata: ObjectMetadataEntity,
     viewId: string,
   ): Promise<void> {
     const viewFieldRepository =
@@ -50,11 +49,7 @@ export class ObjectMetadataRelatedRecordsService {
         'viewField',
       );
 
-    const fields =
-      'fieldsById' in objectMetadata
-        ? Object.values(objectMetadata.fieldsById)
-        : objectMetadata.fields;
-    const viewFields = fields
+    const viewFields = objectMetadata.fields
       .filter((field) => field.name !== 'id' && field.name !== 'deletedAt')
       .map((field, index) => ({
         fieldMetadataId: field.id,
@@ -110,7 +105,7 @@ export class ObjectMetadataRelatedRecordsService {
   }
 
   public async deleteObjectViews(
-    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps,
+    objectMetadata: ObjectMetadataEntity,
     workspaceId: string,
   ) {
     const viewRepository =
