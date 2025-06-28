@@ -13,11 +13,7 @@ import {
 } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-
-export enum TwoFactorAuthenticationProviders {
-  TOTP = 'TOTP',
-  HOTP = 'HOTP',
-}
+import { TwoFactorAuthenticationProviders } from 'twenty-shared/workspace';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorMethod', schema: 'core' })
