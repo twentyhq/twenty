@@ -10,8 +10,7 @@ export const loginTokenState = createState<AuthToken['token'] | null>({
       'loginToken',
       {},
       {
-        validateInitFn: (payload: AuthToken['token']) =>
-          Boolean(payload),
+        validateInitFn: (payload: AuthToken['token']) => Boolean(payload),
       },
     ),
   ],

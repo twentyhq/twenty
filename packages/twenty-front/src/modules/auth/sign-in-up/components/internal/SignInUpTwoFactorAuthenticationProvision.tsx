@@ -2,10 +2,13 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { qrCodeState } from '@/auth/states/qrCode';
 import { Loader } from 'twenty-ui/feedback';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 import { Trans } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
-import { SignInUpStep, signInUpStepState } from '@/auth/states/signInUpStepState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
 
 const StyledMainContentContainer = styled.div`
@@ -19,7 +22,7 @@ const StyledTextContainer = styled.div`
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   color: ${({ theme }) => theme.font.color.tertiary};
-  
+
   max-width: 280px;
   text-align: center;
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -46,17 +49,15 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const handleClick = () => {
-    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification)
-  }
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
+  };
 
   return (
     <>
-      <TwoFactorAuthenticationSetupEffect/>
+      <TwoFactorAuthenticationSetupEffect />
       <StyledForm>
         <StyledTextContainer>
-          <Trans>
-            Use authenticator apps and browser extensions like 
-          </Trans>{' '}
+          <Trans>Use authenticator apps and browser extensions like</Trans>{' '}
           <a
             href="https://twenty.com/legal/terms"
             target="_blank"
@@ -85,16 +86,10 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
           >
             <Trans>Authenticator</Trans>
           </a>{' '}
-          <Trans>
-            to generate one-time passwords
-          </Trans>
+          <Trans>to generate one-time passwords</Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
-          {
-            !qrCode 
-              ? <Loader /> 
-              : <QRCode value={qrCode}/>
-          }
+          {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
         </StyledMainContentContainer>
         <MainButton
           title={'Next'}

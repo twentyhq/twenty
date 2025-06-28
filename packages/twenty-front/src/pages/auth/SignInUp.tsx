@@ -57,12 +57,11 @@ const StandardContent = ({
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
-      { ![
-          SignInUpStep.Password, 
-          SignInUpStep.TwoFactorAuthenticationProvision, 
-          SignInUpStep.TwoFactorAuthenticationVerification
-        ].includes(signInUpStep) 
-        && <FooterNote />}
+      {![
+        SignInUpStep.Password,
+        SignInUpStep.TwoFactorAuthenticationProvision,
+        SignInUpStep.TwoFactorAuthenticationVerification,
+      ].includes(signInUpStep) && <FooterNote />}
     </Modal.Content>
   );
 };
@@ -97,11 +96,11 @@ export const SignInUp = () => {
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
-      return t`Setup your 2FA`
+      return t`Setup your 2FA`;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
-      return t`Verify code from the app`
+      return t`Verify code from the app`;
     }
 
     const workspaceName = !isDefined(workspacePublicData?.displayName)
@@ -138,16 +137,12 @@ export const SignInUp = () => {
       return <SignInUpSSOIdentityProviderSelection />;
     }
 
-    if (
-      signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision
-    ) {
-      return <SignInUpTwoFactorAuthenticationProvisioning/>
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
+      return <SignInUpTwoFactorAuthenticationProvisioning />;
     }
 
-    if (
-      signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification
-    ) {
-      return <SignInUpTOTPVerification/>
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
+      return <SignInUpTOTPVerification />;
     }
 
     if (isDefined(workspacePublicData) && isOnAWorkspace) {

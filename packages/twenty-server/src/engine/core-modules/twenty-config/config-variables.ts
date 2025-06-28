@@ -77,7 +77,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Enforce two factor authentication globally for all workspaces',
+    description:
+      'Enforce two factor authentication globally for all workspaces',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()

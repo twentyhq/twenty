@@ -61,19 +61,19 @@ import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-module
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication.service';
+import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken, AuthToken, AuthTokens } from './dto/token.entity';
+import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { CheckUserExistOutput } from './dto/user-exists.entity';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TwoFactorAuthenticationService } from '../two-factor-authentication/services/two-factor-authentication.service';
-import { TwoFactorAuthenticationVerificationInput } from '../two-factor-authentication/dto/two-factor-authentication-verification.input';
 
 @Resolver()
 @UseFilters(
@@ -258,19 +258,19 @@ export class AuthResolver {
   @Mutation(() => AuthTokens)
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async getAuthTokensFromOTP(
-    @Args() twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
+    @Args()
+    twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      authProvider
-    } = await this.loginTokenService.verifyLoginToken(
-      twoFactorAuthenticationVerificationInput.loginToken,
-    );
+    const { sub: email, authProvider } =
+      await this.loginTokenService.verifyLoginToken(
+        twoFactorAuthenticationVerificationInput.loginToken,
+      );
 
-    const workspace = await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-      origin
-    );
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
     workspaceValidator.assertIsDefinedOrThrow(
       workspace,
@@ -280,7 +280,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userRepository.findOneBy({ email })
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       throw new AuthException(
@@ -293,14 +293,6 @@ export class AuthResolver {
       user.id,
       twoFactorAuthenticationVerificationInput.otp,
       workspace.id,
-    )
-
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      workspace.id,
-      // email validation is active only for password flow
-      AuthProviderEnum.Password,
-      false
     );
 
     return await this.authService.verify(email, workspace.id, authProvider);
@@ -493,7 +485,7 @@ export class AuthResolver {
       sub: email,
       workspaceId,
       authProvider,
-      pending2FA
+      pending2FA,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
     );
@@ -512,13 +504,17 @@ export class AuthResolver {
       );
     }
 
-    const currentUserWorkspace = await this.userWorkspaceService.findCurrentUserWorkspace(email, workspace.id)
+    const currentUserWorkspace =
+      await this.userWorkspaceService.findCurrentUserWorkspace(
+        email,
+        workspace.id,
+      );
 
     if (pending2FA) {
       await this.twoFactorAuthenticationService.checkIf2FARequired(
         workspace,
-        currentUserWorkspace[0].twoFactorMethods
-      )
+        currentUserWorkspace[0].twoFactorMethods,
+      );
     }
 
     return await this.authService.verify(email, workspace.id, authProvider);

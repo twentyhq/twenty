@@ -59,12 +59,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 
+import { TwoFactorMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorMethodModule } from '../two-factor-authentication/two-factor-authentication.module';
+
 import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
-import { TwoFactorMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { TwoFactorMethodModule } from '../two-factor-authentication/two-factor-authentication.module';
 
 @Module({
   imports: [
@@ -86,7 +87,7 @@ import { TwoFactorMethodModule } from '../two-factor-authentication/two-factor-a
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
         UserWorkspace,
-        TwoFactorMethod
+        TwoFactorMethod,
       ],
       'core',
     ),
@@ -104,7 +105,7 @@ import { TwoFactorMethodModule } from '../two-factor-authentication/two-factor-a
     MetricsModule,
     PermissionsModule,
     UserRoleModule,
-    TwoFactorMethodModule
+    TwoFactorMethodModule,
   ],
   controllers: [
     GoogleAuthController,

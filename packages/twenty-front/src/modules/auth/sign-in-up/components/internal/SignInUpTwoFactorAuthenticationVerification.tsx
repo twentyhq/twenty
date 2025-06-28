@@ -1,38 +1,24 @@
 /* @license Enterprise */
 
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { css } from '@emotion/react';
 
-import React, { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import React from 'react';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useSearchParams } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
+import { useLingui, Trans } from '@lingui/react/macro';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AppPath } from '@/types/AppPath';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useOrigin } from '@/domain-manager/hooks/useOrigin';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { getLoginToken } from '@/apollo/utils/getLoginToken';
-import { qrCodeState } from '@/auth/states/qrCode';
-import { Loader } from 'twenty-ui/feedback';
-import QRCode from "react-qr-code";
-import { Trans } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
-import { SignInUpStep, signInUpStepState } from '@/auth/states/signInUpStepState';
 import { OTPInput, SlotProps } from 'input-otp';
-import { OTPFormValues, useTwoFactorAuthenticationForm } from '../../hooks/useTwoFactorAuthenticationForm';
-import { Controller, FormProvider } from 'react-hook-form';
-import { useGetAuthTokensFromOtpMutation } from '~/generated/graphql';
-import { countAvailableWorkspaces, getFirstAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { useSignUpInNewWorkspace } from '../../hooks/useSignUpInNewWorkspace';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import {
+  OTPFormValues,
+  useTwoFactorAuthenticationForm,
+} from '../../hooks/useTwoFactorAuthenticationForm';
+import { Controller } from 'react-hook-form';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -57,12 +43,12 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
+  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
 
   &:first-child {
-    border-left: 1px solid black;
+    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
     border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
   }
@@ -74,131 +60,124 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
 
   .group:hover &,
   .group:focus-within & {
-    border-color: rgba(var(--accent-foreground-rgb), 0.1);
+    border-color: ${({ theme }) => theme.border.color.medium};
   }
 
   outline: 0;
-  outline-color: rgba(var(--accent-foreground-rgb), 0.2);
+  outline-color: ${({ theme }) => theme.border.color.medium};
 
-  ${({ isActive }) =>
+  ${({ isActive, theme }) =>
     isActive &&
     css`
       outline-width: 1px;
       outline-style: solid;
-      outline-color: black;
+      outline-color: ${theme.border.color.strong};
     `}
-`
+`;
 
-const PlaceholderChar = styled.div`
+const StyledPlaceholderChar = styled.div`
   .group:has(input[data-input-otp-placeholder-shown]) & {
     opacity: 0.2;
   }
-`
+`;
 
-export function Slot(props: SlotProps) {
+export const Slot = (props: SlotProps) => {
   return (
     <StyledSlot isActive={props.isActive}>
-      <PlaceholderChar>
+      <StyledPlaceholderChar>
         {props.char ?? props.placeholderChar}
-      </PlaceholderChar>
+      </StyledPlaceholderChar>
       {props.hasFakeCaret && <FakeCaret />}
     </StyledSlot>
-  )
-}
+  );
+};
 
-const CaretContainer = styled.div`
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  display: flex;
+const StyledCaretContainer = styled.div`
   align-items: center;
-  justify-content: center;
   animation: caret-blink 1s steps(2, start) infinite;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
 
   @keyframes caret-blink {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
       opacity: 0;
     }
   }
-`
+`;
 
-const Caret = styled.div`
+const StyledCaret = styled.div`
   width: 1px;
   height: 2rem; /* h-8 */
   background-color: white;
-`
+`;
 
-export function FakeCaret() {
+const FakeCaret = () => {
   return (
-    <CaretContainer>
-      <Caret />
-    </CaretContainer>
-  )
-}
+    <StyledCaretContainer>
+      <StyledCaret />
+    </StyledCaretContainer>
+  );
+};
 
-const DashContainer = styled.div`
+const StyledDashContainer = styled.div`
   display: flex;
   width: 2.5rem;
   justify-content: center;
   align-items: center;
-`
+`;
 
-const Dash = styled.div`
-  width: 0.75rem;
-  height: 0.25rem;
-  border-radius: 9999px;
+const StyledDash = styled.div`
   background-color: black;
-`
+  border-radius: 9999px;
+  height: 0.25rem;
+  width: 0.75rem;
+`;
 
-export function FakeDash() {
+const FakeDash = () => {
   return (
-    <DashContainer>
-      <Dash />
-    </DashContainer>
-  )
-}
+    <StyledDashContainer>
+      <StyledDash />
+    </StyledDashContainer>
+  );
+};
 
-const OTPContainer = styled.div`
+const StyledOTPContainer = styled.div`
   display: flex;
   align-items: center;
 
   &:has(:disabled) {
     opacity: 0.3;
   }
-`
+`;
 
-const SlotGroup = styled.div`
+const StyledSlotGroup = styled.div`
   display: flex;
-`
+`;
 const StyledTextContainer = styled.div`
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   color: ${({ theme }) => theme.font.color.tertiary};
-  
+
   max-width: 280px;
   text-align: center;
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 export const SignInUpTOTPVerification = () => {
-  const { loadCurrentUser, getAuthTokensFromOTP } = useAuth()
+  const { getAuthTokensFromOTP } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
-  const { origin } = useOrigin()
   const loginToken = getLoginToken();
-  const setQrCodeState = useSetRecoilState(qrCodeState);
-  const qrCode = useRecoilValue(qrCodeState);
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
-  const { setAuthTokens } = useAuth();
   const { t } = useLingui();
-  const { createWorkspace } = useSignUpInNewWorkspace();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const { form } = useTwoFactorAuthenticationForm();
 
@@ -213,12 +192,9 @@ export const SignInUpTOTPVerification = () => {
       return navigate(AppPath.SignInUp);
     }
 
-    await getAuthTokensFromOTP(
-      values.otp,
-      loginToken,
-      captchaToken
-    )
+    await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
 
+    //TODO: AAAHpClientConfigProviderEffect
     // getAuthTokensFromOtp({
     //   variables: {
     //     captchaToken,
@@ -230,7 +206,7 @@ export const SignInUpTOTPVerification = () => {
     //     setAuthTokens(data.getAuthTokensFromOTP.tokens);
     //     const { user } = await loadCurrentUser();
 
-        // const availableWorkspacesCount = countAvailableWorkspaces(
+    // const availableWorkspacesCount = countAvailableWorkspaces(
     //       user.availableWorkspaces,
     //     );
 
@@ -253,7 +229,7 @@ export const SignInUpTOTPVerification = () => {
     //         },
     //       );
     //     }
-        
+
     //     // setSignInUpStep(SignInUpStep.WorkspaceSelection);
     //   },
     //   onError: (data) => {
@@ -264,19 +240,17 @@ export const SignInUpTOTPVerification = () => {
 
   return (
     <StyledForm onSubmit={form.handleSubmit(submitOTP)}>
-        <StyledTextContainer>
-          <Trans>
-            Copy paste the code below
-          </Trans>
-        </StyledTextContainer>
+      <StyledTextContainer>
+        <Trans>Copy paste the code below</Trans>
+      </StyledTextContainer>
       <StyledMainContentContainer>
-      {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
         <Controller
           name="otp"
           control={form.control}
           render={({
             field: { onChange, onBlur, value },
-            fieldState: { error },
+            //TODO: AAAH
           }) => (
             <OTPInput
               maxLength={6}
@@ -284,21 +258,29 @@ export const SignInUpTOTPVerification = () => {
               onChange={onChange}
               value={value}
               render={({ slots }) => (
-                <OTPContainer>
-                  <SlotGroup>
+                <StyledOTPContainer>
+                  <StyledSlotGroup>
                     {slots.slice(0, 3).map((slot, idx) => (
-                      <Slot key={idx} {...slot} />
+                      <Slot
+                        key={idx}
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        {...slot}
+                      />
                     ))}
-                  </SlotGroup>
+                  </StyledSlotGroup>
 
                   <FakeDash />
 
-                  <SlotGroup>
+                  <StyledSlotGroup>
                     {slots.slice(3).map((slot, idx) => (
-                      <Slot key={idx} {...slot} />
+                      <Slot
+                        key={idx}
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        {...slot}
+                      />
                     ))}
-                  </SlotGroup>
-                </OTPContainer>
+                  </StyledSlotGroup>
+                </StyledOTPContainer>
               )}
             />
           )}
@@ -306,7 +288,7 @@ export const SignInUpTOTPVerification = () => {
       </StyledMainContentContainer>
       <MainButton
         title={'Submit'}
-        type='submit'
+        type="submit"
         variant={'primary'}
         fullWidth
       />

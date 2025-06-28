@@ -5,7 +5,6 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigController } from './client-config.controller';
-import { F } from '@faker-js/faker/dist/airline-BUL6NtOJ';
 
 describe('ClientConfigController', () => {
   let controller: ClientConfigController;
@@ -85,7 +84,7 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
-        isTwoFactorAuthenticationGloballyEnforced: false
+        isTwoFactorAuthenticationGloballyEnforced: false,
       };
 
       jest

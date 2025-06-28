@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { AuthToken } from './token.entity';
 import { IsOptional } from 'class-validator';
+
+import { AuthToken } from './token.entity';
 
 @ObjectType()
 export class LoginToken {

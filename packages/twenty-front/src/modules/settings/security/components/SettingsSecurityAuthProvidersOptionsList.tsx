@@ -19,7 +19,6 @@ import {
   IconPassword,
 } from 'twenty-ui/display';
 import { Toggle2FA } from './Toggle2FA';
-import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/isTwoFactorAuthenticationEnabledState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
@@ -34,7 +33,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
-  const isTwoFactorAuthenticationEnabled = useRecoilValue(isTwoFactorAuthenticationEnabledState);
+  const isTwoFactorAuthenticationEnabled = useRecoilValue(
+    isTwoFactorAuthenticationEnabledState,
+  );
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );

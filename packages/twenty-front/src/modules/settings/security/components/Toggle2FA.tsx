@@ -7,7 +7,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { IconLifebuoy } from 'twenty-ui/display';
-import { TwoFactorAuthenticationPolicyEnforcement, TwoFactorAuthenticationProviders } from 'twenty-shared/workspace';
+import {
+  TwoFactorAuthenticationPolicyEnforcement,
+  TwoFactorAuthenticationProviders,
+} from 'twenty-shared/workspace';
 import { isTwoFactorAuthenticationGloballyEnforcedState } from '@/client-config/states/isTwoFactorAuthenticationGloballyEnforcedState copy';
 
 export const Toggle2FA = () => {
@@ -15,8 +18,9 @@ export const Toggle2FA = () => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const isTwoFactorAuthenticationGloballyEnforced = useRecoilValue(isTwoFactorAuthenticationGloballyEnforcedState);
-  
+  const isTwoFactorAuthenticationGloballyEnforced = useRecoilValue(
+    isTwoFactorAuthenticationGloballyEnforcedState,
+  );
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -31,8 +35,8 @@ export const Toggle2FA = () => {
           ...currentWorkspace,
           twoFactorAuthenticationPolicy: {
             level: TwoFactorAuthenticationPolicyEnforcement.OPTIONAL,
-            providers: TwoFactorAuthenticationProviders.HOTP
-          }
+            providers: TwoFactorAuthenticationProviders.HOTP,
+          },
         });
 
         await updateWorkspace({
@@ -40,21 +44,21 @@ export const Toggle2FA = () => {
             input: {
               twoFactorAuthenticationPolicy: {
                 level: TwoFactorAuthenticationPolicyEnforcement.OPTIONAL,
-                providers: TwoFactorAuthenticationProviders.HOTP
-              }
+                providers: TwoFactorAuthenticationProviders.HOTP,
+              },
             },
           },
         });
       } else {
         setCurrentWorkspace({
           ...currentWorkspace,
-          twoFactorAuthenticationPolicy: null
+          twoFactorAuthenticationPolicy: null,
         });
 
         await updateWorkspace({
           variables: {
             input: {
-              twoFactorAuthenticationPolicy: null
+              twoFactorAuthenticationPolicy: null,
             },
           },
         });
@@ -70,7 +74,10 @@ export const Toggle2FA = () => {
     <SettingsOptionCardContentToggle
       Icon={IconLifebuoy}
       title={t`Two Factor Authentication`}
-      checked={!!currentWorkspace?.twoFactorAuthenticationPolicy || isTwoFactorAuthenticationGloballyEnforced}
+      checked={
+        !!currentWorkspace?.twoFactorAuthenticationPolicy ||
+        isTwoFactorAuthenticationGloballyEnforced
+      }
       onChange={handleChange}
       advancedMode
     />

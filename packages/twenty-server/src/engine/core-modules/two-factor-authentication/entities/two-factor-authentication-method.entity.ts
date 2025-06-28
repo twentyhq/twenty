@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -16,7 +16,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 
 export enum TwoFactorAuthenticationProviders {
   TOTP = 'TOTP',
-  HOTP = 'HOTP'
+  HOTP = 'HOTP',
 }
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
@@ -43,7 +43,7 @@ export class TwoFactorMethod {
   userWorkspace: Relation<UserWorkspace>;
 
   @Column({ nullable: true, type: 'jsonb' })
-  context: { status: string, secret: string, timestep: string } | null;
+  context: { status: string; secret: string; timestep: string } | null;
 
   @Field(() => TwoFactorAuthenticationProviders)
   @Column({

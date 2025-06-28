@@ -7,7 +7,7 @@ export enum SignInUpStep {
   WorkspaceSelection = 'workspaceSelection',
   SSOIdentityProviderSelection = 'SSOIdentityProviderSelection',
   TwoFactorAuthenticationVerification = 'TwoFactorAuthenticationVerification',
-  TwoFactorAuthenticationProvision = 'TwoFactorAuthenticationProvision'
+  TwoFactorAuthenticationProvision = 'TwoFactorAuthenticationProvision',
 }
 
 export const signInUpStepState = createState<SignInUpStep>({

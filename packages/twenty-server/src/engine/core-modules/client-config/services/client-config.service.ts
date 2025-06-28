@@ -103,11 +103,11 @@ export class ClientConfigService {
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       ),
       isTwoFactorAuthenticationEnabled: this.twentyConfigService.get(
-        'IS_TWO_FACTOR_AUTHENTICATION_ENABLED'
+        'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
       ),
       isTwoFactorAuthenticationGloballyEnforced: this.twentyConfigService.get(
-        'IS_TWO_FACTOR_AUTHENTICATION_GLOBALLY_ENFORCED'
-      )
+        'IS_TWO_FACTOR_AUTHENTICATION_GLOBALLY_ENFORCED',
+      ),
     };
 
     return clientConfig;

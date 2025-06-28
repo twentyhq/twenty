@@ -88,12 +88,12 @@ export const ClientConfigProviderEffect = () => {
   );
 
   const setIsTwoFactorAuthenticationEnabled = useSetRecoilState(
-    isTwoFactorAuthenticationEnabledState
-  )
+    isTwoFactorAuthenticationEnabledState,
+  );
 
   const setIsTwoFactorAuthenticationGloballyEnforced = useSetRecoilState(
-    isTwoFactorAuthenticationGloballyEnforcedState
-  )
+    isTwoFactorAuthenticationGloballyEnforcedState,
+  );
 
   const { data, loading, error, fetchClientConfig } = useClientConfig();
 
@@ -173,8 +173,12 @@ export const ClientConfigProviderEffect = () => {
     setMicrosoftCalendarEnabled(data?.clientConfig?.isMicrosoftCalendarEnabled);
     setGoogleMessagingEnabled(data?.clientConfig?.isGoogleMessagingEnabled);
     setGoogleCalendarEnabled(data?.clientConfig?.isGoogleCalendarEnabled);
-    setIsTwoFactorAuthenticationEnabled(data?.clientConfig?.isTwoFactorAuthenticationEnabled);
-    setIsTwoFactorAuthenticationGloballyEnforced(data?.clientConfig?.isTwoFactorAuthenticationGloballyEnforced)
+    setIsTwoFactorAuthenticationEnabled(
+      data?.clientConfig?.isTwoFactorAuthenticationEnabled,
+    );
+    setIsTwoFactorAuthenticationGloballyEnforced(
+      data?.clientConfig?.isTwoFactorAuthenticationGloballyEnforced,
+    );
     setIsAttachmentPreviewEnabled(
       data?.clientConfig?.isAttachmentPreviewEnabled,
     );
@@ -210,6 +214,8 @@ export const ClientConfigProviderEffect = () => {
     setGoogleCalendarEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
+    setIsTwoFactorAuthenticationEnabled,
+    setIsTwoFactorAuthenticationGloballyEnforced,
   ]);
 
   return <></>;

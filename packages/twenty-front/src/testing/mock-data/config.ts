@@ -57,5 +57,5 @@ export const mockedClientConfig: ClientConfig = {
   isAttachmentPreviewEnabled: true,
   isConfigVariablesInDbEnabled: false,
   isTwoFactorAuthenticationEnabled: false,
-  isTwoFactorAuthenticationGloballyEnforced: false
+  isTwoFactorAuthenticationGloballyEnforced: false,
 };
