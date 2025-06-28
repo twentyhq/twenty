@@ -11,6 +11,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { buildMigrationsToCreateRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-create-remote-table-relations.util';
 import { buildMigrationsToRemoveRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-remove-remote-table-relations.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import {
@@ -85,7 +86,7 @@ export class RemoteTableRelationsService {
 
   public async deleteForeignKeysMetadataAndCreateMigrations(
     workspaceId: string,
-    remoteObjectMetadata: ObjectMetadataEntity,
+    remoteObjectMetadata: ObjectMetadataItemWithFieldMaps,
   ) {
     // find favorite, activityTarget, attachment, timelineActivity objects
     const favoriteObjectMetadata =

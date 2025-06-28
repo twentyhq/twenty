@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -12,6 +12,7 @@ import {
 } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationIndexAction,
@@ -30,15 +31,25 @@ export class IndexMetadataService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
-  async createIndexMetadata(
-    workspaceId: string,
-    objectMetadata: ObjectMetadataEntity,
-    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
-    isUnique: boolean,
-    isCustom: boolean,
-    indexType?: IndexType,
-    indexWhereClause?: string,
-  ) {
+  async createIndexMetadata({
+    workspaceId,
+    objectMetadata,
+    fieldMetadataToIndex,
+    isUnique,
+    isCustom,
+    indexType,
+    indexWhereClause,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
+    isUnique: boolean;
+    isCustom: boolean;
+    indexType?: IndexType;
+    indexWhereClause?: string;
+    queryRunner?: QueryRunner;
+  }) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
     const columnNames: string[] = fieldMetadataToIndex.map(
@@ -53,7 +64,11 @@ export class IndexMetadataService {
 
     let result: IndexMetadataEntity;
 
-    const existingIndex = await this.indexMetadataRepository.findOne({
+    const indexMetadataRepository = queryRunner
+      ? queryRunner.manager.getRepository(IndexMetadataEntity)
+      : this.indexMetadataRepository;
+
+    const existingIndex = await indexMetadataRepository.findOne({
       where: {
         name: indexName,
         workspaceId,
@@ -68,7 +83,7 @@ export class IndexMetadataService {
     }
 
     try {
-      result = await this.indexMetadataRepository.save({
+      result = await indexMetadataRepository.save({
         name: indexName,
         indexFieldMetadatas: fieldMetadataToIndex.map(
           (fieldMetadata, index) => ({
@@ -93,25 +108,31 @@ export class IndexMetadataService {
       );
     }
 
-    await this.createIndexCreationMigration(
+    await this.createIndexCreationMigration({
       workspaceId,
       objectMetadata,
       fieldMetadataToIndex,
       isUnique,
-      isCustom,
+      _isCustom: isCustom,
       indexType,
       indexWhereClause,
-    );
+      queryRunner,
+    });
   }
 
   async recomputeIndexMetadataForObject(
     workspaceId: string,
     updatedObjectMetadata: Pick<
-      ObjectMetadataEntity,
+      ObjectMetadataItemWithFieldMaps,
       'nameSingular' | 'isCustom' | 'id'
     >,
+    queryRunner?: QueryRunner,
   ) {
-    const indexesToRecompute = await this.indexMetadataRepository.find({
+    const indexMetadataRepository = queryRunner
+      ? queryRunner.manager.getRepository(IndexMetadataEntity)
+      : this.indexMetadataRepository;
+
+    const indexesToRecompute = await indexMetadataRepository.find({
       where: {
         objectMetadataId: updatedObjectMetadata.id,
         workspaceId,
@@ -142,7 +163,7 @@ export class IndexMetadataService {
         ...columnNames,
       ])}`;
 
-      await this.indexMetadataRepository.update(index.id, {
+      await indexMetadataRepository.update(index.id, {
         name: newIndexName,
       });
 
@@ -158,8 +179,9 @@ export class IndexMetadataService {
 
   async deleteIndexMetadata(
     workspaceId: string,
-    objectMetadata: ObjectMetadataEntity,
+    objectMetadata: ObjectMetadataItemWithFieldMaps,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    queryRunner?: QueryRunner,
   ) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
@@ -173,7 +195,11 @@ export class IndexMetadataService {
 
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
-    const indexMetadata = await this.indexMetadataRepository.findOne({
+    const indexMetadataRepository = queryRunner
+      ? queryRunner.manager.getRepository(IndexMetadataEntity)
+      : this.indexMetadataRepository;
+
+    const indexMetadata = await indexMetadataRepository.findOne({
       where: {
         name: indexName,
         objectMetadataId: objectMetadata.id,
@@ -186,7 +212,7 @@ export class IndexMetadataService {
     }
 
     try {
-      await this.indexMetadataRepository.delete(indexMetadata.id);
+      await indexMetadataRepository.delete(indexMetadata.id);
     } catch (error) {
       throw new Error(
         `Failed to delete index metadata with name ${indexName} (error: ${error.message})`,
@@ -194,15 +220,25 @@ export class IndexMetadataService {
     }
   }
 
-  async createIndexCreationMigration(
-    workspaceId: string,
-    objectMetadata: ObjectMetadataEntity,
-    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
-    isUnique: boolean,
-    isCustom: boolean,
-    indexType?: IndexType,
-    indexWhereClause?: string,
-  ) {
+  async createIndexCreationMigration({
+    workspaceId,
+    objectMetadata,
+    fieldMetadataToIndex,
+    isUnique,
+    _isCustom,
+    indexType,
+    indexWhereClause,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    objectMetadata: ObjectMetadataEntity | ObjectMetadataItemWithFieldMaps;
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
+    isUnique: boolean;
+    _isCustom: boolean;
+    indexType?: IndexType;
+    indexWhereClause?: string;
+    queryRunner?: QueryRunner;
+  }) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
     const columnNames: string[] = fieldMetadataToIndex.map(
@@ -230,13 +266,14 @@ export class IndexMetadataService {
       generateMigrationName(`create-${objectMetadata.nameSingular}-index`),
       workspaceId,
       [migration],
+      queryRunner,
     );
   }
 
   async createIndexRecomputeMigrations(
     workspaceId: string,
     objectMetadata: Pick<
-      ObjectMetadataEntity,
+      ObjectMetadataItemWithFieldMaps,
       'nameSingular' | 'isCustom' | 'id'
     >,
     recomputedIndexes: {
@@ -244,6 +281,7 @@ export class IndexMetadataService {
       previousName: string;
       newName: string;
     }[],
+    queryRunner?: QueryRunner,
   ) {
     for (const recomputedIndex of recomputedIndexes) {
       const { previousName, newName, indexMetadata } = recomputedIndex;
@@ -283,6 +321,7 @@ export class IndexMetadataService {
         generateMigrationName(`update-${objectMetadata.nameSingular}-index`),
         workspaceId,
         [migration],
+        queryRunner,
       );
     }
   }

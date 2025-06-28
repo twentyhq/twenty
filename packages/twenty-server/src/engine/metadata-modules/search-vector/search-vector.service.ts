@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -46,8 +46,13 @@ export class SearchVectorService {
   public async createSearchVectorFieldForObject(
     objectMetadataInput: CreateObjectInput,
     createdObjectMetadata: ObjectMetadataEntity,
+    queryRunner?: QueryRunner,
   ) {
-    const searchVectorFieldMetadata = await this.fieldMetadataRepository.save({
+    const repository = queryRunner
+      ? queryRunner.manager.getRepository(FieldMetadataEntity)
+      : this.fieldMetadataRepository;
+
+    const searchVectorFieldMetadata = await repository.save({
       standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
       objectMetadataId: createdObjectMetadata.id,
       workspaceId: objectMetadataInput.workspaceId,
@@ -101,24 +106,31 @@ export class SearchVectorService {
           } as FieldMetadataInterface<FieldMetadataType.TS_VECTOR>),
         },
       ],
+      queryRunner,
     );
 
-    await this.indexMetadataService.createIndexMetadata(
-      objectMetadataInput.workspaceId,
-      createdObjectMetadata,
-      [searchVectorFieldMetadata],
-      false,
-      false,
-      IndexType.GIN,
-    );
+    await this.indexMetadataService.createIndexMetadata({
+      workspaceId: objectMetadataInput.workspaceId,
+      objectMetadata: createdObjectMetadata,
+      fieldMetadataToIndex: [searchVectorFieldMetadata],
+      isUnique: false,
+      isCustom: false,
+      indexType: IndexType.GIN,
+      queryRunner,
+    });
   }
 
   public async updateSearchVector(
     objectMetadataId: string,
     fieldMetadataNameAndTypeForSearch: FieldTypeAndNameMetadata[],
     workspaceId: string,
+    queryRunner?: QueryRunner,
   ) {
-    const objectMetadata = await this.objectMetadataRepository.findOneByOrFail({
+    const repository = queryRunner
+      ? queryRunner.manager.getRepository(ObjectMetadataEntity)
+      : this.objectMetadataRepository;
+
+    const objectMetadata = await repository.findOneByOrFail({
       id: objectMetadataId,
     });
 
@@ -152,16 +164,18 @@ export class SearchVectorService {
           ),
         },
       ],
+      queryRunner,
     );
 
     // index needs to be recreated as typeorm deletes then recreates searchVector column at alter
-    await this.indexMetadataService.createIndexCreationMigration(
+    await this.indexMetadataService.createIndexCreationMigration({
       workspaceId,
       objectMetadata,
-      [existingSearchVectorFieldMetadata],
-      false,
-      false,
-      IndexType.GIN,
-    );
+      fieldMetadataToIndex: [existingSearchVectorFieldMetadata],
+      isUnique: false,
+      _isCustom: false,
+      indexType: IndexType.GIN,
+      queryRunner,
+    });
   }
 }

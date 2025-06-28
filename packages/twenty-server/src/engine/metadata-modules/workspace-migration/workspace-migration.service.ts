@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, QueryRunner, Repository } from 'typeorm';
 
 import {
   WorkspaceMigrationEntity,
@@ -113,8 +113,13 @@ export class WorkspaceMigrationService {
     name: string,
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
+    queryRunner?: QueryRunner,
   ) {
-    return this.workspaceMigrationRepository.save({
+    const workspaceMigrationRepository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
+      : this.workspaceMigrationRepository;
+
+    return workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,
