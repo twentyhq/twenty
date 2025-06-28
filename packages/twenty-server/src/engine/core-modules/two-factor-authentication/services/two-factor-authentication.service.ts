@@ -67,7 +67,10 @@ export class TwoFactorAuthenticationService {
     });
   }
 
-  async initiateTwoFactorProvisioning(userId: string, workspaceId: string) {
+  async initiateTwoFactorProvisioning(
+    userId: string, 
+    workspaceId: string
+  ) {
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
         userId,

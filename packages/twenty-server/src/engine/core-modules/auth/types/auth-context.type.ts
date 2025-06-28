@@ -28,13 +28,6 @@ type CommonPropertiesJwtPayload = {
   sub: string;
 };
 
-export type TwoFactorAuthenticationRequiredJwtPayload =
-  CommonPropertiesJwtPayload & {
-    type: JwtTokenTypeEnum.TWO_FACTOR_AUTHENTICATION_REQUIRED;
-    workspaceId: string;
-    userId: string;
-  };
-
 export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.FILE;
   workspaceId: string;
@@ -48,6 +41,7 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
+  userId: string;
   authProvider?: AuthProviderEnum;
   pending2FA?: boolean;
 };
@@ -107,5 +101,4 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | PostgresProxyTokenJwtPayload
-  | RemoteServerTokenJwtPayload
-  | TwoFactorAuthenticationRequiredJwtPayload;
+  | RemoteServerTokenJwtPayload;

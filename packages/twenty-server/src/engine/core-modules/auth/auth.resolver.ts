@@ -175,6 +175,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       // email validation is active only for password flow
       AuthProviderEnum.Password,
     );
@@ -247,6 +248,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       appToken.user.email,
       workspace.id,
+      appToken.user.id,
       authProvider,
     );
 
@@ -262,7 +264,7 @@ export class AuthResolver {
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const { sub: email, authProvider } =
+    const { sub: email, userId, authProvider } =
       await this.loginTokenService.verifyLoginToken(
         twoFactorAuthenticationVerificationInput.loginToken,
       );
@@ -280,17 +282,8 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userRepository.findOneBy({ email });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
     await this.twoFactorAuthenticationService.verifyToken(
-      user.id,
+      userId,
       twoFactorAuthenticationVerificationInput.otp,
       workspace.id,
     );
@@ -405,6 +398,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       authProvider,
     );
 
@@ -430,6 +424,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       authProvider,
     );
 

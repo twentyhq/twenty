@@ -40,7 +40,7 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<TwoFactorAuthenticationProvision> {
-    const { sub: email } = await this.loginTokenService.verifyLoginToken(
+    const { userId } = await this.loginTokenService.verifyLoginToken(
       initiateTwoFactorAuthenticationProvisioningInput.loginToken,
     );
 
@@ -57,18 +57,9 @@ export class TwoFactorAuthenticationResolver {
       ),
     );
 
-    const user = await this.userRepository.findOneBy({ email });
-
-    if (!isDefined(user)) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
     const secret =
       await this.twoFactorAuthenticationService.initiateTwoFactorProvisioning(
-        user.id,
+        userId,
         workspace.id,
       );
 

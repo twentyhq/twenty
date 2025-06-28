@@ -13,50 +13,15 @@ import {
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
-export class LoginTokenService {
+export class TwoFactorAuthenticationPendingTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async generateLoginToken(
-    email: string,
-    workspaceId: string,
-    userId: string,
-    authProvider?: AuthProviderEnum,
-    pending2FA = true,
-  ): Promise<AuthToken> {
-    const jwtPayload: LoginTokenJwtPayload = {
-      type: JwtTokenTypeEnum.LOGIN,
-      sub: email,
-      workspaceId,
-      userId,
-      authProvider,
-      pending2FA,
-    };
-
-    const secret = this.jwtWrapperService.generateAppSecret(
-      jwtPayload.type,
-      workspaceId,
-    );
-
-    const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-      }),
-      expiresAt,
-    };
-  }
-
   async verifyLoginToken(loginToken: string): Promise<{
     sub: string;
     workspaceId: string;
-    userId: string;
     authProvider: AuthProviderEnum;
     pending2FA: boolean;
   }> {
