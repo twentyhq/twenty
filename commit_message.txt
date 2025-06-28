@@ -1,1 +1,1 @@
-fix(types): Improve type safety in date utility functions
+refactor(types): Make any usage explicit in object-record.interface
