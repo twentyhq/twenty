@@ -64,7 +64,7 @@ export class RenameUserWorkspaceRoleToRoleTargets1749000000000
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "CHK_role_targets_either_agent_or_user"`,
+      `ALTER TABLE "core"."userWorkspaceRole" DROP CONSTRAINT "CHK_role_targets_either_agent_or_user"`,
     );
 
     await queryRunner.query(
