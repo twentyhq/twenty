@@ -1,6 +1,8 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
+const WORKFLOW_OBJECT_NAMES = ['workflow', 'workflowVersion', 'workflowRun'];
+
 export const isWorkflowRelatedObject = (
   objectMetadata: ObjectMetadataEntity,
 ): boolean => {
@@ -12,9 +14,5 @@ export const isWorkflowRelatedObject = (
     );
   }
 
-  return (
-    objectMetadata.nameSingular === 'workflow' ||
-    objectMetadata.nameSingular === 'workflowVersion' ||
-    objectMetadata.nameSingular === 'workflowRun'
-  );
+  return WORKFLOW_OBJECT_NAMES.includes(objectMetadata.nameSingular);
 };
