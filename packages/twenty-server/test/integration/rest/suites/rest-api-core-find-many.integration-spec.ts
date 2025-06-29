@@ -197,6 +197,34 @@ describe('Core REST API Find Many endpoint', () => {
     );
   });
 
+  it('should support filtering on a relation field id', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: `/people?filter=companyId[in]:["${TEST_COMPANY_1_ID}"]`,
+    }).expect(200);
+
+    const filteredPeople = response.body.data.people;
+
+    expect(filteredPeople.length).toBeGreaterThan(0);
+  });
+
+  it('should fail to filter on a relation field name', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: `/people?filter=company[in]:["${TEST_COMPANY_1_ID}"]`,
+    });
+
+    expect(response.body).toMatchInlineSnapshot(`
+{
+  "error": "BadRequestException",
+  "messages": [
+    "field 'company' does not exist in 'person' object",
+  ],
+  "statusCode": 400,
+}
+`);
+  });
+
   it('should support ordering Desc of results', async () => {
     const descResponse = await makeRestAPIRequest({
       method: 'get',
