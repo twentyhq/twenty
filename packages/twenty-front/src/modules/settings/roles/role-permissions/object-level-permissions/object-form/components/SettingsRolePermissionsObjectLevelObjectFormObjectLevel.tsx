@@ -85,7 +85,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     [
       {
         key: 'canReadObjectRecords',
-        label: t`See Records on ${objectLabel}`,
+        label: t`See ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canReadObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canReadObjectRecords', value);
@@ -93,7 +93,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canUpdateObjectRecords',
-        label: t`Edit Records on ${objectLabel}`,
+        label: t`Edit ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canUpdateObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canUpdateObjectRecords', value);
@@ -101,7 +101,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canSoftDeleteObjectRecords',
-        label: t`Delete Records on ${objectLabel}`,
+        label: t`Delete ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canSoftDeleteObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canSoftDeleteObjectRecords', value);
@@ -109,7 +109,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
       {
         key: 'canDestroyObjectRecords',
-        label: t`Destroy Records on ${objectLabel}`,
+        label: t`Destroy ${objectLabel}`,
         value: settingsDraftRoleObjectPermissions.canDestroyObjectRecords,
         setValue: (value: boolean | null) => {
           updateObjectPermission('canDestroyObjectRecords', value);
