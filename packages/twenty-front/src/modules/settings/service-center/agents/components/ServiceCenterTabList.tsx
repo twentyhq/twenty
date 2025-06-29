@@ -2,8 +2,9 @@ import styled from '@emotion/styled';
 import * as React from 'react';
 
 import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
-import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+
+import { TabListScope } from '@/ui/layout/tab-list/scopes/TabListScope';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';

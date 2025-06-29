@@ -5,7 +5,6 @@ import { useRef } from 'react';
 import { IconComponent } from 'twenty-ui/display';
 
 import { MenuSelectStatus } from '@/settings/service-center/components/MenuSelectStatus';
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -100,7 +99,6 @@ export const SelectStatus = <Value extends string | number | null>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownWidth={dropdownWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={selectControl}
           dropdownComponents={
@@ -122,7 +120,6 @@ export const SelectStatus = <Value extends string | number | null>({
               ))}
             </DropdownMenuItemsContainer>
           }
-          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
     </StyledContainer>

@@ -2,7 +2,7 @@
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
@@ -34,8 +34,9 @@ const StyledSector = styled.div`
   padding: 4px 8px;
 `;
 
-const StyledCustomDropdownMenu = styled(DropdownMenu)`
+const StyledCustomDropdownContent = styled(DropdownContent)`
   background-color: ${({ theme }) => theme.background.tertiary};
+  width: 160px;
 `;
 
 export const SectorPill = ({
@@ -79,7 +80,7 @@ export const SectorPill = ({
         </StyledSector>
       }
       dropdownComponents={
-        <StyledCustomDropdownMenu width="160px">
+        <StyledCustomDropdownContent>
           <DropdownMenuItemsContainer>
             {options.map((option) => (
               <MenuItem
@@ -94,11 +95,8 @@ export const SectorPill = ({
               />
             ))}
           </DropdownMenuItemsContainer>
-        </StyledCustomDropdownMenu>
+        </StyledCustomDropdownContent>
       }
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
     />
   );
 };

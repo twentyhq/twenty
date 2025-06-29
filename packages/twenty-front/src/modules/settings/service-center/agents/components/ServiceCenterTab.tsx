@@ -10,7 +10,8 @@ import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFind
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import { IntegrationType } from '@/settings/service-center/types/IntegrationType';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';

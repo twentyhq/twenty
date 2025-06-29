@@ -17,6 +17,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { UpdateWorkspaceAgentInput } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const editAgentFormSchema = z
@@ -61,7 +62,7 @@ export const SettingsServiceCenterEditAgent = () => {
     try {
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (activeAgent?.id) {
-        const updatedValues = {
+        const updatedValues: UpdateWorkspaceAgentInput = {
           ...pick(formValues, dirtyFieldsKeys),
           id: formValues.id,
           isAdmin: formValues.isAdmin,

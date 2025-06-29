@@ -70,9 +70,10 @@ export const TraceableFieldsCard = ({
 
   const { t } = useLingui();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem: objectMetadataItemTraceable } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
@@ -80,7 +81,7 @@ export const TraceableFieldsCard = ({
     objectRecordId,
   });
 
-  const availableFieldMetadataItems = objectMetadataItem.fields
+  const availableFieldMetadataItems = objectMetadataItemTraceable.fields
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
@@ -108,6 +109,7 @@ export const TraceableFieldsCard = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItemTraceable.id,
   });
 
   const urlFieldKey: (keyof Traceable)[] = ['websiteUrl'];
@@ -146,7 +148,7 @@ export const TraceableFieldsCard = ({
           fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
             field: fieldMetadataItem,
             position: index,
-            objectMetadataItem,
+            objectMetadataItem: objectMetadataItemTraceable,
             showLabel: true,
             labelWidth: 90,
           }),

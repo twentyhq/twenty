@@ -5,6 +5,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -45,11 +46,14 @@ export const ServiceCenterTabContent = ({
             key={telephony.id}
             telephony={telephony}
             accessory={
-              <EditTelephonyIcon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
+              <IconButton
                 onClick={() => handleEditTelephony(telephony.id)}
-                style={{ cursor: 'pointer' }}
+                Icon={() => (
+                  <EditTelephonyIcon
+                    size={theme.icon.size.md}
+                    color={theme.font.color.tertiary}
+                  />
+                )}
               />
             }
           />
