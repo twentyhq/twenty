@@ -636,8 +636,6 @@ describe('AgentToolService Integration', () => {
         },
       );
 
-      console.log({ test: result });
-
       expectSuccessResult(
         result,
         'Successfully soft deleted 3 testObject records',
