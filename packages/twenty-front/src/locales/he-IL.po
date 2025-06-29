@@ -778,6 +778,11 @@ msgstr "עולה"
 msgid "Assign {workspaceMemberName}?"
 msgstr "להקצות את {workspaceMemberName}?"
 
+#. js-lingui-id: 449JVv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Assign Role"
+msgstr ""
+
 #. js-lingui-id: 17M/rH
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to manage each member’s access and permissions"
@@ -3973,6 +3978,11 @@ msgstr ""
 msgid "No Results"
 msgstr "אין תוצאות"
 
+#. js-lingui-id: qq788M
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No role"
+msgstr ""
+
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "No roles found"
@@ -5138,6 +5148,7 @@ msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -5748,6 +5759,11 @@ msgstr ""
 #. js-lingui-id: BRMXj0
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
+msgstr ""
+
+#. js-lingui-id: xdA/+p
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
