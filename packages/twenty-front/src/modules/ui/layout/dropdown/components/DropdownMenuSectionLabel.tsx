@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const StyledDropdownMenuSectionLabel = styled.div`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
   min-height: 20px;
   width: auto;
   font-size: ${({ theme }) => theme.font.size.xxs};
