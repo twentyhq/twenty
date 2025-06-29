@@ -692,6 +692,11 @@ msgstr ""
 msgid "Creation DateTime"
 msgstr ""
 
+#. js-lingui-id: Mikszu
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Custom Connection Parameters"
+msgstr ""
+
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
@@ -1201,6 +1206,11 @@ msgstr ""
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
+msgstr ""
+
+#. js-lingui-id: WNfJ8M
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "JSON object containing custom connection parameters"
 msgstr ""
 
 #. js-lingui-id: shbh25

@@ -136,6 +136,11 @@ msgstr ""
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr ""
 
+#. js-lingui-id: CwstSL
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "••••••••"
+msgstr ""
+
 #. js-lingui-id: NNQszp
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #~ msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
@@ -206,6 +211,11 @@ msgstr ""
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
+msgstr ""
+
+#. js-lingui-id: IbMa7Z
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "993"
 msgstr ""
 
 #. js-lingui-id: nMTB1f
@@ -1226,6 +1236,11 @@ msgstr ""
 msgid "Configure your emails and calendar settings."
 msgstr ""
 
+#. js-lingui-id: W4D3v/
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Configure your IMAP email account"
+msgstr ""
+
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
@@ -1248,6 +1263,11 @@ msgstr ""
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
+msgstr ""
+
+#. js-lingui-id: VZvZWq
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with IMAP"
 msgstr ""
 
 #. js-lingui-id: IOfqM8
@@ -2053,6 +2073,12 @@ msgstr ""
 msgid "Edit Fields"
 msgstr ""
 
+#. js-lingui-id: 8gm+y4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Edit IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2083,6 +2109,11 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
+#. js-lingui-id: hzKQCy
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Email Address"
+msgstr ""
+
 #. js-lingui-id: 2SWjdJ
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
@@ -2091,6 +2122,12 @@ msgstr ""
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
+msgstr ""
+
+#. js-lingui-id: Zb5c/r
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Email Connections"
 msgstr ""
 
 #. js-lingui-id: lfQsvW
@@ -2178,6 +2215,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 #: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
+msgstr ""
+
+#. js-lingui-id: q1srUM
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Encryption"
 msgstr ""
 
 #. js-lingui-id: T3juzf
@@ -2928,6 +2970,36 @@ msgstr ""
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr ""
 
+#. js-lingui-id: 3rtE4o
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Connection Details"
+msgstr ""
+
+#. js-lingui-id: jXXECN
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully created"
+msgstr ""
+
+#. js-lingui-id: Fz/wXI
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully updated"
+msgstr ""
+
+#. js-lingui-id: TE8s2c
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Port"
+msgstr ""
+
+#. js-lingui-id: /RAwfY
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Server"
+msgstr ""
+
+#. js-lingui-id: +8jOVa
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "imap.example.com"
+msgstr ""
+
 #. js-lingui-id: tSVr6t
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
@@ -3197,6 +3269,11 @@ msgstr ""
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
+msgstr ""
+
+#. js-lingui-id: wrLOeW
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "john.doe@example.com"
 msgstr ""
 
 #. js-lingui-id: VIK/N0
@@ -3689,6 +3766,12 @@ msgstr ""
 msgid "New Field"
 msgstr ""
 
+#. js-lingui-id: GeB/fA
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+msgid "New IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New key"
@@ -4150,6 +4233,7 @@ msgstr ""
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr ""
 
@@ -5050,6 +5134,8 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5768,6 +5854,11 @@ msgstr ""
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
+msgstr ""
+
+#. js-lingui-id: Vmsh9w
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Update your IMAP email account configuration"
 msgstr ""
 
 #. js-lingui-id: +b7T3G
