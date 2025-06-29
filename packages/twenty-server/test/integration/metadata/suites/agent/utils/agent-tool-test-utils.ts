@@ -67,6 +67,8 @@ export const createAgentToolTestModule =
           provide: WorkspaceEventEmitter,
           useValue: {
             emit: jest.fn(),
+            emitDatabaseBatchEvent: jest.fn(),
+            emitCustomBatchEvent: jest.fn(),
           },
         },
         {
