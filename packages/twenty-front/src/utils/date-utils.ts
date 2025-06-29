@@ -7,6 +7,7 @@ import moize from 'moize';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CustomError } from '@/error-handler/CustomError';
 import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
@@ -17,7 +18,10 @@ export const parseDate = (dateToParse: Date | string | number) => {
   let formattedDate: DateTime | null = null;
 
   if (!dateToParse) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   } else if (isString(dateToParse)) {
     formattedDate = DateTime.fromISO(dateToParse);
   } else if (isDate(dateToParse)) {
@@ -27,11 +31,17 @@ export const parseDate = (dateToParse: Date | string | number) => {
   }
 
   if (!formattedDate) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   }
 
   if (!formattedDate.isValid) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   }
 
   return formattedDate.setLocale(DEFAULT_DATE_LOCALE);

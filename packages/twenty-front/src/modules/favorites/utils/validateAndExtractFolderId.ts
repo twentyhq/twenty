@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 
 export const validateAndExtractFolderId = (
@@ -12,7 +13,11 @@ export const validateAndExtractFolderId = (
       FAVORITE_DROPPABLE_IDS.FOLDER_HEADER_PREFIX,
       '',
     );
-    if (!folderId) throw new Error(`Invalid folder header ID: ${droppableId}`);
+    if (!folderId)
+      throw new CustomError(
+        `Invalid folder header ID: ${droppableId}`,
+        'INVALID_FOLDER_HEADER_ID',
+      );
     return folderId;
   }
 
@@ -21,9 +26,16 @@ export const validateAndExtractFolderId = (
       FAVORITE_DROPPABLE_IDS.FOLDER_PREFIX,
       '',
     );
-    if (!folderId) throw new Error(`Invalid folder ID: ${droppableId}`);
+    if (!folderId)
+      throw new CustomError(
+        `Invalid folder ID: ${droppableId}`,
+        'INVALID_FOLDER_ID',
+      );
     return folderId;
   }
 
-  throw new Error(`Invalid droppable ID format: ${droppableId}`);
+  throw new CustomError(
+    `Invalid droppable ID format: ${droppableId}`,
+    'INVALID_DROPPABLE_ID_FORMAT',
+  );
 };

@@ -134,6 +134,11 @@ msgstr ""
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr ""
 
+#. js-lingui-id: pDgeaz
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "{title}"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -4276,6 +4281,12 @@ msgstr ""
 #~ msgid "Please enter a valid URL"
 #~ msgstr "Indtast venligst en gyldig URL"
 
+#. js-lingui-id: CjNkdJ
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
+msgid "Please refresh the page."
+msgstr ""
+
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
@@ -5536,6 +5547,11 @@ msgstr "Der var et problem"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de samme variabler og værdier, dette er nødvendigt for asynkrone opgaver som e-mail synkronisering."
+
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

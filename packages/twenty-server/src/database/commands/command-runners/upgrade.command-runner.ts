@@ -114,10 +114,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
         await this.runAfterSyncMetadata(args);
 
-        await this.workspaceRepository.update(
-          { id: workspaceId },
-          { version: this.currentAppVersion.version },
-        );
+        if (!options.dryRun) {
+          await this.workspaceRepository.update(
+            { id: workspaceId },
+            { version: this.currentAppVersion.version },
+          );
+        }
+
         this.logger.log(
           chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
         );

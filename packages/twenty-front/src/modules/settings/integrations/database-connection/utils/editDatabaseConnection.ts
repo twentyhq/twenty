@@ -3,6 +3,7 @@ import isEmpty from 'lodash.isempty';
 import pickBy from 'lodash.pickby';
 import { z } from 'zod';
 
+import { CustomError } from '@/error-handler/CustomError';
 import {
   settingsIntegrationPostgreSQLConnectionFormSchema,
   settingsIntegrationStripeConnectionFormSchema,
@@ -18,7 +19,10 @@ export const getEditionSchemaForForm = (databaseKey: string) => {
     case 'stripe':
       return settingsIntegrationStripeConnectionFormSchema;
     default:
-      throw new Error(`No schema found for database key: ${databaseKey}`);
+      throw new CustomError(
+        `No schema found for database key: ${databaseKey}`,
+        'NO_SCHEMA_FOUND',
+      );
   }
 };
 
@@ -91,6 +95,9 @@ export const formatValuesForUpdate = ({
         label: formValues.label,
       };
     default:
-      throw new Error(`Cannot format values for database key: ${databaseKey}`);
+      throw new CustomError(
+        `Cannot format values for database key: ${databaseKey}`,
+        'CANNOT_FORMAT_VALUES',
+      );
   }
 };

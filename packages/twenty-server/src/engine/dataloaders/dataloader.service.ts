@@ -2,15 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
+import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -46,6 +49,12 @@ export type IndexMetadataLoaderPayload = {
   objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
 };
 
+export type IndexFieldMetadataLoaderPayload = {
+  workspaceId: string;
+  objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
+  indexMetadata: Pick<IndexMetadataInterface, 'id'>;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -58,11 +67,13 @@ export class DataloaderService {
     const relationLoader = this.createRelationLoader();
     const fieldMetadataLoader = this.createFieldMetadataLoader();
     const indexMetadataLoader = this.createIndexMetadataLoader();
+    const indexFieldMetadataLoader = this.createIndexFieldMetadataLoader();
 
     return {
       relationLoader,
       fieldMetadataLoader,
       indexMetadataLoader,
+      indexFieldMetadataLoader,
     };
   }
 
@@ -178,5 +189,50 @@ export class DataloaderService {
         return fieldMetadataCollection;
       },
     );
+  }
+
+  private createIndexFieldMetadataLoader() {
+    return new DataLoader<
+      IndexFieldMetadataLoaderPayload,
+      IndexFieldMetadataDTO[]
+    >(async (dataLoaderParams: IndexFieldMetadataLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { objectMetadataMaps } =
+        await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+          { workspaceId },
+        );
+
+      return dataLoaderParams.map(
+        ({
+          objectMetadata: { id: objectMetadataId },
+          indexMetadata: { id: indexMetadataId },
+        }) => {
+          const indexMetadataEntity = objectMetadataMaps.byId[
+            objectMetadataId
+          ].indexMetadatas.find(
+            (indexMetadata) => indexMetadata.id === indexMetadataId,
+          );
+
+          if (!isDefined(indexMetadataEntity)) {
+            return [];
+          }
+
+          return indexMetadataEntity.indexFieldMetadatas.map(
+            (indexFieldMetadata) => {
+              return {
+                id: indexFieldMetadata.id,
+                fieldMetadataId: indexFieldMetadata.fieldMetadataId,
+                order: indexFieldMetadata.order,
+                createdAt: new Date(indexFieldMetadata.createdAt),
+                updatedAt: new Date(indexFieldMetadata.updatedAt),
+                indexMetadataId,
+                workspaceId,
+              };
+            },
+          );
+        },
+      );
+    });
   }
 }

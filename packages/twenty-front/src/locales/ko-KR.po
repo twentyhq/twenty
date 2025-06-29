@@ -134,6 +134,11 @@ msgstr ""
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr ""
 
+#. js-lingui-id: pDgeaz
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "{title}"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -4276,6 +4281,12 @@ msgstr ""
 #~ msgid "Please enter a valid URL"
 #~ msgstr "유효한 URL을 입력하세요"
 
+#. js-lingui-id: CjNkdJ
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
+msgid "Please refresh the page."
+msgstr ""
+
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
@@ -5536,6 +5547,11 @@ msgstr "문제가 발생했습니다"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "이것들은 서버 값에 불과합니다. 작업 환경에 동일한 변수와 값이 있는지 확인하십시오. 이메일 동기화와 같은 비동기 작업에 필요합니다."
+
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

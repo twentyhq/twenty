@@ -67,10 +67,10 @@ export const SelectFieldInput = ({
         SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
       }
       selectableItemIdArray={optionIds}
-      focusId={getFieldInputInstanceId(
+      focusId={getFieldInputInstanceId({
         recordId,
-        fieldDefinition.metadata.fieldName,
-      )}
+        fieldName: fieldDefinition.metadata.fieldName,
+      })}
       onEnter={(itemId) => {
         const option = filteredOptions.find(
           (option) => option.value === itemId,
