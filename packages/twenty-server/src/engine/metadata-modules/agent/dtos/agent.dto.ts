@@ -32,6 +32,9 @@ export class AgentDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat: object;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string;
+
   @HideField()
   workspaceId: string;
 

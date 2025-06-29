@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -13,16 +14,15 @@ import {
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('userWorkspaceRole')
-@Unique('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_ROLE_ID_UNIQUE', [
-  'userWorkspaceId',
-  'roleId',
-])
-@Index('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID', [
-  'userWorkspaceId',
-  'workspaceId',
-])
-export class UserWorkspaceRoleEntity {
+@Entity('roleTargets')
+@Unique('IDX_ROLE_TARGETS_UNIQUE', ['userWorkspaceId', 'roleId', 'agentId'])
+@Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
+@Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
+@Check(
+  'CHK_role_targets_either_agent_or_user',
+  '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL)',
+)
+export class RoleTargetsEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,14 +32,17 @@ export class UserWorkspaceRoleEntity {
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.userWorkspaceRoles, {
+  @ManyToOne(() => RoleEntity, (role) => role.roleTargets, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid' })
   userWorkspaceId: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  agentId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

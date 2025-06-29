@@ -9,6 +9,7 @@ export const FIND_ONE_AGENT = gql`
       prompt
       modelId
       responseFormat
+      roleId
     }
   }
 `;

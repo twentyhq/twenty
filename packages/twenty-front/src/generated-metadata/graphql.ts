@@ -70,6 +70,7 @@ export type Agent = {
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   responseFormat?: Maybe<Scalars['JSON']['output']>;
+  roleId?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1003,6 +1004,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
+  assignRoleToAgent: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -1049,6 +1051,7 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeRoleFromAgent: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1100,6 +1103,12 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAssignRoleToAgentArgs = {
+  agentId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID']['input'];
 };
 
 
@@ -1314,6 +1323,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveRoleFromAgentArgs = {
+  agentId: Scalars['UUID']['input'];
 };
 
 

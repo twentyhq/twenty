@@ -62,6 +62,7 @@ export type Agent = {
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: Maybe<Scalars['JSON']>;
+  roleId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -952,6 +953,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
+  assignRoleToAgent: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -996,6 +998,7 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1043,6 +1046,12 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAssignRoleToAgentArgs = {
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
@@ -1237,6 +1246,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveRoleFromAgentArgs = {
+  agentId: Scalars['UUID'];
 };
 
 
@@ -3180,6 +3194,21 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<any> | null } };
 
+export type AssignRoleToAgentMutationVariables = Exact<{
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
+}>;
+
+
+export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
+
+export type RemoveRoleFromAgentMutationVariables = Exact<{
+  agentId: Scalars['UUID'];
+}>;
+
+
+export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
+
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
 }>;
@@ -3192,7 +3221,7 @@ export type FindOneAgentQueryVariables = Exact<{
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: any | null } };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -6569,6 +6598,69 @@ export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export const AssignRoleToAgentDocument = gql`
+    mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
+  assignRoleToAgent(agentId: $agentId, roleId: $roleId)
+}
+    `;
+export type AssignRoleToAgentMutationFn = Apollo.MutationFunction<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
+
+/**
+ * __useAssignRoleToAgentMutation__
+ *
+ * To run a mutation, you first call `useAssignRoleToAgentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssignRoleToAgentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assignRoleToAgentMutation, { data, loading, error }] = useAssignRoleToAgentMutation({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *      roleId: // value for 'roleId'
+ *   },
+ * });
+ */
+export function useAssignRoleToAgentMutation(baseOptions?: Apollo.MutationHookOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>(AssignRoleToAgentDocument, options);
+      }
+export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRoleToAgentMutation>;
+export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
+export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
+export const RemoveRoleFromAgentDocument = gql`
+    mutation RemoveRoleFromAgent($agentId: UUID!) {
+  removeRoleFromAgent(agentId: $agentId)
+}
+    `;
+export type RemoveRoleFromAgentMutationFn = Apollo.MutationFunction<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
+
+/**
+ * __useRemoveRoleFromAgentMutation__
+ *
+ * To run a mutation, you first call `useRemoveRoleFromAgentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveRoleFromAgentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeRoleFromAgentMutation, { data, loading, error }] = useRemoveRoleFromAgentMutation({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *   },
+ * });
+ */
+export function useRemoveRoleFromAgentMutation(baseOptions?: Apollo.MutationHookOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>(RemoveRoleFromAgentDocument, options);
+      }
+export type RemoveRoleFromAgentMutationHookResult = ReturnType<typeof useRemoveRoleFromAgentMutation>;
+export type RemoveRoleFromAgentMutationResult = Apollo.MutationResult<RemoveRoleFromAgentMutation>;
+export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
 export const UpdateOneAgentDocument = gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
   updateOneAgent(input: $input) {
@@ -6616,6 +6708,7 @@ export const FindOneAgentDocument = gql`
     prompt
     modelId
     responseFormat
+    roleId
   }
 }
     `;
