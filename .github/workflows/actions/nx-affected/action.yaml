@@ -19,4 +19,6 @@ runs:
       uses: nrwl/nx-set-shas@v4
     - name: Run affected command
       shell: bash
-      run: npx nx affected --nxBail --configuration=${{ inputs.configuration }} -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}' ${{ inputs.args }}
+      env:
+        GITHUB_DATA: ${{ github.event.pull_request.title || github.event.head_commit.message || github.ref_name }}
+        echo "Processing: $GITHUB_DATA"
