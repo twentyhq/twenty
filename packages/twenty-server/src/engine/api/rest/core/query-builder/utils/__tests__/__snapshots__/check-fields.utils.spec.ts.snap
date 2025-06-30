@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`checkFields should accept valid relation field name 1`] = `"field 'pointOfContact' does not exist in 'opportunity' object"`;
+
+exports[`checkFields should reject invalid field name 1`] = `"field 'wrongField' does not exist in 'opportunity' object"`;
+
+exports[`checkFields should reject mix of valid and invalid field names 1`] = `"field 'wrongField' does not exist in 'opportunity' object"`;
