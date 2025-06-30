@@ -1,0 +1,70 @@
+{
+  "name": "twenty-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-shared/src",
+  "projectType": "library",
+  "tags": [
+    "scope:shared"
+  ],
+  "targets": {
+    "build": {
+      "dependsOn": [
+        "generateBarrels",
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/constants/package.json",
+        "{projectRoot}/constants/dist",
+        "{projectRoot}/testing/package.json",
+        "{projectRoot}/testing/dist",
+        "{projectRoot}/translations/package.json",
+        "{projectRoot}/translations/dist",
+        "{projectRoot}/types/package.json",
+        "{projectRoot}/types/dist",
+        "{projectRoot}/utils/package.json",
+        "{projectRoot}/utils/dist",
+        "{projectRoot}/workspace/package.json",
+        "{projectRoot}/workspace/dist"
+      ]
+    },
+    "generateBarrels": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "production",
+        "{projectRoot}/scripts/generateBarrels.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/src/index.ts",
+        "{projectRoot}/src/*/index.ts",
+        "{projectRoot}/package.json"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
+      }
+    },
+    "typecheck": {},
+    "test": {},
+    "lint": {
+      "options": {
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ],
+        "reportUnusedDisableDirectives": "error"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}
