@@ -1,5 +1,6 @@
 import { useLazyQuery, WatchQueryFetchPolicy } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -29,6 +30,8 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
     recordGqlFields:
@@ -48,6 +51,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       await findOneRecord({
         variables: { objectRecordId },
         fetchPolicy,
+        client: apolloCoreClient,
         onCompleted: (data) => {
           const record = getRecordFromRecordNode<T>({
             recordNode: data[objectNameSingular],

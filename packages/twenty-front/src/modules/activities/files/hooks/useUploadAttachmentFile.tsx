@@ -6,13 +6,15 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUploadAttachmentFile = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const [uploadFile] = useUploadFileMutation();
+  const coreClient = useApolloCoreClient();
+  const [uploadFile] = useUploadFileMutation({ client: coreClient });
 
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({

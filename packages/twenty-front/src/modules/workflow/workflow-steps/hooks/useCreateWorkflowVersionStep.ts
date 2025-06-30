@@ -12,7 +12,7 @@ import {
   CreateWorkflowVersionStepInput,
   CreateWorkflowVersionStepMutation,
   CreateWorkflowVersionStepMutationVariables,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();

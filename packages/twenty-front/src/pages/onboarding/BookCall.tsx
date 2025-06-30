@@ -14,10 +14,8 @@ import { useRecoilValue } from 'recoil';
 import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  OnboardingStatus,
-  useSkipBookOnboardingStepMutation,
-} from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { useSkipBookOnboardingStepMutation } from '~/generated/graphql';
 
 const StyledModalFooter = styled(Modal.Footer)`
   height: auto;

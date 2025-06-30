@@ -4,7 +4,7 @@ import { useApolloClient } from '@apollo/client';
 import {
   CreateDraftFromWorkflowVersionInput,
   useCreateDraftFromWorkflowVersionMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreateDraftFromWorkflowVersion = () => {
   const apolloClient = useApolloClient();

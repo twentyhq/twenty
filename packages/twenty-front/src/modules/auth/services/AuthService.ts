@@ -7,14 +7,14 @@ import {
 } from '@apollo/client';
 
 import { loggerLink } from '@/apollo/utils/loggerLink';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AuthTokenPair,
   RenewTokenDocument,
   RenewTokenMutation,
   RenewTokenMutationVariables,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty-Refresh');
 

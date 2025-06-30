@@ -10,7 +10,7 @@ import {
   useCreateDatabaseConfigVariableMutation,
   useDeleteDatabaseConfigVariableMutation,
   useUpdateDatabaseConfigVariableMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useConfigVariableActions = (variableName: string) => {
   const { t } = useLingui();

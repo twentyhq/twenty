@@ -7,17 +7,19 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AuthProviders } from '~/generated-metadata/graphql';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { capitalize } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Card } from 'twenty-ui/layout';
+import { capitalize } from 'twenty-shared/utils';
 import {
   IconGoogle,
   IconLink,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import {
+  AuthProviders,
+  useUpdateWorkspaceMutation,
+} from '~/generated-metadata/graphql';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
