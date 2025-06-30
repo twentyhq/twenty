@@ -1,11 +1,12 @@
-import { HttpRequestBody } from '../constants/HttpRequest';
+import { isString } from '@sniptt/guards';
+import { JsonArray, JsonObject } from 'type-fest';
 
-export const hasNonStringValues = (obj?: HttpRequestBody): boolean => {
-  if (!obj) {
-    return false;
+export const hasNonStringValues = (obj: JsonObject | JsonArray): boolean => {
+  const values = Object.values(obj);
+
+  if (values.length === 0) {
+    return true;
   }
-  return Object.values(obj).some(
-    (value) =>
-      value !== null && value !== undefined && typeof value !== 'string',
-  );
+
+  return !values.every((value) => isString(value));
 };

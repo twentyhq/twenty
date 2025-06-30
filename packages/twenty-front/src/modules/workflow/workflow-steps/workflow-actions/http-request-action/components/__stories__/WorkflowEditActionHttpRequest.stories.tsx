@@ -1,6 +1,6 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, within } from '@storybook/test';
+import { expect, fn, waitFor, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -8,7 +8,10 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import {
+  getWorkflowNodeIdMock,
+  MOCKED_STEP_ID,
+} from '~/testing/mock-data/workflow';
 import { WorkflowEditActionHttpRequest } from '../WorkflowEditActionHttpRequest';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
@@ -147,5 +150,210 @@ export const ReadOnly: Story = {
 
     const methodSelect = await canvas.findByText('POST');
     expect(methodSelect).toBeVisible();
+  },
+};
+
+export const WithArrayStringBody: Story = {
+  args: {
+    action: {
+      id: getWorkflowNodeIdMock(),
+      name: 'API Call with Array',
+      type: 'HTTP_REQUEST',
+      valid: true,
+      settings: {
+        input: {
+          url: 'https://api.example.com/tags',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: `[
+  "frontend",
+  "backend",
+  "database"
+]`,
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: {
+            value: false,
+          },
+          continueOnFailure: {
+            value: false,
+          },
+        },
+      },
+    } satisfies WorkflowHttpRequestAction,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Key/Value')).toBeVisible();
+
+    expect(await canvas.findByText('0')).toBeVisible();
+    expect(await canvas.findByText('1')).toBeVisible();
+    expect(await canvas.findByText('2')).toBeVisible();
+
+    expect(await canvas.findByText('frontend')).toBeVisible();
+    expect(await canvas.findByText('backend')).toBeVisible();
+    expect(await canvas.findByText('database')).toBeVisible();
+  },
+};
+
+export const WithObjectStringBody: Story = {
+  args: {
+    action: {
+      id: getWorkflowNodeIdMock(),
+      name: 'API Call with Array',
+      type: 'HTTP_REQUEST',
+      valid: true,
+      settings: {
+        input: {
+          url: 'https://api.example.com/tags',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: `{
+  "hey": "frontend",
+  "oh": "backend",
+  "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
+}`,
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: {
+            value: false,
+          },
+          continueOnFailure: {
+            value: false,
+          },
+        },
+      },
+    } satisfies WorkflowHttpRequestAction,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Key/Value')).toBeVisible();
+
+    const textboxes = await waitFor(() => {
+      const elements = canvas.getAllByRole('textbox');
+      expect(elements.length).toBe(14);
+      return elements;
+    });
+
+    expect(textboxes[5]).toHaveTextContent('hey');
+    expect(textboxes[7]).toHaveTextContent('oh');
+    expect(textboxes[9]).toHaveTextContent('amazing');
+
+    expect(textboxes[6]).toHaveTextContent('frontend');
+    expect(textboxes[8]).toHaveTextContent('backend');
+    expect(textboxes[10]).toHaveTextContent('database Salary');
+  },
+};
+
+export const WithArrayContainingNonStringVariablesBody: Story = {
+  args: {
+    action: {
+      id: getWorkflowNodeIdMock(),
+      name: 'API Call with Array',
+      type: 'HTTP_REQUEST',
+      valid: true,
+      settings: {
+        input: {
+          url: 'https://api.example.com/tags',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: `[
+  "frontend",
+  {{${MOCKED_STEP_ID}.salary}},
+  "database"
+]`,
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: {
+            value: false,
+          },
+          continueOnFailure: {
+            value: false,
+          },
+        },
+      },
+    } satisfies WorkflowHttpRequestAction,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Raw JSON')).toBeVisible();
+
+    await waitFor(() => {
+      const textboxes = canvas.getAllByRole('textbox');
+
+      expect(textboxes[5]).toHaveTextContent(
+        '[ "frontend", Salary, "database"]',
+      );
+    });
+  },
+};
+
+export const WithObjectContainingNonStringVariablesBody: Story = {
+  args: {
+    action: {
+      id: getWorkflowNodeIdMock(),
+      name: 'API Call with Array',
+      type: 'HTTP_REQUEST',
+      valid: true,
+      settings: {
+        input: {
+          url: 'https://api.example.com/tags',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: `{
+  "speciality": "frontend",
+  "salary": {{${MOCKED_STEP_ID}.salary}}
+}`,
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: {
+            value: false,
+          },
+          continueOnFailure: {
+            value: false,
+          },
+        },
+      },
+    } satisfies WorkflowHttpRequestAction,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Raw JSON')).toBeVisible();
+
+    await waitFor(() => {
+      const textboxes = canvas.getAllByRole('textbox');
+
+      expect(textboxes[5]).toHaveTextContent(
+        '{ "speciality": "frontend", "salary": Salary}',
+      );
+    });
   },
 };

@@ -126,6 +126,7 @@ export const workflowHttpRequestActionSettingsSchema =
             z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
           ]),
         )
+        .or(z.string())
         .optional(),
     }),
   });

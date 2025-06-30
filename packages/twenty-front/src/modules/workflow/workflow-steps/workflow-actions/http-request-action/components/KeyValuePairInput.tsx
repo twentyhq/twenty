@@ -39,7 +39,7 @@ export type KeyValuePair = {
 
 export type KeyValuePairInputProps = {
   label?: string;
-  defaultValue?: Record<string, string>;
+  defaultValue?: Record<string, string> | Array<string>;
   onChange: (value: Record<string, string>) => void;
   readonly?: boolean;
   keyPlaceholder?: string;

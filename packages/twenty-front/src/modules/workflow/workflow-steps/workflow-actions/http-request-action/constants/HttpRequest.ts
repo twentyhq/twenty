@@ -21,7 +21,7 @@ export type HttpRequestFormData = {
   url: string;
   method: HttpMethod;
   headers: Record<string, string>;
-  body?: HttpRequestBody;
+  body?: HttpRequestBody | string;
 };
 
 export const DEFAULT_JSON_BODY_PLACEHOLDER =
