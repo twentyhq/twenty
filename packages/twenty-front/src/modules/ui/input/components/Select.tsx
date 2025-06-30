@@ -5,12 +5,12 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -115,7 +115,7 @@ export const Select = <Value extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const dropDownMenuWidth =
     dropdownWidthAuto && selectContainerRef.current?.clientWidth
@@ -185,7 +185,7 @@ export const Select = <Value extends SelectValue>({
                         onEnter={() => {
                           onChange?.(option.value);
                           onBlur?.();
-                          closeDropdown();
+                          closeDropdown(dropdownId);
                         }}
                       >
                         <MenuItemSelect
@@ -197,7 +197,7 @@ export const Select = <Value extends SelectValue>({
                           onClick={() => {
                             onChange?.(option.value);
                             onBlur?.();
-                            closeDropdown();
+                            closeDropdown(dropdownId);
                           }}
                         />
                       </SelectableListItem>

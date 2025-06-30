@@ -10,7 +10,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -31,13 +31,13 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
 }: AdvancedFilterRecordFilterOperandSelectContentProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { applyObjectFilterDropdownOperand } =
     useApplyObjectFilterDropdownOperand();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     applyObjectFilterDropdownOperand(operand);
   };

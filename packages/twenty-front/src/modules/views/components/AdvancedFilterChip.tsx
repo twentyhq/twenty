@@ -9,7 +9,7 @@ import { SOFT_DELETE_FILTER_FIELD_NAME } from '@/object-record/record-filter/con
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
@@ -19,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 
 export const AdvancedFilterChip = () => {
-  const { closeDropdown } = useDropdown(ADVANCED_FILTER_DROPDOWN_ID);
+  const { closeDropdown } = useCloseDropdown();
 
   const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
@@ -49,7 +49,7 @@ export const AdvancedFilterChip = () => {
     });
 
   const handleRemoveClick = () => {
-    closeDropdown();
+    closeDropdown(ADVANCED_FILTER_DROPDOWN_ID);
 
     const viewFilterGroupIds = currentRecordFilterGroups.map(
       (recordFilterGroup) => recordFilterGroup.id,
