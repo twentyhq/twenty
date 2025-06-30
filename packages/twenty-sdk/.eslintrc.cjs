@@ -4,7 +4,7 @@ module.exports = {
     {
       files: ['**/*.ts'],
       parserOptions: {
-        project: ['packages/twenty-shared/tsconfig.*.json'],
+        project: ['packages/twenty-sdk/tsconfig.*.json'],
       },
       rules: {
         '@nx/dependency-checks': 'error',

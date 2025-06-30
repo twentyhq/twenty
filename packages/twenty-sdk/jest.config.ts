@@ -2,7 +2,7 @@ import { JestConfigWithTsJest } from 'ts-jest';
 
 const jestConfig: JestConfigWithTsJest = {
   silent: true,
-  displayName: 'twenty-shared',
+  displayName: 'twenty-sdk',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
   transformIgnorePatterns: ['../../node_modules/'],

@@ -43,7 +43,7 @@ jobs:
       - name: Run ${{ matrix.task }} task
         uses: ./.github/workflows/actions/nx-affected
         with:
-          tag: scope:frontend
+          tag: scope:sdk
           tasks: ${{ matrix.task }}
   ci-sdk-status-check:
     if: always() && !cancelled()

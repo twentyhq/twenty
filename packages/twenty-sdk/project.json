@@ -1,27 +1,13 @@
 {
   "name": "twenty-sdk",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/twenty-shared/src",
+  "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
-  "tags": ["scope:shared"],
+  "tags": ["scope:sdk"],
   "targets": {
     "build": {
       "dependsOn": ["generateBarrels", "^build"],
-      "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/constants/package.json",
-        "{projectRoot}/constants/dist",
-        "{projectRoot}/testing/package.json",
-        "{projectRoot}/testing/dist",
-        "{projectRoot}/translations/package.json",
-        "{projectRoot}/translations/dist",
-        "{projectRoot}/types/package.json",
-        "{projectRoot}/types/dist",
-        "{projectRoot}/utils/package.json",
-        "{projectRoot}/utils/dist",
-        "{projectRoot}/workspace/package.json",
-        "{projectRoot}/workspace/dist"
-      ]
+      "outputs": ["{projectRoot}/dist"]
     },
     "typecheck": {},
     "test": {},
