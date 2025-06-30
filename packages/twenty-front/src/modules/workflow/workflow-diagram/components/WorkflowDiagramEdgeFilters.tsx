@@ -13,7 +13,6 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconFilterX, IconGitBranchDeleted } from '@tabler/icons-react';
 import { EdgeLabelRenderer } from '@xyflow/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -21,6 +20,8 @@ import {
   IconDotsVertical,
   IconFilter,
   IconFilterPlus,
+  IconFilterX,
+  IconGitBranchDeleted,
   IconPlus,
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
@@ -44,19 +45,19 @@ const StyledOpacityOverlay = styled(motion.div)<{ shouldDisplay: boolean }>`
   position: relative;
 `;
 
-type WorkflowDiagramEdgeOptionsProps = {
+type WorkflowDiagramEdgeFiltersProps = {
   labelX: number;
   labelY: number;
   parentStepId: string;
   nextStepId: string;
 };
 
-export const WorkflowDiagramEdgeOptions = ({
+export const WorkflowDiagramEdgeFilters = ({
   labelX,
   labelY,
   parentStepId,
   nextStepId,
-}: WorkflowDiagramEdgeOptionsProps) => {
+}: WorkflowDiagramEdgeFiltersProps) => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const { startNodeCreation } = useStartNodeCreation();

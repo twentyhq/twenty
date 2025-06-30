@@ -1,8 +1,11 @@
+import { WorkflowDiagramEdgeAddNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeAddNode';
+import { WorkflowDiagramEdgeFilters } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeFilters';
+import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
+import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
-import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
-import { WorkflowDiagramEdgeOptions } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeOptions';
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramDefaultEdgeProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -16,6 +19,10 @@ export const WorkflowDiagramDefaultEdge = ({
   data,
 }: WorkflowDiagramDefaultEdgeProps) => {
   const theme = useTheme();
+
+  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  );
 
   const [edgePath, labelX, labelY] = getStraightPath({
     sourceX: CREATE_STEP_NODE_WIDTH,
@@ -33,12 +40,22 @@ export const WorkflowDiagramDefaultEdge = ({
         style={{ stroke: theme.border.color.strong }}
       />
       {data?.shouldDisplayEdgeOptions && (
-        <WorkflowDiagramEdgeOptions
-          labelX={labelX}
-          labelY={labelY}
-          parentStepId={source}
-          nextStepId={target}
-        />
+        <>
+          {isWorkflowFilteringEnabled ? (
+            <WorkflowDiagramEdgeFilters
+              labelX={labelX}
+              labelY={labelY}
+              parentStepId={source}
+              nextStepId={target}
+            />
+          ) : (
+            <WorkflowDiagramEdgeAddNode
+              labelY={labelY}
+              parentStepId={source}
+              nextStepId={target}
+            />
+          )}
+        </>
       )}
     </>
   );
