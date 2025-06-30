@@ -65,6 +65,30 @@ Below are a few features we have implemented to date:
 + [Automate workflow with triggers and actions](#automate-workflow-with-triggers-and-actions)
 + [Emails, calendar events, files, and more](#emails-calendar-events-files-and-more)
 
+---
+
+## 🔍 Search People/Contacts by Email (API)
+
+You can now search for people/contacts using their email address via the API. The UUID is no longer a mandatory requirement for lookups—email addresses can be used as a unique identifier for integrations and queries.
+
+**GraphQL Example:**
+```graphql
+query {
+  findOnePerson(filter: { emails: { primaryEmail: { eq: "user@example.com" } } }) {
+    id
+    name
+    emails {
+      primaryEmail
+    }
+  }
+}
+```
+
+- You can still search by `id` (UUID) if you have it.
+- If multiple people share the same email, the first match will be returned (consider handling duplicates in your integration logic).
+- This makes it easier to connect Twenty with other services that use email as a unique identifier.
+
+---
 
 ## Personalize layouts with filters, sort, group by, kanban and table views
 

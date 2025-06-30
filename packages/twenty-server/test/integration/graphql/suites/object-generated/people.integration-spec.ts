@@ -66,4 +66,68 @@ describe('peopleResolver (e2e)', () => {
         }
       });
   });
+
+  it('should find a person by primary email', () => {
+    const queryData = {
+      query: `
+        query findOnePersonByEmail {
+          findOnePerson(filter: { emails: { primaryEmail: { eq: \"mark.young@example.com\" } } }) {
+            id
+            name {
+              firstName
+              lastName
+            }
+            emails {
+              primaryEmail
+            }
+          }
+        }
+      `,
+    };
+
+    return client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .send(queryData)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.data).toBeDefined();
+        expect(res.body.errors).toBeUndefined();
+        const person = res.body.data.findOnePerson;
+        expect(person).toBeDefined();
+        expect(person.emails.primaryEmail).toBe('mark.young@example.com');
+        expect(person.name.firstName).toBe('Mark');
+      });
+  });
+
+  it('should return null or error for non-existent email', () => {
+    const queryData = {
+      query: `
+        query findOnePersonByEmail {
+          findOnePerson(filter: { emails: { primaryEmail: { eq: \"notfound@example.com\" } } }) {
+            id
+            emails {
+              primaryEmail
+            }
+          }
+        }
+      `,
+    };
+
+    return client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .send(queryData)
+      .expect(200)
+      .expect((res) => {
+        // Depending on implementation, could be null or error
+        // If error, res.body.errors should be defined
+        // If null, res.body.data.findOnePerson should be null
+        if (res.body.errors) {
+          expect(res.body.errors.length).toBeGreaterThan(0);
+        } else {
+          expect(res.body.data.findOnePerson).toBeNull();
+        }
+      });
+  });
 });
