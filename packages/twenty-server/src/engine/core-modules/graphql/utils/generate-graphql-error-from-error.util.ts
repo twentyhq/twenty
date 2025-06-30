@@ -13,8 +13,10 @@ export const generateGraphQLErrorFromError = (
   );
 
   if (error instanceof CustomException) {
-    graphqlError.extensions.errorFrontEndMessage =
-      error.errorFrontEndMessage ?? 'An error occurred.';
+    graphqlError.extensions.displayedErrorMessage =
+      error.displayedErrorMessage ?? 'An error occurred.';
+  } else {
+    graphqlError.extensions.displayedErrorMessage = 'An error occurred.';
   }
 
   return graphqlError;
