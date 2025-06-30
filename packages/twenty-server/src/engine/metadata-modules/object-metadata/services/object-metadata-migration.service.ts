@@ -120,7 +120,7 @@ export class ObjectMetadataMigrationService {
       existingObjectMetadata,
     );
 
-    this.workspaceMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`rename-${existingObjectMetadata.nameSingular}`),
       workspaceId,
       [

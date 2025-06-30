@@ -124,12 +124,15 @@ export class WorkspaceMigrationService {
       ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
       : this.workspaceMigrationRepository;
 
-    return workspaceMigrationRepository.save({
+    const migration = await workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,
       isCustom: true,
+      createdAt: new Date(),
     });
+
+    return migration;
   }
 
   public async deleteAllWithinWorkspace(workspaceId: string) {

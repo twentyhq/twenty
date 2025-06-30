@@ -478,6 +478,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       await objectMetadataRepository.delete(objectMetadata.id);
 
+      await queryRunner.commitTransaction();
+
+      // After commit, do non-transactional work
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
