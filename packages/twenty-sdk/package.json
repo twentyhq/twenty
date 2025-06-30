@@ -1,7 +1,7 @@
 {
-  "name": "twenty-shared",
-  "main": "dist/twenty-shared.cjs.js",
-  "module": "dist/twenty-shared.esm.js",
+  "name": "twenty-sdk",
+  "main": "dist/twenty-sdk.cjs.js",
+  "module": "dist/twenty-sdk.esm.js",
   "license": "AGPL-3.0",
   "scripts": {
     "build": "preconstruct build"
@@ -21,28 +21,15 @@
     "tsx": "^4.19.3"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0",
     "zod": "3.23.8"
   },
   "preconstruct": {
     "tsconfig": "tsconfig.lib.json",
     "entrypoints": [
-      "./index.ts",
-      "./constants/index.ts",
-      "./testing/index.ts",
-      "./translations/index.ts",
-      "./types/index.ts",
-      "./utils/index.ts",
-      "./workspace/index.ts"
+      "./index.ts"
     ]
   },
   "files": [
-    "dist",
-    "constants",
-    "testing",
-    "translations",
-    "types",
-    "utils",
-    "workspace"
+    "dist"
   ]
 }

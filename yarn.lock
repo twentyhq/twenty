@@ -56749,6 +56749,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-sdk@workspace:packages/twenty-sdk":
+  version: 0.0.0-use.local
+  resolution: "twenty-sdk@workspace:packages/twenty-sdk"
+  dependencies:
+    "@babel/preset-env": "npm:^7.26.9"
+    "@preconstruct/cli": "npm:^2.8.12"
+    "@prettier/sync": "npm:^0.5.2"
+    "@types/babel__preset-env": "npm:^7"
+    babel-plugin-module-resolver: "npm:^5.0.2"
+    glob: "npm:^11.0.1"
+    tsx: "npm:^4.19.3"
+    zod: "npm:3.23.8"
+  languageName: unknown
+  linkType: soft
+
 "twenty-server@workspace:packages/twenty-server":
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
