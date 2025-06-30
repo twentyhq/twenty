@@ -431,7 +431,6 @@ export type ConnectionParameters = {
   password: Scalars['String']['input'];
   port: Scalars['Float']['input'];
   secure?: InputMaybe<Scalars['Boolean']['input']>;
-  username: Scalars['String']['input'];
 };
 
 export type ConnectionParametersOutput = {
@@ -440,7 +439,6 @@ export type ConnectionParametersOutput = {
   password: Scalars['String']['output'];
   port: Scalars['Float']['output'];
   secure?: Maybe<Scalars['Boolean']['output']>;
-  username: Scalars['String']['output'];
 };
 
 export type CreateAgentInput = {
@@ -693,7 +691,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
-  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
+  IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',

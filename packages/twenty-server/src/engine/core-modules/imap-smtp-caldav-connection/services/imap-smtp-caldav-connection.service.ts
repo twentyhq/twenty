@@ -1,6 +1,8 @@
+// TODO: FIX THIS FILE
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
+import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -19,17 +21,16 @@ export class ImapSmtpCaldavService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async testImapConnection(params: ConnectionParameters): Promise<boolean> {
-    if (!params.host || !params.username || !params.password) {
-      throw new UserInputError('Missing required IMAP connection parameters');
-    }
-
+  async testImapConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
     const client = new ImapFlow({
       host: params.host,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
-        user: params.username,
+        user: handle,
         pass: params.password,
       },
       logger: false,
@@ -74,32 +75,59 @@ export class ImapSmtpCaldavService {
     }
   }
 
-  async testSmtpConnection(params: ConnectionParameters): Promise<boolean> {
-    this.logger.log('SMTP connection testing not yet implemented', params);
+  async testSmtpConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
+    const transport = createTransport({
+      host: params.host,
+      port: params.port,
+      auth: {
+        user: handle,
+        pass: params.password,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    try {
+      await transport.verify();
+    } catch (error) {
+      this.logger.error(
+        `SMTP connection failed: ${error.message}`,
+        error.stack,
+      );
+      throw new UserInputError(`SMTP connection failed: ${error.message}`);
+    }
 
     return true;
   }
 
-  async testCaldavConnection(params: ConnectionParameters): Promise<boolean> {
+  async testCaldavConnection(
+    handle: string,
+    params: ConnectionParameters,
+  ): Promise<boolean> {
     this.logger.log('CALDAV connection testing not yet implemented', params);
 
     return true;
   }
 
   async testImapSmtpCaldav(
+    handle: string,
     params: ConnectionParameters,
     accountType: AccountType,
   ): Promise<boolean> {
     if (accountType === 'IMAP') {
-      return this.testImapConnection(params);
+      return this.testImapConnection(handle, params);
     }
 
     if (accountType === 'SMTP') {
-      return this.testSmtpConnection(params);
+      return this.testSmtpConnection(handle, params);
     }
 
     if (accountType === 'CALDAV') {
-      return this.testCaldavConnection(params);
+      return this.testCaldavConnection(handle, params);
     }
 
     throw new UserInputError(

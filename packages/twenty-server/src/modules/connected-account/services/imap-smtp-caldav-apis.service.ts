@@ -69,9 +69,7 @@ export class ImapSmtpCalDavAPIService {
       ? await connectedAccountRepository.findOne({
           where: { id: connectedAccountId },
         })
-      : await connectedAccountRepository.findOne({
-          where: { handle, accountOwnerId: workspaceMemberId },
-        });
+      : null;
 
     const existingAccountId = connectedAccount?.id;
     const newOrExistingConnectedAccountId =
@@ -87,6 +85,8 @@ export class ImapSmtpCalDavAPIService {
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId,
       });
+
+    const isSyncEnabled = input.accountType !== 'SMTP';
 
     await workspaceDataSource.transaction(async () => {
       if (!existingAccountId) {
@@ -129,7 +129,10 @@ export class ImapSmtpCalDavAPIService {
             connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
-            syncStatus: MessageChannelSyncStatus.ONGOING,
+            isSyncEnabled: isSyncEnabled,
+            ...(isSyncEnabled
+              ? { syncStatus: MessageChannelSyncStatus.ONGOING }
+              : {}),
           },
           {},
         );
@@ -194,40 +197,46 @@ export class ImapSmtpCalDavAPIService {
           where: { connectedAccountId: newOrExistingConnectedAccountId },
         });
 
-        const messageChannelUpdates = await messageChannelRepository.update(
-          {
-            connectedAccountId: newOrExistingConnectedAccountId,
-          },
-          {
-            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
-            syncCursor: '',
-            syncStageStartedAt: null,
-          },
-        );
-
-        const messageChannelMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'messageChannel', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'messageChannel',
-          action: DatabaseEventAction.UPDATED,
-          events: messageChannels.map((messageChannel) => ({
-            recordId: messageChannel.id,
-            objectMetadata: messageChannelMetadata,
-            properties: {
-              before: messageChannel,
-              after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
+        if (isSyncEnabled) {
+          const messageChannelUpdates = await messageChannelRepository.update(
+            {
+              connectedAccountId: newOrExistingConnectedAccountId,
             },
-          })),
-          workspaceId,
-        });
+            {
+              syncStage:
+                MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+              syncStatus: null,
+              syncCursor: '',
+              syncStageStartedAt: null,
+            },
+          );
+
+          const messageChannelMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: { nameSingular: 'messageChannel', workspaceId },
+            });
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'messageChannel',
+            action: DatabaseEventAction.UPDATED,
+            events: messageChannels.map((messageChannel) => ({
+              recordId: messageChannel.id,
+              objectMetadata: messageChannelMetadata,
+              properties: {
+                before: messageChannel,
+                after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
+              },
+            })),
+            workspaceId,
+          });
+        }
       }
     });
 
-    if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
+    if (
+      this.twentyConfigService.get('IS_IMAP_SMTP_CALDAV_ENABLED') &&
+      isSyncEnabled
+    ) {
       const messageChannels = await messageChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,

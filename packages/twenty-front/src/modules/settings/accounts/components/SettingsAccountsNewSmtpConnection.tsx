@@ -1,33 +1,20 @@
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
-import { Loader } from 'twenty-ui/feedback';
-
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-import { NotFound } from '~/pages/not-found/NotFound';
 import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
 
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 200px;
-  justify-content: center;
-`;
-
-export const SettingsAccountsEditImapConnection = () => {
+export const SettingsAccountsNewSmtpConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
   const {
     formMethods,
@@ -36,32 +23,17 @@ export const SettingsAccountsEditImapConnection = () => {
     canSave,
     isSubmitting,
     loading,
-    connectedAccount,
   } = useImapSmtpCaldavConnectionForm({
-    connectionType: 'IMAP',
-    isEditing: true,
-    connectedAccountId,
+    connectionType: 'SMTP',
   });
 
   const { control } = formMethods;
 
-  if (loading && !connectedAccount) {
-    return (
-      <StyledLoadingContainer>
-        <Loader />
-      </StyledLoadingContainer>
-    );
-  }
-
-  if (!connectedAccount && !loading) {
-    return <NotFound />;
-  }
-
-  const renderForm = () => (
+  return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`Edit IMAP Connection`}
+        title={t`New SMTP Connection`}
         links={[
           {
             children: t`Workspace`,
@@ -71,7 +43,7 @@ export const SettingsAccountsEditImapConnection = () => {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`Edit IMAP Connection` },
+          { children: t`New SMTP Connection` },
         ]}
         actionButton={
           <SaveAndCancelButtons
@@ -86,13 +58,11 @@ export const SettingsAccountsEditImapConnection = () => {
         <SettingsPageContainer>
           <SettingsAccountsConnectionForm
             control={control}
-            connectionType="IMAP"
-            isEditing={true}
+            connectionType="SMTP"
+            isEditing={false}
           />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>
   );
-
-  return renderForm();
 };
