@@ -1,5 +1,6 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
@@ -22,6 +23,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
 
   const { performCombinedFindManyRecords } =
     usePerformCombinedFindManyRecords();
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const performSearch = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -97,6 +100,13 @@ export const useMultipleRecordPickerPerformSearch = () => {
           ({ isSelected }) => isSelected,
         );
 
+        const filteredSearchableObjectMetadataItems =
+          searchableObjectMetadataItems.filter(
+            (objectMetadataItem) =>
+              objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+                .canReadObjectRecords === true,
+          );
+
         const [
           searchRecordsFilteredOnPickedRecords,
           searchRecordsExcludingPickedRecords,
@@ -104,7 +114,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         ] = await performSearchQueries({
           client,
           searchFilter,
-          searchableObjectMetadataItems,
+          searchableObjectMetadataItems: filteredSearchableObjectMetadataItems,
           pickedRecordIds: selectedPickableMorphItems.map(
             ({ recordId }) => recordId,
           ),
@@ -357,7 +367,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
           false,
         );
       },
-    [client, performCombinedFindManyRecords],
+    [
+      client,
+      performCombinedFindManyRecords,
+      objectPermissionsByObjectMetadataId,
+    ],
   );
 
   return { performSearch };

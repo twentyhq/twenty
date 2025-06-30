@@ -2,6 +2,7 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -22,6 +23,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -41,13 +44,12 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           cache: apolloClient.cache,
           recordId,
           objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
         });
         if (
           !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.output))
         ) {
-          throw new Error(
-            `No workflow run record found for record ID ${recordId}`,
-          );
+          return;
         }
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({
@@ -114,7 +116,12 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepExecutionStatus: stepToOpenByDefault.data.runStatus,
         });
       },
-    [apolloClient.cache, getIcon, openWorkflowRunViewStepInCommandMenu],
+    [
+      apolloClient.cache,
+      getIcon,
+      openWorkflowRunViewStepInCommandMenu,
+      objectPermissionsByObjectMetadataId,
+    ],
   );
 
   return {

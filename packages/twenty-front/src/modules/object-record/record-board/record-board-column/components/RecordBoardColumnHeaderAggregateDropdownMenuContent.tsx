@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import {
   RecordBoardColumnHeaderAggregateDropdownContext,
   RecordBoardColumnHeaderAggregateDropdownContextValue,
@@ -17,9 +17,11 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   const { t } = useLingui();
 
   const { onContentChange, closeDropdown } =
-    useDropdown<RecordBoardColumnHeaderAggregateDropdownContextValue>({
-      context: RecordBoardColumnHeaderAggregateDropdownContext,
-    });
+    useDropdownContextStateManagement<RecordBoardColumnHeaderAggregateDropdownContextValue>(
+      {
+        context: RecordBoardColumnHeaderAggregateDropdownContext,
+      },
+    );
 
   useScopedHotkeys(
     [Key.Escape],

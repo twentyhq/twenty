@@ -9,7 +9,7 @@ import {
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertUnreachable, parseJson } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const buildValueFromFilter = ({
   filter,
@@ -20,7 +20,7 @@ export const buildValueFromFilter = ({
 }: {
   filter: RecordFilter;
   options?: FieldMetadataItemOption[];
-  relationType?: RelationDefinitionType;
+  relationType?: RelationType;
   currentWorkspaceMember?: CurrentWorkspaceMember;
   label?: string;
 }) => {
@@ -66,6 +66,11 @@ export const buildValueFromFilter = ({
         filter.operand as (typeof FILTER_OPERANDS_MAP)['BOOLEAN'][number],
         filter.value,
       );
+    case 'TS_VECTOR':
+      return computeValueFromFilterTSVector(
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['TS_VECTOR'][number],
+        filter.value,
+      );
     case 'ARRAY':
       return computeValueFromFilterArray(
         filter.operand as (typeof FILTER_OPERANDS_MAP)['ARRAY'][number],
@@ -91,6 +96,11 @@ export const buildValueFromFilter = ({
         label,
       );
     }
+    case 'UUID':
+      return computeValueFromFilterUUID(
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['UUID'][number],
+        filter.value,
+      );
     default:
       assertUnreachable(filter.type);
   }
@@ -264,7 +274,7 @@ const computeValueFromFilterMultiSelect = (
 const computeValueFromFilterRelation = (
   operand: RecordFilterToRecordInputOperand<'RELATION'>,
   value: string,
-  relationType?: RelationDefinitionType,
+  relationType?: RelationType,
   currentWorkspaceMember?: CurrentWorkspaceMember,
   label?: string,
 ) => {
@@ -274,10 +284,7 @@ const computeValueFromFilterRelation = (
         isCurrentWorkspaceMemberSelected: boolean;
         selectedRecordIds: string[];
       }>(value);
-      if (
-        relationType === RelationDefinitionType.MANY_TO_ONE ||
-        relationType === RelationDefinitionType.ONE_TO_ONE
-      ) {
+      if (relationType === RelationType.MANY_TO_ONE) {
         if (label === 'Assignee') {
           return parsedValue?.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
@@ -292,6 +299,30 @@ const computeValueFromFilterRelation = (
     case ViewFilterOperand.IsNotEmpty: // todo
     case ViewFilterOperand.IsEmpty:
       return undefined;
+    default:
+      assertUnreachable(operand);
+  }
+};
+
+const computeValueFromFilterTSVector = (
+  operand: RecordFilterToRecordInputOperand<'TS_VECTOR'>,
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.VectorSearch:
+      return value;
+    default:
+      assertUnreachable(operand);
+  }
+};
+
+const computeValueFromFilterUUID = (
+  operand: RecordFilterToRecordInputOperand<'UUID'>,
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Is:
+      return value;
     default:
       assertUnreachable(operand);
   }

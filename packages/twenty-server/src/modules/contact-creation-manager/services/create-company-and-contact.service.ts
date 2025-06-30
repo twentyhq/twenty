@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Any, DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -20,6 +21,7 @@ import { Contact } from 'src/modules/contact-creation-manager/types/contact.type
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
@@ -30,7 +32,7 @@ export class CreateCompanyAndContactService {
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -59,9 +61,6 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         WorkspaceMemberWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
     const workspaceMembers = await workspaceMemberRepository.find();
@@ -81,16 +80,36 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const alreadyCreatedContacts = await personRepository.find({
-      withDeleted: true,
-      where: {
-        emails: { primaryEmail: Any(uniqueHandles) },
-      },
+    const queryBuilder = addPersonEmailFiltersToQueryBuilder({
+      queryBuilder: personRepository.createQueryBuilder('person'),
+      emails: uniqueHandles,
     });
 
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ emails }) => emails?.primaryEmail?.toLowerCase(),
+    const rawAlreadyCreatedContacts = await queryBuilder
+      .orderBy('person.createdAt', 'ASC')
+      .getMany();
+
+    const alreadyCreatedContacts = await personRepository.formatResult(
+      rawAlreadyCreatedContacts,
     );
+
+    const alreadyCreatedContactEmails: string[] =
+      alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
+        const currentContactEmails: string[] = [];
+
+        if (isNonEmptyString(emails?.primaryEmail)) {
+          currentContactEmails.push(emails.primaryEmail.toLowerCase());
+        }
+        if (Array.isArray(emails?.additionalEmails)) {
+          const additionalEmails = emails.additionalEmails
+            .filter(isNonEmptyString)
+            .map((email) => email.toLowerCase());
+
+          currentContactEmails.push(...additionalEmails);
+        }
+
+        return [...acc, ...currentContactEmails];
+      }, []);
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>

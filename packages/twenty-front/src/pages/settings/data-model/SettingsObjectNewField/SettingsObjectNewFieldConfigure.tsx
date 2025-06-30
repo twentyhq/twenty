@@ -1,4 +1,3 @@
-import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,7 +21,6 @@ import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -33,8 +31,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
@@ -88,18 +84,13 @@ export const SettingsObjectNewFieldConfigure = () => {
     );
   }, [fieldType, formConfig]);
 
-  const [, setObjectViews] = useState<View[]>([]);
-  const [, setRelationObjectViews] = useState<View[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
-    },
-    onCompleted: async (views) => {
-      if (isUndefinedOrNull(views)) return;
-      setObjectViews(views);
     },
   });
 
@@ -114,13 +105,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: relationObjectMetadataId },
     },
-    onCompleted: async (views) => {
-      if (isUndefinedOrNull(views)) return;
-      setRelationObjectViews(views);
-    },
   });
-  const { createOneRelationMetadataItem: createOneRelationMetadata } =
-    useCreateOneRelationMetadataItem();
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {
@@ -137,36 +122,20 @@ export const SettingsObjectNewFieldConfigure = () => {
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {
     try {
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural,
-      });
-
+      setIsSaving(true);
       if (
         formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
-
-        await createOneRelationMetadata({
-          relationType: relationFormValues.type,
-          field: pick(fieldFormValues, [
-            'icon',
-            'label',
-            'description',
-            'name',
-            'isLabelSyncedWithName',
-          ]),
+        await createMetadataField({
+          ...fieldFormValues,
           objectMetadataId: activeObjectMetadataItem.id,
-          connect: {
-            field: {
-              icon: relationFormValues.field.icon,
-              label: relationFormValues.field.label,
-              name:
-                (relationFormValues.field.isLabelSyncedWithName ?? true)
-                  ? computeMetadataNameFromLabel(relationFormValues.field.label)
-                  : relationFormValues.field.name,
-            },
-            objectMetadataId: relationFormValues.objectMetadataId,
+          relationCreationPayload: {
+            type: relationFormValues.type,
+            targetObjectMetadataId: relationFormValues.objectMetadataId,
+            targetFieldLabel: relationFormValues.field.label,
+            targetFieldIcon: relationFormValues.field.icon,
           },
         });
       } else {
@@ -176,12 +145,18 @@ export const SettingsObjectNewFieldConfigure = () => {
         });
       }
 
+      navigate(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
       await apolloClient.refetchQueries({
         include: ['FindManyViews', 'CombinedFindManyRecords'],
       });
+      setIsSaving(false);
     } catch (error) {
+      setIsSaving(false);
       const isDuplicateFieldNameInObject = (error as Error).message.includes(
         'duplicate key value violates unique constraint "IndexOnNameObjectMetadataIdAndWorkspaceIdUnique"',
       );
@@ -224,6 +199,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         ]}
         actionButton={
           <SaveAndCancelButtons
+            isLoading={isSaving}
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             onCancel={() =>

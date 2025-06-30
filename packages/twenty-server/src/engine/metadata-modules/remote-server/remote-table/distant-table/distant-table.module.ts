@@ -8,7 +8,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([RemoteServerEntity], 'metadata'),
+    TypeOrmModule.forFeature([RemoteServerEntity], 'core'),
   ],
   providers: [DistantTableService],
   exports: [DistantTableService],

@@ -1,13 +1,13 @@
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const filterEventsAndReturnCancelledEvents = (
   calendarChannelHandles: string[],
-  events: CalendarEventWithParticipants[],
+  events: FetchedCalendarEvent[],
   blocklist: string[],
 ): {
-  filteredEvents: CalendarEventWithParticipants[];
-  cancelledEvents: CalendarEventWithParticipants[];
+  filteredEvents: FetchedCalendarEvent[];
+  cancelledEvents: FetchedCalendarEvent[];
 } => {
   const filteredEvents = filterOutBlocklistedEvents(
     calendarChannelHandles,
@@ -18,8 +18,8 @@ export const filterEventsAndReturnCancelledEvents = (
   return filteredEvents.reduce(
     (
       acc: {
-        filteredEvents: CalendarEventWithParticipants[];
-        cancelledEvents: CalendarEventWithParticipants[];
+        filteredEvents: FetchedCalendarEvent[];
+        cancelledEvents: FetchedCalendarEvent[];
       },
       event,
     ) => {

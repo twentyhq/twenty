@@ -14,9 +14,9 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -30,7 +30,11 @@ type SelectOptionForFilter = FieldMetadataItemOption & {
   isSelected: boolean;
 };
 
-export const ObjectFilterDropdownOptionSelect = () => {
+export const ObjectFilterDropdownOptionSelect = ({
+  focusId,
+}: {
+  focusId: string;
+}) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -92,15 +96,16 @@ export const ObjectFilterDropdownOptionSelect = () => {
     }
   }, [selectedOptions, selectOptions]);
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       closeDropdown();
       resetSelectedItem();
     },
-    SingleRecordPickerHotkeyScope.SingleRecordPicker,
-    [closeDropdown, resetSelectedItem],
-  );
+    focusId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [closeDropdown, resetSelectedItem],
+  });
 
   const handleMultipleOptionSelectChange = (
     optionChanged: SelectOptionForFilter,
@@ -148,24 +153,28 @@ export const ObjectFilterDropdownOptionSelect = () => {
     <SelectableList
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
+      focusId={focusId}
+      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
-        {optionsInDropdown?.map((option) => (
-          <MenuItemMultiSelect
-            key={option.id}
-            selected={option.isSelected}
-            isKeySelected={option.id === selectedItemId}
-            onSelectChange={(selected) =>
-              handleMultipleOptionSelectChange(option, selected)
-            }
-            text={option.label}
-            color={option.color}
-            className=""
-          />
-        ))}
+        {showNoResult ? (
+          <MenuItem text="No results" />
+        ) : (
+          optionsInDropdown?.map((option) => (
+            <MenuItemMultiSelect
+              key={option.id}
+              selected={option.isSelected}
+              isKeySelected={option.id === selectedItemId}
+              onSelectChange={(selected) =>
+                handleMultipleOptionSelectChange(option, selected)
+              }
+              text={option.label}
+              color={option.color}
+              className=""
+            />
+          ))
+        )}
       </DropdownMenuItemsContainer>
-      {showNoResult && <MenuItem text="No results" />}
     </SelectableList>
   );
 };

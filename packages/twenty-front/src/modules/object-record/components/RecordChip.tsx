@@ -4,9 +4,11 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarChip,
   AvatarChipVariant,
@@ -27,6 +29,7 @@ export type RecordChipProps = {
   size?: ChipSize;
   isLabelHidden?: boolean;
   triggerEvent?: TriggerEventType;
+  onClick?: (event: MouseEvent) => void;
 };
 
 export const RecordChip = ({
@@ -40,6 +43,7 @@ export const RecordChip = ({
   forceDisableClick = false,
   isLabelHidden = false,
   triggerEvent = 'MOUSE_DOWN',
+  onClick,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -49,18 +53,22 @@ export const RecordChip = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
   const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+    canOpenInSidePanel;
 
-  const handleCustomClick = isSidePanelViewOpenRecordInType
-    ? (_event: MouseEvent<HTMLElement>) => {
-        openRecordInCommandMenu({
-          recordId: record.id,
-          objectNameSingular,
-        });
-      }
-    : undefined;
+  const handleCustomClick = isDefined(onClick)
+    ? onClick
+    : isSidePanelViewOpenRecordInType
+      ? (_event: MouseEvent<HTMLElement>) => {
+          openRecordInCommandMenu({
+            recordId: record.id,
+            objectNameSingular,
+          });
+        }
+      : undefined;
 
   // TODO temporary until we create a record show page for Workspaces members
 

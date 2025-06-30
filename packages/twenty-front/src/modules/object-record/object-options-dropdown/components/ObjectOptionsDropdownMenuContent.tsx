@@ -1,20 +1,17 @@
-import { Key } from 'ts-key-enum';
-
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -36,7 +33,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
-    useOptionsDropdown();
+    useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -47,14 +44,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const isGroupByEnabled =
     (isDefined(currentView?.viewGroups) && currentView.viewGroups.length > 0) ||
     currentView?.key !== 'INDEX';
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      closeDropdown();
-    },
-    TableOptionsHotkeyScope.Dropdown,
-  );
 
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -101,8 +90,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuSeparator />
       <SelectableList
         selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
         selectableItemIdArray={selectableItemIdArray}
+        hotkeyScope={DropdownHotkeyScope.Dropdown}
       >
         <DropdownMenuItemsContainer scrollable={false}>
           <SelectableListItem
@@ -173,7 +163,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
               width="100%"
             />
           )}
-          <DropdownMenuSeparator />
+        </DropdownMenuItemsContainer>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer scrollable={false}>
           <SelectableListItem
             itemId="Copy link to view"
             onEnter={() => {

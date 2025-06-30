@@ -37,7 +37,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate = {},
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
     roleId,
     shouldBypassPermissionChecks,
   }: {
@@ -50,7 +50,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
@@ -66,7 +66,7 @@ export class ProcessNestedRelationsV2Helper {
           aggregate,
           limit,
           authContext,
-          dataSource,
+          workspaceDataSource,
           shouldBypassPermissionChecks,
           roleId,
         }),
@@ -85,7 +85,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
   }: {
@@ -99,12 +99,14 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
+    const sourceFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const sourceFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
 
     if (
       !isFieldMetadataInterfaceOfType(
@@ -131,7 +133,7 @@ export class ProcessNestedRelationsV2Helper {
         sourceFieldName,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
+    const targetObjectRepository = workspaceDataSource.getRepository(
       targetObjectMetadata.nameSingular,
       shouldBypassPermissionChecks,
       roleId,
@@ -203,7 +205,7 @@ export class ProcessNestedRelationsV2Helper {
         aggregate,
         limit,
         authContext,
-        dataSource,
+        workspaceDataSource,
         shouldBypassPermissionChecks,
         roleId,
       });
@@ -219,8 +221,11 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
+    const targetFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const targetFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
       objectMetadataMaps,

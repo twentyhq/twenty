@@ -52,7 +52,6 @@ export const SubMatchingSelectRowRightDropdown = <T extends string>({
   return (
     <StyledDropdownContainer>
       <Dropdown
-        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownId={dropdownId}
         dropdownPlacement="bottom-start"
         clickableComponent={
@@ -69,6 +68,7 @@ export const SubMatchingSelectRowRightDropdown = <T extends string>({
             onOptionSelected={handleSelect}
           />
         }
+        isDropdownInModal
       />
     </StyledDropdownContainer>
   );

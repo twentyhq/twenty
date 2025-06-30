@@ -5,6 +5,7 @@ import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { lowercaseUrlAndRemoveTrailingSlash } from 'twenty-shared/utils';
 import { DeepPartial, ILike, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -20,7 +21,7 @@ import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manag
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
-type CompanyToCreate = {
+export type CompanyToCreate = {
   domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
@@ -36,7 +37,7 @@ export class CreateCompanyService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {
     this.httpService = axios.create({
@@ -74,8 +75,16 @@ export class CreateCompanyService {
         },
       );
 
-    // Avoid creating duplicate companies
-    const uniqueCompanies = uniqBy(companies, 'domainName');
+    // Remove trailing slash from domain names
+    const companiesWithoutTrailingSlash = companies.map((company) => ({
+      ...company,
+      domainName: company.domainName
+        ? lowercaseUrlAndRemoveTrailingSlash(company.domainName)
+        : undefined,
+    }));
+
+    // Avoid creating duplicate companies, e.g. example.com and example.com/
+    const uniqueCompanies = uniqBy(companiesWithoutTrailingSlash, 'domainName');
     const conditions = uniqueCompanies.map((companyToCreate) => ({
       domainName: {
         primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),

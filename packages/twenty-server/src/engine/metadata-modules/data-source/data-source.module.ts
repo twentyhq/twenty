@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DataSourceService } from './data-source.service';
 import { DataSourceEntity } from './data-source.entity';
+import { DataSourceService } from './data-source.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DataSourceEntity], 'metadata')],
+  imports: [TypeOrmModule.forFeature([DataSourceEntity], 'core')],
   providers: [DataSourceService],
   exports: [DataSourceService],
 })

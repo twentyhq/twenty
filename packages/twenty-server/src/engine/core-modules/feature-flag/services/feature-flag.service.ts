@@ -15,6 +15,7 @@ import {
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class FeatureFlagService {
@@ -22,6 +23,7 @@ export class FeatureFlagService {
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async isFeatureEnabled(
@@ -72,10 +74,7 @@ export class FeatureFlagService {
       );
 
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-        {
-          workspaceId: workspaceId,
-          ignoreLock: true,
-        },
+        { workspaceId },
       );
     }
   }
@@ -130,10 +129,7 @@ export class FeatureFlagService {
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-      {
-        workspaceId,
-        ignoreLock: true,
-      },
+      { workspaceId },
     );
 
     return result;

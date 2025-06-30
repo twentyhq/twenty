@@ -5,7 +5,7 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -28,7 +28,7 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
       recordBoardId,
     );
 
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(
     getActionMenuIdFromRecordIndexId(instanceIdFromProps),

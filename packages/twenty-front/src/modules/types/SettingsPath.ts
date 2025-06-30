@@ -5,6 +5,8 @@ export enum SettingsPath {
   NewAccount = 'accounts/new',
   AccountsCalendars = 'accounts/calendars',
   AccountsEmails = 'accounts/emails',
+  NewImapConnection = 'accounts/new-imap-connection',
+  EditImapConnection = 'accounts/edit-imap-connection/:connectedAccountId',
   Billing = 'billing',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
@@ -33,6 +35,7 @@ export enum SettingsPath {
   NewSSOIdentityProvider = 'security/sso/new',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Webhooks = 'webhooks',
+  NewWebhook = 'webhooks/new',
   WebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
   AdminPanel = 'admin-panel',
@@ -44,4 +47,5 @@ export enum SettingsPath {
   RoleCreate = 'roles/create',
   RoleDetail = 'roles/:roleId',
   RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
+  RoleAddObjectLevel = 'roles/:roleId/add-object-permission',
 }

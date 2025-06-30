@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
+import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 
@@ -10,6 +11,11 @@ import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/us
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import { useRecoilValue } from 'recoil';
+import styled from '@emotion/styled';
+
+const StyledShowPageBannerContainer = styled.div`
+  z-index: 1;
+`;
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -49,15 +55,17 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <>
+    <RightDrawerProvider value={{ isInRightDrawer }}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={objectRecordId}
       />
       {recordDeletedAt && (
-        <InformationBannerDeletedRecord
-          recordId={objectRecordId}
-          objectNameSingular={objectNameSingular}
-        />
+        <StyledShowPageBannerContainer>
+          <InformationBannerDeletedRecord
+            recordId={objectRecordId}
+            objectNameSingular={objectNameSingular}
+          />
+        </StyledShowPageBannerContainer>
       )}
       <ShowPageContainer>
         <ShowPageSubContainer
@@ -71,6 +79,6 @@ export const RecordShowContainer = ({
           loading={isPrefetchLoading || loading || recordLoading}
         />
       </ShowPageContainer>
-    </>
+    </RightDrawerProvider>
   );
 };

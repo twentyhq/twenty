@@ -10,13 +10,13 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const pushFocusItem = usePushFocusItemToFocusStack();
-      const resetFocusStack = useResetFocusStack();
+      const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+      const { resetFocusStack } = useResetFocusStack();
       const focusStack = useRecoilValue(focusStackState);
       const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
-        pushFocusItem,
+        pushFocusItemToFocusStack,
         resetFocusStack,
         focusStack,
         currentFocusId,
@@ -44,10 +44,11 @@ describe('useResetFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {
-      result.current.pushFocusItem({
+      result.current.pushFocusItemToFocusStack({
         focusId: focusItem.focusId,
         component: {
           type: focusItem.componentInstance.componentType,

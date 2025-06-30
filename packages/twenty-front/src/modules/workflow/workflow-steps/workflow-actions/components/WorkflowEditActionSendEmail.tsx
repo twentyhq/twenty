@@ -8,15 +8,15 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -50,6 +50,7 @@ export const WorkflowEditActionSendEmail = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendEmailProps) => {
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -87,6 +88,8 @@ export const WorkflowEditActionSendEmail = ({
           return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
         case ConnectedAccountProvider.MICROSOFT:
           return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+        case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+          return isDefined(connectedAccount.connectionParameters?.SMTP);
         default:
           assertUnreachable(
             connectedAccount.provider,
@@ -184,6 +187,13 @@ export const WorkflowEditActionSendEmail = ({
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
+    if (
+      account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      !isDefined(account.connectionParameters?.SMTP)
+    ) {
+      return;
+    }
+
     const selectOption = {
       label: account.handle,
       value: account.id,
@@ -197,10 +207,11 @@ export const WorkflowEditActionSendEmail = ({
     }
   });
 
-  const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Send Email',
+    });
 
   const navigate = useNavigateSettings();
 
@@ -245,6 +256,8 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('connectedAccountId', connectedAccountId);
             }}
             disabled={actionOptions.readonly}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <FormTextFieldInput
             label="Email"

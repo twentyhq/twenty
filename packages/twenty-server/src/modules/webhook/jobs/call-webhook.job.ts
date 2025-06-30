@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
+
+import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
@@ -24,7 +25,6 @@ export type CallWebhookJobData = {
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
-  private readonly logger = new Logger(CallWebhookJob.name);
   constructor(
     private readonly httpService: HttpService,
     private readonly auditService: AuditService,
@@ -72,7 +72,7 @@ export class CallWebhookJob {
       }
 
       const response = await this.httpService.axiosRef.post(
-        data.targetUrl,
+        getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
         { headers },
       );
@@ -90,9 +90,6 @@ export class CallWebhookJob {
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
       });
-      this.logger.error(
-        `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
-      );
     }
   }
 }

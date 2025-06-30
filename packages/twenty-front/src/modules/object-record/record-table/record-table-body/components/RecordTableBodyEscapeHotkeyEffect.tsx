@@ -1,11 +1,11 @@
 import { Key } from 'ts-key-enum';
 
+import { RECORD_INDEX_FOCUS_ID } from '@/object-record/record-index/constants/RecordIndexFocusId';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableBodyEscapeHotkeyEffect = () => {
@@ -15,23 +15,26 @@ export const RecordTableBodyEscapeHotkeyEffect = () => {
     recordTableId,
   });
 
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
-
   const isAtLeastOneRecordSelected = useRecoilComponentValueV2(
     isAtLeastOneTableRowSelectedSelector,
   );
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      unfocusRecordTableRow();
-      if (isAtLeastOneRecordSelected) {
-        resetTableRowSelection();
-      }
+  const handleEscape = () => {
+    if (isAtLeastOneRecordSelected) {
+      resetTableRowSelection();
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: RECORD_INDEX_FOCUS_ID,
+    scope: RecordIndexHotkeyScope.RecordIndex,
+    dependencies: [handleEscape],
+    options: {
+      preventDefault: true,
     },
-    RecordIndexHotkeyScope.RecordIndex,
-    [isAtLeastOneRecordSelected, resetTableRowSelection, unfocusRecordTableRow],
-  );
+  });
 
   return null;
 };

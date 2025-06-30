@@ -25,11 +25,14 @@ const StyledModalDiv = styled(motion.div)<{
   box-shadow: ${({ theme, modalVariant }) =>
     modalVariant === 'primary'
       ? theme.boxShadow.superHeavy
-      : theme.boxShadow.strong};
-  background: ${({ theme }) => theme.background.primary};
+      : modalVariant === 'transparent'
+        ? 'none'
+        : theme.boxShadow.strong};
+  background: ${({ theme, modalVariant }) =>
+    modalVariant === 'transparent' ? 'transparent' : theme.background.primary};
   color: ${({ theme }) => theme.font.color.primary};
-  border-radius: ${({ theme, isMobile }) => {
-    if (isMobile) return `0`;
+  border-radius: ${({ theme, isMobile, modalVariant }) => {
+    if (isMobile || modalVariant === 'transparent') return `0`;
     return theme.border.radius.md;
   }};
   overflow-x: hidden;
@@ -37,14 +40,16 @@ const StyledModalDiv = styled(motion.div)<{
   z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
-    if (isMobile) return theme.modal.size.fullscreen;
+    if (isMobile) return theme.modal.size.fullscreen.width;
     switch (size) {
       case 'small':
-        return theme.modal.size.sm;
+        return theme.modal.size.sm.width;
       case 'medium':
-        return theme.modal.size.md;
+        return theme.modal.size.md.width;
       case 'large':
-        return theme.modal.size.lg;
+        return theme.modal.size.lg.width;
+      case 'extraLarge':
+        return theme.modal.size.xl.width;
       default:
         return 'auto';
     }
@@ -64,8 +69,16 @@ const StyledModalDiv = styled(motion.div)<{
         return 'auto';
     }
   }};
-  height: ${({ isMobile, theme }) =>
-    isMobile ? theme.modal.size.fullscreen : 'auto'};
+  height: ${({ isMobile, theme, size }) => {
+    if (isMobile) return theme.modal.size.fullscreen.height;
+
+    switch (size) {
+      case 'extraLarge':
+        return theme.modal.size.xl.height;
+      default:
+        return 'auto';
+    }
+  }};
   max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
 `;
 
@@ -113,7 +126,7 @@ const StyledBackDrop = styled(motion.div)<{
 }>`
   align-items: center;
   background: ${({ theme, modalVariant }) =>
-    modalVariant === 'primary'
+    modalVariant === 'primary' || modalVariant === 'transparent'
       ? theme.background.overlayPrimary
       : modalVariant === 'secondary'
         ? theme.background.overlaySecondary
@@ -165,9 +178,13 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
-export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalSize = 'small' | 'medium' | 'large' | 'extraLarge';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
-export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
+export type ModalVariants =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'transparent';
 
 export type ModalProps = React.PropsWithChildren & {
   modalId: string;
@@ -177,6 +194,8 @@ export type ModalProps = React.PropsWithChildren & {
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
   modalVariant?: ModalVariants;
+  dataGloballyPreventClickOutside?: boolean;
+  shouldCloseModalOnClickOutsideOrEscape?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -198,6 +217,8 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  dataGloballyPreventClickOutside = false,
+  shouldCloseModalOnClickOutsideOrEscape = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -217,7 +238,7 @@ export const Modal = ({
 
   const handleClose = () => {
     onClose?.();
-    closeModal(modalId);
+    if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalId);
   };
 
   return (
@@ -259,6 +280,9 @@ export const Modal = ({
                 transition={{ duration: theme.animation.duration.normal }}
                 className={className}
                 isMobile={isMobile}
+                data-globally-prevent-click-outside={
+                  dataGloballyPreventClickOutside
+                }
               >
                 {children}
               </StyledModalDiv>

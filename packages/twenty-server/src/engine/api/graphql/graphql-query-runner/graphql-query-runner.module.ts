@@ -21,7 +21,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 const graphqlQueryResolvers = [
@@ -45,7 +45,7 @@ const graphqlQueryResolvers = [
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspaceRoleEntity], 'metadata'),
+    TypeOrmModule.forFeature([RoleTargetsEntity], 'core'),
     UserRoleModule,
   ],
   providers: [

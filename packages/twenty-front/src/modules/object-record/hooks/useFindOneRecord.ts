@@ -8,6 +8,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,10 +39,16 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     withSoftDeleted,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords;
+
   const { data, loading, error } = useQuery<{
     [nameSingular: string]: RecordGqlNode;
   }>(findOneRecordQuery, {
-    skip: !objectMetadataItem || !objectRecordId || skip,
+    skip: !objectMetadataItem || !objectRecordId || skip || !hasReadPermission,
     variables: { objectRecordId },
     onCompleted: (data) => {
       const recordWithoutConnection = getRecordFromRecordNode<T>({

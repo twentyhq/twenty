@@ -36,8 +36,10 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   imports: [
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     CalendarEventParticipantManagerModule,
-    TypeOrmModule.forFeature([FeatureFlag, Workspace], 'core'),
-    TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
+    TypeOrmModule.forFeature(
+      [FeatureFlag, Workspace, DataSourceEntity],
+      'core',
+    ),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
     GoogleCalendarDriverModule,
@@ -65,6 +67,12 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     CalendarOngoingStaleCronCommand,
     CalendarOngoingStaleJob,
   ],
-  exports: [CalendarEventsImportService, CalendarFetchEventsService],
+  exports: [
+    CalendarEventsImportService,
+    CalendarFetchEventsService,
+    CalendarEventListFetchCronCommand,
+    CalendarEventsImportCronCommand,
+    CalendarOngoingStaleCronCommand,
+  ],
 })
 export class CalendarEventImportManagerModule {}

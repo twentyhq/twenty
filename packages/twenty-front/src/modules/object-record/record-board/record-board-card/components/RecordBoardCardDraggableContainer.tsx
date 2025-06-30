@@ -2,8 +2,9 @@ import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
-import { RecordBoardCardFocusHotkeyEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardFocusHotkeyEffect';
+import { RecordBoardCardHotkeysEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHotkeysEffect';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -23,8 +24,11 @@ export const RecordBoardCardDraggableContainer = ({
   recordId: string;
   rowIndex: number;
 }) => {
+  const { objectMetadataItem } = useContext(RecordBoardContext);
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const { columnIndex } = useContext(RecordBoardColumnContext);
@@ -53,9 +57,7 @@ export const RecordBoardCardDraggableContainer = ({
             data-selectable-id={recordId}
             data-select-disable
           >
-            {isRecordBoardCardFocusActive && (
-              <RecordBoardCardFocusHotkeyEffect />
-            )}
+            {isRecordBoardCardFocusActive && <RecordBoardCardHotkeysEffect />}
             <RecordBoardCard />
           </StyledDraggableContainer>
         )}

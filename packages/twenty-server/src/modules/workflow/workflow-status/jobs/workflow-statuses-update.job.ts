@@ -10,10 +10,11 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStatus,
@@ -70,11 +71,13 @@ export class WorkflowStatusesUpdateJob {
   protected readonly logger = new Logger(WorkflowStatusesUpdateJob.name);
 
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(ServerlessFunctionEntity, 'core')
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
@@ -125,13 +128,17 @@ export class WorkflowStatusesUpdateJob {
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const newWorkflowStatuses = await this.getWorkflowStatuses({
@@ -212,9 +219,11 @@ export class WorkflowStatusesUpdateJob {
           }
 
           const serverlessFunction =
-            await this.serverlessFunctionService.findOneOrFail({
-              id: step.settings.input.serverlessFunctionId,
-              workspaceId,
+            await this.serverlessFunctionRepository.findOneOrFail({
+              where: {
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+              },
             });
 
           const newStepSettings = { ...step.settings };
@@ -243,13 +252,17 @@ export class WorkflowStatusesUpdateJob {
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOneOrFail({

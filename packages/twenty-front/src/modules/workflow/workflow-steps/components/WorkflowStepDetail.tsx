@@ -1,13 +1,15 @@
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
-import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
@@ -87,12 +89,12 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        default:
+          return assertUnreachable(
+            stepDefinition.definition,
+            `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+          );
       }
-
-      return assertUnreachable(
-        stepDefinition.definition,
-        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-      );
     }
     case 'action': {
       switch (stepDefinition.definition.type) {
@@ -163,12 +165,32 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+
+        case 'HTTP_REQUEST': {
+          return (
+            <WorkflowEditActionHttpRequest
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+        case 'AI_AGENT': {
+          return (
+            <WorkflowEditActionAiAgent
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        default:
+          return assertUnreachable(
+            stepDefinition.definition,
+            `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+          );
       }
     }
   }
-
-  return assertUnreachable(
-    stepDefinition,
-    `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-  );
 };

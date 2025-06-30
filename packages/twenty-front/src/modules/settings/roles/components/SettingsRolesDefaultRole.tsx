@@ -60,8 +60,12 @@ export const SettingsRoleDefaultRole = ({
   const options = roles.map((role) => ({
     label: role.label,
     value: role.id,
-    Icon: getIcon(role.icon),
+    Icon: getIcon(role.icon) ?? IconUserPin,
   }));
+
+  if (options.length === 0) {
+    return null;
+  }
 
   return (
     <Section>

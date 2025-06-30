@@ -13,7 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -24,12 +24,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -37,22 +35,28 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import {
+  ToWorkspaceMemberDtoArgs,
+  WorkspaceMemberTranspiler,
+} from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -65,7 +69,6 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
@@ -77,26 +80,48 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
-    private readonly fileService: FileService,
-    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-    private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
+  private async getUserWorkspacePermissions({
+    currentUserWorkspace,
+    workspace,
+  }: {
+    workspace: Workspace;
+    currentUserWorkspace: UserWorkspace;
+  }): Promise<UserWorkspacePermissions> {
+    const workspaceIsPendingOrOngoingCreation = [
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+    ].includes(workspace.activationStatus);
+
+    if (workspaceIsPendingOrOngoingCreation) {
+      return this.permissionsService.getDefaultUserWorkspacePermissions();
+    }
+
+    return await this.permissionsService.getUserWorkspacePermissions({
+      userWorkspaceId: currentUserWorkspace.id,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Query(() => User)
+  @UseGuards(UserAuthGuard)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: ['workspaces'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -104,99 +129,54 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
+    if (!workspace) {
+      return user;
+    }
+
     const currentUserWorkspace = user.workspaces.find(
-      (userWorkspace) => userWorkspace.workspace.id === workspace.id,
+      (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
-    if (!currentUserWorkspace) {
+    if (!isDefined(currentUserWorkspace)) {
       throw new Error('Current user workspace not found');
     }
-    let settingsPermissions = {};
-    let objectRecordsPermissions = {};
-    let objectPermissions: ObjectPermissionDTO[] = [];
 
-    if (
-      ![
-        WorkspaceActivationStatus.PENDING_CREATION,
-        WorkspaceActivationStatus.ONGOING_CREATION,
-      ].includes(workspace.activationStatus)
-    ) {
-      const isPermissionsV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-          workspace.id,
-        );
-
-      if (isPermissionsV2Enabled) {
-        const permissions =
-          await this.permissionsService.getUserWorkspacePermissionsV2({
-            userWorkspaceId: currentUserWorkspace.id,
-            workspaceId: workspace.id,
-          });
-
-        settingsPermissions = permissions.settingsPermissions;
-        objectPermissions = Object.entries(permissions.objectPermissions).map(
-          ([objectMetadataId, permissions]) => ({
-            objectMetadataId,
-            canReadObjectRecords: permissions.canRead,
-            canUpdateObjectRecords: permissions.canUpdate,
-            canSoftDeleteObjectRecords: permissions.canSoftDelete,
-            canDestroyObjectRecords: permissions.canDestroy,
-          }),
-        );
-        objectRecordsPermissions = permissions.objectRecordsPermissions;
-      } else {
-        const permissions =
-          await this.permissionsService.getUserWorkspacePermissions({
-            userWorkspaceId: currentUserWorkspace.id,
-            workspaceId: workspace.id,
-          });
-
-        settingsPermissions = permissions.settingsPermissions;
-        objectRecordsPermissions = permissions.objectRecordsPermissions;
-      }
-    }
-
-    const grantedSettingsPermissions: SettingPermissionType[] = (
-      Object.keys(settingsPermissions) as SettingPermissionType[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((feature) => settingsPermissions[feature] === true);
-
-    const grantedObjectRecordsPermissions = (
-      Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((permission) => objectRecordsPermissions[permission] === true);
-
-    currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
-    currentUserWorkspace.objectRecordsPermissions =
-      grantedObjectRecordsPermissions;
-    currentUserWorkspace.objectPermissions = objectPermissions;
-    user.currentUserWorkspace = currentUserWorkspace;
+    const userWorkspacePermissions =
+      fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
+        await this.getUserWorkspacePermissions({
+          currentUserWorkspace,
+          workspace,
+        }),
+      );
 
     return {
       ...user,
+      currentUserWorkspace: {
+        ...currentUserWorkspace,
+        ...userWorkspacePermissions,
+      },
       currentWorkspace: workspace,
     };
   }
 
-  @ResolveField(() => GraphQLJSONObject)
+  @ResolveField(() => GraphQLJSONObject, {
+    nullable: true,
+  })
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<Record<string, any>> {
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ): Promise<Record<string, unknown>> {
+    if (!workspace) return {};
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
     });
 
-    const userVarAllowList = [
+    const userVarAllowList: string[] = [
       OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
-    ] as string[];
+    ];
 
     const filteredMap = new Map(
       [...userVars].filter(([key]) => userVarAllowList.includes(key)),
@@ -210,22 +190,43 @@ export class UserResolver {
   })
   async workspaceMember(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
+    if (!workspace) return null;
+
+    const workspaceMemberEntity = await this.userService.loadWorkspaceMember(
       user,
       workspace,
     );
 
-    if (workspaceMember && workspaceMember.avatarUrl) {
-      workspaceMember.avatarUrl = this.fileService.signFileUrl({
-        url: workspaceMember.avatarUrl,
-        workspaceId: workspace.id,
-      });
+    if (!isDefined(workspaceMemberEntity)) {
+      return null;
     }
 
-    // TODO Refactor to be transpiled to WorkspaceMember instead
-    return workspaceMember as WorkspaceMember | null;
+    const workspaceId = workspace.id;
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: workspaceMemberEntity.userId,
+        workspaceId: workspace.id,
+      });
+
+    const roleOfUserWorkspace =
+      await this.userRoleService.getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspace.id],
+        workspaceId,
+      });
+
+    const userWorkspaceRoles = roleOfUserWorkspace.get(userWorkspace.id);
+
+    if (!isDefined(userWorkspaceRoles)) {
+      throw new Error('User workspace roles not found');
+    }
+
+    return this.workspaceMemberTranspiler.toWorkspaceMemberDto({
+      workspaceMemberEntity,
+      userWorkspace,
+      userWorkspaceRoles,
+    });
   }
 
   @ResolveField(() => [WorkspaceMember], {
@@ -233,14 +234,15 @@ export class UserResolver {
   })
   async workspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
       false,
     );
 
-    const workspaceMembers: WorkspaceMember[] = [];
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
@@ -248,14 +250,14 @@ export class UserResolver {
       },
     });
 
-    const userWorkspacesByUserId = new Map<string, UserWorkspace>(
+    const userWorkspacesByUserIdMap = new Map<string, UserWorkspace>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
     );
 
-    const rolesByUserWorkspaces: Map<string, RoleDTO[]> =
+    const rolesByUserWorkspacesMap =
       await this.userRoleService.getRolesByUserWorkspaces({
         userWorkspaceIds: userWorkspaces.map(
           (userWorkspace) => userWorkspace.id,
@@ -263,54 +265,36 @@ export class UserResolver {
         workspaceId: workspace.id,
       });
 
-    for (const workspaceMemberEntity of workspaceMemberEntities) {
-      if (workspaceMemberEntity.avatarUrl) {
-        workspaceMemberEntity.avatarUrl = this.fileService.signFileUrl({
-          url: workspaceMemberEntity.avatarUrl,
-          workspaceId: workspace.id,
-        });
-      }
+    const toWorkspaceMemberDtoArgs =
+      workspaceMemberEntities.map<ToWorkspaceMemberDtoArgs>(
+        (workspaceMemberEntity) => {
+          const userWorkspace = userWorkspacesByUserIdMap.get(
+            workspaceMemberEntity.userId,
+          );
 
-      // TODO Refactor to be transpiled to WorkspaceMember instead
-      const workspaceMember = workspaceMemberEntity as WorkspaceMember;
+          if (!isDefined(userWorkspace)) {
+            throw new Error('User workspace not found');
+          }
 
-      const userWorkspace = userWorkspacesByUserId.get(
-        workspaceMemberEntity.userId,
+          const userWorkspaceRoles = rolesByUserWorkspacesMap.get(
+            userWorkspace.id,
+          );
+
+          if (!isDefined(userWorkspaceRoles)) {
+            throw new Error('User workspace roles not found');
+          }
+
+          return {
+            userWorkspace,
+            userWorkspaceRoles,
+            workspaceMemberEntity,
+          };
+        },
       );
 
-      // TODO Refactor should not throw ? typed as nullable ?
-      if (!userWorkspace) {
-        throw new Error('User workspace not found');
-      }
-
-      workspaceMember.userWorkspaceId = userWorkspace.id;
-
-      const workspaceMemberRoles = (
-        rolesByUserWorkspaces.get(userWorkspace.id) ?? []
-      ).map((roleEntity) => {
-        return {
-          id: roleEntity.id,
-          label: roleEntity.label,
-          canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-          description: roleEntity.description,
-          icon: roleEntity.icon,
-          isEditable: roleEntity.isEditable,
-          userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-          canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
-          canUpdateAllObjectRecords: roleEntity.canUpdateAllObjectRecords,
-          canSoftDeleteAllObjectRecords:
-            roleEntity.canSoftDeleteAllObjectRecords,
-          canDestroyAllObjectRecords: roleEntity.canDestroyAllObjectRecords,
-        };
-      });
-
-      workspaceMember.roles = workspaceMemberRoles;
-
-      workspaceMembers.push(workspaceMember);
-    }
-
-    // TODO: Fix typing disrepency between Entity and DTO
-    return workspaceMembers;
+    return this.workspaceMemberTranspiler.toWorkspaceMemberDtos(
+      toWorkspaceMemberDtoArgs,
+    );
   }
 
   @ResolveField(() => [DeletedWorkspaceMember], {
@@ -318,12 +302,14 @@ export class UserResolver {
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 
-    return this.deletedWorkspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
+    return this.workspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
       workspaceMemberEntities,
       workspace.id,
     );
@@ -344,9 +330,10 @@ export class UserResolver {
   }
 
   @Mutation(() => SignedFileDTO)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<SignedFileDTO> {
@@ -374,21 +361,43 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(UserAuthGuard)
   async deleteUser(@AuthUser() { id: userId }: User) {
-    // Proceed with user deletion
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => OnboardingStatus)
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
   async onboardingStatus(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStatus> {
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 
-  @ResolveField(() => Workspace)
-  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+  @ResolveField(() => Workspace, {
+    nullable: true,
+  })
+  async currentWorkspace(
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ) {
     return workspace;
+  }
+
+  @ResolveField(() => AvailableWorkspaces)
+  async availableWorkspaces(
+    @AuthUser() user: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ): Promise<AvailableWorkspaces> {
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      ),
+      user,
+      authProvider,
+    );
   }
 }

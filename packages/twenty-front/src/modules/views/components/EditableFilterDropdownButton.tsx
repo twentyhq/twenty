@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
@@ -13,12 +12,10 @@ import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEdit
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
-  hotkeyScope: HotkeyScope;
 };
 
 export const EditableFilterDropdownButton = ({
   recordFilter,
-  hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
   const { closeDropdown } = useDropdown(recordFilter.id);
 
@@ -30,7 +27,7 @@ export const EditableFilterDropdownButton = ({
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
-  const handleDropdownClickOutside = useCallback(() => {
+  const onFilterDropdownClose = useCallback(() => {
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
     if (recordFilterIsEmpty) {
@@ -59,10 +56,9 @@ export const EditableFilterDropdownButton = ({
         dropdownComponents={
           <ObjectFilterDropdownFilterInput filterDropdownId={recordFilter.id} />
         }
-        dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
-        onClickOutside={handleDropdownClickOutside}
+        onClose={onFilterDropdownClose}
       />
     </>
   );

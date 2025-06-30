@@ -7,12 +7,10 @@ import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRoles
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -35,9 +33,6 @@ const StyledNoRoles = styled(TableCell)`
 
 export const SettingsRolesList = () => {
   const navigateSettings = useNavigateSettings();
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-  );
 
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
@@ -49,7 +44,7 @@ export const SettingsRolesList = () => {
     <Section>
       <H2Title
         title={t`All roles`}
-        description={t`Assign roles to specify each member's access permissions`}
+        description={t`Assign roles to manage each member’s access and permissions`}
       />
       <Table>
         <SettingsRolesTableHeader />
@@ -69,8 +64,6 @@ export const SettingsRolesList = () => {
           title={t`Create Role`}
           variant="secondary"
           size="small"
-          soon={!isPermissionsV2Enabled}
-          disabled={!isPermissionsV2Enabled}
           onClick={() => navigateSettings(SettingsPath.RoleCreate)}
         />
       </StyledCreateRoleSection>

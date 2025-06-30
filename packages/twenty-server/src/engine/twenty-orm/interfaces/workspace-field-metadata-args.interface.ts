@@ -105,4 +105,6 @@ export interface WorkspaceFieldMetadataArgs {
    * Is active field.
    */
   readonly asExpression?: string;
+
+  readonly isLabelSyncedWithName: boolean;
 }

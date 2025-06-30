@@ -3,17 +3,23 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
+export const useCloseActionMenu = ({
+  closeSidePanelOnShowPageOptionsActionExecution = false,
+  closeSidePanelOnCommandMenuListActionExecution = true,
+}: {
+  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
+  closeSidePanelOnCommandMenuListActionExecution?: boolean;
+} = {}) => {
   const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -25,7 +31,10 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
 
   const closeActionMenu = () => {
     if (actionMenuType === 'command-menu') {
-      if (isDefined(preventCommandMenuClosing) && preventCommandMenuClosing) {
+      if (
+        isDefined(closeSidePanelOnCommandMenuListActionExecution) &&
+        !closeSidePanelOnCommandMenuListActionExecution
+      ) {
         return;
       }
       closeCommandMenu();
@@ -36,6 +45,14 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
       actionMenuType === 'command-menu-show-page-action-menu-dropdown'
     ) {
       closeDropdown(dropdownId);
+    }
+
+    if (
+      actionMenuType === 'command-menu-show-page-action-menu-dropdown' &&
+      isDefined(closeSidePanelOnShowPageOptionsActionExecution) &&
+      closeSidePanelOnShowPageOptionsActionExecution
+    ) {
+      closeCommandMenu();
     }
   };
 

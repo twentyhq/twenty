@@ -1,4 +1,5 @@
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/input';
@@ -13,12 +14,13 @@ export const CmdEnterActionButton = ({
   onClick: () => void;
   disabled?: boolean;
 }) => {
-  useScopedHotkeys(
-    [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    () => onClick(),
-    AppHotkeyScope.CommandMenuOpen,
-    [onClick],
-  );
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
+    callback: () => onClick(),
+    focusId: SIDE_PANEL_FOCUS_ID,
+    scope: AppHotkeyScope.CommandMenuOpen,
+    dependencies: [onClick],
+  });
 
   return (
     <Button

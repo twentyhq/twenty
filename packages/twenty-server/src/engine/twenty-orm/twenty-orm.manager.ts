@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { ObjectLiteral, Repository } from 'typeorm';
 
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -13,8 +13,8 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -28,22 +28,18 @@ export class TwentyORMManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceEntityOrobjectMetadataName: Type<T> | string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const {
-      workspaceId,
-      workspaceMetadataVersion,
-      userWorkspaceId,
-      isExecutedByApiKey,
-    } = this.scopedWorkspaceContextFactory.create();
+    const { workspaceId, userWorkspaceId, isExecutedByApiKey } =
+      this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
 
-    if (typeof workspaceEntityOrobjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrobjectMetadataName;
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      objectMetadataName = workspaceEntityOrObjectMetadataName;
     } else {
       objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrobjectMetadataName.name,
+        workspaceEntityOrObjectMetadataName.name,
       );
     }
 
@@ -51,22 +47,20 @@ export class TwentyORMManager {
       throw new Error('Workspace not found');
     }
 
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      workspaceId,
-      workspaceMetadataVersion,
-    );
+    const workspaceDataSource =
+      await this.workspaceDataSourceFactory.create(workspaceId);
 
     let roleId: string | undefined;
 
     if (isDefined(userWorkspaceId)) {
-      const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+      const roleTarget = await this.roleTargetsRepository.findOne({
         where: {
           userWorkspaceId,
-          workspaceId: workspaceId,
+          workspaceId,
         },
       });
 
-      roleId = userWorkspaceRole?.roleId;
+      roleId = roleTarget?.roleId;
     }
 
     const shouldBypassPermissionChecks = !!isExecutedByApiKey;
@@ -79,16 +73,12 @@ export class TwentyORMManager {
   }
 
   async getDatasource() {
-    const { workspaceId, workspaceMetadataVersion } =
-      this.scopedWorkspaceContextFactory.create();
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
       throw new Error('Workspace not found');
     }
 
-    return this.workspaceDataSourceFactory.create(
-      workspaceId,
-      workspaceMetadataVersion,
-    );
+    return this.workspaceDataSourceFactory.create(workspaceId);
   }
 }

@@ -13,6 +13,9 @@ import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
+import { IconCircleOff } from 'twenty-ui/display';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -31,6 +34,8 @@ export const FormSelectFieldInput = ({
   options,
   readonly,
 }: FormSelectFieldInputProps) => {
+  const theme = useTheme();
+
   const inputId = useId();
 
   const hotkeyScope = InlineCellHotkeyScope.InlineCell;
@@ -89,6 +94,12 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
+  const emptyOption = {
+    label: `No ${label}`,
+    value: '',
+    Icon: IconCircleOff,
+  };
+
   const handleUnlinkVariable = () => {
     setDraftValue({
       type: 'static',
@@ -128,10 +139,13 @@ export const FormSelectFieldInput = ({
             options={options}
             value={selectedOption?.value}
             onChange={onSelect}
+            emptyOption={emptyOption}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
             disabled={readonly}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         ) : (
           <FormFieldInputInnerContainer

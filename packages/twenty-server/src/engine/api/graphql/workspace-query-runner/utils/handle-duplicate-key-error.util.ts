@@ -1,5 +1,5 @@
-import { QueryFailedError } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { QueryFailedError } from 'typeorm';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
@@ -14,14 +14,14 @@ export const handleDuplicateKeyError = (
   if (indexNameMatch) {
     const indexName = indexNameMatch[1];
 
-    const deletedAtFieldMetadata =
-      context.objectMetadataItemWithFieldMaps.fieldsByName['deletedAt'];
+    const deletedAtFieldMetadataId =
+      context.objectMetadataItemWithFieldMaps.fieldIdByName['deletedAt'];
 
     const affectedColumns =
       context.objectMetadataItemWithFieldMaps.indexMetadatas
         .find((index) => index.name === indexName)
         ?.indexFieldMetadatas?.filter(
-          (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
+          (field) => field.fieldMetadataId !== deletedAtFieldMetadataId,
         )
         .map((indexField) => {
           const fieldMetadata =

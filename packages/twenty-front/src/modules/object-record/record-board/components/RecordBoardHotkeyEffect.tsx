@@ -3,127 +3,30 @@ import { Key } from 'ts-key-enum';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardCardNavigation } from '@/object-record/record-board/hooks/useRecordBoardCardNavigation';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { BoardHotkeyScope } from '@/object-record/record-board/types/BoardHotkeyScope';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hooks/useRecordBoardSelectAllHotkeys';
+import { RECORD_INDEX_FOCUS_ID } from '@/object-record/record-index/constants/RecordIndexFocusId';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilCallback } from 'recoil';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 export const RecordBoardHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
   const { move } = useRecordBoardCardNavigation(recordBoardId);
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
-
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
-  const { setRecordAsSelected } = useRecordBoardSelection(recordBoardId);
-
-  const selectAll = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsState,
-        );
-
-        for (const recordId of allRecordIds) {
-          setRecordAsSelected(recordId, true);
-        }
-      },
-    [recordIndexAllRecordIdsState, setRecordAsSelected],
-  );
-
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    selectAll,
-    RecordIndexHotkeyScope.RecordIndex,
-  );
-
-  useScopedHotkeys('ctrl+a,meta+a', selectAll, BoardHotkeyScope.BoardFocus);
-
-  useScopedHotkeys(
-    Key.ArrowLeft,
-    () => {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: BoardHotkeyScope.BoardFocus,
-      });
-      move('left');
-    },
-    RecordIndexHotkeyScope.RecordIndex,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowRight,
-    () => {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: BoardHotkeyScope.BoardFocus,
-      });
-      move('right');
-    },
-    RecordIndexHotkeyScope.RecordIndex,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowUp,
-    () => {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: BoardHotkeyScope.BoardFocus,
-      });
-      move('up');
-    },
-    RecordIndexHotkeyScope.RecordIndex,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowDown,
-    () => {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: BoardHotkeyScope.BoardFocus,
-      });
+  useHotkeysOnFocusedElement({
+    keys: [Key.ArrowLeft, Key.ArrowUp, Key.ArrowDown, Key.ArrowRight],
+    callback: () => {
       move('down');
     },
-    RecordIndexHotkeyScope.RecordIndex,
-  );
+    focusId: RECORD_INDEX_FOCUS_ID,
+    scope: RecordIndexHotkeyScope.RecordIndex,
+    dependencies: [move],
+  });
 
-  useScopedHotkeys(
-    Key.ArrowLeft,
-    () => {
-      move('left');
-    },
-    BoardHotkeyScope.BoardFocus,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowRight,
-    () => {
-      move('right');
-    },
-    BoardHotkeyScope.BoardFocus,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowUp,
-    () => {
-      move('up');
-    },
-    BoardHotkeyScope.BoardFocus,
-  );
-
-  useScopedHotkeys(
-    Key.ArrowDown,
-    () => {
-      move('down');
-    },
-    BoardHotkeyScope.BoardFocus,
-  );
+  useRecordBoardSelectAllHotkeys({
+    recordBoardId,
+    focusId: recordBoardId,
+  });
 
   return null;
 };

@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsString,
+  IsUUID,
   Max,
   Min,
+  ValidationError,
   validateOrReject,
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   FieldMetadataException,
@@ -23,6 +25,7 @@ import {
 enum ValueType {
   PERCENTAGE = 'percentage',
   NUMBER = 'number',
+  SHORT_NUMBER = 'shortNumber',
 }
 
 class NumberSettingsValidation {
@@ -33,7 +36,7 @@ class NumberSettingsValidation {
 
   @IsOptional()
   @IsEnum(ValueType)
-  type?: 'percentage' | 'number';
+  type?: 'percentage' | 'number' | 'shortNumber';
 }
 
 class TextSettingsValidation {
@@ -44,11 +47,50 @@ class TextSettingsValidation {
   displayedMaxRows?: number;
 }
 
+export class RelationCreationPayloadValidation {
+  @IsUUID()
+  targetObjectMetadataId?: string;
+
+  @IsString()
+  targetFieldLabel: string;
+
+  @IsString()
+  targetFieldIcon: string;
+
+  @IsEnum(RelationType)
+  type: RelationType;
+}
+
 @Injectable()
 export class FieldMetadataValidationService<
   T extends FieldMetadataType = FieldMetadataType,
 > {
   constructor() {}
+
+  async validateRelationCreationPayloadOrThrow(
+    relationCreationPayload: RelationCreationPayloadValidation,
+  ) {
+    try {
+      const relationCreationPayloadInstance = plainToInstance(
+        RelationCreationPayloadValidation,
+        relationCreationPayload,
+      );
+
+      await validateOrReject(relationCreationPayloadInstance);
+    } catch (error) {
+      const errorMessages = Array.isArray(error)
+        ? error
+            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
+            .flat()
+            .join(', ')
+        : error.message;
+
+      throw new FieldMetadataException(
+        `Relation creation payload is invalid: ${errorMessages}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
 
   async validateSettingsOrThrow({
     fieldType,
@@ -59,19 +101,32 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings(NumberSettingsValidation, settings);
+        await this.validateSettings<FieldMetadataType.NUMBER>(
+          NumberSettingsValidation,
+          settings,
+        );
         break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings(TextSettingsValidation, settings);
+        await this.validateSettings<FieldMetadataType.TEXT>(
+          TextSettingsValidation,
+          settings,
+        );
         break;
       default:
         break;
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async validateSettings(validator: any, settings: any) {
+  private async validateSettings<Type extends FieldMetadataType>(
+    validator: ClassConstructor<
+      Type extends FieldMetadataType.NUMBER
+        ? NumberSettingsValidation
+        : Type extends FieldMetadataType.TEXT
+          ? TextSettingsValidation
+          : never
+    >,
+    settings: FieldMetadataSettings<T>,
+  ) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
 
@@ -79,8 +134,7 @@ export class FieldMetadataValidationService<
     } catch (error) {
       const errorMessages = Array.isArray(error)
         ? error
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .map((err: any) => Object.values(err.constraints))
+            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
             .flat()
             .join(', ')
         : error.message;
@@ -90,49 +144,5 @@ export class FieldMetadataValidationService<
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
-  }
-
-  async validateDefaultValueOrThrow({
-    fieldType,
-    defaultValue,
-    options,
-  }: {
-    fieldType: FieldMetadataType;
-    defaultValue: FieldMetadataDefaultValue<T>;
-    options: FieldMetadataOptions<T>;
-  }) {
-    if (
-      fieldType === FieldMetadataType.SELECT ||
-      fieldType === FieldMetadataType.MULTI_SELECT
-    ) {
-      this.validateEnumDefaultValue(options, defaultValue);
-    }
-  }
-
-  private validateEnumDefaultValue(
-    options: FieldMetadataOptions<T>,
-    defaultValue: FieldMetadataDefaultValue<T>,
-  ) {
-    if (typeof defaultValue === 'string') {
-      const formattedDefaultValue = defaultValue.replace(
-        /^['"](.*)['"]$/,
-        '$1',
-      );
-
-      const enumOptions = options.map((option) => option.value);
-
-      if (
-        enumOptions &&
-        (enumOptions.includes(formattedDefaultValue) ||
-          // @ts-expect-error legacy noImplicitAny
-          enumOptions.some((option) => option.to === formattedDefaultValue))
-      ) {
-        return;
-      }
-    }
-    throw new FieldMetadataException(
-      `Default value for existing options is invalid: ${defaultValue}`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
   }
 }

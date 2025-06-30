@@ -15,26 +15,15 @@ import {
   UpgradeCommandRunner,
   VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-add-tasks-assigned-to-me-view.command';
-import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
-import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
-import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
-import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
-import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
-import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-update-view-aggregate-operations.command';
-import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-migrate-relations-to-field-metadata.command';
-import { UpgradeDateAndDateTimeFieldsSettingsJsonCommand } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-settings-field';
-import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
-import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
-import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
-import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
-import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
 import { CleanNotFoundFilesCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-clean-not-found-files.command';
 import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
+import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
+import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
+import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
+import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -50,7 +39,6 @@ export class DatabaseMigrationService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
   ) {}
 
   // TODO centralize with ActiveOrSuspendedRunner method
@@ -80,17 +68,6 @@ export class DatabaseMigrationService {
     this.logger.log('Running global database migrations');
 
     try {
-      this.logger.log('Running metadata datasource migrations...');
-      await this.copyTypeormMigrationsCommand.runMigrationCommand([], {
-        dryRun: false,
-        verbose: false,
-      });
-      const metadataResult = await execPromise(
-        'npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource',
-      );
-
-      this.logger.log(metadataResult.stdout);
-
       this.logger.log('Running core datasource migrations...');
       const coreResult = await execPromise(
         'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
@@ -152,37 +129,22 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     private readonly databaseMigrationService: DatabaseMigrationService,
 
-    // 0.43 Commands
-    protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
-    protected readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
-    protected readonly migrateIsSearchableForCustomObjectMetadataCommand: MigrateIsSearchableForCustomObjectMetadataCommand,
-    protected readonly updateDefaultViewRecordOpeningOnWorkflowObjectsCommand: UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
-    protected readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
-
-    // 0.44 Commands
-    protected readonly initializePermissionsCommand: InitializePermissionsCommand,
-    protected readonly updateViewAggregateOperationsCommand: UpdateViewAggregateOperationsCommand,
-
-    // 0.51 Commands
-    protected readonly upgradeCreatedByEnumCommand: UpgradeCreatedByEnumCommand,
-
-    // 0.52 Commands
-    protected readonly upgradeDateAndDateTimeFieldsSettingsJsonCommand: UpgradeDateAndDateTimeFieldsSettingsJsonCommand,
-    protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
-
-    // 0.53 Commands
-    protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
-    protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
-    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
-    protected readonly upgradeSearchVectorOnPersonEntityCommand: UpgradeSearchVectorOnPersonEntityCommand,
-    protected readonly removeRelationForeignKeyFieldMetadataCommand: RemoveRelationForeignKeyFieldMetadataCommand,
-
     // 0.54 Commands
     protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
     protected readonly fixCreatedByDefaultValueCommand: FixCreatedByDefaultValueCommand,
     protected readonly cleanNotFoundFilesCommand: CleanNotFoundFilesCommand,
     protected readonly lowercaseUserAndInvitationEmailsCommand: LowercaseUserAndInvitationEmailsCommand,
     protected readonly migrateDefaultAvatarUrlToUserWorkspaceCommand: MigrateDefaultAvatarUrlToUserWorkspaceCommand,
+
+    // 0.55 Commands
+    protected readonly deduplicateIndexedFieldsCommand: DeduplicateIndexedFieldsCommand,
+
+    // 1.1 Commands
+    protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
+    protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
+
+    // 1.2 Commands
+    protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
   ) {
     super(
       workspaceRepository,
@@ -191,51 +153,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       syncWorkspaceMetadataCommand,
     );
 
-    const commands_043: VersionCommands = {
-      beforeSyncMetadata: [
-        this.migrateRichTextContentPatchCommand,
-        this.migrateIsSearchableForCustomObjectMetadataCommand,
-        this.migrateSearchVectorOnNoteAndTaskEntitiesCommand,
-        this.migrateIsSearchableForCustomObjectMetadataCommand,
-      ],
-      afterSyncMetadata: [
-        this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
-        this.addTasksAssignedToMeViewCommand,
-      ],
-    };
-    const commands_044: VersionCommands = {
-      beforeSyncMetadata: [
-        this.initializePermissionsCommand,
-        this.updateViewAggregateOperationsCommand,
-      ],
-      afterSyncMetadata: [],
-    };
-
-    const commands_050: VersionCommands = {
+    const commands_053: VersionCommands = {
       beforeSyncMetadata: [],
       afterSyncMetadata: [],
-    };
-
-    const commands_051: VersionCommands = {
-      beforeSyncMetadata: [this.upgradeCreatedByEnumCommand],
-      afterSyncMetadata: [],
-    };
-
-    const commands_052: VersionCommands = {
-      beforeSyncMetadata: [
-        this.upgradeDateAndDateTimeFieldsSettingsJsonCommand,
-        this.migrateRelationsToFieldMetadataCommand,
-      ],
-      afterSyncMetadata: [],
-    };
-
-    const commands_053: VersionCommands = {
-      beforeSyncMetadata: [this.removeRelationForeignKeyFieldMetadataCommand],
-      afterSyncMetadata: [
-        this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
-        this.backfillWorkflowNextStepIdsCommand,
-        this.upgradeSearchVectorOnPersonEntityCommand,
-      ],
     };
 
     const commands_054: VersionCommands = {
@@ -250,14 +170,42 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_055: VersionCommands = {
+      beforeSyncMetadata: [this.deduplicateIndexedFieldsCommand],
+      afterSyncMetadata: [],
+    };
+
+    const commands_060: VersionCommands = {
+      afterSyncMetadata: [],
+      beforeSyncMetadata: [],
+    };
+
+    const commands_100: VersionCommands = {
+      afterSyncMetadata: [],
+      beforeSyncMetadata: [],
+    };
+
+    const commands_110: VersionCommands = {
+      beforeSyncMetadata: [
+        this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
+        this.fixSchemaArrayTypeCommand,
+      ],
+      afterSyncMetadata: [],
+    };
+
+    const commands_120: VersionCommands = {
+      beforeSyncMetadata: [this.addEnqueuedStatusToWorkflowRunCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
-      '0.43.0': commands_043,
-      '0.44.0': commands_044,
-      '0.50.0': commands_050,
-      '0.51.0': commands_051,
-      '0.52.0': commands_052,
       '0.53.0': commands_053,
       '0.54.0': commands_054,
+      '0.55.0': commands_055,
+      '0.60.0': commands_060,
+      '1.0.0': commands_100,
+      '1.1.0': commands_110,
+      '1.2.0': commands_120,
     };
   }
 

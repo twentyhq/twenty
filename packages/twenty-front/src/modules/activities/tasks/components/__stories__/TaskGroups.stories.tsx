@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -42,12 +42,10 @@ export const Empty: Story = {};
 
 export const WithTasks: Story = {
   args: {
-    targetableObjects: [
-      {
-        id: mockedTasks[0].taskTargets?.[0].personId,
-        targetObjectNameSingular: 'person',
-      },
-    ] as ActivityTargetableObject[],
+    targetableObject: {
+      id: mockedTasks[0].taskTargets?.[0].personId,
+      targetObjectNameSingular: 'person',
+    } as ActivityTargetableObject,
   },
   parameters: {
     msw: graphqlMocks,

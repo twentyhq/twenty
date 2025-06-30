@@ -1,5 +1,6 @@
 import {
-  workflowActionSchema,
+  workflowAiAgentActionSchema,
+  workflowAiAgentActionSettingsSchema,
   workflowCodeActionSchema,
   workflowCodeActionSettingsSchema,
   workflowCreateRecordActionSchema,
@@ -13,6 +14,7 @@ import {
   workflowFindRecordsActionSettingsSchema,
   workflowFormActionSchema,
   workflowFormActionSettingsSchema,
+  workflowHttpRequestActionSchema,
   workflowManualTriggerSchema,
   workflowRunContextSchema,
   workflowRunOutputSchema,
@@ -67,8 +69,27 @@ export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
 export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
+export type WorkflowHttpRequestAction = z.infer<
+  typeof workflowHttpRequestActionSchema
+>;
 
-export type WorkflowAction = z.infer<typeof workflowActionSchema>;
+export type WorkflowAiAgentActionSettings = z.infer<
+  typeof workflowAiAgentActionSettingsSchema
+>;
+
+export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
+
+export type WorkflowAction =
+  | WorkflowCodeAction
+  | WorkflowSendEmailAction
+  | WorkflowCreateRecordAction
+  | WorkflowUpdateRecordAction
+  | WorkflowDeleteRecordAction
+  | WorkflowFindRecordsAction
+  | WorkflowFormAction
+  | WorkflowHttpRequestAction
+  | WorkflowAiAgentAction;
+
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;
 export type WorkflowStepType = WorkflowStep['type'];
@@ -108,6 +129,10 @@ export type WorkflowVersion = {
   steps: Array<WorkflowStep> | null;
   status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
+};
+
+export type ManualTriggerWorkflowVersion = WorkflowVersion & {
+  trigger: WorkflowManualTrigger | null;
 };
 
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;

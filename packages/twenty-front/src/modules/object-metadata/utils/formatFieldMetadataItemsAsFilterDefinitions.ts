@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const getRelationObjectMetadataNameSingular = ({
@@ -8,12 +8,12 @@ export const getRelationObjectMetadataNameSingular = ({
 }: {
   field: ObjectMetadataItem['fields'][0];
 }): string | undefined => {
-  return field.relationDefinition?.targetObjectMetadata.nameSingular;
+  return field.relation?.targetObjectMetadata.nameSingular;
 };
 
 export const getFilterTypeFromFieldType = (
   fieldType: FieldMetadataType,
-): FilterableFieldType => {
+): FilterableAndTSVectorFieldType => {
   switch (fieldType) {
     case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';
@@ -49,6 +49,10 @@ export const getFilterTypeFromFieldType = (
       return 'RAW_JSON';
     case FieldMetadataType.BOOLEAN:
       return 'BOOLEAN';
+    case FieldMetadataType.TS_VECTOR:
+      return 'TS_VECTOR';
+    case FieldMetadataType.UUID:
+      return 'UUID';
     default:
       return 'TEXT';
   }

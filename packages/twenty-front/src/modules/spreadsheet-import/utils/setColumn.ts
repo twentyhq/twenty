@@ -4,6 +4,8 @@ import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
@@ -45,21 +47,29 @@ export const setColumn = <T extends string>(
   if (field?.fieldType.type === 'multiSelect') {
     const fieldOptions = field.fieldType.options;
 
-    const entries = [
-      ...new Set(
-        data
-          ?.flatMap((row) => {
-            try {
+    let entries: string[] = [];
+    try {
+      entries = [
+        ...new Set(
+          data
+            ?.flatMap((row) => {
               const value = row[oldColumn.index];
+              if (!isDefined(value)) return [];
               const options = JSON.parse(z.string().parse(value));
               return z.array(z.string()).parse(options);
-            } catch {
-              return [];
-            }
-          })
-          .filter((entry) => typeof entry === 'string'),
-      ),
-    ];
+            })
+            .filter((entry) => typeof entry === 'string'),
+        ),
+      ];
+    } catch {
+      return {
+        index: oldColumn.index,
+        header: oldColumn.header,
+        type: SpreadsheetColumnType.matchedError,
+        value: field.key,
+        errorMessage: t`column data is not compatible with Multi-Select.`,
+      };
+    }
 
     const matchedOptions = entries.map((entry) => {
       const value = fieldOptions.find(

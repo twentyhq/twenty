@@ -1,7 +1,7 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-
 import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+
 import { ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/advanced-filter/constants/AdvancedFilterDropdownContentWidth';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { id } from 'date-fns/locale';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
+const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex: 1;

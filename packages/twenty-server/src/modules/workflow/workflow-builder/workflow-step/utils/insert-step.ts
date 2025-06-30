@@ -10,7 +10,7 @@ export const insertStep = ({
   insertedStep: WorkflowAction;
   parentStepId?: string;
   nextStepId?: string;
-}): WorkflowAction[] => {
+}): { updatedSteps: WorkflowAction[]; updatedInsertedStep: WorkflowAction } => {
   const updatedExistingSteps = existingSteps.map((existingStep) => {
     if (existingStep.id === parentStepId) {
       return {
@@ -28,11 +28,13 @@ export const insertStep = ({
     return existingStep;
   });
 
-  return [
-    ...updatedExistingSteps,
-    {
-      ...insertedStep,
-      nextStepIds: nextStepId ? [nextStepId] : undefined,
-    },
-  ];
+  const updatedInsertedStep = {
+    ...insertedStep,
+    nextStepIds: nextStepId ? [nextStepId] : undefined,
+  };
+
+  return {
+    updatedSteps: [...updatedExistingSteps, updatedInsertedStep],
+    updatedInsertedStep,
+  };
 };

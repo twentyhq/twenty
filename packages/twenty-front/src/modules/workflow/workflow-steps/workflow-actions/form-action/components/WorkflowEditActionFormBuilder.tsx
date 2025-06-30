@@ -1,6 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
+import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -14,7 +15,7 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
@@ -88,7 +89,9 @@ const StyledOpenedSettingsContainer = styled.div`
   grid-area: settings;
 `;
 
-const StyledFieldContainer = styled.div`
+const StyledFieldContainer = styled.div<{
+  readonly?: boolean;
+}>`
   align-items: center;
   background: transparent;
   border: none;
@@ -97,17 +100,19 @@ const StyledFieldContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
-  cursor: pointer;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
-  }
+  ${({ readonly, theme }) =>
+    !readonly &&
+    css`
+      &:hover,
+      &[data-open='true'] {
+        background-color: ${theme.background.transparent.lighter};
+      }
+    `}
 `;
 
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
 
@@ -285,7 +290,9 @@ export const WorkflowEditActionFormBuilder = ({
                                 handleFieldClick(field.id);
                               }}
                             >
-                              <StyledFieldContainer>
+                              <StyledFieldContainer
+                                readonly={actionOptions.readonly}
+                              >
                                 <StyledPlaceholder>
                                   {isDefined(field.placeholder) &&
                                   isNonEmptyString(field.placeholder)

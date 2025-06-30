@@ -7,6 +7,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
@@ -25,16 +26,15 @@ import {
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -46,16 +46,14 @@ export class SignInUpService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly fileUploadService: FileUploadService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
-    private readonly userRoleService: UserRoleService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeParamsForNewUser(
@@ -72,7 +70,7 @@ export class SignInUpService {
       );
     }
 
-    if (authParams.provider === 'password') {
+    if (authParams.provider === AuthProviderEnum.Password) {
       newUserParams.passwordHash = await this.generateHash(authParams.password);
     }
 
@@ -290,14 +288,49 @@ export class SignInUpService {
       canAccessFullAdminPanel,
     });
 
-    return await this.userRepository.save(userCreated);
+    const savedUser = await this.userRepository.save(userCreated);
+
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    this.workspaceEventEmitter.emitCustomBatchEvent(
+      USER_SIGNUP_EVENT_NAME,
+      [
+        {
+          userId: savedUser.id,
+          userEmail: newUserWithPicture.email,
+          userFirstName: newUserWithPicture.firstName,
+          userLastName: newUserWithPicture.lastName,
+          locale: newUserWithPicture.locale,
+          serverUrl,
+        },
+      ],
+      undefined,
+    );
+
+    return savedUser;
+  }
+
+  private async setDefaultImpersonateAndAccessFullAdminPanel() {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const workspacesCount = await this.workspaceRepository.count();
+
+      // let the creation of the first workspace
+      if (workspacesCount > 0) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.SIGNUP_DISABLED,
+        );
+      }
+
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    }
+
+    return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ) {
-    let canImpersonate = false;
-    let canAccessFullAdminPanel = false;
     const email =
       userData.type === 'newUserWithPicture'
         ? userData.newUserWithPicture.email
@@ -310,21 +343,8 @@ export class SignInUpService {
       );
     }
 
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspacesCount = await this.workspaceRepository.count();
-
-      // if the workspace doesn't exist it means it's the first user of the workspace
-      canImpersonate = true;
-      canAccessFullAdminPanel = true;
-
-      // let the creation of the first workspace
-      if (workspacesCount > 0) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-    }
+    const { canImpersonate, canAccessFullAdminPanel } =
+      await this.setDefaultImpersonateAndAccessFullAdminPanel();
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -379,5 +399,15 @@ export class SignInUpService {
     });
 
     return { user, workspace };
+  }
+
+  async signUpWithoutWorkspace(
+    newUserParams: SignInUpNewUserPayload,
+    authParams: AuthProviderWithPasswordType['authParams'],
+  ) {
+    return this.saveNewUser(
+      await this.computeParamsForNewUser(newUserParams, authParams),
+      await this.setDefaultImpersonateAndAccessFullAdminPanel(),
+    );
   }
 }

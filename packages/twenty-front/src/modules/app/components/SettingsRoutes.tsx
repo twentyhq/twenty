@@ -64,6 +64,22 @@ const SettingsNewObject = lazy(() =>
   })),
 );
 
+const SettingsNewImapConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewImapConnection,
+  })),
+);
+
+const SettingsEditImapConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsEditImapConnection,
+  })),
+);
+
 const SettingsObjectDetailPage = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
     (module) => ({
@@ -182,11 +198,19 @@ const SettingsObjects = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksDetail = lazy(() =>
+const SettingsDevelopersWebhookNew = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew'
+  ).then((module) => ({
+    default: module.SettingsDevelopersWebhookNew,
+  })),
+);
+
+const SettingsDevelopersWebhookDetail = lazy(() =>
   import(
     '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail'
   ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksDetail,
+    default: module.SettingsDevelopersWebhookDetail,
   })),
 );
 
@@ -319,6 +343,14 @@ const SettingsRoleObjectLevel = lazy(() =>
   })),
 );
 
+const SettingsRoleAddObjectLevel = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleAddObjectLevel').then(
+    (module) => ({
+      default: module.SettingsRoleAddObjectLevel,
+    }),
+  ),
+);
+
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
@@ -341,6 +373,14 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}
+      />
+      <Route
+        path={SettingsPath.NewImapConnection}
+        element={<SettingsNewImapConnection />}
+      />
+      <Route
+        path={SettingsPath.EditImapConnection}
+        element={<SettingsEditImapConnection />}
       />
       <Route
         element={
@@ -412,6 +452,10 @@ export const SettingsRoutes = ({
           path={SettingsPath.RoleObjectLevel}
           element={<SettingsRoleObjectLevel />}
         />
+        <Route
+          path={SettingsPath.RoleAddObjectLevel}
+          element={<SettingsRoleAddObjectLevel />}
+        />
       </Route>
       <Route
         element={
@@ -439,8 +483,12 @@ export const SettingsRoutes = ({
           element={<SettingsDevelopersApiKeyDetail />}
         />
         <Route
+          path={SettingsPath.NewWebhook}
+          element={<SettingsDevelopersWebhookNew />}
+        />
+        <Route
           path={SettingsPath.WebhookDetail}
-          element={<SettingsDevelopersWebhooksDetail />}
+          element={<SettingsDevelopersWebhookDetail />}
         />
         <Route
           path={SettingsPath.Integrations}

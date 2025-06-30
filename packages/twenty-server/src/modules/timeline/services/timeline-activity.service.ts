@@ -6,7 +6,7 @@ import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-e
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
+import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
@@ -258,9 +258,9 @@ export class TimelineActivityService {
 
     const activityObjectMetadataId = event.objectMetadata.fields.find(
       (field) => field.name === activityType,
-    )?.toRelationMetadata?.fromObjectMetadataId;
+    )?.relationTargetObjectMetadataId;
 
-    const targetColumn: string[] = Object.entries(activityTarget[0])
+    const targetColumn: string[] = Object.entries(activityTarget)
       .map(([columnName, columnValue]: [string, string]) => {
         if (columnName === activityType + 'Id' || !columnName.endsWith('Id'))
           return;
@@ -278,9 +278,9 @@ export class TimelineActivityService {
         name: 'linked-' + eventName,
         properties: {},
         objectName: targetColumn[0].replace(/Id$/, ''),
-        recordId: activityTarget[0][targetColumn[0]],
-        linkedRecordCachedName: activity[0].title,
-        linkedRecordId: activity[0].id,
+        recordId: activityTarget[targetColumn[0]],
+        linkedRecordCachedName: activity.title,
+        linkedRecordId: activity.id,
         linkedObjectMetadataId: activityObjectMetadataId,
       } satisfies TimelineActivity,
     ];

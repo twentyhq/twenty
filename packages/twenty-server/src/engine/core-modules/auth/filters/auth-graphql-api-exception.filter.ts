@@ -28,6 +28,7 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.USE_SSO_AUTH:
       case AuthExceptionCode.SIGNUP_DISABLED:
       case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
+      case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
         throw new ForbiddenError(exception.message);
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:

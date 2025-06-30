@@ -81,6 +81,11 @@ export class GoogleCalendarGetEventsService {
   }
 
   private handleError(error: GaxiosError) {
+    this.logger.error(
+      `Error in ${GoogleCalendarGetEventsService.name} - getCalendarEvents`,
+      error.code,
+      error,
+    );
     if (
       error.code &&
       [

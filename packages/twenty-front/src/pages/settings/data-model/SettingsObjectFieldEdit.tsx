@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -60,8 +60,14 @@ export const SettingsObjectFieldEdit = () => {
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();
 
+  const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
+    null,
+  );
+
   const fieldMetadataItem = objectMetadataItem?.fields.find(
-    (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
+    (fieldMetadataItem) =>
+      fieldMetadataItem.name === fieldName ||
+      fieldMetadataItem.name === newNameDuringSave,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
@@ -101,6 +107,7 @@ export const SettingsObjectFieldEdit = () => {
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
     const { dirtyFields } = formConfig.formState;
+    setNewNameDuringSave(formValues.name);
 
     try {
       if (
@@ -130,14 +137,14 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        navigateSettings(SettingsPath.ObjectDetail, {
-          objectNamePlural,
-        });
-
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
+        });
+
+        navigateSettings(SettingsPath.ObjectDetail, {
+          objectNamePlural,
         });
       }
     } catch (error) {
@@ -189,6 +196,7 @@ export const SettingsObjectFieldEdit = () => {
           ]}
           actionButton={
             <SaveAndCancelButtons
+              isLoading={isSubmitting}
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
               onCancel={() =>

@@ -1,15 +1,15 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Workspaces, workspacesState } from '@/auth/states/workspaces';
+import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -37,7 +37,10 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
+import {
+  AvailableWorkspace,
+  useSignUpInNewWorkspaceMutation,
+} from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -46,16 +49,13 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDropdownMenuItemsContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(1)} 0;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
-`;
-
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const workspaces = useRecoilValue(workspacesState);
+  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspacesCount =
+    countAvailableWorkspaces(availableWorkspaces);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   const { signOut } = useAuth();
@@ -68,8 +68,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     multiWorkspaceDropdownState,
   );
 
-  const handleChange = async (workspace: Workspaces[0]) => {
-    redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));
+  const handleChange = async (availableWorkspace: AvailableWorkspace) => {
+    redirectToWorkspaceDomain(
+      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+    );
   };
 
   const createWorkspace = () => {
@@ -115,7 +117,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               />
             }
             dropdownId={'multi-workspace-dropdown-context-menu'}
-            dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
@@ -132,36 +133,41 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {workspaces.length > 1 && (
+      {availableWorkspacesCount > 1 && (
         <>
-          <StyledDropdownMenuItemsContainer>
-            {workspaces
+          <DropdownMenuItemsContainer>
+            {[
+              ...availableWorkspaces.availableWorkspacesForSignIn,
+              ...availableWorkspaces.availableWorkspacesForSignUp,
+            ]
               .filter(({ id }) => id !== currentWorkspace?.id)
               .slice(0, 3)
-              .map((workspace) => (
+              .map((availableWorkspace) => (
                 <UndecoratedLink
-                  key={workspace.id}
+                  key={availableWorkspace.id}
                   to={buildWorkspaceUrl(
-                    getWorkspaceUrl(workspace.workspaceUrls),
+                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
                   )}
                   onClick={(event) => {
                     event?.preventDefault();
-                    handleChange(workspace);
+                    handleChange(availableWorkspace);
                   }}
                 >
                   <MenuItemSelectAvatar
-                    text={workspace.displayName ?? '(No name)'}
+                    text={availableWorkspace.displayName ?? '(No name)'}
                     avatar={
                       <Avatar
-                        placeholder={workspace.displayName || ''}
-                        avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                        placeholder={availableWorkspace.displayName || ''}
+                        avatarUrl={
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
+                        }
                       />
                     }
                     selected={false}
                   />
                 </UndecoratedLink>
               ))}
-            {workspaces.length > 4 && (
+            {availableWorkspacesCount > 4 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
                 text={t`Other workspaces`}
@@ -171,7 +177,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 hasSubMenu={true}
               />
             )}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}

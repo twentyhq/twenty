@@ -1,41 +1,32 @@
-import styled from '@emotion/styled';
-
+import { RecordPickerInitialLoadingEmptyContainer } from '@/object-record/record-picker/components/RecordPickerInitialLoadingEmptyContainer';
+import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
+import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
+import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
 
-export const StyledSelectableItem = styled(SelectableListItem)`
-  height: 100%;
-  width: 100%;
-`;
-
-const StyledEmptyText = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  focusId: string;
 };
 
 export const MultipleRecordPickerMenuItems = ({
   onChange,
+  focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -84,15 +75,31 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItemsState],
   );
 
+  const multipleRecordPickerShouldShowInitialLoading =
+    useRecoilComponentValueV2(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
+
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+    multipleRecordPickerShouldShowSkeletonComponentState,
+  );
+
+  const searchHasNoResults = pickableRecordIds.length === 0;
+
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
-      {pickableRecordIds.length === 0 ? (
-        <StyledEmptyText>No results found</StyledEmptyText>
+      {multipleRecordPickerShouldShowInitialLoading ? (
+        <RecordPickerInitialLoadingEmptyContainer />
+      ) : multipleRecordPickerShouldShowSkeleton ? (
+        <RecordPickerLoadingSkeletonList />
+      ) : searchHasNoResults ? (
+        <RecordPickerNoRecordFoundMenuItem />
       ) : (
         <SelectableList
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
-          hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
+          focusId={focusId}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {pickableRecordIds.map((recordId) => {
             return (

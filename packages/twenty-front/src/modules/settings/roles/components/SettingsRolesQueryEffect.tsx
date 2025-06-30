@@ -28,11 +28,21 @@ export const SettingsRolesQueryEffect = () => {
             snapshot,
             settingsPersistedRoleFamilyState(role.id),
           );
+
+          const currentDraftRole = getSnapshotValue(
+            snapshot,
+            settingsDraftRoleFamilyState(role.id),
+          );
+
           if (isDeeplyEqual(role, persistedRole)) {
             return;
           }
-          set(settingsDraftRoleFamilyState(role.id), role);
+
           set(settingsPersistedRoleFamilyState(role.id), role);
+
+          if (!isDeeplyEqual(currentDraftRole, role)) {
+            set(settingsDraftRoleFamilyState(role.id), role);
+          }
         });
       },
     [],

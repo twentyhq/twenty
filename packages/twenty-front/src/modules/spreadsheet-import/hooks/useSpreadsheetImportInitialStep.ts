@@ -19,7 +19,7 @@ export const useSpreadsheetImportInitialStep = (
       case SpreadsheetImportStepType.validateData:
         return 3;
       default:
-        return -1;
+        return 0;
     }
   }, [initialStep]);
 

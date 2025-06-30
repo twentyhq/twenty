@@ -1,4 +1,5 @@
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
@@ -84,6 +85,9 @@ export const RecordTableTr = forwardRef<
   RecordTableTrProps
 >(({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
   const currentRowSelected = useRecoilComponentFamilyValueV2(
     isRowSelectedComponentFamilyState,
     recordId,
@@ -121,6 +125,8 @@ export const RecordTableTr = forwardRef<
   const isNextRowActiveOrFocused =
     (isRowFocusActive && isNextRowFocused) || isNextRowActive;
 
+  const isReadOnly = !objectPermissions.canUpdateObjectRecords;
+
   return (
     <RecordTableRowContextProvider
       value={{
@@ -133,6 +139,7 @@ export const RecordTableTr = forwardRef<
         objectNameSingular: objectMetadataItem.nameSingular,
         isSelected: currentRowSelected,
         inView: isRowVisible,
+        isReadOnly,
       }}
     >
       <StyledTr

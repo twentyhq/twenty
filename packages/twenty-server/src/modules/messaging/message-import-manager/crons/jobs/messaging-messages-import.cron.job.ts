@@ -11,11 +11,8 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessagesImportJob,
   MessagingMessagesImportJobData,
@@ -30,8 +27,8 @@ export class MessagingMessagesImportCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
@@ -46,20 +43,18 @@ export class MessagingMessagesImportCronJob {
       },
     });
 
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const messageChannelRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-            activeWorkspace.id,
-            'messageChannel',
-          );
+        const schemaName = this.workspaceDataSourceService.getSchemaName(
+          activeWorkspace.id,
+        );
 
-        const messageChannels = await messageChannelRepository.find({
-          where: {
-            isSyncEnabled: true,
-            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-          },
-        });
+        const messageChannels = await mainDataSource.query(
+          `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
+        );
 
         for (const messageChannel of messageChannels) {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(

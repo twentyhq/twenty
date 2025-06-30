@@ -10,13 +10,13 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const pushFocusItem = usePushFocusItemToFocusStack();
-      const resetFocusStackToFocusItem = useResetFocusStackToFocusItem();
+      const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+      const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
       const focusStack = useRecoilValue(focusStackState);
       const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
-        pushFocusItem,
+        pushFocusItemToFocusStack,
         resetFocusStackToFocusItem,
         focusStack,
         currentFocusId,
@@ -44,6 +44,7 @@ describe('useResetFocusStackToFocusItem', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     const secondFocusItem = {
@@ -56,29 +57,30 @@ describe('useResetFocusStackToFocusItem', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
+      memoizeKey: 'global',
     };
 
     await act(async () => {
-      result.current.pushFocusItem({
+      result.current.pushFocusItemToFocusStack({
         focusId: firstFocusItem.focusId,
         component: {
           type: firstFocusItem.componentInstance.componentType,
           instanceId: firstFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: firstFocusItem.memoizeKey,
       });
     });
 
     await act(async () => {
-      result.current.pushFocusItem({
+      result.current.pushFocusItemToFocusStack({
         focusId: secondFocusItem.focusId,
         component: {
           type: secondFocusItem.componentInstance.componentType,
           instanceId: secondFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: secondFocusItem.memoizeKey,
       });
     });
 
@@ -92,7 +94,7 @@ describe('useResetFocusStackToFocusItem', () => {
       result.current.resetFocusStackToFocusItem({
         focusStackItem: firstFocusItem,
         hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
+        memoizeKey: firstFocusItem.memoizeKey,
       });
     });
 

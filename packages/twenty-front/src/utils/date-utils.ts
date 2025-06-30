@@ -4,8 +4,11 @@ import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 import moize from 'moize';
 
-import { logError } from './logError';
+import { DateFormat } from '@/localization/constants/DateFormat';
 import { isDefined } from 'twenty-shared/utils';
+
+import { CustomError } from '@/error-handler/CustomError';
+import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
 
@@ -15,7 +18,10 @@ export const parseDate = (dateToParse: Date | string | number) => {
   let formattedDate: DateTime | null = null;
 
   if (!dateToParse) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   } else if (isString(dateToParse)) {
     formattedDate = DateTime.fromISO(dateToParse);
   } else if (isDate(dateToParse)) {
@@ -25,11 +31,17 @@ export const parseDate = (dateToParse: Date | string | number) => {
   }
 
   if (!formattedDate) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   }
 
   if (!formattedDate.isValid) {
-    throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
+    throw new CustomError(
+      `Invalid date passed to formatPastDate: "${dateToParse}"`,
+      'INVALID_DATE_FORMAT',
+    );
   }
 
   return formattedDate.setLocale(DEFAULT_DATE_LOCALE);
@@ -211,4 +223,21 @@ export const formatToHumanReadableDateTime = (date: Date | string) => {
     hour: 'numeric',
     minute: 'numeric',
   }).format(parsedJSDate);
+};
+
+export const getDateFormatString = (
+  dateFormat: DateFormat,
+  isDateTimeInput: boolean,
+): string => {
+  const timePart = isDateTimeInput ? ' HH:mm' : '';
+
+  switch (dateFormat) {
+    case DateFormat.DAY_FIRST:
+      return `dd/MM/yyyy${timePart}`;
+    case DateFormat.YEAR_FIRST:
+      return `yyyy-MM-dd${timePart}`;
+    case DateFormat.MONTH_FIRST:
+    default:
+      return `MM/dd/yyyy${timePart}`;
+  }
 };

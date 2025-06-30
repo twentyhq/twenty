@@ -24,12 +24,10 @@ export class EntitySchemaFactory {
     objectMetadata: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchema> {
-    const columns = this.entitySchemaColumnFactory.create(
-      objectMetadata.fieldsByName,
-    );
+    const columns = this.entitySchemaColumnFactory.create(objectMetadata);
 
     const relations = await this.entitySchemaRelationFactory.create(
-      objectMetadata.fieldsByName,
+      objectMetadata,
       objectMetadataMaps,
     );
 

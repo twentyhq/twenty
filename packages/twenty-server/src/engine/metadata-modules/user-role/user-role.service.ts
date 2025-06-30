@@ -10,18 +10,18 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -47,22 +47,21 @@ export class UserRoleService {
       return;
     }
 
-    const newUserWorkspaceRole = await this.userWorkspaceRoleRepository.save({
+    const newRoleTarget = await this.roleTargetsRepository.save({
       roleId,
       userWorkspaceId,
       workspaceId,
     });
 
-    await this.userWorkspaceRoleRepository.delete({
+    await this.roleTargetsRepository.delete({
       userWorkspaceId,
       workspaceId,
-      id: Not(newUserWorkspaceRole.id),
+      id: Not(newRoleTarget.id),
     });
 
     await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
       {
         workspaceId,
-        ignoreLock: true,
       },
     );
   }
@@ -99,7 +98,7 @@ export class UserRoleService {
       return new Map();
     }
 
-    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
+    const allRoleTargets = await this.roleTargetsRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         workspaceId,
@@ -111,20 +110,19 @@ export class UserRoleService {
       },
     });
 
-    if (!allUserWorkspaceRoles.length) {
+    if (!allRoleTargets.length) {
       return new Map();
     }
 
     const rolesMap = new Map<string, RoleEntity[]>();
 
     for (const userWorkspaceId of userWorkspaceIds) {
-      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
-        (userWorkspaceRole) =>
-          userWorkspaceRole.userWorkspaceId === userWorkspaceId,
+      const roleTargetsOfUserWorkspace = allRoleTargets.filter(
+        (roleTarget) => roleTarget.userWorkspaceId === userWorkspaceId,
       );
 
-      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
-        .map((userWorkspaceRole) => userWorkspaceRole.role)
+      const rolesOfUserWorkspace = roleTargetsOfUserWorkspace
+        .map((roleTarget) => roleTarget.role)
         .filter(isDefined);
 
       rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);

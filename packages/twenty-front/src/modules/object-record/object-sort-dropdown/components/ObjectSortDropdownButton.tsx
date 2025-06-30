@@ -6,7 +6,6 @@ import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/co
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
-import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
@@ -22,8 +21,11 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -84,11 +86,7 @@ export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export const ObjectSortDropdownButton = ({
-  hotkeyScope,
-}: ObjectSortDropdownButtonProps) => {
-  const { toggleSortDropdown } = useToggleSortDropdown();
-
+export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
@@ -160,13 +158,14 @@ export const ObjectSortDropdownButton = ({
   const shouldShowSeparator =
     visibleFieldMetadataItems.length > 0 && hiddenFieldMetadataItems.length > 0;
 
-  const handleButtonClick = () => {
-    toggleSortDropdown();
-  };
-
   const handleDropdownButtonClose = () => {
     resetRecordSortDropdownSearchInput();
     resetSortDropdown();
+  };
+
+  const handleDropdownOpen = () => {
+    resetSortDropdown();
+    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -216,28 +215,26 @@ export const ObjectSortDropdownButton = ({
     OBJECT_SORT_DROPDOWN_ID,
   );
 
+  const shouldShowHiddenFields = hiddenFieldMetadataItems.length > 0;
+  const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
-      dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
+      onOpen={handleDropdownOpen}
       clickableComponent={
-        <StyledHeaderDropdownButton
-          onClick={() => {
-            handleButtonClick();
-            setSelectedItemId(selectableItemIdArray[0]);
-          }}
-          isUnfolded={isDropdownOpen}
-        >
+        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
           <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
       dropdownComponents={
-        <DropdownContent>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <SelectableList
             selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
-            hotkeyScope={hotkeyScope.scope}
             selectableItemIdArray={selectableItemIdArray}
+            focusId={OBJECT_SORT_DROPDOWN_ID}
+            hotkeyScope={DropdownHotkeyScope.Dropdown}
           >
             {isRecordSortDirectionMenuUnfolded && (
               <StyledSelectedSortDirectionContainer>
@@ -279,43 +276,61 @@ export const ObjectSortDropdownButton = ({
                 setObjectSortDropdownSearchInput(event.target.value)
               }
             />
-            <DropdownMenuItemsContainer scrollable={false}>
-              {visibleFieldMetadataItems.map(
-                (visibleFieldMetadataItem, index) => (
-                  <SelectableListItem
-                    key={visibleFieldMetadataItem.id}
-                    itemId={visibleFieldMetadataItem.id}
-                    onEnter={() => handleAddSort(visibleFieldMetadataItem)}
-                  >
-                    <MenuItem
-                      focused={selectedItemId === visibleFieldMetadataItem.id}
-                      testId={`visible-select-sort-${index}`}
-                      onClick={() => handleAddSort(visibleFieldMetadataItem)}
-                      LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                      text={visibleFieldMetadataItem.label}
-                    />
-                  </SelectableListItem>
-                ),
-              )}
-              {shouldShowSeparator && <DropdownMenuSeparator />}
-              {hiddenFieldMetadataItems.map(
-                (hiddenFieldMetadataItem, index) => (
-                  <SelectableListItem
-                    key={hiddenFieldMetadataItem.id}
-                    itemId={hiddenFieldMetadataItem.id}
-                    onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
-                  >
-                    <MenuItem
-                      focused={selectedItemId === hiddenFieldMetadataItem.id}
-                      testId={`hidden-select-sort-${index}`}
-                      onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                      LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                      text={hiddenFieldMetadataItem.label}
-                    />
-                  </SelectableListItem>
-                ),
-              )}
-            </DropdownMenuItemsContainer>
+            {shouldShowVisibleFields && (
+              <>
+                <DropdownMenuSectionLabel label={t`Visible fields`} />
+                <DropdownMenuItemsContainer>
+                  {visibleFieldMetadataItems.map(
+                    (visibleFieldMetadataItem, index) => (
+                      <SelectableListItem
+                        key={visibleFieldMetadataItem.id}
+                        itemId={visibleFieldMetadataItem.id}
+                        onEnter={() => handleAddSort(visibleFieldMetadataItem)}
+                      >
+                        <MenuItem
+                          focused={
+                            selectedItemId === visibleFieldMetadataItem.id
+                          }
+                          testId={`visible-select-sort-${index}`}
+                          onClick={() =>
+                            handleAddSort(visibleFieldMetadataItem)
+                          }
+                          LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
+                          text={visibleFieldMetadataItem.label}
+                        />
+                      </SelectableListItem>
+                    ),
+                  )}
+                </DropdownMenuItemsContainer>
+              </>
+            )}
+            {shouldShowSeparator && <DropdownMenuSeparator />}
+            {shouldShowHiddenFields && (
+              <>
+                <DropdownMenuSectionLabel label={t`Hidden fields`} />
+                <DropdownMenuItemsContainer>
+                  {hiddenFieldMetadataItems.map(
+                    (hiddenFieldMetadataItem, index) => (
+                      <SelectableListItem
+                        key={hiddenFieldMetadataItem.id}
+                        itemId={hiddenFieldMetadataItem.id}
+                        onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
+                      >
+                        <MenuItem
+                          focused={
+                            selectedItemId === hiddenFieldMetadataItem.id
+                          }
+                          testId={`hidden-select-sort-${index}`}
+                          onClick={() => handleAddSort(hiddenFieldMetadataItem)}
+                          LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
+                          text={hiddenFieldMetadataItem.label}
+                        />
+                      </SelectableListItem>
+                    ),
+                  )}
+                </DropdownMenuItemsContainer>
+              </>
+            )}
           </SelectableList>
         </DropdownContent>
       }

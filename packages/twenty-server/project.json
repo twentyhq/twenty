@@ -18,7 +18,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -26,7 +26,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -150,7 +150,6 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ]
       }
@@ -161,7 +160,6 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ]
       }

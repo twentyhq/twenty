@@ -5,13 +5,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -21,7 +20,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 type RecordDetailRelationSectionProps = {
@@ -57,15 +56,18 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
-  const isToManyObjects = relationType === RelationDefinitionType.ONE_TO_MANY;
+  const isToOneObject = relationType === RelationType.MANY_TO_ONE;
+  const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
       ? [fieldValue as ObjectRecord]
       : ((fieldValue as ObjectRecord[]) ?? []);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
+  const dropdownId = getRecordFieldCardRelationPickerDropdownId({
+    fieldDefinition,
+    recordId,
+  });
 
   const { isDropdownOpen } = useDropdown(dropdownId);
 
@@ -113,16 +115,7 @@ export const RecordDetailRelationSection = ({
     },
   });
 
-  const isRecordReadOnly = useIsRecordReadOnly({
-    recordId,
-  });
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition,
-    isRecordReadOnly,
-  });
-
-  if (loading || isFieldReadOnly) return null;
+  if (loading) return null;
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 

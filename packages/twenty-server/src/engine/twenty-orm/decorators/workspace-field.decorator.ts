@@ -6,7 +6,7 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -19,12 +19,8 @@ export interface WorkspaceFieldOptions<
 > {
   standardId: string;
   type: T;
-  label:
-    | MessageDescriptor
-    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
-  description?:
-    | MessageDescriptor
-    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
+  label: MessageDescriptor;
+  description?: MessageDescriptor;
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
@@ -76,30 +72,18 @@ export function WorkspaceField<T extends FieldMetadataType>(
 
     const defaultValue = (options.defaultValue ??
       generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
+    const name = propertyKey.toString();
+    const label = options.label.message ?? '';
+    const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
 
     metadataArgsStorage.addFields({
       target: object.constructor,
       standardId: options.standardId,
-      name: propertyKey.toString(),
-      label:
-        typeof options.label === 'function'
-          ? (objectMetadata: ObjectMetadataEntity) =>
-              (
-                options.label as (
-                  obj: ObjectMetadataEntity,
-                ) => MessageDescriptor
-              )(objectMetadata).message ?? ''
-          : (options.label.message ?? ''),
+      name,
+      label,
       type: options.type,
-      description:
-        typeof options.description === 'function'
-          ? (objectMetadata: ObjectMetadataEntity) =>
-              (
-                options.description as (
-                  obj: ObjectMetadataEntity,
-                ) => MessageDescriptor
-              )(objectMetadata).message ?? ''
-          : (options.description?.message ?? ''),
+      isLabelSyncedWithName,
+      description: options.description?.message ?? '',
       icon: options.icon,
       defaultValue,
       options: options.options,

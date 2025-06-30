@@ -15,17 +15,52 @@ If you used Docker Compose, follow these steps:
 
 1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
 
-2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `0.53` )
+2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
 
 3. Bring Twenty back online with `docker compose up -d`
 
-If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0, you have to upgrade your instance sequentially, in this example from 0.33.0 to 0.34.0, then from 0.34.0 to 0.35.0.
+If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
 
 
 
 ## Version-specific upgrade steps
 
-### 0.54
+## v1.0
+
+Hello Twenty v1.0! 🎉
+
+## v0.60
+
+### Performance Enhancements
+All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+
+We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+
+If you encounter any runtime issues after upgrading, you may need to flush your cache to ensure it's synchronized with the latest changes. Run this command in your twenty-server container:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Upgrade your Twenty instance to use v0.55 image
+
+You don't need to run any command anymore, the new image will automatically care about running all required migrations.
+
+
+### `User does not have permission` error
+
+If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+
+In your `twenty-server` container, run:
+```bash
+yarn command:prod cache:flush
+```
+
+This issue is specific to this Twenty version and should not be required for future upgrades.
+
+### v0.54
 
 Since version `0.53`, no manual actions needed.
 
@@ -34,7 +69,7 @@ Since version `0.53`, no manual actions needed.
 We've merged the `metadata` schema into the `core` one to simplify data retrieval from `TypeORM`.
 We have merged the `migrate` command step within the `upgrade` command. We do not recommend running `migrate` manually within any of your server/worker containers.
 
-### Since 0.53
+### Since v0.53
 
 Starting from `0.53`, upgrade is programmatically done within the `DockerFile`, this means from now on, you shouldn't have to run any command manually anymore.
 

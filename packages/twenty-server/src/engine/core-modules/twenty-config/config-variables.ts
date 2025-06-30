@@ -11,8 +11,7 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
-import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
+import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -145,6 +144,13 @@ export class ConfigVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable the IMAP messaging integration',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  MESSAGING_PROVIDER_IMAP_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
@@ -223,6 +229,15 @@ export class ConfigVariables {
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TokensDuration,
+    description: 'Duration for which the workspace agnostic token is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
@@ -623,6 +638,14 @@ export class ConfigVariables {
   CHROME_EXTENSION_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Page ID for Cal.com booking integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,
@@ -952,13 +975,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Driver for the LLM chat model',
+    description: 'Driver for the AI chat model',
     type: ConfigVariableType.ENUM,
-    options: Object.values(LLMChatModelDriver),
+    options: Object.values(AiDriver),
     isEnvOnly: true,
   })
   @CastToUpperSnakeCase()
-  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+  AI_DRIVER: AiDriver;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -971,27 +994,10 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'Secret key for Langfuse integration',
+    description: 'API key for Anthropic integration',
     type: ConfigVariableType.STRING,
   })
-  LANGFUSE_SECRET_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Public key for Langfuse integration',
-    type: ConfigVariableType.STRING,
-  })
-  LANGFUSE_PUBLIC_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Driver for LLM tracing',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(LLMTracingDriver),
-    isEnvOnly: true,
-  })
-  @CastToUpperSnakeCase()
-  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.CONSOLE;
+  ANTHROPIC_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
@@ -1051,7 +1057,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

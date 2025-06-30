@@ -1,22 +1,28 @@
 import { Keys } from 'react-hotkeys-hook';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 type HotkeyEffectProps = {
   hotkey: {
     key: Keys;
-    scope: string;
   };
   onHotkeyTriggered: () => void;
+  focusId: string;
 };
 
 export const HotkeyEffect = ({
   hotkey,
+  focusId,
   onHotkeyTriggered,
 }: HotkeyEffectProps) => {
-  useScopedHotkeys(hotkey.key, () => onHotkeyTriggered(), hotkey.scope, [
-    onHotkeyTriggered,
-  ]);
+  useHotkeysOnFocusedElement({
+    keys: hotkey.key,
+    callback: onHotkeyTriggered,
+    focusId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [onHotkeyTriggered],
+  });
 
   return <></>;
 };

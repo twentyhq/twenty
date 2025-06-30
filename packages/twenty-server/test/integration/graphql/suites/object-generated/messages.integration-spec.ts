@@ -3,7 +3,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
+import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 
 describe('messagesResolver (e2e)', () => {
   it('should find many messages', async () => {
@@ -22,7 +22,7 @@ describe('messagesResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(3);
+    expect(edges.length).toEqual(60);
 
     const message1 = edges[0].node;
 
@@ -35,7 +35,7 @@ describe('messagesResolver (e2e)', () => {
   it('should find one message', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'message',
-      filter: { id: { eq: DEV_SEED_MESSAGE_IDS.MESSAGE_1 } },
+      filter: { id: { eq: MESSAGE_DATA_SEED_IDS.ID_1 } },
       gqlFields: MESSAGE_GQL_FIELDS,
     });
 

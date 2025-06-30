@@ -1,6 +1,7 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
+import chunk from 'lodash.chunk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
@@ -32,7 +33,7 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export interface PageInfo {
@@ -71,7 +72,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly coreQueryBuilderFactory: CoreQueryBuilderFactory;
   @Inject()
-  protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
+  protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
   protected readonly getVariablesFactory: GetVariablesFactory;
   @Inject()
@@ -104,11 +105,7 @@ export abstract class RestApiBaseHandler {
       throw new BadRequestException('Workspace not found');
     }
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId: workspace.id,
-        shouldFailIfMetadataNotFound: false,
-      });
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
@@ -125,7 +122,7 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = !!apiKey;
+    const shouldBypassPermissionChecks = isDefined(apiKey);
 
     const roleId =
       await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
@@ -133,7 +130,7 @@ export abstract class RestApiBaseHandler {
         userWorkspaceId,
       });
 
-    const repository = dataSource.getRepository<ObjectRecord>(
+    const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
       shouldBypassPermissionChecks,
       roleId,
@@ -142,7 +139,7 @@ export abstract class RestApiBaseHandler {
     return {
       objectMetadata,
       repository,
-      dataSource,
+      workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
     };
   }
@@ -163,32 +160,34 @@ export abstract class RestApiBaseHandler {
 
     const relations: string[] = [];
 
-    objectMetadata.objectMetadataMapItem.fields.forEach((field) => {
-      if (field.type === FieldMetadataType.RELATION) {
-        if (
-          depth === MAX_DEPTH &&
-          isDefined(field.relationTargetObjectMetadataId)
-        ) {
-          const relationTargetObjectMetadata =
-            objectMetadata.objectMetadataMaps.byId[
-              field.relationTargetObjectMetadataId
-            ];
-          const depth2Relations = this.getRelations({
-            objectMetadata: {
-              objectMetadataMaps: objectMetadata.objectMetadataMaps,
-              objectMetadataMapItem: relationTargetObjectMetadata,
-            },
-            depth: 1,
-          });
+    Object.values(objectMetadata.objectMetadataMapItem.fieldsById).forEach(
+      (field) => {
+        if (field.type === FieldMetadataType.RELATION) {
+          if (
+            depth === MAX_DEPTH &&
+            isDefined(field.relationTargetObjectMetadataId)
+          ) {
+            const relationTargetObjectMetadata =
+              objectMetadata.objectMetadataMaps.byId[
+                field.relationTargetObjectMetadataId
+              ];
+            const depth2Relations = this.getRelations({
+              objectMetadata: {
+                objectMetadataMaps: objectMetadata.objectMetadataMaps,
+                objectMetadataMapItem: relationTargetObjectMetadata,
+              },
+              depth: 1,
+            });
 
-          depth2Relations.forEach((depth2Relation) => {
-            relations.push(`${field.name}.${depth2Relation}`);
-          });
-        } else {
-          relations.push(`${field.name}`);
+            depth2Relations.forEach((depth2Relation) => {
+              relations.push(`${field.name}.${depth2Relation}`);
+            });
+          } else {
+            relations.push(`${field.name}`);
+          }
         }
-      }
-    });
+      },
+    );
 
     return relations;
   }
@@ -212,14 +211,31 @@ export abstract class RestApiBaseHandler {
       depth: depth,
     });
 
-    const unorderedRecords = await repository.find({
+    const relationsChunk = chunk(relations, 50);
+
+    const recordsWithoutRelations = await repository.find({
       where: { id: In(recordIds) },
-      relations,
     });
 
-    const recordMap = new Map(unorderedRecords.map((r) => [r.id, r]));
+    const recordsMap = new Map(
+      recordsWithoutRelations.map((record) => [record.id, record]),
+    );
 
-    const orderedRecords = recordIds.map((id) => recordMap.get(id));
+    for (const relationChunk of relationsChunk) {
+      const records = await repository.find({
+        where: { id: In(recordIds) },
+        relations: relationChunk,
+      });
+
+      records.map((record) => {
+        recordsMap.set(record.id, {
+          ...recordsMap.get(record.id),
+          ...record,
+        });
+      });
+    }
+
+    const orderedRecords = recordIds.map((id) => recordsMap.get(id));
 
     return orderedRecords;
   }
@@ -291,9 +307,7 @@ export abstract class RestApiBaseHandler {
       objectMetadataMaps: ObjectMetadataMaps;
       objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     };
-    objectMetadataItemWithFieldsMaps:
-      | ObjectMetadataItemWithFieldMaps
-      | undefined;
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
     extraFilters?: Partial<ObjectRecordFilter>;
   }) {
     const objectMetadataNameSingular =
@@ -307,17 +321,10 @@ export abstract class RestApiBaseHandler {
       objectMetadata,
     );
 
-    const fieldMetadataMapByName =
-      objectMetadataItemWithFieldsMaps?.fieldsByName || {};
-
-    const fieldMetadataMapByJoinColumnName =
-      objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName || {};
-
     const isForwardPagination = !inputs.endingBefore;
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      fieldMetadataMapByName,
-      fieldMetadataMapByJoinColumnName,
+      objectMetadataItemWithFieldsMaps,
       objectMetadata.objectMetadataMaps,
     );
 
@@ -428,7 +435,7 @@ export abstract class RestApiBaseHandler {
       const cursorArgFilter = computeCursorArgFilter(
         this.parseCursor(cursor),
         inputs.orderBy || [],
-        objectMetadata.objectMetadataMapItem.fieldsByName,
+        objectMetadata.objectMetadataMapItem,
         isForwardPagination,
       );
 

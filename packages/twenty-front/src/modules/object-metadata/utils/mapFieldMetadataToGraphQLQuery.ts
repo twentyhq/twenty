@@ -2,12 +2,15 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
-  RelationDefinitionType,
+  ObjectPermission,
+  RelationType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
@@ -15,22 +18,29 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   gqlField: string;
   fieldMetadata: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'relationDefinition' | 'settings'
+    'name' | 'type' | 'relation' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
-// TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
+// TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
   computeReferences = false,
+  objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
+
+  const objectPermission = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    fieldMetadata.relation?.targetObjectMetadata.id,
+  );
 
   if (fieldIsNonCompositeField) {
     return gqlField;
@@ -38,17 +48,25 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.MANY_TO_ONE
+    fieldMetadata.relation?.type === RelationType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
+    }
+
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
     }
 
     if (gqlField === fieldMetadata.settings?.joinColumnName) {
@@ -62,22 +80,31 @@ ${mapObjectMetadataToGraphQLQuery({
   recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
+  objectPermissionsByObjectMetadataId,
 })}`;
   }
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.ONE_TO_MANY
+    fieldMetadata.relation?.type === RelationType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
       return '';
+    }
+
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
     }
 
     return `${gqlField}
@@ -89,6 +116,7 @@ ${mapObjectMetadataToGraphQLQuery({
       recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
+      objectPermissionsByObjectMetadataId,
     })}
   }
 }`;

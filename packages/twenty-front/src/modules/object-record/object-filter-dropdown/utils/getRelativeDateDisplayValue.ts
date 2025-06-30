@@ -17,11 +17,14 @@ export const getRelativeDateDisplayValue = (
 
   const directionStr = capitalize(direction.toLowerCase());
   const amountStr = direction === 'THIS' ? '' : amount;
-  const unitStr = amount
-    ? amount > 1
-      ? plural(unit.toLowerCase())
-      : unit.toLowerCase()
-    : undefined;
+  const unitStr =
+    direction === 'THIS'
+      ? unit.toLowerCase()
+      : amount
+        ? amount > 1
+          ? plural(unit.toLowerCase())
+          : unit.toLowerCase()
+        : undefined;
 
   return [directionStr, amountStr, unitStr]
     .filter((item) => item !== undefined)

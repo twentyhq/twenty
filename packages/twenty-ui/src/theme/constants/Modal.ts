@@ -1,8 +1,23 @@
-export const MODAL = {
+export const MODAL: {
+  size: { [key: string]: { width?: string; height?: string } };
+} = {
   size: {
-    sm: '300px',
-    md: '400px',
-    lg: '53%',
-    fullscreen: `100dvh`,
+    sm: {
+      width: '300px',
+    },
+    md: {
+      width: '400px',
+    },
+    lg: {
+      width: '53%',
+    },
+    xl: {
+      width: '1200px',
+      height: '800px',
+    },
+    fullscreen: {
+      width: '100dvw',
+      height: '100dvh',
+    },
   },
 };

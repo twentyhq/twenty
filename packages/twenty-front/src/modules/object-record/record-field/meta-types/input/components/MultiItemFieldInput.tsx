@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { CustomError } from '@/error-handler/CustomError';
 import {
   MultiItemBaseInput,
   MultiItemBaseInputProps,
@@ -124,7 +125,10 @@ export const MultiItemFieldInput = <T,>({
         setInputValue(item);
         break;
       default:
-        throw new Error(`Unsupported field type: ${fieldMetadataType}`);
+        throw new CustomError(
+          `Unsupported field type: ${fieldMetadataType}`,
+          'UNSUPPORTED_FIELD_TYPE',
+        );
     }
 
     setItemToEditIndex(index);
@@ -184,7 +188,7 @@ export const MultiItemFieldInput = <T,>({
     <DropdownContent ref={containerRef}>
       {!!items.length && (
         <>
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) =>
               renderItem({
                 value: item,

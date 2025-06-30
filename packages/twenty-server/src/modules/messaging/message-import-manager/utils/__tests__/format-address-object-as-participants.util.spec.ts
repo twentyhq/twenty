@@ -23,11 +23,42 @@ describe('formatAddressObjectAsParticipants', () => {
     ]);
   });
 
-  it('should return an empty array if address object is undefined', () => {
-    const addressObject = undefined;
+  it('should return an empty array if address object handle has no @', () => {
+    const addressObject = {
+      name: 'John Doe',
+      address: 'john.doe',
+    };
 
-    const result = formatAddressObjectAsParticipants(addressObject, 'to');
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
 
     expect(result).toEqual([]);
+  });
+
+  it('should return an empty array if address object handle is empty', () => {
+    const addressObject = {
+      name: 'John Doe',
+      address: '',
+    };
+
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
+
+    expect(result).toEqual([]);
+  });
+
+  it('should return a lowewrcase handle if the handle is not lowercase', () => {
+    const addressObject = {
+      name: 'John Doe',
+      address: 'John.Doe@example.com',
+    };
+
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
+
+    expect(result).toEqual([
+      {
+        role: 'to',
+        handle: 'john.doe@example.com',
+        displayName: 'John Doe',
+      },
+    ]);
   });
 });
