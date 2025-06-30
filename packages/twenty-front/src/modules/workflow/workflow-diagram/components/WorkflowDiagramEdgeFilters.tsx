@@ -14,7 +14,6 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { EdgeLabelRenderer } from '@xyflow/react';
-import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   IconDotsVertical,
@@ -40,7 +39,7 @@ const StyledContainer = styled.div<{ labelX: number; labelY: number }>`
   position: absolute;
 `;
 
-const StyledOpacityOverlay = styled(motion.div)<{ shouldDisplay: boolean }>`
+const StyledOpacityOverlay = styled.div<{ shouldDisplay: boolean }>`
   opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
   position: relative;
 `;
