@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
 import React, { FunctionComponent } from 'react';
 
-export type MainButtonVariant = 'primary' | 'secondary' | 'ligth';
+export type MainButtonVariant = 'primary' | 'secondary';
 
 type Props = {
   title: string;
@@ -111,7 +111,7 @@ export const MainButton = ({
   title,
   width,
   fullWidth = false,
-  variant = 'ligth',
+  variant = 'primary',
   type,
   onClick,
   disabled,

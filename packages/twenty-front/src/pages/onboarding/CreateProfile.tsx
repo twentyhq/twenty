@@ -13,14 +13,15 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { selectIsInModalState } from '@/ui/input/states/selectIsInModalState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -85,6 +86,8 @@ export const CreateProfile = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const setIsSelectInModal = useSetRecoilState(selectIsInModalState);
+  setIsSelectInModal({ isInModal: true });
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -269,11 +272,14 @@ export const CreateProfile = () => {
               name="personType"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <FormSelectFieldInput
-                  label="Person type"
-                  defaultValue={value}
+                <Select
+                  label={t`Person type`}
+                  value={value}
                   onChange={onChange}
                   options={PERSON_TYPE_OPTIONS}
+                  dropdownId="create-profile-person-type-field"
+                  isSelectInModal
+                  fullWidth
                 />
               )}
             />

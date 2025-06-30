@@ -38,6 +38,7 @@ export const useInterChargeDataForm = () => {
       address: '',
       city: '',
       cep: '',
+      stateUnity: InterCustomerUf.SP,
     },
     resolver: zodResolver(interChargeDataInputSchema),
   });

@@ -8,6 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { selectIsInModalState } from '@/ui/input/states/selectIsInModalState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -16,6 +17,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
@@ -51,6 +53,7 @@ export type SelectProps<Value extends SelectValue> = {
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
+  isSelectInModal?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -90,6 +93,7 @@ export const Select = <Value extends SelectValue>({
   callToActionButton,
   dropdownOffset,
   hasRightElement,
+  isSelectInModal = false,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -129,6 +133,8 @@ export const Select = <Value extends SelectValue>({
     dropdownId,
   );
 
+  const { isInModal } = useRecoilValue(selectIsInModalState);
+
   return (
     <StyledContainer
       className={className}
@@ -158,6 +164,7 @@ export const Select = <Value extends SelectValue>({
               hasRightElement={hasRightElement}
             />
           }
+          isDropdownInModal={isSelectInModal || isInModal}
           dropdownComponents={
             <DropdownContent widthInPixels={dropDownMenuWidth}>
               {!!withSearchInput && (

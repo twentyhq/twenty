@@ -17,13 +17,13 @@ export const AUTH_MODAL_CONFIG: {
     showScrollWrapper: true,
   },
   [AppPath.PlanRequired]: {
-    size: 'auto',
-    variant: 'transparent',
+    size: 'large',
+    variant: 'primary',
     showScrollWrapper: false,
   },
   [AppPath.BookCall]: {
     size: 'extraLarge',
-    variant: 'transparent',
+    variant: 'primary',
     showScrollWrapper: false,
   },
 };
