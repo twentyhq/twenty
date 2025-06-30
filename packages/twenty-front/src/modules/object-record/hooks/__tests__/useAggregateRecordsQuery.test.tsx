@@ -6,6 +6,7 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
 import { FieldMetadataType } from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/utils/generateAggregateQuery');
@@ -50,6 +51,10 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isSystem: false,
 };
 
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
+
 describe('useAggregateRecordsQuery', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,13 +72,15 @@ describe('useAggregateRecordsQuery', () => {
   });
 
   it('should handle simple count operation', () => {
-    const { result } = renderHook(() =>
-      useAggregateRecordsQuery({
-        objectNameSingular: 'company',
-        recordGqlFieldsAggregate: {
-          name: [AggregateOperations.COUNT],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecordsQuery({
+          objectNameSingular: 'company',
+          recordGqlFieldsAggregate: {
+            name: [AggregateOperations.COUNT],
+          },
+        }),
+      { wrapper: Wrapper },
     );
 
     expect(result.current.gqlFieldToFieldMap).toEqual({
@@ -88,13 +95,15 @@ describe('useAggregateRecordsQuery', () => {
   });
 
   it('should handle field aggregation', () => {
-    const { result } = renderHook(() =>
-      useAggregateRecordsQuery({
-        objectNameSingular: 'company',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecordsQuery({
+          objectNameSingular: 'company',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM],
+          },
+        }),
+      { wrapper: Wrapper },
     );
 
     expect(result.current.gqlFieldToFieldMap).toEqual({
@@ -111,26 +120,30 @@ describe('useAggregateRecordsQuery', () => {
 
   it('should throw error for invalid aggregation operation', () => {
     expect(() =>
-      renderHook(() =>
-        useAggregateRecordsQuery({
-          objectNameSingular: 'company',
-          recordGqlFieldsAggregate: {
-            name: [AggregateOperations.SUM],
-          },
-        }),
+      renderHook(
+        () =>
+          useAggregateRecordsQuery({
+            objectNameSingular: 'company',
+            recordGqlFieldsAggregate: {
+              name: [AggregateOperations.SUM],
+            },
+          }),
+        { wrapper: Wrapper },
       ),
     ).toThrow();
   });
 
   it('should handle multiple aggregations', () => {
-    const { result } = renderHook(() =>
-      useAggregateRecordsQuery({
-        objectNameSingular: 'company',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM],
-          name: [AggregateOperations.COUNT],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecordsQuery({
+          objectNameSingular: 'company',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM],
+            name: [AggregateOperations.COUNT],
+          },
+        }),
+      { wrapper: Wrapper },
     );
 
     expect(result.current.gqlFieldToFieldMap).toHaveProperty('sumAmount');

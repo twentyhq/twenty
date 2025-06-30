@@ -16,7 +16,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('~/generated/graphql');
+jest.mock('~/generated-metadata/graphql');
 
 dynamicActivate(SOURCE_LOCALE);
 
