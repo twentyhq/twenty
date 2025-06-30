@@ -5,6 +5,7 @@ import {
   Plugin,
 } from '@envelop/core';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
+import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
@@ -191,11 +192,22 @@ export const useGraphQLErrorHandlerHook = <
             const transformedErrors = processedErrors.map((error) => {
               const graphqlError =
                 error instanceof BaseGraphQLError
-                  ? error
+                  ? {
+                      ...error,
+                      extensions: {
+                        ...error.extensions,
+                        displayedErrorMessage:
+                          error.extensions.displayedErrorMessage ??
+                          DEFAULT_DISPLAYED_ERROR_MESSAGE,
+                      },
+                    }
                   : generateGraphQLErrorFromError(error);
 
               if (error.eventId && eventIdKey) {
-                graphqlError.extensions[eventIdKey] = error.eventId;
+                graphqlError.extensions = {
+                  ...graphqlError.extensions,
+                  [eventIdKey]: error.eventId,
+                };
               }
 
               return graphqlError;

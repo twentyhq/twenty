@@ -33,17 +33,17 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
         throw new ForbiddenError(exception.message, {
-          errorFrontEndMessage: t`Authentication is not enabled with this provider.`,
+          displayedErrorMessage: t`Authentication is not enabled with this provider.`,
         });
       case AuthExceptionCode.EMAIL_NOT_VERIFIED:
       case AuthExceptionCode.INVALID_DATA:
         throw new ForbiddenError(exception.message, {
           subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
-          errorFrontEndMessage: t`Email is not verified.`,
+          displayedErrorMessage: t`Email is not verified.`,
         });
       case AuthExceptionCode.UNAUTHENTICATED:
         throw new AuthenticationError(exception.message, {
-          errorFrontEndMessage: t`You must be authenticated to perform this action.`,
+          displayedErrorMessage: t`You must be authenticated to perform this action.`,
         });
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:

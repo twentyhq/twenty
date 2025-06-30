@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { DEFAULT_DISPLAYED_ERROR_MESSAGE } from './DefaultDisplayedErrorMessage';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
