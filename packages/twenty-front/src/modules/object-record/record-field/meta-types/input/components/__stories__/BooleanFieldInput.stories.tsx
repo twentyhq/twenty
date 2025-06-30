@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';

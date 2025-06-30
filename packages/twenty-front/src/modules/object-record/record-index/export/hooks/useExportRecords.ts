@@ -6,8 +6,8 @@ import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-opti
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
-  UseRecordDataOptions,
-  useExportFetchRecords,
+    UseRecordDataOptions,
+    useExportFetchRecords,
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -16,8 +16,7 @@ import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {

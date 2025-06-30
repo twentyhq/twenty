@@ -5,7 +5,7 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
