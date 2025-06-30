@@ -645,7 +645,7 @@ jobs:
                 }
                 
                 // Check PR title for "breaking"
-                const prTitle = `${{ github.event.pull_request.title }}`;
+                const prTitle = `process.env.PR_TITLE`;
                 const titleContainsBreaking = prTitle.toLowerCase().includes('breaking');
                 
                 if (hasBreakingChanges) {
