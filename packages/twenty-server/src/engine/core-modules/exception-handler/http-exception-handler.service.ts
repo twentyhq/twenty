@@ -16,6 +16,34 @@ interface RequestAndParams {
   params: any;
 }
 
+const getErrorNameFromStatusCode = (statusCode: number) => {
+  switch (statusCode) {
+    case 400:
+      return 'BadRequestException';
+    case 401:
+      return 'UnauthorizedException';
+    case 403:
+      return 'ForbiddenException';
+    case 404:
+      return 'NotFoundException';
+    case 405:
+      return 'MethodNotAllowedException';
+    case 409:
+      return 'ConflictException';
+    case 422:
+      return 'UnprocessableEntityException';
+    case 500:
+      return 'InternalServerErrorException';
+    default: {
+      if (statusCode >= 500) {
+        return 'InternalServerErrorException';
+      }
+
+      return 'BadRequestException';
+    }
+  }
+};
+
 @Injectable({ scope: Scope.REQUEST })
 export class HttpExceptionHandlerService {
   constructor(
@@ -62,7 +90,7 @@ export class HttpExceptionHandlerService {
 
     return response.status(statusCode).send({
       statusCode,
-      error: exception.name || 'BadRequestException',
+      error: exception.name ?? getErrorNameFromStatusCode(statusCode),
       messages: [exception?.message],
     });
   };
