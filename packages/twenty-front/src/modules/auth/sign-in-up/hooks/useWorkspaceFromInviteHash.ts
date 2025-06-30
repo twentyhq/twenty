@@ -4,16 +4,16 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { AppPath } from '@/types/AppPath';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -24,9 +24,7 @@ export const useWorkspaceFromInviteHash = () => {
       skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
         navigate(AppPath.Index);
       },
       onCompleted: (data) => {
@@ -36,12 +34,9 @@ export const useWorkspaceFromInviteHash = () => {
           currentWorkspace.id === data.findWorkspaceFromInviteHash.id
         ) {
           initiallyLoggedIn &&
-            enqueueSnackBar(
-              `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
-              {
-                variant: SnackBarVariant.Info,
-              },
-            );
+            enqueueInfoSnackBar({
+              message: t`You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
+            });
           navigate(AppPath.Index);
         }
       },

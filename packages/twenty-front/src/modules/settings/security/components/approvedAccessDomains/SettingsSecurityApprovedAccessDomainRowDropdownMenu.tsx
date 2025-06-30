@@ -1,10 +1,10 @@
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { t } from '@lingui/core/macro';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
@@ -25,7 +25,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
     approvedAccessDomainsState,
   );
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -47,9 +47,11 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       },
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error deleting approved access domain', {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Could not delete approved access domain`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };

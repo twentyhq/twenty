@@ -2,7 +2,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
@@ -33,7 +32,7 @@ export const useObjectRecordSearchRecords = ({
     objectNameSingular,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { data, loading, error, previousData } = useSearchQuery({
     skip:
@@ -53,12 +52,9 @@ export const useObjectRecordSearchRecords = ({
         `useSearchRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
-      enqueueSnackBar(
-        `Error during useSearchRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        apolloError: error,
+      });
     },
   });
 

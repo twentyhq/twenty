@@ -9,7 +9,6 @@ import { RecordGqlOperationFindDuplicatesResult } from '@/object-record/graphql/
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
@@ -33,7 +32,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const queryResponseField = getFindDuplicateRecordsQueryResponseField(
     objectMetadataItem.nameSingular,
@@ -55,8 +54,8 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
             `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
               error,
           );
-          enqueueSnackBar(`Error finding duplicates:", ${error.message}`, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            apolloError: error,
           });
         },
       },

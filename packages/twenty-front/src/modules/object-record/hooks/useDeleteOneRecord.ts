@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -118,7 +118,7 @@ export const useDeleteOneRecord = ({
             });
           },
         })
-        .catch((error: Error) => {
+        .catch((error: ApolloError) => {
           if (!shouldHandleOptimisticCache) {
             throw error;
           }

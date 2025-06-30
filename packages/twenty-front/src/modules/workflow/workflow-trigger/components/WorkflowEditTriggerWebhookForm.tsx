@@ -1,10 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
@@ -24,7 +24,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -50,7 +49,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const theme = useTheme();
   const { t } = useLingui();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
@@ -75,9 +74,11 @@ export const WorkflowEditTriggerWebhookForm = ({
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(webhookUrl);
-    enqueueSnackBar(t`Copied to clipboard!`, {
-      variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
+    enqueueSuccessSnackBar({
+      message: t`Copied to clipboard!`,
+      options: {
+        icon: <IconCopy size={theme.icon.size.md} />,
+      },
     });
   };
 

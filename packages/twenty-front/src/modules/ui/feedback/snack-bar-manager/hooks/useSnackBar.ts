@@ -76,7 +76,13 @@ export const useSnackBar = () => {
   );
 
   const enqueueInfoSnackBar = useCallback(
-    ({ message, options }: { message: string; options?: SnackBarOptions }) => {
+    ({
+      message,
+      options,
+    }: {
+      message: string;
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
       setSnackBarQueue({
         id: uuidv4(),
         message,
@@ -88,7 +94,13 @@ export const useSnackBar = () => {
   );
 
   const enqueueWarningSnackBar = useCallback(
-    ({ message, options }: { message: string; options?: SnackBarOptions }) => {
+    ({
+      message,
+      options,
+    }: {
+      message: string;
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
       setSnackBarQueue({
         id: uuidv4(),
         message,

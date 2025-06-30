@@ -1,12 +1,14 @@
 import { ApolloError } from '@apollo/client';
+import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getErrorMessageFromApolloError = (error: ApolloError): string => {
-  if (!(error instanceof ApolloError)) {
-    return 'An error occurred';
+  if (!isDefined(error.graphQLErrors?.[0]?.extensions?.displayedErrorMessage)) {
+    return DEFAULT_DISPLAYED_ERROR_MESSAGE;
   }
 
   return (
     (error.graphQLErrors[0].extensions?.displayedErrorMessage as string) ??
-    'An error occurred'
+    DEFAULT_DISPLAYED_ERROR_MESSAGE
   );
 };
