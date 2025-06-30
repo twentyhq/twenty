@@ -43,13 +43,13 @@ export const ActionMenuContextProviderWorkflowsEnabled = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const isSingleRecordSelection =
+  const isRecordSelection =
     contextStoreTargetedRecordsRule.mode === 'selection' &&
-    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
+    contextStoreTargetedRecordsRule.selectedRecordIds.length > 0;
 
   const runWorkflowRecordActions = useRunWorkflowRecordActions({
     objectMetadataItem,
-    skip: !isSingleRecordSelection,
+    skip: !isRecordSelection,
   });
 
   const runWorkflowRecordAgnosticActions =
