@@ -48,6 +48,26 @@ msgstr "(מערכת) מיוני תצוגה"
 msgid "(System) Views"
 msgstr "(מערכת) תצוגות"
 
+#. js-lingui-id: rMfEDH
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "% NF-Com"
+msgstr ""
+
+#. js-lingui-id: 4m+uYU
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "% NF-e"
+msgstr ""
+
+#. js-lingui-id: UE4fAy
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "% NFC-e"
+msgstr ""
+
+#. js-lingui-id: ou3zj5
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "% NFS-e"
+msgstr ""
+
 #. js-lingui-id: 3GTImX
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "A charge"
@@ -236,6 +256,36 @@ msgstr "פעולת אגרגציה"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "אירוע מצטבר / מסונן שיוצג בציר הזמן"
+
+#. js-lingui-id: RNKcKo
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota COFINS (%)"
+msgstr ""
+
+#. js-lingui-id: mOmfu+
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota do COFINS. Placeholder: 7.60"
+msgstr ""
+
+#. js-lingui-id: zLG1Ah
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota do ICMS. Placeholder: 18.00"
+msgstr ""
+
+#. js-lingui-id: 0Yz+Xy
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota do PIS. Placeholder: 1.65"
+msgstr ""
+
+#. js-lingui-id: ATtJLL
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota ICMS (%)"
+msgstr ""
+
+#. js-lingui-id: xFH3kf
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Alíquota PIS (%)"
+msgstr ""
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -556,6 +606,11 @@ msgstr "גוף"
 msgid "Body (deprecated)"
 msgstr "גוף (מיושן)"
 
+#. js-lingui-id: 0aOQiG
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID"
+msgstr ""
+
 #. js-lingui-id: XTXVIh
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 msgid "Business Account ID"
@@ -644,6 +699,16 @@ msgstr ""
 msgid "Campaign Source"
 msgstr ""
 
+#. js-lingui-id: X8ziyh
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CEST"
+msgstr ""
+
+#. js-lingui-id: fsRh5D
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CFOP"
+msgstr ""
+
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -691,6 +756,7 @@ msgid "Charge quantity"
 msgstr ""
 
 #. js-lingui-id: ytwNBF
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Charge record position"
@@ -744,6 +810,21 @@ msgstr "\\"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "\\"
+
+#. js-lingui-id: hqcPre
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Código da Situação Tributária ou CSOSN. Placeholder: 102"
+msgstr ""
+
+#. js-lingui-id: FIb+mG
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Código Especificador da Substituição Tributária. Placeholder: 28.038.00"
+msgstr ""
+
+#. js-lingui-id: OsS1Qp
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Código Fiscal de Operações. Placeholder: 5102"
+msgstr ""
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -809,6 +890,7 @@ msgid "Connected Accounts"
 msgstr "\\"
 
 #. js-lingui-id: jfC/xh
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Contact"
 msgstr ""
@@ -835,6 +917,7 @@ msgid "Contact’s company"
 msgstr "\\"
 
 #. js-lingui-id: ITlFIB
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "\\"
@@ -860,6 +943,7 @@ msgid "Contact’s phone number"
 msgstr "\\"
 
 #. js-lingui-id: zsW3gg
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "\\"
@@ -883,6 +967,11 @@ msgstr ""
 #. js-lingui-id: UuEIJ+
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "CPF or CNPJ identifier for the charge"
+msgstr ""
+
+#. js-lingui-id: NTBmQE
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "CPF/CNPJ"
 msgstr ""
 
 #. js-lingui-id: NCIYDF
@@ -910,6 +999,31 @@ msgstr "\\"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
 msgstr "\\"
+
+#. js-lingui-id: TsP8cw
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST COFINS"
+msgstr ""
+
+#. js-lingui-id: hzTsGr
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST do COFINS. Placeholder: 01"
+msgstr ""
+
+#. js-lingui-id: nMSkSB
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST do PIS. Placeholder: 01"
+msgstr ""
+
+#. js-lingui-id: K2hY1Z
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST ICMS/CSOSN"
+msgstr ""
+
+#. js-lingui-id: gUSJXx
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "CST PIS"
+msgstr ""
 
 #. js-lingui-id: 876pfE
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -988,6 +1102,7 @@ msgid "Due Date"
 msgstr "תאריך יעד"
 
 #. js-lingui-id: BXEcos
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Emails"
 msgstr "אימיילים"
@@ -1124,6 +1239,7 @@ msgstr "חבר חלל עבודה באירוע"
 #. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
@@ -1144,6 +1260,11 @@ msgstr ""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "אירועים הקשורים לאדם"
+
+#. js-lingui-id: kZn7Yr
+#: src/modules/support/support.workspace-entity.ts
+msgid "Events linked to the support"
+msgstr ""
 
 #. js-lingui-id: iag/Jq
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
@@ -1467,6 +1588,11 @@ msgstr "פרופיל לקוח אידיאלי: מציין האם החברה הי�
 msgid "Indicates if the entity is an individual or a company"
 msgstr ""
 
+#. js-lingui-id: girw5z
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Inscrição Estadual"
+msgstr ""
+
 #. js-lingui-id: AHWM9N
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
@@ -1499,6 +1625,11 @@ msgstr ""
 #. js-lingui-id: nbfdhU
 #: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 msgid "Integrations"
+msgstr ""
+
+#. js-lingui-id: bB1YSX
+#: src/engine/core-modules/inter/services/inter.service.ts
+msgid "Inter Bilepix Billing Charge"
 msgstr ""
 
 #. js-lingui-id: oK4zvs
@@ -1880,6 +2011,7 @@ msgstr "\\"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1910,6 +2042,16 @@ msgstr ""
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "\\"
+
+#. js-lingui-id: 1VGoRg
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "NCM"
+msgstr ""
+
+#. js-lingui-id: U8O0LR
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Nomenclatura Comum Mercosul. Format: xxxx.xx.xx. Placeholder: 8471.30.12"
+msgstr ""
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1957,6 +2099,7 @@ msgid "Note title"
 msgstr "כותרת ההערה"
 
 #. js-lingui-id: 1DBGsz
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1976,6 +2119,7 @@ msgid "Notes tied to the company"
 msgstr "הערות הקשורות לחברה"
 
 #. js-lingui-id: iQ5AH6
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "הערות הקשורות לאיש קשר"
@@ -2004,6 +2148,11 @@ msgstr "NoteTarget הזדמנות"
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget person"
 msgstr "NoteTarget אדם"
+
+#. js-lingui-id: XVHCAg
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+msgid "NoteTarget support"
+msgstr ""
 
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2105,6 +2254,7 @@ msgid "Opportunity record position"
 msgstr "מיקום רישום ההזדמנות"
 
 #. js-lingui-id: 5ugYS3
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "שלב ההזדמנות"
@@ -2119,6 +2269,16 @@ msgstr "אגרגציה אופציונלית של פעולה"
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "סוד אופציונלי המשמש לחישוב חתימת HMAC עבור משאבות webhook. סוד זה מתואם בין Twenty וצרכן ה-webhook כדי לאמת בקשות webhook."
+
+#. js-lingui-id: 3qocCh
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Origem da Mercadoria"
+msgstr ""
+
+#. js-lingui-id: aefXyf
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Origem da mercadoria (0-8). Placeholder: 0"
+msgstr ""
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2151,6 +2311,26 @@ msgstr "אנשים"
 msgid "People linked to the company."
 msgstr "אנשים הקשורים לחברה."
 
+#. js-lingui-id: jbDhKI
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)"
+msgstr ""
+
+#. js-lingui-id: 017kfr
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Nota Fiscal de Comunicação (Communication Invoice)"
+msgstr ""
+
+#. js-lingui-id: +zipdG
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)"
+msgstr ""
+
+#. js-lingui-id: CWKrq3
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)"
+msgstr ""
+
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
@@ -2171,6 +2351,12 @@ msgstr "אדם"
 msgid "Person linked to the charge"
 msgstr ""
 
+#. js-lingui-id: l9Z3mg
+#: src/modules/support/support.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+msgid "Person linked to the support"
+msgstr ""
+
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
@@ -2187,6 +2373,7 @@ msgid "Phone ID"
 msgstr ""
 
 #. js-lingui-id: m2ivgq
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "טלפונים"
@@ -2206,6 +2393,7 @@ msgstr "איש קשר"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 #: src/modules/traceable/standard-objects/traceable.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2433,6 +2621,7 @@ msgid "Source of the traffic (e.g., Google, Facebook)"
 msgstr ""
 
 #. js-lingui-id: 3PRxO3
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "שלב"
@@ -2442,6 +2631,11 @@ msgstr "שלב"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Start Date"
 msgstr "תאריך התחלה"
+
+#. js-lingui-id: 47Ailm
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+msgid "State Registration number for tax purposes in Brazil"
+msgstr ""
 
 #. js-lingui-id: uAQUqI
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
@@ -2457,6 +2651,7 @@ msgstr ""
 
 #. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "Statuses"
 msgstr "מצבים"
@@ -2472,6 +2667,25 @@ msgstr ""
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "נושא"
+
+#. js-lingui-id: XYLcNv
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
+#: src/modules/support/support.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+msgid "Support"
+msgstr ""
+
+#. js-lingui-id: Uby7zw
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Support linked to the event"
+msgstr ""
+
+#. js-lingui-id: qnIA1S
+#: src/modules/support/support.workspace-entity.ts
+msgid "Supports"
+msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2714,6 +2928,11 @@ msgstr "יוצר הרשומה"
 #. js-lingui-id: ZVYmSG
 #: src/modules/chatbot/standard-objects/chatbot.workspace-entity.ts
 msgid "The current statuses of the chatbot flow"
+msgstr ""
+
+#. js-lingui-id: /AsNLR
+#: src/modules/support/support.workspace-entity.ts
+msgid "The current statuses of the support"
 msgstr ""
 
 #. js-lingui-id: bMyVOx
@@ -2974,6 +3193,16 @@ msgstr ""
 msgid "Type"
 msgstr "סוג"
 
+#. js-lingui-id: yS0vV0
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Unidade Comercial"
+msgstr ""
+
+#. js-lingui-id: QHdsoa
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Unidade comercial. Placeholder: UN"
+msgstr ""
+
 #. js-lingui-id: aSwfbR
 #: src/modules/product/standard-objects/product.workspace-entity.ts
 msgid "Unit"
@@ -3055,6 +3284,16 @@ msgstr ""
 #: src/modules/linklogs/standard-objects/linklog.workspace-entity.ts
 #~ msgid "UV"
 #~ msgstr ""
+
+#. js-lingui-id: 9ifduX
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Valor ou alíquota de IPI (se aplicável). Placeholder: 0.00"
+msgstr ""
+
+#. js-lingui-id: 1eObHA
+#: src/modules/product/standard-objects/product.workspace-entity.ts
+msgid "Valor/Alíquota IPI"
+msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
