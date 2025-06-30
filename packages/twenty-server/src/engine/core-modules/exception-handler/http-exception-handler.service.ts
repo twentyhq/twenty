@@ -1,4 +1,10 @@
-import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+  Scope,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
 import { Response } from 'express';
@@ -53,14 +59,12 @@ export class HttpExceptionHandlerService {
   ) {}
 
   handleError = (
-    exception: Error,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    exception: Error | HttpException,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
