@@ -204,6 +204,7 @@ export {
   IconFilter,
   IconFilterCog,
   IconFilterOff,
+  IconFilterPlus,
   IconFlag,
   IconFlask,
   IconFocusCentered,
