@@ -25,6 +25,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
@@ -33,6 +34,8 @@ import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isF
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
@@ -53,9 +56,20 @@ export const usePersistField = () => {
     recordId,
     fieldDefinition,
     useUpdateRecord = () => [],
+    updateMultipleRecords,
   } = useContext(FieldContext);
 
   const [updateRecord] = useUpdateRecord();
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const selectedRecordIds =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds.length > 1
+        ? contextStoreTargetedRecordsRule.selectedRecordIds
+        : null
+      : null;
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -179,6 +193,19 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelationToOneObject) {
+            if (
+              isDefined(selectedRecordIds) &&
+              selectedRecordIds.includes(recordId)
+            ) {
+              updateMultipleRecords?.({
+                recordIdsToUpdate: selectedRecordIds,
+                updateManyRecordsInput: {
+                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                    valueToPersist?.id ?? null,
+                },
+              });
+              return;
+            }
             updateRecord?.({
               variables: {
                 where: { id: recordId },
@@ -190,7 +217,18 @@ export const usePersistField = () => {
             });
             return;
           }
-
+          if (
+            isDefined(selectedRecordIds) &&
+            selectedRecordIds.includes(recordId)
+          ) {
+            updateMultipleRecords?.({
+              recordIdsToUpdate: selectedRecordIds,
+              updateManyRecordsInput: {
+                [fieldName]: valueToPersist,
+              },
+            });
+            return;
+          }
           updateRecord?.({
             variables: {
               where: { id: recordId },

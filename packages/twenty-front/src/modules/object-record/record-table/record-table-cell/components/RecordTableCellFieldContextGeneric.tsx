@@ -1,6 +1,10 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
+import {
+  FieldContext,
+  RecordsUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
@@ -54,7 +58,15 @@ export const RecordTableCellFieldContextGeneric = ({
 
     hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
   }
-
+  const { updateManyRecords } = useUpdateManyRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+  const updateMultipleRecords = ({
+    recordIdsToUpdate,
+    updateManyRecordsInput,
+  }: RecordsUpdateHookParams) => {
+    updateManyRecords({ recordIdsToUpdate, updateManyRecordsInput });
+  };
   return (
     <FieldContext.Provider
       value={{
@@ -72,6 +84,7 @@ export const RecordTableCellFieldContextGeneric = ({
         displayedMaxRows: 1,
         isReadOnly: isFieldReadOnly,
         isForbidden: !hasObjectReadPermissions,
+        updateMultipleRecords,
       }}
     >
       {children}

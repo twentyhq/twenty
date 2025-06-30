@@ -20,6 +20,11 @@ export type RecordUpdateHook = () => [
   RecordUpdateHookReturn,
 ];
 
+export type RecordsUpdateHookParams = {
+  recordIdsToUpdate: string[];
+  updateManyRecordsInput: Record<string, unknown>;
+};
+
 export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
@@ -40,6 +45,7 @@ export type GenericFieldContextType = {
   onCloseEditMode?: () => void;
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
+  updateMultipleRecords?: (params: RecordsUpdateHookParams) => void;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

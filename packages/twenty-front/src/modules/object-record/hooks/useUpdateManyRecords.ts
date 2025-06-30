@@ -107,11 +107,11 @@ export const useUpdateManyRecords = <
       const cachedRecords = batchIdsToUpdate
         .map((idToUpdate) => getRecordFromCache(idToUpdate, apolloClient.cache))
         .filter(isDefined);
-      const cashedRecordsCopy = [...cachedRecords];
+
       if (!skipOptimisticEffect) {
         const cachedRecordsNode: RecordGqlNode[] = [];
         const computedOptimisticRecordsNode: RecordGqlNode[] = [];
-        cashedRecordsCopy.forEach((cachedRecord) => {
+        cachedRecords.forEach((cachedRecord) => {
           const cachedRecordWithConnection =
             getRecordNodeFromRecord<ObjectRecord>({
               record: cachedRecord,

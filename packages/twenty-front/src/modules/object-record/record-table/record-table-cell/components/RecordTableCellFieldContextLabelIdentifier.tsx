@@ -1,5 +1,9 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
+import {
+  FieldContext,
+  RecordsUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -58,7 +62,15 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     isMobile && !isRecordTableScrolledLeftComponent;
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
-
+  const { updateManyRecords } = useUpdateManyRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+  const updateMultipleRecords = ({
+    recordIdsToUpdate,
+    updateManyRecordsInput,
+  }: RecordsUpdateHookParams) => {
+    updateManyRecords({ recordIdsToUpdate, updateManyRecordsInput });
+  };
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
@@ -84,6 +96,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         },
         isForbidden: !hasObjectReadPermissions,
         triggerEvent,
+        updateMultipleRecords,
       }}
     >
       {children}
