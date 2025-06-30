@@ -3,8 +3,8 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-    getRecordFromCache,
-    GetRecordFromCacheArgs,
+  getRecordFromCache,
+  GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
 import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';

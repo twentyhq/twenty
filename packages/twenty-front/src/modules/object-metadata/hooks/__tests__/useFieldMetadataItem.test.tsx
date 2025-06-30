@@ -7,17 +7,17 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-    FIELD_METADATA_ID,
-    FIELD_RELATION_METADATA_ID,
-    objectMetadataId,
-    queries,
-    responseData,
-    variables,
+  FIELD_METADATA_ID,
+  FIELD_RELATION_METADATA_ID,
+  objectMetadataId,
+  queries,
+  responseData,
+  variables,
 } from '../__mocks__/useFieldMetadataItem';
 
 import {
-    query as findManyObjectMetadataItemsQuery,
-    responseData as findManyObjectMetadataItemsResponseData,
+  query as findManyObjectMetadataItemsQuery,
+  responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
