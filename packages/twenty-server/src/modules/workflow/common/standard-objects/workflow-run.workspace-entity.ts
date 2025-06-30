@@ -30,6 +30,7 @@ export enum WorkflowRunStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
+  ENQUEUED = 'ENQUEUED',
 }
 
 export type StepOutput = {
@@ -116,6 +117,12 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Failed',
         position: 3,
         color: 'red',
+      },
+      {
+        value: WorkflowRunStatus.ENQUEUED,
+        label: 'Enqueued',
+        position: 4,
+        color: 'blue',
       },
     ],
     defaultValue: "'NOT_STARTED'",

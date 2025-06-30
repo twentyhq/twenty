@@ -27,6 +27,13 @@ export const getWorkflowRunStatusTagProps = ({
     };
   }
 
+  if (workflowRunStatus === 'ENQUEUED') {
+    return {
+      color: 'blue',
+      text: 'Enqueued',
+    };
+  }
+
   return {
     color: 'red',
     text: 'Failed',

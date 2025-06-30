@@ -7,5 +7,5 @@ export class ThrottlerException extends CustomException {
 }
 
 export enum ThrottlerExceptionCode {
-  TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
+  LIMIT_REACHED = 'LIMIT_REACHED',
 }

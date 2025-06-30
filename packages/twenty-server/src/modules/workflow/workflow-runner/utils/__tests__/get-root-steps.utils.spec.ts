@@ -1,5 +1,5 @@
-import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-root-steps.utils';
 
 describe('getRootSteps', () => {
   it('should return the root steps', () => {
