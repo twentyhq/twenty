@@ -4,7 +4,12 @@ import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/Cr
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
+import {
+  BaseEdge,
+  EdgeLabelRenderer,
+  EdgeProps,
+  getStraightPath,
+} from '@xyflow/react';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramDefaultEdgeProps = EdgeProps<WorkflowDiagramEdge>;
@@ -40,7 +45,7 @@ export const WorkflowDiagramDefaultEdge = ({
         style={{ stroke: theme.border.color.strong }}
       />
       {data?.shouldDisplayEdgeOptions && (
-        <>
+        <EdgeLabelRenderer>
           {isWorkflowFilteringEnabled ? (
             <WorkflowDiagramEdgeFilters
               labelX={labelX}
@@ -55,7 +60,7 @@ export const WorkflowDiagramDefaultEdge = ({
               nextStepId={target}
             />
           )}
-        </>
+        </EdgeLabelRenderer>
       )}
     </>
   );

@@ -13,7 +13,6 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { EdgeLabelRenderer } from '@xyflow/react';
 import { useState } from 'react';
 import {
   IconDotsVertical,
@@ -83,87 +82,83 @@ export const WorkflowDiagramEdgeFilters = ({
   );
 
   return (
-    <EdgeLabelRenderer>
-      <StyledContainer
-        data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
-        labelX={labelX}
-        labelY={labelY}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+    <StyledContainer
+      data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+      labelX={labelX}
+      labelY={labelY}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <StyledOpacityOverlay
+        shouldDisplay={isSelected || hovered || isDropdownOpen}
       >
-        <StyledOpacityOverlay
-          shouldDisplay={isSelected || hovered || isDropdownOpen}
-        >
-          <StyledIconButtonGroup
-            className="nodrag nopan"
-            iconButtons={[
-              {
-                Icon: IconFilterPlus,
-                onClick: () => {},
+        <StyledIconButtonGroup
+          className="nodrag nopan"
+          iconButtons={[
+            {
+              Icon: IconFilterPlus,
+              onClick: () => {},
+            },
+            {
+              Icon: IconDotsVertical,
+              onClick: () => {
+                openDropdown({
+                  dropdownComponentInstanceIdFromProps: dropdownId,
+                });
               },
-              {
-                Icon: IconDotsVertical,
-                onClick: () => {
-                  openDropdown({
-                    dropdownComponentInstanceIdFromProps: dropdownId,
-                  });
-                },
-              },
-            ]}
-          />
+            },
+          ]}
+        />
 
-          <Dropdown
-            dropdownId={dropdownId}
-            clickableComponent={<div></div>}
-            data-select-disable
-            dropdownPlacement="bottom-start"
-            dropdownStrategy="absolute"
-            dropdownOffset={{
-              x: 0,
-              y: 4,
-            }}
-            onOpen={() => {
-              setWorkflowDiagramPanOnDrag(false);
-            }}
-            onClose={() => {
-              setWorkflowDiagramPanOnDrag(true);
-            }}
-            dropdownComponents={
-              <DropdownContent
-                widthInPixels={GenericDropdownContentWidth.Narrow}
-              >
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    text="Filter"
-                    LeftIcon={IconFilter}
-                    onClick={() => {}}
-                  />
-                  <MenuItem
-                    text="Remove Filter"
-                    LeftIcon={IconFilterX}
-                    onClick={() => {}}
-                  />
-                  <MenuItem
-                    text="Add Node"
-                    LeftIcon={IconPlus}
-                    onClick={() => {
-                      closeDropdown(dropdownId);
-                      setHovered(false);
+        <Dropdown
+          dropdownId={dropdownId}
+          clickableComponent={<div></div>}
+          data-select-disable
+          dropdownPlacement="bottom-start"
+          dropdownStrategy="absolute"
+          dropdownOffset={{
+            x: 0,
+            y: 4,
+          }}
+          onOpen={() => {
+            setWorkflowDiagramPanOnDrag(false);
+          }}
+          onClose={() => {
+            setWorkflowDiagramPanOnDrag(true);
+          }}
+          dropdownComponents={
+            <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  text="Filter"
+                  LeftIcon={IconFilter}
+                  onClick={() => {}}
+                />
+                <MenuItem
+                  text="Remove Filter"
+                  LeftIcon={IconFilterX}
+                  onClick={() => {}}
+                />
+                <MenuItem
+                  text="Add Node"
+                  LeftIcon={IconPlus}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    setHovered(false);
 
-                      startNodeCreation({ parentStepId, nextStepId });
-                    }}
-                  />
-                  <MenuItem
-                    text="Delete branch"
-                    LeftIcon={IconGitBranchDeleted}
-                    onClick={() => {}}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </StyledOpacityOverlay>
-      </StyledContainer>
-    </EdgeLabelRenderer>
+                    startNodeCreation({ parentStepId, nextStepId });
+                  }}
+                />
+                <MenuItem
+                  text="Delete branch"
+                  LeftIcon={IconGitBranchDeleted}
+                  onClick={() => {}}
+                />
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          }
+        />
+      </StyledOpacityOverlay>
+    </StyledContainer>
   );
 };
