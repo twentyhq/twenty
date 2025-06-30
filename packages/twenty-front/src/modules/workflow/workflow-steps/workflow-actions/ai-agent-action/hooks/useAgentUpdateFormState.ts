@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { useFindOneAgentQuery } from '~/generated/graphql';
 import { UPDATE_ONE_AGENT } from '../graphql/mutations/updateOneAgent';
-import { FIND_ONE_AGENT } from '../graphql/queries/findOneAgent';
 
 type AgentFormValues = {
   name: string;
@@ -24,7 +24,7 @@ export const useAgentUpdateFormState = ({
     modelId: '',
   });
 
-  const { loading } = useQuery(FIND_ONE_AGENT, {
+  const { loading } = useFindOneAgentQuery({
     variables: { id: agentId },
     skip: !agentId,
     onCompleted: (data) => {
