@@ -3,7 +3,6 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableRow';
 import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/settings-permissions/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
@@ -18,10 +17,7 @@ import {
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import {
-  FeatureFlagKey,
-  SettingPermissionType,
-} from '~/generated-metadata/graphql';
+import { SettingPermissionType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -45,10 +41,6 @@ export const SettingsRolePermissionsSettingsSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsSettingsSectionProps) => {
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-  );
-
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -102,23 +94,21 @@ export const SettingsRolePermissionsSettingsSection = ({
   return (
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
-      {isPermissionsV2Enabled && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconSettings}
-            title={t`Settings All Access`}
-            description={t`Ability to edit all settings`}
-            checked={settingsDraftRole.canUpdateAllSettings}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-              });
-            }}
-          />
-        </StyledCard>
-      )}
+      <StyledCard rounded>
+        <SettingsOptionCardContentToggle
+          Icon={IconSettings}
+          title={t`Settings All Access`}
+          description={t`Ability to edit all settings`}
+          checked={settingsDraftRole.canUpdateAllSettings}
+          disabled={!isEditable}
+          onChange={() => {
+            setSettingsDraftRole({
+              ...settingsDraftRole,
+              canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+            });
+          }}
+        />
+      </StyledCard>
       <AnimatedExpandableContainer
         isExpanded={!settingsDraftRole.canUpdateAllSettings}
         dimension="height"
@@ -130,7 +120,11 @@ export const SettingsRolePermissionsSettingsSection = ({
         containAnimation={false}
       >
         <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader />
+          <SettingsRolePermissionsSettingsTableHeader
+            roleId={roleId}
+            settingsPermissionsConfig={settingsPermissionsConfig}
+            isEditable={isEditable}
+          />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (
               <SettingsRolePermissionsSettingsTableRow

@@ -144,6 +144,13 @@ export class ConfigVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable the IMAP messaging integration',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  MESSAGING_PROVIDER_IMAP_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
@@ -631,6 +638,14 @@ export class ConfigVariables {
   CHROME_EXTENSION_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Page ID for Cal.com booking integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,
@@ -977,6 +992,14 @@ export class ConfigVariables {
   OPENAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Anthropic integration',
+    type: ConfigVariableType.STRING,
+  })
+  ANTHROPIC_API_KEY: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
@@ -1034,7 +1057,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

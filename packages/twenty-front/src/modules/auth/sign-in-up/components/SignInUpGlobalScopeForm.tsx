@@ -1,42 +1,43 @@
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useTheme } from '@emotion/react';
-import { useLingui } from '@lingui/react/macro';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Avatar,
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
-  Avatar,
 } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { AvailableWorkspace } from '~/generated/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -52,6 +53,7 @@ const StyledForm = styled.form`
 `;
 
 const StyledWorkspaceContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
@@ -60,6 +62,14 @@ const StyledWorkspaceContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
   overflow: hidden;
   width: 100%;
+
+  > * {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
 `;
 
 const StyledWorkspaceItem = styled.div`
@@ -71,7 +81,6 @@ const StyledWorkspaceItem = styled.div`
   padding: 0;
   overflow: hidden;
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
   justify-content: space-between;
 
@@ -125,10 +134,16 @@ const StyledChevronIcon = styled.div`
   display: flex;
 `;
 
+const StyledActionLinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 export const SignInUpGlobalScopeForm = () => {
   const authProviders = useRecoilValue(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { signOut } = useAuth();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
@@ -183,57 +198,65 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <StyledWorkspaceContainer>
-          {[
-            ...availableWorkspaces.availableWorkspacesForSignIn,
-            ...availableWorkspaces.availableWorkspacesForSignUp,
-          ].map((availableWorkspace) => (
-            <UndecoratedLink
-              key={availableWorkspace.id}
-              to={getAvailableWorkspaceUrl(availableWorkspace)}
-            >
-              <StyledWorkspaceItem>
-                <StyledWorkspaceContent>
-                  <Avatar
-                    placeholder={availableWorkspace.displayName || ''}
-                    avatarUrl={
-                      availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
-                    }
-                    size="lg"
-                  />
-                  <StyledWorkspaceTextContainer>
-                    <StyledWorkspaceName>
-                      {availableWorkspace.displayName || availableWorkspace.id}
-                    </StyledWorkspaceName>
-                    <StyledWorkspaceUrl>
-                      {
-                        new URL(
-                          getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                        ).hostname
+        <>
+          <StyledWorkspaceContainer>
+            {[
+              ...availableWorkspaces.availableWorkspacesForSignIn,
+              ...availableWorkspaces.availableWorkspacesForSignUp,
+            ].map((availableWorkspace) => (
+              <UndecoratedLink
+                key={availableWorkspace.id}
+                to={getAvailableWorkspaceUrl(availableWorkspace)}
+              >
+                <StyledWorkspaceItem>
+                  <StyledWorkspaceContent>
+                    <Avatar
+                      placeholder={availableWorkspace.displayName || ''}
+                      avatarUrl={
+                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
                       }
-                    </StyledWorkspaceUrl>
-                  </StyledWorkspaceTextContainer>
-                  <StyledChevronIcon>
-                    <IconChevronRight size={theme.icon.size.md} />
-                  </StyledChevronIcon>
-                </StyledWorkspaceContent>
-              </StyledWorkspaceItem>
-            </UndecoratedLink>
-          ))}
-          <StyledWorkspaceItem onClick={() => createWorkspace()}>
-            <StyledWorkspaceContent>
-              <StyledWorkspaceLogo>
-                <IconPlus size={theme.icon.size.lg} />
-              </StyledWorkspaceLogo>
-              <StyledWorkspaceTextContainer>
-                <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-              </StyledWorkspaceTextContainer>
-              <StyledChevronIcon>
-                <IconChevronRight size={theme.icon.size.md} />
-              </StyledChevronIcon>
-            </StyledWorkspaceContent>
-          </StyledWorkspaceItem>
-        </StyledWorkspaceContainer>
+                      size="lg"
+                    />
+                    <StyledWorkspaceTextContainer>
+                      <StyledWorkspaceName>
+                        {availableWorkspace.displayName ||
+                          availableWorkspace.id}
+                      </StyledWorkspaceName>
+                      <StyledWorkspaceUrl>
+                        {
+                          new URL(
+                            getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                          ).hostname
+                        }
+                      </StyledWorkspaceUrl>
+                    </StyledWorkspaceTextContainer>
+                    <StyledChevronIcon>
+                      <IconChevronRight size={theme.icon.size.md} />
+                    </StyledChevronIcon>
+                  </StyledWorkspaceContent>
+                </StyledWorkspaceItem>
+              </UndecoratedLink>
+            ))}
+            <StyledWorkspaceItem onClick={() => createWorkspace()}>
+              <StyledWorkspaceContent>
+                <StyledWorkspaceLogo>
+                  <IconPlus size={theme.icon.size.lg} />
+                </StyledWorkspaceLogo>
+                <StyledWorkspaceTextContainer>
+                  <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
+                </StyledWorkspaceTextContainer>
+                <StyledChevronIcon>
+                  <IconChevronRight size={theme.icon.size.md} />
+                </StyledChevronIcon>
+              </StyledWorkspaceContent>
+            </StyledWorkspaceItem>
+          </StyledWorkspaceContainer>
+          <StyledActionLinkContainer>
+            <ClickToActionLink onClick={signOut}>
+              <Trans>Log out</Trans>
+            </ClickToActionLink>
+          </StyledActionLinkContainer>
+        </>
       )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledContentContainer>
@@ -260,7 +283,9 @@ export const SignInUpGlobalScopeForm = () => {
                 />
               )}
               <MainButton
-                disabled={isRequestingCaptchaToken}
+                disabled={
+                  isRequestingCaptchaToken || form.formState.isSubmitting
+                }
                 title={
                   signInUpStep === SignInUpStep.Password
                     ? signInUpMode === SignInUpMode.SignIn

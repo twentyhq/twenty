@@ -151,7 +151,9 @@ export const RecordDetailRelationRecordsListItem = ({
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !==
           relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
-        fieldMetadataItem.id !== relationFieldMetadataId,
+        fieldMetadataItem.id !== relationFieldMetadataId &&
+        fieldMetadataItem.name !== 'createdAt' &&
+        fieldMetadataItem.name !== 'deletedAt',
     )
     .sort();
 
@@ -285,7 +287,6 @@ export const RecordDetailRelationRecordsListItem = ({
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
-              dropdownHotkeyScope={{ scope: dropdownScopeId }}
             />
           </DropdownScope>
         )}

@@ -124,10 +124,30 @@ msgstr ""
 msgid "{name}"
 msgstr "{name}"
 
+#. js-lingui-id: OeIgEg
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
+msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
+msgstr ""
+
+#. js-lingui-id: D0C09b
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
+msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
+msgstr ""
+
+#. js-lingui-id: pDgeaz
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "{title}"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} буде позбавлений наступної ролі:"
+
+#. js-lingui-id: CwstSL
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "••••••••"
+msgstr ""
 
 #. js-lingui-id: NNQszp
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -201,6 +221,11 @@ msgstr ""
 msgid "24h ({hour24Label})"
 msgstr "24 год ({hour24Label})"
 
+#. js-lingui-id: IbMa7Z
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "993"
+msgstr ""
+
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
@@ -223,13 +248,13 @@ msgstr ""
 
 #. js-lingui-id: 4lzAkF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Ability to interact with specific objects"
-msgstr ""
+#~ msgid "Ability to interact with specific objects"
+#~ msgstr ""
 
 #. js-lingui-id: nJHSWx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Ability to interact with this specific object"
-msgstr ""
+#~ msgid "Ability to interact with this specific object"
+#~ msgstr ""
 
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -283,15 +308,31 @@ msgid "Action"
 msgstr "Дія"
 
 #. js-lingui-id: 7L01XJ
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 msgid "Actions"
 msgstr "Дії"
 
+#. js-lingui-id: 9MxZtA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Actions users can perform on all objects"
+msgstr ""
+
+#. js-lingui-id: xnXGwA
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Actions users can perform on specific objects"
+msgstr ""
+
+#. js-lingui-id: N4ZcCd
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Actions users can perform on this object"
+msgstr ""
+
 #. js-lingui-id: Ws0qQB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Actions you can perform on all objects"
-msgstr ""
+#~ msgid "Actions you can perform on all objects"
+#~ msgstr ""
 
 #. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -372,6 +413,11 @@ msgstr "Додати опцію"
 #. js-lingui-id: M067Bn
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Add or remove users"
+msgstr ""
+
+#. js-lingui-id: 7YdkgZ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Add Output Field"
 msgstr ""
 
 #. js-lingui-id: O8tK4v
@@ -467,6 +513,21 @@ msgstr "Розширені:"
 msgid "Afrikaans"
 msgstr "Африкаанс"
 
+#. js-lingui-id: MnmJG1
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "AI Agent"
+msgstr ""
+
+#. js-lingui-id: kNfr85
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "AI Model"
+msgstr ""
+
+#. js-lingui-id: QwgquD
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "AI Response Schema"
+msgstr ""
+
 #. js-lingui-id: N40H+G
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "All"
@@ -497,6 +558,11 @@ msgstr ""
 msgid "All lines"
 msgstr "Всі рядки"
 
+#. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "All objects"
+msgstr ""
+
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "All Objects"
@@ -509,7 +575,12 @@ msgstr "Всі ролі"
 
 #. js-lingui-id: F8bx9e
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the basic objects"
+#~ msgid "All the basic objects"
+#~ msgstr ""
+
+#. js-lingui-id: XuuWVF
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+msgid "All the standard objects"
 msgstr ""
 
 #. js-lingui-id: MLmnB2
@@ -692,7 +763,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Ви впевнені, що хочете видалити цей запис? Його можна відновити з меню Command."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
+#: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr ""
 
@@ -707,10 +778,20 @@ msgstr "За зростанням"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Призначити {workspaceMemberName}?"
 
+#. js-lingui-id: 449JVv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Assign Role"
+msgstr ""
+
+#. js-lingui-id: 17M/rH
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Assign roles to manage each member’s access and permissions"
+msgstr ""
+
 #. js-lingui-id: rfYmIr
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each member's access permissions"
-msgstr "Призначте ролі для визначення дозволів доступу кожного учасника"
+#~ msgid "Assign roles to specify each member's access permissions"
+#~ msgstr "Призначте ролі для визначення дозволів доступу кожного учасника"
 
 #. js-lingui-id: 2y2quh
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
@@ -787,6 +868,11 @@ msgstr "Автоматично створювати контакти для лю
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Автоматично створювати записи Людей при отриманні або відправленні електронної пошти"
 
+#. js-lingui-id: csDS2L
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Available"
+msgstr ""
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -794,6 +880,7 @@ msgid "Average"
 msgstr "Середнє"
 
 #. js-lingui-id: iH8pgl
+#: src/pages/onboarding/BookCall.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 msgid "Back"
 msgstr ""
@@ -805,8 +892,8 @@ msgstr "Повернутися до вмісту"
 
 #. js-lingui-id: ehOkF+
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Basics"
-msgstr ""
+#~ msgid "Basics"
+#~ msgstr ""
 
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
@@ -829,6 +916,26 @@ msgstr "Чорний список"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "Запланувати дзвінок"
+
+#. js-lingui-id: d/yr35
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book onboarding"
+msgstr ""
+
+#. js-lingui-id: 2X0NCp
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Book your onboarding"
+msgstr ""
+
+#. js-lingui-id: bOwPjT
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Boolean"
+msgstr ""
+
+#. js-lingui-id: qDsMss
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Brief explanation of this output field"
+msgstr ""
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -884,7 +991,8 @@ msgstr "Неможливо змінити API імена для стандарт
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Скасувати"
@@ -981,6 +1089,11 @@ msgstr ""
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Виберіть між протоколами OIDC та SAML"
 
+#. js-lingui-id: 2ZFG9X
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose between Short and Full"
+msgstr ""
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -1019,6 +1132,11 @@ msgstr ""
 #. js-lingui-id: HevGC0
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+msgstr ""
+
+#. js-lingui-id: RFmRvm
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Click on \"Add Output Field\" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps."
 msgstr ""
 
 #. js-lingui-id: b8wwse
@@ -1079,6 +1197,11 @@ msgstr ""
 msgid "Columns not matched:"
 msgstr ""
 
+#. js-lingui-id: Icd+JO
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Command menu icon"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -1126,6 +1249,11 @@ msgstr "Налаштуйте, як ми повинні відображати в
 msgid "Configure your emails and calendar settings."
 msgstr "Налаштуйте налаштування електронної пошти та календаря."
 
+#. js-lingui-id: W4D3v/
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Configure your IMAP email account"
+msgstr ""
+
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
@@ -1149,6 +1277,11 @@ msgstr "Під'єднайте новий обліковий запис до ва
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Під'єднатися через Google"
+
+#. js-lingui-id: VZvZWq
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with IMAP"
+msgstr ""
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1387,6 +1520,21 @@ msgstr "Створіть свій робочий простір"
 #~ msgid "Created"
 #~ msgstr "Створено"
 
+#. js-lingui-id: fR16ki
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your data model..."
+msgstr ""
+
+#. js-lingui-id: TlL0Pl
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Creating your schema"
+#~ msgstr ""
+
+#. js-lingui-id: YO4SdK
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Creating your workspace"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -1503,6 +1651,7 @@ msgid "Database configuration is currently disabled."
 msgstr ""
 
 #. js-lingui-id: mYGY3B
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -1595,6 +1744,11 @@ msgstr ""
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "Визначте, що буде видно іншим користувачам у вашому робочому просторі"
+
+#. js-lingui-id: HNlEFZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "delete"
+msgstr ""
 
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1748,13 +1902,24 @@ msgstr "Видалені записи"
 msgid "Descending"
 msgstr "По спадаючій"
 
+#. js-lingui-id: g+5exC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Describe what you want the AI to do..."
+msgstr ""
+
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Опис"
+
+#. js-lingui-id: +ow7t4
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "destroy"
+msgstr ""
 
 #. js-lingui-id: 2xxBws
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -1878,6 +2043,11 @@ msgstr "Голландська"
 msgid "E.g. backoffice integration"
 msgstr "Наприклад, інтеграція з бекофісом"
 
+#. js-lingui-id: GhTFTJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "e.g., summary, status, count"
+msgstr ""
+
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
@@ -1916,6 +2086,12 @@ msgstr "Редагувати значення полів"
 msgid "Edit Fields"
 msgstr "Редагувати поля"
 
+#. js-lingui-id: 8gm+y4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Edit IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -1946,6 +2122,11 @@ msgstr "Редагуйте назву вашого субдомену або в�
 msgid "Email"
 msgstr "Електронна адреса"
 
+#. js-lingui-id: hzKQCy
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Email Address"
+msgstr ""
+
 #. js-lingui-id: 2SWjdJ
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
@@ -1955,6 +2136,12 @@ msgstr "Електронна адреса"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
 msgstr "Електронна пошта не може бути порожньою"
+
+#. js-lingui-id: Zb5c/r
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Email Connections"
+msgstr ""
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2042,6 +2229,11 @@ msgstr "Порожній масив"
 #: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Порожній об'єкт"
+
+#. js-lingui-id: q1srUM
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Encryption"
+msgstr ""
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2216,7 +2408,7 @@ msgid "Existing objects"
 msgstr "Існуючі об'єкти"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
+#: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 msgid "Exit"
 msgstr ""
 
@@ -2226,7 +2418,7 @@ msgstr ""
 #~ msgstr "Вийти з повноекранного режиму"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
+#: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 msgid "Exit import flow"
 msgstr ""
 
@@ -2396,6 +2588,11 @@ msgstr "Прапори функцій та персонуфікація"
 msgid "Field name"
 msgstr "Назва поля"
 
+#. js-lingui-id: fV7qkH
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Field Name"
+msgstr ""
+
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -2428,6 +2625,8 @@ msgid "Filters"
 msgstr "Фільтри"
 
 #. js-lingui-id: JmZ/+d
+#: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCallDecision.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr ""
@@ -2465,13 +2664,18 @@ msgstr "Ім’я"
 
 #. js-lingui-id: 7JBW66
 #: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
-msgid "Forbidden"
-msgstr ""
+#~ msgid "Forbidden"
+#~ msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Забули свій пароль?"
+
+#. js-lingui-id: kI1qVD
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Format"
+msgstr ""
 
 #. js-lingui-id: abDZwc
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
@@ -2597,6 +2801,16 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx
 #~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 #~ msgstr "Надайте службі підтримки Twenty тимчасовий доступ до вашого робочого простору, щоб ми могли вирішувати проблеми або відновлювати контент від вашого імені. Ви можете скасувати доступ у будь-який час."
+
+#. js-lingui-id: MM43i1
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Granted for {grantedBy} {pluralizedGrantedObject}"
+msgstr ""
+
+#. js-lingui-id: WUgtid
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "Granted for this object"
+msgstr ""
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2769,6 +2983,36 @@ msgstr ""
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Якщо ви втратили цей ключ, ви можете його згенерувати знову, але майте на увазі, що будь-який сценарій, який використовує цей ключ, потрібно буде оновити. Будь ласка, введіть \" {confirmationValue}\" для підтвердження."
 
+#. js-lingui-id: 3rtE4o
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Connection Details"
+msgstr ""
+
+#. js-lingui-id: jXXECN
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully created"
+msgstr ""
+
+#. js-lingui-id: Fz/wXI
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully updated"
+msgstr ""
+
+#. js-lingui-id: TE8s2c
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Port"
+msgstr ""
+
+#. js-lingui-id: /RAwfY
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Server"
+msgstr ""
+
+#. js-lingui-id: +8jOVa
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "imap.example.com"
+msgstr ""
+
 #. js-lingui-id: tSVr6t
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
@@ -2825,6 +3069,11 @@ msgstr "Налаштування введення"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
 msgstr "Екземпляри"
+
+#. js-lingui-id: g+29+d
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Instructions for AI"
+msgstr ""
 
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
@@ -3035,6 +3284,11 @@ msgstr "Італійська"
 msgid "Japanese"
 msgstr "Японська"
 
+#. js-lingui-id: wrLOeW
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "john.doe@example.com"
+msgstr ""
+
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "JSON keys cannot contain spaces"
@@ -3190,6 +3444,7 @@ msgstr ""
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
 msgstr "Вийти"
 
@@ -3524,6 +3779,12 @@ msgstr "Новий затверджений домен доступу"
 msgid "New Field"
 msgstr "Нове поле"
 
+#. js-lingui-id: GeB/fA
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+msgid "New IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New key"
@@ -3573,6 +3834,11 @@ msgstr "Новий провайдер єдиної системи входу"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Next Step"
+msgstr ""
+
+#. js-lingui-id: QNbLNQ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No AI models available"
 msgstr ""
 
 #. js-lingui-id: OTe3RI
@@ -3678,12 +3944,17 @@ msgstr ""
 
 #. js-lingui-id: fE7upK
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No overrides found"
-msgstr ""
+#~ msgid "No overrides found"
+#~ msgstr ""
 
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
+msgstr ""
+
+#. js-lingui-id: CfOZmU
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "No permissions found"
 msgstr ""
 
 #. js-lingui-id: EqGTpW
@@ -3706,6 +3977,11 @@ msgstr ""
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Немає результатів"
+
+#. js-lingui-id: qq788M
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No role"
+msgstr ""
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -3777,6 +4053,7 @@ msgid "Not Found"
 msgstr "Не знайдено"
 
 #. js-lingui-id: 51G4/+
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr ""
@@ -3797,6 +4074,7 @@ msgid "Notes"
 msgstr ""
 
 #. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Number"
 msgstr "Число"
@@ -3812,6 +4090,7 @@ msgid "Number type"
 msgstr "Тип числа"
 
 #. js-lingui-id: W0i24j
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -3822,11 +4101,17 @@ msgstr "Об'єкт"
 msgid "Object destination"
 msgstr "Об'єкт призначення"
 
+#. js-lingui-id: YJgmMZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Object-Level"
+msgstr ""
+
 #. js-lingui-id: ZXhr6E
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Object-Level Permissions"
-msgstr ""
+#~ msgid "Object-Level Permissions"
+#~ msgstr ""
 
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -3835,7 +4120,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
 msgstr "Об'єкти"
 
@@ -3873,6 +4157,11 @@ msgstr "Відкрити в"
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
+msgstr ""
+
+#. js-lingui-id: avIMon
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
@@ -3940,6 +4229,16 @@ msgstr "Інший"
 msgid "Other workspaces"
 msgstr "Інші робочі простори"
 
+#. js-lingui-id: p5ufK6
+#: src/pages/onboarding/BookCallDecision.tsx
+msgid "Our team can help you set up your workspace to match your specific needs and workflows."
+msgstr ""
+
+#. js-lingui-id: xvfn7l
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+msgid "Output Field {fieldNumber}"
+msgstr ""
+
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 #~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
@@ -3952,6 +4251,7 @@ msgstr "Сторінку не знайдено"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr "Пароль"
 
@@ -4044,6 +4344,11 @@ msgstr ""
 msgid "Phone number copied to clipboard"
 msgstr "Номер телефону скопійовано в буфер обміну"
 
+#. js-lingui-id: FdlpPK
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems.tsx
+msgid "Pick a {nameSingular} record"
+msgstr ""
+
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -4069,6 +4374,12 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "Please enter a valid URL"
 #~ msgstr "Будь ласка, введіть дійсний URL"
+
+#. js-lingui-id: CjNkdJ
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
+msgid "Please refresh the page."
+msgstr ""
 
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4129,6 +4440,16 @@ msgstr "Португальська — Португалія"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
+
+#. js-lingui-id: /IZFIg
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Prefilling your workspace data"
+#~ msgstr ""
+
+#. js-lingui-id: /v6Rp9
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Prefilling your workspace data..."
+msgstr ""
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4349,6 +4670,17 @@ msgstr ""
 msgid "REST"
 msgstr "ВІДПОЧИНОК"
 
+#. js-lingui-id: 6z9W13
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Restart"
+msgstr ""
+
+#. js-lingui-id: 82zWno
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Restart Import"
+msgstr ""
+
 #. js-lingui-id: yKu/3Y
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4375,6 +4707,11 @@ msgstr "Результати"
 #~ msgid "Review your import"
 #~ msgstr ""
 
+#. js-lingui-id: Wz7mbi
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "Revoked for {revokedBy} {pluralizedRevokedObject}"
+msgstr ""
+
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Revoked for this object"
@@ -4382,8 +4719,8 @@ msgstr ""
 
 #. js-lingui-id: 4+uhWL
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Revoked on {revokedBy} {pluralizedObject}"
-msgstr ""
+#~ msgid "Revoked on {revokedBy} {pluralizedObject}"
+#~ msgstr ""
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -4566,6 +4903,11 @@ msgstr ""
 msgid "Security"
 msgstr "Безпека"
 
+#. js-lingui-id: i0zibG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "see"
+msgstr ""
+
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4642,6 +4984,11 @@ msgstr "Переглянути робочий процес"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See workflows"
 msgstr "Переглянути робочі процеси"
+
+#. js-lingui-id: 5S/Gqz
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Select a record then open the ⌘K to trigger this workflow"
+msgstr ""
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4789,12 +5136,25 @@ msgstr "Встановіть ім'я вашого домашнього доме�
 msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
 
+#. js-lingui-id: oG3fDz
+#: src/pages/onboarding/CreateWorkspace.tsx
+#~ msgid "Setting up your database"
+#~ msgstr ""
+
+#. js-lingui-id: dQsqpC
+#: src/pages/onboarding/CreateWorkspace.tsx
+msgid "Setting up your database..."
+msgstr ""
+
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -4893,6 +5253,7 @@ msgstr "Одниночні і множинні імена мають бути р
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
+#: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Пропустити"
 
@@ -4927,6 +5288,11 @@ msgstr "SSO (SAML / OIDC)"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
 msgstr "Стадії"
+
+#. js-lingui-id: TJBHlP
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+msgid "Standard"
+msgstr ""
 
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -5161,9 +5527,9 @@ msgid "Test Workflow"
 msgstr "Тестування Workflows"
 
 #. js-lingui-id: xeiujy
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
-#~ msgid "Text"
-#~ msgstr "Текст"
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/output-field-type-options.ts
+msgid "Text"
+msgstr "Текст"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
@@ -5190,6 +5556,11 @@ msgstr "Опис цього поля"
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Електронна адреса, пов'язана з вашим акаунтом"
+
+#. js-lingui-id: diO3fm
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5274,6 +5645,11 @@ msgstr "Виникла проблема"
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "Це тільки значення серверу. Переконайтеся, що ваше робоче середовище має ті ж змінні та значення, це необхідно для асинхронних задач, таких як синхронізація електронної пошти."
 
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
+
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -5293,6 +5669,11 @@ msgstr ""
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
 #~ msgstr "This member will be unassigned from this role."
+
+#. js-lingui-id: vbLBMd
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
+msgid "This role can {humanReadableAction} all records"
+msgstr ""
 
 #. js-lingui-id: /tr8Uy
 #: src/pages/settings/roles/components/RolePermissions.tsx
@@ -5370,9 +5751,19 @@ msgstr "Сьогодні"
 msgid "Toggle all object permissions"
 msgstr ""
 
+#. js-lingui-id: /kWolQ
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+msgid "Toggle all settings permissions"
+msgstr ""
+
 #. js-lingui-id: BRMXj0
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
+msgstr ""
+
+#. js-lingui-id: xdA/+p
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
@@ -5471,10 +5862,27 @@ msgstr "Необмежена кількість контактів"
 msgid "Untitled role"
 msgstr ""
 
+#. js-lingui-id: KmUc2w
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
+#~ msgid "Untitled Role"
+#~ msgstr ""
+
+#. js-lingui-id: Y8zko3
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "update"
+msgstr ""
+
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
+msgstr ""
+
+#. js-lingui-id: Vmsh9w
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Update your IMAP email account configuration"
 msgstr ""
 
 #. js-lingui-id: +b7T3G
@@ -5769,6 +6177,11 @@ msgstr "Коли ключ буде відключено"
 #~ msgid "Will be saved as:"
 #~ msgstr ""
 
+#. js-lingui-id: e9sagb
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Will return one {objectType} to the next step of this workflow"
+msgstr ""
+
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
@@ -5905,6 +6318,11 @@ msgstr "Ви не маєте права створювати записи для
 #~ msgid "You do not have access to impersonate users."
 #~ msgstr "You do not have access to impersonate users."
 
+#. js-lingui-id: cdk3eC
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
+msgstr ""
+
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You will be charged ${enterprisePrice} per user per month billed annually."
@@ -5924,6 +6342,11 @@ msgstr ""
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "You will be charged immediately for the full year."
 #~ msgstr "Ви будете негайно стягнуті за цілий рік."
+
+#. js-lingui-id: C2d+Xk
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "You will lose all your mappings."
+msgstr ""
 
 #. js-lingui-id: Cl+hUj
 #: src/pages/settings/workspace/SettingsDomain.tsx

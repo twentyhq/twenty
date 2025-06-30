@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
+import { SingleRecordPickerLoadingEffect } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerLoadingEffect';
 import {
   SingleRecordPickerMenuItems,
   SingleRecordPickerMenuItemsProps,
@@ -16,7 +16,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -26,6 +25,7 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   objectNameSingular: string;
   recordPickerInstanceId?: string;
   layoutDirection?: RecordPickerLayoutDirection;
+  focusId: string;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
   | 'EmptyIcon'
@@ -44,6 +44,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   onRecordSelected,
   objectNameSingular,
   layoutDirection = 'search-bar-on-top',
+  focusId,
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useSingleRecordPickerSearch();
 
@@ -71,17 +72,13 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const searchHasNoResults =
-    isNonEmptyString(recordPickerSearchFilter) &&
-    records.recordsToSelect.length === 0 &&
-    !records.loading;
-
   const handleCreateNew = () => {
     onCreate?.(recordPickerSearchFilter);
   };
 
   return (
     <>
+      <SingleRecordPickerLoadingEffect loading={records.loading} />
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
           {isDefined(onCreate) && hasObjectUpdatePermissions && (
@@ -96,12 +93,13 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               <DropdownMenuSeparator />
             </>
           )}
+
           <DropdownMenuItemsContainer hasMaxHeight>
-            {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
             <SingleRecordPickerMenuItems
+              focusId={focusId}
               recordsToSelect={records.recordsToSelect}
-              loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
+              filteredSelectedRecords={records.filteredSelectedRecords}
               {...{
                 EmptyIcon,
                 emptyLabel,
@@ -123,9 +121,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
+              focusId={focusId}
               recordsToSelect={records.recordsToSelect}
-              loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
+              filteredSelectedRecords={records.filteredSelectedRecords}
               {...{
                 EmptyIcon,
                 emptyLabel,
@@ -133,7 +132,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
                 onRecordSelected,
               }}
             />
-            {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
           </DropdownMenuItemsContainer>
           {isDefined(onCreate) && hasObjectUpdatePermissions && (
             <>

@@ -1,3 +1,4 @@
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/form-types/constants/FormFieldPlaceholderStyles';
 import styled from '@emotion/styled';
 import { Editor, EditorContent } from '@tiptap/react';
 
@@ -30,9 +31,8 @@ const StyledEditor = styled.div<{
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
 
     p.is-editor-empty:first-of-type::before {
+      ${FORM_FIELD_PLACEHOLDER_STYLES}
       content: attr(data-placeholder);
-      color: ${({ theme }) => theme.font.color.light};
-      font-weight: ${({ theme }) => theme.font.weight.medium};
       float: left;
       height: 0;
       pointer-events: none;

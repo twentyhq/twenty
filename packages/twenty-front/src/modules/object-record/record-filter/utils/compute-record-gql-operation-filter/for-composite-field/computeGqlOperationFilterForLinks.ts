@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { LinksFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -83,7 +84,10 @@ export const computeGqlOperationFilterForLinks = ({
         }
       }
       default: {
-        throw new Error(`Unknown subfield name ${subFieldName}`);
+        throw new CustomError(
+          `Unknown subfield name ${subFieldName}`,
+          'UNKNOWN_SUBFIELD_NAME',
+        );
       }
     }
   }

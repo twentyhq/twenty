@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -10,6 +10,8 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
   ForbiddenError,
   ValidationError,
@@ -41,50 +43,17 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
 @Resolver(() => FieldMetadataDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
-
-  @ResolveField(() => String, { nullable: true })
-  async label(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'label',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async description(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'description',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
-  @ResolveField(() => String, { nullable: true })
-  async icon(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'icon',
-      context.req.headers['x-locale'],
-    );
-  }
 
   @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)

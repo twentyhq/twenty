@@ -1,19 +1,15 @@
 import { useTheme } from '@emotion/react';
-import {
-  Avatar,
-  AvatarProps,
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from '@ui/display';
+import { Avatar, AvatarProps, IconChevronRight } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
 import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
-import { MouseEvent } from 'react';
+import { MenuItemLeftContent } from '@ui/navigation/menu-item/internals/components/MenuItemLeftContent';
+import { MouseEvent, ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
-import { isDefined } from 'twenty-shared/utils';
 
 export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;
@@ -31,6 +27,7 @@ export type MenuItemAvatarProps = {
   testId?: string;
   text: string;
   hasSubMenu?: boolean;
+  contextualText?: ReactNode;
 };
 
 // TODO: merge with MenuItem
@@ -46,6 +43,7 @@ export const MenuItemAvatar = ({
   avatar,
   hasSubMenu = false,
   text,
+  contextualText,
 }: MenuItemAvatarProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -69,16 +67,22 @@ export const MenuItemAvatar = ({
       onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
-        {isDefined(avatar) && (
-          <Avatar
-            placeholder={avatar.placeholder}
-            avatarUrl={avatar.avatarUrl}
-            placeholderColorSeed={avatar.placeholderColorSeed}
-            size={avatar.size}
-            type={avatar.type}
-          />
-        )}
-        <OverflowingTextWithTooltip text={text ?? ''} />
+        <MenuItemLeftContent
+          LeftIcon={undefined}
+          LeftComponent={
+            isDefined(avatar) ? (
+              <Avatar
+                placeholder={avatar.placeholder}
+                avatarUrl={avatar.avatarUrl}
+                placeholderColorSeed={avatar.placeholderColorSeed}
+                size={avatar.size}
+                type={avatar.type}
+              />
+            ) : undefined
+          }
+          text={text}
+          contextualText={contextualText}
+        />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (

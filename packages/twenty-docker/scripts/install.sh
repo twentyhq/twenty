@@ -94,7 +94,7 @@ echo "# === Randomly generated secret ===" >> .env
 echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
 
 echo "" >> .env
-echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 16)" >> .env
+echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 32)" >> .env
 
 echo -e "\t• .env configuration completed"
 

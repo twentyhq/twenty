@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import {
+  ModelId,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigController } from './client-config.controller';
@@ -44,6 +48,15 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiModels: [
+          {
+            modelId: 'gpt-4o' as ModelId,
+            label: 'GPT-4o',
+            provider: ModelProvider.OPENAI,
+            inputCostPer1kTokensInCredits: 2.5,
+            outputCostPer1kTokensInCredits: 10.0,
+          },
+        ],
         authProviders: {
           google: true,
           magicLink: false,
@@ -83,6 +96,8 @@ describe('ClientConfigController', () => {
         isGoogleMessagingEnabled: false,
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
+        isIMAPMessagingEnabled: false,
+        calendarBookingPageId: undefined,
       };
 
       jest
@@ -91,8 +106,8 @@ describe('ClientConfigController', () => {
 
       const result = await controller.getClientConfig();
 
-      expect(clientConfigService.getClientConfig).toHaveBeenCalled();
       expect(result).toEqual(mockClientConfig);
+      expect(clientConfigService.getClientConfig).toHaveBeenCalled();
     });
   });
 });

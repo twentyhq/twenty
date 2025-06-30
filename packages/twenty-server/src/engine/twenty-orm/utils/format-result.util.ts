@@ -44,15 +44,15 @@ export function formatResult<T>(
   );
 
   const newData: object = {};
-  const objectMetadaItemFieldsByName =
-    objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
 
-    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key] as
-      | FieldMetadataInterface<FieldMetadataType>
-      | undefined;
+    const fieldMetadataId = objectMetadataItemWithFieldMaps.fieldIdByName[key];
+
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsById[
+      fieldMetadataId
+    ] as FieldMetadataInterface<FieldMetadataType> | undefined;
 
     const isRelation = fieldMetadata
       ? isFieldMetadataInterfaceOfType(
@@ -69,12 +69,9 @@ export function formatResult<T>(
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
         );
-      } else if (objectMetadaItemFieldsByName[key]) {
+      } else if (fieldMetadata) {
         // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(
-          value,
-          objectMetadaItemFieldsByName[key],
-        );
+        newData[key] = formatFieldMetadataValue(value, fieldMetadata);
       } else {
         // @ts-expect-error legacy noImplicitAny
         newData[key] = value;
@@ -123,10 +120,9 @@ export function formatResult<T>(
     newData[parentField][compositeProperty.name] = value;
   }
 
-  const dateFieldMetadataCollection =
-    objectMetadataItemWithFieldMaps.fields.filter(
-      (field) => field.type === FieldMetadataType.DATE,
-    );
+  const dateFieldMetadataCollection = Object.values(
+    objectMetadataItemWithFieldMaps.fieldsById,
+  ).filter((field) => field.type === FieldMetadataType.DATE);
 
   // This is a temporary fix to handle a bug in the frontend where the date gets returned in the wrong timezone,
   //   thus returning the wrong date.

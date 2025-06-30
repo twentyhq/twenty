@@ -1,3 +1,4 @@
+import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
@@ -5,26 +6,27 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
+import { logDebug } from '~/utils/logDebug';
+
+const addOrMoveItemToTheTopOfTheStack = ({
+  focusStackItem,
+  currentFocusStack,
+}: {
+  focusStackItem: FocusStackItem;
+  currentFocusStack: FocusStackItem[];
+}) => [
+  ...currentFocusStack.filter(
+    (currentFocusStackItem) =>
+      currentFocusStackItem.focusId !== focusStackItem.focusId,
+  ),
+  focusStackItem,
+];
 
 export const usePushFocusItemToFocusStack = () => {
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
-  const addOrMoveItemToTheTopOfTheStack = useRecoilCallback(
-    ({ set }) =>
-      (focusStackItem: FocusStackItem) => {
-        set(focusStackState, (currentFocusStack) => [
-          ...currentFocusStack.filter(
-            (currentFocusStackItem) =>
-              currentFocusStackItem.focusId !== focusStackItem.focusId,
-          ),
-          focusStackItem,
-        ]);
-      },
-    [],
-  );
-
-  return useRecoilCallback(
-    () =>
+  const pushFocusItemToFocusStack = useRecoilCallback(
+    ({ snapshot, set }) =>
       ({
         focusId,
         component,
@@ -40,7 +42,7 @@ export const usePushFocusItemToFocusStack = () => {
         globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         hotkeyScope: HotkeyScope;
-        memoizeKey: string;
+        memoizeKey?: string;
       }) => {
         const focusStackItem: FocusStackItem = {
           focusId,
@@ -55,9 +57,27 @@ export const usePushFocusItemToFocusStack = () => {
               globalHotkeysConfig?.enableGlobalHotkeysConflictingWithKeyboard ??
               true,
           },
+          // TODO: Remove this once we've migrated hotkey scopes to the new api
+          memoizeKey,
         };
 
-        addOrMoveItemToTheTopOfTheStack(focusStackItem);
+        const currentFocusStack = snapshot
+          .getLoadable(focusStackState)
+          .getValue();
+
+        const newFocusStack = addOrMoveItemToTheTopOfTheStack({
+          focusStackItem,
+          currentFocusStack,
+        });
+
+        set(focusStackState, newFocusStack);
+
+        if (DEBUG_FOCUS_STACK) {
+          logDebug(`DEBUG: pushFocusItemToFocusStack ${focusId}`, {
+            focusStackItem,
+            newFocusStack,
+          });
+        }
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         setHotkeyScopeAndMemorizePreviousScope({
@@ -66,6 +86,8 @@ export const usePushFocusItemToFocusStack = () => {
           memoizeKey,
         });
       },
-    [setHotkeyScopeAndMemorizePreviousScope, addOrMoveItemToTheTopOfTheStack],
+    [setHotkeyScopeAndMemorizePreviousScope],
   );
+
+  return { pushFocusItemToFocusStack };
 };

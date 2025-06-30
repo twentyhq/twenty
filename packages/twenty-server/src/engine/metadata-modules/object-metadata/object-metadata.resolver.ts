@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -15,6 +17,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
@@ -29,7 +32,11 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
@@ -127,17 +134,40 @@ export class ObjectMetadataResolver {
   async fieldsList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<FieldMetadataDTO[]> {
     try {
       const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load(
         {
           objectMetadata,
           workspaceId: workspace.id,
+          locale: context.req.headers['x-locale'],
         },
       );
 
       return fieldMetadataItems;
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
+    }
+  }
+
+  @ResolveField(() => [IndexMetadataDTO], { nullable: false })
+  async indexMetadataList(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<IndexMetadataDTO[]> {
+    try {
+      const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
+        {
+          objectMetadata,
+          workspaceId: workspace.id,
+        },
+      );
+
+      return indexMetadataItems;
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
 

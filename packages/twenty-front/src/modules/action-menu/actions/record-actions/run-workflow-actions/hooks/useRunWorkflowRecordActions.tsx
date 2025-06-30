@@ -11,7 +11,8 @@ import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { IconSettingsAutomation } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/display';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -20,6 +21,7 @@ export const useRunWorkflowRecordActions = ({
   objectMetadataItem: ObjectMetadataItem;
   skip?: boolean;
 }) => {
+  const { getIcon } = useIcons();
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -48,13 +50,18 @@ export const useRunWorkflowRecordActions = ({
     .map((activeWorkflowVersion, index) => {
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
+      const Icon = getIcon(
+        activeWorkflowVersion.trigger?.settings.icon,
+        COMMAND_MENU_DEFAULT_ICON,
+      );
+
       return {
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.RecordSelection,
         label: msg`${name}`,
         position: index,
-        Icon: IconSettingsAutomation,
+        Icon,
         shouldBeRegistered: () => true,
         component: (
           <Action
@@ -64,6 +71,7 @@ export const useRunWorkflowRecordActions = ({
               }
 
               await runWorkflowVersion({
+                workflowId: activeWorkflowVersion.workflowId,
                 workflowVersionId: activeWorkflowVersion.id,
                 payload: selectedRecord,
               });

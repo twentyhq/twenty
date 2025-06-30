@@ -3,12 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
-import {
-  LinksFieldGraphQLInput,
-  transformLinksValue,
-} from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   RichTextV2Metadata,
@@ -31,19 +27,11 @@ export class RecordInputTransformerService {
       return recordInput;
     }
 
-    const fieldMetadataByFieldName = objectMetadataMapItem.fields.reduce(
-      (acc, field) => {
-        acc[field.name] = field;
-
-        return acc;
-      },
-      {} as Record<string, FieldMetadataInterface>,
-    );
-
     let transformedEntries = {};
 
     for (const [key, value] of Object.entries(recordInput)) {
-      const fieldMetadata = fieldMetadataByFieldName[key];
+      const fieldMetadataId = objectMetadataMapItem.fieldIdByName[key];
+      const fieldMetadata = objectMetadataMapItem.fieldsById[fieldMetadataId];
 
       if (!fieldMetadata) {
         transformedEntries = { ...transformedEntries, [key]: value };
@@ -86,9 +74,11 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT_V2:
         return this.transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
-        return transformLinksValue(value as LinksFieldGraphQLInput);
+        return transformLinksValue(value);
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
+      case FieldMetadataType.PHONES:
+        return transformPhonesValue({ input: value });
       default:
         return value;
     }
@@ -109,13 +99,13 @@ export class RecordInputTransformerService {
     let convertedMarkdown: string | null = null;
 
     try {
-      convertedMarkdown = parsedValue.blocknote
+      convertedMarkdown = isDefined(parsedValue.blocknote)
         ? await serverBlockNoteEditor.blocksToMarkdownLossy(
             JSON.parse(parsedValue.blocknote),
           )
         : null;
     } catch {
-      convertedMarkdown = parsedValue.blocknote;
+      convertedMarkdown = parsedValue.blocknote || null;
     }
 
     const convertedBlocknote = parsedValue.markdown
@@ -132,7 +122,6 @@ export class RecordInputTransformerService {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformEmailsValue(value: any): any {
     if (!value) {

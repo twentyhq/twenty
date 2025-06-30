@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { WorkflowActionType } from '@/workflow/types/Workflow';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -41,24 +42,33 @@ export const shouldDisplayFormField = ({
       isTypeAllowedForAction =
         fieldMetadataItem.type !== FieldMetadataType.RELATION ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
-      break;
+      return (
+        isTypeAllowedForAction &&
+        !fieldMetadataItem.isSystem &&
+        fieldMetadataItem.isActive
+      );
     case 'UPDATE_RECORD':
       isTypeAllowedForAction =
         COMMON_DISPLAYABLE_FIELD_TYPES.includes(fieldMetadataItem.type) ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
-      break;
+      return (
+        isTypeAllowedForAction &&
+        !fieldMetadataItem.isSystem &&
+        fieldMetadataItem.isActive
+      );
     case 'FIND_RECORDS':
       isTypeAllowedForAction = FIND_RECORDS_DISPLAYABLE_FIELD_TYPES.includes(
         fieldMetadataItem.type,
       );
-      break;
+      return (
+        isTypeAllowedForAction &&
+        (!fieldMetadataItem.isSystem || isIdField) &&
+        fieldMetadataItem.isActive
+      );
     default:
-      throw new Error(`Action "${actionType}" is not supported`);
+      throw new CustomError(
+        `Action "${actionType}" is not supported`,
+        'UNSUPPORTED_ACTION_TYPE',
+      );
   }
-
-  return (
-    isTypeAllowedForAction &&
-    (!fieldMetadataItem.isSystem || isIdField) &&
-    fieldMetadataItem.isActive
-  );
 };

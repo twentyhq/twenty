@@ -1,7 +1,7 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
-import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
+import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
@@ -29,10 +29,10 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     openTableCell(args);
   };
 
-  const { move } = useRecordTableMove(recordTableId);
+  const { moveFocus } = useRecordTableMoveFocusedCell(recordTableId);
 
   const handleMoveFocus = (direction: MoveFocusDirection) => {
-    move(direction);
+    moveFocus(direction);
   };
 
   const { closeTableCellInGroup } = useCloseRecordTableCellInGroup();

@@ -15,7 +15,7 @@ const StyledActionsHeader = styled(TableHeader)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 type SettingsRolePermissionsObjectsTableHeaderProps = {

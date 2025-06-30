@@ -5,10 +5,10 @@ import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { lowercaseUrlAndRemoveTrailingSlash } from 'twenty-shared/utils';
 import { DeepPartial, ILike, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { lowercaseDomainAndRemoveTrailingSlash } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -79,7 +79,7 @@ export class CreateCompanyService {
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
       domainName: company.domainName
-        ? lowercaseDomainAndRemoveTrailingSlash(company.domainName)
+        ? lowercaseUrlAndRemoveTrailingSlash(company.domainName)
         : undefined,
     }));
 

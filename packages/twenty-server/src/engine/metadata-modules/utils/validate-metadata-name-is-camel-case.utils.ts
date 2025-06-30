@@ -8,7 +8,7 @@ import {
 export const validateMetadataNameIsCamelCaseOrThrow = (name: string) => {
   if (name !== camelCase(name)) {
     throw new InvalidMetadataException(
-      `Name should be in camelCase: ${name}`,
+      `${name} should be in camelCase`,
       InvalidMetadataExceptionCode.NOT_CAMEL_CASE,
     );
   }

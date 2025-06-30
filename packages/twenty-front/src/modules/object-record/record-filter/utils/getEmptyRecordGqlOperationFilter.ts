@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
   ActorFilter,
@@ -384,7 +385,10 @@ export const getEmptyRecordGqlOperationFilter = ({
       });
       break;
     default:
-      throw new Error(`Unsupported empty filter type ${filterType}`);
+      throw new CustomError(
+        `Unsupported empty filter type ${filterType}`,
+        'UNSUPPORTED_EMPTY_FILTER_TYPE',
+      );
   }
 
   switch (operand) {
@@ -395,6 +399,9 @@ export const getEmptyRecordGqlOperationFilter = ({
         not: emptyRecordFilter,
       };
     default:
-      throw new Error(`Unknown operand ${operand} for ${filterType} filter`);
+      throw new CustomError(
+        `Unknown operand ${operand} for ${filterType} filter`,
+        'UNKNOWN_OPERAND_FOR_FILTER',
+      );
   }
 };

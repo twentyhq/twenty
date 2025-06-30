@@ -15,7 +15,9 @@ const StyledLoaderContainer = styled.div<{
   border-radius: ${({ theme }) => theme.border.radius.pill};
   border: 1px solid
     ${({ color, theme }) =>
-      color ? theme.tag.text[color] : theme.font.color.tertiary};
+      color
+        ? theme.tag.text[color]
+        : `var(--tw-button-color, ${theme.font.color.tertiary})`};
   overflow: hidden;
 `;
 
@@ -23,7 +25,9 @@ const StyledLoader = styled(motion.div)<{
   color?: ThemeColor;
 }>`
   background-color: ${({ color, theme }) =>
-    color ? theme.tag.text[color] : theme.font.color.tertiary};
+    color
+      ? theme.tag.text[color]
+      : `var(--tw-button-color, ${theme.font.color.tertiary})`};
   border-radius: ${({ theme }) => theme.border.radius.pill};
   height: 8px;
   width: 8px;

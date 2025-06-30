@@ -218,7 +218,6 @@ describe('ObjectPermissionService', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         roleIds: [roleId],
-        ignoreLock: true,
       });
     });
 

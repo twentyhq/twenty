@@ -2,6 +2,7 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -20,7 +21,8 @@ export const SelectFieldInput = ({
   onSubmit,
   onCancel,
 }: SelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { persistField, fieldDefinition, fieldValue, recordId } =
+    useSelectField();
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
@@ -65,7 +67,10 @@ export const SelectFieldInput = ({
         SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
       }
       selectableItemIdArray={optionIds}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
+      focusId={getFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+      })}
       onEnter={(itemId) => {
         const option = filteredOptions.find(
           (option) => option.value === itemId,

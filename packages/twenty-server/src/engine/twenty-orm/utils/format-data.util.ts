@@ -7,7 +7,6 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export function formatData<T>(
   data: T,
@@ -25,28 +24,14 @@ export function formatData<T>(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newData: Record<string, any> = {};
-  const fieldMetadataByJoinColumnName =
-    objectMetadataItemWithFieldMaps.fields.reduce((acc, fieldMetadata) => {
-      if (
-        isFieldMetadataInterfaceOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        )
-      ) {
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
-
-        if (joinColumnName) {
-          acc.set(joinColumnName, fieldMetadata);
-        }
-      }
-
-      return acc;
-    }, new Map<string, FieldMetadataInterface>());
 
   for (const [key, value] of Object.entries(data)) {
+    const fieldMetadataId =
+      objectMetadataItemWithFieldMaps.fieldIdByName[key] ||
+      objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[key];
+
     const fieldMetadata =
-      objectMetadataItemWithFieldMaps.fieldsByName[key] ||
-      fieldMetadataByJoinColumnName.get(key);
+      objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
     if (!fieldMetadata) {
       throw new Error(

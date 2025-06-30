@@ -18,6 +18,7 @@ import { CompositeFieldSubFieldName } from '@/settings/data-model/types/Composit
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -93,7 +94,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     objectFilterDropdownSubMenuFieldType
-  ].subFields.map((subField) => subField.subFieldName);
+  ].subFields
+    .filter((subField) => subField.isFilterable === true)
+    .map((subField) => subField.subFieldName);
 
   const subFieldsAreFilterable =
     isDefined(fieldMetadataItemUsedInDropdown) &&
@@ -124,9 +127,10 @@ export const AdvancedFilterSubFieldSelectMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          hotkeyScope={advancedFilterFieldSelectDropdownId}
+          focusId={advancedFilterFieldSelectDropdownId}
           selectableItemIdArray={selectableItemIdArray}
           selectableListInstanceId={advancedFilterFieldSelectDropdownId}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {compositeFieldTypeIsFilterableByAnySubField && (
             <SelectableListItem

@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import {
   Leaf,
   Node,
@@ -7,8 +9,6 @@ import {
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 
 export const generateFakeFormResponse = async ({
   formMetadata,
@@ -40,8 +40,10 @@ export const generateFakeFormResponse = async ({
             isLeaf: false,
             label: formFieldMetadata.label,
             value: generateFakeObjectRecord({
-              objectMetadataMaps,
-              objectMetadataItemWithFieldsMaps,
+              objectMetadataInfo: {
+                objectMetadataItemWithFieldsMaps,
+                objectMetadataMaps,
+              },
             }),
           },
         };
@@ -50,6 +52,7 @@ export const generateFakeFormResponse = async ({
           [formFieldMetadata.name]: generateFakeField({
             type: formFieldMetadata.type,
             label: formFieldMetadata.label,
+            value: formFieldMetadata.placeholder,
           }),
         };
       }

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
@@ -42,7 +42,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     onContentChange,
     resetContent,
     closeDropdown,
-  } = useOptionsDropdown();
+  } = useObjectOptionsDropdown();
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,

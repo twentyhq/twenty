@@ -1,18 +1,17 @@
+//
 import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import {
   MessageImportExceptionHandlerService,
@@ -38,6 +37,7 @@ export class MessagingMessageListFetchJob {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
@@ -82,36 +82,10 @@ export class MessagingMessageListFetchJob {
         return;
       }
 
-      try {
-        messageChannel.connectedAccount.accessToken =
-          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-            messageChannel.connectedAccount,
-            workspaceId,
-          );
-      } catch (error) {
-        switch (error.code) {
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingMonitoringService.track({
-              eventName: `refresh_token.error.insufficient_permissions`,
-              workspaceId,
-              connectedAccountId: messageChannel.connectedAccountId,
-              messageChannelId: messageChannel.id,
-              message: `${error.code}: ${error.reason ?? ''}`,
-            });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
-          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
-          default:
-            throw error;
-        }
-      }
+      await this.messagingAccountAuthenticationService.validateAndPrepareAuthentication(
+        messageChannel,
+        workspaceId,
+      );
 
       switch (messageChannel.syncStage) {
         case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING:

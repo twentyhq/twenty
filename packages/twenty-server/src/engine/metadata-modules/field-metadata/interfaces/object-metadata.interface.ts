@@ -13,7 +13,7 @@ export interface ObjectMetadataInterface {
   labelSingular: string;
   labelPlural: string;
   description?: string;
-  icon?: string;
+  icon: string;
   targetTableName: string;
   fields: FieldMetadataInterface[];
   indexMetadatas: IndexMetadataInterface[];

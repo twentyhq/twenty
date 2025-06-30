@@ -4,6 +4,7 @@ export type SettingsRolePermissionsObjectPermission = {
   label: string | ReactNode;
   value?: boolean;
   setValue: (value: boolean) => void;
+  grantedBy?: number;
   revokedBy?: number;
 };
 

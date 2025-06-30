@@ -20,7 +20,7 @@ type BaseTrigger = {
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: WorkflowTriggerType.DATABASE_EVENT;
-  settings: {
+  settings: BaseWorkflowTriggerSettings & {
     eventName: string;
   };
 };
@@ -32,45 +32,49 @@ export enum WorkflowManualTriggerAvailability {
 
 export type WorkflowManualTrigger = BaseTrigger & {
   type: WorkflowTriggerType.MANUAL;
-  settings: {
+  settings: BaseWorkflowTriggerSettings & {
     objectType?: string;
+    icon?: string;
   };
 };
 
 export type WorkflowCronTrigger = BaseTrigger & {
   type: WorkflowTriggerType.CRON;
-  settings: (
-    | {
-        type: 'DAYS';
-        schedule: { day: number; hour: number; minute: number };
-      }
-    | {
-        type: 'HOURS';
-        schedule: { hour: number; minute: number };
-      }
-    | {
-        type: 'MINUTES';
-        schedule: { minute: number };
-      }
-    | {
-        type: 'CUSTOM';
-        pattern: string;
-      }
-  ) & { outputSchema: object };
+  settings: BaseWorkflowTriggerSettings &
+    (
+      | {
+          type: 'DAYS';
+          schedule: { day: number; hour: number; minute: number };
+        }
+      | {
+          type: 'HOURS';
+          schedule: { hour: number; minute: number };
+        }
+      | {
+          type: 'MINUTES';
+          schedule: { minute: number };
+        }
+      | {
+          type: 'CUSTOM';
+          pattern: string;
+        }
+    );
 };
 
 export type WorkflowWebhookTrigger = BaseTrigger & {
   type: WorkflowTriggerType.WEBHOOK;
-  settings:
-    | {
-        httpMethod: 'GET';
-        authentication: 'API_KEY' | null;
-      }
-    | ({
-        httpMethod: 'POST';
-        authentication: 'API_KEY' | null;
-        expectedBody: object;
-      } & { outputSchema: object });
+  settings: BaseWorkflowTriggerSettings &
+    (
+      | {
+          httpMethod: 'GET';
+          authentication: 'API_KEY' | null;
+        }
+      | {
+          httpMethod: 'POST';
+          authentication: 'API_KEY' | null;
+          expectedBody: object;
+        }
+    );
 };
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];

@@ -70,7 +70,6 @@ export const CurrencyPickerDropdownButton = ({
   return (
     <Dropdown
       dropdownId="currency-picker-dropdown-id"
-      dropdownHotkeyScope={{ scope: CurrencyPickerHotkeyScope.CurrencyPicker }}
       clickableComponent={
         <StyledDropdownButtonContainer>
           <StyledIconContainer>
