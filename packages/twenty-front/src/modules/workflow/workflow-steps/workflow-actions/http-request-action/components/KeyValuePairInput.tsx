@@ -14,12 +14,6 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledKeyValueContainer = styled.div`
   display: flex;
   flex: 1;
@@ -29,6 +23,11 @@ const StyledKeyValueContainer = styled.div`
 const StyledPlaceholder = styled.div`
   aspect-ratio: 1;
   height: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledFormTextFieldInput = styled.div`
+  flex: 1;
+  max-width: 214px;
 `;
 
 export type KeyValuePair = {
@@ -122,8 +121,8 @@ export const KeyValuePairInput = ({
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
         {pairs.map((pair) => (
-          <StyledRow key={pair.id}>
-            <StyledKeyValueContainer>
+          <StyledKeyValueContainer key={pair.id}>
+            <StyledFormTextFieldInput>
               <FormTextFieldInput
                 placeholder={keyPlaceholder}
                 readonly={readonly}
@@ -133,6 +132,8 @@ export const KeyValuePairInput = ({
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
+            </StyledFormTextFieldInput>
+            <StyledFormTextFieldInput>
               <FormTextFieldInput
                 placeholder={valuePlaceholder}
                 readonly={readonly}
@@ -142,16 +143,16 @@ export const KeyValuePairInput = ({
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
-              {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
-                <Button
-                  onClick={() => handleRemovePair(pair.id)}
-                  Icon={IconTrash}
-                />
-              ) : pairs.length > 1 ? (
-                <StyledPlaceholder />
-              ) : null}
-            </StyledKeyValueContainer>
-          </StyledRow>
+            </StyledFormTextFieldInput>
+            {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
+              <Button
+                onClick={() => handleRemovePair(pair.id)}
+                Icon={IconTrash}
+              />
+            ) : pairs.length > 1 && !readonly ? (
+              <StyledPlaceholder />
+            ) : null}
+          </StyledKeyValueContainer>
         ))}
       </StyledContainer>
     </FormFieldInputContainer>
