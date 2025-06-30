@@ -44,6 +44,18 @@ const StyledTableHead = styled.thead`
       z-index: ${TABLE_Z_INDEX.header.default};
       transition: 0.3s ease;
 
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -4px;
+        width: 4px;
+        height: 100%;
+        background: ${({ theme }) => theme.background.primary};
+        border-bottom: ${({ theme }) =>
+          `1px solid ${theme.border.color.light}`};
+      }
+
       &::after {
         content: '';
         position: absolute;

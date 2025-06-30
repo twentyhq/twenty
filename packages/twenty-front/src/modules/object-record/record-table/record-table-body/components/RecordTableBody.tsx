@@ -23,6 +23,22 @@ const StyledTbody = styled.tbody`
       z-index: ${TABLE_Z_INDEX.cell.sticky};
       transition: transform 0.3s ease;
 
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -4px;
+        width: 4px;
+        height: 100%;
+        background: ${({ theme }) => theme.background.primary};
+        border-bottom: ${({ theme }) =>
+          `1px solid ${theme.border.color.light}`};
+      }
+
+      &.td-selected::before {
+        background: ${({ theme }) => theme.accent.quaternary};
+      }
+
       &:not(.disable-shadow)::after {
         content: '';
         position: absolute;
