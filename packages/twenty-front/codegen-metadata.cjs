@@ -44,7 +44,7 @@ module.exports = {
   ],
   overwrite: true,
   generates: {
-    './src/generated-metadata/graphql.tsx': {
+    './src/generated-metadata/graphql.ts': {
       plugins: [
         'typescript',
         'typescript-operations',
