@@ -81,14 +81,11 @@ jobs:
         run: |
           echo "Attempting to merge main into current branch..."
           
-          # Fetch latest main
           git fetch origin main
           
-          # Get current branch name
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Current branch: $CURRENT_BRANCH"
           
-          # Try to merge main into current branch
           if git merge origin/main --no-edit; then
             echo "✅ Successfully merged main into current branch"
             echo "merged=true" >> $GITHUB_OUTPUT
