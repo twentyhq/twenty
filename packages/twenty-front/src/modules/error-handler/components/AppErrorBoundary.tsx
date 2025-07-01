@@ -42,14 +42,7 @@ export const AppErrorBoundary = ({
       checkIfItsAViteStaleChunkLazyLoadingError(error);
 
     if (isViteStaleChunkLazyLoadingError) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const hasRetried = urlParams.has('vite-chunk-reload');
-
-      if (!hasRetried) {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('vite-chunk-reload', 'true');
-        window.location.href = newUrl.toString();
-      }
+      window.location.reload();
     }
   };
 
