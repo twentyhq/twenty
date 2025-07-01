@@ -87,7 +87,7 @@ export const SettingsAccountsEditSmtpConnection = () => {
           <SettingsAccountsConnectionForm
             control={control}
             connectionType="SMTP"
-            isEditing={true}
+            isEditing
           />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
