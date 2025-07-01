@@ -1,4 +1,3 @@
-// TODO: FIX THIS FILE
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
