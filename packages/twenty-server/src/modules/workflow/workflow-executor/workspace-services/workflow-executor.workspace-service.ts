@@ -76,6 +76,10 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
+    if (!this.canExecuteStep({ step, steps, context })) {
+      return;
+    }
+
     if (
       !(await this.checkBillingAllowedOrEndWorkflowRun({
         step,
@@ -297,5 +301,21 @@ export class WorkflowExecutorWorkspaceService {
         status: WorkflowRunStatus.COMPLETED,
       });
     }
+  }
+
+  private canExecuteStep({
+    context,
+    step,
+    steps,
+  }: Pick<WorkflowExecutorInput, 'context' | 'steps'> & {
+    step: WorkflowAction;
+  }) {
+    const parentSteps = steps.filter((parentStep) =>
+      parentStep.nextStepIds?.includes(step.id),
+    );
+
+    return parentSteps.every((parentStep) =>
+      Object.keys(context).includes(parentStep.id),
+    );
   }
 }
