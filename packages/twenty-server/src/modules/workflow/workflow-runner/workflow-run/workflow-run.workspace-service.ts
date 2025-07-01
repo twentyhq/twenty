@@ -269,7 +269,7 @@ export class WorkflowRunWorkspaceService {
           [stepOutput.id]: stepOutput.output,
         },
       },
-      context,
+      context: { ...workflowRunToUpdate.context, ...context },
     };
 
     await workflowRunRepository.update(workflowRunId, partialUpdate);

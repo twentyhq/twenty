@@ -120,9 +120,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
     it('should return success when all steps are completed', async () => {
       // No steps to execute
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-2',
+        stepIdsToExecute: ['step-2'],
         steps: mockSteps,
         context: mockContext,
       });
@@ -141,9 +141,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockStepResult);
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: mockSteps,
         context: mockContext,
       });
@@ -154,7 +154,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       );
       expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: mockSteps,
         context: mockContext,
         attemptCount: 1,
@@ -196,9 +196,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         new Error('Step execution failed'),
       );
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: mockSteps,
         context: mockContext,
       });
@@ -229,9 +229,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockPendingEvent);
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: mockSteps,
         context: mockContext,
       });
@@ -284,9 +284,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         error: 'Step execution failed but continue',
       });
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: stepsWithContinueOnFailure,
         context: mockContext,
       });
@@ -331,9 +331,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         error: 'Step execution failed, will retry',
       });
 
-      await service.execute({
+      await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: stepsWithRetryOnFailure,
         context: mockContext,
       });
@@ -368,9 +368,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(errorOutput);
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: stepsWithRetryOnFailure,
         context: mockContext,
         attemptCount: 3, // MAX_RETRIES_ON_FAILURE is 3
@@ -396,9 +396,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
       mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
       mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
 
-      const result = await service.execute({
+      const result = await service.executeBranch({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
+        stepIdsToExecute: ['step-1'],
         steps: mockSteps,
         context: mockContext,
       });
