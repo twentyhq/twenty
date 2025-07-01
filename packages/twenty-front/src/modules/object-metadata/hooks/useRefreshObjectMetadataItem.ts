@@ -11,7 +11,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useRefreshObjectMetadataItems = (
   fetchPolicy: FetchPolicy = 'network-only',
 ) => {
-  const client = useApolloClient(); // Use default client (points to /metadata)
+  const client = useApolloClient();
 
   const refreshObjectMetadataItems = async () => {
     const result = await client.query<ObjectMetadataItemsQuery>({
