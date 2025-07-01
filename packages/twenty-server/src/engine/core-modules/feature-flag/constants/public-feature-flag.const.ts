@@ -17,7 +17,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'IMAP, SMTP, CalDAV',
       description:
-        'Easily add email accounts from any provider that supports IMAP send emails with SMTP (and soon, sync calendars with CalDAV)',
+        'Easily add email accounts from any provider that supports IMAP, send emails with SMTP (and soon, sync calendars with CalDAV)',
       imagePath:
         'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
     },
