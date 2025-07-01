@@ -22,6 +22,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -62,6 +63,149 @@ export class WorkflowExecutorWorkspaceService {
     attemptCount = 1,
     workflowRunId,
   }: WorkflowExecutorInput) {
+    const workspaceId = this.getWorkspaceIdOrThrow();
+
+    const step = await this.getStepOrEndWorkflowRun({
+      currentStepId,
+      steps,
+      workspaceId,
+      workflowRunId,
+    });
+
+    if (!step) {
+      return;
+    }
+
+    if (
+      !(await this.checkBillingAllowedOrEndWorkflowRun({
+        step,
+        context,
+        workflowRunId,
+        workspaceId,
+      }))
+    ) {
+      return;
+    }
+
+    const workflowExecutor = this.workflowExecutorFactory.get(step.type);
+
+    let actionOutput: WorkflowExecutorOutput;
+
+    try {
+      actionOutput = await workflowExecutor.execute({
+        currentStepId,
+        steps,
+        context,
+        attemptCount,
+        workflowRunId,
+      });
+    } catch (error) {
+      actionOutput = {
+        error: error.message ?? 'Execution result error, no data or error',
+      };
+    }
+
+    const stepOutput: StepOutput = {
+      id: step.id,
+      output: actionOutput,
+    };
+
+    const { continueOnFailure, retryOnFailure } =
+      step.settings.errorHandlingOptions;
+
+    const shouldExecuteNextSteps =
+      isDefined(actionOutput.result) || continueOnFailure.value;
+
+    const shouldRetry =
+      isDefined(actionOutput.error) &&
+      retryOnFailure.value &&
+      attemptCount < MAX_RETRIES_ON_FAILURE;
+
+    const updatedContext = isDefined(actionOutput.result)
+      ? {
+          ...context,
+          [step.id]: actionOutput.result,
+        }
+      : context;
+
+    if (shouldRetry) {
+      await this.execute({
+        workflowRunId,
+        currentStepId,
+        steps,
+        context,
+        attemptCount: attemptCount + 1,
+      });
+
+      return;
+    }
+
+    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workflowRunId,
+      stepOutput,
+      context: updatedContext,
+      workspaceId,
+    });
+
+    if (!actionOutput.error) {
+      this.sendWorkflowNodeRunEvent(workspaceId);
+    }
+
+    if (actionOutput.pendingEvent) {
+      return;
+    }
+
+    if (shouldExecuteNextSteps) {
+      if (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0) {
+        await this.endWorkflowRunIfCompleted({
+          context,
+          steps,
+          workflowRunId,
+          workspaceId,
+        });
+
+        return;
+      }
+
+      await this.executeBranch({
+        workflowRunId,
+        stepIdsToExecute: step.nextStepIds,
+        steps,
+        context: updatedContext,
+      });
+
+      return;
+    }
+
+    await this.workflowRunWorkspaceService.endWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      status: WorkflowRunStatus.FAILED,
+      error: actionOutput.error,
+    });
+  }
+
+  private sendWorkflowNodeRunEvent(workspaceId: string) {
+    this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
+      BILLING_FEATURE_USED,
+      [
+        {
+          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
+          value: 1,
+        },
+      ],
+      workspaceId,
+    );
+  }
+
+  private async canBillWorkflowNodeExecution(workspaceId: string) {
+    return this.billingService.canBillMeteredProduct(
+      workspaceId,
+      BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+  }
+
+  private getWorkspaceIdOrThrow() {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
@@ -71,6 +215,18 @@ export class WorkflowExecutorWorkspaceService {
       );
     }
 
+    return workspaceId;
+  }
+
+  private async getStepOrEndWorkflowRun({
+    currentStepId,
+    steps,
+    workflowRunId,
+    workspaceId,
+  }: Pick<
+    WorkflowExecutorInput,
+    'currentStepId' | 'steps' | 'workflowRunId'
+  > & { workspaceId: string }) {
     const step = steps.find((step) => step.id === currentStepId);
 
     if (!step) {
@@ -84,10 +240,18 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const workflowExecutor = this.workflowExecutorFactory.get(step.type);
+    return step;
+  }
 
-    let actionOutput: WorkflowExecutorOutput;
-
+  private async checkBillingAllowedOrEndWorkflowRun({
+    workflowRunId,
+    workspaceId,
+    step,
+    context,
+  }: Pick<WorkflowExecutorInput, 'context' | 'workflowRunId'> & {
+    workspaceId: string;
+    step: WorkflowAction;
+  }) {
     if (
       this.billingService.isBillingEnabled() &&
       !(await this.canBillWorkflowNodeExecution(workspaceId))
@@ -113,129 +277,26 @@ export class WorkflowExecutorWorkspaceService {
         error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
       });
 
-      return;
+      return false;
     }
 
-    try {
-      actionOutput = await workflowExecutor.execute({
-        currentStepId,
-        steps,
-        context,
-        attemptCount,
-        workflowRunId,
-      });
-    } catch (error) {
-      actionOutput = {
-        error: error.message ?? 'Execution result error, no data or error',
-      };
-    }
+    return true;
+  }
 
-    if (!actionOutput.error) {
-      this.sendWorkflowNodeRunEvent(workspaceId);
-    }
-
-    const stepOutput: StepOutput = {
-      id: step.id,
-      output: actionOutput,
-    };
-
-    if (actionOutput.pendingEvent) {
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        context,
-        workspaceId,
-      });
-
-      return;
-    }
-
-    const shouldContinue =
-      isDefined(actionOutput.result) ||
-      step.settings.errorHandlingOptions.continueOnFailure.value;
-
-    if (shouldContinue) {
-      const updatedContext = isDefined(actionOutput.result)
-        ? {
-            ...context,
-            [step.id]: actionOutput.result,
-          }
-        : context;
-
-      await this.workflowRunWorkspaceService.saveWorkflowRunState({
-        workflowRunId,
-        stepOutput,
-        context: updatedContext,
-        workspaceId,
-      });
-
-      if (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0) {
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: WorkflowRunStatus.COMPLETED,
-        });
-
-        return;
-      }
-
-      await this.executeBranch({
-        workflowRunId,
-        stepIdsToExecute: step.nextStepIds,
-        steps,
-        context: updatedContext,
-      });
-    }
-
-    if (
-      step.settings.errorHandlingOptions.retryOnFailure.value &&
-      attemptCount < MAX_RETRIES_ON_FAILURE
-    ) {
-      await this.execute({
-        workflowRunId,
-        currentStepId,
-        steps,
-        context,
-        attemptCount: attemptCount + 1,
-      });
-
-      return;
-    }
-
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
-      workflowRunId,
-      stepOutput,
-      context,
-      workspaceId,
-    });
-
-    if (isDefined(actionOutput.error)) {
+  private async endWorkflowRunIfCompleted({
+    context,
+    steps,
+    workflowRunId,
+    workspaceId,
+  }: Pick<WorkflowExecutorInput, 'context' | 'steps' | 'workflowRunId'> & {
+    workspaceId: string;
+  }) {
+    if (Object.keys(context).length - 1 === steps.length) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: actionOutput.error,
+        status: WorkflowRunStatus.COMPLETED,
       });
     }
-  }
-
-  private sendWorkflowNodeRunEvent(workspaceId: string) {
-    this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
-      BILLING_FEATURE_USED,
-      [
-        {
-          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-          value: 1,
-        },
-      ],
-      workspaceId,
-    );
-  }
-
-  private async canBillWorkflowNodeExecution(workspaceId: string) {
-    return this.billingService.canBillMeteredProduct(
-      workspaceId,
-      BillingProductKey.WORKFLOW_NODE_EXECUTION,
-    );
   }
 }
