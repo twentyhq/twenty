@@ -9,7 +9,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { AppPath } from '@/types/AppPath';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {

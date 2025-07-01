@@ -7,7 +7,7 @@ import {
   CreateSamlIdentityProviderMutationVariables,
   useCreateOidcIdentityProviderMutation,
   useCreateSamlIdentityProviderMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreateSSOIdentityProvider = () => {
   const [createOidcIdentityProviderMutation] =

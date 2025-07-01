@@ -1,5 +1,4 @@
-import { useApolloClient } from '@apollo/client';
-
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
@@ -10,7 +9,7 @@ export const useDeleteRecordFromCache = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -23,7 +22,7 @@ export const useDeleteRecordFromCache = ({
       objectMetadataItem,
       objectMetadataItems,
       recordToDestroy,
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
     });
   };
 };

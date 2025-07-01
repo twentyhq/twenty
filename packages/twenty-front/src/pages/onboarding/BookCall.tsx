@@ -17,7 +17,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import {
   OnboardingStatus,
   useSkipBookOnboardingStepMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledModalFooter = styled(Modal.Footer)`
   height: auto;
