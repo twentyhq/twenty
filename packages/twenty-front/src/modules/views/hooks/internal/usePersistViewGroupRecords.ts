@@ -1,18 +1,18 @@
 import { useCallback } from 'react';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ViewGroup } from '@/views/types/ViewGroup';
-import { useApolloClient } from '@apollo/client';
 
 type CreateViewGroupRecordsArgs = {
   viewGroupsToCreate: ViewGroup[];
   viewId: string;
 };
 export const usePersistViewGroupRecords = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular: CoreObjectNameSingular.ViewGroup,
@@ -46,7 +46,7 @@ export const usePersistViewGroupRecords = () => {
       if (!viewGroupsToUpdate.length) return;
 
       const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
-        apolloClient.mutate<{ updateViewGroup: ViewGroup }>({
+        apolloCoreClient.mutate<{ updateViewGroup: ViewGroup }>({
           mutation: updateOneRecordMutation,
           variables: {
             idToUpdate: viewGroup.id,
@@ -69,8 +69,8 @@ export const usePersistViewGroupRecords = () => {
 
         if (!record) return;
 
-        apolloClient.cache.modify({
-          id: apolloClient.cache.identify({
+        apolloCoreClient.cache.modify({
+          id: apolloCoreClient.cache.identify({
             __typename: 'ViewGroup',
             id: record.id,
           }),
@@ -81,7 +81,7 @@ export const usePersistViewGroupRecords = () => {
         });
       });
     },
-    [apolloClient, updateOneRecordMutation],
+    [apolloCoreClient, updateOneRecordMutation],
   );
 
   const deleteViewGroupRecords = useCallback(

@@ -1,4 +1,5 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
@@ -9,7 +10,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { ApolloClient, useApolloClient } from '@apollo/client';
+import { ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -19,7 +20,7 @@ import { SearchResultEdge } from '~/generated/graphql';
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
 export const useMultipleRecordPickerPerformSearch = () => {
-  const client = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { performCombinedFindManyRecords } =
     usePerformCombinedFindManyRecords();
@@ -112,7 +113,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
           searchRecordsExcludingPickedRecords,
           pageInfo,
         ] = await performSearchQueries({
-          client,
+          client: apolloCoreClient,
           searchFilter,
           searchableObjectMetadataItems: filteredSearchableObjectMetadataItems,
           pickedRecordIds: selectedPickableMorphItems.map(
@@ -368,7 +369,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         );
       },
     [
-      client,
+      apolloCoreClient,
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,
     ],

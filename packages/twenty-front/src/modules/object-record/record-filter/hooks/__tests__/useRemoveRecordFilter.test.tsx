@@ -5,7 +5,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { act } from 'react';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useRemoveRecordFilter } from '../useRemoveRecordFilter';
 import { useUpsertRecordFilter } from '../useUpsertRecordFilter';

@@ -1,6 +1,6 @@
 import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('searchVariableThroughOutputSchema', () => {
   describe('step tests', () => {

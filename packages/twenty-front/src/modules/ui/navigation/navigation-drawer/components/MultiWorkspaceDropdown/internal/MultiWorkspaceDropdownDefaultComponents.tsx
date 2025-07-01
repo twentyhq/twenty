@@ -40,7 +40,7 @@ import {
 import {
   AvailableWorkspace,
   useSignUpInNewWorkspaceMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 

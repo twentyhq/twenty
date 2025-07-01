@@ -1,7 +1,7 @@
 import {
   type GetConnectedImapSmtpCaldavAccountQuery,
   useGetConnectedImapSmtpCaldavAccountQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useConnectedImapSmtpCaldavAccount = (
   connectedAccountId: string | undefined,

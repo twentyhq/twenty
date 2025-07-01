@@ -1,24 +1,25 @@
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DeactivateWorkflowVersionMutation,
   DeactivateWorkflowVersionMutationVariables,
-} from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
+} from '~/generated-metadata/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const [mutate] = useMutation<
     DeactivateWorkflowVersionMutation,
     DeactivateWorkflowVersionMutationVariables
   >(DEACTIVATE_WORKFLOW_VERSION, {
-    client: apolloClient,
+    client: apolloCoreClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
@@ -37,7 +38,7 @@ export const useDeactivateWorkflowVersion = () => {
       },
       update: () => {
         modifyRecordFromCache({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           recordId: workflowVersionId,
           objectMetadataItem: objectMetadataItemWorkflowVersion,
           fieldModifiers: {
@@ -45,7 +46,7 @@ export const useDeactivateWorkflowVersion = () => {
           },
         });
 
-        const cacheSnapshot = apolloClient.cache.extract();
+        const cacheSnapshot = apolloCoreClient.cache.extract();
         const workflowVersion: WorkflowVersion | undefined = Object.values(
           cacheSnapshot,
         ).find(
@@ -59,7 +60,7 @@ export const useDeactivateWorkflowVersion = () => {
         }
 
         triggerUpdateRecordOptimisticEffect({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           objectMetadataItem: objectMetadataItemWorkflowVersion,
           currentRecord: workflowVersion,
           updatedRecord: {

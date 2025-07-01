@@ -1,4 +1,4 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
 import { useQuery } from '@apollo/client';
 import {
@@ -7,7 +7,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useGetManyServerlessFunctions = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
 
   const { data, loading, error } = useQuery<
     GetManyServerlessFunctionsQuery,

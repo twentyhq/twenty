@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
@@ -29,6 +28,7 @@ import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActiv
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
@@ -59,7 +59,7 @@ export const ActivityRichTextEditor = ({
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
 
-  const cache = useApolloClient().cache;
+  const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
 
   const { objectMetadataItem: objectMetadataItemActivity } =
