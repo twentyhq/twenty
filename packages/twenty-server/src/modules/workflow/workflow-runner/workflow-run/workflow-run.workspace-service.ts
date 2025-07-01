@@ -278,6 +278,8 @@ export class WorkflowRunWorkspaceService {
       workflowRunBefore: workflowRunToUpdate,
       updatedFields: ['context', 'output'],
     });
+
+    return partialUpdate;
   }
 
   async updateWorkflowRunStep({

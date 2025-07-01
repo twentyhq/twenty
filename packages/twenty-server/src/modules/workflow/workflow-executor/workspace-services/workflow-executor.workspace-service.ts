@@ -121,13 +121,6 @@ export class WorkflowExecutorWorkspaceService {
       retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE;
 
-    const updatedContext = isDefined(actionOutput.result)
-      ? {
-          ...context,
-          [step.id]: actionOutput.result,
-        }
-      : context;
-
     if (shouldRetry) {
       await this.execute({
         workflowRunId,
@@ -140,12 +133,18 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
-      workflowRunId,
-      stepOutput,
-      context: updatedContext,
-      workspaceId,
-    });
+    const { context: updatedContext } =
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput,
+        context: isDefined(actionOutput.result)
+          ? {
+              ...context,
+              [step.id]: actionOutput.result,
+            }
+          : context,
+        workspaceId,
+      });
 
     if (!actionOutput.error) {
       this.sendWorkflowNodeRunEvent(workspaceId);
@@ -158,7 +157,7 @@ export class WorkflowExecutorWorkspaceService {
     if (shouldExecuteNextSteps) {
       if (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0) {
         await this.endWorkflowRunIfCompleted({
-          context,
+          context: updatedContext,
           steps,
           workflowRunId,
           workspaceId,
