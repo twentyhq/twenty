@@ -31,18 +31,17 @@ const StyledWrapper = styled.div`
   position: relative;
 `;
 
-type WorkflowDiagramEdgeAddNodeProps = {
-  labelX?: number;
+type WorkflowDiagramEdgeV1Props = {
   labelY?: number;
   parentStepId: string;
   nextStepId: string;
 };
 
-export const WorkflowDiagramEdgeAddNode = ({
+export const WorkflowDiagramEdgeV1 = ({
   labelY,
   parentStepId,
   nextStepId,
-}: WorkflowDiagramEdgeAddNodeProps) => {
+}: WorkflowDiagramEdgeV1Props) => {
   const [hovered, setHovered] = useState(false);
 
   const { startNodeCreation } = useStartNodeCreation();

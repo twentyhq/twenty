@@ -1,5 +1,5 @@
-import { WorkflowDiagramEdgeAddNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeAddNode';
-import { WorkflowDiagramEdgeFilters } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeFilters';
+import { WorkflowDiagramEdgeV1 } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV1';
+import { WorkflowDiagramEdgeV2 } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -47,14 +47,14 @@ export const WorkflowDiagramDefaultEdge = ({
       {data?.shouldDisplayEdgeOptions && (
         <EdgeLabelRenderer>
           {isWorkflowFilteringEnabled ? (
-            <WorkflowDiagramEdgeFilters
+            <WorkflowDiagramEdgeV2
               labelX={labelX}
               labelY={labelY}
               parentStepId={source}
               nextStepId={target}
             />
           ) : (
-            <WorkflowDiagramEdgeAddNode
+            <WorkflowDiagramEdgeV1
               labelY={labelY}
               parentStepId={source}
               nextStepId={target}

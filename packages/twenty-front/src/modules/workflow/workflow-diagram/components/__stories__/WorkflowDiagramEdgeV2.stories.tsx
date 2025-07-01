@@ -7,11 +7,11 @@ import {
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEdgeFilters } from '../WorkflowDiagramEdgeFilters';
+import { WorkflowDiagramEdgeV2 } from '../WorkflowDiagramEdgeV2';
 
-const meta: Meta<typeof WorkflowDiagramEdgeFilters> = {
-  title: 'Modules/Workflow/WorkflowDiagramEdgeFilters',
-  component: WorkflowDiagramEdgeFilters,
+const meta: Meta<typeof WorkflowDiagramEdgeV2> = {
+  title: 'Modules/Workflow/WorkflowDiagramEdgeV2',
+  component: WorkflowDiagramEdgeV2,
   decorators: [
     ComponentDecorator,
     ReactflowDecorator,
@@ -39,7 +39,7 @@ const meta: Meta<typeof WorkflowDiagramEdgeFilters> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof WorkflowDiagramEdgeFilters>;
+type Story = StoryObj<typeof WorkflowDiagramEdgeV2>;
 
 export const ButtonsAppearOnHover: Story = {
   play: async ({ canvasElement }) => {

@@ -43,19 +43,19 @@ const StyledOpacityOverlay = styled.div<{ shouldDisplay: boolean }>`
   position: relative;
 `;
 
-type WorkflowDiagramEdgeFiltersProps = {
+type WorkflowDiagramEdgeV2Props = {
   labelX: number;
   labelY: number;
   parentStepId: string;
   nextStepId: string;
 };
 
-export const WorkflowDiagramEdgeFilters = ({
+export const WorkflowDiagramEdgeV2 = ({
   labelX,
   labelY,
   parentStepId,
   nextStepId,
-}: WorkflowDiagramEdgeFiltersProps) => {
+}: WorkflowDiagramEdgeV2Props) => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const { startNodeCreation } = useStartNodeCreation();
