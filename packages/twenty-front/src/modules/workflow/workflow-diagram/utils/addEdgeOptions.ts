@@ -8,7 +8,7 @@ export const addEdgeOptions = ({
     nodes,
     edges: edges.map((edge) => ({
       ...edge,
-      data: { shouldDisplayEdgeOptions: true },
+      data: { ...edge.data, shouldDisplayEdgeOptions: true },
     })),
   };
 };

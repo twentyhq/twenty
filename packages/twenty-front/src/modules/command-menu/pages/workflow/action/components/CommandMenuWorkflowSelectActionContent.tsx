@@ -28,7 +28,11 @@ export const CommandMenuWorkflowSelectActionContent = ({
           key={action.type}
           LeftIcon={getIcon(action.icon)}
           text={action.label}
-          onClick={() => createStep(action.type)}
+          onClick={() =>
+            createStep({
+              newStepType: action.type,
+            })
+          }
         />
       ))}
       <RightDrawerWorkflowSelectStepTitle>
@@ -39,7 +43,11 @@ export const CommandMenuWorkflowSelectActionContent = ({
           key={action.type}
           LeftIcon={getIcon(action.icon)}
           text={action.label}
-          onClick={() => createStep(action.type)}
+          onClick={() =>
+            createStep({
+              newStepType: action.type,
+            })
+          }
         />
       ))}
     </RightDrawerStepListContainer>

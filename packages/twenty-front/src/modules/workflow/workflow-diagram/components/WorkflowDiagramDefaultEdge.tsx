@@ -52,6 +52,7 @@ export const WorkflowDiagramDefaultEdge = ({
               labelY={labelY}
               parentStepId={source}
               nextStepId={target}
+              filter={data.filter}
             />
           ) : (
             <WorkflowDiagramEdgeV1

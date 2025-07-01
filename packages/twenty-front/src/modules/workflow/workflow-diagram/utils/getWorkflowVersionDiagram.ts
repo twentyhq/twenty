@@ -1,6 +1,7 @@
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
+import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
@@ -15,8 +16,10 @@ export const getWorkflowVersionDiagram = (
     return EMPTY_DIAGRAM;
   }
 
-  return generateWorkflowDiagram({
-    trigger: workflowVersion.trigger ?? undefined,
-    steps: workflowVersion.steps ?? [],
-  });
+  return transformFilterNodesAsEdges(
+    generateWorkflowDiagram({
+      trigger: workflowVersion.trigger ?? undefined,
+      steps: workflowVersion.steps ?? [],
+    }),
+  );
 };

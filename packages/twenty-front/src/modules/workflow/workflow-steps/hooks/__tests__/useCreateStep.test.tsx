@@ -73,7 +73,9 @@ describe('useCreateStep', () => {
         wrapper,
       },
     );
-    await result.current.createStep('CODE');
+    await result.current.createStep({
+      newStepType: 'CODE',
+    });
 
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
   });
