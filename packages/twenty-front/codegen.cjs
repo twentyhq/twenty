@@ -5,35 +5,26 @@ module.exports = {
     (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
     '/graphql',
   documents: [
-    // Exclude system operations (now handled by metadata codegen)
-    '!./src/modules/auth/**',
-    '!./src/modules/billing/**',
-    '!./src/modules/workspace/**',
-    '!./src/modules/workspace-member/**',
-    '!./src/modules/workspace-invitation/**',
-    '!./src/modules/users/**',
-    '!./src/modules/settings/accounts/**',
-    '!./src/modules/settings/admin-panel/**',
-    '!./src/modules/settings/lab/**',
-    '!./src/modules/settings/roles/**',
-    '!./src/modules/settings/security/**',
-    '!./src/modules/settings/serverless-functions/**',
-    '!./src/modules/databases/**',
-    '!./src/modules/workflow/**',
-    '!./src/modules/analytics/**',
-    '!./src/modules/object-metadata/**',
-    '!./src/modules/metadata/**',
+    // Core business objects
+    './src/modules/activities/graphql/**/*.{ts,tsx}',
+    './src/modules/companies/graphql/**/*.{ts,tsx}', 
+    './src/modules/people/graphql/**/*.{ts,tsx}',
+    './src/modules/opportunities/graphql/**/*.{ts,tsx}',
     
-    // Exclude placeholder constants that cause codegen errors, this seems weird
-    // may be just exclude enitre constants folder
-    '!./src/modules/object-record/constants/Empty*.ts',
+    // Business operations
+    './src/modules/search/graphql/**/*.{ts,tsx}',
+    './src/modules/views/graphql/**/*.{ts,tsx}',
+    './src/modules/favorites/graphql/**/*.{ts,tsx}',
+    './src/modules/spreadsheet-import/graphql/**/*.{ts,tsx}',
+    './src/modules/command-menu/graphql/**/*.{ts,tsx}',
     
-    // Include core data operations
-    './src/modules/**/*.tsx',
-    './src/modules/**/*.ts',
-    '!./src/**/*.test.ts',
-    '!./src/**/*.test.tsx',
-    '!./src/**/*.stories.tsx',
+    // Business infrastructure
+    './src/modules/prefetch/graphql/**/*.{ts,tsx}',
+    './src/modules/subscription/graphql/**/*.{ts,tsx}',
+    
+    // Exclude tests and stories
+    '!./src/**/*.test.{ts,tsx}',
+    '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',
   ],
   overwrite: true,

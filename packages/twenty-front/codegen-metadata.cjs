@@ -5,42 +5,31 @@ module.exports = {
     (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
     '/metadata',
   documents: [
-    // Authentication
-    './src/modules/auth/graphql/**/*.ts',
-    
-    // Billing
-    './src/modules/billing/graphql/**/*.ts',
+    // Authentication & User Management
+    './src/modules/auth/graphql/**/*.{ts,tsx}',
+    './src/modules/users/graphql/**/*.{ts,tsx}',
     
     // Workspace Management
-    './src/modules/workspace/graphql/**/*.ts',
-    './src/modules/workspace-member/graphql/**/*.ts',
-    './src/modules/workspace-invitation/graphql/**/*.ts',
+    './src/modules/workspace/graphql/**/*.{ts,tsx}',
+    './src/modules/workspace-member/graphql/**/*.{ts,tsx}',
+    './src/modules/workspace-invitation/graphql/**/*.{ts,tsx}',
     
-    // User Management
-    './src/modules/users/graphql/**/*.ts',
+    // Billing & Admin
+    './src/modules/billing/graphql/**/*.{ts,tsx}',
+    './src/modules/settings/**/graphql/**/*.{ts,tsx}',
     
-    // Settings & Administration
-    './src/modules/settings/accounts/graphql/**/*.ts',
-    './src/modules/settings/admin-panel/graphql/**/*.ts',
-    './src/modules/settings/admin-panel/config-variables/graphql/**/*.ts',
-    './src/modules/settings/admin-panel/health-status/graphql/**/*.ts',
-    './src/modules/settings/lab/graphql/**/*.ts',
-    './src/modules/settings/roles/graphql/**/*.ts',
-    './src/modules/settings/security/graphql/**/*.ts',
-    './src/modules/settings/serverless-functions/graphql/**/*.ts',
+    // System Operations
+    './src/modules/databases/graphql/**/*.{ts,tsx}',
+    './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
+    './src/modules/analytics/graphql/**/*.{ts,tsx}',
+    './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/attachments/graphql/**/*.{ts,tsx}',
+    './src/modules/onboarding/graphql/**/*.{ts,tsx}',
     
-    // Database Connections
-    './src/modules/databases/graphql/**/*.ts',
-    
-    // Workflow Management (including nested workflow-steps)
-    './src/modules/workflow/**/graphql/**/*.ts',
-    
-    // Analytics & Tracking
-    './src/modules/analytics/graphql/**/*.ts',
-    
-    // Metadata Operations
-    './src/modules/object-metadata/graphql/*.ts',
-    './src/modules/metadata/graphql/*.ts',
+    // Exclude tests and stories
+    '!./src/**/*.test.{ts,tsx}',
+    '!./src/**/*.stories.{ts,tsx}',
+    '!./src/**/__mocks__/*.ts',
   ],
   overwrite: true,
   generates: {
