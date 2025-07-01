@@ -108,6 +108,7 @@ export const SettingsObjectNewFieldSelector = ({
       {' '}
       <Section>
         <StyledSearchInput
+          inputId="new-field-type-search"
           LeftIcon={IconSearch}
           placeholder={t`Search a type`}
           value={searchQuery}

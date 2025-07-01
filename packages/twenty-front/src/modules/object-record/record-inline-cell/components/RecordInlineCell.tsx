@@ -28,11 +28,14 @@ import {
 } from './RecordInlineCellContext';
 
 type RecordInlineCellProps = {
-  readonly?: boolean;
   loading?: boolean;
+  inputIdPrefix?: string;
 };
 
-export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
+export const RecordInlineCell = ({
+  loading,
+  inputIdPrefix,
+}: RecordInlineCellProps) => {
   const {
     fieldDefinition,
     recordId,
@@ -47,13 +50,28 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
 
   const onOpenEditMode = onOpenEditModeFromContext
     ? onOpenEditModeFromContext
-    : () => openFieldInput({ fieldDefinition, recordId });
+    : () =>
+        openFieldInput({
+          fieldDefinition,
+          recordId,
+          prefix: inputIdPrefix,
+        });
 
   const onCloseEditMode = useCallback(() => {
     onCloseEditModeFromContext
       ? onCloseEditModeFromContext()
-      : closeFieldInput({ fieldDefinition, recordId });
-  }, [onCloseEditModeFromContext, closeFieldInput, fieldDefinition, recordId]);
+      : closeFieldInput({
+          fieldDefinition,
+          recordId,
+          prefix: inputIdPrefix,
+        });
+  }, [
+    onCloseEditModeFromContext,
+    closeFieldInput,
+    fieldDefinition,
+    recordId,
+    inputIdPrefix,
+  ]);
 
   const buttonIcon = useGetButtonIcon();
 

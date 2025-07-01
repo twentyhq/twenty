@@ -28,6 +28,8 @@ type FieldsCardProps = {
   objectRecordId: string;
 };
 
+const INPUT_ID_PREFIX = 'fields-card';
+
 export const FieldsCard = ({
   objectNameSingular,
   objectRecordId,
@@ -139,13 +141,13 @@ export const FieldsCard = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
-                    componentInstanceId={getRecordFieldInputId(
-                      objectRecordId,
-                      fieldMetadataItem.name,
-                      isInRightDrawer
+                    componentInstanceId={getRecordFieldInputId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: isInRightDrawer
                         ? 'right-drawer-fields-card'
                         : 'fields-card',
-                    )}
+                    })}
                     activityObjectNameSingular={
                       objectNameSingular as
                         | CoreObjectNameSingular.Note
@@ -185,14 +187,17 @@ export const FieldsCard = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId(
-                      objectRecordId,
-                      fieldMetadataItem.name,
-                      'fields-card',
-                    ),
+                    instanceId: getRecordFieldInputId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: INPUT_ID_PREFIX,
+                    }),
                   }}
                 >
-                  <RecordInlineCell loading={recordLoading} />
+                  <RecordInlineCell
+                    loading={recordLoading}
+                    inputIdPrefix={INPUT_ID_PREFIX}
+                  />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}

@@ -14,7 +14,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -41,8 +40,6 @@ export const MultipleRecordPicker = ({
   componentInstanceId,
   focusId,
 }: MultipleRecordPickerProps) => {
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
-
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
@@ -79,7 +76,6 @@ export const MultipleRecordPicker = ({
 
   const handleSubmit = () => {
     onSubmit?.();
-    goBackToPreviousHotkeyScope();
     resetSelectedItem();
     resetState();
   };

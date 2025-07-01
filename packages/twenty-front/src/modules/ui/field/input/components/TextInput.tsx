@@ -16,7 +16,7 @@ export const StyledTextInput = styled.input`
 `;
 
 type TextInputProps = {
-  inputId?: string;
+  inputId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -70,6 +70,7 @@ export const TextInput = ({
   }, [value, shouldTrim]);
 
   useRegisterInputEvents({
+    focusId: inputId,
     inputRef: wrapperRef,
     copyRef: copyRef,
     inputValue: internalText,
