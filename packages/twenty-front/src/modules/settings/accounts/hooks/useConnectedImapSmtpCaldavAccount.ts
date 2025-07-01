@@ -1,5 +1,5 @@
 import {
-  GetConnectedImapSmtpCaldavAccountQuery,
+  type GetConnectedImapSmtpCaldavAccountQuery,
   useGetConnectedImapSmtpCaldavAccountQuery,
 } from '~/generated/graphql';
 
