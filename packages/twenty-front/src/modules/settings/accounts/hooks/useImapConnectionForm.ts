@@ -106,7 +106,6 @@ export const useImapConnectionForm = ({
             port: variables.port,
             secure: variables.secure,
             password: variables.password,
-            username: variables.handle,
           },
           ...(variables.id ? { id: variables.id } : {}),
         },

@@ -9,7 +9,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { useSaveImapSmtpCaldavMutation } from '~/generated/graphql';
+import { useSaveImapSmtpCaldavMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceState } from '~/modules/auth/states/currentWorkspaceState';
 import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavAccount';
