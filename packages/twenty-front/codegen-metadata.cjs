@@ -5,20 +5,16 @@ module.exports = {
     (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
     '/metadata',
   documents: [
-    // Authentication & User Management
     './src/modules/auth/graphql/**/*.{ts,tsx}',
     './src/modules/users/graphql/**/*.{ts,tsx}',
     
-    // Workspace Management
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-member/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-invitation/graphql/**/*.{ts,tsx}',
     
-    // Billing & Admin
     './src/modules/billing/graphql/**/*.{ts,tsx}',
     './src/modules/settings/**/graphql/**/*.{ts,tsx}',
     
-    // System Operations
     './src/modules/databases/graphql/**/*.{ts,tsx}',
     './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
@@ -26,7 +22,6 @@ module.exports = {
     './src/modules/attachments/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
     
-    // Exclude tests and stories
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',
