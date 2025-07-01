@@ -191,6 +191,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingSwitchPlanOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async switchPlan(
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,

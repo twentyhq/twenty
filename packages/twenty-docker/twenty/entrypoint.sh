@@ -50,7 +50,7 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
         
         echo "Successfuly migrated DB!"
     fi
-
+fi
    
 yarn command:prod upgrade
 echo "Successfully migrated DB!"
