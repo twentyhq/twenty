@@ -321,6 +321,8 @@ export const CallCenterProvider = ({
   };
 
   const startService = useCallback(() => {
+    if (!selectedChat) return;
+
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -338,7 +340,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -359,6 +361,8 @@ export const CallCenterProvider = ({
   }, []);
 
   const finalizeService = useCallback(() => {
+    if (!selectedChat) return;
+
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -376,7 +380,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -386,6 +390,8 @@ export const CallCenterProvider = ({
   }, []);
 
   const transferService = (agent?: WorkspaceMember, sector?: Sector) => {
+    if (!selectedChat) return;
+
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
     //   ? sendEventMessageb
     //   : messengerEventMessage;
@@ -415,7 +421,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',
@@ -425,6 +431,8 @@ export const CallCenterProvider = ({
   };
 
   const holdService = useCallback(() => {
+    if (!selectedChat) return;
+
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -442,7 +450,7 @@ export const CallCenterProvider = ({
       from:
         `${currentMember?.name.firstName} ${currentMember?.name.lastName}` ||
         'system',
-      integrationId: selectedChat?.integrationId || '',
+      integrationId: selectedChat?.integrationId,
       to: isWhatsappDocument(selectedChat)
         ? (selectedChat?.client.phone ?? '')
         : 'Name not available',

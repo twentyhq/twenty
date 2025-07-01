@@ -4,6 +4,7 @@ import {
   initialEdges,
   initialNodes,
 } from '@/chatbot/flow-templates/mockFlowTemplate';
+import { useChatbotFlowCommandMenu } from '@/chatbot/hooks/useChatbotFlowCommandMenu';
 import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
@@ -12,6 +13,8 @@ import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/compon
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+// eslint-disable-next-line no-restricted-imports
+import { IconPlus } from '@tabler/icons-react';
 import {
   addEdge,
   applyEdgeChanges,
@@ -91,6 +94,7 @@ const StyledButtonContainer = styled.div`
   top: 0;
   position: absolute;
   padding: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledButton = styled(Button)`
@@ -109,6 +113,8 @@ export const BotDiagramBase = ({
     Node,
     Edge
   > | null>(null);
+
+  const { openChatbotFlowCommandMenu } = useChatbotFlowCommandMenu();
 
   const { chatbotFlow } = useValidateChatbotFlow();
   const { updateFlow } = useUpdateChatbotFlow();
@@ -263,6 +269,14 @@ export const BotDiagramBase = ({
         <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
       <StyledButtonContainer>
+        <StyledButton
+          accent="default"
+          Icon={IconPlus}
+          title="Add node"
+          onClick={() =>
+            chatbotFlowId && openChatbotFlowCommandMenu(chatbotFlowId)
+          }
+        />
         <StyledButton accent="blue" title="Save" onClick={onSave} />
       </StyledButtonContainer>
     </StyledResetReactflowStyles>

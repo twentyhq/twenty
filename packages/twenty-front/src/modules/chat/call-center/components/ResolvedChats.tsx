@@ -8,9 +8,10 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 const StyledDiv = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)} 0;
 `;
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
