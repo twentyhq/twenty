@@ -44,8 +44,8 @@ export const transformFilterNodesAsEdges = ({
           target: outgoingEdge.target,
           data: {
             ...incomingEdge.data,
+            stepId: filterNode.id,
             filter: filterNode.data,
-            shouldDisplayEdgeOptions: true,
           },
         };
 

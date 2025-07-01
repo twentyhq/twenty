@@ -25,7 +25,7 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-C',
           source: 'A',
           target: 'C',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -64,13 +64,13 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -99,6 +99,7 @@ describe('transformFilterNodesAsEdges', () => {
       target: 'C',
       data: {
         shouldDisplayEdgeOptions: true,
+        stepId: 'B',
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
       },
     });
@@ -146,25 +147,25 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B1',
           source: 'A',
           target: 'B1',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B1-C',
           source: 'B1',
           target: 'C',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B1', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'C-B2',
           source: 'C',
           target: 'B2',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'C', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B2-D',
           source: 'B2',
           target: 'D',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B2', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -188,6 +189,7 @@ describe('transformFilterNodesAsEdges', () => {
       source: 'A',
       target: 'C',
       data: {
+        stepId: 'B1',
         shouldDisplayEdgeOptions: true,
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B1' },
       },
@@ -201,6 +203,7 @@ describe('transformFilterNodesAsEdges', () => {
       source: 'C',
       target: 'D',
       data: {
+        stepId: 'B2',
         shouldDisplayEdgeOptions: true,
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B2' },
       },
@@ -249,25 +252,25 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A1-B',
           source: 'A1',
           target: 'B',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A1', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'A2-B',
           source: 'A2',
           target: 'B',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A2', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B-C1',
           source: 'B',
           target: 'C1',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B-C2',
           source: 'B',
           target: 'C2',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -323,7 +326,7 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'A', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -375,13 +378,13 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'trigger-B',
           source: 'trigger',
           target: 'B',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'trigger', shouldDisplayEdgeOptions: true },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { shouldDisplayEdgeOptions: true },
+          data: { stepId: 'B', shouldDisplayEdgeOptions: true },
         },
       ],
     };
@@ -413,6 +416,7 @@ describe('transformFilterNodesAsEdges', () => {
         source: 'trigger',
         target: 'C',
         data: {
+          stepId: 'B',
           shouldDisplayEdgeOptions: true,
           filter: {
             nodeType: 'action',

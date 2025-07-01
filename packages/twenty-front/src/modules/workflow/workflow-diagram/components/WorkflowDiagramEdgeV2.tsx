@@ -13,6 +13,7 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -56,6 +57,7 @@ const StyledOpacityOverlay = styled.div<{ shouldDisplay: boolean }>`
 type WorkflowDiagramEdgeV2Props = {
   labelX: number;
   labelY: number;
+  stepId: string;
   parentStepId: string;
   nextStepId: string;
   filter: Record<string, any> | undefined;
@@ -64,6 +66,7 @@ type WorkflowDiagramEdgeV2Props = {
 export const WorkflowDiagramEdgeV2 = ({
   labelX,
   labelY,
+  stepId,
   parentStepId,
   nextStepId,
   filter,
@@ -103,6 +106,7 @@ export const WorkflowDiagramEdgeV2 = ({
   }
 
   const { createStep } = useCreateStep({ workflow });
+  const { deleteStep } = useDeleteStep({ workflow });
 
   const handleCreateFilter = async () => {
     await createStep({
@@ -186,7 +190,12 @@ export const WorkflowDiagramEdgeV2 = ({
                 <MenuItem
                   text="Remove Filter"
                   LeftIcon={IconFilterX}
-                  onClick={() => {}}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    setHovered(false);
+
+                    deleteStep(stepId);
+                  }}
                 />
                 <MenuItem
                   text="Add Node"
