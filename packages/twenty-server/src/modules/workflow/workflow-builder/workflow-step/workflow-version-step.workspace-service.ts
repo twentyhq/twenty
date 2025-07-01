@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -308,6 +309,9 @@ export class WorkflowVersionStepWorkspaceService {
       throw new WorkflowVersionStepException(
         'Step is not a form',
         WorkflowVersionStepExceptionCode.INVALID,
+        {
+          displayedErrorMessage: t`Step is not a form`,
+        },
       );
     }
 

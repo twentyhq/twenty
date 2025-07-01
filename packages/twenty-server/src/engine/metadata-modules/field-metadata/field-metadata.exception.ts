@@ -2,8 +2,12 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class FieldMetadataException extends CustomException {
   declare code: FieldMetadataExceptionCode;
-  constructor(message: string, code: FieldMetadataExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: FieldMetadataExceptionCode,
+    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+  ) {
+    super(message, code, displayedErrorMessage);
   }
 }
 

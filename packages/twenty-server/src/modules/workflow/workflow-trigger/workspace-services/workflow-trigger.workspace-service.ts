@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -269,6 +270,9 @@ export class WorkflowTriggerWorkspaceService {
       throw new WorkflowTriggerException(
         'Cannot have more than one active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
+        {
+          displayedErrorMessage: t`Cannot have more than one active workflow version`,
+        },
       );
     }
 
@@ -294,6 +298,9 @@ export class WorkflowTriggerWorkspaceService {
       throw new WorkflowTriggerException(
         'Cannot disable non-active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
+        {
+          displayedErrorMessage: t`Cannot disable non-active workflow version`,
+        },
       );
     }
 

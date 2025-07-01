@@ -18,9 +18,13 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: AuthException) {
     switch (exception.code) {
       case AuthExceptionCode.CLIENT_NOT_FOUND:
-        throw new NotFoundError(exception.message);
+        throw new NotFoundError(exception.message, {
+          displayedErrorMessage: exception.displayedErrorMessage,
+        });
       case AuthExceptionCode.INVALID_INPUT:
-        throw new UserInputError(exception.message);
+        throw new UserInputError(exception.message, {
+          displayedErrorMessage: exception.displayedErrorMessage,
+        });
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
       case AuthExceptionCode.INSUFFICIENT_SCOPES:
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
@@ -29,7 +33,9 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.SIGNUP_DISABLED:
       case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
       case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
-        throw new ForbiddenError(exception.message);
+        throw new ForbiddenError(exception.message, {
+          displayedErrorMessage: exception.displayedErrorMessage,
+        });
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
         throw new ForbiddenError(exception.message, {

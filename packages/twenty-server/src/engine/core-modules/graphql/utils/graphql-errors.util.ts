@@ -159,8 +159,9 @@ export class UserInputError extends BaseGraphQLError {
 }
 
 export class NotFoundError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.NOT_FOUND);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.NOT_FOUND, extensions);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
   }
