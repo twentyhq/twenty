@@ -87,7 +87,7 @@ export const SettingsAccountsEditImapConnection = () => {
           <SettingsAccountsConnectionForm
             control={control}
             connectionType="IMAP"
-            isEditing={true}
+            isEditing
           />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
