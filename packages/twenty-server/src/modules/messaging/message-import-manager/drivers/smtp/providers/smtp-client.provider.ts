@@ -15,7 +15,7 @@ export class SmtpClientProvider {
     const smtpParams = connectedAccount.connectionParameters?.SMTP;
 
     if (!smtpParams) {
-      throw new Error('SMTP configuration not found');
+      throw new Error('SMTP settings not configured for this account');
     }
 
     const transporter = createTransport({
