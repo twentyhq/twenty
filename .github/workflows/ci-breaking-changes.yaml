@@ -76,6 +76,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Try to merge main into current branch
+        id: merge_attempt
+        run: |
+          echo "Attempting to merge main into current branch..."
+          
+          # Fetch latest main
+          git fetch origin main
+          
+          # Get current branch name
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "Current branch: $CURRENT_BRANCH"
+          
+          # Try to merge main into current branch
+          if git merge origin/main --no-edit; then
+            echo "✅ Successfully merged main into current branch"
+            echo "merged=true" >> $GITHUB_OUTPUT
+            echo "BRANCH_STATE=merged" >> $GITHUB_ENV
+          else
+            echo "❌ Merge failed due to conflicts"
+            echo "⚠️ Falling back to comparing current branch against main without merge"
+            
+            # Abort the failed merge
+            git merge --abort
+            
+            echo "merged=false" >> $GITHUB_OUTPUT
+            echo "BRANCH_STATE=conflicts" >> $GITHUB_ENV
+          fi
+
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
 
@@ -608,6 +636,13 @@ jobs:
               
               // Only post comment if there are changes
               if (hasChanges) {
+                // Add branch state information only if there were conflicts
+                const branchState = process.env.BRANCH_STATE || 'unknown';
+                let branchStateNote = '';
+                
+                if (branchState === 'conflicts') {
+                  branchStateNote = '\n\n⚠️ **Note**: Could not merge with `main` due to conflicts. This comparison shows changes between the current branch and `main` as separate states.\n';
+                }
                 // Check if there are any breaking changes detected
                 let hasBreakingChanges = false;
                 let breakingChangeNote = '';
@@ -665,7 +700,7 @@ jobs:
                 }
                 
                 const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
-                const commentBody = COMMENT_MARKER + '\n' + comment + '⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
+                const commentBody = COMMENT_MARKER + '\n' + comment + branchStateNote + '\n⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
                 
                 // Get all comments to find existing API changes comment
                 const {data: comments} = await github.rest.issues.listComments({
