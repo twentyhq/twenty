@@ -1,7 +1,10 @@
 /* eslint-disable @nx/workspace-component-props-naming */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
-import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
+import {
+  NewConditionalState,
+  RecordType,
+} from '@/chatbot/types/LogicNodeDataType';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
 import styled from '@emotion/styled';
 import {
@@ -130,8 +133,22 @@ function CondicionalNode({
     setState(updatedLogic);
   }, [sourceConnections]);
 
-  const getSectorName = (sectorId: string) =>
-    sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
+  function getDisplayValueForCondition(condition: {
+    recordType?: RecordType;
+    message?: string;
+    sectorId?: string;
+  }) {
+    const getSectorName = (sectorId: string) =>
+      sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
+
+    if (condition.recordType === 'text') {
+      return condition.message?.trim() || '';
+    }
+
+    if (condition.recordType === 'sectors') {
+      return getSectorName(condition.sectorId || '');
+    }
+  }
 
   return (
     <BaseNode icon={'IconHierarchy'} title={data.title ?? 'Node title'}>
@@ -150,7 +167,7 @@ function CondicionalNode({
               return (
                 <StyledOption key={nodeData.option}>
                   <StyledLabel>
-                    {nodeData.option} - {getSectorName(nodeData.sectorId)}
+                    {nodeData.option} - {getDisplayValueForCondition(nodeData)}
                   </StyledLabel>
                   <StyledHandle
                     id={`b-${nodeData.option}`}

@@ -61,10 +61,18 @@ export class CondicionalInputHandler implements NodeHandler {
 
       const optionsList = logic.logicNodeData
         .map((d) => {
-          const sector = this.sectors.find((s) => s.id === d.sectorId);
-          const name = sector?.name ?? '';
+          if (d.recordType === 'text') {
+            return d.message?.trim() || '';
+          }
 
-          return `${d.option} - ${name}`;
+          if (d.recordType === 'sectors') {
+            const sector = this.sectors.find((s) => s.id === d.sectorId);
+            const name = sector?.name ?? '';
+
+            return `${d.option} - ${name}`;
+          }
+
+          return '';
         })
         .join('\n');
 

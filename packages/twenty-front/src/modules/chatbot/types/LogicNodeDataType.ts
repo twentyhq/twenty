@@ -7,9 +7,13 @@ export interface NewLogicNodeData {
   outgoingNodeId?: string;
   incomingEdgeId?: string;
   incomingNodeId?: string;
+  recordType?: RecordType;
+  message?: string;
 }
 
 export interface NewConditionalState {
   logicNodes: number[];
   logicNodeData: NewLogicNodeData[];
 }
+
+export type RecordType = 'sectors' | 'text' | '';

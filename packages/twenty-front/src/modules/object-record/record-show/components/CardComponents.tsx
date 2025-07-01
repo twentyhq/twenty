@@ -157,9 +157,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       />
     </TraceableCardContainer>
   ),
-  // [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
-  //   <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
-  // ),
 
   [CardType.ChatbotCard]: ({ targetableObject }) => (
     <ChatbotFlow targetableObject={targetableObject} />
