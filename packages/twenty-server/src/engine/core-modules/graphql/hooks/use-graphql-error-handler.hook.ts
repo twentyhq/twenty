@@ -6,7 +6,6 @@ import {
 } from '@envelop/core';
 import { t } from '@lingui/core/macro';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
-import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
@@ -199,7 +198,7 @@ export const useGraphQLErrorHandlerHook = <
                         ...error.extensions,
                         displayedErrorMessage:
                           error.extensions.displayedErrorMessage ??
-                          t`${DEFAULT_DISPLAYED_ERROR_MESSAGE}`,
+                          t`An error occurred.`,
                       },
                     }
                   : generateGraphQLErrorFromError(error);

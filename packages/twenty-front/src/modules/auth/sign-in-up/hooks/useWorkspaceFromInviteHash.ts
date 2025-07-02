@@ -34,10 +34,12 @@ export const useWorkspaceFromInviteHash = () => {
           currentWorkspace.id === data.findWorkspaceFromInviteHash.id
         ) {
           const workspaceDisplayName =
-            data?.findWorkspaceFromInviteHash?.displayName ?? 'this';
+            data?.findWorkspaceFromInviteHash?.displayName;
           initiallyLoggedIn &&
             enqueueInfoSnackBar({
-              message: t`You already belong to ${workspaceDisplayName} workspace`,
+              message: workspaceDisplayName
+                ? t`You already belong to the workspace ${workspaceDisplayName}`
+                : t`You already belong to this workspace`,
             });
           navigate(AppPath.Index);
         }

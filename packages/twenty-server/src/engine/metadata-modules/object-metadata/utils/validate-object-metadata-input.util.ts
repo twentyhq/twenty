@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
@@ -36,7 +35,7 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
         errorMessage,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         {
-          displayedErrorMessage: t`${errorMessage}`,
+          displayedErrorMessage: errorMessage,
         },
       );
     }
@@ -68,6 +67,9 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
       throw new ObjectMetadataException(
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          displayedErrorMessage: error.displayedErrorMessage,
+        },
       );
     }
 

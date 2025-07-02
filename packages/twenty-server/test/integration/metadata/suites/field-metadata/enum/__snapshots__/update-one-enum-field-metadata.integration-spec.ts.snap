@@ -137,8 +137,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -303,8 +305,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -336,6 +340,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      
     },
     "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
   },
