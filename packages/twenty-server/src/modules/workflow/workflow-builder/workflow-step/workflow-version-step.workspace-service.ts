@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -56,6 +57,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly agentChatService: AgentChatService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -618,6 +620,8 @@ export class WorkflowVersionStepWorkspaceService {
           },
           workspaceId,
         );
+
+        await this.agentChatService.createThread(newAgent.id);
 
         if (!isDefined(newAgent)) {
           throw new WorkflowVersionStepException(

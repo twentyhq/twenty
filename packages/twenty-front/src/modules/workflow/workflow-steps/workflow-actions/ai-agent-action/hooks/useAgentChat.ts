@@ -7,7 +7,6 @@ import {
   AgentChatMessage,
   useAgentChatMessagesQuery,
   useAgentChatThreadsQuery,
-  useCreateAgentChatThreadMutation,
   useSendAgentChatMessageMutation,
 } from '~/generated-metadata/graphql';
 
@@ -34,7 +33,7 @@ export const useAgentChat = (agentId: string) => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
 
-  const currentThreadId = threadsData?.agentChatThreads[0]?.id;
+  const currentThreadId = threadsData?.agentChatThreads[0]?.id as string;
 
   const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({
@@ -53,12 +52,6 @@ export const useAgentChat = (agentId: string) => {
         setAgentChatMessages(data.agentChatMessages);
       }
       scrollToBottom();
-    },
-  });
-
-  const [createThread] = useCreateAgentChatThreadMutation({
-    onCompleted: () => {
-      refetchThreads();
     },
   });
 
@@ -83,12 +76,10 @@ export const useAgentChat = (agentId: string) => {
     });
 
   const sendChatMessage = async (message: string) => {
-    let threadId = currentThreadId || '';
-
     const optimisticUserMessage: AgentChatMessage = {
       __typename: 'AgentChatMessage',
       id: `temp-${v4()}`,
-      threadId,
+      threadId: currentThreadId,
       sender: 'user',
       message: message,
       createdAt: new Date().toISOString(),
@@ -97,7 +88,7 @@ export const useAgentChat = (agentId: string) => {
     const optimisticAiMessage: AgentChatMessage = {
       __typename: 'AgentChatMessage',
       id: `temp-${v4()}`,
-      threadId,
+      threadId: currentThreadId,
       sender: 'ai',
       message: '',
       createdAt: new Date().toISOString(),
@@ -111,26 +102,9 @@ export const useAgentChat = (agentId: string) => {
 
     setTimeout(scrollToBottom, 100);
 
-    if (!threadId) {
-      await createThread({
-        variables: {
-          agentId,
-        },
-        onCompleted: (data) => {
-          if (isDefined(data?.createAgentChatThread)) {
-            threadId = data.createAgentChatThread.id;
-          }
-        },
-      });
-    }
-
-    if (!threadId) {
-      return;
-    }
-
     await sendMessage({
       variables: {
-        threadId,
+        threadId: currentThreadId,
         message,
       },
     });
