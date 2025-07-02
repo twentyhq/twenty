@@ -126,6 +126,7 @@ export const workflowHttpRequestActionSettingsSchema =
             z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
           ]),
         )
+        .or(z.string())
         .optional(),
     }),
   });
@@ -134,6 +135,13 @@ export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       agentId: z.string(),
+    }),
+  });
+
+export const workflowFilterActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      filter: z.record(z.any()),
     }),
   });
 
@@ -189,6 +197,11 @@ export const workflowAiAgentActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowAiAgentActionSettingsSchema,
 });
 
+export const workflowFilterActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('FILTER'),
+  settings: workflowFilterActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -200,6 +213,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowFormActionSchema,
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
+  workflowFilterActionSchema,
 ]);
 
 // Trigger schemas
@@ -309,6 +323,7 @@ export const workflowRunStatusSchema = z.enum([
   'RUNNING',
   'COMPLETED',
   'FAILED',
+  'ENQUEUED',
 ]);
 
 export const workflowRunSchema = z

@@ -1,20 +1,19 @@
 /* @license Enterprise */
 
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationDeleteSSOIDPCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => ({
+jest.mock('~/generated-metadata/graphql', () => ({
   useDeleteSsoIdentityProviderMutation: () => [mutationDeleteSSOIDPCallSpy],
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useDeleteSsoIdentityProvider', () => {
   afterEach(() => {
@@ -22,10 +21,11 @@ describe('useDeleteSsoIdentityProvider', () => {
   });
 
   it('delete SSO identity provider', async () => {
+    const params = { identityProviderId: 'test' };
     renderHook(
       () => {
         const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
-        deleteSSOIdentityProvider({ identityProviderId: 'test' });
+        deleteSSOIdentityProvider(params);
       },
       { wrapper: Wrapper },
     );
@@ -33,7 +33,7 @@ describe('useDeleteSsoIdentityProvider', () => {
     expect(mutationDeleteSSOIDPCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: {
-        input: { identityProviderId: 'test' },
+        input: params,
       },
     });
   });

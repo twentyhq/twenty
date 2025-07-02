@@ -4,19 +4,19 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   PublicWorkspaceDataOutput,
   useEmailPasswordResetLinkMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('~/generated/graphql');
+jest.mock('~/generated-metadata/graphql');
 
 dynamicActivate(SOURCE_LOCALE);
 

@@ -2,8 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,

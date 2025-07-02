@@ -48,10 +48,15 @@ export class WorkflowRunWorkspaceService {
     workflowVersionId,
     createdBy,
     workflowRunId,
+    context,
+    status,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
     workflowRunId?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context: Record<string, any>;
+    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -117,9 +122,10 @@ export class WorkflowRunWorkspaceService {
       workflowVersionId,
       createdBy,
       workflowId: workflow.id,
-      status: WorkflowRunStatus.NOT_STARTED,
+      status,
       position,
       runContext: this.initRunContext(workflowVersion),
+      context,
     });
 
     await workflowRunRepository.insert(workflowRun);
@@ -130,14 +136,11 @@ export class WorkflowRunWorkspaceService {
   async startWorkflowRun({
     workflowRunId,
     workspaceId,
-    context,
     output,
     payload,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context: Record<string, any>;
     output: WorkflowRunOutput;
     payload: object;
   }) {
@@ -159,7 +162,10 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    if (workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED) {
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
       throw new WorkflowRunException(
         'Workflow run already started',
         WorkflowRunExceptionCode.INVALID_OPERATION,
@@ -169,7 +175,6 @@ export class WorkflowRunWorkspaceService {
     const partialUpdate = {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
-      context,
       output,
       runContext: {
         ...workflowRunToUpdate.runContext,
@@ -188,7 +193,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['status', 'startedAt', 'context', 'output'],
+      updatedFields: ['status', 'startedAt', 'output'],
     });
   }
 

@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useUpdateWorkspaceMemberRoleMutation,
   WorkspaceMember,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;

@@ -578,6 +578,20 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.FILTER: {
+        return {
+          id: newStepId,
+          name: 'Filter',
+          type: WorkflowActionType.FILTER,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              filter: {},
+            },
+          },
+        };
+      }
       case WorkflowActionType.HTTP_REQUEST: {
         return {
           id: newStepId,

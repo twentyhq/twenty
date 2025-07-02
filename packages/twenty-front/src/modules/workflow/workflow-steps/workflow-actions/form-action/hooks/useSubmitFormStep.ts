@@ -1,20 +1,21 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { SUBMIT_FORM_STEP } from '@/workflow/workflow-steps/workflow-actions/form-action/graphql/mutations/submitFormStep';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import {
   SubmitFormStepInput,
   SubmitFormStepMutation,
   SubmitFormStepMutationVariables,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useSubmitFormStep = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const [mutate] = useMutation<
     SubmitFormStepMutation,
     SubmitFormStepMutationVariables
   >(SUBMIT_FORM_STEP, {
-    client: apolloClient,
+    client: apolloCoreClient,
   });
 
   const { findOneRecordQuery: findOneWorkflowRunQuery } = useFindOneRecordQuery(

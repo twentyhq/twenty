@@ -1,12 +1,12 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
-import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteOneWorkflowVersion = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
@@ -39,8 +39,8 @@ export const useDeleteOneWorkflowVersion = () => {
       return;
     }
 
-    apolloClient.cache.modify({
-      id: apolloClient.cache.identify(cachedWorkflow),
+    apolloCoreClient.cache.modify({
+      id: apolloCoreClient.cache.identify(cachedWorkflow),
       fields: {
         versions: () => {
           return cachedWorkflow.versions.filter(

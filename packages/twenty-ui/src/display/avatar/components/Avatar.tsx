@@ -51,6 +51,12 @@ const StyledImage = styled.img`
   width: 100%;
 `;
 
+const StyledPlaceholderChar = styled.span<{
+  fontWeight: number;
+}>`
+  font-weight: ${({ fontWeight }) => fontWeight};
+`;
+
 export type AvatarProps = {
   avatarUrl?: string | null;
   className?: string;
@@ -132,7 +138,9 @@ export const Avatar = ({
           size={theme.icon.size.xl}
         />
       ) : showPlaceholder ? (
-        placeholderChar
+        <StyledPlaceholderChar fontWeight={theme.font.weight.medium}>
+          {placeholderChar}
+        </StyledPlaceholderChar>
       ) : (
         <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
       )}

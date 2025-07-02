@@ -184,6 +184,11 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        case 'FILTER': {
+          throw new Error(
+            "The Filter action isn't meant to be displayed as a node.",
+          );
+        }
 
         default:
           return assertUnreachable(

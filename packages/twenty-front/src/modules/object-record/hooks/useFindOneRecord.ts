@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -30,6 +31,8 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
@@ -50,6 +53,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   }>(findOneRecordQuery, {
     skip: !objectMetadataItem || !objectRecordId || skip || !hasReadPermission,
     variables: { objectRecordId },
+    client: apolloCoreClient,
     onCompleted: (data) => {
       const recordWithoutConnection = getRecordFromRecordNode<T>({
         recordNode: { ...data[objectNameSingular] },
