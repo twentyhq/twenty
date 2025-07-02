@@ -52,10 +52,12 @@ export class AgentChatService {
     const userMsg = await this.addMessage(threadId, 'user', userMessage);
     const thread = await this.threadRepository.findOneOrFail({
       where: { id: threadId },
+      relations: ['messages'],
     });
     const aiResponseText = await this.agentExecutionService.getChatResponse({
       agentId: thread.agentId,
       userMessage,
+      messages: thread.messages,
     });
     const aiMsg = await this.addMessage(threadId, 'ai', aiResponseText);
 

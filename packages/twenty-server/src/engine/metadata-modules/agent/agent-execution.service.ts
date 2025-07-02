@@ -97,11 +97,11 @@ export class AgentExecutionService {
   async getChatResponse({
     agentId,
     userMessage,
-    threadId,
+    messages,
   }: {
     agentId: string;
     userMessage: string;
-    threadId: string;
+    messages: AgentChatMessagesEntity[];
   }): Promise<string> {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -120,17 +120,12 @@ export class AgentExecutionService {
 
     let llmMessages: CoreMessage[] = [];
 
-    if (threadId) {
-      const previousMessages = await this.agentChatmessageRepository.find({
-        where: { threadId },
-        order: { createdAt: 'ASC' },
-      });
+    console.log('messages', messages);
 
-      llmMessages = previousMessages.map((msg) => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.message,
-      }));
-    }
+    llmMessages = messages.map((msg) => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.message,
+    }));
     llmMessages.push({ role: 'user', content: userMessage });
 
     const textResponse = await generateText({
