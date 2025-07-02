@@ -104,6 +104,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     isUser ? theme.font.color.light : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   width: fit-content;
+  white-space: pre-line;
 `;
 
 const StyledMessageFooter = styled.div`
