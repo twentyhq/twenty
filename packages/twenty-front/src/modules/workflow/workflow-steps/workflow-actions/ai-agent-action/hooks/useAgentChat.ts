@@ -45,7 +45,7 @@ export const useAgentChat = (agentId: string) => {
 
   const { loading: messagesLoading } = useAgentChatMessagesQuery({
     variables: {
-      threadId: currentThreadId || '',
+      threadId: currentThreadId as string,
     },
     skip: !currentThreadId,
     onCompleted: (data) => {
