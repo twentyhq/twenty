@@ -66,6 +66,23 @@ export type Agent = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentChatMessage = {
+  __typename?: 'AgentChatMessage';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  message: Scalars['String'];
+  sender: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
+export type AgentChatThread = {
+  __typename?: 'AgentChatThread';
+  agentId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -433,6 +450,10 @@ export type ConnectionParametersOutput = {
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
   username: Scalars['String'];
+};
+
+export type CreateAgentChatThreadInput = {
+  agentId: Scalars['ID'];
 };
 
 export type CreateAgentInput = {
@@ -959,6 +980,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgentChatThread: AgentChatThread;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -1005,6 +1027,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
+  sendAgentChatMessage: Array<AgentChatMessage>;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1073,6 +1096,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateAgentChatThreadArgs = {
+  input: CreateAgentChatThreadInput;
 };
 
 
@@ -1282,6 +1310,11 @@ export type MutationSaveImapSmtpCaldavArgs = {
   connectionParameters: ConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationSendAgentChatMessageArgs = {
+  input: SendAgentChatMessageInput;
 };
 
 
@@ -1648,6 +1681,8 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatMessages: Array<AgentChatMessage>;
+  agentChatThreads: Array<AgentChatThread>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
@@ -1687,6 +1722,16 @@ export type Query = {
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
+};
+
+
+export type QueryAgentChatMessagesArgs = {
+  threadId: Scalars['ID'];
+};
+
+
+export type QueryAgentChatThreadsArgs = {
+  agentId: Scalars['ID'];
 };
 
 
@@ -1952,6 +1997,11 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
+};
+
+export type SendAgentChatMessageInput = {
+  message: Scalars['String'];
+  threadId: Scalars['ID'];
 };
 
 export type SendInvitationsOutput = {

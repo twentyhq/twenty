@@ -66,6 +66,23 @@ export type Agent = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentChatMessage = {
+  __typename?: 'AgentChatMessage';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  message: Scalars['String'];
+  sender: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
+export type AgentChatThread = {
+  __typename?: 'AgentChatThread';
+  agentId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -433,6 +450,10 @@ export type ConnectionParametersOutput = {
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
   username: Scalars['String'];
+};
+
+export type CreateAgentChatThreadInput = {
+  agentId: Scalars['ID'];
 };
 
 export type CreateAgentInput = {
@@ -1002,6 +1023,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgentChatThread: AgentChatThread;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -1050,6 +1072,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
+  sendAgentChatMessage: Array<AgentChatMessage>;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1122,6 +1145,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateAgentChatThreadArgs = {
+  input: CreateAgentChatThreadInput;
 };
 
 
@@ -1351,6 +1379,11 @@ export type MutationSaveImapSmtpCaldavArgs = {
   connectionParameters: ConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationSendAgentChatMessageArgs = {
+  input: SendAgentChatMessageInput;
 };
 
 
@@ -1737,6 +1770,8 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatMessages: Array<AgentChatMessage>;
+  agentChatThreads: Array<AgentChatThread>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
@@ -1779,6 +1814,16 @@ export type Query = {
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
+};
+
+
+export type QueryAgentChatMessagesArgs = {
+  threadId: Scalars['ID'];
+};
+
+
+export type QueryAgentChatThreadsArgs = {
+  agentId: Scalars['ID'];
 };
 
 
@@ -2106,6 +2151,11 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
+};
+
+export type SendAgentChatMessageInput = {
+  message: Scalars['String'];
+  threadId: Scalars['ID'];
 };
 
 export type SendInvitationsOutput = {
@@ -3487,6 +3537,13 @@ export type AssignRoleToAgentMutationVariables = Exact<{
 
 export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
 
+export type CreateAgentChatThreadMutationVariables = Exact<{
+  input: CreateAgentChatThreadInput;
+}>;
+
+
+export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: string, agentId: string, createdAt: string, updatedAt: string } };
+
 export type RemoveRoleFromAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
 }>;
@@ -3494,12 +3551,33 @@ export type RemoveRoleFromAgentMutationVariables = Exact<{
 
 export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
 
+export type SendAgentChatMessageMutationVariables = Exact<{
+  input: SendAgentChatMessageInput;
+}>;
+
+
+export type SendAgentChatMessageMutation = { __typename?: 'Mutation', sendAgentChatMessage: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, sender: string, message: string, createdAt: string }> };
+
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
 }>;
 
 
 export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: any, name: string, description?: string | null, prompt: string, modelId: string, responseFormat?: any | null } };
+
+export type AgentChatMessagesQueryVariables = Exact<{
+  threadId: Scalars['ID'];
+}>;
+
+
+export type AgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, sender: string, message: string, createdAt: string }> };
+
+export type AgentChatThreadsQueryVariables = Exact<{
+  agentId: Scalars['ID'];
+}>;
+
+
+export type AgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: string, agentId: string, createdAt: string, updatedAt: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -7631,6 +7709,42 @@ export function useAssignRoleToAgentMutation(baseOptions?: Apollo.MutationHookOp
 export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
+export const CreateAgentChatThreadDocument = gql`
+    mutation CreateAgentChatThread($input: CreateAgentChatThreadInput!) {
+  createAgentChatThread(input: $input) {
+    id
+    agentId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateAgentChatThreadMutationFn = Apollo.MutationFunction<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
+
+/**
+ * __useCreateAgentChatThreadMutation__
+ *
+ * To run a mutation, you first call `useCreateAgentChatThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAgentChatThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAgentChatThreadMutation, { data, loading, error }] = useCreateAgentChatThreadMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateAgentChatThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>(CreateAgentChatThreadDocument, options);
+      }
+export type CreateAgentChatThreadMutationHookResult = ReturnType<typeof useCreateAgentChatThreadMutation>;
+export type CreateAgentChatThreadMutationResult = Apollo.MutationResult<CreateAgentChatThreadMutation>;
+export type CreateAgentChatThreadMutationOptions = Apollo.BaseMutationOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
 export const RemoveRoleFromAgentDocument = gql`
     mutation RemoveRoleFromAgent($agentId: UUID!) {
   removeRoleFromAgent(agentId: $agentId)
@@ -7662,6 +7776,43 @@ export function useRemoveRoleFromAgentMutation(baseOptions?: Apollo.MutationHook
 export type RemoveRoleFromAgentMutationHookResult = ReturnType<typeof useRemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationResult = Apollo.MutationResult<RemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
+export const SendAgentChatMessageDocument = gql`
+    mutation SendAgentChatMessage($input: SendAgentChatMessageInput!) {
+  sendAgentChatMessage(input: $input) {
+    id
+    threadId
+    sender
+    message
+    createdAt
+  }
+}
+    `;
+export type SendAgentChatMessageMutationFn = Apollo.MutationFunction<SendAgentChatMessageMutation, SendAgentChatMessageMutationVariables>;
+
+/**
+ * __useSendAgentChatMessageMutation__
+ *
+ * To run a mutation, you first call `useSendAgentChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendAgentChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendAgentChatMessageMutation, { data, loading, error }] = useSendAgentChatMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendAgentChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendAgentChatMessageMutation, SendAgentChatMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendAgentChatMessageMutation, SendAgentChatMessageMutationVariables>(SendAgentChatMessageDocument, options);
+      }
+export type SendAgentChatMessageMutationHookResult = ReturnType<typeof useSendAgentChatMessageMutation>;
+export type SendAgentChatMessageMutationResult = Apollo.MutationResult<SendAgentChatMessageMutation>;
+export type SendAgentChatMessageMutationOptions = Apollo.BaseMutationOptions<SendAgentChatMessageMutation, SendAgentChatMessageMutationVariables>;
 export const UpdateOneAgentDocument = gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
   updateOneAgent(input: $input) {
@@ -7700,6 +7851,83 @@ export function useUpdateOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOneAgentMutationHookResult = ReturnType<typeof useUpdateOneAgentMutation>;
 export type UpdateOneAgentMutationResult = Apollo.MutationResult<UpdateOneAgentMutation>;
 export type UpdateOneAgentMutationOptions = Apollo.BaseMutationOptions<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
+export const AgentChatMessagesDocument = gql`
+    query AgentChatMessages($threadId: ID!) {
+  agentChatMessages(threadId: $threadId) {
+    id
+    threadId
+    sender
+    message
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useAgentChatMessagesQuery__
+ *
+ * To run a query within a React component, call `useAgentChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAgentChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAgentChatMessagesQuery({
+ *   variables: {
+ *      threadId: // value for 'threadId'
+ *   },
+ * });
+ */
+export function useAgentChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<AgentChatMessagesQuery, AgentChatMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AgentChatMessagesQuery, AgentChatMessagesQueryVariables>(AgentChatMessagesDocument, options);
+      }
+export function useAgentChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AgentChatMessagesQuery, AgentChatMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AgentChatMessagesQuery, AgentChatMessagesQueryVariables>(AgentChatMessagesDocument, options);
+        }
+export type AgentChatMessagesQueryHookResult = ReturnType<typeof useAgentChatMessagesQuery>;
+export type AgentChatMessagesLazyQueryHookResult = ReturnType<typeof useAgentChatMessagesLazyQuery>;
+export type AgentChatMessagesQueryResult = Apollo.QueryResult<AgentChatMessagesQuery, AgentChatMessagesQueryVariables>;
+export const AgentChatThreadsDocument = gql`
+    query AgentChatThreads($agentId: ID!) {
+  agentChatThreads(agentId: $agentId) {
+    id
+    agentId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useAgentChatThreadsQuery__
+ *
+ * To run a query within a React component, call `useAgentChatThreadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAgentChatThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAgentChatThreadsQuery({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *   },
+ * });
+ */
+export function useAgentChatThreadsQuery(baseOptions: Apollo.QueryHookOptions<AgentChatThreadsQuery, AgentChatThreadsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AgentChatThreadsQuery, AgentChatThreadsQueryVariables>(AgentChatThreadsDocument, options);
+      }
+export function useAgentChatThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AgentChatThreadsQuery, AgentChatThreadsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AgentChatThreadsQuery, AgentChatThreadsQueryVariables>(AgentChatThreadsDocument, options);
+        }
+export type AgentChatThreadsQueryHookResult = ReturnType<typeof useAgentChatThreadsQuery>;
+export type AgentChatThreadsLazyQueryHookResult = ReturnType<typeof useAgentChatThreadsLazyQuery>;
+export type AgentChatThreadsQueryResult = Apollo.QueryResult<AgentChatThreadsQuery, AgentChatThreadsQueryVariables>;
 export const FindOneAgentDocument = gql`
     query FindOneAgent($id: UUID!) {
   findOneAgent(input: {id: $id}) {
