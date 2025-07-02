@@ -10,6 +10,10 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
+import { AgentChatMessagesEntity } from './agent-chat-message.entity';
+import { AgentChatThreadsEntity } from './agent-chat-thread.entity';
+import { AgentChatResolver } from './agent-chat.resolver';
+import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
 import { AgentToolService } from './agent-tool.service';
 import { AgentEntity } from './agent.entity';
@@ -19,7 +23,13 @@ import { AgentService } from './agent.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [AgentEntity, RoleEntity, RoleTargetsEntity],
+      [
+        AgentEntity,
+        RoleEntity,
+        RoleTargetsEntity,
+        AgentChatMessagesEntity,
+        AgentChatThreadsEntity,
+      ],
       'core',
     ),
     AiModule,
@@ -34,12 +44,18 @@ import { AgentService } from './agent.service';
     AgentService,
     AgentExecutionService,
     AgentToolService,
+    AgentChatResolver,
+    AgentChatService,
   ],
   exports: [
     AgentService,
     AgentExecutionService,
     AgentToolService,
-    TypeOrmModule.forFeature([AgentEntity], 'core'),
+    AgentChatService,
+    TypeOrmModule.forFeature(
+      [AgentEntity, AgentChatMessagesEntity, AgentChatThreadsEntity],
+      'core',
+    ),
   ],
 })
 export class AgentModule {}
