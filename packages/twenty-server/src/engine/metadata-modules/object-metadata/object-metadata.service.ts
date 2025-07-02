@@ -402,7 +402,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
       );
 
-      return updatedObject;
+      const formattedUpdatedObject = {
+        ...updatedObject,
+        createdAt: new Date(updatedObject.createdAt),
+      };
+
+      return formattedUpdatedObject;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
