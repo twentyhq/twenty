@@ -1,9 +1,9 @@
-import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { hasObjectMetadataItemFieldCreatedBy } from '@/object-metadata/utils/hasObjectMetadataItemFieldCreatedBy';
@@ -49,7 +49,7 @@ export const useCreateManyRecords = <
   shouldMatchRootQueryFilter,
   shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -120,7 +120,7 @@ export const useCreateManyRecords = <
       if (shouldDoOptimisticEffect) {
         const optimisticRecordInput = {
           ...computeOptimisticRecordFromInput({
-            cache: apolloClient.cache,
+            cache: apolloCoreClient.cache,
             objectMetadataItem,
             objectMetadataItems,
             currentWorkspaceMember: currentWorkspaceMember,
@@ -158,7 +158,7 @@ export const useCreateManyRecords = <
         .filter(isDefined);
 
       triggerCreateRecordsOptimisticEffect({
-        cache: apolloClient.cache,
+        cache: apolloCoreClient.cache,
         objectMetadataItem,
         recordsToCreate: recordNodeCreatedInCache,
         objectMetadataItems,
@@ -171,7 +171,7 @@ export const useCreateManyRecords = <
       objectMetadataItem.namePlural,
     );
 
-    const createdObjects = await apolloClient
+    const createdObjects = await apolloCoreClient
       .mutate({
         mutation: createManyRecordsMutation,
         variables: {
@@ -204,13 +204,13 @@ export const useCreateManyRecords = <
           deleteRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
-            cache: apolloClient.cache,
+            cache: apolloCoreClient.cache,
             recordToDestroy,
           });
         });
 
         triggerDestroyRecordsOptimisticEffect({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           objectMetadataItem,
           recordsToDestroy: recordsCreatedInCache,
           objectMetadataItems,

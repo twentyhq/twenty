@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type GenerateDepthOneWithoutRelationsRecordGqlFields = {
   objectMetadataItem: ObjectMetadataItem;

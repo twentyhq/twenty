@@ -3,7 +3,7 @@ import {
   BillingProductKey,
   SubscriptionStatus,
   useGetMeteredProductsUsageQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
   const subscriptionStatus = useSubscriptionStatus();

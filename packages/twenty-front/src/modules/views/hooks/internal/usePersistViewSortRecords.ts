@@ -1,9 +1,9 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -39,14 +39,14 @@ export const usePersistViewSortRecords = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const createViewSortRecords = useCallback(
     (viewSortsToCreate: ViewSort[], view: GraphQLView) => {
       if (!viewSortsToCreate.length) return;
       return Promise.all(
         viewSortsToCreate.map((viewSort) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: createOneRecordMutation,
             variables: {
               input: {
@@ -73,7 +73,7 @@ export const usePersistViewSortRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       createOneRecordMutation,
       objectMetadataItem,
       objectMetadataItems,
@@ -86,7 +86,7 @@ export const usePersistViewSortRecords = () => {
       if (!viewSortsToUpdate.length) return;
       return Promise.all(
         viewSortsToUpdate.map((viewSort) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
               idToUpdate: viewSort.id,
@@ -117,7 +117,7 @@ export const usePersistViewSortRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
@@ -130,7 +130,7 @@ export const usePersistViewSortRecords = () => {
       if (!viewSortIdsToDelete.length) return;
       return Promise.all(
         viewSortIdsToDelete.map((viewSortId) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: destroyOneRecordMutation,
             variables: {
               idToDestroy: viewSortId,
@@ -157,7 +157,7 @@ export const usePersistViewSortRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       destroyOneRecordMutation,
       getRecordFromCache,
       objectMetadataItem,

@@ -7,7 +7,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
   OnboardingStatus,
   ValidatePasswordResetTokenDocument,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import {
   PageDecorator,

@@ -1,9 +1,9 @@
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsHealthStatusListCard';
 import { t } from '@lingui/core/macro';
-import { useGetSystemHealthStatusQuery } from '~/generated/graphql';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useGetSystemHealthStatusQuery } from '~/generated-metadata/graphql';
 
 export const SettingsAdminHealthStatus = () => {
   const { data, loading: loadingHealthStatus } = useGetSystemHealthStatusQuery({

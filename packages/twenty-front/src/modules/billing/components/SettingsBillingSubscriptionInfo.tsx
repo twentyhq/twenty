@@ -1,17 +1,27 @@
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionInfoRowContainer';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
+  IconArrowUp,
   IconCalendarEvent,
   IconTag,
   IconUsers,
-  IconArrowUp,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import {
   BillingPlanKey,
   BillingPlanOutput,
@@ -21,17 +31,7 @@ import {
   useBillingBaseProductPricesQuery,
   useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
-} from '~/generated/graphql';
-import { useRecoilState } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Tag } from 'twenty-ui/components';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
-import { isDefined } from 'twenty-shared/utils';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+} from '~/generated-metadata/graphql';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 

@@ -1,19 +1,18 @@
-import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
+import { renderHook } from '@testing-library/react';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const mutationDeleteWorspaceInvitationCallSpy = jest.fn();
+const mutationDeleteWorkspaceInvitationCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => ({
+jest.mock('~/generated-metadata/graphql', () => ({
   useDeleteWorkspaceInvitationMutation: () => [
-    mutationDeleteWorspaceInvitationCallSpy,
+    mutationDeleteWorkspaceInvitationCallSpy,
   ],
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useDeleteWorkspaceInvitation', () => {
   afterEach(() => {
@@ -30,7 +29,7 @@ describe('useDeleteWorkspaceInvitation', () => {
       { wrapper: Wrapper },
     );
 
-    expect(mutationDeleteWorspaceInvitationCallSpy).toHaveBeenCalledWith({
+    expect(mutationDeleteWorkspaceInvitationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: params,
     });
