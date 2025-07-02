@@ -1,5 +1,8 @@
+import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilState } from 'recoil';
-
+import { Key } from 'ts-key-enum';
 import {
   AgentChatMessage,
   useAgentChatMessagesQuery,
@@ -10,22 +13,23 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { agentChatMessagesState } from '../states/agentChatMessagesState';
+import { agentChatInputState } from '../states/agentChatInputState';
+import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 
 export const useAgentChat = (agentId: string) => {
-  const [agentChatMessages, setAgentChatMessages] = useRecoilState(
-    agentChatMessagesState,
+  const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
+    agentChatMessagesComponentState,
+    agentId,
   );
+  const [agentChatInput, setAgentChatInput] =
+    useRecoilState(agentChatInputState);
 
-  const {
-    data: threadsData,
-    loading: threadsLoading,
-    refetch: refetchThreads,
-  } = useAgentChatThreadsQuery({
-    variables: {
-      agentId,
-    },
-  });
+  const { data: threadsData, refetch: refetchThreads } =
+    useAgentChatThreadsQuery({
+      variables: {
+        agentId,
+      },
+    });
 
   const currentThreadId = threadsData?.agentChatThreads[0]?.id;
 
@@ -41,12 +45,11 @@ export const useAgentChat = (agentId: string) => {
     },
   });
 
-  const [createThread, { loading: creatingThread }] =
-    useCreateAgentChatThreadMutation({
-      onCompleted: () => {
-        refetchThreads();
-      },
-    });
+  const [createThread] = useCreateAgentChatThreadMutation({
+    onCompleted: () => {
+      refetchThreads();
+    },
+  });
 
   const [sendMessage, { loading: sendingMessage }] =
     useSendAgentChatMessageMutation({
@@ -69,26 +72,7 @@ export const useAgentChat = (agentId: string) => {
     });
 
   const sendChatMessage = async (message: string) => {
-    let threadId = currentThreadId;
-
-    if (!threadId) {
-      await createThread({
-        variables: {
-          input: {
-            agentId,
-          },
-        },
-        onCompleted: (data) => {
-          if (isDefined(data?.createAgentChatThread)) {
-            threadId = data.createAgentChatThread.id;
-          }
-        },
-      });
-    }
-
-    if (!threadId) {
-      return;
-    }
+    let threadId = currentThreadId || '';
 
     const optimisticUserMessage: AgentChatMessage = {
       __typename: 'AgentChatMessage',
@@ -114,6 +98,25 @@ export const useAgentChat = (agentId: string) => {
       optimisticAiMessage,
     ]);
 
+    if (!threadId) {
+      await createThread({
+        variables: {
+          input: {
+            agentId,
+          },
+        },
+        onCompleted: (data) => {
+          if (isDefined(data?.createAgentChatThread)) {
+            threadId = data.createAgentChatThread.id;
+          }
+        },
+      });
+    }
+
+    if (!threadId) {
+      return;
+    }
+
     await sendMessage({
       variables: {
         input: {
@@ -124,10 +127,31 @@ export const useAgentChat = (agentId: string) => {
     });
   };
 
+  const handleSendMessage = async () => {
+    if (!agentChatInput.trim()) return;
+    const message = agentChatInput.trim();
+    setAgentChatInput('');
+    await sendChatMessage(message);
+  };
+
+  useScopedHotkeys(
+    [Key.Enter],
+    (event) => {
+      if (!event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    },
+    InputHotkeyScope.TextInput,
+    [agentChatInput, sendingMessage],
+  );
+
   return {
+    handleInputChange: (value: string) => setAgentChatInput(value),
     messages: agentChatMessages,
+    input: agentChatInput,
+    handleSendMessage,
     messagesLoading,
     sendingMessage,
-    sendChatMessage,
   };
 };

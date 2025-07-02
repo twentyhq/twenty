@@ -1,14 +1,11 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
+import React from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
-import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
@@ -162,30 +159,16 @@ type AIChatTabProps = {
 };
 
 export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
-  const [input, setInput] = useState('');
   const theme = useTheme();
 
-  const { messages, messagesLoading, sendingMessage, sendChatMessage } =
-    useAgentChat(agentId);
-
-  const handleSendMessage = async () => {
-    if (!input.trim()) return;
-    const message = input.trim();
-    setInput('');
-    await sendChatMessage(message);
-  };
-
-  useScopedHotkeys(
-    [Key.Enter],
-    (event) => {
-      if (!event.ctrlKey && !event.metaKey) {
-        event.preventDefault();
-        handleSendMessage();
-      }
-    },
-    InputHotkeyScope.TextInput,
-    [input, sendingMessage],
-  );
+  const {
+    messages,
+    messagesLoading,
+    sendingMessage,
+    handleSendMessage,
+    input,
+    handleInputChange,
+  } = useAgentChat(agentId);
 
   const isLoading = messagesLoading || sendingMessage;
 
@@ -251,7 +234,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
         <TextArea
           placeholder="Enter a question..."
           value={input}
-          onChange={(value) => setInput(value)}
+          onChange={handleInputChange}
           disabled={sendingMessage}
         />
         <Button
