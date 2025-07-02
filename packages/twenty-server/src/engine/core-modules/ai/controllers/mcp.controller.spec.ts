@@ -58,21 +58,18 @@ describe('McpController', () => {
 
       mcpService.executeTool.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeTool(
+      const result = await controller.executeMcpMethods(
         mockRequest,
         mockWorkspace,
         mockApiKey,
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(
-        mockRequest,
-        {
-          workspace: mockWorkspace,
-          userWorkspaceId: mockUserWorkspaceId,
-          apiKey: mockApiKey,
-        },
-      );
+      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: mockApiKey,
+      });
       expect(result).toEqual(mockResponse);
     });
 
@@ -98,21 +95,18 @@ describe('McpController', () => {
 
       mcpService.executeTool.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeTool(
+      const result = await controller.executeMcpMethods(
         mockRequest,
         mockWorkspace,
         mockApiKey,
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(
-        mockRequest,
-        {
-          workspace: mockWorkspace,
-          userWorkspaceId: mockUserWorkspaceId,
-          apiKey: mockApiKey,
-        },
-      );
+      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: mockApiKey,
+      });
       expect(result).toEqual(mockResponse);
     });
 
@@ -143,21 +137,18 @@ describe('McpController', () => {
 
       mcpService.executeTool.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeTool(
+      const result = await controller.executeMcpMethods(
         mockRequest,
         mockWorkspace,
         mockApiKey,
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(
-        mockRequest,
-        {
-          workspace: mockWorkspace,
-          userWorkspaceId: mockUserWorkspaceId,
-          apiKey: mockApiKey,
-        },
-      );
+      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: mockApiKey,
+      });
       expect(result).toEqual(mockResponse);
     });
   });
