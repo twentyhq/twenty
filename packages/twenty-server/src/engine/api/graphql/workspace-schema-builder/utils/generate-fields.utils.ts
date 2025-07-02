@@ -5,8 +5,10 @@ import {
   GraphQLOutputType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -31,7 +33,7 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         settings: any;
         isIdField: boolean;
-        isConnectField?: boolean;
+        isRelationConnectField?: boolean;
       },
     ) => T extends InputTypeDefinitionKind
       ? GraphQLInputType
@@ -50,104 +52,153 @@ export const generateFields = <
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     GraphQLFieldConfigMap<any, any> => {
-  const fields = {};
+  const allGeneratedFields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
+    let generatedField;
+
     if (
-      isFieldMetadataInterfaceOfType(
-        fieldMetadata,
-        FieldMetadataType.RELATION,
-      ) &&
-      fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
+      isFieldMetadataInterfaceOfType(fieldMetadata, FieldMetadataType.RELATION)
     ) {
-      continue;
+      generatedField = generateRelationField(
+        fieldMetadata,
+        kind,
+        options,
+        typeFactory,
+      );
+    } else {
+      generatedField = generateField(fieldMetadata, kind, options, typeFactory);
     }
 
-    const target = isCompositeFieldMetadataType(fieldMetadata.type)
-      ? fieldMetadata.type.toString()
-      : fieldMetadata.id;
+    Object.assign(allGeneratedFields, generatedField);
+  }
 
-    const typeFactoryOptions = isInputTypeDefinitionKind(kind)
-      ? {
-          nullable: fieldMetadata.isNullable,
-          defaultValue: fieldMetadata.defaultValue,
-          isArray:
-            kind !== InputTypeDefinitionKind.Filter &&
-            fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-          settings: fieldMetadata.settings,
-          isIdField: fieldMetadata.name === 'id',
-        }
-      : {
-          nullable: fieldMetadata.isNullable,
-          isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-          settings: fieldMetadata.settings,
-          // Scalar type is already defined in the entity itself.
-          isIdField: false,
-        };
+  return allGeneratedFields;
+};
 
-    const type = typeFactory.create(
-      target,
+const getTarget = <T extends FieldMetadataType>(
+  fieldMetadata: FieldMetadataInterface<T>,
+) => {
+  return isCompositeFieldMetadataType(fieldMetadata.type)
+    ? fieldMetadata.type.toString()
+    : fieldMetadata.id;
+};
+
+const getTypeFactoryOptions = <T extends FieldMetadataType>(
+  fieldMetadata: FieldMetadataInterface<T>,
+  kind: InputTypeDefinitionKind | ObjectTypeDefinitionKind,
+) => {
+  return isInputTypeDefinitionKind(kind)
+    ? {
+        nullable: fieldMetadata.isNullable,
+        defaultValue: fieldMetadata.defaultValue,
+        isArray:
+          kind !== InputTypeDefinitionKind.Filter &&
+          fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+        settings: fieldMetadata.settings,
+        isIdField: fieldMetadata.name === 'id',
+      }
+    : {
+        nullable: fieldMetadata.isNullable,
+        isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+        settings: fieldMetadata.settings,
+        // Scalar type is already defined in the entity itself.
+        isIdField: false,
+      };
+};
+
+const generateField = <
+  T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
+>(
+  fieldMetadata: FieldMetadataInterface,
+  kind: T,
+  options: WorkspaceBuildSchemaOptions,
+  typeFactory: TypeFactory<T>,
+) => {
+  const target = getTarget(fieldMetadata);
+
+  const typeFactoryOptions = getTypeFactoryOptions(fieldMetadata, kind);
+
+  const type = typeFactory.create(
+    target,
+    fieldMetadata.type,
+    kind,
+    options,
+    typeFactoryOptions,
+  );
+
+  return {
+    [fieldMetadata.name]: {
+      type,
+      description: fieldMetadata.description,
+    },
+  };
+};
+
+const generateRelationField = <
+  T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
+>(
+  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+  kind: T,
+  options: WorkspaceBuildSchemaOptions,
+  typeFactory: TypeFactory<T>,
+) => {
+  const relationField = {};
+
+  if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+    return relationField;
+  }
+
+  const joinColumnName = fieldMetadata.settings?.joinColumnName;
+
+  if (!joinColumnName) {
+    throw new Error('Join column name is not defined');
+  }
+
+  const target = getTarget(fieldMetadata);
+  const typeFactoryOptions = getTypeFactoryOptions(fieldMetadata, kind);
+
+  const type = typeFactory.create(
+    target,
+    fieldMetadata.type,
+    kind,
+    options,
+    typeFactoryOptions,
+  );
+
+  // @ts-expect-error legacy noImplicitAny
+  relationField[joinColumnName] = {
+    type,
+    description: fieldMetadata.description,
+  };
+
+  if (
+    [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
+      kind as InputTypeDefinitionKind,
+    ) &&
+    isDefined(fieldMetadata.relationTargetObjectMetadataId)
+  ) {
+    const connectType = typeFactory.create(
+      formatRelationConnectInputTarget(
+        fieldMetadata.relationTargetObjectMetadataId,
+      ),
       fieldMetadata.type,
       kind,
       options,
-      typeFactoryOptions,
+      {
+        ...typeFactoryOptions,
+        isRelationConnectField: true,
+      },
     );
 
-    if (
-      isFieldMetadataInterfaceOfType(
-        fieldMetadata,
-        FieldMetadataType.RELATION,
-      ) &&
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
-    ) {
-      const joinColumnName = fieldMetadata.settings?.joinColumnName;
-
-      if (!joinColumnName) {
-        throw new Error('Join column name is not defined');
-      }
-
-      // @ts-expect-error legacy noImplicitAny
-      fields[joinColumnName] = {
-        type,
-        description: fieldMetadata.description,
-      };
-
-      if (
-        [
-          InputTypeDefinitionKind.Create,
-          InputTypeDefinitionKind.Update,
-        ].includes(kind as InputTypeDefinitionKind)
-      ) {
-        const connectType = typeFactory.create(
-          formatRelationConnectInputTarget(
-            fieldMetadata.relationTargetObjectMetadataId || '',
-          ),
-          fieldMetadata.type,
-          kind,
-          options,
-          {
-            ...typeFactoryOptions,
-            isConnectField: true,
-          },
-        );
-
-        // @ts-expect-error legacy noImplicitAny
-        fields[fieldMetadata.name] = {
-          type: connectType,
-          description: fieldMetadata.description,
-        };
-      }
-      continue;
-    }
-
     // @ts-expect-error legacy noImplicitAny
-    fields[fieldMetadata.name] = {
-      type,
+    relationField[fieldMetadata.name] = {
+      type: connectType,
       description: fieldMetadata.description,
     };
   }
 
-  return fields;
+  return relationField;
 };
 
 // Type guard
