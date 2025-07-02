@@ -9,7 +9,7 @@ import {
   Relation,
 } from 'typeorm';
 
-import { AgentChatThreadsEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
 export enum AgentChatMessageRole {
   USER = 'user',
@@ -25,11 +25,11 @@ export class AgentChatMessageEntity {
   @Index()
   threadId: string;
 
-  @ManyToOne(() => AgentChatThreadsEntity, (thread) => thread.messages, {
+  @ManyToOne(() => AgentChatThreadEntity, (thread) => thread.messages, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'threadId' })
-  thread: Relation<AgentChatThreadsEntity>;
+  thread: Relation<AgentChatThreadEntity>;
 
   @Column({ type: 'enum', enum: AgentChatMessageRole })
   role: AgentChatMessageRole;

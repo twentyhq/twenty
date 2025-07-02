@@ -7,15 +7,15 @@ import {
   AgentChatMessageEntity,
   AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
-import { AgentChatThreadsEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
 import { AgentExecutionService } from './agent-execution.service';
 
 @Injectable()
 export class AgentChatService {
   constructor(
-    @InjectRepository(AgentChatThreadsEntity, 'core')
-    private readonly threadRepository: Repository<AgentChatThreadsEntity>,
+    @InjectRepository(AgentChatThreadEntity, 'core')
+    private readonly threadRepository: Repository<AgentChatThreadEntity>,
     @InjectRepository(AgentChatMessageEntity, 'core')
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
     private readonly agentExecutionService: AgentExecutionService,

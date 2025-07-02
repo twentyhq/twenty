@@ -16,7 +16,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { AgentChatThreadsEntity } from './agent-chat-thread.entity';
+import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -48,8 +48,8 @@ export class AgentEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @OneToMany(() => AgentChatThreadsEntity, (chatThread) => chatThread.agent)
-  chatThreads: Relation<AgentChatThreadsEntity[]>;
+  @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
+  chatThreads: Relation<AgentChatThreadEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

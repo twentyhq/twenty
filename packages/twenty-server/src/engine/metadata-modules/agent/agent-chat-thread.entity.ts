@@ -17,7 +17,7 @@ import { AgentChatMessageEntity } from 'src/engine/metadata-modules/agent/agent-
 import { AgentEntity } from './agent.entity';
 
 @Entity('agentChatThread')
-export class AgentChatThreadsEntity {
+export class AgentChatThreadEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

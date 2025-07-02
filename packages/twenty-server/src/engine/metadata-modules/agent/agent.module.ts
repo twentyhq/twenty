@@ -11,7 +11,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
-import { AgentChatThreadsEntity } from './agent-chat-thread.entity';
+import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
@@ -28,7 +28,7 @@ import { AgentService } from './agent.service';
         RoleEntity,
         RoleTargetsEntity,
         AgentChatMessageEntity,
-        AgentChatThreadsEntity,
+        AgentChatThreadEntity,
       ],
       'core',
     ),
@@ -53,7 +53,7 @@ import { AgentService } from './agent.service';
     AgentToolService,
     AgentChatService,
     TypeOrmModule.forFeature(
-      [AgentEntity, AgentChatMessageEntity, AgentChatThreadsEntity],
+      [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
       'core',
     ),
   ],
