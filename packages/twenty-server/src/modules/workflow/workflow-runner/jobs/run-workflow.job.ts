@@ -120,6 +120,7 @@ export class RunWorkflowJob {
           },
         },
       },
+      payload,
     });
 
     await this.throttleExecution(workflowVersion.workflowId);

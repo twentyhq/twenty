@@ -42,6 +42,7 @@ export class WorkflowRunnerWorkspaceService {
         'Cannot execute billed function, there is no subscription for this workspace',
       );
     }
+
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
         workflowVersionId,
