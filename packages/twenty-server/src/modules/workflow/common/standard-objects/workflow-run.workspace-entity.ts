@@ -190,7 +190,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsNullable()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runContext: WorkflowRunContext | null;
 
   @WorkspaceField({

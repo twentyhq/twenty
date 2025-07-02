@@ -502,7 +502,7 @@ export class WorkflowRunWorkspaceService {
       stepInfos: {
         trigger: { status: StepStatus.NOT_STARTED },
         ...Object.fromEntries(
-          (workflowVersion.steps || [])?.map((step) => [
+          workflowVersion.steps.map((step) => [
             step.id,
             { status: StepStatus.NOT_STARTED },
           ]),
