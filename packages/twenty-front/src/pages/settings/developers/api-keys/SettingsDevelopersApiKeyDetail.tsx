@@ -1,19 +1,13 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -24,10 +18,16 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGenerateApiKeyTokenMutation } from '~/generated-metadata/graphql';
+import {
+  useCreateApiKeyMutation,
+  useDeleteApiKeyMutation,
+  useGenerateApiKeyTokenMutation,
+  useGetApiKeyQuery,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -68,30 +68,33 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-  });
-  const { updateOneRecord: updateApiKey } = useUpdateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
+  const [createApiKey] = useCreateApiKeyMutation();
+  const [deleteApiKey] = useDeleteApiKeyMutation();
+  const { data: apiKeyData } = useGetApiKeyQuery({
+    variables: {
+      input: {
+        id: apiKeyId,
+      },
+    },
+    onCompleted: (data) => {
+      if (isDefined(data?.apiKey)) {
+        setApiKeyName(data.apiKey.name);
+      }
+    },
   });
 
   const [apiKeyName, setApiKeyName] = useState('');
-
-  const { record: apiKeyData, loading } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-    objectRecordId: apiKeyId,
-    onCompleted: (record) => {
-      setApiKeyName(record.name);
-    },
-  });
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
 
     try {
-      await updateApiKey?.({
-        idToUpdate: apiKeyId,
-        updateOneRecordInput: { revokedAt: DateTime.now().toString() },
+      await deleteApiKey({
+        variables: {
+          input: {
+            id: apiKeyId,
+          },
+        },
       });
       if (redirect) {
         navigate(SettingsPath.APIs);
@@ -109,10 +112,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
-    const newApiKey = await createOneApiKey?.({
-      name: name,
-      expiresAt: newExpiresAt ?? '',
+    const { data: newApiKeyData } = await createApiKey({
+      variables: {
+        input: {
+          name: name,
+          expiresAt: newExpiresAt ?? '',
+        },
+      },
     });
+
+    const newApiKey = newApiKeyData?.createApiKey;
 
     if (!newApiKey) {
       return;
@@ -133,12 +142,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
-      if (isNonEmptyString(apiKeyData?.name)) {
+      if (isNonEmptyString(apiKeyData?.apiKey?.name)) {
         const newExpiresAt = computeNewExpirationDate(
-          apiKeyData?.expiresAt,
-          apiKeyData?.createdAt,
+          apiKeyData?.apiKey?.expiresAt,
+          apiKeyData?.apiKey?.createdAt,
         );
-        const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
+        const apiKey = await createIntegration(
+          apiKeyData?.apiKey?.name,
+          newExpiresAt,
+        );
         await deleteIntegration(false);
 
         if (isNonEmptyString(apiKey?.token)) {
@@ -161,9 +173,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   return (
     <>
-      {apiKeyData?.name && (
+      {apiKeyData?.apiKey?.name && (
         <SubMenuTopBarContainer
-          title={apiKeyData?.name}
+          title={apiKeyData?.apiKey?.name}
           links={[
             {
               children: t`Workspace`,
@@ -200,7 +212,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     />
                     <StyledInfo>
                       {formatExpiration(
-                        apiKeyData?.expiresAt || '',
+                        apiKeyData?.apiKey?.expiresAt || '',
                         true,
                         false,
                       )}
@@ -213,8 +225,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <H2Title title={t`Name`} description={t`Name of your API key`} />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
-                apiKeyId={apiKeyData?.id}
-                disabled={loading}
+                apiKeyId={apiKeyData?.apiKey?.id}
+                disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
             </Section>
@@ -226,7 +238,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <TextInput
                 placeholder={t`E.g. backoffice integration`}
                 value={formatExpiration(
-                  apiKeyData?.expiresAt || '',
+                  apiKeyData?.apiKey?.expiresAt || '',
                   true,
                   false,
                 )}

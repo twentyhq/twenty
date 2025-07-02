@@ -10,8 +10,12 @@ import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-reso
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
 import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
@@ -45,6 +49,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async create(
@@ -75,7 +80,38 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
+    // Get workspace feature flags for GraphQL filtering
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace?.id || '',
+      );
+
     for (const objectMetadata of Object.values(objectMetadataMaps.byId)) {
+      // Check if this object should be excluded from GraphQL
+      const workspaceEntity = standardObjectMetadataDefinitions.find(
+        (entity) => {
+          const entityMetadata = metadataArgsStorage.filterEntities(entity);
+
+          return entityMetadata?.standardId === objectMetadata.standardId;
+        },
+      );
+
+      if (workspaceEntity) {
+        const entityMetadata =
+          metadataArgsStorage.filterEntities(workspaceEntity);
+
+        // Skip entities that are GraphQL-gated and not enabled
+        if (
+          isGatedAndNotEnabled(
+            entityMetadata?.gate,
+            workspaceFeatureFlagsMap,
+            'graphql',
+          )
+        ) {
+          continue;
+        }
+      }
+
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
         const resolverName = getResolverName(objectMetadata, methodName);

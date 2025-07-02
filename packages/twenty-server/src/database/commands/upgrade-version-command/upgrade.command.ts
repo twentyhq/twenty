@@ -24,6 +24,7 @@ import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-v
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run.command';
+import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-migrate-api-keys-webhooks-to-core.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -145,6 +146,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.2 Commands
     protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
+
+    // 1.3 Commands
+    protected readonly migrateApiKeysWebhooksToCoreCommand: MigrateApiKeysWebhooksToCoreCommand,
   ) {
     super(
       workspaceRepository,
@@ -198,6 +202,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_130: VersionCommands = {
+      beforeSyncMetadata: [this.migrateApiKeysWebhooksToCoreCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -206,6 +215,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.0.0': commands_100,
       '1.1.0': commands_110,
       '1.2.0': commands_120,
+      '1.3.0': commands_130,
     };
   }
 

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -19,25 +20,24 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(ApiKey, 'core')
+    private readonly apiKeyRepository: Repository<ApiKey>,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
     // @ts-expect-error legacy noImplicitAny
@@ -87,15 +87,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       ),
     );
 
-    const apiKeyRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
-        workspace.id,
-        'apiKey',
-      );
-
-    const apiKey = await apiKeyRepository.findOne({
+    const apiKey = await this.apiKeyRepository.findOne({
       where: {
         id: payload.jti,
+        workspaceId: workspace.id,
       },
     });
 

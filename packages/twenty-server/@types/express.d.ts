@@ -1,12 +1,12 @@
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 declare module 'express-serve-static-core' {
   interface Request {
     user?: User | null;
-    apiKey?: ApiKeyWorkspaceEntity | null;
+    apiKey?: ApiKey | null;
     workspace?: Workspace;
     workspaceId?: string;
     workspaceMetadataVersion?: number;
