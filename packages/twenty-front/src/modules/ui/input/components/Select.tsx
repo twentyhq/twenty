@@ -7,6 +7,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { SelectAutoScrollEffect } from '@/ui/input/components/internal/select/SelectAutoScrollEffect';
+import { SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -28,8 +30,6 @@ type CallToActionButton = {
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   Icon?: IconComponent;
 };
-
-export type SelectValue = string | number | boolean | null;
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
@@ -99,6 +99,7 @@ export const Select = <Value extends SelectValue>({
     options.find(({ value: key }) => key === value) ||
     emptyOption ||
     options[0];
+
   const filteredOptions = useMemo(
     () =>
       searchInputValue
@@ -115,7 +116,7 @@ export const Select = <Value extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
   const dropDownMenuWidth =
     dropdownWidthAuto && selectContainerRef.current?.clientWidth
@@ -160,6 +161,12 @@ export const Select = <Value extends SelectValue>({
           }
           dropdownComponents={
             <DropdownContent widthInPixels={dropDownMenuWidth}>
+              {isDropdownOpen && selectedOption && !searchInputValue && (
+                <SelectAutoScrollEffect
+                  selectedOptionLabel={selectedOption.label}
+                  dropdownId={dropdownId}
+                />
+              )}
               {!!withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
