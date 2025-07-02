@@ -7,9 +7,9 @@ import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
-import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
 
@@ -214,7 +214,9 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                   </StyledMessageText>
                   {msg.content && (
                     <StyledMessageFooter className="message-footer">
-                      <span>{formatChatMessageDate(msg.createdAt)}</span>
+                      <span>
+                        {beautifyPastDateRelativeToNow(msg.createdAt)}
+                      </span>
                       <LightCopyIconButton copyText={msg.content} />
                     </StyledMessageFooter>
                   )}
