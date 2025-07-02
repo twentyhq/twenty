@@ -25,6 +25,7 @@ import styled from '@emotion/styled';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
+import { getWorkflowRunStepExecutionStatusFromContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatusFromContext';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -64,10 +65,16 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
     return null;
   }
 
-  const stepExecutionStatus = getWorkflowRunStepExecutionStatus({
-    workflowRunOutput: workflowRun.output,
-    stepId: workflowSelectedNode,
-  });
+  // TODO: remove getWorkflowRunStepExecutionStatus when all runContext are migrated
+  const stepExecutionStatus = isDefined(workflowRun.runContext)
+    ? getWorkflowRunStepExecutionStatusFromContext({
+        workflowRunRunContext: workflowRun.runContext,
+        stepId: workflowSelectedNode,
+      })
+    : getWorkflowRunStepExecutionStatus({
+        workflowRunOutput: workflowRun.output,
+        stepId: workflowSelectedNode,
+      });
   const stepDefinition = getStepDefinitionOrThrow({
     stepId: workflowSelectedNode,
     trigger: flow.trigger,
