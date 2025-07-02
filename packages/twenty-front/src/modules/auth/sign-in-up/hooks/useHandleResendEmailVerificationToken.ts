@@ -4,7 +4,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useResendEmailVerificationTokenMutation } from '~/generated/graphql';
+import { useResendEmailVerificationTokenMutation } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();

@@ -1,10 +1,10 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
-import { useApolloClient } from '@apollo/client';
 import { renderHook } from '@testing-library/react';
 
-jest.mock('@apollo/client', () => ({
-  useApolloClient: jest.fn(),
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: jest.fn(),
 }));
 
 describe('useRefetchAggregateQueries', () => {
@@ -15,7 +15,7 @@ describe('useRefetchAggregateQueries', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useApolloClient as jest.Mock).mockReturnValue(mockApolloClient);
+    (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
   });
 
   it('should refetch queries', async () => {

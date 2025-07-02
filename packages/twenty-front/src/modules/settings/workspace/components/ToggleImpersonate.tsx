@@ -7,7 +7,7 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 export const ToggleImpersonate = () => {
   const { enqueueErrorSnackBar } = useSnackBar();

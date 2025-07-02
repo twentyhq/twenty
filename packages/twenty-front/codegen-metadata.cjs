@@ -5,20 +5,43 @@ module.exports = {
     (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
     '/metadata',
   documents: [
-    './src/modules/databases/graphql/**/*.ts',
-    './src/modules/object-metadata/graphql/*.ts',
-    './src/modules/settings/serverless-functions/graphql/**/*.ts',
-    './src/modules/object-record/graphql/*.tsx',
-    './src/modules/metadata/graphql/*.ts',
+    './src/modules/auth/graphql/**/*.{ts,tsx}',
+    './src/modules/users/graphql/**/*.{ts,tsx}',
+    
+    './src/modules/workspace/graphql/**/*.{ts,tsx}',
+    './src/modules/workspace-member/graphql/**/*.{ts,tsx}',
+    './src/modules/workspace-invitation/graphql/**/*.{ts,tsx}',
+    
+    './src/modules/billing/graphql/**/*.{ts,tsx}',
+    './src/modules/settings/**/graphql/**/*.{ts,tsx}',
+    
+    './src/modules/databases/graphql/**/*.{ts,tsx}',
+    './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
+    './src/modules/analytics/graphql/**/*.{ts,tsx}',
+    './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/attachments/graphql/**/*.{ts,tsx}',
+    './src/modules/onboarding/graphql/**/*.{ts,tsx}',
+    
+    '!./src/**/*.test.{ts,tsx}',
+    '!./src/**/*.stories.{ts,tsx}',
+    '!./src/**/__mocks__/*.ts',
   ],
   overwrite: true,
   generates: {
-    './src/generated-metadata/': {
-      preset: 'client',
-      presetConfig: {
-        fragmentMasking: false,
-      },
+    './src/generated-metadata/graphql.ts': {
+      plugins: [
+        'typescript',
+        'typescript-operations',
+        'typescript-react-apollo',
+      ],
       config: {
+        skipTypename: false,
+        withHooks: true,
+        withHOC: false,
+        withComponent: false,
+        scalars: {
+          DateTime: 'string',
+        },
         namingConvention: { enumValues: 'keep' },
       },
     },

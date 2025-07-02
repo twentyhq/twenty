@@ -1,8 +1,7 @@
-import { useApolloClient } from '@apollo/client';
-
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -35,7 +34,7 @@ export const useDestroyManyRecords = ({
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -75,10 +74,10 @@ export const useDestroyManyRecords = ({
       );
 
       const cachedRecords = batchedIdToDestroy
-        .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
+        .map((recordId) => getRecordFromCache(recordId, apolloCoreClient.cache))
         .filter(isDefined);
 
-      const destroyedRecordsResponse = await apolloClient
+      const destroyedRecordsResponse = await apolloCoreClient
         .mutate<Record<string, ObjectRecord[]>>({
           mutation: destroyManyRecordsMutation,
           variables: {
@@ -117,7 +116,7 @@ export const useDestroyManyRecords = ({
         .catch((error: Error) => {
           if (cachedRecords.length > 0 && !skipOptimisticEffect) {
             triggerCreateRecordsOptimisticEffect({
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               objectMetadataItem,
               recordsToCreate: cachedRecords,
               objectMetadataItems,

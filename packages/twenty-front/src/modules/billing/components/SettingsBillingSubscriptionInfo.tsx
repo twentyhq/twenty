@@ -21,16 +21,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  BillingPlanKey,
-  BillingPlanOutput,
-  BillingProductKey,
-  SubscriptionInterval,
-  SubscriptionStatus,
-  useBillingBaseProductPricesQuery,
-  useSwitchSubscriptionToEnterprisePlanMutation,
-  useSwitchSubscriptionToYearlyIntervalMutation,
-} from '~/generated/graphql';
+import { BillingPlanKey, BillingPlanOutput, BillingProductKey, SubscriptionInterval, SubscriptionStatus, useBillingBaseProductPricesQuery, useSwitchSubscriptionToEnterprisePlanMutation, useSwitchSubscriptionToYearlyIntervalMutation } from '~/generated-metadata/graphql';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 

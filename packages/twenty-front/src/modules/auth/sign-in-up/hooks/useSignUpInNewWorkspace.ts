@@ -2,7 +2,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
+import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useSignUpInNewWorkspace = () => {

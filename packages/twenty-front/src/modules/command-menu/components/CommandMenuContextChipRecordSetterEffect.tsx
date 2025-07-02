@@ -1,10 +1,10 @@
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useApolloClient } from '@apollo/client';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
     commandMenuNavigationStackState,
   );
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   useEffect(() => {
     if (commandMenuNavigationStack.length > 1) {
@@ -45,7 +45,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
 
           const record = getRecordFromCache({
             recordId: morphItem.recordId,
-            cache: apolloClient.cache,
+            cache: apolloCoreClient.cache,
             objectMetadataItems,
             objectMetadataItem,
             objectPermissionsByObjectMetadataId,
@@ -65,7 +65,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
       setCommandMenuNavigationRecords(records);
     }
   }, [
-    apolloClient.cache,
+    apolloCoreClient.cache,
     commandMenuNavigationMorphItemByPage,
     commandMenuNavigationStack,
     commandMenuNavigationStack.length,

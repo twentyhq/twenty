@@ -1,12 +1,11 @@
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import styled from '@emotion/styled';
-import { EdgeLabelRenderer } from '@xyflow/react';
+import { useState } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
-import { useState } from 'react';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
@@ -32,18 +31,17 @@ const StyledWrapper = styled.div`
   position: relative;
 `;
 
-type WorkflowDiagramEdgeOptionsProps = {
-  labelX?: number;
+type WorkflowDiagramEdgeV1Props = {
   labelY?: number;
   parentStepId: string;
   nextStepId: string;
 };
 
-export const WorkflowDiagramEdgeOptions = ({
+export const WorkflowDiagramEdgeV1 = ({
   labelY,
   parentStepId,
   nextStepId,
-}: WorkflowDiagramEdgeOptionsProps) => {
+}: WorkflowDiagramEdgeV1Props) => {
   const [hovered, setHovered] = useState(false);
 
   const { startNodeCreation } = useStartNodeCreation();
@@ -57,31 +55,29 @@ export const WorkflowDiagramEdgeOptions = ({
     workflowInsertStepIds.nextStepId === nextStepId;
 
   return (
-    <EdgeLabelRenderer>
-      <StyledContainer
-        labelY={labelY}
-        data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+    <StyledContainer
+      labelY={labelY}
+      data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+    >
+      <StyledWrapper
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <StyledWrapper
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
-          <StyledHoverZone />
-          {(hovered || isSelected) && (
-            <StyledIconButtonGroup
-              className="nodrag nopan"
-              iconButtons={[
-                {
-                  Icon: IconPlus,
-                  onClick: () => {
-                    startNodeCreation({ parentStepId, nextStepId });
-                  },
+        <StyledHoverZone />
+        {(hovered || isSelected) && (
+          <StyledIconButtonGroup
+            className="nodrag nopan"
+            iconButtons={[
+              {
+                Icon: IconPlus,
+                onClick: () => {
+                  startNodeCreation({ parentStepId, nextStepId });
                 },
-              ]}
-            />
-          )}
-        </StyledWrapper>
-      </StyledContainer>
-    </EdgeLabelRenderer>
+              },
+            ]}
+          />
+        )}
+      </StyledWrapper>
+    </StyledContainer>
   );
 };

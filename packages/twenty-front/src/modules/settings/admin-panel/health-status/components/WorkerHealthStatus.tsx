@@ -2,7 +2,7 @@ import { WorkerQueueMetricsSection } from '@/settings/admin-panel/health-status/
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
 import { SettingsAdminIndicatorHealthContext } from '../contexts/SettingsAdminIndicatorHealthContext';
 
 const StyledErrorMessage = styled.div`

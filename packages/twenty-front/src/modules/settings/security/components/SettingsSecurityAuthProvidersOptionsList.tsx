@@ -16,8 +16,10 @@ import {
   IconPassword,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { AuthProviders } from '~/generated-metadata/graphql';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import {
+  AuthProviders,
+  useUpdateWorkspaceMutation,
+} from '~/generated-metadata/graphql';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;

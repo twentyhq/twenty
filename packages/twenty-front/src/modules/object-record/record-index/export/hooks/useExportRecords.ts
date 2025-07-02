@@ -16,8 +16,7 @@ import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {

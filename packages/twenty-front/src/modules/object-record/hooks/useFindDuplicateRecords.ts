@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -24,6 +25,8 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -46,6 +49,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
         variables: {
           ids: objectRecordIds,
         },
+        client: apolloCoreClient,
         onCompleted: (data) => {
           onCompleted?.(data[queryResponseField]);
         },

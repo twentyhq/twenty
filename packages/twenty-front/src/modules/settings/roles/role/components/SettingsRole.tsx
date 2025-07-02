@@ -29,7 +29,7 @@ import {
   useUpdateOneRoleMutation,
   useUpsertObjectPermissionsMutation,
   useUpsertSettingPermissionsMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { isSelectOptionDefaultValue } from '../isSelectOptionDefaultValue';
 

@@ -5,7 +5,7 @@ import {
   useFindOneAgentQuery,
   useGetRolesQuery,
   useRemoveRoleFromAgentMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useAgentRoleAssignment = (agentId: string) => {
   const [workflowAiAgentSelectedRole, setWorkflowAiAgentSelectedRole] =

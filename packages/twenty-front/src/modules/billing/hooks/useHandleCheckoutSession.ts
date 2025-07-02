@@ -6,8 +6,8 @@ import { useState } from 'react';
 import {
   BillingPlanKey,
   SubscriptionInterval,
+  useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
-import { useCheckoutSessionMutation } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useHandleCheckoutSession = ({

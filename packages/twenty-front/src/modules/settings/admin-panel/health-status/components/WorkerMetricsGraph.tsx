@@ -8,7 +8,7 @@ import { ResponsiveLine } from '@nivo/line';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};

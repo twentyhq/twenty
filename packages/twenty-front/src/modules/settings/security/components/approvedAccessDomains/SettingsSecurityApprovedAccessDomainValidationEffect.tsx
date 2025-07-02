@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useValidateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =

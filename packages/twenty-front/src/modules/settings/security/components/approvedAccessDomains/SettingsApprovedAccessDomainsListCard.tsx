@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
-import { useGetApprovedAccessDomainsQuery } from '~/generated/graphql';
+import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
