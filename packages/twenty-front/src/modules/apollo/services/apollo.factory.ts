@@ -19,7 +19,8 @@ import { logDebug } from '~/utils/logDebug';
 
 import { i18n } from '@lingui/core';
 import { GraphQLFormattedError } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import isEmpty from 'lodash.isempty';
+import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
@@ -160,8 +161,39 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                     );
                   }
                   import('@sentry/react')
-                    .then(({ captureException }) => {
-                      captureException(graphQLError);
+                    .then(({ captureException, withScope }) => {
+                      withScope((scope) => {
+                        const error = new Error(graphQLError.message);
+
+                        error.name = graphQLError.message;
+
+                        const fingerPrint: string[] = [];
+                        if (isDefined(graphQLError.extensions)) {
+                          scope.setExtra('extensions', graphQLError.extensions);
+                          if (isDefined(graphQLError.extensions.code)) {
+                            fingerPrint.push(
+                              graphQLError.extensions.code as string,
+                            );
+                          }
+                        }
+
+                        if (isDefined(operation.operationName)) {
+                          scope.setExtra('operation', operation.operationName);
+                          const genericOperationName = getGenericOperationName(
+                            operation.operationName,
+                          );
+
+                          if (isDefined(genericOperationName)) {
+                            fingerPrint.push(genericOperationName);
+                          }
+                        }
+
+                        if (!isEmpty(fingerPrint)) {
+                          scope.setFingerprint(fingerPrint);
+                        }
+
+                        captureException(error); // Sentry expects a JS error
+                      });
                     })
                     .catch((sentryError) => {
                       // eslint-disable-next-line no-console

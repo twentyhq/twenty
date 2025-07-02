@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -34,6 +35,9 @@ export const getAggregateOperationShortLabel = (
     case AggregateOperations.COUNT_FALSE:
       return msg`False`;
     default:
-      throw new Error(`Unknown aggregate operation: ${operation}`);
+      throw new CustomError(
+        `Unknown aggregate operation: ${operation}`,
+        'UNKNOWN_AGGREGATE_OPERATION',
+      );
   }
 };

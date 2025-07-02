@@ -6,6 +6,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -31,8 +32,12 @@ const renderHooks = ({
         objectMetadataItemsState,
       );
       const setPrefetchViews = useSetRecoilState(prefetchViewsState);
+      const setArePrefetchViewsLoaded = useSetRecoilState(
+        arePrefetchViewsLoadedState,
+      );
 
       setObjectMetadataItems(generatedMockObjectMetadataItems);
+      setArePrefetchViewsLoaded(true);
 
       if (withExistingView) {
         setPrefetchViews([
@@ -56,6 +61,8 @@ const renderHooks = ({
             __typename: 'View',
           },
         ]);
+      } else {
+        setPrefetchViews([]);
       }
 
       if (withCurrentUser) {
@@ -70,6 +77,7 @@ const renderHooks = ({
   );
   return { result };
 };
+
 describe('useDefaultHomePagePath', () => {
   it('should return proper path when no currentUser', () => {
     const { result } = renderHooks({

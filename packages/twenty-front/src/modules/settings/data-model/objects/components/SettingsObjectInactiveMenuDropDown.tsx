@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -22,16 +22,16 @@ export const SettingsObjectInactiveMenuDropDown = ({
 }: SettingsObjectInactiveMenuDropDownProps) => {
   const dropdownId = `${scopeKey}-settings-object-inactive-menu-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleActivate = () => {
     onActivate();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleDelete = () => {
     onDelete();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,7 +61,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
     const record = records[0];
 
     if (!isDefined(record)) {
-      throw new Error('Created record not found');
+      throw new InternalServerErrorException('Created record not found');
     }
 
     return this.formatResult({

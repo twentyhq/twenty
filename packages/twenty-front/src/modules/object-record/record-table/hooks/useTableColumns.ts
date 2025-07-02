@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
@@ -39,6 +40,10 @@ export const useTableColumns = (props?: useRecordTableProps) => {
   );
 
   const { handleColumnMove } = useMoveViewColumns();
+
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
+    props?.recordTableId,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordTableComponentInstanceContext,
@@ -106,6 +111,8 @@ export const useTableColumns = (props?: useRecordTableProps) => {
       direction: 'left' | 'right',
       column: ColumnDefinition<FieldMetadata>,
     ) => {
+      unfocusRecordTableCell();
+
       const currentColumnArrayIndex = visibleTableColumns.findIndex(
         (visibleColumn) =>
           visibleColumn.fieldMetadataId === column.fieldMetadataId,
@@ -119,7 +126,12 @@ export const useTableColumns = (props?: useRecordTableProps) => {
 
       await handleColumnsChange(columns);
     },
-    [visibleTableColumns, handleColumnMove, handleColumnsChange],
+    [
+      unfocusRecordTableCell,
+      visibleTableColumns,
+      handleColumnMove,
+      handleColumnsChange,
+    ],
   );
 
   const handleColumnReorder = useCallback(

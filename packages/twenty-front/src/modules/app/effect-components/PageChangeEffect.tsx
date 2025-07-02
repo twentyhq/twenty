@@ -24,7 +24,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
+import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -40,6 +40,7 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
@@ -91,6 +92,8 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -130,25 +133,10 @@ export const PageChangeEffect = () => {
         unfocusBoardCard();
       }
     }
-  }, [
-    previousLocation,
-    resetTableSelections,
-    unfocusRecordTableRow,
-    deactivateRecordTableRow,
-    contextStoreCurrentViewType,
-    resetRecordSelection,
-    deactivateBoardCard,
-    unfocusBoardCard,
-  ]);
 
-  useEffect(() => {
     switch (true) {
       case isMatchingLocation(location, AppPath.RecordIndexPage): {
-        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        });
+        resetFocusStackToRecordIndex();
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
@@ -198,7 +186,19 @@ export const PageChangeEffect = () => {
         break;
       }
     }
-  }, [location, setHotkeyScope]);
+  }, [
+    location,
+    setHotkeyScope,
+    previousLocation,
+    contextStoreCurrentViewType,
+    resetTableSelections,
+    unfocusRecordTableRow,
+    deactivateRecordTableRow,
+    resetRecordSelection,
+    deactivateBoardCard,
+    unfocusBoardCard,
+    resetFocusStackToRecordIndex,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {

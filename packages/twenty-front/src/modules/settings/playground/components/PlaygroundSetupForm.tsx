@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
@@ -66,7 +67,10 @@ export const PlaygroundSetupForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new CustomError(
+          `HTTP error! status: ${response.status}`,
+          'HTTP_ERROR',
+        );
       }
 
       const openAPIReference = await response.json();

@@ -1,8 +1,9 @@
 import { ApolloProvider as ApolloProviderBase } from '@apollo/client';
 
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { createCaptchaRefreshLink } from '@/apollo/utils/captchaRefreshLink';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -10,6 +11,7 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
   const captchaRefreshLink = createCaptchaRefreshLink(requestFreshCaptchaToken);
 
   const apolloClient = useApolloFactory({
+    uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
     connectToDevTools: true,
     extraLinks: [captchaRefreshLink],
   });

@@ -44,6 +44,7 @@ import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -82,6 +83,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
     fieldMetadataInput: T;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     existingFieldMetadata?: FieldMetadataInterface;
+    objectMetadataMaps: ObjectMetadataMaps;
   };
 
 @Injectable()
@@ -156,6 +158,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     await queryRunner.startTransaction();
 
     try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
+          FieldMetadataEntity,
+        );
+
       if (
         !isDefined(
           objectMetadataItemWithFieldMaps.labelIdentifierFieldMetadataId,
@@ -208,6 +215,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata,
         fieldMetadataInput: fieldMetadataForUpdate,
         objectMetadata: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       });
 
       const isLabelSyncedWithName =
@@ -221,10 +229,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      // We're running field update under a transaction, so we can rollback if migration fails
-      await this.fieldMetadataRepository.update(id, fieldMetadataForUpdate);
+      await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
-      const [updatedFieldMetadata] = await this.fieldMetadataRepository.find({
+      const [updatedFieldMetadata] = await fieldMetadataRepository.find({
         where: { id },
       });
 
@@ -234,6 +241,36 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         );
       }
+
+      if (
+        isDefined(fieldMetadataInput.name) ||
+        isDefined(updatableFieldInput.options) ||
+        isDefined(updatableFieldInput.defaultValue)
+      ) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`update-${updatedFieldMetadata.name}`),
+          fieldMetadataInput.workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadataItemWithFieldMaps),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.ALTER,
+                existingFieldMetadata,
+                updatedFieldMetadata,
+              ),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+          queryRunner,
+        );
+
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
+          updatedFieldMetadata.workspaceId,
+          queryRunner,
+        );
+      }
+
+      await queryRunner.commitTransaction();
 
       if (fieldMetadataInput.isActive === false) {
         const viewsRepository =
@@ -263,44 +300,19 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      if (
-        isDefined(fieldMetadataInput.name) ||
-        isDefined(updatableFieldInput.options) ||
-        isDefined(updatableFieldInput.defaultValue)
-      ) {
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(`update-${updatedFieldMetadata.name}`),
-          fieldMetadataInput.workspaceId,
-          [
-            {
-              name: computeObjectTargetTable(objectMetadataItemWithFieldMaps),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: this.workspaceMigrationFactory.createColumnActions(
-                WorkspaceMigrationColumnActionType.ALTER,
-                existingFieldMetadata,
-                updatedFieldMetadata,
-              ),
-            } satisfies WorkspaceMigrationTableAction,
-          ],
-        );
-
-        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-          updatedFieldMetadata.workspaceId,
-        );
-      }
-
-      await queryRunner.commitTransaction();
-
-      return updatedFieldMetadata;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );
+
+      return updatedFieldMetadata;
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -311,7 +323,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
-    await queryRunner.startTransaction(); // transaction not safe as a different queryRunner is used within workspaceMigrationRunnerService
+    await queryRunner.startTransaction();
 
     try {
       const fieldMetadataRepository =
@@ -354,11 +366,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
-        workspaceId,
-        fieldMetadataId: fieldMetadata.id,
-      });
-
       if (fieldMetadata.type === FieldMetadataType.RELATION) {
         const isManyToOneRelation =
           (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
@@ -399,6 +406,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               ],
             } satisfies WorkspaceMigrationTableAction,
           ],
+          queryRunner,
         );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         await fieldMetadataRepository.delete(fieldMetadata.id);
@@ -430,6 +438,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               }),
             } satisfies WorkspaceMigrationTableAction,
           ],
+          queryRunner,
         );
       } else {
         await fieldMetadataRepository.delete(fieldMetadata.id);
@@ -448,24 +457,35 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               ],
             } satisfies WorkspaceMigrationTableAction,
           ],
+          queryRunner,
         );
       }
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         workspaceId,
+        queryRunner,
       );
 
       await queryRunner.commitTransaction();
 
-      return fieldMetadata;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
+      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
+        workspaceId,
+        fieldMetadataId: fieldMetadata.id,
+      });
+
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      return fieldMetadata;
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -528,6 +548,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataType,
     objectMetadata,
     existingFieldMetadata,
+    objectMetadataMaps,
   }: ValidateFieldMetadataArgs<T>): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
@@ -601,6 +622,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (isDefined(relationCreationPayload)) {
         await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
           relationCreationPayload,
+        );
+        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+          relationCreationPayload.targetFieldLabel,
+        );
+
+        validateMetadataNameOrThrow(computedMetadataNameFromLabel);
+
+        const objectMetadataTarget =
+          objectMetadataMaps.byId[
+            relationCreationPayload.targetObjectMetadataId
+          ];
+
+        validateFieldNameAvailabilityOrThrow(
+          computedMetadataNameFromLabel,
+          objectMetadataTarget,
         );
       }
     }
@@ -728,6 +764,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: CreateFieldInput,
     objectMetadata: ObjectMetadataItemWithFieldMaps,
     fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<FieldMetadataEntity[]> {
     if (!fieldMetadataInput.isRemoteCreation) {
       assertMutationNotOnRemoteObject(objectMetadata);
@@ -747,6 +784,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         relationCreationPayload: fieldMetadataInput.relationCreationPayload,
       },
       objectMetadata,
+      objectMetadataMaps,
     });
 
     if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
@@ -773,13 +811,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
+    const targetFieldMetadataName = computeMetadataNameFromLabel(
+      relationCreationPayload.targetFieldLabel,
+    );
+
     const targetFieldMetadataToCreate =
       this.prepareCustomFieldMetadataForCreation({
         objectMetadataId: relationCreationPayload.targetObjectMetadataId,
         type: FieldMetadataType.RELATION,
-        name: computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        ),
+        name: targetFieldMetadataName,
         label: relationCreationPayload.targetFieldLabel,
         icon: relationCreationPayload.targetFieldIcon,
         workspaceId: fieldMetadataForCreate.workspaceId,
@@ -900,6 +940,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               fieldMetadataInput,
               objectMetadata,
               fieldMetadataRepository,
+              objectMetadataMaps,
             );
 
           createdFieldMetadatas.push(...createdFieldMetadataItems);
@@ -919,26 +960,32 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           generateMigrationName(`create-multiple-fields`),
           workspaceId,
           migrationActions,
+          queryRunner,
         );
 
-        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
           workspaceId,
+          queryRunner,
         );
       }
 
-      await this.createViewAndViewFields(createdFieldMetadatas, workspaceId);
-
       await queryRunner.commitTransaction();
 
-      return createdFieldMetadatas;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
+      await this.createViewAndViewFields(createdFieldMetadatas, workspaceId);
+
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      return createdFieldMetadatas;
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 

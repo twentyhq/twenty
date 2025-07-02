@@ -8,7 +8,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -30,12 +30,14 @@ export const CommandMenuActionMenuDropdown = () => {
 
   const dropdownId =
     getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId);
-  const { toggleDropdown } = useDropdownV2();
+  const { toggleDropdown } = useToggleDropdown();
 
   const hotkeysConfig = {
     keys: ['ctrl+o', 'meta+o'],
     callback: () => {
-      toggleDropdown(dropdownId);
+      toggleDropdown({
+        dropdownComponentInstanceIdFromProps: dropdownId,
+      });
     },
     scope: AppHotkeyScope.CommandMenuOpen,
     dependencies: [toggleDropdown],

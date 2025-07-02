@@ -1,4 +1,4 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
@@ -14,9 +14,10 @@ import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableColumnAggregateFooterDropdownContent = () => {
   const { t } = useLingui();
-  const { currentContentId, fieldMetadataType } = useDropdown({
-    context: RecordTableColumnAggregateFooterDropdownContext,
-  });
+  const { currentContentId, fieldMetadataType } =
+    useDropdownContextStateManagement({
+      context: RecordTableColumnAggregateFooterDropdownContext,
+    });
 
   const availableAggregateOperations =
     getAvailableAggregateOperationsForFieldMetadataType({

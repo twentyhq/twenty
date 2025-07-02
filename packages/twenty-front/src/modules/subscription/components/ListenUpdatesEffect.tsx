@@ -1,4 +1,5 @@
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -10,7 +11,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
-import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from '~/generated/graphql';
@@ -26,7 +26,7 @@ export const ListenRecordUpdatesEffect = ({
   recordId,
   listenedFields,
 }: ListenRecordUpdatesEffectProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -76,14 +76,14 @@ export const ListenRecordUpdatesEffect = ({
         updateRecordFromCache({
           objectMetadataItems,
           objectMetadataItem,
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           record: computedOptimisticRecord,
           recordGqlFields: computedRecordGqlFields,
           objectPermissionsByObjectMetadataId,
         });
 
         triggerUpdateRecordOptimisticEffect({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           objectMetadataItem,
           currentRecord: cachedRecordNode,
           updatedRecord: updatedRecord,

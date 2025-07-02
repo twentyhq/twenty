@@ -7,7 +7,7 @@ import {
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
+import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
@@ -82,7 +82,10 @@ export class OrderByInputFactory {
       result = [...result, ...resultFields];
     }
 
-    checkArrayFields(objectMetadata.objectMetadataMapItem, result);
+    checkFields(
+      objectMetadata.objectMetadataMapItem,
+      result.flatMap((fields) => Object.keys(fields)),
+    );
 
     return this.addDefaultOrderById(result);
   }

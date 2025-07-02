@@ -99,13 +99,13 @@ export class RecordInputTransformerService {
     let convertedMarkdown: string | null = null;
 
     try {
-      convertedMarkdown = parsedValue.blocknote
+      convertedMarkdown = isDefined(parsedValue.blocknote)
         ? await serverBlockNoteEditor.blocksToMarkdownLossy(
             JSON.parse(parsedValue.blocknote),
           )
         : null;
     } catch {
-      convertedMarkdown = parsedValue.blocknote;
+      convertedMarkdown = parsedValue.blocknote || null;
     }
 
     const convertedBlocknote = parsedValue.markdown

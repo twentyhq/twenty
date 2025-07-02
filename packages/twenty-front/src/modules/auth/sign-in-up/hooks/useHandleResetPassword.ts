@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useRecoilValue } from 'recoil';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { useEmailPasswordResetLinkMutation } from '~/generated-metadata/graphql';
 
 export const useHandleResetPassword = () => {
   const { enqueueSnackBar } = useSnackBar();

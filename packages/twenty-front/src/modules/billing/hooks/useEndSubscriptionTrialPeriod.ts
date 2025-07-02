@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useEndSubscriptionTrialPeriodMutation } from '~/generated/graphql';
+import { useEndSubscriptionTrialPeriodMutation } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
   const { enqueueSnackBar } = useSnackBar();

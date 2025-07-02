@@ -139,6 +139,7 @@ export const useEmailThreadInCommandMenu = () => {
         connectedAccount: {
           id: true,
           provider: true,
+          connectionParameters: true,
         },
       },
       skip: !lastMessageChannelId,
@@ -175,12 +176,16 @@ export const useEmailThreadInCommandMenu = () => {
       ? messageChannelData[0]?.connectedAccount
       : null;
   const connectedAccountProvider = connectedAccount?.provider ?? null;
+  const connectedAccountConnectionParameters =
+    connectedAccount?.connectionParameters;
+
   return {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
     connectedAccountHandle,
     connectedAccountProvider,
+    connectedAccountConnectionParameters,
     threadLoading: messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,
