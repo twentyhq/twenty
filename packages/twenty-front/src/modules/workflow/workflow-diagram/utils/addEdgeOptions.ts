@@ -1,11 +1,4 @@
-import {
-  EdgeData,
-  WorkflowDiagram,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-
-const DEFAULT_EDGE_DATA: EdgeData = {
-  stepId: '',
-};
+import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const addEdgeOptions = ({
   nodes,
@@ -17,7 +10,7 @@ export const addEdgeOptions = ({
       return {
         ...edge,
         data: {
-          ...(edge.data ?? DEFAULT_EDGE_DATA),
+          ...edge.data,
           shouldDisplayEdgeOptions: true,
         },
       };

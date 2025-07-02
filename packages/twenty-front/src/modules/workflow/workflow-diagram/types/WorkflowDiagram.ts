@@ -69,7 +69,7 @@ export type WorkflowRunDiagramNodeData = Exclude<
 > & { runStatus: WorkflowDiagramRunStatus };
 
 export type EdgeData = {
-  stepId: string;
+  stepId?: string;
   filter?: Record<string, any>;
   shouldDisplayEdgeOptions?: boolean;
 };

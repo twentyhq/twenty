@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 type WorkflowDiagramEdgeV2Props = {
   labelX: number;
   labelY: number;
-  stepId: string;
+  stepId: string | undefined;
   parentStepId: string;
   nextStepId: string;
   filter: Record<string, any> | undefined;
@@ -50,6 +50,12 @@ export const WorkflowDiagramEdgeV2 = ({
         });
       }}
       onDeleteFilter={() => {
+        if (!isDefined(stepId)) {
+          throw new Error(
+            'Step ID must be configured for the edge when rendering a filter',
+          );
+        }
+
         return deleteStep(stepId);
       }}
       onCreateNode={() => {
