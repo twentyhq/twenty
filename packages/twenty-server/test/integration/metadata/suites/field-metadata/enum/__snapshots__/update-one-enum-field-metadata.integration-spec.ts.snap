@@ -104,8 +104,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -115,8 +117,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -126,8 +130,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -194,8 +200,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -205,8 +213,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -240,8 +250,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option id is required",
     },
     "message": "Option id is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -251,8 +263,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option label is required",
     },
     "message": "Option label is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -262,8 +276,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+       "displayedErrorMessage": "Option value is required",
     },
     "message": "Option value is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -273,8 +289,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -284,8 +302,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -295,8 +315,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -319,8 +341,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -330,8 +354,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -341,9 +367,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      
+      "displayedErrorMessage": "Option label exceeds 63 characters",
     },
     "message": "Option label exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -353,8 +380,10 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Option value exceeds 63 characters",
     },
     "message": "Option value exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -596,8 +625,10 @@ exports[`Update field metadata SELECT tests suite Update should fail with not a 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "displayedErrorMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+    "name": "UserInputError",
   },
 ]
 `;
