@@ -104,7 +104,7 @@ export const useAgentChat = (agentId: string) => {
       id: `temp-${v4()}`,
       threadId,
       sender: 'ai',
-      message: '...',
+      message: '',
       createdAt: new Date().toISOString(),
     };
 

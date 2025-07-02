@@ -2,7 +2,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useState } from 'react';
-import { Avatar, IconSparkles } from 'twenty-ui/display';
+import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
@@ -78,7 +78,6 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
 const StyledMessageText = styled.div<{ isUser?: boolean }>`
   background: ${({ theme, isUser }) =>
     isUser ? theme.background.secondary : theme.background.transparent};
-  color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   padding: ${({ theme, isUser }) => (isUser ? theme.spacing(1, 2) : 0)};
   border: ${({ isUser, theme }) =>
@@ -102,6 +101,20 @@ const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: 1px;
   position: relative;
+`;
+
+const StyledDotsIconContainer = styled.div`
+  align-items: center;
+  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  justify-content: center;
+  padding-inline: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledDotsIcon = styled(IconDotsVertical)`
+  color: ${({ theme }) => theme.font.color.light};
+  transform: rotate(90deg);
 `;
 
 type AIChatTabProps = {
@@ -148,15 +161,10 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                 </StyledAvatarContainer>
               )}
               <StyledMessageText isUser={msg.sender === 'user'}>
-                {msg.sender === 'ai' && msg.message === '...' ? (
-                  <span
-                    style={{
-                      fontStyle: 'italic',
-                      color: theme.font.color.secondary,
-                    }}
-                  >
-                    AI is thinking...
-                  </span>
+                {msg.sender === 'ai' && !msg.message ? (
+                  <StyledDotsIconContainer>
+                    <StyledDotsIcon size={theme.icon.size.xl} />
+                  </StyledDotsIconContainer>
                 ) : (
                   msg.message
                 )}
