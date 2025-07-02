@@ -1,12 +1,12 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -54,10 +54,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdown } = useDropdown(column.fieldMetadataId + '-header');
+  const dropdownId = column.fieldMetadataId + '-header';
+
+  const { closeDropdown } = useCloseDropdown();
 
   const closeDropdownAndToggleScroll = () => {
-    closeDropdown();
+    closeDropdown(dropdownId);
     toggleScrollXWrapper(true);
     toggleScrollYWrapper(false);
   };

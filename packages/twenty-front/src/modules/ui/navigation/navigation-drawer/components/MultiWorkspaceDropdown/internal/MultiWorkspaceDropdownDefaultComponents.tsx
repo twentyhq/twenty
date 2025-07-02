@@ -16,7 +16,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
@@ -40,7 +40,7 @@ import {
 import {
   AvailableWorkspace,
   useSignUpInNewWorkspaceMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -57,7 +57,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+  const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
@@ -195,7 +195,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         />
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
-          onClick={closeDropdown}
+          onClick={() => {
+            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+          }}
         >
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>

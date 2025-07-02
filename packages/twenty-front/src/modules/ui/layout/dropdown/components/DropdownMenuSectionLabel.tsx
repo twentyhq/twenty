@@ -14,7 +14,6 @@ const StyledDropdownMenuSectionLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-
 export type DropdownMenuSectionLabelProps = {
   label: string;
 };

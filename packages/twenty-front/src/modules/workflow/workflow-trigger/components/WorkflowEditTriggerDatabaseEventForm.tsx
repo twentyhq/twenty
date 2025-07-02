@@ -9,7 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -71,7 +71,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
-  const { closeDropdown } = useDropdown('workflow-edit-trigger-record-type');
+  const dropdownId = 'workflow-edit-trigger-record-type';
+
+  const { closeDropdown } = useCloseDropdown();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -131,7 +133,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         eventName: `${value}.${triggerEvent.event}`,
       },
     });
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleFieldsChange = (fields: FieldMultiSelectValue | string) => {

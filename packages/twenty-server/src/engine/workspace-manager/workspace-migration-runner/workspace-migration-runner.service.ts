@@ -32,6 +32,54 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMigrationColumnService: WorkspaceMigrationColumnService,
   ) {}
 
+  public async executeMigrationFromPendingMigrationsWithinTransaction(
+    workspaceId: string,
+    transactionQueryRunner: QueryRunner,
+  ): Promise<WorkspaceMigrationTableAction[]> {
+    const pendingMigrations =
+      await this.workspaceMigrationService.getPendingMigrations(
+        workspaceId,
+        transactionQueryRunner,
+      );
+
+    if (pendingMigrations.length === 0) {
+      return [];
+    }
+
+    const migrationActionsWithParent = pendingMigrations.flatMap(
+      (pendingMigration) =>
+        (pendingMigration.migrations || []).map((tableAction) => ({
+          tableAction,
+          parentMigrationId: pendingMigration.id,
+        })),
+    );
+
+    const schemaName =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await transactionQueryRunner.query(
+      `SET LOCAL search_path TO ${schemaName}`,
+    );
+
+    for (const {
+      tableAction,
+      parentMigrationId,
+    } of migrationActionsWithParent) {
+      await this.handleTableChanges(
+        transactionQueryRunner as PostgresQueryRunner,
+        schemaName,
+        tableAction,
+      );
+
+      await transactionQueryRunner.query(
+        `UPDATE "core"."workspaceMigration" SET "appliedAt" = NOW() WHERE "id" = $1 AND "workspaceId" = $2`,
+        [parentMigrationId, workspaceId],
+      );
+    }
+
+    return migrationActionsWithParent.map((item) => item.tableAction);
+  }
+
   public async executeMigrationFromPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationTableAction[]> {
@@ -42,58 +90,32 @@ export class WorkspaceMigrationRunnerService {
       throw new Error('Main data source not found');
     }
 
-    const pendingMigrations =
-      await this.workspaceMigrationService.getPendingMigrations(workspaceId);
-
-    if (pendingMigrations.length === 0) {
-      return [];
-    }
-
-    const flattenedPendingMigrations: WorkspaceMigrationTableAction[] =
-      pendingMigrations.reduce((acc, pendingMigration) => {
-        return [...acc, ...pendingMigration.migrations];
-      }, []);
-
     const queryRunner =
       mainDataSource.createQueryRunner() as PostgresQueryRunner;
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
-
     try {
-      // Loop over each migration and create or update the table
-      for (const migration of flattenedPendingMigrations) {
-        await this.handleTableChanges(queryRunner, schemaName, migration);
-      }
+      const result =
+        await this.executeMigrationFromPendingMigrationsWithinTransaction(
+          workspaceId,
+          queryRunner,
+        );
 
       await queryRunner.commitTransaction();
+
+      return result;
     } catch (error) {
       this.logger.error(
         `Error executing migration: ${error.message}`,
         error.stack,
       );
-
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
       await queryRunner.release();
     }
-
-    // Update appliedAt date for each migration
-    // TODO: Should be done after the migration is successful
-    for (const pendingMigration of pendingMigrations) {
-      await this.workspaceMigrationService.setAppliedAtForMigration(
-        workspaceId,
-        pendingMigration,
-      );
-    }
-
-    return flattenedPendingMigrations;
   }
 
   private async handleTableChanges(

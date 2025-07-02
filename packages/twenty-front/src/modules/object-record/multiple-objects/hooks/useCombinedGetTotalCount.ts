@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
@@ -24,6 +25,7 @@ export const useCombinedGetTotalCount = ({
       }) satisfies RecordGqlOperationSignature,
   );
 
+  const apolloCoreClient = useApolloCoreClient();
   const findManyQuery = useGenerateCombinedFindManyRecordsQuery({
     operationSignatures,
   });
@@ -32,6 +34,7 @@ export const useCombinedGetTotalCount = ({
     findManyQuery ?? EMPTY_QUERY,
     {
       skip,
+      client: apolloCoreClient,
     },
   );
 

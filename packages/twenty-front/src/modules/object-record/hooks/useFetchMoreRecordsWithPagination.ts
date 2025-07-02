@@ -24,6 +24,7 @@ import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyReco
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
@@ -76,6 +77,8 @@ export const useFetchMoreRecordsWithPagination = <
   objectMetadataItem,
   onCompleted,
 }: UseFindManyRecordsStateParams<T>) => {
+  const apolloCoreClient = useApolloCoreClient();
+
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
     filter,
@@ -121,6 +124,7 @@ export const useFetchMoreRecordsWithPagination = <
                 lastCursor: isNonEmptyString(lastCursorLocal)
                   ? lastCursorLocal
                   : undefined,
+                client: apolloCoreClient,
               },
               updateQuery: (prev, { fetchMoreResult }) => {
                 const previousEdges =
@@ -203,6 +207,7 @@ export const useFetchMoreRecordsWithPagination = <
       onCompleted,
       handleFindManyRecordsError,
       queryIdentifier,
+      apolloCoreClient,
     ],
   );
 

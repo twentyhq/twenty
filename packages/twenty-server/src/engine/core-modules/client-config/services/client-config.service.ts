@@ -137,6 +137,9 @@ export class ClientConfigService {
       isConfigVariablesInDbEnabled: this.twentyConfigService.get(
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       ),
+      isIMAPMessagingEnabled: this.twentyConfigService.get(
+        'MESSAGING_PROVIDER_IMAP_ENABLED',
+      ),
       calendarBookingPageId: this.twentyConfigService.get(
         'CALENDAR_BOOKING_PAGE_ID',
       ),

@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { UnwrapRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,7 +26,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
   const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
@@ -81,7 +81,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
               text={SSOIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
               onClick={() => {
                 toggleSSOIdentityProviderStatus(SSOIdp.id);
-                closeDropdown();
+                closeDropdown(dropdownId);
               }}
             />
             <MenuItem
@@ -90,7 +90,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
               text={t`Delete`}
               onClick={() => {
                 handleDeleteSSOIdentityProvider(SSOIdp.id);
-                closeDropdown();
+                closeDropdown(dropdownId);
               }}
             />
           </DropdownMenuItemsContainer>

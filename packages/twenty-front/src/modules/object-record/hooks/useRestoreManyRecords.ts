@@ -1,7 +1,6 @@
-import { useApolloClient } from '@apollo/client';
-
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -36,7 +35,7 @@ export const useRestoreManyRecords = ({
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -73,7 +72,7 @@ export const useRestoreManyRecords = ({
 
       const cachedRecords = batchedIdsToRestore
         .map((idToRestore) =>
-          getRecordFromCache(idToRestore, apolloClient.cache),
+          getRecordFromCache(idToRestore, apolloCoreClient.cache),
         )
         .filter(isDefined);
 
@@ -109,13 +108,13 @@ export const useRestoreManyRecords = ({
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               record: computedOptimisticRecord,
               recordGqlFields,
               objectPermissionsByObjectMetadataId,
             });
             triggerUpdateRecordOptimisticEffect({
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               objectMetadataItem,
               currentRecord: cachedRecordWithConnection,
               updatedRecord: optimisticRecordWithConnection,
@@ -125,7 +124,7 @@ export const useRestoreManyRecords = ({
         });
       }
 
-      const restoredRecordsResponse = await apolloClient
+      const restoredRecordsResponse = await apolloCoreClient
         .mutate({
           mutation: restoreManyRecordsMutation,
           variables: {
@@ -168,14 +167,14 @@ export const useRestoreManyRecords = ({
               updateRecordFromCache({
                 objectMetadataItems,
                 objectMetadataItem,
-                cache: apolloClient.cache,
+                cache: apolloCoreClient.cache,
                 record: cachedRecord,
                 recordGqlFields,
                 objectPermissionsByObjectMetadataId,
               });
 
               triggerUpdateRecordOptimisticEffect({
-                cache: apolloClient.cache,
+                cache: apolloCoreClient.cache,
                 objectMetadataItem,
                 currentRecord: optimisticRecordWithConnection,
                 updatedRecord: cachedRecordWithConnection,

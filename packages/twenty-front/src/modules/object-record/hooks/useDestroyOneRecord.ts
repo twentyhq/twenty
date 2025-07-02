@@ -1,8 +1,8 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -19,7 +19,7 @@ type useDestroyOneRecordProps = {
 export const useDestroyOneRecord = ({
   objectNameSingular,
 }: useDestroyOneRecordProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -40,10 +40,10 @@ export const useDestroyOneRecord = ({
     async (idToDestroy: string) => {
       const originalRecord = getRecordFromCache(
         idToDestroy,
-        apolloClient.cache,
+        apolloCoreClient.cache,
       );
 
-      const deletedRecord = await apolloClient
+      const deletedRecord = await apolloCoreClient
         .mutate({
           mutation: destroyOneRecordMutation,
           variables: { idToDestroy },
@@ -70,7 +70,7 @@ export const useDestroyOneRecord = ({
         .catch((error: Error) => {
           if (isDefined(originalRecord)) {
             triggerCreateRecordsOptimisticEffect({
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               objectMetadataItem,
               recordsToCreate: [originalRecord],
               objectMetadataItems,
@@ -84,7 +84,7 @@ export const useDestroyOneRecord = ({
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
-      apolloClient,
+      apolloCoreClient,
       destroyOneRecordMutation,
       getRecordFromCache,
       mutationResponseField,

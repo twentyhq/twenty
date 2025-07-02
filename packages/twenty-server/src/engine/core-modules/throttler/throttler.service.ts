@@ -20,8 +20,8 @@ export class ThrottlerService {
 
     if (currentCount >= limit) {
       throw new ThrottlerException(
-        'Too many requests',
-        ThrottlerExceptionCode.TOO_MANY_REQUESTS,
+        'Limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }
 

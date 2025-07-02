@@ -8,6 +8,7 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -106,6 +107,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   scopes: string[] | null;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Custom Connection Parameters`,
+    description: msg`JSON object containing custom connection parameters`,
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  connectionParameters: ImapSmtpCaldavParams | null;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,

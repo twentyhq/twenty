@@ -85,6 +85,11 @@ export class ConnectedAccountRefreshTokensService {
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
+        case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Token refresh is not supported for IMAP provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+          );
         default:
           return assertUnreachable(
             connectedAccount.provider,
