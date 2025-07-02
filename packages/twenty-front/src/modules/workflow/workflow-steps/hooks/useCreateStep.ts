@@ -10,7 +10,6 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
   workflow,
