@@ -1063,6 +1063,7 @@ export type Mutation = {
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
   trackAnalytics: Analytics;
+  updateApiKey?: Maybe<ApiKey>;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -1394,6 +1395,11 @@ export type MutationTrackAnalyticsArgs = {
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
+};
+
+
+export type MutationUpdateApiKeyArgs = {
+  input: UpdateApiKeyDto;
 };
 
 
@@ -2323,6 +2329,13 @@ export type UpdateAgentInput = {
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateApiKeyDto = {
+  expiresAt: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  revokedAt?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateFieldInput = {

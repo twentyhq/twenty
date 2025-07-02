@@ -1111,6 +1111,7 @@ export type Mutation = {
   syncRemoteTableSchemaChanges: RemoteTable;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
+  updateApiKey?: Maybe<ApiKey>;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -1478,6 +1479,11 @@ export type MutationTrackAnalyticsArgs = {
 
 export type MutationUnsyncRemoteTableArgs = {
   input: RemoteTableInput;
+};
+
+
+export type MutationUpdateApiKeyArgs = {
+  input: UpdateApiKeyDto;
 };
 
 
@@ -2479,6 +2485,13 @@ export type UpdateAgentInput = {
   responseFormat?: InputMaybe<Scalars['JSON']>;
 };
 
+export type UpdateApiKeyDto = {
+  expiresAt: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  revokedAt?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -3348,6 +3361,13 @@ export type DeleteWebhookMutationVariables = Exact<{
 
 
 export type DeleteWebhookMutation = { __typename?: 'Mutation', deleteWebhook: boolean };
+
+export type UpdateApiKeyMutationVariables = Exact<{
+  input: UpdateApiKeyDto;
+}>;
+
+
+export type UpdateApiKeyMutation = { __typename?: 'Mutation', updateApiKey?: { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null } | null };
 
 export type UpdateWebhookMutationVariables = Exact<{
   input: UpdateWebhookDto;
@@ -6577,6 +6597,42 @@ export function useDeleteWebhookMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteWebhookMutationHookResult = ReturnType<typeof useDeleteWebhookMutation>;
 export type DeleteWebhookMutationResult = Apollo.MutationResult<DeleteWebhookMutation>;
 export type DeleteWebhookMutationOptions = Apollo.BaseMutationOptions<DeleteWebhookMutation, DeleteWebhookMutationVariables>;
+export const UpdateApiKeyDocument = gql`
+    mutation UpdateApiKey($input: UpdateApiKeyDTO!) {
+  updateApiKey(input: $input) {
+    id
+    name
+    expiresAt
+    revokedAt
+  }
+}
+    `;
+export type UpdateApiKeyMutationFn = Apollo.MutationFunction<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>;
+
+/**
+ * __useUpdateApiKeyMutation__
+ *
+ * To run a mutation, you first call `useUpdateApiKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateApiKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateApiKeyMutation, { data, loading, error }] = useUpdateApiKeyMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>(UpdateApiKeyDocument, options);
+      }
+export type UpdateApiKeyMutationHookResult = ReturnType<typeof useUpdateApiKeyMutation>;
+export type UpdateApiKeyMutationResult = Apollo.MutationResult<UpdateApiKeyMutation>;
+export type UpdateApiKeyMutationOptions = Apollo.BaseMutationOptions<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>;
 export const UpdateWebhookDocument = gql`
     mutation UpdateWebhook($input: UpdateWebhookDTO!) {
   updateWebhook(input: $input) {

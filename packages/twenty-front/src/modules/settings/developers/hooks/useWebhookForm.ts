@@ -1,8 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import {
   webhookFormSchema,
@@ -16,6 +14,7 @@ import { v4 } from 'uuid';
 import {
   useCreateWebhookMutation,
   useDeleteWebhookMutation,
+  useGetWebhookQuery,
   useUpdateWebhookMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -77,33 +76,34 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     );
   };
 
-  const { loading, error } = useFindOneRecord({
-    skip: isCreationMode,
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-    objectRecordId: webhookId || '',
+  const { loading, error } = useGetWebhookQuery({
+    skip: isCreationMode || !webhookId,
+    variables: {
+      input: { id: webhookId || '' },
+    },
     onCompleted: (data) => {
-      if (!data) return;
+      const webhook = data.webhook;
+      if (!webhook) return;
 
-      const baseOperations = data?.operations
-        ? data.operations.map((op: string) => {
-            const [object, action] = op.split('.');
-            return { object, action };
-          })
-        : data?.operation
-          ? [
-              {
-                object: data.operation.split('.')[0],
-                action: data.operation.split('.')[1],
-              },
-            ]
+      const baseOperations =
+        webhook?.operations && webhook.operations.length > 0
+          ? webhook.operations.map((op: string) => {
+              const [object, action] = op.split('.');
+              return { object, action };
+            })
           : [];
       const operations = addEmptyOperationIfNecessary(baseOperations);
 
       formConfig.reset({
-        targetUrl: data.targetUrl || '',
-        description: data.description || '',
+        targetUrl: webhook.targetUrl || '',
+        description: webhook.description || '',
         operations,
-        secret: data.secret || '',
+        secret: webhook.secret || '',
+      });
+    },
+    onError: (error) => {
+      enqueueSnackBar(`Failed to load webhook: ${error.message}`, {
+        variant: SnackBarVariant.Error,
       });
     },
   });
