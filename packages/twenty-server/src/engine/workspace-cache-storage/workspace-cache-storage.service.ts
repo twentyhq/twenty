@@ -91,9 +91,10 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     objectMetadataMaps: ObjectMetadataMaps,
+    locale: string, // Added locale parameter
   ) {
     return this.cacheStorageService.set<ObjectMetadataMaps>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}:${locale}`, // Added locale to key
       objectMetadataMaps,
       TTL_INFINITE,
     );
@@ -102,9 +103,10 @@ export class WorkspaceCacheStorageService {
   getObjectMetadataMaps(
     workspaceId: string,
     metadataVersion: number,
+    locale: string, // Added locale parameter
   ): Promise<ObjectMetadataMaps | undefined> {
     return this.cacheStorageService.get<ObjectMetadataMaps>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}:${locale}`, // Added locale to key
     );
   }
 
@@ -222,25 +224,27 @@ export class WorkspaceCacheStorageService {
   async flushVersionedMetadata(
     workspaceId: string,
     metadataVersion?: number,
+    locale?: string, // Added locale parameter
   ): Promise<void> {
     const metadataVersionSuffix = isDefined(metadataVersion)
       ? `${metadataVersion}`
       : '*';
+    const localeSuffix = isDefined(locale) ? `${locale}` : '*'; // Added locale suffix
 
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersionSuffix}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersionSuffix}:${localeSuffix}`, // Added localeSuffix to key
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}:${metadataVersionSuffix}`,
+      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}:${metadataVersionSuffix}`, // MetadataVersion does not need locale
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersionSuffix}`,
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersionSuffix}:${localeSuffix}`, // Added localeSuffix to key
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersionSuffix}`,
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersionSuffix}:${localeSuffix}`, // Added localeSuffix to key
     );
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersionSuffix}`,
+      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersionSuffix}:${localeSuffix}`, // Added localeSuffix to key
     );
   }
 

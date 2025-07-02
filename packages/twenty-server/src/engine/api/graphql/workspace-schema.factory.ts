@@ -46,6 +46,7 @@ export class WorkspaceSchemaFactory {
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         {
           workspaceId: authContext.workspace.id,
+          locale: authContext.locale, // Assuming locale is available in authContext
         },
       );
 
@@ -68,11 +69,13 @@ export class WorkspaceSchemaFactory {
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
       authContext.workspace.id,
       metadataVersion,
+      authContext.locale, // Added locale
     );
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
         authContext.workspace.id,
         metadataVersion,
+        authContext.locale, // Added locale
       );
 
     // If typeDefs are not cached, generate them
@@ -92,11 +95,13 @@ export class WorkspaceSchemaFactory {
         authContext.workspace.id,
         metadataVersion,
         typeDefs,
+        authContext.locale, // Added locale
       );
       await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
         authContext.workspace.id,
         metadataVersion,
         usedScalarNames,
+        authContext.locale, // Added locale
       );
     }
 

@@ -36,8 +36,10 @@ export class WorkspaceMetadataCacheService {
 
   async getExistingOrRecomputeMetadataMaps({
     workspaceId,
+    locale, // Added locale parameter
   }: {
     workspaceId: string;
+    locale: string; // Added locale parameter
   }): Promise<getExistingOrRecomputeMetadataMapsResult> {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
@@ -60,6 +62,7 @@ export class WorkspaceMetadataCacheService {
       await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspaceId,
         currentDatabaseVersion,
+        locale, // Passed locale to getObjectMetadataMaps
       );
 
     if (isDefined(existingObjectMetadataMaps) && !shouldRecompute) {
@@ -72,6 +75,7 @@ export class WorkspaceMetadataCacheService {
     const { objectMetadataMaps, metadataVersion } =
       await this.recomputeMetadataCache({
         workspaceId,
+        locale, // Passed locale to recomputeMetadataCache
       });
 
     return {
@@ -82,8 +86,10 @@ export class WorkspaceMetadataCacheService {
 
   async recomputeMetadataCache({
     workspaceId,
+    locale, // Added locale parameter
   }: {
     workspaceId: string;
+    locale: string; // Added locale parameter
   }): Promise<getExistingOrRecomputeMetadataMapsResult> {
     const currentDatabaseVersion =
       await this.getMetadataVersionFromDatabase(workspaceId);
@@ -95,7 +101,11 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    await this.workspaceCacheStorageService.flushVersionedMetadata(workspaceId);
+    await this.workspaceCacheStorageService.flushVersionedMetadata(
+      workspaceId,
+      currentDatabaseVersion,
+      locale, // Passed locale to flushVersionedMetadata
+    );
 
     const objectMetadataItems = await this.objectMetadataRepository.find({
       where: { workspaceId },
@@ -129,6 +139,7 @@ export class WorkspaceMetadataCacheService {
       workspaceId,
       currentDatabaseVersion,
       freshObjectMetadataMaps,
+      locale, // Passed locale to setObjectMetadataMaps
     );
 
     await this.workspaceCacheStorageService.setMetadataVersion(
