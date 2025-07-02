@@ -3,8 +3,10 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { FileFolder } from '~/generated-metadata/graphql';
-import { useUploadImageMutation } from '~/generated/graphql';
+import {
+  FileFolder,
+  useUploadImageMutation,
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 interface UseRecordShowContainerActionsProps {

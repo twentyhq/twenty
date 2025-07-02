@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,7 +58,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     const record = records[0];
 
     if (!isDefined(record)) {
-      throw new Error('Updated record not found');
+      throw new InternalServerErrorException('Updated record not found');
     }
 
     return this.formatResult({

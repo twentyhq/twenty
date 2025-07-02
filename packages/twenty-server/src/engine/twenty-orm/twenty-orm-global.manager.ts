@@ -17,6 +17,7 @@ export class TwentyORMGlobalManager {
     workspaceEntity: Type<T>,
     options?: {
       shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
     },
   ): Promise<WorkspaceRepository<T>>;
 
@@ -25,6 +26,7 @@ export class TwentyORMGlobalManager {
     objectMetadataName: string,
     options?: {
       shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
     },
   ): Promise<WorkspaceRepository<T>>;
 
@@ -33,6 +35,7 @@ export class TwentyORMGlobalManager {
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     options: {
       shouldBypassPermissionChecks?: boolean;
+      roleId?: string;
     } = {
       shouldBypassPermissionChecks: false,
     },
@@ -53,6 +56,7 @@ export class TwentyORMGlobalManager {
     const repository = workspaceDataSource.getRepository<T>(
       objectMetadataName,
       options.shouldBypassPermissionChecks,
+      options.roleId,
     );
 
     return repository;

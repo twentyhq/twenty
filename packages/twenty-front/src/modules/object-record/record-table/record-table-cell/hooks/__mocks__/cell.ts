@@ -1,7 +1,7 @@
 import { RecordTableCellContextValue } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextValue } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const recordTableRowContextValue: RecordTableRowContextValue = {
   rowIndex: 2,

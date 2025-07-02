@@ -134,6 +134,10 @@ export const usePersistField = () => {
           fieldName: fieldDefinition.metadata.fieldName,
         });
 
+        if (fieldIsRawJson && isUnpersistableRawJsonField) {
+          return;
+        }
+
         const isValuePersistable =
           fieldIsRelationToOneObject ||
           fieldIsText ||
@@ -150,7 +154,7 @@ export const usePersistField = () => {
           fieldIsSelect ||
           fieldIsMultiSelect ||
           fieldIsAddress ||
-          (fieldIsRawJson && !isUnpersistableRawJsonField) ||
+          fieldIsRawJson ||
           fieldIsArray ||
           fieldIsRichText ||
           fieldIsRichTextV2;

@@ -13,7 +13,7 @@ import { IconCheck } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { useGetCurrentUserLazyQuery } from '~/generated/graphql';
+import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledModalContent = styled(Modal.Content)`

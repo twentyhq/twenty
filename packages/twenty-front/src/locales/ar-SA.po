@@ -144,6 +144,11 @@ msgstr ""
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} سيتم إلغاء تعيينه من الدور التالي:"
 
+#. js-lingui-id: CwstSL
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "••••••••"
+msgstr ""
+
 #. js-lingui-id: NNQszp
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #~ msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
@@ -215,6 +220,11 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24 ساعة ({hour24Label})"
+
+#. js-lingui-id: IbMa7Z
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "993"
+msgstr ""
 
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -768,6 +778,11 @@ msgstr "تصاعدي"
 msgid "Assign {workspaceMemberName}?"
 msgstr "تعيين {workspaceMemberName}؟"
 
+#. js-lingui-id: 449JVv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Assign Role"
+msgstr ""
+
 #. js-lingui-id: 17M/rH
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to manage each member’s access and permissions"
@@ -1234,6 +1249,11 @@ msgstr "حدد كيفية عرض أحداثك في التقويم الخاص ب�
 msgid "Configure your emails and calendar settings."
 msgstr "ضبط إعدادات بريدك الإلكتروني والتقويم."
 
+#. js-lingui-id: W4D3v/
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Configure your IMAP email account"
+msgstr ""
+
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
@@ -1257,6 +1277,11 @@ msgstr "ربط حساب جديد بمساحة العمل الخاصة بك"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "الاتصال بـ Google"
+
+#. js-lingui-id: VZvZWq
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with IMAP"
+msgstr ""
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -2061,6 +2086,12 @@ msgstr "تحرير قيم الحقل"
 msgid "Edit Fields"
 msgstr "تحرير الحقول"
 
+#. js-lingui-id: 8gm+y4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Edit IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2091,6 +2122,11 @@ msgstr "قم بتعديل اسم النطاق الفرعي أو اضبط نطا�
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
+#. js-lingui-id: hzKQCy
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Email Address"
+msgstr ""
+
 #. js-lingui-id: 2SWjdJ
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
@@ -2100,6 +2136,12 @@ msgstr "البريد الإلكتروني"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
 msgstr "لا يمكن أن يكون البريد الإلكتروني فارغًا"
+
+#. js-lingui-id: Zb5c/r
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Email Connections"
+msgstr ""
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2187,6 +2229,11 @@ msgstr "مصفوفة فارغة"
 #: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "كائن فارغ"
+
+#. js-lingui-id: q1srUM
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Encryption"
+msgstr ""
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2936,6 +2983,36 @@ msgstr ""
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "إذا كنت قد فقدت هذا المفتاح، يمكنك توليده مرة أخرى، ولكن كن على دراية أن أي سكربت يستخدم هذا المفتاح سيحتاج إلى تحديث. الرجاء كتابة \"{confirmationValue}\" للتأكيد."
 
+#. js-lingui-id: 3rtE4o
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Connection Details"
+msgstr ""
+
+#. js-lingui-id: jXXECN
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully created"
+msgstr ""
+
+#. js-lingui-id: Fz/wXI
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully updated"
+msgstr ""
+
+#. js-lingui-id: TE8s2c
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Port"
+msgstr ""
+
+#. js-lingui-id: /RAwfY
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Server"
+msgstr ""
+
+#. js-lingui-id: +8jOVa
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "imap.example.com"
+msgstr ""
+
 #. js-lingui-id: tSVr6t
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
@@ -3206,6 +3283,11 @@ msgstr "الإيطالية"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "اليابانية"
+
+#. js-lingui-id: wrLOeW
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "john.doe@example.com"
+msgstr ""
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -3697,6 +3779,12 @@ msgstr "نطاق وصول معتمد جديد"
 msgid "New Field"
 msgstr "حقل جديد"
 
+#. js-lingui-id: GeB/fA
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+msgid "New IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New key"
@@ -3889,6 +3977,11 @@ msgstr ""
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "لا توجد نتائج"
+
+#. js-lingui-id: qq788M
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No role"
+msgstr ""
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4158,6 +4251,7 @@ msgstr "الصفحة غير موجودة"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr "كلمة السر"
 
@@ -5054,10 +5148,13 @@ msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5548,6 +5645,11 @@ msgstr "حدثت مشكلة"
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "هذه هي القيم الخاصة بالخادم فقط. تأكد من أن بيئة العمل لديك تحتوي على نفس المتغيرات والقيم. هذا مطلوب للمهام غير المتزامنة مثل مزامنة البريد الإلكتروني."
 
+#. js-lingui-id: Kb1oAw
+#: src/modules/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityRowHook.ts
+msgid "This {columnName} value already exists in your import data"
+msgstr ""
+
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -5657,6 +5759,11 @@ msgstr ""
 #. js-lingui-id: BRMXj0
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
+msgstr ""
+
+#. js-lingui-id: xdA/+p
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
@@ -5771,6 +5878,11 @@ msgstr ""
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
+msgstr ""
+
+#. js-lingui-id: Vmsh9w
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Update your IMAP email account configuration"
 msgstr ""
 
 #. js-lingui-id: +b7T3G

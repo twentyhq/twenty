@@ -69,7 +69,7 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
         );
       }
 
-      const executionResult = await this.agentExecutionService.executeAgent({
+      const { result, usage } = await this.agentExecutionService.executeAgent({
         agent,
         context,
         schema: step.settings.outputSchema,
@@ -77,11 +77,13 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
 
       await this.aiBillingService.calculateAndBillUsage(
         agent.modelId,
-        executionResult.usage,
+        usage,
         workspaceId,
       );
 
-      return { result: executionResult.object };
+      return {
+        result,
+      };
     } catch (error) {
       if (error instanceof AgentException) {
         return {
