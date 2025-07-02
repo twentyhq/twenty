@@ -621,14 +621,14 @@ export class WorkflowVersionStepWorkspaceService {
           workspaceId,
         );
 
-        await this.agentChatService.createThread(newAgent.id);
-
         if (!isDefined(newAgent)) {
           throw new WorkflowVersionStepException(
             'Failed to create AI Agent Step',
             WorkflowVersionStepExceptionCode.FAILURE,
           );
         }
+
+        await this.agentChatService.createThread(newAgent.id);
 
         return {
           id: newStepId,
