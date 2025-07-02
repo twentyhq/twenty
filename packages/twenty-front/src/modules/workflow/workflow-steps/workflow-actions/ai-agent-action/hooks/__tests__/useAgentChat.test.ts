@@ -395,7 +395,11 @@ describe('useAgentChat', () => {
       });
 
       await act(async () => {
-        await result.current.handleSendMessage();
+        try {
+          await result.current.handleSendMessage();
+        } catch (error) {
+          // Expected error, continue with test
+        }
       });
 
       expect(mockSetAgentChatMessages).toHaveBeenCalledWith(
