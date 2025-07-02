@@ -206,12 +206,12 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                       msg.message
                     )}
                   </StyledMessageText>
-                  <StyledMessageFooter className="message-footer">
-                    <span>{formatChatMessageDate(msg.createdAt)}</span>
-                    {msg.message && (
+                  {msg.message && (
+                    <StyledMessageFooter className="message-footer">
+                      <span>{formatChatMessageDate(msg.createdAt)}</span>
                       <LightCopyIconButton copyText={msg.message} />
-                    )}
-                  </StyledMessageFooter>
+                    </StyledMessageFooter>
+                  )}
                 </StyledMessageContainer>
               </StyledMessageRow>
             </StyledMessageBubble>
