@@ -86,7 +86,9 @@ export const shouldCaptureException = (
   return true;
 };
 
-export const handleException = <T extends Error | CustomException>({
+export const handleException = <
+  T extends Error | CustomException | HttpException,
+>({
   exception,
   exceptionHandlerService,
   user,

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
@@ -72,7 +76,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
     });
 
     if (records.length !== body.length) {
-      throw new Error(
+      throw new InternalServerErrorException(
         `Error when creating records. ${body.length - records.length} records are missing after creation.`,
       );
     }

@@ -1,17 +1,16 @@
-import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { renderHook } from '@testing-library/react';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationSendInvitationsCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => ({
+jest.mock('~/generated-metadata/graphql', () => ({
   useSendInvitationsMutation: () => [mutationSendInvitationsCallSpy],
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useCreateWorkspaceInvitation', () => {
   afterEach(() => {
@@ -19,18 +18,18 @@ describe('useCreateWorkspaceInvitation', () => {
   });
 
   it('Send invitations', async () => {
-    const invitationParams = { emails: ['test@twenty.com'] };
+    const params = { emails: ['test@test.com'] };
     renderHook(
       () => {
         const { sendInvitation } = useCreateWorkspaceInvitation();
-        sendInvitation(invitationParams);
+        sendInvitation(params);
       },
       { wrapper: Wrapper },
     );
 
     expect(mutationSendInvitationsCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
-      variables: invitationParams,
+      variables: params,
     });
   });
 });

@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import {
   FieldRelationFromManyValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -33,7 +33,7 @@ export const useOpenRelationFromManyFieldInput = () => {
         objectNameSingular: string;
         recordId: string;
       }) => {
-        const recordPickerInstanceId = getRelationFromManyFieldInputInstanceId({
+        const recordPickerInstanceId = getFieldInputInstanceId({
           recordId,
           fieldName,
         });

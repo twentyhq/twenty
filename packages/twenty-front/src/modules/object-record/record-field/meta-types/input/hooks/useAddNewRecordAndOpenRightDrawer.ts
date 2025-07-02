@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -10,7 +11,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -45,7 +45,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
@@ -109,7 +109,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
       setViewableRecordId(newRecordId);
       setViewableRecordNameSingular(relationObjectMetadataNameSingular);
 
-      apolloClient.refetchQueries({
+      apolloCoreClient.refetchQueries({
         include: [getOperationName(SEARCH_QUERY) ?? ''],
       });
 

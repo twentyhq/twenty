@@ -11,7 +11,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
@@ -23,7 +23,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const hiddenTableColumns = useRecoilComponentValueV2(
     hiddenTableColumnsComponentSelector,

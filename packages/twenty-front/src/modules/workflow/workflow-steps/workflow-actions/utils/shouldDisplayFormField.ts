@@ -1,6 +1,7 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { WorkflowActionType } from '@/workflow/types/Workflow';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const COMMON_DISPLAYABLE_FIELD_TYPES = [
   FieldMetadataType.TEXT,
@@ -65,6 +66,9 @@ export const shouldDisplayFormField = ({
         fieldMetadataItem.isActive
       );
     default:
-      throw new Error(`Action "${actionType}" is not supported`);
+      throw new CustomError(
+        `Action "${actionType}" is not supported`,
+        'UNSUPPORTED_ACTION_TYPE',
+      );
   }
 };

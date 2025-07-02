@@ -7,6 +7,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
@@ -19,6 +20,7 @@ import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const coreClient = useApolloCoreClient();
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -36,6 +38,7 @@ export const useCommandMenuSearchRecords = () => {
   }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
   const { data: searchData, loading } = useSearchQuery({
+    client: coreClient,
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,

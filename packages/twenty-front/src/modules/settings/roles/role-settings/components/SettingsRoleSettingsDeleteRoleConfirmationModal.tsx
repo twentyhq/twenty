@@ -3,7 +3,7 @@ import { SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle } from '@/setti
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
-import { useDeleteOneRoleMutation } from '~/generated/graphql';
+import { useDeleteOneRoleMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsRoleSettingsDeleteRoleConfirmationModalProps = {

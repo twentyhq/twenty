@@ -10,9 +10,10 @@ import {
   WorkflowRunDiagramNode,
   WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { isDefined } from 'twenty-shared/utils';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
+import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
+import { isDefined } from 'twenty-shared/utils';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
@@ -38,7 +39,9 @@ export const generateWorkflowRunDiagram = ({
       }
     | undefined = undefined;
 
-  const workflowDiagram = generateWorkflowDiagram({ trigger, steps });
+  const workflowDiagram = transformFilterNodesAsEdges(
+    generateWorkflowDiagram({ trigger, steps }),
+  );
 
   let skippedExecution = false;
 

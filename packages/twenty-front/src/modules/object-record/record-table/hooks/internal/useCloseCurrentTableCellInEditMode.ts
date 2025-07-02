@@ -27,7 +27,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
         goBackToPreviousDropdownFocusId();
 
         removeLastFocusItemFromFocusStackByComponentType({
-          componentType: FocusComponentType.OPEN_FIELD_INPUT,
+          componentType: FocusComponentType.OPENED_FIELD_INPUT,
         });
       };
     },

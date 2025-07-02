@@ -1,5 +1,9 @@
 import {
-  workflowActionSchema,
+  WorkflowFormAction,
+  WorkflowHttpRequestAction,
+  WorkflowSendEmailAction,
+} from '@/workflow/types/Workflow';
+import {
   workflowFormActionSettingsSchema,
   workflowHttpRequestActionSettingsSchema,
   workflowSendEmailActionSettingsSchema,
@@ -34,7 +38,7 @@ describe('useWorkflowActionHeader', () => {
 
   describe('when action name is not defined', () => {
     it('should return default title', () => {
-      const action = workflowActionSchema.parse({
+      const action = {
         id: '1',
         name: '',
         type: 'HTTP_REQUEST',
@@ -52,7 +56,7 @@ describe('useWorkflowActionHeader', () => {
           },
         }),
         valid: true,
-      });
+      } satisfies WorkflowHttpRequestAction;
 
       const { result } = renderHook(() =>
         useWorkflowActionHeader({
@@ -71,7 +75,7 @@ describe('useWorkflowActionHeader', () => {
 
   describe('when action name is defined', () => {
     it('should return the action name', () => {
-      const action = workflowActionSchema.parse({
+      const action = {
         id: '1',
         name: 'Test Action',
         type: 'HTTP_REQUEST',
@@ -89,7 +93,7 @@ describe('useWorkflowActionHeader', () => {
           },
         }),
         valid: true,
-      });
+      } satisfies WorkflowHttpRequestAction;
 
       const { result } = renderHook(() =>
         useWorkflowActionHeader({
@@ -108,7 +112,7 @@ describe('useWorkflowActionHeader', () => {
 
   describe('when action type is defined', () => {
     it('should return default title for HTTP request action', () => {
-      const action = workflowActionSchema.parse({
+      const action = {
         id: '1',
         name: '',
         type: 'HTTP_REQUEST',
@@ -126,7 +130,7 @@ describe('useWorkflowActionHeader', () => {
           },
         }),
         valid: true,
-      });
+      } satisfies WorkflowHttpRequestAction;
 
       const { result } = renderHook(() =>
         useWorkflowActionHeader({
@@ -143,7 +147,7 @@ describe('useWorkflowActionHeader', () => {
     });
 
     it('should return default title for form action', () => {
-      const action = workflowActionSchema.parse({
+      const action = {
         id: '1',
         name: '',
         type: 'FORM',
@@ -165,7 +169,7 @@ describe('useWorkflowActionHeader', () => {
           },
         }),
         valid: true,
-      });
+      } satisfies WorkflowFormAction;
 
       const { result } = renderHook(() =>
         useWorkflowActionHeader({
@@ -182,7 +186,7 @@ describe('useWorkflowActionHeader', () => {
     });
 
     it('should return default title for email action', () => {
-      const action = workflowActionSchema.parse({
+      const action = {
         id: '1',
         name: '',
         type: 'SEND_EMAIL',
@@ -200,7 +204,7 @@ describe('useWorkflowActionHeader', () => {
           },
         }),
         valid: true,
-      });
+      } satisfies WorkflowSendEmailAction;
 
       const { result } = renderHook(() =>
         useWorkflowActionHeader({

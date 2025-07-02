@@ -4,7 +4,7 @@ import { ExtendedAggregateOperations } from '@/object-record/record-table/types/
 import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getAvailableAggregateOperationsForFieldMetadataType = ({
   fieldMetadataType,

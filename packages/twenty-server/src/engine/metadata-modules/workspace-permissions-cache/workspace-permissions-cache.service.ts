@@ -10,8 +10,8 @@ import { In, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -35,8 +35,8 @@ export class WorkspacePermissionsCacheService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'core')
-    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
   ) {}
 
@@ -264,14 +264,14 @@ export class WorkspacePermissionsCacheService {
   }: {
     workspaceId: string;
   }): Promise<UserWorkspaceRoleMap> {
-    const userWorkspaceRoleMap = await this.userWorkspaceRoleRepository.find({
+    const roleTargetsMap = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
       },
     });
 
-    return userWorkspaceRoleMap.reduce((acc, userWorkspaceRole) => {
-      acc[userWorkspaceRole.userWorkspaceId] = userWorkspaceRole.roleId;
+    return roleTargetsMap.reduce((acc, roleTarget) => {
+      acc[roleTarget.userWorkspaceId] = roleTarget.roleId;
 
       return acc;
     }, {} as UserWorkspaceRoleMap);

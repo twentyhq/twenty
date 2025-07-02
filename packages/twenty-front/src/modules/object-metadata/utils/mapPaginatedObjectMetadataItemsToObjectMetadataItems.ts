@@ -1,3 +1,4 @@
+import { IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
 import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
@@ -26,7 +27,12 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
           (index) =>
             ({
               ...index,
-              indexFieldMetadatas: [],
+              indexFieldMetadatas: index.indexFieldMetadataList.map(
+                (indexFieldMetadata) =>
+                  ({
+                    ...indexFieldMetadata,
+                  }) satisfies IndexFieldMetadataItem,
+              ),
             }) satisfies IndexMetadataItem,
         ),
       } satisfies ObjectMetadataItem;

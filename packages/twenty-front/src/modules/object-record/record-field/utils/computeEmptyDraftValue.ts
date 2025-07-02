@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
@@ -64,5 +65,8 @@ export const computeEmptyDraftValue = <FieldValue>({
     } as FieldInputDraftValue<FieldValue>;
   }
 
-  throw new Error(`Record field type not supported : ${fieldDefinition.type}}`);
+  throw new CustomError(
+    `Record field type not supported : ${fieldDefinition.type}}`,
+    'RECORD_FIELD_TYPE_NOT_SUPPORTED',
+  );
 };

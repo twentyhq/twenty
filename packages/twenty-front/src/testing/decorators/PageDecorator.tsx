@@ -12,7 +12,7 @@ import {
 import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientMockedProvider';
+import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
@@ -87,7 +87,7 @@ const Providers = () => {
               <UserProviderEffect />
               <WorkspaceProviderEffect />
               <UserProvider>
-                <ApolloMetadataClientMockedProvider>
+                <ApolloCoreClientMockedProvider>
                   <ObjectMetadataItemsLoadEffect />
                   <ObjectMetadataItemsProvider>
                     <FullHeightStorybookLayout>
@@ -120,7 +120,7 @@ const Providers = () => {
                     </FullHeightStorybookLayout>
                   </ObjectMetadataItemsProvider>
                   <MainContextStoreProvider />
-                </ApolloMetadataClientMockedProvider>
+                </ApolloCoreClientMockedProvider>
               </UserProvider>
             </ClientConfigProvider>
           </I18nProvider>

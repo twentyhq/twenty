@@ -1,22 +1,21 @@
 /* @license Enterprise */
 
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationOIDCCallSpy = jest.fn();
 const mutationSAMLCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => ({
+jest.mock('~/generated-metadata/graphql', () => ({
   useCreateOidcIdentityProviderMutation: () => [mutationOIDCCallSpy],
   useCreateSamlIdentityProviderMutation: () => [mutationSAMLCallSpy],
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useCreateSSOIdentityProvider', () => {
   afterEach(() => {

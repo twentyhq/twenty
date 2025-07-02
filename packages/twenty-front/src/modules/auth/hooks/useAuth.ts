@@ -23,10 +23,10 @@ import {
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
-  useSignUpMutation,
   useSignInMutation,
   useSignUpInWorkspaceMutation,
-} from '~/generated/graphql';
+  useSignUpMutation,
+} from '~/generated-metadata/graphql';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -41,6 +41,8 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
@@ -49,6 +51,11 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import {
+  countAvailableWorkspaces,
+  getFirstAvailableWorkspaces,
+} from '@/auth/utils/availableWorkspacesUtils';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -70,13 +77,6 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import {
-  countAvailableWorkspaces,
-  getFirstAvailableWorkspaces,
-} from '@/auth/utils/availableWorkspacesUtils';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -464,19 +464,27 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      return signUp({
+      const signUpResult = await signUp({
         variables: { email, password, captchaToken },
-        onCompleted: async (data) => {
-          handleSetAuthTokens(data.signUp.tokens);
-          const { user } = await loadCurrentUser();
-
-          if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
-            return createWorkspace();
-          }
-
-          setSignInUpStep(SignInUpStep.WorkspaceSelection);
-        },
       });
+
+      if (isDefined(signUpResult.errors)) {
+        throw signUpResult.errors;
+      }
+
+      if (!signUpResult.data?.signUp) {
+        throw new Error('No signUp result');
+      }
+
+      handleSetAuthTokens(signUpResult.data.signUp.tokens);
+
+      const { user } = await loadCurrentUser();
+
+      if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
+        return await createWorkspace({ newTab: false });
+      }
+
+      setSignInUpStep(SignInUpStep.WorkspaceSelection);
     },
     [
       handleSetAuthTokens,

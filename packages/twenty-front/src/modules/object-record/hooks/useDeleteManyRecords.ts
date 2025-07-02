@@ -1,7 +1,6 @@
-import { useApolloClient } from '@apollo/client';
-
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -38,7 +37,7 @@ export const useDeleteManyRecords = ({
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -79,7 +78,9 @@ export const useDeleteManyRecords = ({
       );
 
       const cachedRecords = batchedIdsToDelete
-        .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
+        .map((idToDelete) =>
+          getRecordFromCache(idToDelete, apolloCoreClient.cache),
+        )
         .filter(isDefined);
       const currentTimestamp = new Date().toISOString();
       if (!skipOptimisticEffect) {
@@ -113,7 +114,7 @@ export const useDeleteManyRecords = ({
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               record: computedOptimisticRecord,
               recordGqlFields,
               objectPermissionsByObjectMetadataId,
@@ -125,7 +126,7 @@ export const useDeleteManyRecords = ({
         });
 
         triggerUpdateRecordOptimisticEffectByBatch({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           objectMetadataItem,
           currentRecords: cachedRecordsNode,
           updatedRecords: computedOptimisticRecordsNode,
@@ -133,7 +134,7 @@ export const useDeleteManyRecords = ({
         });
       }
 
-      const deletedRecordsResponse = await apolloClient
+      const deletedRecordsResponse = await apolloCoreClient
         .mutate<Record<string, ObjectRecord[]>>({
           mutation: deleteManyRecordsMutation,
           variables: {
@@ -155,7 +156,7 @@ export const useDeleteManyRecords = ({
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,
-              cache: apolloClient.cache,
+              cache: apolloCoreClient.cache,
               record: { ...cachedRecord, deletedAt: null },
               recordGqlFields,
               objectPermissionsByObjectMetadataId,
@@ -195,7 +196,7 @@ export const useDeleteManyRecords = ({
           });
 
           triggerUpdateRecordOptimisticEffectByBatch({
-            cache: apolloClient.cache,
+            cache: apolloCoreClient.cache,
             objectMetadataItem,
             currentRecords: computedOptimisticRecordsNode,
             updatedRecords: cachedRecordsNode,

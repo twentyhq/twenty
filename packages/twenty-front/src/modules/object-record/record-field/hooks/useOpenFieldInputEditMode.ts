@@ -7,7 +7,6 @@ import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTa
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationToOneFieldInput';
-import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldMetadata,
@@ -22,6 +21,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -75,7 +75,7 @@ export const useOpenFieldInputEditMode = () => {
           });
 
           openActivityTargetCellEditMode({
-            recordPickerInstanceId: getRelationFromManyFieldInputInstanceId({
+            recordPickerInstanceId: getFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
             }),
@@ -110,16 +110,16 @@ export const useOpenFieldInputEditMode = () => {
         }
 
         pushFocusItemToFocusStack({
-          focusId: getFieldInputInstanceId(
+          focusId: getFieldInputInstanceId({
             recordId,
-            fieldDefinition.metadata.fieldName,
-          ),
+            fieldName: fieldDefinition.metadata.fieldName,
+          }),
           component: {
-            type: FocusComponentType.OPEN_FIELD_INPUT,
-            instanceId: getFieldInputInstanceId(
+            type: FocusComponentType.OPENED_FIELD_INPUT,
+            instanceId: getFieldInputInstanceId({
               recordId,
-              fieldDefinition.metadata.fieldName,
-            ),
+              fieldName: fieldDefinition.metadata.fieldName,
+            }),
           },
           hotkeyScope: {
             scope: DEFAULT_CELL_SCOPE.scope,
@@ -136,8 +136,26 @@ export const useOpenFieldInputEditMode = () => {
     ],
   );
 
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  const closeFieldInput = ({
+    fieldDefinition,
+    recordId,
+  }: {
+    fieldDefinition: FieldDefinition<FieldMetadata>;
+    recordId: string;
+  }) => {
+    removeFocusItemFromFocusStackById({
+      focusId: getFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+      }),
+    });
+  };
+
   return {
-    openFieldInput: openFieldInput,
-    closeFieldInput: () => {},
+    openFieldInput,
+    closeFieldInput,
   };
 };

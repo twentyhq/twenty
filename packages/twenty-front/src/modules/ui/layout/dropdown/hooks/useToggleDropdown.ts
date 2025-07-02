@@ -1,12 +1,16 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+
+type ToggleDropdownArgs = {
+  dropdownComponentInstanceIdFromProps?: string;
+  globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
+};
 
 export const useToggleDropdown = () => {
   const dropdownComponentInstanceIdFromContext =
@@ -17,15 +21,9 @@ export const useToggleDropdown = () => {
 
   const toggleDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      ({
-        dropdownComponentInstanceIdFromProps,
-        globalHotkeysConfig,
-      }: {
-        dropdownComponentInstanceIdFromProps?: string;
-        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
-      }) => {
+      (args?: ToggleDropdownArgs | null | undefined) => {
         const dropdownComponentInstanceId =
-          dropdownComponentInstanceIdFromProps ??
+          args?.dropdownComponentInstanceIdFromProps ??
           dropdownComponentInstanceIdFromContext;
 
         if (!isDefined(dropdownComponentInstanceId)) {
@@ -40,20 +38,12 @@ export const useToggleDropdown = () => {
           )
           .getValue();
 
-        const isDropdownOpenLegacy = snapshot
-          .getLoadable(
-            isDropdownOpenComponentState({
-              scopeId: dropdownComponentInstanceId,
-            }),
-          )
-          .getValue();
-
-        if (isDropdownOpen || isDropdownOpenLegacy) {
+        if (isDropdownOpen) {
           closeDropdown(dropdownComponentInstanceId);
         } else {
           openDropdown({
             dropdownComponentInstanceIdFromProps: dropdownComponentInstanceId,
-            globalHotkeysConfig,
+            globalHotkeysConfig: args?.globalHotkeysConfig,
           });
         }
       },

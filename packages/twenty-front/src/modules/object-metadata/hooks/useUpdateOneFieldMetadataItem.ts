@@ -18,10 +18,8 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { isDefined } from 'twenty-shared/utils';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
@@ -48,9 +46,7 @@ export const useUpdateOneFieldMetadataItem = () => {
   const [mutate] = useMutation<
     UpdateOneFieldMetadataItemMutation,
     UpdateOneFieldMetadataItemMutationVariables
-  >(UPDATE_ONE_FIELD_METADATA_ITEM, {
-    client: apolloMetadataClient ?? undefined,
-  });
+  >(UPDATE_ONE_FIELD_METADATA_ITEM);
 
   const updateOneFieldMetadataItem = async ({
     objectMetadataId,

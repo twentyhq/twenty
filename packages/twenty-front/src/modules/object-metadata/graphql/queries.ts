@@ -33,6 +33,13 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             indexWhereClause
             indexType
             isUnique
+            indexFieldMetadataList {
+              id
+              fieldMetadataId
+              createdAt
+              updatedAt
+              order
+            }
           }
           fieldsList {
             id

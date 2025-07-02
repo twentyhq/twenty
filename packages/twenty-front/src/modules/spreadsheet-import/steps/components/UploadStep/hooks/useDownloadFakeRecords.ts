@@ -39,6 +39,7 @@ export const useDownloadFakeRecords = () => {
 
           break;
         }
+        case FieldMetadataType.RICH_TEXT_V2:
         case FieldMetadataType.ACTOR:
         case FieldMetadataType.EMAILS:
         case FieldMetadataType.CURRENCY:
