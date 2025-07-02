@@ -1,10 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 export const getUniqueConstraintsFields = (
   objectMetadata: ObjectMetadataInterface,
-) => {
+): FieldMetadataInterface[][] => {
   const uniqueIndexes = objectMetadata.indexMetadatas.filter(
     (index) => index.isUnique,
   );

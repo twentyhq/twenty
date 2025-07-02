@@ -95,7 +95,7 @@ export class RelationConnectInputTypeDefinitionFactory {
               { type: GraphQLInputType; description: string }
             > = {};
 
-            uniqueProperties.forEach(async (property) => {
+            uniqueProperties.forEach((property) => {
               const scalarType = this.typeMapperService.mapToScalarType(
                 property.type,
               );
