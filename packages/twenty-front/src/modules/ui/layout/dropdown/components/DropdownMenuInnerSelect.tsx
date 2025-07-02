@@ -1,7 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
@@ -43,7 +43,7 @@ export const DropdownMenuInnerSelect = ({
 }: DropdownMenuInnerSelectProps) => {
   const theme = useTheme();
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   return (
     <Dropdown
@@ -61,7 +61,7 @@ export const DropdownMenuInnerSelect = ({
                 key={`dropdown-menu-inner-select-item-${selectOption.value}`}
                 onClick={() => {
                   onChange(selectOption);
-                  closeDropdown();
+                  closeDropdown(dropdownId);
                 }}
                 text={selectOption.label}
                 disabled={selectOption.disabled}
