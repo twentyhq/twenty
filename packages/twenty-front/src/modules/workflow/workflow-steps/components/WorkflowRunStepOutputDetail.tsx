@@ -30,23 +30,18 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const workflowRunOutput = workflowRun?.runContext || workflowRun?.output;
-
-  const workflowRunStepsOutput =
-    workflowRun?.runContext?.stepInfos || workflowRun?.output?.stepsOutput;
-
-  if (!isDefined(workflowRunOutput) || !isDefined(workflowRunStepsOutput)) {
+  if (!isDefined(workflowRun?.output?.stepsOutput)) {
     return null;
   }
 
-  const stepOutput = workflowRunStepsOutput[stepId] as
+  const stepOutput = workflowRun.output.stepsOutput[stepId] as
     | WorkflowExecutorOutput
     | undefined;
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
-    trigger: workflowRunOutput.flow.trigger,
-    steps: workflowRunOutput.flow.steps,
+    trigger: workflowRun.output.flow.trigger,
+    steps: workflowRun.output.flow.steps,
   });
   if (
     !isDefined(stepDefinition?.definition) ||

@@ -9,7 +9,7 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
@@ -82,15 +82,15 @@ export const WorkflowRunVisualizerEffect = ({
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
-        workflowRun,
+        workflowRunOutput,
         workflowVersionId,
         isInRightDrawer,
       }: {
-        workflowRun: WorkflowRun | undefined;
+        workflowRunOutput: WorkflowRunOutput | undefined;
         workflowVersionId: string | undefined;
         isInRightDrawer: boolean;
       }) => {
-        if (!(isDefined(workflowRun?.output) && isDefined(workflowVersionId))) {
+        if (!(isDefined(workflowRunOutput) && isDefined(workflowVersionId))) {
           set(flowState, undefined);
           set(workflowDiagramState, undefined);
 
@@ -108,13 +108,15 @@ export const WorkflowRunVisualizerEffect = ({
 
         set(flowState, {
           workflowVersionId,
-          trigger: workflowRun.output.flow.trigger,
-          steps: workflowRun.output.flow.steps,
+          trigger: workflowRunOutput.flow.trigger,
+          steps: workflowRunOutput.flow.steps,
         });
 
         const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =
           generateWorkflowRunDiagram({
-            workflowRun: workflowRun,
+            trigger: workflowRunOutput.flow.trigger,
+            steps: workflowRunOutput.flow.steps,
+            stepsOutput: workflowRunOutput.stepsOutput,
           });
 
         if (isDefined(stepToOpenByDefault)) {
@@ -195,7 +197,7 @@ export const WorkflowRunVisualizerEffect = ({
 
   useEffect(() => {
     handleWorkflowRunDiagramGeneration({
-      workflowRun: workflowRun ?? undefined,
+      workflowRunOutput: workflowRun?.output ?? undefined,
       workflowVersionId: workflowRun?.workflowVersionId,
       isInRightDrawer,
     });

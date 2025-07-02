@@ -11,7 +11,7 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, mapObjectByKey } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
   GetJsonNodeHighlighting,
@@ -32,16 +32,12 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const step = workflowRun?.output?.flow.steps.find(
     (step) => step.id === stepId,
   );
-  const workflowRunOutput = workflowRun?.runContext || workflowRun?.output;
-  const workflowRunContext = workflowRun?.runContext
-    ? mapObjectByKey(workflowRun.runContext.stepInfos, 'result')
-    : workflowRun?.context;
 
   if (
     !(
       isDefined(workflowRun) &&
-      isDefined(workflowRunContext) &&
-      isDefined(workflowRunOutput?.flow) &&
+      isDefined(workflowRun.context) &&
+      isDefined(workflowRun.output?.flow) &&
       isDefined(step)
     )
   ) {
@@ -50,7 +46,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   const previousStepId = getWorkflowPreviousStepId({
     stepId,
-    steps: workflowRunOutput.flow.steps,
+    steps: workflowRun.output.flow.steps,
   });
 
   if (previousStepId === undefined) {
@@ -59,8 +55,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
-    trigger: workflowRunOutput.flow.trigger,
-    steps: workflowRunOutput.flow.steps,
+    trigger: workflowRun.output.flow.trigger,
+    steps: workflowRun.output.flow.steps,
   });
   if (stepDefinition?.type !== 'action') {
     throw new Error('The input tab must be rendered with an action step.');
@@ -80,8 +76,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const allVariablesUsedInStep = Array.from(variablesUsedInStep);
 
   const stepContext = getWorkflowRunStepContext({
-    context: workflowRunContext,
-    flow: workflowRunOutput.flow,
+    context: workflowRun.context,
+    flow: workflowRun.output.flow,
     stepId,
   });
   if (stepContext.length === 0) {

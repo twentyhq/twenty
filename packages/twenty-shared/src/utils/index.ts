@@ -14,7 +14,6 @@ export {
   sanitizeURL,
   getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
-export { mapObjectByKey } from './object/mapObjectByKey';
 export { parseJson } from './parseJson';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { getGenericOperationName } from './sentry/getGenericOperationName';

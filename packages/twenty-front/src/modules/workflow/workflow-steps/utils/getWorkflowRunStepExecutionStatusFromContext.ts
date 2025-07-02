@@ -10,7 +10,7 @@ export const getWorkflowRunStepExecutionStatusFromContext = ({
 }): WorkflowDiagramRunStatus => {
   const stepStatus = workflowRunRunContext.stepInfos[stepId].status;
 
-  return stepStatus === 'RUNNING' || stepStatus === 'PENDING'
+  return stepStatus === 'RUNNING'
     ? 'running'
     : stepStatus === 'SUCCESS'
       ? 'success'
