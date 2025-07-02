@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { Event } from '@microsoft/microsoft-graph-types';
 
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
 import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
 import { FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 
 @Injectable()
 export class MicrosoftCalendarImportEventsService {
@@ -39,6 +44,13 @@ export class MicrosoftCalendarImportEventsService {
 
       return formatMicrosoftCalendarEvents(events);
     } catch (error) {
+      if (isAccessTokenRefreshingError(error?.body)) {
+        throw new CalendarEventImportDriverException(
+          error.message,
+          CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
+
       throw parseMicrosoftCalendarError(error);
     }
   }
