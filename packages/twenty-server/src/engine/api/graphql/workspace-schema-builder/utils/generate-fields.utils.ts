@@ -12,6 +12,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
+import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -30,6 +31,7 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         settings: any;
         isIdField: boolean;
+        isConnectField?: boolean;
       },
     ) => T extends InputTypeDefinitionKind
       ? GraphQLInputType
@@ -109,6 +111,33 @@ export const generateFields = <
         type,
         description: fieldMetadata.description,
       };
+
+      if (
+        [
+          InputTypeDefinitionKind.Create,
+          InputTypeDefinitionKind.Update,
+        ].includes(kind as InputTypeDefinitionKind)
+      ) {
+        const connectType = typeFactory.create(
+          formatRelationConnectInputTarget(
+            fieldMetadata.relationTargetObjectMetadataId || '',
+          ),
+          fieldMetadata.type,
+          kind,
+          options,
+          {
+            ...typeFactoryOptions,
+            isConnectField: true,
+          },
+        );
+
+        // @ts-expect-error legacy noImplicitAny
+        fields[fieldMetadata.name] = {
+          type: connectType,
+          description: fieldMetadata.description,
+        };
+      }
+      continue;
     }
 
     // @ts-expect-error legacy noImplicitAny

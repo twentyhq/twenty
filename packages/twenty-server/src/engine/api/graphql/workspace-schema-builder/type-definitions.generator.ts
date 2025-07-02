@@ -8,6 +8,7 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
+import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
@@ -39,6 +40,7 @@ export class TypeDefinitionsGenerator {
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
     private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
     private readonly extendObjectTypeDefinitionV2Factory: ExtendObjectTypeDefinitionV2Factory,
+    private readonly relationConnectInputTypeDefinitionFactory: RelationConnectInputTypeDefinitionFactory,
   ) {}
 
   async generate(
@@ -49,6 +51,8 @@ export class TypeDefinitionsGenerator {
     await this.generateCompositeTypeDefs(options);
     // Generate metadata objects
     await this.generateMetadataTypeDefs(objectMetadataCollection, options);
+
+    this.generateRelationConnectInputTypeDefs(objectMetadataCollection);
   }
 
   /**
@@ -96,10 +100,10 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateCompositeInputTypeDefs(
-    compisteTypes: CompositeType[],
+    compositeTypes: CompositeType[],
     options: WorkspaceBuildSchemaOptions,
   ) {
-    const inputTypeDefs = compisteTypes
+    const inputTypeDefs = compositeTypes
       .map((compositeType) => {
         const optionalExtendedObjectMetadata = {
           ...compositeType,
@@ -282,5 +286,17 @@ export class TypeDefinitionsGenerator {
     );
 
     this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+  }
+
+  private generateRelationConnectInputTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+  ) {
+    const relationWhereInputTypeDefs = objectMetadataCollection
+      .map((objectMetadata) =>
+        this.relationConnectInputTypeDefinitionFactory.create(objectMetadata),
+      )
+      .flat();
+
+    this.typeDefinitionsStorage.addInputTypes(relationWhereInputTypeDefs);
   }
 }
