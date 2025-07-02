@@ -173,7 +173,6 @@ export class SearchVectorService {
       objectMetadata,
       fieldMetadataToIndex: [existingSearchVectorFieldMetadata],
       isUnique: false,
-      _isCustom: false,
       indexType: IndexType.GIN,
       queryRunner,
     });

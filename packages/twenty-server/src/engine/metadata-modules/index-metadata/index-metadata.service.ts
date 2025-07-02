@@ -112,7 +112,6 @@ export class IndexMetadataService {
       objectMetadata,
       fieldMetadataToIndex,
       isUnique,
-      _isCustom: isCustom,
       indexType,
       indexWhereClause,
       queryRunner,
@@ -224,7 +223,6 @@ export class IndexMetadataService {
     objectMetadata,
     fieldMetadataToIndex,
     isUnique,
-    _isCustom,
     indexType,
     indexWhereClause,
     queryRunner,
@@ -233,7 +231,6 @@ export class IndexMetadataService {
     objectMetadata: ObjectMetadataEntity;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     isUnique: boolean;
-    _isCustom: boolean;
     indexType?: IndexType;
     indexWhereClause?: string;
     queryRunner?: QueryRunner;

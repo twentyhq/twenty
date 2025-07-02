@@ -2,6 +2,8 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -9,7 +11,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {
-    const isJest = process.argv.some((arg) => arg.includes('jest'));
+    const isTest = twentyConfigService.get('NODE_ENV') === NodeEnvironment.TEST;
 
     this.mainDataSource = new DataSource({
       url: twentyConfigService.get('PG_DATABASE_URL'),
@@ -17,8 +19,8 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
       logging: twentyConfigService.getLoggingConfig(),
       schema: 'core',
       entities: [
-        `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
-        `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
+        `${isTest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
+        `${isTest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

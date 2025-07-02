@@ -101,7 +101,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let createdObjectMetadata;
 
     try {
       const objectMetadataRepository =
@@ -178,7 +177,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         );
       }
 
-      createdObjectMetadata = await objectMetadataRepository.save({
+      const createdObjectMetadata = await objectMetadataRepository.save({
         ...objectMetadataInput,
         dataSourceId: lastDataSourceMetadata.id,
         targetTableName: 'DEPRECATED',
@@ -246,6 +245,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         objectMetadataInput.workspaceId,
       );
+
+      return createdObjectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
@@ -254,8 +255,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } finally {
       await queryRunner.release();
     }
-
-    return createdObjectMetadata;
   }
 
   public async updateOneObject(
@@ -268,8 +267,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let updatedObject;
-    let didUpdateLabelOrIcon = false;
 
     try {
       const objectMetadataRepository =
@@ -343,17 +340,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         imageIdentifierFieldMetadataId:
           inputPayload.imageIdentifierFieldMetadataId,
       });
-      updatedObject = await objectMetadataRepository.save({
-        ...existingObjectMetadata,
+      const updatedObject = await objectMetadataRepository.save({
+        id: inputId,
+        workspaceId,
         ...inputPayload,
       });
 
-      didUpdateLabelOrIcon = await this.handleObjectNameAndLabelUpdates(
-        existingObjectMetadata,
-        existingObjectMetadataCombinedWithUpdateInput,
-        inputPayload,
-        queryRunner,
-      );
+      const { didUpdateLabelOrIcon } =
+        await this.handleObjectNameAndLabelUpdates(
+          existingObjectMetadata,
+          existingObjectMetadataCombinedWithUpdateInput,
+          inputPayload,
+          queryRunner,
+        );
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         workspaceId,
@@ -403,6 +402,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+
+      return updatedObject;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
@@ -411,8 +412,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } finally {
       await queryRunner.release();
     }
-
-    return updatedObject;
   }
 
   public async deleteOneObject(
@@ -453,7 +452,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }
 
       if (objectMetadata.isRemote) {
-        throw new Error('Remote objects are not supported yet');
+        throw new ObjectMetadataException(
+          'Remote objects are not supported yet',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
       } else {
         await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
           objectMetadata,
@@ -564,7 +566,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     >,
     inputPayload: UpdateObjectPayload,
     queryRunner: QueryRunner,
-  ): Promise<boolean> {
+  ): Promise<{ didUpdateLabelOrIcon: boolean }> {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
     );
@@ -620,11 +622,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         (inputPayload.labelPlural !== existingObjectMetadata.labelPlural ||
           inputPayload.icon !== existingObjectMetadata.icon)
       ) {
-        return true;
+        return {
+          didUpdateLabelOrIcon: true,
+        };
       }
     }
 
-    return false;
+    return {
+      didUpdateLabelOrIcon: false,
+    };
   }
 
   async resolveOverridableString(
