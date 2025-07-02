@@ -1,7 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { v4 } from 'uuid';
 import { faker } from '@faker-js/faker';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
@@ -89,6 +89,10 @@ export const generateRandomFieldValue = ({
     }
 
     case FieldMetadataType.RELATION: {
+      return null;
+    }
+
+    case FieldMetadataType.MORPH_RELATION: {
       return null;
     }
 

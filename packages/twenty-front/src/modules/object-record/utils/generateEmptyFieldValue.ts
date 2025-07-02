@@ -63,6 +63,13 @@ export const generateEmptyFieldValue = ({
 
       return [];
     }
+    case FieldMetadataType.MORPH_RELATION: {
+      if (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE) {
+        return null;
+      }
+
+      return [];
+    }
     case FieldMetadataType.CURRENCY: {
       return {
         amountMicros: null,
