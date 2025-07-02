@@ -108,6 +108,7 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
+      chatThreads: [],
     };
 
     const testRole: RoleEntity = {
