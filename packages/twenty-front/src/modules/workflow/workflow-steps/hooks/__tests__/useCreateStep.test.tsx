@@ -1,5 +1,4 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
@@ -30,16 +29,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
     'workflow-visualizer-instance-id';
 
   return (
-    <RecoilRoot
-      initializeState={({ set }) => {
-        set(
-          workflowInsertStepIdsComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          { parentStepId: 'parent-step-id', nextStepId: undefined },
-        );
-      }}
-    >
+    <RecoilRoot>
       <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
           instanceId: workflowVisualizerComponentInstanceId,
@@ -75,6 +65,8 @@ describe('useCreateStep', () => {
     );
     await result.current.createStep({
       newStepType: 'CODE',
+      parentStepId: 'parent-step-id',
+      nextStepId: undefined,
     });
 
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
