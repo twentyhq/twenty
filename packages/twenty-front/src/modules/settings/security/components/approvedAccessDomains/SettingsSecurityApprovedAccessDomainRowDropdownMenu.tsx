@@ -3,7 +3,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +27,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const [deleteApprovedAccessDomain] = useDeleteApprovedAccessDomainMutation();
 
@@ -72,7 +72,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
               text="Delete"
               onClick={() => {
                 handleDeleteApprovedAccessDomain();
-                closeDropdown();
+                closeDropdown(dropdownId);
               }}
             />
           </DropdownMenuItemsContainer>
