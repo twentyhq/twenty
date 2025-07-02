@@ -12,6 +12,7 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -52,6 +53,7 @@ const StyledOpacityOverlay = styled.div<{ shouldDisplay: boolean }>`
 type WorkflowDiagramEdgeV2ContentProps = {
   labelX: number;
   labelY: number;
+  stepId: string | undefined;
   parentStepId: string;
   nextStepId: string;
   filter: Record<string, any> | undefined;
@@ -63,6 +65,7 @@ type WorkflowDiagramEdgeV2ContentProps = {
 export const WorkflowDiagramEdgeV2Content = ({
   labelX,
   labelY,
+  stepId,
   parentStepId,
   nextStepId,
   filter,
@@ -84,8 +87,10 @@ export const WorkflowDiagramEdgeV2Content = ({
   );
 
   const isSelected =
-    workflowInsertStepIds.parentStepId === parentStepId &&
-    workflowInsertStepIds.nextStepId === nextStepId;
+    workflowInsertStepIds.nextStepId === nextStepId &&
+    (workflowInsertStepIds.parentStepId === parentStepId ||
+      (isNonEmptyString(stepId) &&
+        workflowInsertStepIds.parentStepId === stepId));
 
   const dropdownId = `${WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}-${parentStepId}-${nextStepId}`;
 

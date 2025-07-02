@@ -39,6 +39,7 @@ export const WorkflowDiagramEdgeV2 = ({
     <WorkflowDiagramEdgeV2Content
       labelX={labelX}
       labelY={labelY}
+      stepId={stepId}
       parentStepId={parentStepId}
       nextStepId={nextStepId}
       filter={filter}
