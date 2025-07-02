@@ -341,8 +341,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           inputPayload.imageIdentifierFieldMetadataId,
       });
       const updatedObject = await objectMetadataRepository.save({
-        id: inputId,
-        workspaceId,
+        ...existingObjectMetadata,
         ...inputPayload,
       });
 
