@@ -2,13 +2,13 @@
 
 exports[`Object metadata creation should fail when labelPlural contains only whitespace 1`] = `"Input is too short: """`;
 
-exports[`Object metadata creation should fail when labelPlural exceeds maximum length 1`] = `"String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" exceeds 63 characters limit"`;
+exports[`Object metadata creation should fail when labelPlural exceeds maximum length 1`] = `"Name is too long: it exceeds the 63 characters limit."`;
 
 exports[`Object metadata creation should fail when labelPlural is empty 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when labelSingular contains only whitespace 1`] = `"Input is too short: """`;
 
-exports[`Object metadata creation should fail when labelSingular exceeds maximum length 1`] = `"String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" exceeds 63 characters limit"`;
+exports[`Object metadata creation should fail when labelSingular exceeds maximum length 1`] = `"Name is too long: it exceeds the 63 characters limit."`;
 
 exports[`Object metadata creation should fail when labelSingular is empty 1`] = `"Input is too short: """`;
 
@@ -16,7 +16,7 @@ exports[`Object metadata creation should fail when labels are identical 1`] = `"
 
 exports[`Object metadata creation should fail when labels with whitespaces result to be identical 1`] = `"The singular and plural labels cannot be the same for an object"`;
 
-exports[`Object metadata creation should fail when name exceeds maximum length 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
+exports[`Object metadata creation should fail when name exceeds maximum length 1`] = `"Name is too long: it exceeds the 63 characters limit."`;
 
 exports[`Object metadata creation should fail when namePlural has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 

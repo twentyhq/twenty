@@ -33,7 +33,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
       "code": "BAD_USER_INPUT",
       "displayedErrorMessage": "An error occurred.",
     },
-    "message": "String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit",
+    "message": "Name is too long: it exceeds the 63 characters limit.",
     "name": "UserInputError",
   },
 ]
