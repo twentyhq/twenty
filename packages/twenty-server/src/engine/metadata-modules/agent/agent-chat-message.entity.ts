@@ -20,7 +20,9 @@ export class AgentChatMessagesEntity {
   @Index()
   threadId: string;
 
-  @ManyToOne(() => AgentChatThreadsEntity, (thread) => thread.messages)
+  @ManyToOne(() => AgentChatThreadsEntity, (thread) => thread.messages, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'threadId' })
   thread: Relation<AgentChatThreadsEntity>;
 
