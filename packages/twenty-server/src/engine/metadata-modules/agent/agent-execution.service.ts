@@ -118,14 +118,11 @@ export class AgentExecutionService {
 
     await this.validateApiKey(provider);
 
-    let llmMessages: CoreMessage[] = [];
-
-    console.log('messages', messages);
-
-    llmMessages = messages.map((msg) => ({
+    const llmMessages: CoreMessage[] = messages.map((msg) => ({
       role: msg.sender === 'user' ? 'user' : 'assistant',
       content: msg.message,
     }));
+
     llmMessages.push({ role: 'user', content: userMessage });
 
     const textResponse = await generateText({
