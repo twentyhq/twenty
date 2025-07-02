@@ -28,8 +28,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}

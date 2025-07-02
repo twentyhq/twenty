@@ -1,37 +1,39 @@
 import {
   Body,
   Controller,
-  HttpException,
-  HttpStatus,
   Post,
-  Res,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
-import { CoreMessage } from 'ai';
-import { Response } from 'express';
-
-import { AiService } from 'src/engine/core-modules/ai/ai.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 
-@Controller('mcp/tools/manifest')
+@Controller('mcp')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 export class McpController {
-  constructor(
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly mcpService: McpService) {}
 
-  @Post()
-  async listTools(
-    @Body() request: any,
+  @Post('/')
+  @Post('execute')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async executeTool(
+    @Body() body: JsonRpc,
     @AuthWorkspace() workspace: Workspace,
-    @Res() res: Response,
+    @AuthApiKey() apiKey: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
-    return []
+    return this.mcpService.executeTool(body, {
+      workspace,
+      userWorkspaceId,
+      apiKey,
+    });
   }
 }
