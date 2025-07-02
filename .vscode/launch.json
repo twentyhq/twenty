@@ -82,6 +82,27 @@
       "env": {
         "NODE_ENV": "test"
       },
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "twenty-server - debug unit test file (to launch with test file open)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:jest",
+        "--",
+        "--config",
+        "./jest.config.ts",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/packages/twenty-server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      },
     }
   ]
 }

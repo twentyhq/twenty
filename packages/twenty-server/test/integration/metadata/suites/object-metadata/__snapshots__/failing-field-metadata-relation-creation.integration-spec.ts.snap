@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata relation creation should fail relation when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Name "collisionfieldlabel" is not available",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Invalid label: "   "",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Input is too short: """,
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+    },
+    "message": "Cannot read properties of undefined (reading 'fieldsById')",
+  },
+]
+`;

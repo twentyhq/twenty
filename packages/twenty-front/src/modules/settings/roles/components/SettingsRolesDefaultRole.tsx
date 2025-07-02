@@ -13,7 +13,7 @@ import {
   Role,
   UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type SettingsRoleDefaultRoleProps = {
   roles: Role[];

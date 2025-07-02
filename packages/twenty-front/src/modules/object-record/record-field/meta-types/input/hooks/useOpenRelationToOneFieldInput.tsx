@@ -1,8 +1,8 @@
-import { getRelationToOneFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationToOneFieldInputInstanceId';
 import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -19,7 +19,7 @@ export const useOpenRelationToOneFieldInput = () => {
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
       ({ fieldName, recordId }: { fieldName: string; recordId: string }) => {
-        const recordPickerInstanceId = getRelationToOneFieldInputInstanceId({
+        const recordPickerInstanceId = getFieldInputInstanceId({
           recordId,
           fieldName,
         });
@@ -46,7 +46,7 @@ export const useOpenRelationToOneFieldInput = () => {
         pushFocusItemToFocusStack({
           focusId: recordPickerInstanceId,
           component: {
-            type: FocusComponentType.OPEN_FIELD_INPUT,
+            type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordPickerInstanceId,
           },
           // TODO: Remove this once we've fully migrated away from hotkey scopes

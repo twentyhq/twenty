@@ -8,7 +8,7 @@ import { Section } from 'twenty-ui/layout';
 import {
   AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
 type WorkerQueueMetricsSectionProps = {

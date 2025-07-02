@@ -32,11 +32,17 @@ export class InputTypeDefinitionFactory {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public create(
-    objectMetadata: ObjectMetadataInterface,
-    kind: InputTypeDefinitionKind,
-    options: WorkspaceBuildSchemaOptions,
-  ): InputTypeDefinition {
+  public create({
+    objectMetadata,
+    kind,
+    options,
+    isRelationConnectEnabled = false,
+  }: {
+    objectMetadata: ObjectMetadataInterface;
+    kind: InputTypeDefinitionKind;
+    options: WorkspaceBuildSchemaOptions;
+    isRelationConnectEnabled?: boolean;
+  }): InputTypeDefinition {
     // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
@@ -55,12 +61,12 @@ export class InputTypeDefinitionFactory {
             });
 
             return {
-              ...generateFields(
+              ...generateFields({
                 objectMetadata,
                 kind,
                 options,
-                this.inputTypeFactory,
-              ),
+                typeFactory: this.inputTypeFactory,
+              }),
               and: {
                 type: andOrType,
               },
@@ -78,12 +84,13 @@ export class InputTypeDefinitionFactory {
            * Other input types are generated with fields only
            */
           default:
-            return generateFields(
+            return generateFields({
               objectMetadata,
               kind,
               options,
-              this.inputTypeFactory,
-            );
+              typeFactory: this.inputTypeFactory,
+              isRelationConnectEnabled,
+            });
         }
       },
     });

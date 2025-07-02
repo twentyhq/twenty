@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -6,6 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -30,14 +30,24 @@ export const SentryInitEffect = () => {
         setIsSentryInitializing(true);
 
         try {
-          const { init, browserTracingIntegration, replayIntegration } =
-            await import('@sentry/react');
+          const {
+            init,
+            browserTracingIntegration,
+            replayIntegration,
+            globalHandlersIntegration,
+          } = await import('@sentry/react');
 
           init({
             environment: sentryConfig?.environment ?? undefined,
             release: sentryConfig?.release ?? undefined,
             dsn: sentryConfig?.dsn,
-            integrations: [browserTracingIntegration({}), replayIntegration()],
+            integrations: [
+              browserTracingIntegration({}),
+              replayIntegration(),
+              globalHandlersIntegration({
+                onunhandledrejection: false, // handled in PromiseRejectionEffect
+              }),
+            ],
             tracePropagationTargets: [
               'localhost:3001',
               REACT_APP_SERVER_BASE_URL,

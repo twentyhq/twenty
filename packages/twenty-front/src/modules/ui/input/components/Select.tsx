@@ -7,6 +7,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -14,6 +15,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,8 +30,6 @@ type CallToActionButton = {
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   Icon?: IconComponent;
 };
-
-export type SelectValue = string | number | boolean | null;
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
@@ -99,6 +99,7 @@ export const Select = <Value extends SelectValue>({
     options.find(({ value: key }) => key === value) ||
     emptyOption ||
     options[0];
+
   const filteredOptions = useMemo(
     () =>
       searchInputValue
@@ -129,6 +130,14 @@ export const Select = <Value extends SelectValue>({
     dropdownId,
   );
 
+  const { setSelectedItemId } = useSelectableList(dropdownId);
+
+  const handleDropdownOpen = () => {
+    if (selectedOption && !searchInputValue) {
+      setSelectedItemId(selectedOption.label);
+    }
+  };
+
   return (
     <StyledContainer
       className={className}
@@ -150,6 +159,7 @@ export const Select = <Value extends SelectValue>({
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
+          onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
               selectedOption={selectedOption}

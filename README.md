@@ -1,5 +1,16 @@
-
 <br />
+
+<p align="center">
+  <a href="https://www.producthunt.com/products/twenty-crm">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/product-hunt-banner-light.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/product-hunt-banner-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" alt="Product Hunt Banner" />
+    </picture>
+  </a>
+</p>
+<br />
+
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
@@ -8,16 +19,16 @@
 
 <h2 align="center" >The #1 Open-Source CRM </h2>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p> 
 <br />
 
 
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-light.png" />
-      <img src="./packages/twenty-docs/static/img/preview-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/github-cover-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/github-cover-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/github-cover-light.png" alt="Cover" />
     </picture>
   </a>
 </p>
@@ -43,99 +54,67 @@ We built Twenty for three reasons:
 <br />
 
 # What You Can Do With Twenty
-We're currently developing Twenty's beta version.  
 
 Please feel free to flag any specific needs you have by creating an issue.   
 
 Below are a few features we have implemented to date:
 
-+ [Add, filter, sort, edit, and track customers](#add-filter-sort-edit-and-track-customers)
-+ [Create one or several opportunities for each company](#create-one-or-several-opportunities-for-each-company)
-+ [See rich notes tasks displayed in a timeline](#see-rich-notes-tasks-displayed-in-a-timeline)
-+ [Create tasks on records](#create-tasks-on-records)
-+ [Navigate quickly through the app using keyboard shortcuts and search](#navigate-quickly-through-the-app-using-keyboard-shortcuts-and-search)
++ [Personalize layouts with filters, sort, group by, kanban and table views](#personalize-layouts-with-filters-sort-group-by-kanban-and-table-views)
++ [Customize your objects and fields](#customize-your-objects-and-fields)
++ [Create and manage permissions with custom roles](#create-and-manage-permissions-with-custom-roles)
++ [Automate workflow with triggers and actions](#automate-workflow-with-triggers-and-actions)
++ [Emails, calendar events, files, and more](#emails-calendar-events-files-and-more)
 
 
-## Add, filter, sort, edit, and track customers:
-
-<p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/index-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/index-light.png" />
-      <img src="./packages/twenty-docs/static/img/visualise-customer-light.png" alt="Companies view" />
-    </picture>
-</p>
-
-## Create one or several opportunities for each company:
+## Personalize layouts with filters, sort, group by, kanban and table views
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/kanban-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/kanban-light.png" />
-      <img src="./packages/twenty-docs/static/img/follow-your-deals-light.png" alt="Opportunities view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/views-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/views-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/views-light.png" alt="Companies Kanban Views" />
     </picture>
 </p>
 
-## Track deals effortlessly with the email integration:
+## Customize your objects and fields
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-light.png" />
-      <img src="./packages/twenty-docs/static/img/emails-light.png" alt="Emails" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/data-model-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/data-model-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/data-model-light.png" alt="Setting Custom Objects" />
     </picture>
 </p>
 
-## Tailor your data model to meet business needs:
+## Create and manage permissions with custom roles
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-light.png" />
-      <img src="./packages/twenty-docs/static/img/data-light.png" alt="Data model" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/permissions-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/permissions-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/permissions-light.png" alt="Permissions" />
     </picture>
 </p>
 
-## See rich notes displayed in a timeline:
+## Automate workflow with triggers and actions
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-light.png" />
-      <img src="./packages/twenty-docs/static/img/notes-light.png" alt="Rich notes" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/workflows-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/workflows-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/workflows-light.png" alt="Workflows" />
     </picture>
 </p>
 
-## Create tasks on records
+## Emails, calendar events, files, and more
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/tasks-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/tasks-light.png" />
-      <img src="./packages/twenty-docs/static/img/create-tasks-light.png" alt="Tasks" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/plus-other-features-dark.png" />
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/plus-other-features-light.png" />
+      <img src="./packages/twenty-website/public/images/readme/plus-other-features-light.png" alt="Other Features" />
     </picture>
 </p>
-
-## Navigate quickly through the app using keyboard shortcuts and search:
-
-<p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-light.png" />
-      <img src="./packages/twenty-docs/static/img/keyboard-dark.png" alt="Keyboard shortcuts" />
-    </picture>
-</p>
-
-## Connect your CRM to all your tools through our APIs and Webhooks.
-
-<p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-light.png" />
-      <img src="./packages/twenty-docs/static/img/api-light.png" alt="API" />
-    </picture>
-</p>
-
 
 <br />
 
@@ -167,7 +146,3 @@ Below are a few features we have implemented to date:
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
 - Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
-
-
-
-

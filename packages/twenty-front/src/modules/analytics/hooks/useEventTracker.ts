@@ -4,7 +4,7 @@ import {
   AnalyticsType,
   MutationTrackAnalyticsArgs,
   useTrackAnalyticsMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
 export const getSessionId = (): string => {

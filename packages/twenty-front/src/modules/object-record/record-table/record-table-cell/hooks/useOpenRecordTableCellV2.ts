@@ -24,9 +24,9 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -90,7 +90,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     recordTableId,
   );
 
-  const setFocusPosition = useSetRecordTableFocusPosition();
+  const { focusRecordTableCell } = useFocusRecordTableCell();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -157,7 +157,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
 
         deactivateRecordTableRow();
 
-        setFocusPosition(cellPosition);
+        focusRecordTableCell(cellPosition);
 
         setIsRowFocusActive(false);
 
@@ -194,7 +194,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     [
       clickOutsideListenerIsActivatedState,
       deactivateRecordTableRow,
-      setFocusPosition,
+      focusRecordTableCell,
       setIsRowFocusActive,
       setDragSelectionStartEnabled,
       openFieldInput,

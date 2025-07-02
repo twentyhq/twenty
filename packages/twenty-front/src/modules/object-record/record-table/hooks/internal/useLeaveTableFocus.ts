@@ -1,7 +1,8 @@
+import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
+import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -14,10 +15,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   );
 
   const resetTableRowSelection = useResetTableRowSelection(
-    recordTableIdFromContext,
-  );
-
-  const { setIsFocusActiveForCurrentPosition } = useSetIsRecordTableFocusActive(
     recordTableIdFromContext,
   );
 
@@ -34,15 +31,23 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableIdFromContext,
   );
 
-  return () => {
-    resetTableRowSelection();
+  const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
-    setIsFocusActiveForCurrentPosition(false);
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
+    recordTableIdFromContext,
+  );
+
+  return () => {
+    unfocusRecordTableCell();
+
+    resetTableRowSelection();
 
     unfocusRecordTableRow();
 
     deactivateRecordTableRow();
 
     setRecordTableHoverPosition(null);
+
+    resetFocusStackToRecordIndex();
   };
 };

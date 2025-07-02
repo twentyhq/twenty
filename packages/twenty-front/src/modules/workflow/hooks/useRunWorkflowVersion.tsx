@@ -1,6 +1,7 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,17 +16,17 @@ import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/ut
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { WorkflowRun } from '@/workflow/types/Workflow';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
   RunWorkflowVersionMutation,
   RunWorkflowVersionMutationVariables,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useRunWorkflowVersion = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
@@ -42,7 +43,7 @@ export const useRunWorkflowVersion = () => {
     RunWorkflowVersionMutation,
     RunWorkflowVersionMutationVariables
   >(RUN_WORKFLOW_VERSION, {
-    client: apolloClient,
+    client: apolloCoreClient,
   });
 
   const computedRecordGqlFields = generateDepthOneRecordGqlFields({
@@ -87,7 +88,7 @@ export const useRunWorkflowVersion = () => {
     };
 
     const optimisticRecordInput = computeOptimisticRecordFromInput({
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
       currentWorkspaceMember: currentWorkspaceMember,
       objectMetadataItem,
       objectMetadataItems,
@@ -122,7 +123,7 @@ export const useRunWorkflowVersion = () => {
     });
 
     triggerCreateRecordsOptimisticEffect({
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
       objectMetadataItem,
       recordsToCreate: [recordNodeCreatedInCache],
       objectMetadataItems,

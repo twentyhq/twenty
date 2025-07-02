@@ -1,18 +1,16 @@
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
+import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useResetFocusStack } from '@/ui/utilities/focus/hooks/useResetFocusStack';
-import { useCallback } from 'react';
+import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilCallback } from 'recoil';
 
 export const useCloseRecordTableCellNoGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
-
-  const setHotkeyScope = useSetHotkeyScope();
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -23,28 +21,27 @@ export const useCloseRecordTableCellNoGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const { resetFocusStack } = useResetFocusStack();
+  const clickOutsideListenerIsActivatedState =
+    useRecoilComponentCallbackStateV2(
+      clickOutsideListenerIsActivatedComponentState,
+      RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+    );
 
-  const closeTableCellNoGroup = useCallback(() => {
-    toggleClickOutside(true);
-    setDragSelectionStartEnabled(true);
-    closeCurrentTableCellInEditMode();
-
-    // TODO: Remove this once we've fully migrated away from hotkey scopes
-    resetFocusStack();
-
-    setHotkeyScope(TableHotkeyScope.TableFocus, {
-      goto: true,
-      keyboardShortcutMenu: true,
-      searchRecords: true,
-    });
-  }, [
-    closeCurrentTableCellInEditMode,
-    resetFocusStack,
-    setDragSelectionStartEnabled,
-    setHotkeyScope,
-    toggleClickOutside,
-  ]);
+  const closeTableCellNoGroup = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        toggleClickOutside(true);
+        setDragSelectionStartEnabled(true);
+        closeCurrentTableCellInEditMode();
+        set(clickOutsideListenerIsActivatedState, true);
+      },
+    [
+      clickOutsideListenerIsActivatedState,
+      closeCurrentTableCellInEditMode,
+      setDragSelectionStartEnabled,
+      toggleClickOutside,
+    ],
+  );
 
   return {
     closeTableCellNoGroup,

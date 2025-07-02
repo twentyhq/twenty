@@ -1,8 +1,3 @@
-import {
-  isDefined,
-  parseJson,
-  removeUndefinedFields,
-} from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   CountryCallingCode,
@@ -11,6 +6,11 @@ import {
   getCountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
+import {
+  isDefined,
+  parseJson,
+  removeUndefinedFields,
+} from 'twenty-shared/utils';
 
 import {
   RecordTransformerException,
@@ -165,7 +165,7 @@ const validateAndInferPhoneInput = ({
     countryCode,
   });
 
-  if (isDefined(number)) {
+  if (isDefined(number) && isNonEmptyString(number)) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
       callingCode,

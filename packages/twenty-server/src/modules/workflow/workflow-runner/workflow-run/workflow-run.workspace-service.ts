@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -35,16 +37,22 @@ export class WorkflowRunWorkspaceService {
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async createWorkflowRun({
     workflowVersionId,
     createdBy,
     workflowRunId,
+    context,
+    status,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
     workflowRunId?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context: Record<string, any>;
+    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -110,8 +118,9 @@ export class WorkflowRunWorkspaceService {
       workflowVersionId,
       createdBy,
       workflowId: workflow.id,
-      status: WorkflowRunStatus.NOT_STARTED,
+      status,
       position,
+      context,
     });
 
     await workflowRunRepository.insert(workflowRun);
@@ -122,13 +131,10 @@ export class WorkflowRunWorkspaceService {
   async startWorkflowRun({
     workflowRunId,
     workspaceId,
-    context,
     output,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context: Record<string, any>;
     output: WorkflowRunOutput;
   }) {
     const workflowRunRepository =
@@ -149,7 +155,10 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    if (workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED) {
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
       throw new WorkflowRunException(
         'Workflow run already started',
         WorkflowRunExceptionCode.INVALID_OPERATION,
@@ -159,7 +168,6 @@ export class WorkflowRunWorkspaceService {
     const partialUpdate = {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
-      context,
       output,
     };
 
@@ -167,7 +175,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['status', 'startedAt', 'context', 'output'],
+      updatedFields: ['status', 'startedAt', 'output'],
     });
   }
 
@@ -214,6 +222,14 @@ export class WorkflowRunWorkspaceService {
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
       updatedFields: ['status', 'endedAt', 'output'],
+    });
+
+    await this.metricsService.incrementCounter({
+      key:
+        status === WorkflowRunStatus.COMPLETED
+          ? MetricsKeys.WorkflowRunCompleted
+          : MetricsKeys.WorkflowRunFailed,
+      eventId: workflowRunId,
     });
   }
 

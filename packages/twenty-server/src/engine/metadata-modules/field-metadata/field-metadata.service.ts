@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
@@ -44,6 +44,7 @@ import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -82,6 +83,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
     fieldMetadataInput: T;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     existingFieldMetadata?: FieldMetadataInterface;
+    objectMetadataMaps: ObjectMetadataMaps;
   };
 
 @Injectable()
@@ -208,6 +210,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata,
         fieldMetadataInput: fieldMetadataForUpdate,
         objectMetadata: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       });
 
       const isLabelSyncedWithName =
@@ -528,6 +531,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataType,
     objectMetadata,
     existingFieldMetadata,
+    objectMetadataMaps,
   }: ValidateFieldMetadataArgs<T>): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
@@ -602,29 +606,36 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
           relationCreationPayload,
         );
+        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+          relationCreationPayload.targetFieldLabel,
+        );
+
+        validateMetadataNameOrThrow(computedMetadataNameFromLabel);
+
+        const objectMetadataTarget =
+          objectMetadataMaps.byId[
+            relationCreationPayload.targetObjectMetadataId
+          ];
+
+        validateFieldNameAvailabilityOrThrow(
+          computedMetadataNameFromLabel,
+          objectMetadataTarget,
+        );
       }
     }
 
     return fieldMetadataInput;
   }
 
-  async resolveOverridableString(
-    fieldMetadata: FieldMetadataDTO,
+  resolveOverridableString(
+    fieldMetadata: Pick<
+      FieldMetadataDTO,
+      'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
+    >,
     labelKey: 'label' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
-  ): Promise<string> {
+  ): string {
     if (fieldMetadata.isCustom) {
-      return fieldMetadata[labelKey] ?? '';
-    }
-
-    if (!locale || locale === SOURCE_LOCALE) {
-      if (
-        fieldMetadata.standardOverrides &&
-        isDefined(fieldMetadata.standardOverrides[labelKey])
-      ) {
-        return fieldMetadata.standardOverrides[labelKey] as string;
-      }
-
       return fieldMetadata[labelKey] ?? '';
     }
 
@@ -736,6 +747,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: CreateFieldInput,
     objectMetadata: ObjectMetadataItemWithFieldMaps,
     fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<FieldMetadataEntity[]> {
     if (!fieldMetadataInput.isRemoteCreation) {
       assertMutationNotOnRemoteObject(objectMetadata);
@@ -755,6 +767,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         relationCreationPayload: fieldMetadataInput.relationCreationPayload,
       },
       objectMetadata,
+      objectMetadataMaps,
     });
 
     if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
@@ -781,13 +794,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
+    const targetFieldMetadataName = computeMetadataNameFromLabel(
+      relationCreationPayload.targetFieldLabel,
+    );
+
     const targetFieldMetadataToCreate =
       this.prepareCustomFieldMetadataForCreation({
         objectMetadataId: relationCreationPayload.targetObjectMetadataId,
         type: FieldMetadataType.RELATION,
-        name: computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        ),
+        name: targetFieldMetadataName,
         label: relationCreationPayload.targetFieldLabel,
         icon: relationCreationPayload.targetFieldIcon,
         workspaceId: fieldMetadataForCreate.workspaceId,
@@ -908,6 +923,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               fieldMetadataInput,
               objectMetadata,
               fieldMetadataRepository,
+              objectMetadataMaps,
             );
 
           createdFieldMetadatas.push(...createdFieldMetadataItems);

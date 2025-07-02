@@ -22,6 +22,7 @@ export class CreateFieldInput extends OmitType(
   @IsOptional()
   isRemoteCreation?: boolean;
 
+  // TODO @prastoin implement validation for this with validate nested and dedicated class instance
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   relationCreationPayload?: {

@@ -85,6 +85,11 @@ export class ConnectedAccountRefreshTokensService {
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
+        case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Token refresh is not supported for IMAP provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+          );
         default:
           return assertUnreachable(
             connectedAccount.provider,
@@ -93,9 +98,26 @@ export class ConnectedAccountRefreshTokensService {
       }
     } catch (error) {
       if (error?.name === 'AggregateError') {
-        this.logger.log(error.message);
-        this.logger.log(error.name);
+        const firstErrorCode = error?.errors?.[0]?.code;
+        const networkErrorCodes = [
+          'ENETUNREACH',
+          'ETIMEDOUT',
+          'ECONNABORTED',
+          'ERR_NETWORK',
+        ];
+        const isTemporaryNetworkError =
+          networkErrorCodes.includes(firstErrorCode);
+
+        this.logger.log(error?.message);
+        this.logger.log(firstErrorCode);
         this.logger.log(error?.errors);
+
+        if (isTemporaryNetworkError) {
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${firstErrorCode}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+          );
+        }
       } else {
         this.logger.log(error);
       }

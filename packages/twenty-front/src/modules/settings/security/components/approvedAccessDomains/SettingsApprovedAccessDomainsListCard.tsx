@@ -3,19 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
+import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
+import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
-import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
-import { useGetApprovedAccessDomainsQuery } from '~/generated/graphql';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
+import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link)`
   text-decoration: none;

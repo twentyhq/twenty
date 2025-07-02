@@ -1,7 +1,7 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('isFieldTypeValidForAggregateOperation', () => {
   it('should return true for valid field types and operations', () => {

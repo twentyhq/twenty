@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
-import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -8,6 +8,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import {
   WorkflowDiagram,
@@ -132,6 +133,9 @@ export const WorkflowDiagramCanvasBase = ({
   const workflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
   );
+  const workflowDiagramPanOnDrag = useRecoilComponentValueV2(
+    workflowDiagramPanOnDragComponentState,
+  );
   const workflowDiagramState = useRecoilComponentCallbackStateV2(
     workflowDiagramComponentState,
   );
@@ -180,7 +184,7 @@ export const WorkflowDiagramCanvasBase = ({
     });
   };
 
-  useListenRightDrawerClose(() => {
+  useListenToSidePanelClosing(() => {
     reactflow.setNodes((nodes) =>
       nodes.map((node) => ({ ...node, selected: false })),
     );
@@ -383,6 +387,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
+        panOnDrag={workflowDiagramPanOnDrag}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}

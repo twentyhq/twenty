@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { assertUnreachable } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
@@ -33,6 +33,10 @@ export class EmailAliasManagerService {
           await this.googleEmailAliasManagerService.getHandleAliases(
             connectedAccount,
           );
+        break;
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        // IMAP Protocol does not support email aliases
+        handleAliases = [];
         break;
       default:
         assertUnreachable(

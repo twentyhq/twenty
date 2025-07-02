@@ -3,6 +3,8 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -13,13 +15,14 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-root-steps.utils';
+import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
   workflowRunId: string;
-  payload?: object;
   lastExecutedStepId?: string;
 };
 
@@ -31,12 +34,13 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly metricsService: MetricsService,
+    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
   @Process(RunWorkflowJob.name)
   async handle({
     workflowRunId,
-    payload,
     lastExecutedStepId,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
@@ -51,7 +55,6 @@ export class RunWorkflowJob {
         await this.startWorkflowExecution({
           workflowRunId,
           workspaceId,
-          payload: payload ?? {},
         });
       }
     } catch (error) {
@@ -61,22 +64,20 @@ export class RunWorkflowJob {
         status: WorkflowRunStatus.FAILED,
         error: error.message,
       });
+    } finally {
+      await this.workflowRunQueueWorkspaceService.decreaseWorkflowRunQueuedCount(
+        workspaceId,
+      );
     }
   }
 
   private async startWorkflowExecution({
     workflowRunId,
     workspaceId,
-    payload,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    payload: object;
   }): Promise<void> {
-    const context = {
-      trigger: payload,
-    };
-
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -96,10 +97,16 @@ export class RunWorkflowJob {
       );
     }
 
+    await this.incrementTriggerMetrics({
+      workflowRunId,
+      triggerType: workflowVersion.trigger.type,
+    });
+
+    const triggerPayload = workflowRun.context?.trigger ?? {};
+
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
-      context,
       output: {
         flow: {
           trigger: workflowVersion.trigger,
@@ -107,7 +114,7 @@ export class RunWorkflowJob {
         },
         stepsOutput: {
           trigger: {
-            result: payload,
+            result: triggerPayload,
           },
         },
       },
@@ -121,7 +128,9 @@ export class RunWorkflowJob {
       workflowRunId,
       currentStepId: rootSteps[0].id,
       steps: workflowVersion.steps,
-      context,
+      context: workflowRun.context ?? {
+        trigger: triggerPayload,
+      },
       workspaceId,
     });
   }
@@ -222,10 +231,47 @@ export class RunWorkflowJob {
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.WorkflowRunFailedThrottled,
+        eventId: workflowId,
+      });
+
       throw new WorkflowRunException(
         'Workflow execution rate limit exceeded',
         WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED,
       );
     }
+  }
+
+  private async incrementTriggerMetrics({
+    workflowRunId,
+    triggerType,
+  }: {
+    workflowRunId: string;
+    triggerType: string;
+  }) {
+    let key: MetricsKeys;
+
+    switch (triggerType) {
+      case WorkflowTriggerType.DATABASE_EVENT:
+        key = MetricsKeys.WorkflowRunStartedDatabaseEventTrigger;
+        break;
+      case WorkflowTriggerType.CRON:
+        key = MetricsKeys.WorkflowRunStartedCronTrigger;
+        break;
+      case WorkflowTriggerType.WEBHOOK:
+        key = MetricsKeys.WorkflowRunStartedWebhookTrigger;
+        break;
+      case WorkflowTriggerType.MANUAL:
+        key = MetricsKeys.WorkflowRunStartedManualTrigger;
+        break;
+      default:
+        throw new Error('Invalid trigger type');
+    }
+
+    await this.metricsService.incrementCounter({
+      key,
+      eventId: workflowRunId,
+    });
   }
 }

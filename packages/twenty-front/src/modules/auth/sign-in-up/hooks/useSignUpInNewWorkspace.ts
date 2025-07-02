@@ -1,9 +1,9 @@
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { AppPath } from '@/types/AppPath';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -11,7 +11,7 @@ export const useSignUpInNewWorkspace = () => {
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const createWorkspace = () => {
+  const createWorkspace = ({ newTab } = { newTab: true }) => {
     signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
         return await redirectToWorkspaceDomain(
@@ -20,7 +20,7 @@ export const useSignUpInNewWorkspace = () => {
           {
             loginToken: data.signUpInNewWorkspace.loginToken.token,
           },
-          '_blank',
+          newTab ? '_blank' : '_self',
         );
       },
       onError: (error: Error) => {

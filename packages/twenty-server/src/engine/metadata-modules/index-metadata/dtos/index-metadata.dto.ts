@@ -14,7 +14,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsBoolean,
-  IsDateString,
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -81,11 +81,11 @@ export class IndexMetadataDTO {
 
   objectMetadataId: string;
 
-  @IsDateString()
+  @IsDate()
   @Field()
   createdAt: Date;
 
-  @IsDateString()
+  @IsDate()
   @Field()
   updatedAt: Date;
 

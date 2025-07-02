@@ -1,9 +1,9 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -39,7 +39,7 @@ export const usePersistViewFilterRecords = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const createViewFilterRecords = useCallback(
     (viewFiltersToCreate: ViewFilter[], view: GraphQLView) => {
@@ -47,7 +47,7 @@ export const usePersistViewFilterRecords = () => {
 
       return Promise.all(
         viewFiltersToCreate.map((viewFilter) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: createOneRecordMutation,
             variables: {
               input: {
@@ -79,7 +79,7 @@ export const usePersistViewFilterRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       createOneRecordMutation,
       objectMetadataItem,
       objectMetadataItems,
@@ -92,7 +92,7 @@ export const usePersistViewFilterRecords = () => {
       if (!viewFiltersToUpdate.length) return;
       return Promise.all(
         viewFiltersToUpdate.map((viewFilter) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
               idToUpdate: viewFilter.id,
@@ -128,7 +128,7 @@ export const usePersistViewFilterRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
@@ -141,7 +141,7 @@ export const usePersistViewFilterRecords = () => {
       if (!viewFilterIdsToDelete.length) return;
       return Promise.all(
         viewFilterIdsToDelete.map((viewFilterId) =>
-          apolloClient.mutate({
+          apolloCoreClient.mutate({
             mutation: destroyOneRecordMutation,
             variables: {
               idToDestroy: viewFilterId,
@@ -168,7 +168,7 @@ export const usePersistViewFilterRecords = () => {
       );
     },
     [
-      apolloClient,
+      apolloCoreClient,
       destroyOneRecordMutation,
       getRecordFromCache,
       objectMetadataItem,

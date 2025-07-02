@@ -96,6 +96,7 @@ describe('ClientConfigController', () => {
         isGoogleMessagingEnabled: false,
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
+        isIMAPMessagingEnabled: false,
         calendarBookingPageId: undefined,
       };
 

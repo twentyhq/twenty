@@ -13,7 +13,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
@@ -58,15 +58,16 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    handleSelectAllRows,
-    TableHotkeyScope.TableFocus,
-    [],
-    {
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+a,meta+a'],
+    callback: handleSelectAllRows,
+    focusId: recordTableId,
+    scope: RecordIndexHotkeyScope.RecordIndex,
+    dependencies: [handleSelectAllRows],
+    options: {
       enableOnFormTags: false,
     },
-  );
+  });
 
   const { saveViewFields } = useSaveCurrentViewFields();
 

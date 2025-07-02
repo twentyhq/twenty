@@ -32,7 +32,7 @@ export class GoogleRecaptchaDriver implements CaptchaDriver {
     return {
       success: responseData.success,
       ...(!responseData.success && {
-        error: responseData['error-codes']?.[0] ?? 'Captcha Error',
+        error: responseData['error-codes']?.[0] ?? 'unknown-error',
       }),
     };
   }

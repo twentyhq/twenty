@@ -1,4 +1,4 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
 import { RecordBoardColumnHeaderAggregateDropdownMenuContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent';
@@ -12,9 +12,10 @@ import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-re
 import { t } from '@lingui/core/macro';
 
 export const AggregateDropdownContent = () => {
-  const { currentContentId, objectMetadataItem } = useDropdown({
-    context: RecordBoardColumnHeaderAggregateDropdownContext,
-  });
+  const { currentContentId, objectMetadataItem } =
+    useDropdownContextStateManagement({
+      context: RecordBoardColumnHeaderAggregateDropdownContext,
+    });
 
   switch (currentContentId) {
     case 'countAggregateOperationsOptions': {

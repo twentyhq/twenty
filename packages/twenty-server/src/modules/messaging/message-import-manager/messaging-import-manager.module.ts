@@ -20,6 +20,7 @@ import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
+import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
 import { MessagingAddSingleMessageToCacheForImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
 import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
@@ -27,6 +28,7 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -45,6 +47,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     WorkspaceDataSourceModule,
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,
+    MessagingIMAPDriverModule,
     MessagingCommonModule,
     TypeOrmModule.forFeature(
       [Workspace, DataSourceEntity, ObjectMetadataEntity],
@@ -82,6 +85,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessageImportExceptionHandlerService,
     MessagingCursorService,
     MessagingSendMessageService,
+    MessagingAccountAuthenticationService,
   ],
   exports: [
     MessagingSendMessageService,

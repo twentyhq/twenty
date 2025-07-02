@@ -5,9 +5,11 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
+import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -16,12 +18,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { useActivateWorkspaceMutation } from '~/generated/graphql';
+import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -36,6 +40,15 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
+
 enum PendingCreationLoaderStep {
   None = 'none',
   Step1 = 'step-1',
@@ -44,7 +57,6 @@ enum PendingCreationLoaderStep {
 }
 
 const StyledPendingCreationLoader = styled(motion.div)`
-  height: 388px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -62,6 +74,7 @@ export const CreateWorkspace = () => {
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,
   );
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const validationSchema = z
     .object({
@@ -140,26 +153,36 @@ export const CreateWorkspace = () => {
     <Modal.Content isVerticalCentered isHorizontalCentered>
       {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
         <>
+          <Logo
+            primaryLogo={
+              isNonEmptyString(currentWorkspace?.logo)
+                ? currentWorkspace?.logo
+                : undefined
+            }
+          />
+          <Title>
+            <Trans>Creating your workspace</Trans>
+          </Title>
           <StyledPendingCreationLoader>
             {pendingCreationLoaderStep === PendingCreationLoaderStep.Step1 && (
-              <Title animate>
-                <Loader color="gray" />
-                <Trans>Setting up your database</Trans>
-              </Title>
+              <SubTitle>
+                <Trans>Setting up your database...</Trans>
+              </SubTitle>
             )}
             {pendingCreationLoaderStep === PendingCreationLoaderStep.Step2 && (
-              <Title animate>
-                <Loader color="gray" />
-                <Trans>Creating your schema</Trans>
-              </Title>
+              <SubTitle>
+                <Trans>Creating your data model...</Trans>
+              </SubTitle>
             )}
             {pendingCreationLoaderStep === PendingCreationLoaderStep.Step3 && (
-              <Title animate>
-                <Loader color="gray" />
-                <Trans>Prefilling your workspace data</Trans>
-              </Title>
+              <SubTitle>
+                <Trans>Prefilling your workspace data...</Trans>
+              </SubTitle>
             )}
           </StyledPendingCreationLoader>
+          <StyledLoaderContainer>
+            <Loader color="gray" />
+          </StyledLoaderContainer>
         </>
       )}
       {pendingCreationLoaderStep === PendingCreationLoaderStep.None && (

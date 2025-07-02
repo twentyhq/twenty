@@ -134,13 +134,14 @@ export class ObjectMetadataResolver {
   async fieldsList(
     @AuthWorkspace() workspace: Workspace,
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<FieldMetadataDTO[]> {
     try {
       const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load(
         {
           objectMetadata,
           workspaceId: workspace.id,
+          locale: context.req.headers['x-locale'],
         },
       );
 
