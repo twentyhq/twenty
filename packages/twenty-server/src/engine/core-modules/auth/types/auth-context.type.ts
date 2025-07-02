@@ -10,6 +10,7 @@ export type AuthContext = {
   workspace?: Workspace;
   userWorkspaceId?: string;
   authProvider?: AuthProviderEnum;
+  locale?: string; // Added locale property
 };
 
 export enum JwtTokenTypeEnum {
