@@ -8,10 +8,9 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
-import { applyFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/apply-filter.util';
-
-import { getPreviousStepOutput } from './utils/get-previous-step-output.util';
+import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 @Injectable()
 export class FilterWorkflowAction implements WorkflowExecutor {
@@ -34,37 +33,30 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const { filter } = step.settings.input;
+    const { filterGroups, filters } = step.settings.input;
 
-    if (!filter) {
+    if (!filterGroups || !filters) {
       throw new WorkflowStepExecutorException(
         'Filter is not defined',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_SETTINGS,
       );
     }
 
-    const previousStepOutput = getPreviousStepOutput(
-      steps,
-      currentStepId,
-      context,
-    );
+    const resolvedFilters = filters.map((filter) => ({
+      ...filter,
+      rightOperand: resolveInput(filter.value, context),
+      leftOperand: resolveInput(filter.stepOutputKey, context),
+    }));
 
-    const isPreviousStepOutputArray = Array.isArray(previousStepOutput);
-
-    const previousStepOutputArray = isPreviousStepOutputArray
-      ? previousStepOutput
-      : [previousStepOutput];
-
-    const filteredOutput = applyFilter(previousStepOutputArray, filter);
-
-    if (filteredOutput.length === 0) {
-      return {
-        result: undefined,
-      };
-    }
+    const matchesFilter = evaluateFilterConditions({
+      filterGroups,
+      filters: resolvedFilters,
+    });
 
     return {
-      result: isPreviousStepOutputArray ? filteredOutput : filteredOutput[0],
+      result: {
+        matchesFilter,
+      },
     };
   }
 }

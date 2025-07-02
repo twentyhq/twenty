@@ -7,7 +7,6 @@ import {
 
 import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Tag, TagColor } from 'twenty-ui/components';
@@ -30,8 +29,6 @@ export const SubMatchingSelectDropdownButton = <T extends string>({
   column,
   placeholder,
 }: SubMatchingSelectDropdownButtonProps<T>) => {
-  const { openDropdown } = useDropdown();
-
   const { fields } = useSpreadsheetImportInternal<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);
@@ -39,11 +36,7 @@ export const SubMatchingSelectDropdownButton = <T extends string>({
   const theme = useTheme();
 
   return (
-    <SubMatchingSelectControlContainer
-      cursor="pointer"
-      onClick={() => openDropdown()}
-      id="control"
-    >
+    <SubMatchingSelectControlContainer cursor="pointer" id="control">
       <Tag
         text={value?.label ?? placeholder}
         color={value?.color as TagColor}

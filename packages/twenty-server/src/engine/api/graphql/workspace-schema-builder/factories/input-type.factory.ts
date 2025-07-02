@@ -44,6 +44,9 @@ export class InputTypeFactory {
        */
       case InputTypeDefinitionKind.Create:
       case InputTypeDefinitionKind.Update:
+        //if it's a relation connect field, type is in storage
+        if (typeOptions.isRelationConnectField) break;
+
         inputType = this.typeMapperService.mapToScalarType(
           type,
           typeOptions.settings,

@@ -10,7 +10,7 @@ import {
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -38,7 +38,7 @@ export const SubMatchingSelectRowRightDropdown = <T extends string>({
 }: SubMatchingSelectRowRightDropdownProps<T>) => {
   const dropdownId = `sub-matching-select-dropdown-${option.entry}`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { fields } = useSpreadsheetImportInternal<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
@@ -46,7 +46,7 @@ export const SubMatchingSelectRowRightDropdown = <T extends string>({
 
   const handleSelect = (selectedOption: SelectOption) => {
     onSubChange(selectedOption.value as T, column.index, option.entry ?? '');
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (
