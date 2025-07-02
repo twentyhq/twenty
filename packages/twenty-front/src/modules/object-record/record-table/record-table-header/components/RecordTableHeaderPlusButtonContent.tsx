@@ -61,7 +61,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           fullWidth
-          to={getSettingsPath(SettingsPath.Objects, {
+          to={getSettingsPath(SettingsPath.ObjectDetail, {
             objectNamePlural: objectMetadataItem.namePlural,
           })}
           onClick={() => {
