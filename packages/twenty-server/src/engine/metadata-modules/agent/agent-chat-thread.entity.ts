@@ -12,7 +12,7 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { AgentChatMessagesEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+import { AgentChatMessageEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 
 import { AgentEntity } from './agent.entity';
 
@@ -31,8 +31,8 @@ export class AgentChatThreadsEntity {
   @JoinColumn({ name: 'agentId' })
   agent: Relation<AgentEntity>;
 
-  @OneToMany(() => AgentChatMessagesEntity, (message) => message.thread)
-  messages: Relation<AgentChatMessagesEntity[]>;
+  @OneToMany(() => AgentChatMessageEntity, (message) => message.thread)
+  messages: Relation<AgentChatMessageEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;

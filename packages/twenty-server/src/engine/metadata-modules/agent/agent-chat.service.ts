@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
+  AgentChatMessageEntity,
   AgentChatMessageRole,
-  AgentChatMessagesEntity,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadsEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
@@ -16,8 +16,8 @@ export class AgentChatService {
   constructor(
     @InjectRepository(AgentChatThreadsEntity, 'core')
     private readonly threadRepository: Repository<AgentChatThreadsEntity>,
-    @InjectRepository(AgentChatMessagesEntity, 'core')
-    private readonly messageRepository: Repository<AgentChatMessagesEntity>,
+    @InjectRepository(AgentChatMessageEntity, 'core')
+    private readonly messageRepository: Repository<AgentChatMessageEntity>,
     private readonly agentExecutionService: AgentExecutionService,
   ) {}
 

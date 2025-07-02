@@ -12,7 +12,7 @@ import {
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AgentChatMessagesEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+import { AgentChatMessageEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
@@ -42,8 +42,8 @@ export class AgentExecutionService {
     private readonly agentToolService: AgentToolService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(AgentChatMessagesEntity, 'core')
-    private readonly agentChatmessageRepository: Repository<AgentChatMessagesEntity>,
+    @InjectRepository(AgentChatMessageEntity, 'core')
+    private readonly agentChatmessageRepository: Repository<AgentChatMessageEntity>,
   ) {}
 
   private getModel = (modelId: ModelId, provider: ModelProvider) => {
@@ -101,7 +101,7 @@ export class AgentExecutionService {
   }: {
     agentId: string;
     userMessage: string;
-    messages: AgentChatMessagesEntity[];
+    messages: AgentChatMessageEntity[];
   }): Promise<string> {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },

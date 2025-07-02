@@ -17,7 +17,7 @@ export enum AgentChatMessageRole {
 }
 
 @Entity('agentChatMessage')
-export class AgentChatMessagesEntity {
+export class AgentChatMessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
