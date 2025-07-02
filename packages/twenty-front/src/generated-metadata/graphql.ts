@@ -452,10 +452,6 @@ export type ConnectionParametersOutput = {
   username: Scalars['String'];
 };
 
-export type CreateAgentChatThreadInput = {
-  agentId: Scalars['ID'];
-};
-
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   modelId: Scalars['String'];
@@ -1149,7 +1145,7 @@ export type MutationComputeStepOutputSchemaArgs = {
 
 
 export type MutationCreateAgentChatThreadArgs = {
-  input: CreateAgentChatThreadInput;
+  agentId: Scalars['ID'];
 };
 
 
@@ -1383,7 +1379,8 @@ export type MutationSaveImapSmtpCaldavArgs = {
 
 
 export type MutationSendAgentChatMessageArgs = {
-  input: SendAgentChatMessageInput;
+  message: Scalars['String'];
+  threadId: Scalars['ID'];
 };
 
 
@@ -2151,11 +2148,6 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
-};
-
-export type SendAgentChatMessageInput = {
-  message: Scalars['String'];
-  threadId: Scalars['ID'];
 };
 
 export type SendInvitationsOutput = {
@@ -3538,7 +3530,7 @@ export type AssignRoleToAgentMutationVariables = Exact<{
 export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
 
 export type CreateAgentChatThreadMutationVariables = Exact<{
-  input: CreateAgentChatThreadInput;
+  agentId: Scalars['ID'];
 }>;
 
 
@@ -3552,7 +3544,8 @@ export type RemoveRoleFromAgentMutationVariables = Exact<{
 export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
 
 export type SendAgentChatMessageMutationVariables = Exact<{
-  input: SendAgentChatMessageInput;
+  threadId: Scalars['ID'];
+  message: Scalars['String'];
 }>;
 
 
@@ -7710,8 +7703,8 @@ export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRol
 export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
 export const CreateAgentChatThreadDocument = gql`
-    mutation CreateAgentChatThread($input: CreateAgentChatThreadInput!) {
-  createAgentChatThread(input: $input) {
+    mutation CreateAgentChatThread($agentId: ID!) {
+  createAgentChatThread(agentId: $agentId) {
     id
     agentId
     createdAt
@@ -7734,7 +7727,7 @@ export type CreateAgentChatThreadMutationFn = Apollo.MutationFunction<CreateAgen
  * @example
  * const [createAgentChatThreadMutation, { data, loading, error }] = useCreateAgentChatThreadMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      agentId: // value for 'agentId'
  *   },
  * });
  */
@@ -7777,8 +7770,8 @@ export type RemoveRoleFromAgentMutationHookResult = ReturnType<typeof useRemoveR
 export type RemoveRoleFromAgentMutationResult = Apollo.MutationResult<RemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
 export const SendAgentChatMessageDocument = gql`
-    mutation SendAgentChatMessage($input: SendAgentChatMessageInput!) {
-  sendAgentChatMessage(input: $input) {
+    mutation SendAgentChatMessage($threadId: ID!, $message: String!) {
+  sendAgentChatMessage(threadId: $threadId, message: $message) {
     id
     threadId
     sender
@@ -7802,7 +7795,8 @@ export type SendAgentChatMessageMutationFn = Apollo.MutationFunction<SendAgentCh
  * @example
  * const [sendAgentChatMessageMutation, { data, loading, error }] = useSendAgentChatMessageMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      threadId: // value for 'threadId'
+ *      message: // value for 'message'
  *   },
  * });
  */

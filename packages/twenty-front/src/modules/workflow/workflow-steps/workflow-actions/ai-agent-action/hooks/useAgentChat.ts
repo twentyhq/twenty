@@ -114,9 +114,7 @@ export const useAgentChat = (agentId: string) => {
     if (!threadId) {
       await createThread({
         variables: {
-          input: {
-            agentId,
-          },
+          agentId,
         },
         onCompleted: (data) => {
           if (isDefined(data?.createAgentChatThread)) {
@@ -132,10 +130,8 @@ export const useAgentChat = (agentId: string) => {
 
     await sendMessage({
       variables: {
-        input: {
-          threadId,
-          message,
-        },
+        threadId,
+        message,
       },
     });
 

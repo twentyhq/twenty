@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const SEND_AGENT_CHAT_MESSAGE = gql`
-  mutation SendAgentChatMessage($input: SendAgentChatMessageInput!) {
-    sendAgentChatMessage(input: $input) {
+  mutation SendAgentChatMessage($threadId: ID!, $message: String!) {
+    sendAgentChatMessage(threadId: $threadId, message: $message) {
       id
       threadId
       sender

@@ -452,10 +452,6 @@ export type ConnectionParametersOutput = {
   username: Scalars['String'];
 };
 
-export type CreateAgentChatThreadInput = {
-  agentId: Scalars['ID'];
-};
-
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   modelId: Scalars['String'];
@@ -1100,7 +1096,7 @@ export type MutationComputeStepOutputSchemaArgs = {
 
 
 export type MutationCreateAgentChatThreadArgs = {
-  input: CreateAgentChatThreadInput;
+  agentId: Scalars['ID'];
 };
 
 
@@ -1314,7 +1310,8 @@ export type MutationSaveImapSmtpCaldavArgs = {
 
 
 export type MutationSendAgentChatMessageArgs = {
-  input: SendAgentChatMessageInput;
+  message: Scalars['String'];
+  threadId: Scalars['ID'];
 };
 
 
@@ -1997,11 +1994,6 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
-};
-
-export type SendAgentChatMessageInput = {
-  message: Scalars['String'];
-  threadId: Scalars['ID'];
 };
 
 export type SendInvitationsOutput = {

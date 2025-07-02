@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_AGENT_CHAT_THREAD = gql`
-  mutation CreateAgentChatThread($input: CreateAgentChatThreadInput!) {
-    createAgentChatThread(input: $input) {
+  mutation CreateAgentChatThread($agentId: ID!) {
+    createAgentChatThread(agentId: $agentId) {
       id
       agentId
       createdAt

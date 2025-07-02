@@ -8,8 +8,6 @@ import { AgentChatService } from './agent-chat.service';
 
 import { AgentChatMessageDTO } from './dtos/agent-chat-message.dto';
 import { AgentChatThreadDTO } from './dtos/agent-chat-thread.dto';
-import { CreateAgentChatThreadInput } from './dtos/create-agent-chat-thread.input';
-import { SendAgentChatMessageInput } from './dtos/send-agent-chat-message.input';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
@@ -30,16 +28,16 @@ export class AgentChatResolver {
 
   @Mutation(() => AgentChatThreadDTO)
   async createAgentChatThread(
-    @Args('input') input: CreateAgentChatThreadInput,
+    @Args('agentId', { type: () => ID }) agentId: string,
   ) {
-    return this.chatService.createThread(input.agentId);
+    return this.chatService.createThread(agentId);
   }
 
   @Mutation(() => [AgentChatMessageDTO])
-  async sendAgentChatMessage(@Args('input') input: SendAgentChatMessageInput) {
-    return this.chatService.addUserMessageAndAIResponse(
-      input.threadId,
-      input.message,
-    );
+  async sendAgentChatMessage(
+    @Args('threadId', { type: () => ID }) threadId: string,
+    @Args('message', { type: () => String }) message: string,
+  ) {
+    return this.chatService.addUserMessageAndAIResponse(threadId, message);
   }
 }
