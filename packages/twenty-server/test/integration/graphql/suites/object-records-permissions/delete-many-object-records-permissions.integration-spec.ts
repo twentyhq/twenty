@@ -69,8 +69,16 @@ describe('deleteManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.deletePeople).toBeDefined();
     expect(response.body.data.deletePeople).toHaveLength(2);
-    expect(response.body.data.deletePeople[0].id).toBe(personId1);
-    expect(response.body.data.deletePeople[1].id).toBe(personId2);
+    expect(
+      response.body.data.deletePeople.some(
+        (person: { id: string }) => person.id === personId1,
+      ),
+    ).toBe(true);
+    expect(
+      response.body.data.deletePeople.some(
+        (person: { id: string }) => person.id === personId2,
+      ),
+    ).toBe(true);
   });
 
   it('should delete multiple object records when executed by api key', async () => {
