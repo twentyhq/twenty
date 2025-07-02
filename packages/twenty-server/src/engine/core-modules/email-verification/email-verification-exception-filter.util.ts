@@ -27,6 +27,9 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
           subCode: exception.code,
         });
       case EmailVerificationExceptionCode.EMAIL_MISSING:
+        throw new UserInputError(exception.message, {
+          subCode: exception.code,
+        });
       case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
         throw new UserInputError(exception.message, {
           subCode: exception.code,
