@@ -163,12 +163,12 @@ export class McpService {
 
   private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
+      .filter(([, def]) => !!def.parameters.jsonSchema)
       .map(([name, def]) => ({
         name,
         description: def.description,
         inputSchema: def.parameters.jsonSchema,
-      }))
-      .filter(({ inputSchema }) => !!inputSchema);
+      }));
 
     return wrapJsonRpcResponse(id, {
       result: {

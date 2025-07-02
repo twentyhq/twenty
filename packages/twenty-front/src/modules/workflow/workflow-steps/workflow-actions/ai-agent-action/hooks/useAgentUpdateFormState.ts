@@ -4,7 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
   useUpdateOneAgentMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type AgentFormValues = {
   name: string;

@@ -5,8 +5,8 @@ import {
 
 @ValidatorConstraint({ name: 'string-or-number', async: false })
 export class IsNumberOrString implements ValidatorConstraintInterface {
-  validate(text: unknown) {
-    return typeof text === 'number' || typeof text === 'string';
+  validate(value: unknown) {
+    return typeof value === 'number' || typeof value === 'string';
   }
 
   defaultMessage() {

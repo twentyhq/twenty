@@ -21,10 +21,9 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 export class McpController {
   constructor(private readonly mcpService: McpService) {}
 
-  @Post('/')
-  @Post('execute')
+  @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async executeTool(
+  async executeMcpMethods(
     @Body() body: JsonRpc,
     @AuthWorkspace() workspace: Workspace,
     @AuthApiKey() apiKey: string | undefined,

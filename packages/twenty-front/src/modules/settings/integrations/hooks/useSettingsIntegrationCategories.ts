@@ -31,6 +31,10 @@ export const useSettingsIntegrationCategories =
       ({ name }) => name === 'stripe',
     )?.isActive;
 
+    const isAiIntegrationEnabled = useIsFeatureEnabled(
+      FeatureFlagKey.IS_AI_ENABLED,
+    );
+
     const allIntegrations = getSettingsIntegrationAll({
       isAirtableIntegrationEnabled,
       isAirtableIntegrationActive,
@@ -44,7 +48,7 @@ export const useSettingsIntegrationCategories =
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
       SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
-      SETTINGS_INTEGRATION_AI_CATEGORY,
+      ...(isAiIntegrationEnabled ? [SETTINGS_INTEGRATION_AI_CATEGORY] : []),
       SETTINGS_INTEGRATION_REQUEST_CATEGORY,
     ];
   };

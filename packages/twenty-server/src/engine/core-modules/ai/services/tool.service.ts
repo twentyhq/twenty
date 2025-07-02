@@ -6,6 +6,7 @@ import {
   LessThan,
   LessThanOrEqual,
   Like,
+  ILike,
   MoreThan,
   MoreThanOrEqual,
   Not,
@@ -327,7 +328,7 @@ export class ToolService {
       return Like(filterValue.like as string);
     }
     if ('ilike' in filterValue) {
-      return Like(filterValue.ilike as string);
+      return ILike(filterValue.ilike as string);
     }
     if ('startsWith' in filterValue) {
       return Like(`${filterValue.startsWith}%`);
