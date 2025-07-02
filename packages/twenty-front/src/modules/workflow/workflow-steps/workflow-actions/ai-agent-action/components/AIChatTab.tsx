@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import React, { useState } from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
@@ -70,9 +72,22 @@ const StyledMessageList = styled.div`
 `;
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
-  align-items: center;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+  &:hover .message-footer {
+    opacity: 1;
+    pointer-events: auto;
+  }
+`;
+
+const StyledMessageRow = styled.div`
+  display: flex;
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
 `;
 
 const StyledMessageText = styled.div<{ isUser?: boolean }>`
@@ -85,6 +100,24 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   color: ${({ theme, isUser }) =>
     isUser ? theme.font.color.light : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
+  width: fit-content;
+`;
+
+const StyledMessageFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  &.message-footer {
+    opacity: 0;
+    pointer-events: none;
+  }
 `;
 
 const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
@@ -116,6 +149,10 @@ const StyledDotsIcon = styled(IconDotsVertical)`
   transform: rotate(90deg);
 `;
 
+const StyledMessageContainer = styled.div`
+  width: 100%;
+`;
+
 type AIChatTabProps = {
   agentId: string;
 };
@@ -143,31 +180,40 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
         <StyledMessageList>
           {messages.map((msg) => (
             <StyledMessageBubble key={msg.id} isUser={msg.sender === 'user'}>
-              {msg.sender === 'ai' && (
-                <StyledAvatarContainer>
-                  <Avatar
-                    size="sm"
-                    placeholder="AI"
-                    Icon={IconSparkles}
-                    iconColor={theme.color.blue}
-                  />
-                </StyledAvatarContainer>
-              )}
-
-              {msg.sender === 'user' && (
-                <StyledAvatarContainer isUser>
-                  <Avatar size="sm" placeholder="U" type="rounded" />
-                </StyledAvatarContainer>
-              )}
-              <StyledMessageText isUser={msg.sender === 'user'}>
-                {msg.sender === 'ai' && !msg.message ? (
-                  <StyledDotsIconContainer>
-                    <StyledDotsIcon size={theme.icon.size.xl} />
-                  </StyledDotsIconContainer>
-                ) : (
-                  msg.message
+              <StyledMessageRow>
+                {msg.sender === 'ai' && (
+                  <StyledAvatarContainer>
+                    <Avatar
+                      size="sm"
+                      placeholder="AI"
+                      Icon={IconSparkles}
+                      iconColor={theme.color.blue}
+                    />
+                  </StyledAvatarContainer>
                 )}
-              </StyledMessageText>
+                {msg.sender === 'user' && (
+                  <StyledAvatarContainer isUser>
+                    <Avatar size="sm" placeholder="U" type="rounded" />
+                  </StyledAvatarContainer>
+                )}
+                <StyledMessageContainer>
+                  <StyledMessageText isUser={msg.sender === 'user'}>
+                    {msg.sender === 'ai' && !msg.message ? (
+                      <StyledDotsIconContainer>
+                        <StyledDotsIcon size={theme.icon.size.xl} />
+                      </StyledDotsIconContainer>
+                    ) : (
+                      msg.message
+                    )}
+                  </StyledMessageText>
+                  <StyledMessageFooter className="message-footer">
+                    <span>{formatChatMessageDate(msg.createdAt)}</span>
+                    {msg.message && (
+                      <LightCopyIconButton copyText={msg.message} />
+                    )}
+                  </StyledMessageFooter>
+                </StyledMessageContainer>
+              </StyledMessageRow>
             </StyledMessageBubble>
           ))}
         </StyledMessageList>
