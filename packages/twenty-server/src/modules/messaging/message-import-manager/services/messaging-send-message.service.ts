@@ -119,6 +119,9 @@ export class MessagingSendMessageService {
 
         break;
       }
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
+        throw new Error('IMAP provider does not support sending messages');
+      }
       default:
         assertUnreachable(
           connectedAccount.provider,

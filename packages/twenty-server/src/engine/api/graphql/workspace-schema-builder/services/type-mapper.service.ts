@@ -50,6 +50,7 @@ export interface TypeOptions<T = any> {
   defaultValue?: T;
   settings?: FieldMetadataSettings<FieldMetadataType>;
   isIdField?: boolean;
+  isRelationConnectField?: boolean;
 }
 
 const StringArrayScalarType = new GraphQLList(GraphQLString);

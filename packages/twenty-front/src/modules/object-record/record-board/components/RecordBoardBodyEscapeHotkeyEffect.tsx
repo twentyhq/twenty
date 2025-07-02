@@ -5,17 +5,17 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { BoardHotkeyScope } from '@/object-record/record-board/types/BoardHotkeyScope';
+import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
-
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
+  const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
   const selectedRecordIds = useRecoilComponentValueV2(
     recordBoardSelectedRecordIdsComponentSelector,
@@ -24,29 +24,21 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
 
   const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      unfocusBoardCard();
-      if (isAtLeastOneRecordSelected) {
-        resetRecordSelection();
-      }
-    },
-    RecordIndexHotkeyScope.RecordIndex,
-    [isAtLeastOneRecordSelected, resetRecordSelection, unfocusBoardCard],
-  );
+  const handleEscape = () => {
+    unfocusBoardCard();
+    if (isAtLeastOneRecordSelected) {
+      resetRecordSelection();
+    }
+    resetFocusStackToRecordIndex();
+  };
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      unfocusBoardCard();
-      if (isAtLeastOneRecordSelected) {
-        resetRecordSelection();
-      }
-    },
-    BoardHotkeyScope.BoardFocus,
-    [isAtLeastOneRecordSelected, resetRecordSelection, unfocusBoardCard],
-  );
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: recordBoardId,
+    scope: RecordIndexHotkeyScope.RecordIndex,
+    dependencies: [handleEscape],
+  });
 
   return null;
 };

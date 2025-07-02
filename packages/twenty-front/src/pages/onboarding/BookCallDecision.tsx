@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { LightButton, MainButton } from 'twenty-ui/input';
-import { useSkipBookOnboardingStepMutation } from '~/generated/graphql';
+import { useSkipBookOnboardingStepMutation } from '~/generated-metadata/graphql';
 
 const StyledCoverImage = styled.img`
   border-radius: ${({ theme }) => theme.border.radius.sm};

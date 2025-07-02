@@ -1,3 +1,4 @@
+import { CustomError } from '@/error-handler/CustomError';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -24,6 +25,6 @@ export const useSourceContent = (source: ConfigSource) => {
         color: theme.font.color.tertiary,
       };
     default:
-      throw new Error(`Unknown source: ${source}`);
+      throw new CustomError(`Unknown source: ${source}`, 'UNKNOWN_SOURCE');
   }
 };

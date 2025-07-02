@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateObject } from 'ai';
+import { generateObject, generateText } from 'ai';
 
 import {
   ModelId,
@@ -10,16 +10,21 @@ import {
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
+import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
-import { convertOutputSchemaToZod } from './utils/convert-output-schema-to-zod';
-
 export interface AgentExecutionResult {
-  object: object;
+  result: {
+    textResponse: string;
+    structuredOutput?: object;
+  };
   usage: {
     promptTokens: number;
     completionTokens: number;
@@ -29,7 +34,10 @@ export interface AgentExecutionResult {
 
 @Injectable()
 export class AgentExecutionService {
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly agentToolService: AgentToolService,
+  ) {}
 
   private getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
@@ -103,18 +111,52 @@ export class AgentExecutionService {
 
       await this.validateApiKey(provider);
 
-      const output = await generateObject({
+      const tools = await this.agentToolService.generateToolsForAgent(
+        agent.id,
+        agent.workspaceId,
+      );
+
+      const textResponse = await generateText({
+        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
         model: this.getModel(agent.modelId, provider),
         prompt: resolveInput(agent.prompt, context) as string,
+        tools,
+        maxSteps: AGENT_CONFIG.MAX_STEPS,
+      });
+
+      if (Object.keys(schema).length === 0) {
+        return {
+          result: { textResponse: textResponse.text },
+          usage: textResponse.usage,
+        };
+      }
+
+      const output = await generateObject({
+        system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+        model: this.getModel(agent.modelId, provider),
+        prompt: `Based on the following execution results, generate the structured output according to the schema:
+
+                 Execution Results: ${textResponse.text}
+
+                 Please generate the structured output based on the execution results and context above.`,
         schema: convertOutputSchemaToZod(schema),
       });
 
       return {
-        object: output.object,
+        result: {
+          textResponse: textResponse.text,
+          structuredOutput: output.object,
+        },
         usage: {
-          promptTokens: output.usage?.promptTokens ?? 0,
-          completionTokens: output.usage?.completionTokens ?? 0,
-          totalTokens: output.usage?.totalTokens,
+          promptTokens:
+            (textResponse.usage?.promptTokens ?? 0) +
+            (output.usage?.promptTokens ?? 0),
+          completionTokens:
+            (textResponse.usage?.completionTokens ?? 0) +
+            (output.usage?.completionTokens ?? 0),
+          totalTokens:
+            (textResponse.usage?.totalTokens ?? 0) +
+            (output.usage?.totalTokens ?? 0),
         },
       };
     } catch (error) {

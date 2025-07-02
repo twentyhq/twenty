@@ -4,7 +4,7 @@ import { Relation } from 'typeorm';
 
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permission/dtos/setting-permission.dto';
 
 @ObjectType('Role')
@@ -25,7 +25,7 @@ export class RoleDTO {
   isEditable: boolean;
 
   @HideField()
-  userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
+  roleTargets: Relation<RoleTargetsEntity[]>;
 
   @Field(() => [WorkspaceMember], { nullable: true })
   workspaceMembers?: WorkspaceMember[];

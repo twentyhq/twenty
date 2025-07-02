@@ -1,11 +1,13 @@
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 export const useAdvancedFilterFieldSelectDropdown = (viewFilterId?: string) => {
   const advancedFilterFieldSelectDropdownId = `advanced-filter-view-filter-field-${viewFilterId}`;
 
-  const { closeDropdown: closeAdvancedFilterFieldSelectDropdown } = useDropdown(
-    advancedFilterFieldSelectDropdownId,
-  );
+  const { closeDropdown } = useCloseDropdown();
+
+  const closeAdvancedFilterFieldSelectDropdown = () => {
+    closeDropdown(advancedFilterFieldSelectDropdownId);
+  };
 
   return {
     closeAdvancedFilterFieldSelectDropdown,

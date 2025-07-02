@@ -38,7 +38,7 @@ export const getActivityTargetObjectRecords = ({
   const activityTargetObjectRecords = targets
     .map<ActivityTargetWithTargetRecord | undefined>((activityTarget) => {
       if (!isDefined(activityTarget)) {
-        throw new Error(`Cannot find activity target`);
+        throw new Error('Cannot find activity target');
       }
 
       const correspondingObjectMetadataItem = objectMetadataItems.find(

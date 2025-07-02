@@ -1,5 +1,5 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { useApolloClient } from '@apollo/client';
 import { createApolloStoreFieldName } from '~/utils/createApolloStoreFieldName';
 
 export const useRecordIdsFromFindManyCacheRootQuery = ({
@@ -12,14 +12,14 @@ export const useRecordIdsFromFindManyCacheRootQuery = ({
     orderBy: any;
   };
 }) => {
-  const apollo = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const testsFieldNameOnRootQuery = createApolloStoreFieldName({
     fieldName: objectNamePlural,
     fieldVariables: fieldVariables,
   });
 
-  const extractedCache = apollo.cache.extract() as any;
+  const extractedCache = apolloCoreClient.cache.extract() as any;
 
   const recordIdsInCache: string[] =
     extractedCache?.['ROOT_QUERY']?.[testsFieldNameOnRootQuery]?.edges?.map(

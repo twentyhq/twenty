@@ -1,6 +1,7 @@
-import { ApolloClient, gql, useApolloClient } from '@apollo/client';
+import { ApolloClient, gql } from '@apollo/client';
 import { isUndefined } from '@sniptt/guards';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
@@ -16,7 +17,7 @@ import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
 
 export const usePerformCombinedFindManyRecords = () => {
-  const client = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -121,7 +122,7 @@ export const usePerformCombinedFindManyRecords = () => {
     operationSignatures: RecordGqlOperationSignature[];
     client?: ApolloClient<object>;
   }) => {
-    const apolloClient = customClient || client;
+    const apolloClient = customClient || apolloCoreClient;
 
     const findManyQuery = generateCombinedFindManyRecordsQuery(
       operationSignatures,

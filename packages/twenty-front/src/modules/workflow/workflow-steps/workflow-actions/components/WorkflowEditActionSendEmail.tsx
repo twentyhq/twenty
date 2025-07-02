@@ -8,6 +8,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
@@ -15,6 +16,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -24,8 +26,6 @@ import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useTheme } from '@emotion/react';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -88,6 +88,8 @@ export const WorkflowEditActionSendEmail = ({
           return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
         case ConnectedAccountProvider.MICROSOFT:
           return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+        case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+          return isDefined(connectedAccount.connectionParameters?.SMTP);
         default:
           assertUnreachable(
             connectedAccount.provider,
@@ -185,6 +187,13 @@ export const WorkflowEditActionSendEmail = ({
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
+    if (
+      account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      !isDefined(account.connectionParameters?.SMTP)
+    ) {
+      return;
+    }
+
     const selectOption = {
       label: account.handle,
       value: account.id,

@@ -1,11 +1,10 @@
-import { useApolloClient } from '@apollo/client';
-
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -31,7 +30,7 @@ export const usePrepareFindManyActivitiesQuery = ({
     objectNameSingular: activityObjectNameSingular,
   });
 
-  const cache = useApolloClient().cache;
+  const cache = useApolloCoreClient().cache;
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
