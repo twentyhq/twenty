@@ -5,7 +5,10 @@ import React, { useState } from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
+import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
@@ -166,11 +169,22 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
-
     const message = input.trim();
     setInput('');
     await sendChatMessage(message);
   };
+
+  useScopedHotkeys(
+    [Key.Enter],
+    (event) => {
+      if (!event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    },
+    InputHotkeyScope.TextInput,
+    [input, sendingMessage],
+  );
 
   const isLoading = messagesLoading || sendingMessage;
 
