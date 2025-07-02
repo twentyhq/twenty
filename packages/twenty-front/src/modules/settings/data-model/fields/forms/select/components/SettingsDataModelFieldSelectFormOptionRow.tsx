@@ -5,7 +5,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -82,12 +82,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
 
-  const { closeDropdown: closeColorDropdown } = useDropdown(
-    SELECT_COLOR_DROPDOWN_ID,
-  );
-  const { closeDropdown: closeActionsDropdown } = useDropdown(
-    SELECT_ACTIONS_DROPDOWN_ID,
-  );
+  const { closeDropdown: closeColorDropdown } = useCloseDropdown();
+  const { closeDropdown: closeActionsDropdown } = useCloseDropdown();
 
   const handleInputEnter = () => {
     onInputEnter?.();
@@ -126,7 +122,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
-                    closeColorDropdown();
+                    closeColorDropdown(SELECT_COLOR_DROPDOWN_ID);
                   }}
                   color={colorName}
                   selected={colorName === option.color}
@@ -171,7 +167,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   text={t`Remove as default`}
                   onClick={() => {
                     onRemoveAsDefault?.();
-                    closeActionsDropdown();
+                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                   }}
                 />
               ) : (
@@ -180,7 +176,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   text={t`Set as default`}
                   onClick={() => {
                     onSetAsDefault?.();
-                    closeActionsDropdown();
+                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                   }}
                 />
               )}
@@ -191,7 +187,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   text={t`Remove option`}
                   onClick={() => {
                     onRemove();
-                    closeActionsDropdown();
+                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                   }}
                 />
               )}

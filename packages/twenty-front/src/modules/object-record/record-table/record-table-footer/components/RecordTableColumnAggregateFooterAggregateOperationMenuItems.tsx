@@ -2,7 +2,7 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
@@ -23,7 +23,8 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   const { dropdownId, resetContent } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
+
   return (
     <>
       {aggregateOperations.map((operation) => (
@@ -31,7 +32,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
           key={operation}
           onClick={() => {
             updateViewFieldAggregateOperation(operation);
-            closeDropdown();
+            closeDropdown(dropdownId);
           }}
           text={getAggregateOperationLabel(operation)}
           RightIcon={
@@ -48,7 +49,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
         onClick={() => {
           updateViewFieldAggregateOperation(null);
           resetContent();
-          closeDropdown();
+          closeDropdown(dropdownId);
         }}
         text={'None'}
         RightIcon={

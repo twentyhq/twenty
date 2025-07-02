@@ -16,8 +16,9 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -69,7 +70,10 @@ export const RecordDetailRelationSection = ({
     recordId,
   });
 
-  const { isDropdownOpen } = useDropdown(dropdownId);
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
+  );
 
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
