@@ -5,6 +5,7 @@ import React from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
@@ -12,7 +13,7 @@ import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
-  height: 100%;
+  height: calc(100% - 154px);
 `;
 
 const StyledEmptyState = styled.div`
@@ -61,14 +62,14 @@ const StyledInputArea = styled.div`
   background: ${({ theme }) => theme.background.primary};
 `;
 
-const StyledMessageList = styled.div`
+const StyledScrollWrapper = styled(ScrollWrapper)`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${({ theme }) => theme.spacing(5)};
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
   padding: ${({ theme }) => theme.spacing(3)};
+  width: calc(100% - 24px);
 `;
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -77,6 +78,7 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   align-items: flex-start;
   position: relative;
   width: 100%;
+
   &:hover .message-footer {
     opacity: 1;
     pointer-events: auto;
@@ -109,7 +111,7 @@ const StyledMessageFooter = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
@@ -175,7 +177,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
   return (
     <StyledContainer>
       {messages.length !== 0 && (
-        <StyledMessageList>
+        <StyledScrollWrapper componentInstanceId={agentId}>
           {messages.map((msg) => (
             <StyledMessageBubble key={msg.id} isUser={msg.sender === 'user'}>
               <StyledMessageRow>
@@ -214,7 +216,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
               </StyledMessageRow>
             </StyledMessageBubble>
           ))}
-        </StyledMessageList>
+        </StyledScrollWrapper>
       )}
       {messages.length === 0 && !isLoading && (
         <StyledEmptyState>

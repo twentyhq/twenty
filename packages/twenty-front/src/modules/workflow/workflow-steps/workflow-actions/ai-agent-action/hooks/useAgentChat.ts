@@ -11,6 +11,7 @@ import {
   useSendAgentChatMessageMutation,
 } from '~/generated-metadata/graphql';
 
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
@@ -31,7 +32,16 @@ export const useAgentChat = (agentId: string) => {
       },
     });
 
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
+
   const currentThreadId = threadsData?.agentChatThreads[0]?.id;
+
+  const scrollToBottom = () => {
+    scrollWrapperHTMLElement?.scroll({
+      top: scrollWrapperHTMLElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
 
   const { loading: messagesLoading } = useAgentChatMessagesQuery({
     variables: {
@@ -42,6 +52,7 @@ export const useAgentChat = (agentId: string) => {
       if (isDefined(data?.agentChatMessages)) {
         setAgentChatMessages(data.agentChatMessages);
       }
+      scrollToBottom();
     },
   });
 
@@ -63,6 +74,7 @@ export const useAgentChat = (agentId: string) => {
             return [...realMessages, ...newMessages];
           });
         }
+        scrollToBottom();
       },
       onError: () => {
         setAgentChatMessages((prevMessages) =>
@@ -97,6 +109,8 @@ export const useAgentChat = (agentId: string) => {
       optimisticUserMessage,
       optimisticAiMessage,
     ]);
+
+    setTimeout(scrollToBottom, 100);
 
     if (!threadId) {
       await createThread({
