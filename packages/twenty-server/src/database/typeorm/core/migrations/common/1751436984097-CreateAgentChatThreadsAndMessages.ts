@@ -19,7 +19,7 @@ export class CreateAgentChatThreadsAndMessages1751436984097
       `CREATE INDEX "IDX_835cfc934d46c0fc3efb6d1d82" ON "core"."agent_chat_threads" ("agentId") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agent_chat_messages" ADD CONSTRAINT "FK_98220335d760255ae5f4c819cf0" FOREIGN KEY ("threadId") REFERENCES "core"."agent_chat_threads"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agent_chat_messages" ADD CONSTRAINT "FK_98220335d760255ae5f4c819cf0" FOREIGN KEY ("threadId") REFERENCES "core"."agent_chat_threads"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."agent_chat_threads" ADD CONSTRAINT "FK_835cfc934d46c0fc3efb6d1d82a" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
