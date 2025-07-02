@@ -16,14 +16,8 @@ const StyledMessageBubble = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledAvatarSkeleton = styled.div`
-  width: 24px;
-  height: 24px;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-`;
-
 const StyledMessageSkeleton = styled.div`
-  max-width: 320px;
+  width: 100%;
 `;
 
 export const AIChatSkeletonLoader = () => {
@@ -38,12 +32,10 @@ export const AIChatSkeletonLoader = () => {
       <StyledSkeletonContainer>
         {Array.from({ length: 6 }).map((_, index) => (
           <StyledMessageBubble key={index}>
-            <StyledAvatarSkeleton>
-              <Skeleton width={24} height={24} borderRadius={4} />
-            </StyledAvatarSkeleton>
+            <Skeleton width={24} height={24} borderRadius={4} />
 
             <StyledMessageSkeleton>
-              <Skeleton width={320} height={20} borderRadius={8} />
+              <Skeleton height={20} borderRadius={8} />
             </StyledMessageSkeleton>
           </StyledMessageBubble>
         ))}
