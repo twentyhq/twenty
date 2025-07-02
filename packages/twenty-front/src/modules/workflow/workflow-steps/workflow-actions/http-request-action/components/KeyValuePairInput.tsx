@@ -15,19 +15,10 @@ const StyledContainer = styled.div`
 `;
 
 const StyledKeyValueContainer = styled.div`
-  display: flex;
-  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) ${({ theme }) =>
+      theme.spacing(8)};
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledPlaceholder = styled.div`
-  aspect-ratio: 1;
-  height: ${({ theme }) => theme.spacing(8)};
-`;
-
-const StyledFormTextFieldInput = styled.div`
-  flex: 1;
-  max-width: 214px;
 `;
 
 export type KeyValuePair = {
@@ -122,36 +113,32 @@ export const KeyValuePairInput = ({
       <StyledContainer>
         {pairs.map((pair) => (
           <StyledKeyValueContainer key={pair.id}>
-            <StyledFormTextFieldInput>
-              <FormTextFieldInput
-                placeholder={keyPlaceholder}
-                readonly={readonly}
-                defaultValue={pair.key}
-                onChange={(value) =>
-                  handlePairChange(pair.id, 'key', value ?? '')
-                }
-                VariablePicker={WorkflowVariablePicker}
-              />
-            </StyledFormTextFieldInput>
-            <StyledFormTextFieldInput>
-              <FormTextFieldInput
-                placeholder={valuePlaceholder}
-                readonly={readonly}
-                defaultValue={pair.value}
-                onChange={(value) =>
-                  handlePairChange(pair.id, 'value', value ?? '')
-                }
-                VariablePicker={WorkflowVariablePicker}
-              />
-            </StyledFormTextFieldInput>
+            <FormTextFieldInput
+              placeholder={keyPlaceholder}
+              readonly={readonly}
+              defaultValue={pair.key}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'key', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+            />
+
+            <FormTextFieldInput
+              placeholder={valuePlaceholder}
+              readonly={readonly}
+              defaultValue={pair.value}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'value', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+            />
+
             {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
               <Button
                 onClick={() => handleRemovePair(pair.id)}
                 Icon={IconTrash}
               />
-            ) : pairs.length > 1 && !readonly ? (
-              <StyledPlaceholder />
-            ) : null}
+            ) : pairs.length > 1 ? null : null}
           </StyledKeyValueContainer>
         ))}
       </StyledContainer>
