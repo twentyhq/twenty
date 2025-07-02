@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('isFieldValueReadOnly', () => {
   it('should return true if record is read only', () => {

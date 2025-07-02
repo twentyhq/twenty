@@ -1,25 +1,24 @@
 /* @license Enterprise */
 
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationEditSSOIDPCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => {
-  const actual = jest.requireActual('~/generated/graphql');
+jest.mock('~/generated-metadata/graphql', () => {
+  const actual = jest.requireActual('~/generated-metadata/graphql');
   return {
+    ...actual,
     useEditSsoIdentityProviderMutation: () => [mutationEditSSOIDPCallSpy],
-    SsoIdentityProviderStatus: actual.SsoIdentityProviderStatus,
   };
 });
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useEditSsoIdentityProvider', () => {
   afterEach(() => {

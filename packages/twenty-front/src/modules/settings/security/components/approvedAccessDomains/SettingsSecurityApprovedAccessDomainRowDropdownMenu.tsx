@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
+import { useDeleteApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
   approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];

@@ -11,7 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
-import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { useCreateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 

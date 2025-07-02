@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   SettingPermissionType,
   useBillingPortalSessionQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerBillingSubscriptionPaused = () => {

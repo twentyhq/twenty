@@ -26,7 +26,7 @@ import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   useSkipSyncEmailOnboardingStepMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;

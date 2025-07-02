@@ -13,7 +13,7 @@ import { Section } from 'twenty-ui/layout';
 import {
   ConfigSource,
   useGetConfigVariablesGroupedQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 
 const StyledControlsContainer = styled.div`

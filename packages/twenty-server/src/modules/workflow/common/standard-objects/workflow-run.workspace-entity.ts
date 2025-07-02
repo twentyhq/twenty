@@ -5,9 +5,12 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -17,6 +20,10 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -30,6 +37,7 @@ export enum WorkflowRunStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
+  ENQUEUED = 'ENQUEUED',
 }
 
 export type StepOutput = {
@@ -45,6 +53,12 @@ export type WorkflowRunOutput = {
   stepsOutput?: Record<string, WorkflowExecutorOutput>;
   error?: string;
 };
+
+const NAME_FIELD_NAME = 'name';
+
+export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
@@ -117,6 +131,12 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         position: 3,
         color: 'red',
       },
+      {
+        value: WorkflowRunStatus.ENQUEUED,
+        label: 'Enqueued',
+        position: 4,
+        color: 'blue',
+      },
     ],
     defaultValue: "'NOT_STARTED'",
   })
@@ -162,6 +182,22 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   position: number;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: string;
 
   // Relations
   @WorkspaceRelation({

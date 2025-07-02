@@ -1,5 +1,4 @@
-import { useApolloClient } from '@apollo/client';
-
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -13,7 +12,7 @@ export const useUpsertFindOneRecordQueryInCache = ({
   recordGqlFields: Record<string, any>;
   withSoftDeleted?: boolean;
 }) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -30,7 +29,7 @@ export const useUpsertFindOneRecordQueryInCache = ({
     objectRecordId: string;
     objectRecordToOverwrite: T;
   }) => {
-    apolloClient.writeQuery({
+    apolloCoreClient.writeQuery({
       query: findOneRecordQuery,
       variables: { objectRecordId },
       data: {

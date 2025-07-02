@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   ConnectionParameters,
   useSaveImapSmtpCaldavMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '~/modules/auth/states/currentWorkspaceState';
