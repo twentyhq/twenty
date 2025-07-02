@@ -7,6 +7,7 @@ import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
+import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
@@ -44,7 +45,6 @@ const StyledTitle = styled.div`
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  font-size: 15px;
   text-align: center;
   max-width: 410px;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -135,7 +135,6 @@ const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
   min-width: 24px;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: 1px;
-  position: relative;
 `;
 
 const StyledDotsIconContainer = styled.div`
@@ -223,10 +222,10 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           <StyledSparkleIcon>
             <IconSparkles size={theme.icon.size.lg} color={theme.color.blue} />
           </StyledSparkleIcon>
-          <StyledTitle>Ask AI</StyledTitle>
+          <StyledTitle>{t`Ask AI`}</StyledTitle>
           <StyledDescription>
-            Start a conversation to get instant insights, support, or updates
-            about your deals. How can I help you today?
+            {t`Start a conversation to get instant insights, support, or updates
+            about your deals. How can I help you today?`}
           </StyledDescription>
         </StyledEmptyState>
       )}
@@ -234,7 +233,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
 
       <StyledInputArea>
         <TextArea
-          placeholder="Enter a question..."
+          placeholder={t`Enter a question...`}
           value={input}
           onChange={handleInputChange}
         />
@@ -244,7 +243,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           size="small"
           hotkeys={input && !sendingMessage ? ['⏎'] : undefined}
           disabled={!input || sendingMessage}
-          title="Send"
+          title={t`Send`}
           onClick={handleSendMessage}
         />
       </StyledInputArea>
