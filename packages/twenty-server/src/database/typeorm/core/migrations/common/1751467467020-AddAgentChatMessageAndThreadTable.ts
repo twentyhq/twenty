@@ -19,19 +19,19 @@ export class AddAgentChatMessageAndThreadTable1751467467020
       `CREATE TABLE "core"."agentChatThread" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "agentId" uuid NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a53b1d75d11ec67d13590cfa627" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_9c716045fa8012bc198108b203" ON "core"."agentChatThread" ("agentId") `,
+      `CREATE INDEX "IDX_d0bdc80c68a48b1f26727aabfe" ON "core"."agentChatThread" ("agentId") `,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatMessage" ADD CONSTRAINT "FK_cd5b23d4e471b630137b3017ba6" FOREIGN KEY ("threadId") REFERENCES "core"."agentChatThread"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agentChatThread" ADD CONSTRAINT "FK_9c716045fa8012bc198108b2035" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agentChatThread" ADD CONSTRAINT "FK_d0bdc80c68a48b1f26727aabfe6" FOREIGN KEY ("agentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agentChatThread" DROP CONSTRAINT "FK_9c716045fa8012bc198108b2035"`,
+      `ALTER TABLE "core"."agentChatThread" DROP CONSTRAINT "FK_d0bdc80c68a48b1f26727aabfe6"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatMessage" DROP CONSTRAINT "FK_cd5b23d4e471b630137b3017ba6"`,
