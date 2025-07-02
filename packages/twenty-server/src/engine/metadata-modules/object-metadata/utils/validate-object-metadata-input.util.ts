@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
@@ -29,9 +30,14 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
     validateMetadataNameOrThrow(name);
   } catch (error) {
     if (error instanceof InvalidMetadataException) {
+      const errorMessage = error.message;
+
       throw new ObjectMetadataException(
-        error.message,
+        errorMessage,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          displayedErrorMessage: t`${errorMessage}`,
+        },
       );
     }
 

@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -43,6 +45,9 @@ export const validateFieldNameAvailabilityOrThrow = (
     throw new InvalidMetadataException(
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
+      {
+        displayedErrorMessage: t`This name is not available.`,
+      },
     );
   }
 

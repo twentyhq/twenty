@@ -176,8 +176,9 @@ export class MethodNotAllowedError extends BaseGraphQLError {
 }
 
 export class ConflictError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.CONFLICT);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.CONFLICT, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }

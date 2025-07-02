@@ -24,7 +24,9 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
         throw new ForbiddenError(error.message);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
-        throw new ConflictError(error.message);
+        throw new ConflictError(error.message, {
+          displayedErrorMessage: error.displayedErrorMessage,
+        });
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
         throw error;
       default: {

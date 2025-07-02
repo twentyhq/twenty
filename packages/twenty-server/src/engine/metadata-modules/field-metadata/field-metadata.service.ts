@@ -561,6 +561,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              displayedErrorMessage: t`Name is not available, it may be duplicating another field's name.`,
+            },
           );
         }
 
