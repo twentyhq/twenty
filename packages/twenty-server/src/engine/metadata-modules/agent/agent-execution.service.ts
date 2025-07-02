@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateObject, generateText } from 'ai';
+import { CoreMessage, generateObject, generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import {
@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AgentChatMessagesEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
@@ -41,6 +42,8 @@ export class AgentExecutionService {
     private readonly agentToolService: AgentToolService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(AgentChatMessagesEntity, 'core')
+    private readonly agentChatmessageRepository: Repository<AgentChatMessagesEntity>,
   ) {}
 
   private getModel = (modelId: ModelId, provider: ModelProvider) => {
@@ -94,9 +97,11 @@ export class AgentExecutionService {
   async getChatResponse({
     agentId,
     userMessage,
+    threadId,
   }: {
     agentId: string;
     userMessage: string;
+    threadId: string;
   }): Promise<string> {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -112,10 +117,26 @@ export class AgentExecutionService {
     const provider = aiModel.provider;
 
     await this.validateApiKey(provider);
+
+    let llmMessages: CoreMessage[] = [];
+
+    if (threadId) {
+      const previousMessages = await this.agentChatmessageRepository.find({
+        where: { threadId },
+        order: { createdAt: 'ASC' },
+      });
+
+      llmMessages = previousMessages.map((msg) => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.message,
+      }));
+    }
+    llmMessages.push({ role: 'user', content: userMessage });
+
     const textResponse = await generateText({
-      system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
+      system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
       model: this.getModel(agent.modelId, provider),
-      prompt: userMessage,
+      messages: llmMessages,
       maxSteps: AGENT_CONFIG.MAX_STEPS,
     });
 
