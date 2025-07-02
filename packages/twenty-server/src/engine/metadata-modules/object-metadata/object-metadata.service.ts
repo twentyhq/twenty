@@ -50,6 +50,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -62,6 +64,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
@@ -71,7 +74,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super(objectMetadataRepository);
   }
@@ -95,6 +97,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    return this.createOneWithAuthContext(objectMetadataInput, {
+      workspace: { id: objectMetadataInput.workspaceId } as Workspace,
+      locale: 'en',
+    });
+  }
+
+  async createOneWithAuthContext(
+    objectMetadataInput: CreateObjectInput,
+    authContext: AuthContext,
+  ): Promise<ObjectMetadataEntity> {
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
@@ -109,7 +121,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       const { objectMetadataMaps } =
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
           {
-            workspaceId: objectMetadataInput.workspaceId,
+            workspaceId:
+              authContext.workspace?.id ?? objectMetadataInput.workspaceId,
+            locale: authContext.locale ?? 'en',
           },
         );
 
@@ -230,14 +244,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         queryRunner,
       );
 
-      await queryRunner.commitTransaction();
-
-      // After commit, do non-transactional work
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId: objectMetadataInput.workspaceId,
-        },
-      );
       await this.objectMetadataRelatedRecordsService.createObjectRelatedRecords(
         createdObjectMetadata,
       );
@@ -245,6 +251,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         objectMetadataInput.workspaceId,
       );
+
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+      );
+
+      await queryRunner.commitTransaction();
 
       return createdObjectMetadata;
     } catch (error) {
@@ -261,6 +275,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    return this.updateOneObjectWithAuthContext(input, workspaceId, {
+      workspace: { id: workspaceId } as Workspace,
+      locale: 'en',
+    });
+  }
+
+  public async updateOneObjectWithAuthContext(
+    input: UpdateOneObjectInput,
+    workspaceId: string,
+    authContext: AuthContext,
+  ): Promise<ObjectMetadataEntity> {
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
@@ -269,14 +294,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await queryRunner.startTransaction();
 
     try {
-      const objectMetadataRepository =
-        queryRunner.manager.getRepository(ObjectMetadataEntity);
-
       const { objectMetadataMaps } =
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-          { workspaceId },
+          { workspaceId, locale: authContext.locale ?? 'en' },
         );
+
       const inputId = input.id;
+
       const inputPayload = {
         ...input.update,
         ...(isDefined(input.update.labelSingular)
@@ -288,6 +312,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       };
 
       validateObjectMetadataInputNamesOrThrow(inputPayload);
+
       const existingObjectMetadata = objectMetadataMaps.byId[inputId];
 
       if (!existingObjectMetadata) {
@@ -296,6 +321,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
+
       const existingObjectMetadataCombinedWithUpdateInput = {
         ...existingObjectMetadata,
         ...inputPayload,
@@ -310,6 +336,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           existingObjectMetadataCombinedWithUpdateInput.id,
         objectMetadataMaps,
       });
+
       if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
         validateNameAndLabelAreSyncOrThrow(
           existingObjectMetadataCombinedWithUpdateInput.labelSingular,
@@ -320,6 +347,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           existingObjectMetadataCombinedWithUpdateInput.namePlural,
         );
       }
+
       if (
         isDefined(inputPayload.nameSingular) ||
         isDefined(inputPayload.namePlural)
@@ -333,6 +361,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             'The singular and plural names cannot be the same for an object',
         });
       }
+
       validateMetadataIdentifierFieldMetadataIds({
         fieldMetadataItems: Object.values(existingObjectMetadata.fieldsById),
         labelIdentifierFieldMetadataId:
@@ -340,10 +369,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         imageIdentifierFieldMetadataId:
           inputPayload.imageIdentifierFieldMetadataId,
       });
-      const updatedObject = await objectMetadataRepository.save({
-        ...existingObjectMetadata,
-        ...inputPayload,
-      });
+
+      const updatedObject = await super.updateOne(inputId, inputPayload);
 
       const { didUpdateLabelOrIcon } =
         await this.handleObjectNameAndLabelUpdates(
@@ -460,13 +487,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'Remote objects are not supported yet',
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         );
-      } else {
-        await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
-          objectMetadata,
-          workspaceId,
-          queryRunner,
-        );
       }
+
+      await this.objectMetadataMigrationService.deleteAllRelationsAndDropTable(
+        objectMetadata,
+        workspaceId,
+        queryRunner,
+      );
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         workspaceId,

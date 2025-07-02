@@ -148,6 +148,7 @@ export class WorkspaceDatasourceFactory {
             await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
               {
                 workspaceId,
+                locale: 'en',
               },
             );
 

@@ -112,7 +112,7 @@ export class DataloaderService {
 
         const { objectMetadataMaps } =
           await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-            { workspaceId },
+            { workspaceId, locale: 'en' },
           );
 
         const indexMetadataCollection = objectMetadataIds.map((id) =>
@@ -146,7 +146,7 @@ export class DataloaderService {
 
         const { objectMetadataMaps } =
           await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-            { workspaceId },
+            { workspaceId, locale: 'en' },
           );
 
         const fieldMetadataCollection = objectMetadataIds.map((id) =>
@@ -200,7 +200,7 @@ export class DataloaderService {
 
       const { objectMetadataMaps } =
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-          { workspaceId },
+          { workspaceId, locale: 'en' },
         );
 
       return dataLoaderParams.map(

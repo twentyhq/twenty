@@ -44,6 +44,7 @@ export class WorkspaceMetadataVersionService {
 
     await this.workspaceMetadataCacheService.recomputeMetadataCache({
       workspaceId,
+      locale: 'en',
     });
   }
 }

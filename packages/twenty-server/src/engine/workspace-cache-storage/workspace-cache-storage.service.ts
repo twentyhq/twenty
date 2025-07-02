@@ -123,6 +123,7 @@ export class WorkspaceCacheStorageService {
     const objectMetadataMaps = await this.getObjectMetadataMaps(
       workspaceId,
       currentCacheVersion,
+      'en',
     );
 
     if (!objectMetadataMaps) {
@@ -139,9 +140,10 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     typeDefs: string,
+    locale: string,
   ): Promise<void> {
     return this.cacheStorageService.set<string>(
-      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}:${locale}`,
       typeDefs,
       TTL_INFINITE,
     );
@@ -150,9 +152,10 @@ export class WorkspaceCacheStorageService {
   getGraphQLTypeDefs(
     workspaceId: string,
     metadataVersion: number,
+    locale: string,
   ): Promise<string | undefined> {
     return this.cacheStorageService.get<string>(
-      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}:${locale}`,
     );
   }
 
@@ -160,9 +163,10 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     usedScalarNames: string[],
+    locale: string,
   ): Promise<void> {
     return this.cacheStorageService.set<string[]>(
-      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}:${locale}`,
       usedScalarNames,
       TTL_INFINITE,
     );
@@ -171,9 +175,10 @@ export class WorkspaceCacheStorageService {
   getGraphQLUsedScalarNames(
     workspaceId: string,
     metadataVersion: number,
+    locale: string,
   ): Promise<string[] | undefined> {
     return this.cacheStorageService.get<string[]>(
-      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}:${locale}`,
     );
   }
 

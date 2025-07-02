@@ -51,6 +51,7 @@ export class CoreQueryBuilderFactory {
     if (currentCacheVersion === undefined) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache({
         workspaceId: workspace.id,
+        locale: request.locale ?? 'en',
       });
 
       throw new BadRequestException('Metadata cache version not found');
@@ -59,6 +60,7 @@ export class CoreQueryBuilderFactory {
       await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspace.id,
         currentCacheVersion,
+        request.locale ?? 'en',
       );
 
     if (!objectMetadataMaps) {
