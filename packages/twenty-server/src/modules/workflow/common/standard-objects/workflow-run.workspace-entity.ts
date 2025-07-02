@@ -24,6 +24,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowRunStepInfo } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -44,6 +45,15 @@ export type WorkflowRunOutput = {
   };
   stepsOutput?: Record<string, WorkflowExecutorOutput>;
   error?: string;
+};
+
+export type WorkflowRunContext = {
+  flow: {
+    trigger: WorkflowTrigger;
+    steps: WorkflowAction[];
+  };
+  stepInfos: Record<string, WorkflowRunStepInfo>;
+  workflowRunError?: string;
 };
 
 @WorkspaceEntity({
@@ -151,6 +161,17 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any> | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.runContext,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Run context`,
+    description: msg`Run context`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsNullable()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  runContext: WorkflowRunContext | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,

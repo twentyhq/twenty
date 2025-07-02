@@ -28,6 +28,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { MigrateRunContextToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-run-context-to-workflow-run.command';
 
 const execPromise = promisify(exec);
 
@@ -141,6 +142,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.1 Commands
     protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
+    protected readonly migrateRunContextToWorkflowRunCommand: MigrateRunContextToWorkflowRunCommand,
   ) {
     super(
       workspaceRepository,
@@ -186,7 +188,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
         this.fixSchemaArrayTypeCommand,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.migrateRunContextToWorkflowRunCommand],
     };
 
     this.allCommands = {
