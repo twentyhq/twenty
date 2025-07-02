@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject, generateText } from 'ai';
+import { Repository } from 'typeorm';
 
 import {
   ModelId,
@@ -37,6 +39,8 @@ export class AgentExecutionService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
+    @InjectRepository(AgentEntity, 'core')
+    private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 
   private getModel = (modelId: ModelId, provider: ModelProvider) => {
@@ -79,13 +83,43 @@ export class AgentExecutionService {
           AgentExceptionCode.AGENT_EXECUTION_FAILED,
         );
     }
-
     if (!apiKey) {
       throw new AgentException(
         `${provider.toUpperCase()} API key not configured`,
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
+  }
+
+  async getChatResponse({
+    agentId,
+    userMessage,
+  }: {
+    agentId: string;
+    userMessage: string;
+  }): Promise<string> {
+    const agent = await this.agentRepository.findOneOrFail({
+      where: { id: agentId },
+    });
+    const aiModel = getAIModelById(agent.modelId);
+
+    if (!aiModel) {
+      throw new AgentException(
+        `AI model with id ${agent.modelId} not found`,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+    const provider = aiModel.provider;
+
+    await this.validateApiKey(provider);
+    const textResponse = await generateText({
+      system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
+      model: this.getModel(agent.modelId, provider),
+      prompt: userMessage,
+      maxSteps: AGENT_CONFIG.MAX_STEPS,
+    });
+
+    return textResponse.text;
   }
 
   async executeAgent({
@@ -106,16 +140,13 @@ export class AgentExecutionService {
           AgentExceptionCode.AGENT_EXECUTION_FAILED,
         );
       }
-
       const provider = aiModel.provider;
 
       await this.validateApiKey(provider);
-
       const tools = await this.agentToolService.generateToolsForAgent(
         agent.id,
         agent.workspaceId,
       );
-
       const textResponse = await generateText({
         system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
         model: this.getModel(agent.modelId, provider),
@@ -130,7 +161,6 @@ export class AgentExecutionService {
           usage: textResponse.usage,
         };
       }
-
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: this.getModel(agent.modelId, provider),
@@ -163,7 +193,6 @@ export class AgentExecutionService {
       if (error instanceof AgentException) {
         throw error;
       }
-
       throw new AgentException(
         error instanceof Error ? error.message : 'Agent execution failed',
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
