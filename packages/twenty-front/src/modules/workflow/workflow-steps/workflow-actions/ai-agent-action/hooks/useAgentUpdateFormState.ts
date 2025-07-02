@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { useFindOneAgentQuery } from '~/generated/graphql';
+import { useFindOneAgentQuery } from '~/generated-metadata/graphql';
 import { UPDATE_ONE_AGENT } from '../graphql/mutations/updateOneAgent';
 
 type AgentFormValues = {

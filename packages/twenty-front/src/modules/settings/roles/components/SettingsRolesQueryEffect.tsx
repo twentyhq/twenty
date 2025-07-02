@@ -6,7 +6,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Role, useGetRolesQuery } from '~/generated/graphql';
+import { Role, useGetRolesQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const SettingsRolesQueryEffect = () => {

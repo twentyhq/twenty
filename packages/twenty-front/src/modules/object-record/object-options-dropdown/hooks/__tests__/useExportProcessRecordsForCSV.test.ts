@@ -1,7 +1,7 @@
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: jest.fn(() => ({

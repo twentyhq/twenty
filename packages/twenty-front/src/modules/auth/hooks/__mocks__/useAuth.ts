@@ -4,7 +4,7 @@ import {
   GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
   SignUpInWorkspaceDocument,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const queries = {
   getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,

@@ -126,6 +126,7 @@ export const workflowHttpRequestActionSettingsSchema =
             z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
           ]),
         )
+        .or(z.string())
         .optional(),
     }),
   });
@@ -309,6 +310,7 @@ export const workflowRunStatusSchema = z.enum([
   'RUNNING',
   'COMPLETED',
   'FAILED',
+  'ENQUEUED',
 ]);
 
 export const workflowRunSchema = z
