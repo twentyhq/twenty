@@ -23,7 +23,7 @@ const StyledEmptyState = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   justify-content: center;
-  height: calc(100% - 200px);
+  height: 100%;
 `;
 
 const StyledSparkleIcon = styled.div`
