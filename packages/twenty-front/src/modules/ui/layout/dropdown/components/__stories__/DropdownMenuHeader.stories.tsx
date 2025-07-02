@@ -1,11 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 import {
   Avatar,
   IconChevronLeft,
@@ -13,6 +12,7 @@ import {
   IconPlus,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',
@@ -62,11 +62,12 @@ export const ContextDropdownAndAvatar: Story = {
     EndComponent: (
       <Dropdown
         dropdownId={'story-dropdown-id-context-menu'}
-        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         dropdownComponents={
-          <DropdownMenuItemsContainer>
-            <MenuItem LeftIcon={IconPlus} text={`Create Workspace`} />
-          </DropdownMenuItemsContainer>
+          <DropdownContent>
+            <DropdownMenuItemsContainer>
+              <MenuItem LeftIcon={IconPlus} text={`Create Workspace`} />
+            </DropdownMenuItemsContainer>
+          </DropdownContent>
         }
       />
     ),

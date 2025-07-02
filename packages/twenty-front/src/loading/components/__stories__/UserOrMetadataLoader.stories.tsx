@@ -2,12 +2,12 @@ import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse, graphql, http } from 'msw';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
-import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import {
   PageDecorator,
@@ -21,17 +21,13 @@ import { mockedUserData } from '~/testing/mock-data/users';
 const userMetadataLoaderMocks = {
   msw: {
     handlers: [
+      http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () => {
+        return HttpResponse.json(mockedClientConfig);
+      }),
       graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
         return HttpResponse.json({
           data: {
             currentUser: mockedUserData,
-          },
-        });
-      }),
-      graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
-        return HttpResponse.json({
-          data: {
-            clientConfig: mockedClientConfig,
           },
         });
       }),

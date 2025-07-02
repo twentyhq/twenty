@@ -46,8 +46,12 @@
         "ignorePath": "{workspaceRoot}/.gitignore"
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "fix": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "fix": true
+        }
       },
       "dependsOn": ["^build"]
     },
@@ -63,8 +67,12 @@
         "write": false
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "write": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "write": true
+        }
       },
       "dependsOn": ["^build"]
     },
@@ -76,7 +84,9 @@
         "command": "tsc -b tsconfig.json --incremental"
       },
       "configurations": {
-        "watch": { "watch": true }
+        "watch": {
+          "watch": true
+        }
       },
       "dependsOn": ["^build"]
     },
@@ -101,8 +111,12 @@
           "ci": true,
           "maxWorkers": 3
         },
-        "coverage": { "coverageReporters": ["lcov", "text"] },
-        "watch": { "watch": true }
+        "coverage": {
+          "coverageReporters": ["lcov", "text"]
+        },
+        "watch": {
+          "watch": true
+        }
       }
     },
     "test:e2e": {
@@ -192,7 +206,9 @@
         "checkCoverage": true
       },
       "configurations": {
-        "text": { "reporter": "text" }
+        "text": {
+          "reporter": "text"
+        }
       }
     },
     "storybook:serve-and-test:static": {
@@ -288,9 +304,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "options": {
-        "cacheableOperations": ["storybook:build"]
-      }
+      "options": {}
     }
   },
   "useInferencePlugins": false,

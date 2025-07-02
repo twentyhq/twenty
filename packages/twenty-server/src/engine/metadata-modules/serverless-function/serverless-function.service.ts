@@ -25,10 +25,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import {
-  ServerlessFunctionEntity,
-  ServerlessFunctionSyncStatus,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
@@ -39,7 +36,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
-    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    @InjectRepository(ServerlessFunctionEntity, 'core')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -49,29 +46,6 @@ export class ServerlessFunctionService {
   // @ts-expect-error legacy noImplicitAny
   async findManyServerlessFunctions(where) {
     return this.serverlessFunctionRepository.findBy(where);
-  }
-
-  async findOneOrFail({
-    workspaceId,
-    id,
-  }: {
-    workspaceId: string;
-    id: string;
-  }) {
-    const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneBy({
-        id,
-        workspaceId,
-      });
-
-    if (!serverlessFunction) {
-      throw new ServerlessFunctionException(
-        `Function does not exist`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    return serverlessFunction;
   }
 
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
@@ -88,10 +62,13 @@ export class ServerlessFunctionService {
     id: string,
     version: string,
   ): Promise<{ [filePath: string]: string } | undefined> {
-    const serverlessFunction = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
 
     try {
       const folderPath = getServerlessFolder({
@@ -129,10 +106,13 @@ export class ServerlessFunctionService {
   ): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
-    const functionToExecute = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
+    const functionToExecute =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
 
     const resultServerlessFunction = await this.serverlessService.execute(
       functionToExecute,
@@ -158,10 +138,13 @@ export class ServerlessFunctionService {
   }
 
   async publishOneServerlessFunction(id: string, workspaceId: string) {
-    const existingServerlessFunction = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
 
     if (isDefined(existingServerlessFunction.latestVersion)) {
       const latestCode = await this.getServerlessFunctionSourceCode(
@@ -222,39 +205,54 @@ export class ServerlessFunctionService {
   async deleteOneServerlessFunction({
     id,
     workspaceId,
-    isHardDeletion = true,
+    softDelete = false,
   }: {
     id: string;
     workspaceId: string;
-    isHardDeletion?: boolean;
+    softDelete?: boolean;
   }) {
-    const existingServerlessFunction = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+        withDeleted: true,
+      });
 
-    if (isHardDeletion) {
-      await this.serverlessFunctionRepository.delete(id);
-      await this.fileStorageService.delete({
+    if (softDelete) {
+      await this.serverlessFunctionRepository.softDelete({ id });
+    } else {
+      await this.serverlessFunctionRepository.delete({ id });
+      // We don't need to await this
+      this.fileStorageService.delete({
         folderPath: getServerlessFolder({
           serverlessFunction: existingServerlessFunction,
         }),
       });
     }
 
-    await this.serverlessService.delete(existingServerlessFunction);
+    // We don't need to await this
+    this.serverlessService.delete(existingServerlessFunction);
 
     return existingServerlessFunction;
+  }
+
+  async restoreOneServerlessFunction(id: string) {
+    await this.serverlessFunctionRepository.restore({ id });
   }
 
   async updateOneServerlessFunction(
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const existingServerlessFunction = await this.findOneOrFail({
-      id: serverlessFunctionInput.id,
-      workspaceId,
-    });
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id: serverlessFunctionInput.id,
+          workspaceId,
+        },
+      });
 
     await this.serverlessFunctionRepository.update(
       existingServerlessFunction.id,
@@ -316,13 +314,13 @@ export class ServerlessFunctionService {
     serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const serverlessFunctionToCreate =
-      await this.serverlessFunctionRepository.create({
+    const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
+      {
         ...serverlessFunctionInput,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
-        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
-      });
+      },
+    );
 
     const createdServerlessFunction =
       await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
@@ -359,10 +357,13 @@ export class ServerlessFunctionService {
       return;
     }
 
-    const serverlessFunction = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
 
     await this.fileStorageService.copy({
       from: {

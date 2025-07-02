@@ -364,13 +364,15 @@ export class InterApiService {
 
       const fileFolder = FileFolder.ChargeBill;
 
-      const { path } = await this.fileUploadService.uploadFile({
+      const { files } = await this.fileUploadService.uploadFile({
         file: Buffer.from(pdfBuffer, 'base64'),
         fileFolder,
         workspaceId,
         filename: `bolepix-${requestCode}-${workspaceId}.pdf`,
         mimeType: 'application/pdf',
       });
+
+      const path = files[0].path;
 
       const fullPath = this.extractFullPathFromFilePath(path);
 

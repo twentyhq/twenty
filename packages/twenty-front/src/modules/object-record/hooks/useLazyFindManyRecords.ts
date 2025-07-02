@@ -2,12 +2,14 @@ import { useLazyQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { useLazyFetchMoreRecordsWithPagination } from '@/object-record/hooks/useLazyFetchMoreRecordsWithPagination';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -15,7 +17,7 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
-  'skip'
+  'skip' | 'onCompleted' | 'onError'
 >;
 
 export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -24,9 +26,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   orderBy,
   limit,
   recordGqlFields,
-  fetchPolicy,
-  onCompleted,
-  onError,
 }: UseLazyFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -39,7 +38,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
-    handleError: onError,
   });
 
   const queryIdentifier = getQueryIdentifier({
@@ -52,37 +50,53 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
     objectMetadataItem,
     queryIdentifier,
-    onCompleted,
   });
 
-  const [findManyRecords, { data, loading, error, fetchMore }] =
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords;
+
+  const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
         filter,
         limit,
         orderBy,
       },
-      fetchPolicy: fetchPolicy,
+      fetchPolicy: 'cache-first',
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords, totalCount, records, hasNextPage } =
-    useFetchMoreRecordsWithPagination<T>({
-      objectNameSingular,
-      filter,
-      orderBy,
-      limit,
-      onCompleted,
-      fetchMore,
-      data,
-      error,
-      objectMetadataItem,
-    });
+  const { fetchMoreRecordsLazy } = useLazyFetchMoreRecordsWithPagination<T>({
+    objectNameSingular,
+    filter,
+    orderBy,
+    limit,
+    fetchMore,
+    data,
+    error,
+    objectMetadataItem,
+  });
 
   const findManyRecordsLazy = useRecoilCallback(
     ({ set }) =>
       async () => {
+        if (!hasReadPermission) {
+          set(hasNextPageFamilyState(queryIdentifier), false);
+          set(cursorFamilyState(queryIdentifier), '');
+
+          return {
+            data: null,
+            records: [],
+            totalCount: 0,
+            hasNextPage: false,
+            error: undefined,
+          };
+        }
+
         const result = await findManyRecords();
 
         const hasNextPage =
@@ -96,21 +110,41 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         set(hasNextPageFamilyState(queryIdentifier), hasNextPage);
         set(cursorFamilyState(queryIdentifier), lastCursor);
 
-        return result;
+        const records = getRecordsFromRecordConnection({
+          recordConnection: {
+            edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
+            pageInfo: result?.data?.[objectMetadataItem.namePlural]
+              ?.pageInfo ?? {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          },
+        });
+
+        const totalCount =
+          result?.data?.[objectMetadataItem.namePlural]?.totalCount ?? 0;
+
+        return {
+          data: result?.data,
+          records,
+          totalCount,
+          hasNextPage,
+          error: result?.error,
+        };
       },
-    [queryIdentifier, findManyRecords, objectMetadataItem],
+    [
+      hasReadPermission,
+      findManyRecords,
+      objectMetadataItem.namePlural,
+      queryIdentifier,
+    ],
   );
 
   return {
-    objectMetadataItem,
-    records,
-    totalCount,
-    loading,
-    error,
-    fetchMore,
-    fetchMoreRecords,
-    queryStateIdentifier: queryIdentifier,
-    findManyRecords: findManyRecordsLazy,
-    hasNextPage,
+    findManyRecordsLazy,
+    fetchMoreRecordsLazy,
+    queryIdentifier,
   };
 };

@@ -6,6 +6,8 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { subscriptionStatusState } from '@/workspace/states/subscriptionStatusState';
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
+import { useState } from 'react';
+
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
@@ -14,6 +16,7 @@ import {
   useGetCurrentUserLazyQuery,
 } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+
 const StyledLoaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,27 +33,40 @@ export const PaymentSuccess = () => {
 
   const setCurrentUser = useSetRecoilState(currentUserState);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigateWithSubscriptionCheck = async () => {
-    if (isDefined(subscriptionStatus)) {
-      navigate(AppPath.CreateWorkspace);
-      return;
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    try {
+      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+      if (isDefined(subscriptionStatus)) {
+        navigate(AppPath.CreateWorkspace);
+        return;
+      }
+
+      const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+      const currentUser = result.data?.currentUser;
+      const refreshedSubscriptionStatus =
+        currentUser?.currentWorkspace?.currentBillingSubscription?.status;
+
+      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+      if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
+        setCurrentUser(currentUser);
+        navigate(AppPath.CreateWorkspace);
+        return;
+      }
+
+      throw new Error(
+        "We're waiting for a confirmation from our payment provider.\n" +
+          'Please try again in a few seconds, sorry.',
+      );
+    } catch (error) {
+      setIsLoading(false);
+      throw error;
     }
-
-    const result = await getCurrentUser({ fetchPolicy: 'network-only' });
-    const currentUser = result.data?.currentUser;
-    const refreshedSubscriptionStatus =
-      currentUser?.currentWorkspace?.currentBillingSubscription?.status;
-
-    if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
-      setCurrentUser(currentUser);
-      navigate(AppPath.CreateWorkspace);
-      return;
-    }
-
-    throw new Error(
-      "We're waiting for a confirmation from our payment provider.\n" +
-        'Please try again in a few seconds, sorry.',
-    );
   };
 
   const { loading, refetch } = useQuery<GetCurrentUserQuery>(GET_CURRENT_USER, {
@@ -60,6 +76,7 @@ export const PaymentSuccess = () => {
       const refreshedSubscriptionStatus =
         data.currentUser.currentWorkspace?.currentBillingSubscription?.status;
 
+      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isDefined(refreshedSubscriptionStatus)) {
         await navigateWithSubscriptionCheck();
       }

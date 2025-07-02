@@ -5,10 +5,11 @@ import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-r
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook({
   key: `workflow.deleteMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowDeleteManyPostQueryHook
   implements WorkspacePostQueryHookInstance
@@ -22,9 +23,14 @@ export class WorkflowDeleteManyPostQueryHook
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
-      payload.map((workflow) => workflow.id),
-      authContext.workspace.id,
-    );
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      workflowIds: payload.map((workflow) => workflow.id),
+      workspaceId: workspace.id,
+      operation: 'delete',
+    });
   }
 }

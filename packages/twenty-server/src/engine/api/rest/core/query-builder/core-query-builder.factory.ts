@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-many-query.factory';
+import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
 import { FindDuplicatesQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-duplicates-query.factory';
 import { FindDuplicatesVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/find-duplicates-variables.factory';
 import { computeDepth } from 'src/engine/api/rest/core/query-builder/utils/compute-depth.utils';
@@ -17,7 +18,7 @@ import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-module
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -42,6 +43,8 @@ export class CoreQueryBuilderFactory {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
 
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
@@ -63,7 +66,7 @@ export class CoreQueryBuilderFactory {
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname: '/settings/developers',
+            pathname: '/settings/apis',
           })
           .toString()}`,
       );

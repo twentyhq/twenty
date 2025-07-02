@@ -30,6 +30,7 @@ import {
   SessionManager,
 } from 'sip.js/lib/platform/web';
 import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
 import { CallState } from '../types/callState';
@@ -934,19 +935,25 @@ const WebSoftphone: React.FC = () => {
                       }}
                       RightIcon={() =>
                         isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardOffIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
                           />
                         ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
@@ -990,19 +997,25 @@ const WebSoftphone: React.FC = () => {
                       }}
                       RightIcon={() =>
                         isKeyboardExpanded ? (
-                          <KeyboardOffIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
+                            Icon={() => (
+                              <KeyboardOffIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                           />
                         ) : (
-                          <KeyboardIcon
-                            color={theme.font.color.tertiary}
-                            size={theme.icon.size.md}
-                            style={{ cursor: 'pointer' }}
+                          <IconButton
+                            Icon={() => (
+                              <KeyboardIcon
+                                color={theme.font.color.tertiary}
+                                size={theme.icon.size.md}
+                              />
+                            )}
                             onClick={() =>
                               setIsKeyboardExpanded(!isKeyboardExpanded)
                             }
@@ -1090,22 +1103,24 @@ const WebSoftphone: React.FC = () => {
                       setCallState={setCallState}
                       callState={callState}
                     />
-
-                    <IconMicrophoneOff
+                    <IconButton
                       onClick={handleMute}
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.secondary}
-                      style={{
-                        cursor: 'pointer',
-                        padding: theme.spacing(3),
-                        borderRadius: '50%',
-                        // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-                        border: `1px solid #fff`,
-                        backgroundColor: callState.isMuted
-                          ? theme.background.overlaySecondary
-                          : theme.background.tertiary,
-                      }}
+                      Icon={() => (
+                        <IconMicrophoneOff
+                          size={theme.icon.size.lg}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.secondary}
+                          style={{
+                            padding: theme.spacing(3),
+                            borderRadius: '50%',
+                            // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+                            border: `1px solid #fff`,
+                            backgroundColor: callState.isMuted
+                              ? theme.background.overlaySecondary
+                              : theme.background.tertiary,
+                          }}
+                        />
+                      )}
                     />
 
                     <TransferButton

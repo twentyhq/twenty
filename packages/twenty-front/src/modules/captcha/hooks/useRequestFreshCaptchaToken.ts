@@ -41,17 +41,23 @@ export const useRequestFreshCaptchaToken = () => {
         let captchaWidget: any;
 
         switch (captcha.provider) {
-          case CaptchaDriverType.GoogleRecaptcha:
+          case CaptchaDriverType.GOOGLE_RECAPTCHA:
             window.grecaptcha
               .execute(captcha.siteKey, {
                 action: 'submit',
               })
               .then((token: string) => {
+                // TODO remove this log once debugged
+                // eslint-disable-next-line no-console
+                console.log(
+                  'Google Recaptcha token generated at',
+                  new Date().toISOString(),
+                );
                 setCaptchaToken(token);
                 setIsRequestingCaptchaToken(false);
               });
             break;
-          case CaptchaDriverType.Turnstile:
+          case CaptchaDriverType.TURNSTILE:
             captchaWidget = window.turnstile.render('#captcha-widget', {
               sitekey: captcha.siteKey,
             });

@@ -11,22 +11,16 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab/components/TabList';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import {
   H3Title,
   IconCodeCircle,
@@ -35,8 +29,14 @@ import {
   IconPoint,
   IconSettings,
 } from 'twenty-ui/display';
-import { MAIN_COLORS } from 'twenty-ui/theme';
+import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { MAIN_COLORS } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
+import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -76,7 +76,7 @@ export const SettingsObjectDetailPage = () => {
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsUniqueIndexesEnabled,
+    FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
 
   useEffect(() => {

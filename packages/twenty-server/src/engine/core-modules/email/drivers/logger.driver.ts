@@ -2,9 +2,9 @@ import { Logger } from '@nestjs/common';
 
 import { SendMailOptions } from 'nodemailer';
 
-import { EmailDriver } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
+import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
-export class LoggerDriver implements EmailDriver {
+export class LoggerDriver implements EmailDriverInterface {
   private readonly logger = new Logger(LoggerDriver.name);
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {

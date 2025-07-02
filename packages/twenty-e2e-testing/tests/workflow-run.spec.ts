@@ -8,14 +8,12 @@ test('The workflow run visualizer shows the executed draft version without the l
   await workflowVisualizer.createInitialTrigger('manual');
 
   const manualTriggerAvailabilitySelect = page.getByRole('button', {
-    name: 'When record(s) are selected',
+    name: 'When record is selected',
   });
 
   await manualTriggerAvailabilitySelect.click();
 
-  const alwaysAvailableOption = page.getByText(
-    'When no record(s) are selected',
-  );
+  const alwaysAvailableOption = page.getByText('When no record is selected');
 
   await alwaysAvailableOption.click();
 
@@ -30,21 +28,31 @@ test('The workflow run visualizer shows the executed draft version without the l
 
   await launchTestButton.click();
 
-  const goToExecutionPageLink = page.getByRole('link', {
-    name: 'View execution details',
-  });
-  const executionPageUrl = await goToExecutionPageLink.getAttribute('href');
-  expect(executionPageUrl).not.toBeNull();
+  await workflowVisualizer.closeSidePanel();
 
   await workflowVisualizer.deleteStep(firstStepId);
 
-  await page.goto(executionPageUrl!);
+  await page.goto('/objects/workflowRuns');
 
-  const workflowRunName = page
+  const recordTableRowForWorkflowRun = page
+    .getByRole('row', {
+      name: workflowVisualizer.workflowName,
+    })
+    .first();
+
+  const linkToWorkflowRun = recordTableRowForWorkflowRun
+    .getByRole('link', {
+      name: workflowVisualizer.workflowName,
+    })
+    .first();
+
+  await linkToWorkflowRun.click({ force: true });
+
+  const workflowRunNameElement = page
     .getByText(`#1 - ${workflowVisualizer.workflowName}`)
     .nth(1);
 
-  await expect(workflowRunName).toBeVisible();
+  await expect(workflowRunNameElement).toBeVisible();
 
   const executedFirstStepNode = workflowVisualizer.getStepNode(firstStepId);
 
@@ -64,14 +72,12 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
   await workflowVisualizer.createInitialTrigger('manual');
 
   const manualTriggerAvailabilitySelect = page.getByRole('button', {
-    name: 'When record(s) are selected',
+    name: 'When record is selected',
   });
 
   await manualTriggerAvailabilitySelect.click();
 
-  const alwaysAvailableOption = page.getByText(
-    'When no record(s) are selected',
-  );
+  const alwaysAvailableOption = page.getByText('When no record is selected');
 
   await alwaysAvailableOption.click();
 
@@ -80,35 +86,23 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
   const { createdStepId: firstStepId } =
     await workflowVisualizer.createStep('form');
 
+  const addFormFieldButton = page.getByText('Add Field', { exact: true });
+
+  await addFormFieldButton.click();
+
   await workflowVisualizer.closeSidePanel();
 
   const launchTestButton = page.getByLabel(workflowVisualizer.workflowName);
 
   await launchTestButton.click();
 
-  const goToExecutionPageLink = page.getByRole('link', {
-    name: 'View execution details',
-  });
-
-  await expect(goToExecutionPageLink).toBeVisible();
-
-  await workflowVisualizer.seeRunsButton.click();
-
   const workflowRunName = `#1 - ${workflowVisualizer.workflowName}`;
-
-  const workflowRunNameCell = page.getByRole('cell', { name: workflowRunName });
-
-  await expect(workflowRunNameCell).toBeVisible();
-
-  await workflowVisualizer.setWorkflowsOpenInMode('side-panel');
-
-  // 1. Exit the dropdown
-  await workflowRunNameCell.click();
-  // 2. Actually open the workflow run in the side panel
-  await workflowRunNameCell.click();
 
   await expect(workflowVisualizer.stepHeaderInCommandMenu).toContainText(
     'Form',
+    {
+      timeout: 30_000,
+    },
   );
 
   await workflowVisualizer.goBackInCommandMenu.click();
@@ -118,7 +112,9 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await expect(workflowRunNameInCommandMenu).toBeVisible();
 
-  await workflowVisualizer.triggerNode.click();
+  await workflowVisualizer.commandMenu
+    .locator(workflowVisualizer.triggerNode)
+    .click();
 
   await expect(workflowVisualizer.stepHeaderInCommandMenu).toContainText(
     'Launch manually',
@@ -126,7 +122,9 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
 
   await workflowVisualizer.goBackInCommandMenu.click();
 
-  const formStep = workflowVisualizer.getStepNode(firstStepId);
+  const formStep = workflowVisualizer.commandMenu.locator(
+    workflowVisualizer.getStepNode(firstStepId),
+  );
 
   await formStep.click();
 

@@ -6,7 +6,12 @@ import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
+import {
+  defineConfig,
+  loadEnv,
+  PluginOption,
+  searchForWorkspaceRoot,
+} from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -32,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
     REACT_APP_FIREBASE_STORAGE_BUCKET,
     REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     REACT_APP_FIREBASE_APP_ID,
+    IS_DEBUG_MODE,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -43,6 +49,13 @@ export default defineConfig(({ command, mode }) => {
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.build.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
+
+  const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
+  // Please don't increase this limit for main index chunk
+  // If it gets too big then find modules in the code base
+  // that can be loaded lazily, there are more!
+  const MAIN_CHUNK_SIZE_LIMIT = 6 * 1024 * 1024; // 4.7MB for main index chunk
+  const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
     overlay: false,
@@ -174,19 +187,86 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
+        //  Don't use manual chunks as it causes many issue
+        // including this one we wasted a lot of time on:
+        // https://github.com/rollup/rollup/issues/2793
         output: {
-          manualChunks: (id) => {
-            if (id.includes('@scalar')) {
-              return 'scalar';
-            }
+          // Set chunk size warning limit (in bytes) - warns at 1MB
+          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
+          // Custom plugin to fail build if chunks exceed max size
+          plugins: [
+            {
+              name: 'chunk-size-limit',
+              generateBundle(_options, bundle) {
+                const oversizedChunks: string[] = [];
 
-            return null;
-          },
-        },
-      },
-      modulePreload: {
-        resolveDependencies: (filename, deps, { hostId }) => {
-          return deps.filter(dep => !dep.includes('scalar'));
+                Object.entries(bundle).forEach(([fileName, chunk]) => {
+                  if (chunk.type === 'chunk' && chunk.code) {
+                    const size = Buffer.byteLength(chunk.code, 'utf8');
+                    const isMainChunk =
+                      fileName.includes('index') && chunk.isEntry;
+                    const sizeLimit = isMainChunk
+                      ? MAIN_CHUNK_SIZE_LIMIT
+                      : OTHER_CHUNK_SIZE_LIMIT;
+                    const limitType = isMainChunk ? 'main' : 'other';
+
+                    if (size > sizeLimit) {
+                      oversizedChunks.push(
+                        `${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(2)}MB)`,
+                      );
+                    }
+                  }
+                });
+
+                if (oversizedChunks.length > 0) {
+                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map((chunk) => `  - ${chunk}`).join('\n')}`;
+                  this.error(errorMessage);
+                }
+              },
+            },
+            // TODO; later - think about prefetching modules such
+            // as date time picker, phone input etc...
+            /*
+            {
+              name: 'add-prefetched-modules',
+              transformIndexHtml(html: string, 
+                ctx: {
+                  path: string;
+                  filename: string;
+                  server?: ViteDevServer;
+                  bundle?: import('rollup').OutputBundle;
+                  chunk?: import('rollup').OutputChunk;
+                }) {
+
+                  const bundles = Object.keys(ctx.bundle ?? {});
+
+                  let modernBundles = bundles.filter(
+                    (bundle) => bundle.endsWith('.map') === false
+                  );
+
+                  
+                  // Remove existing files and concatenate them into link tags
+                  const prefechBundlesString = modernBundles
+                    .filter((bundle) => html.includes(bundle) === false)
+                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
+                    .join('');
+            
+                  // Use regular expression to get the content within <head> </head>
+                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
+                  // Insert the content of prefetch into the head
+                  const newHeadContent = `${headContent}${prefechBundlesString}`;
+                  // Replace the original head
+                  html = html.replace(
+                    /<head>([\s\S]*)<\/head>/,
+                    `<head>${newHeadContent}</head>`
+                  );
+            
+                  return html;
+            
+             
+              },
+            }*/
+          ],
         },
       },
     },
@@ -215,6 +295,7 @@ export default defineConfig(({ command, mode }) => {
         REACT_APP_FIREBASE_STORAGE_BUCKET,
         REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
         REACT_APP_FIREBASE_APP_ID,
+        IS_DEBUG_MODE,
       },
     },
     css: {

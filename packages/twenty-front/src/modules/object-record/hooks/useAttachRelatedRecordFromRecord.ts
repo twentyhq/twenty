@@ -5,6 +5,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +30,7 @@ export const useAttachRelatedRecordFromRecord = ({
   });
 
   const relatedRecordObjectNameSingular =
-    fieldOnObject?.relationDefinition?.targetObjectMetadata.nameSingular;
+    fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
 
   if (!relatedRecordObjectNameSingular) {
     throw new Error(
@@ -42,7 +43,7 @@ export const useAttachRelatedRecordFromRecord = ({
     });
 
   const fieldOnRelatedObject =
-    fieldOnObject?.relationDefinition?.targetFieldMetadata.name;
+    fieldOnObject?.relation?.targetFieldMetadata.name;
 
   if (!fieldOnRelatedObject) {
     throw new Error(`Missing target field for ${fieldNameOnRecordObject}`);
@@ -61,7 +62,7 @@ export const useAttachRelatedRecordFromRecord = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const updateOneRecordAndAttachRelations = async ({
     recordId,
     relatedRecordId,
@@ -98,6 +99,7 @@ export const useAttachRelatedRecordFromRecord = ({
           [fieldOnRelatedObject]: previousRecord,
         },
         recordGqlFields: gqlFields,
+        objectPermissionsByObjectMetadataId,
       });
     }
 

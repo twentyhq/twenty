@@ -1,4 +1,3 @@
-import { Heading } from '@/spreadsheet-import/components/Heading';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -31,16 +30,30 @@ import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
 const StyledContent = styled(Modal.Content)`
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding: 0px;
+  position: relative;
 `;
 
 const StyledToolbar = styled.div`
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.secondary};
+  bottom: ${({ theme }) => theme.spacing(3)};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 400px;
+  padding: ${({ theme }) => theme.spacing(3)};
+  z-index: 1;
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+`;
+
+const StyledButton = styled(Button)`
+  height: 24px;
 `;
 
 const StyledErrorToggle = styled.div`
@@ -50,8 +63,8 @@ const StyledErrorToggle = styled.div`
 `;
 
 const StyledErrorToggleDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
@@ -69,6 +82,13 @@ const StyledNoRowsContainer = styled.div`
   grid-column: 1/-1;
   justify-content: center;
   margin-top: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledNoRowsWithErrorsContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  justify-content: center;
+  margin: auto 0;
 `;
 
 type ValidationStepProps<T extends string> = {
@@ -103,7 +123,6 @@ export const ValidationStep = <T extends string>({
     ReadonlySet<number | string>
   >(new Set());
   const [filterByErrors, setFilterByErrors] = useState(false);
-  const [showUnmatchedColumns, setShowUnmatchedColumns] = useState(false);
 
   const updateData = useCallback(
     (rows: typeof data) => {
@@ -164,11 +183,11 @@ export const ValidationStep = <T extends string>({
                 column.key === 'select-row',
             ).length > 0;
 
-          if (!hasBeenImported && !showUnmatchedColumns) return null;
+          if (!hasBeenImported) return null;
           return column;
         })
         .filter(Boolean),
-    [fields, importedColumns, showUnmatchedColumns],
+    [fields, importedColumns],
   );
 
   const tableData = useMemo(() => {
@@ -218,7 +237,8 @@ export const ValidationStep = <T extends string>({
     );
 
     setCurrentStepState({
-      type: SpreadsheetImportStepType.loading,
+      type: SpreadsheetImportStepType.importData,
+      recordsToImportCount: calculatedData.validStructuredRows.length,
     });
 
     await onSubmit(calculatedData, file);
@@ -255,61 +275,56 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <StyledContent>
-        <Heading
-          title={t`Review your import`}
-          description={t`Correct the issues and fill the missing data.`}
-        />
+        {filterByErrors && tableData.length === 0 ? (
+          <StyledNoRowsWithErrorsContainer>
+            <Trans>No rows with errors</Trans>
+          </StyledNoRowsWithErrorsContainer>
+        ) : (
+          <StyledScrollContainer>
+            <SpreadsheetImportTable
+              headerRowHeight={32}
+              rowKeyGetter={rowKeyGetter}
+              rows={tableData}
+              onRowsChange={updateRow}
+              columns={columns}
+              selectedRows={selectedRows}
+              onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+              components={{
+                noRowsFallback: (
+                  <StyledNoRowsContainer>
+                    {filterByErrors
+                      ? t`No data containing errors`
+                      : t`No data found`}
+                  </StyledNoRowsContainer>
+                ),
+              }}
+            />
+          </StyledScrollContainer>
+        )}
         <StyledToolbar>
           <StyledErrorToggle>
             <Toggle
               value={filterByErrors}
               onChange={() => setFilterByErrors(!filterByErrors)}
+              toggleSize="small"
             />
             <StyledErrorToggleDescription>
               <Trans>Show only rows with errors</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
-          <StyledErrorToggle>
-            <Toggle
-              value={showUnmatchedColumns}
-              onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
-            />
-            <StyledErrorToggleDescription>
-              <Trans>Show unmatched columns</Trans>
-            </StyledErrorToggleDescription>
-          </StyledErrorToggle>
-          <Button
+          <StyledButton
             Icon={IconTrash}
             title={t`Remove`}
-            accent="danger"
+            accent="default"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />
         </StyledToolbar>
-        <StyledScrollContainer>
-          <SpreadsheetImportTable
-            rowKeyGetter={rowKeyGetter}
-            rows={tableData}
-            onRowsChange={updateRow}
-            columns={columns}
-            selectedRows={selectedRows}
-            onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
-            components={{
-              noRowsFallback: (
-                <StyledNoRowsContainer>
-                  {filterByErrors
-                    ? t`No data containing errors`
-                    : t`No data found`}
-                </StyledNoRowsContainer>
-              ),
-            }}
-          />
-        </StyledScrollContainer>
       </StyledContent>
       <StepNavigationButton
-        onClick={onContinue}
+        onContinue={onContinue}
         onBack={onBack}
-        title={t`Confirm`}
+        continueTitle={t`Confirm`}
       />
     </>
   );

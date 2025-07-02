@@ -1,4 +1,3 @@
-import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -19,16 +18,19 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import {
+  isDefined,
+  isLabelIdentifierFieldMetadataTypes,
+} from 'twenty-shared/utils';
+import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
-import { isDefined } from 'twenty-shared/utils';
-import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -102,7 +104,7 @@ export const SettingsObjectFieldItemTableRow = ({
   const canBeSetAsLabelIdentifier =
     objectMetadataItem.isCustom &&
     !isLabelIdentifier &&
-    LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type);
+    isLabelIdentifierFieldMetadataTypes(fieldMetadataItem.type);
 
   const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
     objectNamePlural: objectMetadataItem.namePlural,
@@ -240,8 +242,7 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationDefinitionType.MANY_TO_ONE ||
-            relationType === RelationDefinitionType.ONE_TO_ONE
+            relationType === RelationType.MANY_TO_ONE
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }

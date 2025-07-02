@@ -11,6 +11,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 jest.mock(
   'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate',
@@ -35,8 +36,12 @@ describe('FeatureFlagService', () => {
     recomputeFeatureFlagsMapCache: jest.fn(),
   };
 
+  const mockWorkspacePermissionsCacheService = {
+    recomputeRolesPermissionsCache: jest.fn(),
+  };
+
   const workspaceId = 'workspace-id';
-  const featureFlag = FeatureFlagKey.IsWorkflowEnabled;
+  const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -56,6 +61,10 @@ describe('FeatureFlagService', () => {
         {
           provide: WorkspaceFeatureFlagsMapCacheService,
           useValue: mockWorkspaceFeatureFlagsMapCacheService,
+        },
+        {
+          provide: WorkspacePermissionsCacheService,
+          useValue: mockWorkspacePermissionsCacheService,
         },
       ],
     }).compile();
@@ -121,13 +130,11 @@ describe('FeatureFlagService', () => {
       // Prepare
       mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
         {
-          [FeatureFlagKey.IsWorkflowEnabled]: true,
-          [FeatureFlagKey.IsCopilotEnabled]: false,
+          [FeatureFlagKey.IS_AI_ENABLED]: false,
         },
       );
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IsWorkflowEnabled, value: true },
-        { key: FeatureFlagKey.IsCopilotEnabled, value: false },
+        { key: FeatureFlagKey.IS_AI_ENABLED, value: false },
       ];
 
       // Act
@@ -145,8 +152,7 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IsWorkflowEnabled, value: true, workspaceId },
-        { key: FeatureFlagKey.IsCopilotEnabled, value: false, workspaceId },
+        { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
@@ -156,8 +162,7 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual({
-        [FeatureFlagKey.IsWorkflowEnabled]: true,
-        [FeatureFlagKey.IsCopilotEnabled]: false,
+        [FeatureFlagKey.IS_AI_ENABLED]: false,
       });
     });
   });
@@ -165,10 +170,7 @@ describe('FeatureFlagService', () => {
   describe('enableFeatureFlags', () => {
     it('should enable multiple feature flags for a workspace', async () => {
       // Prepare
-      const keys = [
-        FeatureFlagKey.IsWorkflowEnabled,
-        FeatureFlagKey.IsCopilotEnabled,
-      ];
+      const keys = [FeatureFlagKey.IS_AI_ENABLED];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
 
@@ -212,7 +214,6 @@ describe('FeatureFlagService', () => {
       // Assert
       expect(result).toEqual(mockFeatureFlag);
       expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
-        // @ts-expect-error legacy noImplicitAny
         key: FeatureFlagKey[featureFlag],
         value,
         workspaceId,

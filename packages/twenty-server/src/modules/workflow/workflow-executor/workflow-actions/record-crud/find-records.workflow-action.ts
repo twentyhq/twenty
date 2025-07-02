@@ -16,7 +16,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -36,7 +36,7 @@ import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-ex
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowExecutor {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
@@ -67,10 +67,6 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       context,
     ) as WorkflowFindRecordsActionInput;
 
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
@@ -80,6 +76,13 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       );
     }
 
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        workflowActionInput.objectName,
+        { shouldBypassPermissionChecks: true },
+      );
+
     const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
         workflowActionInput.objectName,
@@ -87,8 +90,7 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
       );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldsMaps.fieldsByName,
-      objectMetadataItemWithFieldsMaps.fieldsByJoinColumnName,
+      objectMetadataItemWithFieldsMaps,
       objectMetadataMaps,
     );
 
@@ -129,7 +131,8 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const orderByWithIdCondition = [
@@ -167,14 +170,15 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
-        workflowActionInput.filter
-          ? workflowActionInput.filter
+        workflowActionInput.filter?.gqlOperationFilter
+          ? workflowActionInput.filter.gqlOperationFilter
           : ({} as ObjectRecordFilter),
       );
 

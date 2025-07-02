@@ -5,6 +5,7 @@
     {
       "name": "twenty-server - start debug",
       "type": "node",
+      "runtimeVersion": "22.12",
       "request": "launch",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
@@ -37,7 +38,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeVersion": "18",
+      "runtimeVersion": "22.12",
       "runtimeArgs": [
         "nx",
         "run",

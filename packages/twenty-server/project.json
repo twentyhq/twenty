@@ -2,30 +2,23 @@
   "name": "twenty-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "tags": [
-    "scope:backend"
-  ],
+  "tags": ["scope:backend"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "packages/twenty-server",
-        "commands": [
-          "rimraf dist",
-          "nest build --path ./tsconfig.build.json"
-        ]
+        "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -33,7 +26,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -56,10 +49,7 @@
     },
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "typecheck",
-        "build"
-      ],
+      "dependsOn": ["typecheck", "build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "NODE_ENV=development && nest start --watch"
@@ -67,9 +57,7 @@
     },
     "start:debug": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "nx start --debug"
@@ -77,12 +65,8 @@
     },
     "reset:env": {
       "executor": "nx:run-commands",
-      "inputs": [
-        "{projectRoot}/.env.example"
-      ],
-      "outputs": [
-        "{projectRoot}/.env"
-      ],
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
@@ -91,9 +75,7 @@
     },
     "command": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/src/command/command.js"
@@ -108,9 +90,7 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/src/queue-worker/queue-worker.js"
@@ -125,9 +105,7 @@
     },
     "ts-node": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "ts-node"
@@ -149,16 +127,12 @@
     },
     "lint": {
       "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,json}"
-        ],
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
         "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "lintFilePatterns": [
-            "{projectRoot}/**/*.{ts,json}"
-          ]
+          "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"]
         },
         "fix": {}
       }
@@ -180,26 +154,20 @@
     },
     "database:migrate": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ]
       }
     },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ]
       }
@@ -216,9 +184,7 @@
     },
     "database:reset": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "configurations": {
         "no-seed": {
           "cwd": "packages/twenty-server",

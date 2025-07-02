@@ -1,5 +1,5 @@
-import { TabListScopeInternalContext } from '@/ui/layout/tab/scopes/scope-internal-context/TabListScopeInternalContext';
-import { activeTabIdComponentStateV1 } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabListScopeInternalContext } from '@/ui/layout/tab-list/scopes/scope-internal-context/TabListScopeInternalContext';
+import { activeTabIdComponentStateV1 } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 

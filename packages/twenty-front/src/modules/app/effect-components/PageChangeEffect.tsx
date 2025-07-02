@@ -24,7 +24,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
+import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -32,7 +32,6 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,6 +40,7 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
@@ -92,6 +92,8 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -131,48 +133,20 @@ export const PageChangeEffect = () => {
         unfocusBoardCard();
       }
     }
-  }, [
-    previousLocation,
-    resetTableSelections,
-    unfocusRecordTableRow,
-    deactivateRecordTableRow,
-    contextStoreCurrentViewType,
-    resetRecordSelection,
-    deactivateBoardCard,
-    unfocusBoardCard,
-  ]);
 
-  useEffect(() => {
     switch (true) {
       case isMatchingLocation(location, AppPath.RecordIndexPage): {
-        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
+        resetFocusStackToRecordIndex();
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+        setHotkeyScope(PageHotkeyScope.RecordShowPage, {
           goto: true,
           keyboardShortcutMenu: true,
+          searchRecords: true,
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(location, AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-
       case isMatchingLocation(location, AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
@@ -201,52 +175,30 @@ export const PageChangeEffect = () => {
         setHotkeyScope(PageHotkeyScope.PlanRequired);
         break;
       }
-      case isMatchingLocation(
-        location,
-        SettingsPath.ProfilePage,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.Domain,
-        AppBasePath.Settings,
-      ): {
+      case location.pathname.startsWith(AppBasePath.Settings): {
         setHotkeyScope(PageHotkeyScope.Settings, {
           goto: false,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.RestPlayground,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.Settings, {
-          goto: false,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.WorkspaceMembersPage,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
+          keyboardShortcutMenu: false,
+          commandMenu: false,
+          commandMenuOpen: false,
+          searchRecords: false,
         });
         break;
       }
     }
-  }, [location, setHotkeyScope]);
+  }, [
+    location,
+    setHotkeyScope,
+    previousLocation,
+    contextStoreCurrentViewType,
+    resetTableSelections,
+    unfocusRecordTableRow,
+    deactivateRecordTableRow,
+    resetRecordSelection,
+    deactivateBoardCard,
+    unfocusBoardCard,
+    resetFocusStackToRecordIndex,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {

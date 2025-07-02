@@ -1,40 +1,30 @@
-import {
-  Brackets,
-  NotBrackets,
-  SelectQueryBuilder,
-  WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, NotBrackets, WhereExpressionBuilder } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
-  private fieldMetadataMapByName: FieldMetadataMap;
-  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
+  private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
-  constructor(
-    fieldMetadataMapByName: FieldMetadataMap,
-    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
-  ) {
-    this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
+  constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
+    this.objectMetadataMapItem = objectMetadataMapItem;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
-      this.fieldMetadataMapByName,
-      this.fieldMetadataMapByJoinColumnName,
+      this.objectMetadataMapItem,
     );
   }
 
   public parse(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    queryBuilder: SelectQueryBuilder<any>,
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): SelectQueryBuilder<any> {
+  ): WorkspaceSelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }

@@ -4,24 +4,51 @@ import { isDefined } from 'class-validator';
 import differenceWith from 'lodash.differencewith';
 import { Any } from 'typeorm';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CalendarEventParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
+import { FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  CreateCompanyAndContactJob,
+  CreateCompanyAndContactJobData,
+} from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
+
+type FetchedCalendarEventParticipantWithCalendarEventId =
+  FetchedCalendarEventParticipant & {
+    calendarEventId: string;
+  };
 
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.contactCreationQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  public async upsertAndDeleteCalendarEventParticipants(
-    participantsToSave: CalendarEventParticipantWithCalendarEventId[],
-    participantsToUpdate: CalendarEventParticipantWithCalendarEventId[],
-    transactionManager?: WorkspaceEntityManager,
-  ): Promise<void> {
+  public async upsertAndDeleteCalendarEventParticipants({
+    participantsToSave,
+    participantsToUpdate,
+    transactionManager,
+    calendarChannel,
+    connectedAccount,
+    workspaceId,
+  }: {
+    participantsToSave: FetchedCalendarEventParticipantWithCalendarEventId[];
+    participantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
+    transactionManager?: WorkspaceEntityManager;
+    calendarChannel: CalendarChannelWorkspaceEntity;
+    connectedAccount: ConnectedAccountWorkspaceEntity;
+    workspaceId: string;
+  }): Promise<void> {
     const calendarEventParticipantRepository =
       await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
@@ -39,7 +66,10 @@ export class CalendarEventParticipantService {
       });
 
     const { calendarEventParticipantsToUpdate, newCalendarEventParticipants } =
-      participantsToUpdate.reduce(
+      participantsToUpdate.reduce<{
+        calendarEventParticipantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
+        newCalendarEventParticipants: FetchedCalendarEventParticipantWithCalendarEventId[];
+      }>(
         (acc, calendarEventParticipant) => {
           const existingCalendarEventParticipant =
             existingCalendarEventParticipants.find(
@@ -61,10 +91,8 @@ export class CalendarEventParticipantService {
           return acc;
         },
         {
-          calendarEventParticipantsToUpdate:
-            [] as CalendarEventParticipantWithCalendarEventId[],
-          newCalendarEventParticipants:
-            [] as CalendarEventParticipantWithCalendarEventId[],
+          calendarEventParticipantsToUpdate: [],
+          newCalendarEventParticipants: [],
         },
       );
 
@@ -110,10 +138,22 @@ export class CalendarEventParticipantService {
       transactionManager,
     );
 
-    await this.matchParticipantService.matchParticipants(
-      savedParticipants,
-      'calendarEventParticipant',
+    if (calendarChannel.isContactAutoCreationEnabled) {
+      await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+        CreateCompanyAndContactJob.name,
+        {
+          workspaceId,
+          connectedAccount,
+          contactsToCreate: savedParticipants,
+          source: FieldActorSource.CALENDAR,
+        },
+      );
+    }
+
+    await this.matchParticipantService.matchParticipants({
+      participants: savedParticipants,
+      objectMetadataName: 'calendarEventParticipant',
       transactionManager,
-    );
+    });
   }
 }

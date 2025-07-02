@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { GaxiosError } from 'gaxios';
 
 import {
@@ -9,6 +11,7 @@ import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-impor
 export const parseGaxiosError = (
   error: GaxiosError,
 ): CalendarEventImportDriverException => {
+  const logger = new Logger(parseGaxiosError.name);
   const { code } = error;
 
   switch (code) {
@@ -23,6 +26,8 @@ export const parseGaxiosError = (
       );
 
     default:
+      logger.error(error);
+
       return new CalendarEventImportDriverException(
         error.message,
         CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR,

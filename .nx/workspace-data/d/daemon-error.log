@@ -1,0 +1,26 @@
+Daemon process terminated and closed the connection
+
+Messages from the log:
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.428Z - Closed a connection. Number of open connections: 0
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.430Z - [WATCHER]: Stopping the watcher for /home/mind-developer/Projects/Kvoip/kvoip-v2 (sources)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.431Z - [WATCHER]: Stopping the watcher for /home/mind-developer/Projects/Kvoip/kvoip-v2 (outputs)
+[NX v21.2.1 Daemon Server] - 2025-06-26T21:19:18.431Z - Server stopped because: "NX_VERSION_CHANGED"
+node:internal/modules/cjs/loader:1235
+  throw err;
+  ^
+
+Error: Cannot find module '/home/mind-developer/Projects/Kvoip/kvoip-v2/node_modules/nx/src/daemon/server/start.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1232:15)
+    at Module._load (node:internal/modules/cjs/loader:1058:27)
+    at c._load (node:electron/js2c/node_init:2:16955)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:188:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v20.18.1
+
+
+
+More information: /home/mind-developer/Projects/Kvoip/kvoip-v2/.nx/workspace-data/d/daemon.log

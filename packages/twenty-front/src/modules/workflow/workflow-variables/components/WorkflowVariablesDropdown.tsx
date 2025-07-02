@@ -1,8 +1,8 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
 import { WorkflowVariablesDropdownObjectItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
@@ -13,7 +13,6 @@ import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
 
@@ -37,19 +36,22 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect,
   disabled,
   objectNameSingularToSelect,
+  multiline,
 }: {
   inputId: string;
   onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
   objectNameSingularToSelect?: string;
+  multiline?: boolean;
 }) => {
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const isDropdownOpen = useRecoilValue(
-    extractComponentState(isDropdownOpenComponentState, dropdownId),
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
   );
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     objectNameSingularToSelect,
   });
@@ -99,9 +101,6 @@ export const WorkflowVariablesDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
       clickableComponent={
         <StyledDropdownVariableButtonContainer
           isUnfolded={isDropdownOpen}
@@ -132,7 +131,10 @@ export const WorkflowVariablesDropdown = ({
         )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 2, y: 4 }}
+      dropdownOffset={{
+        x: parseInt(theme.spacing(0.5), 10),
+        y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
+      }}
     />
   );
 };

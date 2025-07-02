@@ -1,21 +1,20 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsRolePermissionsObjectLevelObjectPickerDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
+import { hasPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/utils/hasPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { v4 } from 'uuid';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
@@ -44,15 +43,20 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
+  const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const navigate = useNavigateSettings();
+  const navigateSettings = useNavigateSettings();
 
-  const objectMetadataItems = useObjectMetadataItems();
+  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
-  const objectMetadataMap = objectMetadataItems.objectMetadataItems.reduce(
+  const filteredObjectMetadataItems = objectMetadataItems.filter(
+    (item) => !isWorkflowRelatedObjectMetadata(item.nameSingular),
+  );
+
+  const objectMetadataMap = filteredObjectMetadataItems.reduce(
     (acc, item) => {
       acc[item.id] = item;
       return acc;
@@ -62,43 +66,26 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 
   const filteredObjectPermissions = settingsDraftRole.objectPermissions?.filter(
     (objectPermission) =>
-      (isDefined(objectPermission.canReadObjectRecords) &&
-        objectPermission.canReadObjectRecords !==
-          settingsDraftRole.canReadAllObjectRecords) ||
-      (isDefined(objectPermission.canUpdateObjectRecords) &&
-        objectPermission.canUpdateObjectRecords !==
-          settingsDraftRole.canUpdateAllObjectRecords) ||
-      (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-        objectPermission.canSoftDeleteObjectRecords !==
-          settingsDraftRole.canSoftDeleteAllObjectRecords) ||
-      (isDefined(objectPermission.canDestroyObjectRecords) &&
-        objectPermission.canDestroyObjectRecords !==
-          settingsDraftRole.canDestroyAllObjectRecords),
+      hasPermissionOverride(objectPermission, settingsDraftRole) &&
+      !isWorkflowRelatedObjectMetadata(
+        objectMetadataMap[objectPermission.objectMetadataId]?.nameSingular,
+      ),
   );
 
-  const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    setSettingsDraftRole((draftRole) => ({
-      ...draftRole,
-      objectPermissions: [
-        ...(draftRole.objectPermissions ?? []).filter(
-          (permission) =>
-            permission.objectMetadataId !== objectMetadataId ||
-            permission.roleId !== roleId,
-        ),
-        { objectMetadataId, roleId, id: v4() },
-      ],
-    }));
-    navigate(SettingsPath.RoleObjectLevel, {
+  const allObjectsHaveSetPermission =
+    filteredObjectPermissions?.length === filteredObjectMetadataItems.length;
+
+  const handleAddRule = () => {
+    navigateSettings(SettingsPath.RoleAddObjectLevel, {
       roleId,
-      objectMetadataId,
     });
   };
 
   return (
     <Section>
       <H2Title
-        title={t`Object-Level Permissions`}
-        description={t`Ability to interact with specific objects`}
+        title={t`Object-Level`}
+        description={t`Actions users can perform on specific objects`}
       />
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader />
@@ -107,41 +94,27 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           filteredObjectPermissions?.length > 0 ? (
             filteredObjectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
-                key={objectPermission.id}
+                key={objectPermission.objectMetadataId}
                 objectPermission={objectPermission}
                 objectMetadataItem={
                   objectMetadataMap[objectPermission.objectMetadataId]
                 }
+                roleId={roleId}
               />
             ))
           ) : (
-            <StyledNoOverride>{t`No overrides found`}</StyledNoOverride>
+            <StyledNoOverride>{t`No permissions found`}</StyledNoOverride>
           )}
         </StyledTableRows>
       </Table>
       <StyledCreateObjectOverrideSection>
-        <Dropdown
-          dropdownId="role-object-select"
-          dropdownHotkeyScope={{ scope: 'roleObject' }}
-          clickableComponent={
-            <Button
-              Icon={IconPlus}
-              title={t`Add rule`}
-              variant="secondary"
-              size="small"
-              disabled={!isEditable}
-            />
-          }
-          dropdownComponents={
-            <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
-              excludedObjectMetadataIds={
-                filteredObjectPermissions?.map(
-                  (objectPermission) => objectPermission.objectMetadataId,
-                ) ?? []
-              }
-              onSelect={handleSelectObjectMetadata}
-            />
-          }
+        <Button
+          Icon={IconPlus}
+          title={t`Add rule`}
+          variant="secondary"
+          size="small"
+          disabled={!isEditable || allObjectsHaveSetPermission}
+          onClick={handleAddRule}
         />
       </StyledCreateObjectOverrideSection>
     </Section>

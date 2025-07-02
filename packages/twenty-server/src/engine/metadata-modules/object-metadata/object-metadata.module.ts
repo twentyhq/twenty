@@ -24,12 +24,13 @@ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -45,8 +46,8 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
       imports: [
         TypeORMModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [ObjectMetadataEntity, FieldMetadataEntity, RelationMetadataEntity],
-          'metadata',
+          [ObjectMetadataEntity, FieldMetadataEntity],
+          'core',
         ),
         TypeOrmModule.forFeature([FeatureFlag], 'core'),
         DataSourceModule,
@@ -58,6 +59,8 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         IndexMetadataModule,
         PermissionsModule,
         WorkspacePermissionsCacheModule,
+        WorkspaceCacheStorageModule,
+        WorkspaceMetadataCacheModule,
       ],
       services: [
         ObjectMetadataService,

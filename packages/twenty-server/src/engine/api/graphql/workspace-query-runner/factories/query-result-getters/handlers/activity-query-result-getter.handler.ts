@@ -1,6 +1,7 @@
+import { Injectable } from '@nestjs/common';
+
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
@@ -10,13 +11,11 @@ type RichTextBlock = Record<string, any>;
 
 type RichTextBody = RichTextBlock[];
 
+@Injectable()
 export class ActivityQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
 {
-  constructor(
-    private readonly fileService: FileService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   async handle(
     activity: TaskWorkspaceEntity | NoteWorkspaceEntity,
@@ -50,20 +49,30 @@ export class ActivityQueryResultGetterHandler
         }
 
         const imageProps = block.props;
-        const imageUrl = new URL(imageProps.url);
+        const url = new URL(imageProps.url);
 
-        imageUrl.searchParams.delete('token');
+        const pathname = url.pathname;
 
-        const signedPayload = this.fileService.encodeFileToken({
-          noteBlockId: block.id,
-          workspaceId: workspaceId,
+        const isLinkExternal = !pathname.startsWith('/files/attachment/');
+
+        if (isLinkExternal) {
+          return block;
+        }
+
+        const fileName = pathname.match(
+          /files\/attachment\/(?:.+)\/(.+)$/,
+        )?.[1];
+
+        const signedPath = this.fileService.signFileUrl({
+          url: `attachment/${fileName}`,
+          workspaceId,
         });
 
         return {
           ...block,
           props: {
             ...imageProps,
-            url: `${imageUrl.toString()}?token=${signedPayload}`,
+            url: `${process.env.SERVER_URL}/files/${signedPath}`,
           },
         };
       }),

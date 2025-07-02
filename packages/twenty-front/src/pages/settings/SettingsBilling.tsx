@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -20,7 +21,6 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
-  IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
   IconDownload,
@@ -48,11 +48,15 @@ export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const billing = useRecoilValue(billingState);
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const subscriptions = currentWorkspace?.billingSubscriptions;
+
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
@@ -132,11 +136,15 @@ export const SettingsBilling = () => {
     >
       <SettingsPageContainer>
         {/* {hasNotCanceledCurrentSubscription && (
+        {hasNotCanceledCurrentSubscription && (
+          <SettingsBillingSubscriptionInfo />
+        )}
+        {hasNotCanceledCurrentSubscription && (
           <SettingsBillingMonthlyCreditsSection />
         )} */}
         <Section>
           <H2Title
-            title={t`Manage your subscription`}
+            title={t`Manage billing information`}
             description={t`Edit payment method, see your invoices and more`}
           />
           <Button
@@ -171,35 +179,23 @@ export const SettingsBilling = () => {
           currentWorkspace?.currentBillingSubscription?.interval ===
             SubscriptionInterval.Month,
           !!billing?.isBillingSwitchPlanIntervalEnabled,
-        ].includes(false) && (
-          <Section>
-            <H2Title
-              title={t`Edit billing interval`}
-              description={t`Switch from monthly to yearly`}
-            />
-            <Button
-              Icon={IconCalendarEvent}
-              title={t`Switch to yearly`}
-              variant="secondary"
-              onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
-              disabled={!hasNotCanceledCurrentSubscription}
-            />
-          </Section>
-        )}
-        <Section>
-          <H2Title
-            title={t`Cancel your subscription`}
-            description={t`Your workspace will be disabled`}
-          />
-          <Button
-            Icon={IconCircleX}
-            title={t`Cancel Plan`}
-            variant="secondary"
-            accent="danger"
-            onClick={openBillingPortal}
-            disabled={!hasNotCanceledCurrentSubscription}
-          />
-        </Section>
+        ].includes(false) &&
+          hasNotCanceledCurrentSubscription && (
+            <Section>
+              <H2Title
+                title={t`Cancel your subscription`}
+                description={t`Your workspace will be disabled`}
+              />
+              <Button
+                Icon={IconCircleX}
+                title={t`Cancel Plan`}
+                variant="secondary"
+                accent="danger"
+                onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
+              />
+            </Section>
+          )}
       </SettingsPageContainer>
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}

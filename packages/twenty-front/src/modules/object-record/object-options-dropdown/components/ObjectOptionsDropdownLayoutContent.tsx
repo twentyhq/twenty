@@ -1,14 +1,15 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -42,7 +43,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     resetContent,
     onContentChange,
     dropdownId,
-  } = useOptionsDropdown();
+  } = useObjectOptionsDropdown();
 
   const { isCompactModeActive, setAndPersistIsCompactModeActive } =
     useObjectOptionsForBoard({
@@ -92,7 +93,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -105,12 +106,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       </DropdownMenuHeader>
 
       {!!currentView && (
-        <DropdownMenuItemsContainer>
-          <SelectableList
-            selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-            hotkeyScope={TableOptionsHotkeyScope.Dropdown}
-            selectableItemIdArray={selectableItemIdArray}
-          >
+        <SelectableList
+          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableItemIdArray={selectableItemIdArray}
+          hotkeyScope={DropdownHotkeyScope.Dropdown}
+        >
+          <DropdownMenuItemsContainer scrollable={false}>
             <SelectableListItem
               itemId={ViewType.Table}
               onEnter={() => {
@@ -156,7 +158,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 onClick={handleSelectKanbanViewType}
               />
             </SelectableListItem>
-            <DropdownMenuSeparator />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
             <SelectableListItem
               itemId={ViewOpenRecordInType.SIDE_PANEL}
               onEnter={() => {
@@ -231,9 +235,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
               </>
             )}
-          </SelectableList>
-        </DropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
+        </SelectableList>
       )}
-    </>
+    </DropdownContent>
   );
 };

@@ -21,6 +21,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResolverService<
@@ -90,22 +91,27 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
     );
 
     this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: formattedExistingRecords,
-      records: formattedUpdatedRecords,
+      existingRecords: structuredClone(formattedExistingRecords),
+      records: structuredClone(formattedUpdatedRecords),
       updatedFields: Object.keys(executionArgs.args.data),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: formattedUpdatedRecords,
+        parentObjectRecords: [
+          ...formattedExistingRecords,
+          ...formattedUpdatedRecords,
+        ],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

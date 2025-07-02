@@ -16,7 +16,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
@@ -33,9 +32,8 @@ export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly dataSourceService: DataSourceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -94,74 +92,6 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  private async deleteUserFromWorkspace({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }) {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    const workspaceMembers = await workspaceMemberRepository.find();
-
-    if (workspaceMembers.length > 1) {
-      const userWorkspace =
-        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-          userId,
-          workspaceId,
-        });
-
-      await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow({
-        workspaceId,
-        userWorkspaceId: userWorkspace.id,
-      });
-    }
-
-    const workspaceMember = workspaceMembers.filter(
-      (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
-    )?.[0];
-
-    assert(workspaceMember, 'WorkspaceMember not found');
-
-    await workspaceMemberRepository.delete({ userId });
-
-    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
-      where: {
-        nameSingular: 'workspaceMember',
-        workspaceId,
-      },
-    });
-
-    if (workspaceMembers.length === 1) {
-      await this.workspaceService.deleteWorkspace(workspaceId);
-
-      return;
-    }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workspaceMember',
-      action: DatabaseEventAction.DELETED,
-      events: [
-        {
-          recordId: workspaceMember.id,
-          objectMetadata,
-          properties: {
-            before: workspaceMember,
-          },
-        },
-      ],
-      workspaceId,
-    });
-  }
-
   async deleteUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
@@ -172,27 +102,95 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await Promise.all(
+    const prepareForUserDeletionInWorkspaces = await Promise.all(
       user.workspaces.map(async (userWorkspace) => {
-        try {
-          await this.deleteUserFromWorkspace({
-            userId,
-            workspaceId: userWorkspace.workspaceId,
-          });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          if (
-            error instanceof PermissionsException &&
-            error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
-          ) {
-            throw new PermissionsException(
-              PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
-              PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
+        const { workspaceId } = userWorkspace;
+
+        const workspaceMemberRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+          );
+
+        const workspaceMembers = await workspaceMemberRepository.find();
+
+        if (workspaceMembers.length > 1) {
+          try {
+            await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+              {
+                workspaceId,
+                userWorkspaceId: userWorkspace.id,
+              },
             );
+          } catch (error) {
+            if (
+              error instanceof PermissionsException &&
+              error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
+            ) {
+              throw new PermissionsException(
+                PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
+                PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
+              );
+            }
+            throw error;
           }
-          throw error;
         }
+
+        const workspaceMember = workspaceMembers.find(
+          (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
+        );
+
+        assert(workspaceMember, 'WorkspaceMember not found');
+
+        return {
+          workspaceId,
+          workspaceMemberRepository,
+          workspaceMembers,
+          workspaceMember,
+        };
       }),
+    );
+
+    await Promise.all(
+      prepareForUserDeletionInWorkspaces.map(
+        async ({
+          workspaceId,
+          workspaceMemberRepository,
+          workspaceMembers,
+          workspaceMember,
+        }) => {
+          await workspaceMemberRepository.delete({ userId });
+
+          const objectMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: {
+                nameSingular: 'workspaceMember',
+                workspaceId,
+              },
+            });
+
+          if (workspaceMembers.length === 1) {
+            await this.workspaceService.deleteWorkspace(workspaceId);
+
+            return;
+          }
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'workspaceMember',
+            action: DatabaseEventAction.DELETED,
+            events: [
+              {
+                recordId: workspaceMember.id,
+                objectMetadata,
+                properties: {
+                  before: workspaceMember,
+                },
+              },
+            ],
+            workspaceId,
+          });
+        },
+      ),
     );
 
     return user;

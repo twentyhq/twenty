@@ -15,6 +15,7 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseResolverService<
@@ -56,9 +57,11 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
     );
 
     this.apiEventEmitterService.emitRestoreEvents({
-      records: formattedRestoredRecords,
+      records: structuredClone(formattedRestoredRecords),
       authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
+      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+        objectMetadataItemWithFieldMaps,
+      ),
     });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -69,7 +72,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

@@ -18,8 +18,8 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-function
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -150,7 +150,7 @@ export const WorkflowEditActionServerlessFunction = ({
         return;
       }
 
-      const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
+      const newFunctionInput = await getFunctionInputFromSourceCode(sourceCode);
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
         oldInput: action.settings.input.serverlessFunctionInput,

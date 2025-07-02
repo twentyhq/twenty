@@ -22,6 +22,7 @@ import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-ru
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class WorkspaceQueryHookExplorer implements OnModuleInit {
@@ -89,6 +90,10 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   ): Promise<ReturnType<WorkspacePreQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
+    const workspace = executeParams?.[0].workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     if (isRequestScoped) {
       const contextId = createContextId();
 
@@ -96,7 +101,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         this.moduleRef.registerRequestByContextId(
           {
             req: {
-              workspaceId: executeParams?.[0].workspace.id,
+              workspaceId: workspace.id,
             },
           },
           contextId,
@@ -152,6 +157,10 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   ): Promise<ReturnType<WorkspacePostQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
+    const workspace = executeParams?.[0].workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const transformedPayload = this.transformPayload(executeParams[2]);
 
     if (isRequestScoped) {
@@ -161,7 +170,11 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         this.moduleRef.registerRequestByContextId(
           {
             req: {
-              workspaceId: executeParams?.[0].workspace.id,
+              workspaceId: workspace.id,
+              userWorkspaceId: executeParams?.[0].userWorkspaceId,
+              apiKey: executeParams?.[0].apiKey,
+              workspaceMemberId: executeParams?.[0].workspaceMemberId,
+              user: executeParams?.[0].user,
             },
           },
           contextId,
@@ -201,7 +214,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     isRequestScoped: boolean,
   ) {
     switch (type) {
-      case WorkspaceQueryHookType.PreHook:
+      case WorkspaceQueryHookType.PRE_HOOK:
         this.workspaceQueryHookStorage.registerWorkspaceQueryPreHookInstance(
           key,
           {
@@ -211,7 +224,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
           },
         );
         break;
-      case WorkspaceQueryHookType.PostHook:
+      case WorkspaceQueryHookType.POST_HOOK:
         this.workspaceQueryHookStorage.registerWorkspacePostQueryHookInstance(
           key,
           {

@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build": "NODE_ENV=production VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx serve -s build",
     "tsup": "npx tsup"
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
@@ -29,8 +29,10 @@
     "workerDirectory": "public"
   },
   "dependencies": {
-    "@blocknote/xl-docx-exporter": "^0.22.0",
-    "@blocknote/xl-pdf-exporter": "^0.22.0",
+    "@blocknote/mantine": "^0.31.1",
+    "@blocknote/react": "^0.31.1",
+    "@blocknote/xl-docx-exporter": "^0.31.1",
+    "@blocknote/xl-pdf-exporter": "^0.31.1",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",

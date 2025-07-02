@@ -1,3 +1,5 @@
+import { useAuth } from '@/auth/hooks/useAuth';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
@@ -13,19 +15,16 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 import {
-  FeatureFlagKey,
   Role,
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
@@ -56,11 +55,7 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-  );
-
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -70,11 +65,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
 
   const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
 
-  const settingsDraftRole = useRecoilValue(
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
 
@@ -82,24 +79,26 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsPersistedRoleFamilyState(roleId),
   );
 
+  const { loadCurrentUser } = useAuth();
+
   const { enqueueSnackBar } = useSnackBar();
 
   if (!isDefined(settingsRolesIsLoading)) {
     return <></>;
   }
 
-  const isRoleEditable = isPermissionsV2Enabled && settingsDraftRole.isEditable;
+  const isRoleEditable = settingsDraftRole.isEditable;
 
   const tabs = [
-    {
-      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
-      title: t`Assignment`,
-      Icon: IconUserPlus,
-    },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
       Icon: IconLockOpen,
+    },
+    {
+      id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
+      title: t`Assignment`,
+      Icon: IconUserPlus,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS,
@@ -110,7 +109,20 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
+  const handleCancel = () => {
+    if (isCreateMode) {
+      navigateSettings(SettingsPath.Roles);
+      return;
+    }
+
+    if (isDefined(settingsPersistedRole)) {
+      setSettingsDraftRole(settingsPersistedRole);
+    }
+  };
+
   const handleSave = async () => {
+    setIsSaving(true);
+
     const dirtyFields = getDirtyFields(
       settingsDraftRole,
       settingsPersistedRole,
@@ -123,144 +135,155 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       return;
     }
 
-    if (isCreateMode) {
-      const roleId = v4();
-
-      createRole({
-        variables: {
-          createRoleInput: {
-            id: roleId,
-            label: settingsDraftRole.label,
-            description: settingsDraftRole.description,
-            icon: settingsDraftRole.icon,
-            canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-            canReadAllObjectRecords: settingsDraftRole.canReadAllObjectRecords,
-            canUpdateAllObjectRecords:
-              settingsDraftRole.canUpdateAllObjectRecords,
-            canSoftDeleteAllObjectRecords:
-              settingsDraftRole.canSoftDeleteAllObjectRecords,
-            canDestroyAllObjectRecords:
-              settingsDraftRole.canDestroyAllObjectRecords,
-          },
-        },
-        onCompleted: async (data) => {
-          if (isDefined(dirtyFields.workspaceMembers)) {
-            await addWorkspaceMembersToRole({
-              roleId: data.createOneRole.id,
-              workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
-                (member) => member.id,
-              ),
-            });
-          }
-
-          if (isDefined(dirtyFields.settingPermissions)) {
-            await upsertSettingPermissions({
-              variables: {
-                upsertSettingPermissionsInput: {
-                  roleId: data.createOneRole.id,
-                  settingPermissionKeys:
-                    settingsDraftRole.settingPermissions?.map(
-                      (settingPermission) => settingPermission.setting,
-                    ) ?? [],
-                },
-              },
-              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-            });
-          }
-
-          if (isDefined(dirtyFields.objectPermissions)) {
-            await upsertObjectPermissions({
-              variables: {
-                upsertObjectPermissionsInput: {
-                  roleId: data.createOneRole.id,
-                  objectPermissions:
-                    settingsDraftRole.objectPermissions?.map(
-                      (objectPermission) => ({
-                        objectMetadataId: objectPermission.objectMetadataId,
-                        canReadObjectRecords:
-                          objectPermission.canReadObjectRecords,
-                        canUpdateObjectRecords:
-                          objectPermission.canUpdateObjectRecords,
-                        canSoftDeleteObjectRecords:
-                          objectPermission.canSoftDeleteObjectRecords,
-                        canDestroyObjectRecords:
-                          objectPermission.canDestroyObjectRecords,
-                      }),
-                    ) ?? [],
-                },
-              },
-              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-            });
-          }
-
-          navigateSettings(SettingsPath.RoleDetail, {
-            roleId: data.createOneRole.id,
-          });
-        },
-      });
-    } else {
-      if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
-        await updateRole({
+    try {
+      if (isCreateMode) {
+        const { data } = await createRole({
           variables: {
-            updateRoleInput: {
+            createRoleInput: {
               id: roleId,
-              update: {
-                label: settingsDraftRole.label,
-                description: settingsDraftRole.description,
-                icon: settingsDraftRole.icon,
-                canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-                canReadAllObjectRecords:
-                  settingsDraftRole.canReadAllObjectRecords,
-                canUpdateAllObjectRecords:
-                  settingsDraftRole.canUpdateAllObjectRecords,
-                canSoftDeleteAllObjectRecords:
-                  settingsDraftRole.canSoftDeleteAllObjectRecords,
-                canDestroyAllObjectRecords:
-                  settingsDraftRole.canDestroyAllObjectRecords,
+              label: settingsDraftRole.label,
+              description: settingsDraftRole.description,
+              icon: settingsDraftRole.icon,
+              canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+              canReadAllObjectRecords:
+                settingsDraftRole.canReadAllObjectRecords,
+              canUpdateAllObjectRecords:
+                settingsDraftRole.canUpdateAllObjectRecords,
+              canSoftDeleteAllObjectRecords:
+                settingsDraftRole.canSoftDeleteAllObjectRecords,
+              canDestroyAllObjectRecords:
+                settingsDraftRole.canDestroyAllObjectRecords,
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+
+        if (!data) {
+          return;
+        }
+
+        if (isDefined(dirtyFields.settingPermissions)) {
+          await upsertSettingPermissions({
+            variables: {
+              upsertSettingPermissionsInput: {
+                roleId: data.createOneRole.id,
+                settingPermissionKeys:
+                  settingsDraftRole.settingPermissions?.map(
+                    (settingPermission) => settingPermission.setting,
+                  ) ?? [],
               },
             },
-          },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          });
+        }
+
+        if (isDefined(dirtyFields.objectPermissions)) {
+          await upsertObjectPermissions({
+            variables: {
+              upsertObjectPermissionsInput: {
+                roleId: data.createOneRole.id,
+                objectPermissions:
+                  settingsDraftRole.objectPermissions?.map(
+                    (objectPermission) => ({
+                      objectMetadataId: objectPermission.objectMetadataId,
+                      canReadObjectRecords:
+                        objectPermission.canReadObjectRecords,
+                      canUpdateObjectRecords:
+                        objectPermission.canUpdateObjectRecords,
+                      canSoftDeleteObjectRecords:
+                        objectPermission.canSoftDeleteObjectRecords,
+                      canDestroyObjectRecords:
+                        objectPermission.canDestroyObjectRecords,
+                    }),
+                  ) ?? [],
+              },
+            },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          });
+        }
+
+        if (isDefined(dirtyFields.workspaceMembers)) {
+          await addWorkspaceMembersToRole({
+            roleId: data.createOneRole.id,
+            workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
+              (member) => member.id,
+            ),
+          });
+        }
+
+        navigateSettings(SettingsPath.RoleDetail, {
+          roleId: data.createOneRole.id,
         });
+      } else {
+        if (isDefined(dirtyFields.settingPermissions)) {
+          await upsertSettingPermissions({
+            variables: {
+              upsertSettingPermissionsInput: {
+                roleId: roleId,
+                settingPermissionKeys:
+                  settingsDraftRole.settingPermissions?.map(
+                    (settingPermission) => settingPermission.setting,
+                  ) ?? [],
+              },
+            },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          });
+        }
+
+        if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
+          await updateRole({
+            variables: {
+              updateRoleInput: {
+                id: roleId,
+                update: {
+                  label: settingsDraftRole.label,
+                  description: settingsDraftRole.description,
+                  icon: settingsDraftRole.icon,
+                  canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+                  canReadAllObjectRecords:
+                    settingsDraftRole.canReadAllObjectRecords,
+                  canUpdateAllObjectRecords:
+                    settingsDraftRole.canUpdateAllObjectRecords,
+                  canSoftDeleteAllObjectRecords:
+                    settingsDraftRole.canSoftDeleteAllObjectRecords,
+                  canDestroyAllObjectRecords:
+                    settingsDraftRole.canDestroyAllObjectRecords,
+                },
+              },
+            },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          });
+        }
+
+        if (isDefined(dirtyFields.objectPermissions)) {
+          await upsertObjectPermissions({
+            variables: {
+              upsertObjectPermissionsInput: {
+                roleId: roleId,
+                objectPermissions:
+                  settingsDraftRole.objectPermissions?.map(
+                    (objectPermission) => ({
+                      objectMetadataId: objectPermission.objectMetadataId,
+                      canReadObjectRecords:
+                        objectPermission.canReadObjectRecords,
+                      canUpdateObjectRecords:
+                        objectPermission.canUpdateObjectRecords,
+                      canSoftDeleteObjectRecords:
+                        objectPermission.canSoftDeleteObjectRecords,
+                      canDestroyObjectRecords:
+                        objectPermission.canDestroyObjectRecords,
+                    }),
+                  ) ?? [],
+              },
+            },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          });
+        }
       }
 
-      if (isDefined(dirtyFields.settingPermissions)) {
-        await upsertSettingPermissions({
-          variables: {
-            upsertSettingPermissionsInput: {
-              roleId: roleId,
-              settingPermissionKeys:
-                settingsDraftRole.settingPermissions?.map(
-                  (settingPermission) => settingPermission.setting,
-                ) ?? [],
-            },
-          },
-          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-        });
-      }
-
-      if (isDefined(dirtyFields.objectPermissions)) {
-        await upsertObjectPermissions({
-          variables: {
-            upsertObjectPermissionsInput: {
-              roleId: roleId,
-              objectPermissions:
-                settingsDraftRole.objectPermissions?.map(
-                  (objectPermission) => ({
-                    objectMetadataId: objectPermission.objectMetadataId,
-                    canReadObjectRecords: objectPermission.canReadObjectRecords,
-                    canUpdateObjectRecords:
-                      objectPermission.canUpdateObjectRecords,
-                    canSoftDeleteObjectRecords:
-                      objectPermission.canSoftDeleteObjectRecords,
-                    canDestroyObjectRecords:
-                      objectPermission.canDestroyObjectRecords,
-                  }),
-                ) ?? [],
-            },
-          },
-          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-        });
-      }
+      await loadCurrentUser();
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -281,14 +304,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         },
       ]}
       actionButton={
+        isRoleEditable &&
         isDirty && (
-          <Button
-            title={isCreateMode ? t`Create` : t`Save`}
-            variant="primary"
-            size="small"
-            accent="blue"
-            onClick={handleSave}
-            disabled={!isRoleEditable}
+          <SaveAndCancelButtons
+            onSave={handleSave}
+            onCancel={handleCancel}
+            isLoading={isSaving}
           />
         )
       }
@@ -297,7 +318,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         <TabList
           tabs={tabs}
           className="tab-list"
-          componentInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+          componentInstanceId={
+            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
+          }
         />
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT && (
           <SettingsRoleAssignment roleId={roleId} isCreateMode={isCreateMode} />
@@ -306,11 +329,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           <SettingsRolePermissions
             roleId={roleId}
             isEditable={isRoleEditable}
-            isCreateMode={isCreateMode}
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
-          <SettingsRoleSettings roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRoleSettings
+            roleId={roleId}
+            isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
+          />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

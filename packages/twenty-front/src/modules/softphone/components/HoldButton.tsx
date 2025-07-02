@@ -6,6 +6,7 @@ import React from 'react';
 import { Session, SessionState } from 'sip.js';
 import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
 import { useIcons } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { CallState } from '../types/callState';
 
 interface HoldButtonProps {
@@ -135,22 +136,25 @@ const HoldButton: React.FC<HoldButtonProps> = ({
   const theme = useTheme();
 
   return (
-    <IconPhonePause
+    <IconButton
       onClick={() => {
         handleHold();
       }}
-      size={theme.icon.size.lg}
-      stroke={theme.icon.stroke.sm}
-      color={theme.font.color.secondary}
-      style={{
-        cursor: 'pointer',
-        padding: theme.spacing(3),
-        borderRadius: '50%',
-        border: `1px solid #fff`,
-        backgroundColor: isOnHold
-          ? theme.background.overlaySecondary
-          : theme.background.tertiary,
-      }}
+      Icon={() => (
+        <IconPhonePause
+          size={theme.icon.size.lg}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.secondary}
+          style={{
+            padding: theme.spacing(3),
+            borderRadius: '50%',
+            border: `1px solid #fff`,
+            backgroundColor: isOnHold
+              ? theme.background.overlaySecondary
+              : theme.background.tertiary,
+          }}
+        />
+      )}
     />
   );
 };

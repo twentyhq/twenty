@@ -3,6 +3,10 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -18,24 +22,10 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/display';
-import { MenuItemLeftContent, StyledMenuItemBase } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
-export const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-`;
-
-export const StyledMenuItemSelect = styled(StyledMenuItemBase)`
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
-`;
-
-export const StyledPill = styled(Pill)`
+const StyledPill = styled(Pill)`
   background: ${({ theme }) => theme.color.blueAccent10};
   color: ${({ theme }) => theme.color.blue};
 `;
@@ -44,6 +34,11 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
   const { t } = useLingui();
+
+  const isSelected = useRecoilComponentFamilyValueV2(
+    isSelectedItemIdComponentFamilySelector,
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
+  );
 
   const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
     ADVANCED_FILTER_DROPDOWN_ID,
@@ -124,19 +119,23 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     }
 
     closeObjectFilterDropdown();
-    openAdvancedFilterDropdown({
-      scope: ADVANCED_FILTER_DROPDOWN_ID,
-    });
+    openAdvancedFilterDropdown();
   };
 
   return (
-    <StyledContainer>
-      <StyledMenuItemSelect onClick={handleClick}>
-        <MenuItemLeftContent LeftIcon={IconFilter} text={t`Advanced filter`} />
-        {advancedFilterQuerySubFilterCount > 0 && (
-          <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
-        )}
-      </StyledMenuItemSelect>
-    </StyledContainer>
+    <SelectableListItem
+      itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
+      onEnter={handleClick}
+    >
+      <MenuItem
+        text={t`Advanced filter`}
+        onClick={handleClick}
+        LeftIcon={IconFilter}
+        focused={isSelected}
+      />
+      {advancedFilterQuerySubFilterCount > 0 && (
+        <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
+      )}
+    </SelectableListItem>
   );
 };

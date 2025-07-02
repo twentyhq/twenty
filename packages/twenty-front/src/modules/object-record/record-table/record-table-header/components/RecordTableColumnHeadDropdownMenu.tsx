@@ -6,6 +6,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -107,43 +108,45 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = column.isLabelIdentifier !== true;
 
   return (
-    <StyledDropdownMenuItemsContainer>
-      {isFilterable && (
-        <MenuItem
-          LeftIcon={IconFilter}
-          onClick={handleFilterClick}
-          text={t`Filter`}
-        />
-      )}
-      {isSortable && (
-        <MenuItem
-          LeftIcon={IconSortDescending}
-          onClick={handleSortClick}
-          text={t`Sort`}
-        />
-      )}
-      {showSeparator && <DropdownMenuSeparator />}
-      {canMoveLeft && (
-        <MenuItem
-          LeftIcon={IconArrowLeft}
-          onClick={handleColumnMoveLeft}
-          text={t`Move left`}
-        />
-      )}
-      {canMoveRight && (
-        <MenuItem
-          LeftIcon={IconArrowRight}
-          onClick={handleColumnMoveRight}
-          text={t`Move right`}
-        />
-      )}
-      {canHide && (
-        <MenuItem
-          LeftIcon={IconEyeOff}
-          onClick={handleColumnVisibility}
-          text={t`Hide`}
-        />
-      )}
-    </StyledDropdownMenuItemsContainer>
+    <DropdownContent>
+      <StyledDropdownMenuItemsContainer>
+        {isFilterable && (
+          <MenuItem
+            LeftIcon={IconFilter}
+            onClick={handleFilterClick}
+            text={t`Filter`}
+          />
+        )}
+        {isSortable && (
+          <MenuItem
+            LeftIcon={IconSortDescending}
+            onClick={handleSortClick}
+            text={t`Sort`}
+          />
+        )}
+        {showSeparator && <DropdownMenuSeparator />}
+        {canMoveLeft && (
+          <MenuItem
+            LeftIcon={IconArrowLeft}
+            onClick={handleColumnMoveLeft}
+            text={t`Move left`}
+          />
+        )}
+        {canMoveRight && (
+          <MenuItem
+            LeftIcon={IconArrowRight}
+            onClick={handleColumnMoveRight}
+            text={t`Move right`}
+          />
+        )}
+        {canHide && (
+          <MenuItem
+            LeftIcon={IconEyeOff}
+            onClick={handleColumnVisibility}
+            text={t`Hide`}
+          />
+        )}
+      </StyledDropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };

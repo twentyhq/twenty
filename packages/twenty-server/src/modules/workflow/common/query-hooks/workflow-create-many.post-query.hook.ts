@@ -17,10 +17,11 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook({
   key: `workflow.createMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowCreateManyPostQueryHook
   implements WorkspacePostQueryHookInstance
@@ -28,7 +29,7 @@ export class WorkflowCreateManyPostQueryHook
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
   ) {}
@@ -38,6 +39,10 @@ export class WorkflowCreateManyPostQueryHook
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -49,7 +54,7 @@ export class WorkflowCreateManyPostQueryHook
         isCustom: false,
         nameSingular: 'workflowVersion',
       },
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
 
     const workflowVersionsToCreate = payload.map((workflow) => {
@@ -70,7 +75,7 @@ export class WorkflowCreateManyPostQueryHook
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workflowVersion',
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
       },
     });
 
@@ -87,7 +92,7 @@ export class WorkflowCreateManyPostQueryHook
           },
         };
       }),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
     });
   }
 }

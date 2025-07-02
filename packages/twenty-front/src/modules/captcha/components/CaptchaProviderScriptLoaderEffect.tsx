@@ -35,7 +35,7 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       scriptElement = document.createElement('script');
       scriptElement.src = scriptUrl;
       scriptElement.onload = () => {
-        if (captcha.provider === CaptchaDriverType.GoogleRecaptcha) {
+        if (captcha.provider === CaptchaDriverType.GOOGLE_RECAPTCHA) {
           window.grecaptcha?.ready(() => {
             setIsCaptchaScriptLoaded(true);
           });
@@ -55,11 +55,11 @@ export const CaptchaProviderScriptLoaderEffect = () => {
     let refreshInterval: NodeJS.Timeout;
 
     switch (captcha.provider) {
-      case CaptchaDriverType.GoogleRecaptcha:
+      case CaptchaDriverType.GOOGLE_RECAPTCHA:
         // Google reCAPTCHA tokens expire after 120 seconds, refresh at 110 seconds
         refreshInterval = setInterval(requestFreshCaptchaToken, 110 * 1000);
         break;
-      case CaptchaDriverType.Turnstile:
+      case CaptchaDriverType.TURNSTILE:
         // Cloudflare Turnstile tokens expire after 500 seconds, refresh at 480 seconds
         refreshInterval = setInterval(requestFreshCaptchaToken, 480 * 1000);
         break;

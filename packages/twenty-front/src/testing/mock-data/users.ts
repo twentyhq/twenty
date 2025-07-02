@@ -13,6 +13,7 @@ import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 type MockedWorkspace = Omit<Workspace, 'stripeIntegrations' | 'billingPlans'>;
 
@@ -30,6 +31,7 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
+  | 'availableWorkspaces'
 > & {
   workspaceMember: MockedWorkspaceMmeber | null;
   locale: string;
@@ -69,15 +71,11 @@ export const mockCurrentWorkspace: Omit<
   isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
-      key: FeatureFlagKey.IsAirtableIntegrationEnabled,
+      key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
       value: true,
     },
     {
-      key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
-      value: true,
-    },
-    {
-      key: FeatureFlagKey.IsWorkflowEnabled,
+      key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
   ],
@@ -90,6 +88,7 @@ export const mockCurrentWorkspace: Omit<
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
     provider: BillingPaymentProviders.Stripe,
+    metadata: {},
   },
   billingSubscriptions: [
     {
@@ -97,6 +96,7 @@ export const mockCurrentWorkspace: Omit<
       id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
       status: SubscriptionStatus.Active,
       provider: BillingPaymentProviders.Stripe,
+      metadata: {},
     },
   ],
   workspaceMembersCount: 1,
@@ -137,12 +137,43 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
+    objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+      objectMetadataId: item.id,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: true,
+    })),
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.COMPLETED,
+  availableWorkspaces: {
+    availableWorkspacesForSignIn: [],
+    availableWorkspacesForSignUp: [],
+  },
   userVars: {},
+};
+
+export const mockedLimitedPermissionsUserData: MockedUser = {
+  ...mockedUserData,
+  currentUserWorkspace: {
+    ...mockedUserData.currentUserWorkspace,
+    objectPermissions: generatedMockObjectMetadataItems
+      .filter(
+        (objectMetadata) =>
+          objectMetadata.nameSingular !== 'task' &&
+          objectMetadata.nameSingular !== 'opportunity',
+      )
+      .map((item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+      })),
+  },
 };
 
 export const mockedOnboardingUserData = (

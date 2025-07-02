@@ -74,6 +74,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               >
                 <RecordIndexContextProvider
                   value={{
+                    objectPermissionsByObjectMetadataId: {},
                     indexIdentifierUrl: () => 'indexIdentifierUrl',
                     onIndexRecordsLoaded: () => {},
                     objectNamePlural: mockObjectMetadataItem.namePlural,

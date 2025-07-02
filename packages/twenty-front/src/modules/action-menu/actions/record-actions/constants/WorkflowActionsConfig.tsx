@@ -39,14 +39,15 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPower,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
         isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
         workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
         (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
           !workflowWithCurrentVersion.versions?.some(
             (version) => version.status === 'ACTIVE',
-          )),
+          )) &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -62,9 +63,10 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPlayerPause,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
-        workflowWithCurrentVersion.currentVersion.status === 'ACTIVE',
+        workflowWithCurrentVersion.currentVersion.status === 'ACTIVE' &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -80,10 +82,11 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconNoteOff,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         workflowWithCurrentVersion.versions.length > 1 &&
-        workflowWithCurrentVersion.currentVersion.status === 'DRAFT',
+        workflowWithCurrentVersion.currentVersion.status === 'DRAFT' &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -99,9 +102,10 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconVersions,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ workflowWithCurrentVersion, selectedRecord }) =>
         (workflowWithCurrentVersion?.statuses?.includes('ACTIVE') || false) &&
-        (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false),
+        (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false) &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -117,8 +121,9 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconHistoryToggle,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
-        isDefined(workflowWithCurrentVersion),
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        isDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -134,8 +139,9 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconVersions,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
-        isDefined(workflowWithCurrentVersion),
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        isDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -151,14 +157,16 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPlayerPlay,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
         ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
           !isDefined(
             workflowWithCurrentVersion.currentVersion.trigger.settings
               .objectType,
           )) ||
-          workflowWithCurrentVersion.currentVersion.trigger.type === 'WEBHOOK'),
+          workflowWithCurrentVersion.currentVersion.trigger.type ===
+            'WEBHOOK') &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -175,7 +183,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconHistoryToggle,
       accent: 'default',
       isPinned: true,
-      shouldBeRegistered: () => true,
+      shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
+        !isSoftDeleteFilterActive,
       availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
       component: (
         <ActionLink
@@ -193,9 +202,11 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.DELETE,
     SingleRecordActionKeys.DESTROY,
+    SingleRecordActionKeys.RESTORE,
     SingleRecordActionKeys.EXPORT,
     MultipleRecordsActionKeys.DELETE,
     MultipleRecordsActionKeys.DESTROY,
+    MultipleRecordsActionKeys.RESTORE,
     MultipleRecordsActionKeys.EXPORT,
     NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
@@ -232,6 +243,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     [SingleRecordActionKeys.EXPORT]: {
       position: 13,
       label: msg`Export workflow`,
+      shouldBeRegistered: ({ selectedRecord }) =>
+        !isDefined(selectedRecord?.deletedAt),
     },
     [MultipleRecordsActionKeys.EXPORT]: {
       position: 14,

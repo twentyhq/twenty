@@ -1,7 +1,9 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
@@ -14,6 +16,8 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
@@ -21,10 +25,15 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
   WorkspaceAuthGuard,
   SettingsPermissionsGuard(SettingPermissionType.WORKSPACE_MEMBERS),
 )
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UsePipes(ResolverValidationPipe)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 @Resolver()
 export class WorkspaceInvitationResolver {
   constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly fileService: FileService,
   ) {}
@@ -47,10 +56,22 @@ export class WorkspaceInvitationResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ) {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,
       workspace,
-      user,
+      workspaceMember,
     );
   }
 
@@ -69,17 +90,28 @@ export class WorkspaceInvitationResolver {
     let workspaceLogoWithToken = '';
 
     if (workspace.logo) {
-      const workspaceLogoToken = this.fileService.encodeFileToken({
+      workspaceLogoWithToken = this.fileService.signFileUrl({
+        url: workspace.logo,
         workspaceId: workspace.id,
       });
-
-      workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
     }
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+      },
+    });
 
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
       { ...workspace, logo: workspaceLogoWithToken },
-      user,
+      workspaceMember,
     );
   }
 }

@@ -1,4 +1,3 @@
-import dagre from '@dagrejs/dagre';
 import { useTheme } from '@emotion/react';
 import { Edge, Node } from '@xyflow/react';
 import { useEffect } from 'react';
@@ -21,81 +20,88 @@ export const SettingsDataModelOverviewEffect = ({
     useFilteredObjectMetadataItems();
 
   useEffect(() => {
-    const g = new dagre.graphlib.Graph();
-    g.setGraph({ rankdir: 'LR' });
-    g.setDefaultEdgeLabel(() => ({}));
+    const loadDagreAndLayout = async () => {
+      const dagre = await import('@dagrejs/dagre');
 
-    const edges: Edge[] = [];
-    const nodes = [];
-    let i = 0;
-    for (const object of items) {
-      nodes.push({
-        id: object.namePlural,
-        width: 220,
-        height: 100,
-        position: { x: i * 300, y: 0 },
-        data: object,
-        type: 'object',
-      });
-      g.setNode(object.namePlural, { width: 220, height: 100 });
+      const g = new dagre.default.graphlib.Graph();
+      g.setGraph({ rankdir: 'LR' });
+      g.setDefaultEdgeLabel(() => ({}));
 
-      for (const field of object.fields) {
-        if (
-          isDefined(field.relationDefinition) &&
-          isDefined(
-            items.find(
-              (x) => x.id === field.relationDefinition?.targetObjectMetadata.id,
-            ),
-          )
-        ) {
-          const sourceObj =
-            field.relationDefinition?.sourceObjectMetadata.namePlural;
-          const targetObj =
-            field.relationDefinition?.targetObjectMetadata.namePlural;
+      const edges: Edge[] = [];
+      const nodes: Node[] = [];
+      let i = 0;
+      for (const object of items) {
+        nodes.push({
+          id: object.namePlural,
+          width: 220,
+          height: 100,
+          position: { x: i * 300, y: 0 },
+          data: object,
+          type: 'object',
+        });
+        g.setNode(object.namePlural, { width: 220, height: 100 });
 
-          edges.push({
-            id: `${sourceObj}-${targetObj}`,
-            source: object.namePlural,
-            sourceHandle: `${field.id}-right`,
-            target: field.relationDefinition.targetObjectMetadata.namePlural,
-            targetHandle: `${field.relationDefinition.targetObjectMetadata}-left`,
-            type: 'smoothstep',
-            style: {
-              strokeWidth: 1,
-              stroke: theme.color.gray,
-            },
-            markerEnd: 'marker',
-            markerStart: 'marker',
-            data: {
-              sourceField: field.id,
-              targetField: field.relationDefinition.targetFieldMetadata.id,
-              relation: field.relationDefinition.direction,
-              sourceObject: sourceObj,
-              targetObject: targetObj,
-            },
-          });
-          if (!isUndefinedOrNull(sourceObj) && !isUndefinedOrNull(targetObj)) {
-            g.setEdge(sourceObj, targetObj);
+        for (const field of object.fields) {
+          if (
+            isDefined(field.relation) &&
+            isDefined(
+              items.find(
+                (x) => x.id === field.relation?.targetObjectMetadata.id,
+              ),
+            )
+          ) {
+            const sourceObj = field.relation?.sourceObjectMetadata.namePlural;
+            const targetObj = field.relation?.targetObjectMetadata.namePlural;
+
+            edges.push({
+              id: `${sourceObj}-${targetObj}`,
+              source: object.namePlural,
+              sourceHandle: `${field.id}-right`,
+              target: field.relation.targetObjectMetadata.namePlural,
+              targetHandle: `${field.relation.targetObjectMetadata}-left`,
+              type: 'smoothstep',
+              style: {
+                strokeWidth: 1,
+                stroke: theme.color.gray,
+              },
+              markerEnd: 'marker',
+              markerStart: 'marker',
+              data: {
+                sourceField: field.id,
+                targetField: field.relation.targetFieldMetadata.id,
+                relation: field.relation.type,
+                sourceObject: sourceObj,
+                targetObject: targetObj,
+              },
+            });
+            if (
+              !isUndefinedOrNull(sourceObj) &&
+              !isUndefinedOrNull(targetObj)
+            ) {
+              g.setEdge(sourceObj, targetObj);
+            }
           }
         }
+        i++;
       }
-      i++;
-    }
 
-    dagre.layout(g);
+      dagre.default.layout(g);
 
-    nodes.forEach((node) => {
-      const nodeWithPosition = g.node(node.id);
-      node.position = {
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
-        x: nodeWithPosition.x - node.width / 2,
-        y: nodeWithPosition.y - node.height / 2,
-      };
-    });
+      nodes.forEach((node) => {
+        const nodeWithPosition = g.node(node.id);
+        node.position = {
+          // We are shifting the dagre node position (anchor=center center) to the top left
+          // so it matches the React Flow node anchor point (top left).
+          x: nodeWithPosition.x - (node.width ?? 0) / 2,
+          y: nodeWithPosition.y - (node.height ?? 0) / 2,
+        };
+      });
 
-    setNodes(nodes);
-    setEdges(edges);
+      setNodes(nodes);
+      setEdges(edges);
+    };
+
+    loadDagreAndLayout();
   }, [items, setEdges, setNodes, theme]);
 
   return <></>;

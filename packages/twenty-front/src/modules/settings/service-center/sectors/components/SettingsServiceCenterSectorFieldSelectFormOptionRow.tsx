@@ -8,7 +8,7 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
@@ -91,12 +91,9 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
       <Dropdown
         dropdownId={dropdownIds.color}
         dropdownPlacement="bottom-start"
-        dropdownHotkeyScope={{
-          scope: dropdownIds.color,
-        }}
         clickableComponent={<StyledColorSample colorName={option.color} />}
         dropdownComponents={
-          <DropdownMenu>
+          <DropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
                 <MenuItemSelectColor
@@ -110,7 +107,7 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
                 />
               ))}
             </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          </DropdownContent>
         }
       />
       <StyledOptionInput
@@ -129,12 +126,9 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
       <Dropdown
         dropdownId={dropdownIds.actions}
         dropdownPlacement="right-start"
-        dropdownHotkeyScope={{
-          scope: dropdownIds.actions,
-        }}
         clickableComponent={<LightIconButton Icon={IconDotsVertical} />}
         dropdownComponents={
-          <DropdownMenu>
+          <DropdownContent>
             <DropdownMenuItemsContainer>
               {!!onRemove && !isDefault && (
                 <MenuItem
@@ -148,7 +142,7 @@ export const SettingsServiceCenterSectorFieldSelectFormOptionRow = ({
                 />
               )}
             </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          </DropdownContent>
         }
       />
     </StyledRow>

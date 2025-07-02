@@ -1,7 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { displayedExportProgress, generateCsv } from '../useExportRecords';
 
 jest.useFakeTimers();
@@ -11,12 +11,16 @@ describe('generateCsv', () => {
     const columns = [
       { label: 'Foo', metadata: { fieldName: 'foo' } },
       { label: 'Empty', metadata: { fieldName: 'empty' } },
-      { label: 'Nested', metadata: { fieldName: 'nested' } },
+      {
+        label: 'Nested link field',
+        type: FieldMetadataType.LINKS,
+        metadata: { fieldName: 'nestedLinkField' },
+      },
       {
         label: 'Relation',
         metadata: {
           fieldName: 'relation',
-          relationType: RelationDefinitionType.MANY_TO_ONE,
+          relationType: RelationType.MANY_TO_ONE,
         },
       },
     ] as ColumnDefinition<FieldMetadata>[];
@@ -26,13 +30,21 @@ describe('generateCsv', () => {
         bar: 'another field',
         empty: null,
         foo: 'some field',
-        nested: { __typename: 'type', foo: 'foo', nested: 'nested' },
+        nestedLinkField: {
+          __typename: 'Links',
+          primaryLinkUrl: 'https://www.test.com',
+          secondaryLinks: [
+            { label: 'secondary link 1', url: 'https://www.test.com' },
+            { label: 'secondary link 2', url: 'https://www.test.com' },
+          ],
+        },
         relation: 'a relation',
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Id,Foo,Empty,Nested Foo,Nested Nested,Relation
-1,some field,,foo,nested,a relation`);
+    expect(csv)
+      .toEqual(`Id,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
+1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
   });
 });
 

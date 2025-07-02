@@ -50,9 +50,27 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
         
         echo "Successfuly migrated DB!"
     fi
-else
-  echo "DB migrations disabled."
 fi
+   
+yarn command:prod upgrade
+echo "Successfully migrated DB!"
+
+
+register_background_jobs() {
+    if [ "${DISABLE_CRON_JOBS_REGISTRATION}" = "true" ]; then
+        echo "Cron job registration is disabled, skipping..."
+        return
+    fi
+  
+    echo "Registering background sync jobs..."
+    if yarn command:prod cron:register:all; then
+        echo "Successfully registered all background sync jobs!"
+    else
+        echo "Warning: Failed to register background jobs, but continuing startup..."
+    fi
+}
+
+register_background_jobs
 
 # Continue with the original Docker command
 echo "Executando o comando original: $@"

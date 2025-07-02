@@ -1,6 +1,6 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
@@ -14,9 +14,10 @@ import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableColumnAggregateFooterDropdownContent = () => {
   const { t } = useLingui();
-  const { currentContentId, fieldMetadataType } = useDropdown({
-    context: RecordTableColumnAggregateFooterDropdownContext,
-  });
+  const { currentContentId, fieldMetadataType } =
+    useDropdownContextStateManagement({
+      context: RecordTableColumnAggregateFooterDropdownContext,
+    });
 
   const availableAggregateOperations =
     getAvailableAggregateOperationsForFieldMetadataType({
@@ -28,7 +29,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
           !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
-            aggregateOperation as AGGREGATE_OPERATIONS,
+            aggregateOperation as AggregateOperations,
           ),
       );
 
@@ -43,7 +44,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
           COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
-            aggregateOperation as AGGREGATE_OPERATIONS,
+            aggregateOperation as AggregateOperations,
           ),
       );
       return (
@@ -57,7 +58,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
           PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
-            aggregateOperation as AGGREGATE_OPERATIONS,
+            aggregateOperation as AggregateOperations,
           ),
       );
       return (
@@ -71,7 +72,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
           DATE_AGGREGATE_OPERATION_OPTIONS.includes(
-            aggregateOperation as DATE_AGGREGATE_OPERATIONS,
+            aggregateOperation as DateAggregateOperations,
           ),
       );
       return (

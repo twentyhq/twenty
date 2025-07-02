@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  FindOptionsRelations,
-  ObjectLiteral,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -22,6 +18,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -40,7 +37,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate = {},
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
     roleId,
     shouldBypassPermissionChecks,
   }: {
@@ -53,7 +50,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
@@ -69,7 +66,7 @@ export class ProcessNestedRelationsV2Helper {
           aggregate,
           limit,
           authContext,
-          dataSource,
+          workspaceDataSource,
           shouldBypassPermissionChecks,
           roleId,
         }),
@@ -88,7 +85,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
   }: {
@@ -102,12 +99,14 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
+    const sourceFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const sourceFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
 
     if (
       !isFieldMetadataInterfaceOfType(
@@ -134,7 +133,7 @@ export class ProcessNestedRelationsV2Helper {
         sourceFieldName,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
+    const targetObjectRepository = workspaceDataSource.getRepository(
       targetObjectMetadata.nameSingular,
       shouldBypassPermissionChecks,
       roleId,
@@ -206,7 +205,7 @@ export class ProcessNestedRelationsV2Helper {
         aggregate,
         limit,
         authContext,
-        dataSource,
+        workspaceDataSource,
         shouldBypassPermissionChecks,
         roleId,
       });
@@ -222,8 +221,11 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
+    const targetFieldMetadataId =
+      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
     const targetFieldMetadata =
-      parentObjectMetadataItem.fieldsByName[sourceFieldName];
+      parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
       objectMetadataMaps,
@@ -269,7 +271,7 @@ export class ProcessNestedRelationsV2Helper {
     sourceFieldName,
   }: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    referenceQueryBuilder: SelectQueryBuilder<any>;
+    referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
     column: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ids: any[];

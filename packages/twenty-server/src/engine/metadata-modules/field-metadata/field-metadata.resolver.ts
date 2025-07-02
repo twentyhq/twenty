@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -10,6 +10,8 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
   ForbiddenError,
   ValidationError,
@@ -23,10 +25,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import {
-  RelationDefinitionDTO,
-  RelationDefinitionType,
-} from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import {
   UpdateFieldInput,
@@ -43,53 +41,19 @@ import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mod
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
 @Resolver(() => FieldMetadataDTO)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  PermissionsGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
-
-  @ResolveField(() => String, { nullable: true })
-  async label(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'label',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async description(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'description',
-      context.req.headers['x-locale'],
-    );
-  }
-
-  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
-  @ResolveField(() => String, { nullable: true })
-  async icon(
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: I18nContext,
-  ): Promise<string> {
-    return this.fieldMetadataService.resolveOverridableString(
-      fieldMetadata,
-      'icon',
-      context.req.headers['x-locale'],
-    );
-  }
 
   @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
@@ -163,40 +127,6 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
-  }
-
-  @ResolveField(() => RelationDefinitionDTO, { nullable: true })
-  async relationDefinition(
-    @AuthWorkspace() workspace: Workspace,
-    @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context: { loaders: IDataloaders },
-  ): Promise<RelationDefinitionDTO | null | undefined> {
-    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
-      return null;
-    }
-
-    const relation = await this.relation(
-      workspace,
-      fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
-      context,
-    );
-
-    if (!relation) {
-      return null;
-    }
-
-    return {
-      // Temporary fix as we don't have relationId in the new relation
-      relationId: createDeterministicUuid([
-        relation.sourceFieldMetadata.id,
-        relation.targetFieldMetadata.id,
-      ]),
-      direction: relation.type as unknown as RelationDefinitionType,
-      sourceObjectMetadata: relation.sourceObjectMetadata,
-      targetObjectMetadata: relation.targetObjectMetadata,
-      sourceFieldMetadata: relation.sourceFieldMetadata,
-      targetFieldMetadata: relation.targetFieldMetadata,
-    };
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })

@@ -14,12 +14,12 @@ const StyledIconButton = styled(IconButton)`
   min-width: 24px;
 `;
 
+const StyledDropdown = styled(Dropdown)`
+  width: 200px;
+`;
+
 export const TRANSFER_CHAT_OPTIONS_DROPDOWN_ID =
   'transfer-chat-options-dropdown-id';
-
-enum TransferOptionsHotkeyScope {
-  Dropdown = 'transfer-options-dropdown',
-}
 
 export const TransferChatOptionsDropdown = () => {
   const theme = useTheme();
@@ -28,7 +28,7 @@ export const TransferChatOptionsDropdown = () => {
   const IconArrowForwardUp = getIcon('IconArrowForwardUp');
 
   return (
-    <Dropdown
+    <StyledDropdown
       dropdownId={TRANSFER_CHAT_OPTIONS_DROPDOWN_ID}
       clickableComponent={
         <StyledIconButton
@@ -41,8 +41,6 @@ export const TransferChatOptionsDropdown = () => {
           )}
         />
       }
-      dropdownWidth={'200px'}
-      dropdownHotkeyScope={{ scope: TransferOptionsHotkeyScope.Dropdown }}
       dropdownPlacement="bottom-start"
       dropdownComponents={<TransferChatOptionsDropdownContent />}
     />

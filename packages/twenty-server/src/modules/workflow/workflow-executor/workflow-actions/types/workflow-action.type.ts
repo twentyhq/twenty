@@ -1,6 +1,8 @@
+import { WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import { WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
 import { WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
   WorkflowCreateRecordActionSettings,
@@ -19,6 +21,8 @@ export enum WorkflowActionType {
   FIND_RECORDS = 'FIND_RECORDS',
   FORM = 'FORM',
   FILTER = 'FILTER',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  AI_AGENT = 'AI_AGENT',
 }
 
 type BaseWorkflowAction = {
@@ -70,6 +74,16 @@ export type WorkflowFilterAction = BaseWorkflowAction & {
   settings: WorkflowFilterActionSettings;
 };
 
+export type WorkflowHttpRequestAction = BaseWorkflowAction & {
+  type: WorkflowActionType.HTTP_REQUEST;
+  settings: WorkflowHttpRequestActionSettings;
+};
+
+export type WorkflowAiAgentAction = BaseWorkflowAction & {
+  type: WorkflowActionType.AI_AGENT;
+  settings: WorkflowAiAgentActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
@@ -78,4 +92,6 @@ export type WorkflowAction =
   | WorkflowDeleteRecordAction
   | WorkflowFindRecordsAction
   | WorkflowFormAction
-  | WorkflowFilterAction;
+  | WorkflowFilterAction
+  | WorkflowHttpRequestAction
+  | WorkflowAiAgentAction;

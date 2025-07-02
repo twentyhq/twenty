@@ -160,6 +160,7 @@ export const OnboardingInterChargeDataForm = ({
                   value={value}
                   onChange={onChange}
                   options={INTER_CUSTOMER_TYPE_OPTIONS}
+                  isSelectInModal
                 />
               )}
             />
@@ -262,6 +263,7 @@ export const OnboardingInterChargeDataForm = ({
                   onChange={onChange}
                   options={INTER_STATE_UNITY_OPTIONS}
                   fullWidth
+                  isSelectInModal
                 />
               )}
             />

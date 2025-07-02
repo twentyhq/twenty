@@ -18,9 +18,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
@@ -62,7 +62,6 @@ export class UserRoleService {
     await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
       {
         workspaceId,
-        ignoreLock: true,
       },
     );
   }

@@ -2,9 +2,11 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -23,12 +25,19 @@ const renderHooks = ({
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,
       );
       const setPrefetchViews = useSetRecoilState(prefetchViewsState);
+      const setArePrefetchViewsLoaded = useSetRecoilState(
+        arePrefetchViewsLoadedState,
+      );
 
       setObjectMetadataItems(generatedMockObjectMetadataItems);
+      setArePrefetchViewsLoaded(true);
 
       if (withExistingView) {
         setPrefetchViews([
@@ -44,7 +53,7 @@ const renderHooks = ({
             viewGroups: [],
             viewSorts: [],
             kanbanFieldMetadataId: '',
-            kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+            kanbanAggregateOperation: AggregateOperations.COUNT,
             icon: '',
             kanbanAggregateOperationFieldMetadataId: '',
             position: 0,
@@ -52,10 +61,13 @@ const renderHooks = ({
             __typename: 'View',
           },
         ]);
+      } else {
+        setPrefetchViews([]);
       }
 
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
+        setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
       }
       return useDefaultHomePagePath();
     },
@@ -65,6 +77,7 @@ const renderHooks = ({
   );
   return { result };
 };
+
 describe('useDefaultHomePagePath', () => {
   it('should return proper path when no currentUser', () => {
     const { result } = renderHooks({

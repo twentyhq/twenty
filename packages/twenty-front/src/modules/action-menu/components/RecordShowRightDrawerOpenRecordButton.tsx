@@ -1,33 +1,30 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import styled from '@emotion/styled';
-import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
 
 type RecordShowRightDrawerOpenRecordButtonProps = {
   objectNameSingular: string;
@@ -66,69 +63,83 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     tabListComponentIdInRecordPage,
   );
 
+  const parentViewState = useRecoilComponentCallbackStateV2(
+    contextStoreRecordShowParentViewComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
   const navigate = useNavigateApp();
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
 
-  const { closeDropdown } = useDropdownV2();
+  const { closeDropdown } = useCloseDropdown();
 
-  const handleOpenRecord = useCallback(() => {
-    const tabIdToOpen =
-      activeTabIdInRightDrawer === 'home'
-        ? objectNameSingular === CoreObjectNameSingular.Note ||
-          objectNameSingular === CoreObjectNameSingular.Task
-          ? 'richText'
-          : 'timeline'
-        : activeTabIdInRightDrawer;
+  const handleOpenRecord = useRecoilCallback(
+    ({ snapshot, reset }) =>
+      () => {
+        const tabIdToOpen =
+          activeTabIdInRightDrawer === 'home'
+            ? objectNameSingular === CoreObjectNameSingular.Note ||
+              objectNameSingular === CoreObjectNameSingular.Task
+              ? 'richText'
+              : 'timeline'
+            : activeTabIdInRightDrawer;
 
-    setActiveTabIdInRecordPage(tabIdToOpen);
+        setActiveTabIdInRecordPage(tabIdToOpen);
 
-    navigate(AppPath.RecordShowPage, {
+        const parentView = snapshot.getLoadable(parentViewState).getValue();
+
+        if (parentView?.parentViewObjectNameSingular !== objectNameSingular) {
+          reset(parentViewState);
+        }
+
+        navigate(AppPath.RecordShowPage, {
+          objectNameSingular,
+          objectRecordId: recordId,
+        });
+
+        closeDropdown(
+          getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+        );
+
+        closeCommandMenu();
+      },
+    [
+      actionMenuId,
+      activeTabIdInRightDrawer,
+      closeCommandMenu,
+      closeDropdown,
+      navigate,
       objectNameSingular,
-      objectRecordId: recordId,
-    });
-
-    closeDropdown(
-      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
-    );
-
-    closeCommandMenu();
-  }, [
-    actionMenuId,
-    activeTabIdInRightDrawer,
-    closeCommandMenu,
-    closeDropdown,
-    navigate,
-    objectNameSingular,
-    recordId,
-    setActiveTabIdInRecordPage,
-  ]);
-
-  useScopedHotkeys(
-    ['ctrl+Enter,meta+Enter'],
-    handleOpenRecord,
-    AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu, navigate, objectNameSingular, recordId],
+      parentViewState,
+      recordId,
+      setActiveTabIdInRecordPage,
+    ],
   );
+
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+Enter,meta+Enter'],
+    callback: handleOpenRecord,
+    focusId: SIDE_PANEL_FOCUS_ID,
+    scope: AppHotkeyScope.CommandMenuOpen,
+    dependencies: [handleOpenRecord],
+  });
 
   if (!isDefined(record)) {
     return null;
   }
 
-  const to = getLinkToShowPage(objectNameSingular, record);
-
   return (
-    <StyledLink to={to} onClick={closeCommandMenu}>
-      <Button
-        title="Open"
-        variant="primary"
-        accent="blue"
-        size="medium"
-        Icon={IconBrowserMaximize}
-        hotkeys={[getOsControlSymbol(), '⏎']}
-      />
-    </StyledLink>
+    <Button
+      title="Open"
+      variant="primary"
+      accent="blue"
+      size="medium"
+      Icon={IconBrowserMaximize}
+      hotkeys={[getOsControlSymbol(), '⏎']}
+      onClick={handleOpenRecord}
+    />
   );
 };

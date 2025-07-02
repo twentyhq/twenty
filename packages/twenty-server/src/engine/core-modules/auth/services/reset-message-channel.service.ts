@@ -10,6 +10,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   MessageChannelSyncStage,
+  MessageChannelSyncStatus,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -24,7 +25,7 @@ export class ResetMessageChannelService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
@@ -47,7 +48,7 @@ export class ResetMessageChannelService {
       },
       {
         syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-        syncStatus: null,
+        syncStatus: MessageChannelSyncStatus.ONGOING,
         syncCursor: '',
         syncStageStartedAt: null,
       },

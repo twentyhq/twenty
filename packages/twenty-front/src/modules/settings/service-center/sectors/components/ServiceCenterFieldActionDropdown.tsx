@@ -1,5 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -77,7 +77,7 @@ export const ServiceCenterFieldActionDropdown = ({
           />
         }
         dropdownComponents={
-          <DropdownMenu width="100%">
+          <DropdownContent>
             <DropdownMenuItemsContainer>
               <MenuItem
                 text={'Edit'}
@@ -106,11 +106,8 @@ export const ServiceCenterFieldActionDropdown = ({
                 />
               )}
             </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          </DropdownContent>
         }
-        dropdownHotkeyScope={{
-          scope: dropdownId,
-        }}
       />
       <ConfirmationModal
         modalId={SERVCE_CENTER_ACTION_MODAL_ID}

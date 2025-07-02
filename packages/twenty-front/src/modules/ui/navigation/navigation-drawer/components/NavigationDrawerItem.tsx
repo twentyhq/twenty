@@ -11,10 +11,11 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
+import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { Pill } from 'twenty-ui/components';
+import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -37,6 +38,8 @@ export type NavigationDrawerItemProps = {
   rightOptions?: ReactNode;
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
+  triggerEvent?: TriggerEventType;
+  mouseUpNavigation?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -250,6 +253,8 @@ export const NavigationDrawerItem = ({
   rightOptions,
   isDragging,
   isRightOptionsDropdownOpen,
+  triggerEvent,
+  mouseUpNavigation = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -259,22 +264,30 @@ export const NavigationDrawerItem = ({
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
 
-  const handleItemClick = () => {
+  const handleMobileNavigation = () => {
     if (isMobile) {
       setIsNavigationDrawerExpanded(false);
     }
-
-    if (isDefined(onClick)) {
-      onClick();
-      return;
-    }
   };
+
+  const {
+    onClick: handleMouseDownNavigationClickClick,
+    onMouseDown: handleMouseDown,
+  } = useMouseDownNavigation({
+    to,
+    onClick,
+    onBeforeNavigation: handleMobileNavigation,
+    triggerEvent,
+  });
 
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
         className={`navigation-drawer-item ${className || ''}`}
-        onClick={handleItemClick}
+        onClick={
+          mouseUpNavigation ? onClick : handleMouseDownNavigationClickClick
+        }
+        onMouseDown={mouseUpNavigation ? undefined : handleMouseDown}
         active={active}
         aria-selected={active}
         danger={danger}

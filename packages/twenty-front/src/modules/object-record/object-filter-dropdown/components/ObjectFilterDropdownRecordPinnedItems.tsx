@@ -1,6 +1,6 @@
-import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledPinnedItemsContainer = styled.div`
@@ -26,16 +26,21 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
             onSelectChange={(newCheckedValue) => {
               props.onChange(selectableItem, newCheckedValue);
             }}
+            text={selectableItem.name}
             avatar={
-              <StyledMultipleSelectDropdownAvatarChip
-                className="avatar-icon-container"
-                name={selectableItem.name}
-                avatarUrl={selectableItem.avatarUrl}
-                LeftIcon={selectableItem.AvatarIcon}
-                avatarType={selectableItem.avatarType}
-                isIconInverted={selectableItem.isIconInverted}
-                placeholderColorSeed={selectableItem.id}
-              />
+              selectableItem.avatarUrl ? (
+                <Avatar
+                  avatarUrl={selectableItem.avatarUrl}
+                  placeholderColorSeed={selectableItem.id}
+                  placeholder={selectableItem.name}
+                  type={selectableItem.avatarType}
+                  size="md"
+                />
+              ) : (
+                selectableItem.AvatarIcon && (
+                  <selectableItem.AvatarIcon size="16" />
+                )
+              )
             }
           />
         );

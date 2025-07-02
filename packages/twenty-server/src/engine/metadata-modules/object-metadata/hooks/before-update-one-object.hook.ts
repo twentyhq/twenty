@@ -12,7 +12,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -32,7 +32,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   constructor(
     readonly objectMetadataService: ObjectMetadataService,
     // TODO: Should not use the repository here
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
@@ -56,8 +56,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     if (!objectMetadata.isCustom) {
       return this.handleStandardObjectUpdate(instance, objectMetadata, locale);
     }
-
-    await this.validateIdentifierFields(instance, workspaceId);
 
     return instance;
   }
@@ -436,57 +434,5 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       instance.update.labelPlural,
       locale,
     );
-  }
-
-  private async validateIdentifierFields(
-    instance: UpdateOneInputType<T>,
-    workspaceId: string,
-  ): Promise<void> {
-    if (
-      !instance.update.labelIdentifierFieldMetadataId &&
-      !instance.update.imageIdentifierFieldMetadataId
-    ) {
-      return;
-    }
-
-    const fields = await this.fieldMetadataRepository.findBy({
-      workspaceId: Equal(workspaceId),
-      objectMetadataId: Equal(instance.id.toString()),
-      id: In(
-        [
-          instance.update.labelIdentifierFieldMetadataId,
-          instance.update.imageIdentifierFieldMetadataId,
-        ].filter((id) => id !== null),
-      ),
-    });
-
-    const fieldIds = fields.map((field) => field.id);
-
-    this.validateLabelIdentifier(instance, fieldIds);
-    this.validateImageIdentifier(instance, fieldIds);
-  }
-
-  private validateLabelIdentifier(
-    instance: UpdateOneInputType<T>,
-    fieldIds: string[],
-  ): void {
-    if (
-      instance.update.labelIdentifierFieldMetadataId &&
-      !fieldIds.includes(instance.update.labelIdentifierFieldMetadataId)
-    ) {
-      throw new BadRequestException('This label identifier does not exist');
-    }
-  }
-
-  private validateImageIdentifier(
-    instance: UpdateOneInputType<T>,
-    fieldIds: string[],
-  ): void {
-    if (
-      instance.update.imageIdentifierFieldMetadataId &&
-      !fieldIds.includes(instance.update.imageIdentifierFieldMetadataId)
-    ) {
-      throw new BadRequestException('This image identifier does not exist');
-    }
   }
 }

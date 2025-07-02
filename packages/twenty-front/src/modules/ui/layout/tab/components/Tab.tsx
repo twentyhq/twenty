@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Pill } from 'twenty-ui/components';
 import { Avatar, IconComponent } from 'twenty-ui/display';
 
-type TabProps = {
+type DeprecatedTabProps = {
   id: string;
   title: string;
   Icon?: IconComponent;
@@ -75,6 +75,7 @@ const StyledIconContainer = styled.div`
   justify-content: center;
 `;
 
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledIncomingCircle = styled.div`
   display: flex;
   align-items: center;
@@ -89,7 +90,7 @@ const StyledIncomingCircle = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Tab = ({
+export const DeprecatedTab = ({
   id,
   title,
   Icon,
@@ -101,7 +102,7 @@ export const Tab = ({
   to,
   logo,
   incomingMessages = 0,
-}: TabProps) => {
+}: DeprecatedTabProps) => {
   const theme = useTheme();
   const iconColor = active
     ? theme.font.color.primary

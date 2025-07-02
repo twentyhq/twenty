@@ -11,20 +11,20 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
+  AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
+  useSignInMutation,
+  useSignUpInWorkspaceMutation,
   useSignUpMutation,
 } from '~/generated/graphql';
 
@@ -41,16 +41,26 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import {
+  countAvailableWorkspaces,
+  getFirstAvailableWorkspaces,
+} from '@/auth/utils/availableWorkspacesUtils';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
@@ -60,7 +70,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
@@ -71,12 +81,13 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const { origin } = useOrigin();
-
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -86,16 +97,18 @@ export const useAuth = () => {
   );
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
+  const [signIn] = useSignInMutation();
   const [signUp] = useSignUpMutation();
+  const [signUpInWorkspace] = useSignUpInWorkspaceMutation();
   const [getAuthTokensFromLoginToken] =
     useGetAuthTokensFromLoginTokenMutation();
   const [getLoginTokenFromEmailVerificationToken] =
@@ -119,10 +132,13 @@ export const useAuth = () => {
 
   const [, setSearchParams] = useSearchParams();
 
+  const navigate = useNavigate();
+
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
+
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
@@ -132,7 +148,6 @@ export const useAuth = () => {
           .getLoadable(isDeveloperDefaultSignInPrefilledState)
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
         const captcha = snapshot.getLoadable(captchaState).getValue();
         const clientConfigApiStatus = snapshot
           .getLoadable(clientConfigApiStatusState)
@@ -146,6 +161,12 @@ export const useAuth = () => {
         const domainConfiguration = snapshot
           .getLoadable(domainConfigurationState)
           .getValue();
+        const apiConfig = snapshot.getLoadable(apiConfigState).getValue();
+        const sentryConfig = snapshot.getLoadable(sentryConfigState).getValue();
+        const workspacePublicData = snapshot
+          .getLoadable(workspacePublicDataState)
+          .getValue();
+
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
@@ -155,22 +176,27 @@ export const useAuth = () => {
             isDeveloperDefaultSignInPrefilled,
           );
           set(supportChatState, supportChat);
-          set(isDebugModeState, isDebugMode);
           set(captchaState, captcha);
+          set(apiConfigState, apiConfig);
+          set(sentryConfigState, sentryConfig);
+          set(workspacePublicDataState, workspacePublicData);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
           return undefined;
         });
+
         goToRecoilSnapshot(initialSnapshot);
-        await client.clearStore();
+
         sessionStorage.clear();
         localStorage.clear();
+        await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        navigate(AppPath.SignInUp);
       },
-    [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(
@@ -266,6 +292,10 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers(workspaceMembers);
     }
 
+    if (isDefined(user.availableWorkspaces)) {
+      setAvailableWorkspaces(user.availableWorkspaces);
+    }
+
     if (isDefined(user.currentUserWorkspace)) {
       setCurrentUserWorkspace(user.currentUserWorkspace);
     }
@@ -313,30 +343,6 @@ export const useAuth = () => {
       });
     }
 
-    if (isDefined(user.workspaces)) {
-      const validWorkspaces = user.workspaces
-        .filter(
-          ({ workspace }) => workspace !== null && workspace !== undefined,
-        )
-        .map((validWorkspace) => validWorkspace.workspace)
-        .filter(isDefined);
-
-      setWorkspaces(validWorkspaces);
-    }
-
-    // TODO temporario
-    // if (typeof window !== 'undefined') {
-    //  window.OneSignalDeferred = window.OneSignalDeferred || [];
-    //  window.OneSignalDeferred.push(async (OneSignal) => {
-    //    try {
-    //      console.log('[OneSignal] Setando external_id:', user.id);
-    //      await OneSignal.setExternalUserId(user.id);
-    //    } catch (error) {
-    //     console.error('[OneSignal] Erro ao setar external_id:', error);
-    //    }
-    //  });
-    //}
-
     return {
       user,
       workspaceMember,
@@ -352,8 +358,16 @@ export const useAuth = () => {
     setCurrentWorkspaceMembers,
     setDateTimeFormat,
     setLastAuthenticateWorkspaceDomain,
-    setWorkspaces,
+    setAvailableWorkspaces,
   ]);
+
+  const handleSetAuthTokens = useCallback(
+    (tokens: AuthTokenPair) => {
+      setTokenPair(tokens);
+      cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
+    },
+    [setTokenPair],
+  );
 
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
@@ -372,29 +386,109 @@ export const useAuth = () => {
         throw new Error('No getAuthTokensFromLoginToken result');
       }
 
-      setTokenPair(
-        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
-      );
-      cookieStorage.setItem(
-        'tokenPair',
-        JSON.stringify(
-          getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
-        ),
+      handleSetAuthTokens(
+        getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
       );
 
+      // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
+      // then UserProvider updates its children and PrefetchDataProvider is triggered
+      // which requires the correct metadata to be loaded (not the mocks)
       await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
     [
       getAuthTokensFromLoginToken,
-      setTokenPair,
-      refreshObjectMetadataItems,
       loadCurrentUser,
       origin,
+      handleSetAuthTokens,
+      refreshObjectMetadataItems,
     ],
   );
 
   const handleCredentialsSignIn = useCallback(
+    async (email: string, password: string, captchaToken?: string) => {
+      signIn({
+        variables: { email, password, captchaToken },
+        onCompleted: async (data) => {
+          handleSetAuthTokens(data.signIn.tokens);
+          const { user } = await loadCurrentUser();
+
+          const availableWorkspacesCount = countAvailableWorkspaces(
+            user.availableWorkspaces,
+          );
+
+          if (availableWorkspacesCount === 0) {
+            return createWorkspace();
+          }
+
+          if (availableWorkspacesCount === 1) {
+            const targetWorkspace = getFirstAvailableWorkspaces(
+              user.availableWorkspaces,
+            );
+            return await redirectToWorkspaceDomain(
+              getWorkspaceUrl(targetWorkspace.workspaceUrls),
+              targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
+              {
+                ...(targetWorkspace.loginToken && {
+                  loginToken: targetWorkspace.loginToken,
+                }),
+                email: user.email,
+              },
+            );
+          }
+
+          setSignInUpStep(SignInUpStep.WorkspaceSelection);
+        },
+        onError: (error) => {
+          if (
+            error instanceof ApolloError &&
+            error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+          ) {
+            setSearchParams({ email });
+            setSignInUpStep(SignInUpStep.EmailVerification);
+            throw error;
+          }
+          throw error;
+        },
+      });
+    },
+    [
+      handleSetAuthTokens,
+      redirectToWorkspaceDomain,
+      signIn,
+      loadCurrentUser,
+      setSearchParams,
+      setSignInUpStep,
+      createWorkspace,
+    ],
+  );
+
+  const handleCredentialsSignUp = useCallback(
+    async (email: string, password: string, captchaToken?: string) => {
+      return signUp({
+        variables: { email, password, captchaToken },
+        onCompleted: async (data) => {
+          handleSetAuthTokens(data.signUp.tokens);
+          const { user } = await loadCurrentUser();
+
+          if (countAvailableWorkspaces(user.availableWorkspaces) === 0) {
+            return createWorkspace();
+          }
+
+          setSignInUpStep(SignInUpStep.WorkspaceSelection);
+        },
+      });
+    },
+    [
+      handleSetAuthTokens,
+      signUp,
+      loadCurrentUser,
+      setSignInUpStep,
+      createWorkspace,
+    ],
+  );
+
+  const handleCredentialsSignInInWorkspace = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       const { loginToken } = await handleGetLoginTokenFromCredentials(
         email,
@@ -408,17 +502,26 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-  }, [clearSession]);
+    await requestFreshCaptchaToken();
+  }, [clearSession, requestFreshCaptchaToken]);
 
-  const handleCredentialsSignUp = useCallback(
-    async (
-      email: string,
-      password: string,
-      workspaceInviteHash?: string,
-      workspacePersonalInviteToken?: string,
-      captchaToken?: string,
-    ) => {
-      const signUpResult = await signUp({
+  const handleCredentialsSignUpInWorkspace = useCallback(
+    async ({
+      email,
+      password,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      captchaToken,
+      verifyEmailNextPath,
+    }: {
+      email: string;
+      password: string;
+      workspaceInviteHash?: string;
+      workspacePersonalInviteToken?: string;
+      captchaToken?: string;
+      verifyEmailNextPath?: string;
+    }) => {
+      const signUpInWorkspaceResult = await signUpInWorkspace({
         variables: {
           email,
           password,
@@ -429,14 +532,15 @@ export const useAuth = () => {
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
+          verifyEmailNextPath,
         },
       });
 
-      if (isDefined(signUpResult.errors)) {
-        throw signUpResult.errors;
+      if (isDefined(signUpInWorkspaceResult.errors)) {
+        throw signUpInWorkspaceResult.errors;
       }
 
-      if (!signUpResult.data?.signUp) {
+      if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
         throw new Error('No login token');
       }
 
@@ -450,11 +554,15 @@ export const useAuth = () => {
       // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
       if (isMultiWorkspaceEnabled) {
         return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
+          getWorkspaceUrl(
+            signUpInWorkspaceResult.data.signUpInWorkspace.workspace
+              .workspaceUrls,
+          ),
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {
-              loginToken: signUpResult.data.signUp.loginToken.token,
+              loginToken:
+                signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
             }),
             email,
           },
@@ -462,11 +570,11 @@ export const useAuth = () => {
       }
 
       await handleGetAuthTokensFromLoginToken(
-        signUpResult.data?.signUp.loginToken.token,
+        signUpInWorkspaceResult.data?.signUpInWorkspace.loginToken.token,
       );
     },
     [
-      signUp,
+      signUpInWorkspace,
       workspacePublicData,
       isMultiWorkspaceEnabled,
       handleGetAuthTokensFromLoginToken,
@@ -484,6 +592,7 @@ export const useAuth = () => {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
         billingCheckoutSession?: BillingCheckoutSession;
+        action?: string;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -503,6 +612,10 @@ export const useAuth = () => {
         );
       }
 
+      if (isDefined(params.action)) {
+        url.searchParams.set('action', params.action);
+      }
+
       if (isDefined(workspacePublicData)) {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
@@ -517,6 +630,7 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
+      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -528,6 +642,7 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
+      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },
@@ -546,8 +661,11 @@ export const useAuth = () => {
     clearSession,
     signOut: handleSignOut,
     signUpWithCredentials: handleCredentialsSignUp,
+    signUpWithCredentialsInWorkspace: handleCredentialsSignUpInWorkspace,
+    signInWithCredentialsInWorkspace: handleCredentialsSignInInWorkspace,
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    setAuthTokens: handleSetAuthTokens,
   };
 };

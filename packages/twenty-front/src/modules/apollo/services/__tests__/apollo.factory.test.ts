@@ -1,6 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, Options } from '../apollo.factory';
 
 enableFetchMocks();
@@ -29,11 +30,35 @@ const mockWorkspaceMember = {
     lastName: 'Doe',
   },
   colorScheme: 'Light' as const,
+  userEmail: 'userEmail',
+};
+
+const mockWorkspace = {
+  id: 'workspace-id',
+  metadataVersion: 1,
+  allowImpersonation: false,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
+  billingSubscriptions: [],
+  currentBillingSubscription: null,
+  workspaceMembersCount: 0,
+  isPublicInviteLinkEnabled: false,
+  isGoogleAuthEnabled: false,
+  isMicrosoftAuthEnabled: false,
+  isPasswordAuthEnabled: false,
+  isCustomDomainEnabled: false,
+  hasValidEnterpriseKey: false,
+  subdomain: 'test',
+  customDomain: 'test.com',
+  workspaceUrls: {
+    subdomainUrl: 'test.com',
+    customUrl: 'test.com',
+  },
 };
 
 const createMockOptions = (): Options<any> => ({
   uri: 'http://localhost:3000',
   currentWorkspaceMember: mockWorkspaceMember,
+  currentWorkspace: mockWorkspace,
   cache: new InMemoryCache(),
   isDebugMode: true,
   onError: mockOnError,
@@ -176,6 +201,7 @@ describe('ApolloFactory', () => {
         lastName: 'Doe',
       },
       colorScheme: 'Light' as const,
+      userEmail: 'userEmail',
     };
 
     apolloFactory.updateWorkspaceMember(newWorkspaceMember);

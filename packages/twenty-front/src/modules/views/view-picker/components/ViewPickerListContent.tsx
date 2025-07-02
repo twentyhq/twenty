@@ -6,6 +6,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -94,8 +95,8 @@ export const ViewPickerListContent = () => {
   );
 
   return (
-    <>
-      <DropdownMenuItemsContainer>
+    <DropdownContent>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <DraggableList
           onDragEnd={handleDragEnd}
           draggableItems={viewsOnCurrentObject.map((view, index) => {
@@ -127,6 +128,6 @@ export const ViewPickerListContent = () => {
           text={t`Add view`}
         />
       </StyledBoldDropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

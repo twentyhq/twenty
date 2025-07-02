@@ -1,9 +1,9 @@
-import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
 import { RecordBoardColumnHeaderAggregateDropdownMenuContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent';
 import { RecordBoardColumnHeaderAggregateDropdownOptionsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownOptionsContent';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
@@ -12,9 +12,10 @@ import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-re
 import { t } from '@lingui/core/macro';
 
 export const AggregateDropdownContent = () => {
-  const { currentContentId, objectMetadataItem } = useDropdown({
-    context: RecordBoardColumnHeaderAggregateDropdownContext,
-  });
+  const { currentContentId, objectMetadataItem } =
+    useDropdownContextStateManagement({
+      context: RecordBoardColumnHeaderAggregateDropdownContext,
+    });
 
   switch (currentContentId) {
     case 'countAggregateOperationsOptions': {
@@ -47,10 +48,7 @@ export const AggregateDropdownContent = () => {
       const datesAvailableAggregations: AvailableFieldsForAggregateOperation =
         getAvailableFieldsIdsForAggregationFromObjectFields(
           objectMetadataItem.fields,
-          [
-            DATE_AGGREGATE_OPERATIONS.earliest,
-            DATE_AGGREGATE_OPERATIONS.latest,
-          ],
+          [DateAggregateOperations.EARLIEST, DateAggregateOperations.LATEST],
         );
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent

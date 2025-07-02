@@ -23,7 +23,10 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -66,23 +69,17 @@ export class WorkspaceRepository<
       alias,
       queryRunner,
     ) as unknown as WorkspaceSelectQueryBuilder<U>;
-    const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
-    if (!isPermissionsV2Enabled) {
-      return queryBuilder;
-    } else {
-      if (!this.objectRecordsPermissions) {
-        throw new Error('Object records permissions are required');
-      }
-
-      return new WorkspaceSelectQueryBuilder(
-        queryBuilder,
-        this.objectRecordsPermissions,
-        this.internalContext,
-        this.shouldBypassPermissionChecks,
-      );
+    if (!this.objectRecordsPermissions) {
+      throw new Error('Object records permissions are required');
     }
+
+    return new WorkspaceSelectQueryBuilder(
+      queryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
   }
 
   /**
@@ -94,7 +91,15 @@ export class WorkspaceRepository<
   ): Promise<T[]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
-    const result = await manager.find(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.find(
+      this.target,
+      computedOptions,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -106,7 +111,15 @@ export class WorkspaceRepository<
   ): Promise<T[]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
-    const result = await manager.findBy(this.target, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.findBy(
+      this.target,
+      computedOptions.where,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -118,7 +131,15 @@ export class WorkspaceRepository<
   ): Promise<[T[], number]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
-    const result = await manager.findAndCount(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.findAndCount(
+      this.target,
+      computedOptions,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -130,9 +151,14 @@ export class WorkspaceRepository<
   ): Promise<[T[], number]> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
     const result = await manager.findAndCountBy(
       this.target,
       computedOptions.where,
+      permissionOptions,
     );
     const formattedResult = await this.formatResult(result);
 
@@ -145,7 +171,15 @@ export class WorkspaceRepository<
   ): Promise<T | null> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
-    const result = await manager.findOne(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.findOne(
+      this.target,
+      computedOptions,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -157,7 +191,15 @@ export class WorkspaceRepository<
   ): Promise<T | null> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
-    const result = await manager.findOneBy(this.target, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.findOneBy(
+      this.target,
+      computedOptions.where,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -169,7 +211,15 @@ export class WorkspaceRepository<
   ): Promise<T> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
-    const result = await manager.findOneOrFail(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+    const result = await manager.findOneOrFail(
+      this.target,
+      computedOptions,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -181,9 +231,14 @@ export class WorkspaceRepository<
   ): Promise<T> {
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
     const result = await manager.findOneByOrFail(
       this.target,
       computedOptions.where,
+      permissionOptions,
     );
     const formattedResult = await this.formatResult(result);
 
@@ -219,12 +274,17 @@ export class WorkspaceRepository<
 
   override async save<U extends DeepPartial<T>>(
     entityOrEntities: U | U[],
-    options?: SaveOptions,
+    options?: SaveOptions | (SaveOptions & { reload: false }),
     entityManager?: WorkspaceEntityManager,
   ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: U | U[];
+
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
 
     // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
@@ -232,12 +292,14 @@ export class WorkspaceRepository<
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     } else {
       result = await manager.save(
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     }
 
@@ -268,10 +330,15 @@ export class WorkspaceRepository<
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
     const result = await manager.remove(
       this.target,
       formattedEntityOrEntities,
       options,
+      permissionOptions,
     );
 
     const formattedResult = await this.formatResult(result);
@@ -298,7 +365,12 @@ export class WorkspaceRepository<
       criteria = await this.transformOptions(criteria);
     }
 
-    return manager.delete(this.target, criteria);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.delete(this.target, criteria, permissionOptions);
   }
 
   override softRemove<U extends DeepPartial<T>>(
@@ -332,20 +404,26 @@ export class WorkspaceRepository<
   ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.softRemove(
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     } else {
       result = await manager.softRemove(
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     }
 
@@ -373,7 +451,12 @@ export class WorkspaceRepository<
       criteria = await this.transformOptions(criteria);
     }
 
-    return manager.softDelete(this.target, criteria);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.softDelete(this.target, criteria, permissionOptions);
   }
 
   /**
@@ -410,20 +493,26 @@ export class WorkspaceRepository<
   ): Promise<U | U[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.recover(
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     } else {
       result = await manager.recover(
         this.target,
         formattedEntityOrEntities,
         options,
+        permissionOptions,
       );
     }
 
@@ -451,7 +540,12 @@ export class WorkspaceRepository<
       criteria = await this.transformOptions(criteria);
     }
 
-    return manager.restore(this.target, criteria);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.restore(this.target, criteria, permissionOptions);
   }
 
   /**
@@ -464,10 +558,15 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
 
     const formattedEntity = await this.formatData(entity);
-    const result = await manager.insert(this.target, formattedEntity, {
+    const permissionOptions = {
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       objectRecordsPermissions: this.objectRecordsPermissions,
-    });
+    };
+    const result = await manager.insert(
+      this.target,
+      formattedEntity,
+      permissionOptions,
+    );
     const formattedResult = await this.formatResult(result.generatedMaps);
 
     return {
@@ -500,7 +599,17 @@ export class WorkspaceRepository<
       criteria = await this.transformOptions(criteria);
     }
 
-    return manager.update(this.target, criteria, partialEntity);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.update(
+      this.target,
+      criteria,
+      partialEntity,
+      permissionOptions,
+    );
   }
 
   override async upsert(
@@ -512,14 +621,16 @@ export class WorkspaceRepository<
 
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
 
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
     const result = await manager.upsert(
       this.target,
       formattedEntityOrEntities,
       conflictPathsOrOptions,
-      {
-        shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-        objectRecordsPermissions: this.objectRecordsPermissions,
-      },
+      permissionOptions,
     );
 
     const formattedResult = await this.formatResult(result.generatedMaps);
@@ -541,7 +652,12 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
 
-    return manager.exists(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.exists(this.target, computedOptions, permissionOptions);
   }
 
   override async existsBy(
@@ -551,7 +667,16 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.existsBy(this.target, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.existsBy(
+      this.target,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   /**
@@ -564,7 +689,12 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
 
-    return manager.count(this.target, computedOptions);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.count(this.target, computedOptions, permissionOptions);
   }
 
   override async countBy(
@@ -574,7 +704,16 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.countBy(this.target, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.countBy(
+      this.target,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   /**
@@ -588,7 +727,17 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.sum(this.target, columnName, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.sum(
+      this.target,
+      columnName,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   override async average(
@@ -599,7 +748,17 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.average(this.target, columnName, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.average(
+      this.target,
+      columnName,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   override async minimum(
@@ -610,7 +769,17 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.minimum(this.target, columnName, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.minimum(
+      this.target,
+      columnName,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   override async maximum(
@@ -621,7 +790,17 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
 
-    return manager.maximum(this.target, columnName, computedOptions.where);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.maximum(
+      this.target,
+      columnName,
+      computedOptions.where,
+      permissionOptions,
+    );
   }
 
   override async increment(
@@ -635,11 +814,17 @@ export class WorkspaceRepository<
       where: conditions,
     });
 
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
     return manager.increment(
       this.target,
       computedConditions.where,
       propertyPath,
       value,
+      permissionOptions,
     );
   }
 
@@ -654,12 +839,74 @@ export class WorkspaceRepository<
       where: conditions,
     });
 
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
     return manager.decrement(
       this.target,
       computedConditions.where,
       propertyPath,
       value,
+      permissionOptions,
     );
+  }
+
+  /**
+   * PRELOAD METHOD
+   */
+  override async preload<U extends DeepPartial<T>>(
+    entityLike: U,
+    entityManager?: WorkspaceEntityManager,
+  ): Promise<T | undefined> {
+    const manager = entityManager || this.manager;
+    const formattedEntityLike = await this.formatData(entityLike);
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.preload(this.target, formattedEntityLike, permissionOptions);
+  }
+
+  /**
+   * CLEAR METHOD
+   */
+  override async clear(entityManager?: WorkspaceEntityManager): Promise<void> {
+    const manager = entityManager || this.manager;
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return manager.clear(this.target, permissionOptions);
+  }
+
+  /**
+   * DEPRECATED AND RESTRICTED METHODS
+   */
+  override async query(): Promise<unknown> {
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
+  }
+
+  override async findByIds(): Promise<T[]> {
+    throw new Error(
+      'findByIds is deprecated. Please use findBy with In operator instead.',
+    );
+  }
+
+  override async findOneById(): Promise<T | null> {
+    throw new Error(
+      'findOneById is deprecated. Please use findOneBy with id condition instead.',
+    );
+  }
+
+  override async exist(): Promise<boolean> {
+    throw new Error('exist is deprecated. Please use exists method instead.');
   }
 
   /**

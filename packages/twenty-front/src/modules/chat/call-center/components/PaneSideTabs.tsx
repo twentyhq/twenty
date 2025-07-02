@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 
-import { Tab } from '@/ui/layout/tab/components/Tab';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
+import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
+
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 type TabItemProps = {
@@ -44,7 +45,7 @@ export const PaneSideTabs = ({
     <TabListComponentInstanceContext.Provider value={{ instanceId: tabListId }}>
       <StyledContainer className={className}>
         {tabs.map((tab) => (
-          <Tab
+          <DeprecatedTab
             id={tab.id.toString()}
             key={tab.id}
             title={tab.name}

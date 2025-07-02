@@ -1,16 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { SendMailOptions } from 'nodemailer';
 
-import { EmailDriver } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
+import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
-import { EMAIL_DRIVER } from 'src/engine/core-modules/email/email.constants';
+import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 
 @Injectable()
-export class EmailSenderService implements EmailDriver {
-  constructor(@Inject(EMAIL_DRIVER) private driver: EmailDriver) {}
+export class EmailSenderService implements EmailDriverInterface {
+  constructor(private readonly emailDriverFactory: EmailDriverFactory) {}
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {
-    await this.driver.send(sendMailOptions);
+    const driver = this.emailDriverFactory.getCurrentDriver();
+
+    await driver.send(sendMailOptions);
   }
 }

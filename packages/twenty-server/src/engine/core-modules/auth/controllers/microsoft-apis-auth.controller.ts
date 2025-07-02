@@ -26,6 +26,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -42,14 +43,14 @@ export class MicrosoftAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard)
+  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard, PublicEndpointGuard)
   async MicrosoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard)
+  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
   async MicrosoftAuthGetAccessToken(
     @Req() req: MicrosoftAPIsRequest,
     @Res() res: Response,
@@ -125,15 +126,16 @@ export class MicrosoftAPIsAuthController {
           })
           .toString(),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace: workspace ?? {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-        ),
+          pathname: '/verify',
+        }),
       );
     }
   }

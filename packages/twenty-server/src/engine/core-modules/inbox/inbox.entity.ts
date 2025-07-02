@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum IntegrationType {
@@ -47,7 +47,7 @@ export class Inbox {
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   workspace: Relation<Workspace>;
 
-  @Field(() => [Agent])
-  @ManyToMany(() => Agent, (agent) => agent.inboxes)
-  agents: Agent[];
+  @Field(() => [WorkspaceAgent])
+  @ManyToMany(() => WorkspaceAgent, (agent) => agent.inboxes)
+  agents: WorkspaceAgent[];
 }

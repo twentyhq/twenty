@@ -1,4 +1,7 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import {
+  CurrentWorkspaceMember,
+  currentWorkspaceMemberState,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
@@ -28,11 +31,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  Role,
-  SearchRecord,
-  WorkspaceMember,
-} from '~/generated-metadata/graphql';
+import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
@@ -48,15 +47,15 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTable = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-`;
-
 const StyledSearchInput = styled(TextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
   }
+`;
+
+const StyledTable = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledTableRows = styled.div`
@@ -142,17 +141,14 @@ export const SettingsRoleAssignment = ({
   };
 
   const handleSelectWorkspaceMember = (
-    workspaceMemberSearchRecord: SearchRecord,
+    workspaceMember: CurrentWorkspaceMember,
   ) => {
-    const existingRole = workspaceMemberRoleMap.get(
-      workspaceMemberSearchRecord.recordId,
-    );
+    const existingRole = workspaceMemberRoleMap.get(workspaceMember.id);
 
     setSelectedWorkspaceMember({
-      id: workspaceMemberSearchRecord.recordId,
-      name: `${workspaceMemberSearchRecord.label}`,
+      id: workspaceMember.id,
+      name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       role: existingRole,
-      avatarUrl: workspaceMemberSearchRecord.imageUrl,
     });
     openModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
     closeDropdown();
@@ -242,7 +238,7 @@ export const SettingsRoleAssignment = ({
         <StyledAssignToMemberContainer>
           <Dropdown
             dropdownId="role-member-select"
-            dropdownHotkeyScope={{ scope: 'roleAssignment' }}
+            dropdownOffset={{ x: 0, y: 4 }}
             clickableComponent={
               <>
                 <div id="assign-member">
@@ -256,7 +252,7 @@ export const SettingsRoleAssignment = ({
                 </div>
                 <AppTooltip
                   anchorSelect="#assign-member"
-                  content={t`No more members to assign`}
+                  content={t`The workspace needs at least one Admin`}
                   delay={TooltipDelay.noDelay}
                   hidden={!allWorkspaceMembersHaveThisRole}
                 />

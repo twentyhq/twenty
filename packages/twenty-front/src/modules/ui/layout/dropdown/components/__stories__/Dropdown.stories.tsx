@@ -6,7 +6,16 @@ import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
+import { SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -15,6 +24,8 @@ import {
   MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -29,14 +40,11 @@ const meta: Meta<typeof Dropdown> = {
   decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
-    dropdownHotkeyScope: { scope: 'testDropdownMenu' },
     dropdownOffset: { x: 0, y: 8 },
     dropdownId: 'test-dropdown-id',
-    dropdownWidth: '200px',
   },
   argTypes: {
     clickableComponent: { control: false },
-    dropdownHotkeyScope: { control: false },
     dropdownOffset: { control: false },
     dropdownComponents: { control: false },
   },
@@ -77,7 +85,9 @@ const StyledEmptyDropdownContent = styled.div`
 export const Empty: Story = {
   args: {
     dropdownComponents: (
-      <StyledEmptyDropdownContent data-testid="dropdown-content" />
+      <DropdownContent>
+        <StyledEmptyDropdownContent data-testid="dropdown-content" />
+      </DropdownContent>
     ),
   },
   play: async () => {
@@ -148,26 +158,28 @@ const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   return (
-    <>
-      {optionsMock.map((item) => (
-        <MenuItemSelectAvatar
-          key={item.id}
-          selected={selectedItem === item.id}
-          onClick={() => setSelectedItem(item.id)}
-          avatar={
-            hasAvatar ? (
-              <Avatar
-                placeholder="A"
-                avatarUrl={item.avatarUrl}
-                size="md"
-                type="squared"
-              />
-            ) : undefined
-          }
-          text={item.name}
-        />
-      ))}
-    </>
+    <DropdownContent>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {optionsMock.map((item) => (
+          <MenuItemSelectAvatar
+            key={item.id}
+            selected={selectedItem === item.id}
+            onClick={() => setSelectedItem(item.id)}
+            avatar={
+              hasAvatar ? (
+                <Avatar
+                  placeholder="A"
+                  avatarUrl={item.avatarUrl}
+                  size="md"
+                  type="squared"
+                />
+              ) : undefined
+            }
+            text={item.name}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };
 
@@ -177,31 +189,33 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   >({});
 
   return (
-    <>
-      {optionsMock.map((item) => (
-        <MenuItemMultiSelectAvatar
-          key={item.id}
-          selected={selectedItemsById[item.id]}
-          onSelectChange={(checked) =>
-            setSelectedItemsById((previous) => ({
-              ...previous,
-              [item.id]: checked,
-            }))
-          }
-          avatar={
-            hasAvatar ? (
-              <Avatar
-                placeholder="A"
-                avatarUrl={item.avatarUrl}
-                size="md"
-                type="squared"
-              />
-            ) : undefined
-          }
-          text={item.name}
-        />
-      ))}
-    </>
+    <DropdownContent>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {optionsMock.map((item) => (
+          <MenuItemMultiSelectAvatar
+            key={item.id}
+            selected={selectedItemsById[item.id]}
+            onSelectChange={(checked) =>
+              setSelectedItemsById((previous) => ({
+                ...previous,
+                [item.id]: checked,
+              }))
+            }
+            avatar={
+              hasAvatar ? (
+                <Avatar
+                  placeholder="A"
+                  avatarUrl={item.avatarUrl}
+                  size="md"
+                  type="squared"
+                />
+              ) : undefined
+            }
+            text={item.name}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };
 
@@ -220,7 +234,7 @@ export const WithHeaders: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
@@ -243,7 +257,7 @@ export const WithHeaders: Story = {
             <MenuItem key={item.id} text={item.name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: playInteraction,
@@ -253,13 +267,13 @@ export const SearchWithLoadingMenu: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuSearchInput value="query" autoFocus />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: async () => {
@@ -285,7 +299,7 @@ export const WithInput: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <>
+      <DropdownContent>
         <DropdownMenuInput value="Lorem ipsum" autoFocus />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
@@ -293,7 +307,7 @@ export const WithInput: Story = {
             <MenuItem key={name} text={name} />
           ))}
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     ),
   },
   play: playInteraction,
@@ -302,11 +316,7 @@ export const WithInput: Story = {
 export const SelectableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    dropdownComponents: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeSelectableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    ),
+    dropdownComponents: <FakeSelectableMenuItemList hasAvatar />,
   },
   play: playInteraction,
 };
@@ -314,11 +324,98 @@ export const SelectableMenuItemWithAvatar: Story = {
 export const CheckableMenuItemWithAvatar: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
-    dropdownComponents: (
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeCheckableMenuItemList hasAvatar />
-      </DropdownMenuItemsContainer>
-    ),
+    dropdownComponents: <FakeCheckableMenuItemList hasAvatar />,
   },
   play: playInteraction,
+};
+
+const modalId = 'dropdown-modal-test';
+
+const ModalWithDropdown = () => {
+  return (
+    <>
+      <Modal modalId={modalId} size="medium" padding="medium" isClosable={true}>
+        <Modal.Header>Modal with Dropdown Test</Modal.Header>
+        <Modal.Content>
+          <p>
+            This modal contains a dropdown that should appear above the modal
+            (higher z-index).
+          </p>
+          <div style={{ marginTop: '20px' }}>
+            <Dropdown
+              clickableComponent={
+                <Button
+                  dataTestId="dropdown-button"
+                  title="Open Dropdown in Modal"
+                />
+              }
+              dropdownOffset={{ x: 0, y: 8 }}
+              dropdownId="modal-dropdown-test"
+              isDropdownInModal={true}
+              dropdownComponents={
+                <div data-testid="dropdown-content">
+                  <FakeSelectableMenuItemList hasAvatar />
+                </div>
+              }
+            />
+          </div>
+        </Modal.Content>
+      </Modal>
+    </>
+  );
+};
+
+const initializeModalState = ({ set }: { set: SetRecoilState }) => {
+  set(
+    isModalOpenedComponentState.atomFamily({
+      instanceId: modalId,
+    }),
+    true,
+  );
+
+  set(currentHotkeyScopeState, {
+    scope: ModalHotkeyScope.ModalFocus,
+    customScopes: {
+      commandMenu: true,
+      goto: false,
+      keyboardShortcutMenu: false,
+    },
+  });
+
+  set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+
+  set(focusStackState, [
+    {
+      focusId: modalId,
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: modalId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
+      },
+      memoizeKey: 'global',
+    },
+  ]);
+};
+
+export const DropdownInsideModal: Story = {
+  decorators: [I18nFrontDecorator, RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState: initializeModalState,
+    disableHotkeyInitialization: true,
+  },
+  render: () => <ModalWithDropdown />,
+  play: async () => {
+    const canvas = within(document.body);
+
+    const dropdownButton = await canvas.findByTestId('dropdown-button');
+
+    await userEvent.click(dropdownButton);
+
+    const dropdownContent = await canvas.findByTestId('dropdown-content');
+
+    expect(dropdownContent).toBeVisible();
+  },
 };

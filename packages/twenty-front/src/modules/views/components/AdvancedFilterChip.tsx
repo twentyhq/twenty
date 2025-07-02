@@ -113,6 +113,7 @@ export const AdvancedFilterChip = () => {
       Icon={IconFilter}
       onRemove={handleRemoveClick}
       variant={hasAnyDeletedAtFilterInAdvancedFilters ? 'danger' : 'default'}
+      type="filter"
     />
   );
 };

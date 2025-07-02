@@ -6,8 +6,7 @@ export const IMPERSONATE = gql`
     impersonate(userId: $userId, workspaceId: $workspaceId) {
       workspace {
         workspaceUrls {
-          subdomainUrl
-          customUrl
+          ...WorkspaceUrlsFragment
         }
         id
       }

@@ -1,18 +1,18 @@
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { t } from '@lingui/core/macro';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { IconChevronDown } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -110,7 +110,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
           </StyledButtonContainer>
         }
         dropdownComponents={
-          <DropdownMenu>
+          <DropdownContent>
             <DropdownMenuItemsContainer>
               <StyledMenuItemWrapper>
                 <StyledMenuItem
@@ -128,9 +128,8 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
                 />
               </StyledMenuItemWrapper>
             </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          </DropdownContent>
         }
-        dropdownHotkeyScope={{ scope: dropdownId }}
       />
     </StyledContainer>
   );

@@ -1,5 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
@@ -51,7 +51,7 @@ export const StyledInput = styled.input`
   }
 `;
 
-const StyledCustomDropdownMenu = styled(DropdownMenu)`
+const StyledCustomDropdownContent = styled(DropdownContent)`
   background-color: ${({ theme }) => theme.background.tertiary};
 `;
 
@@ -78,7 +78,7 @@ export const SettingsServiceCenterFilterDropdown = ({
         />
       }
       dropdownComponents={
-        <StyledCustomDropdownMenu width="100%">
+        <StyledCustomDropdownContent>
           <StyledContainerSearchInput>
             <StyledInput
               value={searchText}
@@ -117,11 +117,8 @@ export const SettingsServiceCenterFilterDropdown = ({
               }}
             />
           </DropdownMenuItemsContainer>
-        </StyledCustomDropdownMenu>
+        </StyledCustomDropdownContent>
       }
-      dropdownHotkeyScope={{
-        scope: dropdownId,
-      }}
     />
   );
 };

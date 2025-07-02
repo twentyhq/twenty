@@ -10,6 +10,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
+import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormRichTextV2FieldInput } from '@/object-record/record-field/form-types/components/FormRichTextV2FieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
@@ -24,6 +25,8 @@ import {
   FieldMetadata,
   FieldMultiSelectValue,
   FieldPhonesValue,
+  FieldRelationToOneValue,
+  FieldRelationValue,
   FieldRichTextV2Value,
   FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
@@ -39,6 +42,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -100,7 +104,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata.options}
+      options={field.metadata?.options}
       readonly={readonly}
     />
   ) : isFieldFullName(field) ? (
@@ -166,7 +170,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata.options}
+      options={field.metadata?.options}
       readonly={readonly}
       placeholder={placeholder}
     />
@@ -204,6 +208,17 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
       placeholder={placeholder}
+    />
+  ) : isFieldRelationToOneObject(field) ? (
+    <FormRelationToOneFieldInput
+      label={field.label}
+      objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
+      defaultValue={
+        defaultValue as FieldRelationValue<FieldRelationToOneValue> | string
+      }
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
     />
   ) : null;
 };

@@ -253,6 +253,36 @@ export const CreatePrimaryLink: Story = {
   },
 };
 
+export const TrimInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('URL');
+    await userEvent.type(input, '  https://www.twenty.com  {enter}');
+
+    const linkDisplay = await canvas.findByText('twenty.com');
+    expect(linkDisplay).toBeVisible();
+
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: '123' },
+          updateOneRecordInput: {
+            links: {
+              primaryLinkUrl: 'https://www.twenty.com',
+              primaryLinkLabel: null,
+              secondaryLinks: [],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
+  },
+};
+
 export const AddSecondaryLink: Story = {
   args: {
     value: {

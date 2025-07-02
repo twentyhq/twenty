@@ -24,10 +24,7 @@ const getFromCacheWithRecompute = async <T, U>({
   workspaceId: string;
   getCacheData: (workspaceId: string) => Promise<U | undefined>;
   getCacheVersion?: (workspaceId: string) => Promise<T | undefined>;
-  recomputeCache: (params: {
-    workspaceId: string;
-    ignoreLock?: boolean;
-  }) => Promise<void>;
+  recomputeCache: (params: { workspaceId: string }) => Promise<void>;
   cachedEntityName: string;
   exceptionCode: TwentyORMExceptionCode;
   logger: Logger;
@@ -54,7 +51,7 @@ const getFromCacheWithRecompute = async <T, U>({
         cachedData,
       },
     );
-    await recomputeCache({ workspaceId, ignoreLock: true });
+    await recomputeCache({ workspaceId });
 
     cachedData = await getCacheData(workspaceId);
     if (expectCacheVersion) {

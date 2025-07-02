@@ -216,14 +216,10 @@ export const ChatbotFlowFileEventForm = ({
                 <H3Title title={renameFile(file)} />
               </StyledLink>
             )}
-
             <StyledButton
               title="Upload file"
               onClick={() => fileInputRef.current?.click()}
-            >
-              Upload file
-            </StyledButton>
-
+            />
             <StyledInput
               ref={fileInputRef}
               type="file"

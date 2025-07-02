@@ -7,7 +7,7 @@ import {
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -132,8 +132,9 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleSubmitInput = () => {
+    const sanitizedInput = inputValue.trim();
     if (validateInput !== undefined) {
-      const validationData = validateInput(inputValue) ?? { isValid: true };
+      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
@@ -141,18 +142,18 @@ export const MultiItemFieldInput = <T,>({
       }
     }
 
-    if (inputValue === '' && isAddingNewItem) {
+    if (sanitizedInput === '' && isAddingNewItem) {
       return;
     }
 
-    if (inputValue === '' && !isAddingNewItem) {
+    if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
       return;
     }
 
     const newItem = formatInput
-      ? formatInput(inputValue)
-      : (inputValue as unknown as T);
+      ? formatInput(sanitizedInput)
+      : (sanitizedInput as unknown as T);
 
     if (!isAddingNewItem && newItem === items[itemToEditIndex]) {
       setIsInputDisplayed(false);
@@ -180,10 +181,10 @@ export const MultiItemFieldInput = <T,>({
   };
 
   return (
-    <DropdownMenu ref={containerRef} width={200}>
+    <DropdownContent ref={containerRef}>
       {!!items.length && (
         <>
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) =>
               renderItem({
                 value: item,
@@ -231,6 +232,6 @@ export const MultiItemFieldInput = <T,>({
           />
         </DropdownMenuItemsContainer>
       )}
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

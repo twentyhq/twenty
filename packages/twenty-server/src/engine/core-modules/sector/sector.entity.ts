@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {
   Column,
   CreateDateColumn,
@@ -11,12 +12,11 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SectorTopic } from 'src/engine/core-modules/sector/types/SectorTopic';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'sector', schema: 'core' })
 @ObjectType()
@@ -49,7 +49,7 @@ export class Sector {
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   workspace: Relation<Workspace>;
 
-  @Field(() => [Agent])
-  @ManyToMany(() => Agent, (agent) => agent.sectors)
-  agents: Agent[];
+  @Field(() => [WorkspaceAgent])
+  @ManyToMany(() => WorkspaceAgent, (agent) => agent.sectors)
+  agents: WorkspaceAgent[];
 }

@@ -2,24 +2,26 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { selectIsInModalState } from '@/ui/input/states/selectIsInModalState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -83,6 +85,9 @@ export const CreateProfile = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setIsSelectInModal = useSetRecoilState(selectIsInModalState);
+  setIsSelectInModal({ isInModal: true });
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -137,6 +142,7 @@ export const CreateProfile = () => {
         });
 
         setCurrentWorkspaceMember((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (isDefined(current)) {
             return {
               ...current,
@@ -151,6 +157,19 @@ export const CreateProfile = () => {
           }
           return current;
         });
+
+        setCurrentUser((current) => {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+          if (isDefined(current)) {
+            return {
+              ...current,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            };
+          }
+          return current;
+        });
+
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
@@ -163,6 +182,7 @@ export const CreateProfile = () => {
       setNextOnboardingStatus,
       enqueueSnackBar,
       setCurrentWorkspaceMember,
+      setCurrentUser,
       updateOneRecord,
     ],
   );
@@ -252,11 +272,14 @@ export const CreateProfile = () => {
               name="personType"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <FormSelectFieldInput
-                  label="Person type"
-                  defaultValue={value}
+                <Select
+                  label={t`Person type`}
+                  value={value}
                   onChange={onChange}
                   options={PERSON_TYPE_OPTIONS}
+                  dropdownId="create-profile-person-type-field"
+                  isSelectInModal
+                  fullWidth
                 />
               )}
             />

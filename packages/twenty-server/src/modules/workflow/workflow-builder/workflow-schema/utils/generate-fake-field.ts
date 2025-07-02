@@ -12,24 +12,19 @@ export const generateFakeField = ({
   type,
   label,
   icon,
+  value,
 }: {
   type: FieldMetadataType;
   label: string;
   icon?: string;
+  value?: string;
 }): Leaf | Node => {
   const compositeType = compositeTypeDefinitions.get(type);
 
-  if (!compositeType) {
-    return {
-      isLeaf: true,
-      type: type,
-      icon: icon,
-      label: label,
-      value: generateFakeValue(type, 'FieldMetadataType'),
-    };
-  } else {
+  if (compositeType) {
     return {
       isLeaf: false,
+      type: type,
       icon: icon,
       label: label,
       value: compositeType.properties.reduce((acc, property) => {
@@ -38,11 +33,19 @@ export const generateFakeField = ({
           isLeaf: true,
           type: property.type,
           label: camelToTitleCase(property.name),
-          value: generateFakeValue(property.type, 'FieldMetadataType'),
+          value: value || generateFakeValue(property.type, 'FieldMetadataType'),
         };
 
         return acc;
       }, {}),
     };
   }
+
+  return {
+    isLeaf: true,
+    type: type,
+    icon: icon,
+    label: label,
+    value: value || generateFakeValue(type, 'FieldMetadataType'),
+  };
 };

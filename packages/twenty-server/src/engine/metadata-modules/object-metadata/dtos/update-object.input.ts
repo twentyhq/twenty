@@ -1,12 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -76,6 +78,8 @@ export class UpdateObjectPayload {
 @InputType()
 @BeforeUpdateOne(BeforeUpdateOneObject)
 export class UpdateOneObjectInput {
+  @Type(() => UpdateObjectPayload)
+  @ValidateNested()
   @Field(() => UpdateObjectPayload)
   update: UpdateObjectPayload;
 

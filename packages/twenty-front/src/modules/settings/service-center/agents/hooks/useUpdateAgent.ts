@@ -1,11 +1,11 @@
 import { UPDATE_AGENT } from '@/settings/service-center/agents/graphql/mutation/updateAgent';
-import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client';
+import { UpdateWorkspaceAgentInput } from '~/generated/graphql';
 
 interface UseToggleAgentActiveReturn {
-  editAgent: (updateAgentInput: UpdateAgentInput) => Promise<void>;
+  editAgent: (updateAgentInput: UpdateWorkspaceAgentInput) => Promise<void>;
   loading: boolean;
   error: Error | undefined;
 }
@@ -26,7 +26,7 @@ export const useUpdateAgent = (): UseToggleAgentActiveReturn => {
     },
   });
 
-  const editAgent = async (updateInput: UpdateAgentInput) => {
+  const editAgent = async (updateInput: UpdateWorkspaceAgentInput) => {
     try {
       await updateAgent({
         variables: {

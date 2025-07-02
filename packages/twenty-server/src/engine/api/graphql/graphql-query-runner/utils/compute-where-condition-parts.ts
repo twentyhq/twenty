@@ -4,19 +4,25 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
 type WhereConditionParts = {
   sql: string;
   params: ObjectLiteral;
 };
 
-export const computeWhereConditionParts = (
-  operator: string,
-  objectNameSingular: string,
-  key: string,
+export const computeWhereConditionParts = ({
+  operator,
+  objectNameSingular,
+  key,
+  value,
+}: {
+  operator: string;
+  objectNameSingular: string;
+  key: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-): WhereConditionParts => {
+  value: any;
+}): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
 
   switch (operator) {
@@ -90,6 +96,20 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'search': {
+      const tsQuery = formatSearchTerms(value, 'and');
+
+      return {
+        sql: `(
+          "${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid}Ts) OR
+          "${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}Like
+        )`,
+        params: {
+          [`${key}${uuid}Ts`]: tsQuery,
+          [`${key}${uuid}Like`]: `%${value}%`,
+        },
+      };
+    }
     case 'notContains':
       return {
         sql: `NOT ("${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[])`,
@@ -105,7 +125,6 @@ export const computeWhereConditionParts = (
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
-
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,

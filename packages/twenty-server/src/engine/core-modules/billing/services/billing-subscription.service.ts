@@ -11,6 +11,7 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
+import { getSubscriptionStatus } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -33,11 +34,11 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
-import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
@@ -200,15 +201,14 @@ export class BillingSubscriptionService {
       );
     }
 
-    const newInterval = SubscriptionInterval.Year;
+    const interval = SubscriptionInterval.Year;
 
     const planKey = getPlanKeyFromSubscription(billingSubscription);
-    const billingProductsByPlan =
-      await this.billingProductService.getProductsByPlan(planKey);
+
     const pricesPerPlanArray =
-      this.billingProductService.getProductPricesByInterval({
-        interval: newInterval,
-        billingProductsByPlan,
+      await this.billingProductService.getProductPrices({
+        interval,
+        planKey,
       });
 
     const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
@@ -222,14 +222,54 @@ export class BillingSubscriptionService {
     );
   }
 
+  async switchToEnterprisePlan(workspace: Workspace) {
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
+    );
+
+    if (billingSubscription.metadata?.plan === BillingPlanKey.ENTERPRISE) {
+      throw new BillingException(
+        'Cannot switch from Organization to Pro plan',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE,
+      );
+    }
+
+    const planKey = BillingPlanKey.ENTERPRISE;
+
+    const interval = billingSubscription.interval as SubscriptionInterval;
+
+    const pricesPerPlanArray =
+      await this.billingProductService.getProductPrices({
+        interval,
+        planKey,
+      });
+
+    const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
+      billingSubscription,
+      pricesPerPlanArray,
+    );
+
+    await this.stripeSubscriptionService.updateSubscriptionItems(
+      billingSubscription.stripeSubscriptionId,
+      subscriptionItemsToUpdate,
+    );
+
+    await this.stripeSubscriptionService.updateSubscription(
+      billingSubscription.stripeSubscriptionId,
+      { metadata: { ...billingSubscription?.metadata, plan: planKey } },
+    );
+  }
+
   private getSubscriptionItemsToUpdate(
     billingSubscription: BillingSubscription,
     billingPricesPerPlanAndIntervalArray: BillingPrice[],
   ): BillingSubscriptionItem[] {
-    const subscriptionItemsToUpdate =
-      billingSubscription.billingSubscriptionItems.map((subscriptionItem) => {
+    return billingSubscription.billingSubscriptionItems.map(
+      (subscriptionItem) => {
         const matchingPrice = billingPricesPerPlanAndIntervalArray.find(
-          (price) => price.stripeProductId === subscriptionItem.stripeProductId,
+          (price) =>
+            price.billingProduct.metadata.priceUsageBased ===
+            subscriptionItem.billingProduct.metadata.priceUsageBased,
         );
 
         if (!matchingPrice) {
@@ -242,10 +282,10 @@ export class BillingSubscriptionService {
         return {
           ...subscriptionItem,
           stripePriceId: matchingPrice.stripePriceId,
+          stripeProductId: matchingPrice.stripeProductId,
         };
-      });
-
-    return subscriptionItemsToUpdate;
+      },
+    );
   }
 
   async endTrialPeriod(workspace: Workspace) {

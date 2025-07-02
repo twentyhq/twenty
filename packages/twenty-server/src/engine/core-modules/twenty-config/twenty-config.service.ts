@@ -1,6 +1,9 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 
 import { isString } from 'class-validator';
+import { LoggerOptions } from 'typeorm/logger/LoggerOptions';
+
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
@@ -193,6 +196,17 @@ export class TwentyConfigService {
         `Database configuration is disabled or unavailable, cannot ${operation} configuration`,
         ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED,
       );
+    }
+  }
+
+  getLoggingConfig(): LoggerOptions {
+    switch (this.get('NODE_ENV')) {
+      case NodeEnvironment.DEVELOPMENT:
+        return ['query', 'error'];
+      case NodeEnvironment.TEST:
+        return [];
+      default:
+        return ['error'];
     }
   }
 

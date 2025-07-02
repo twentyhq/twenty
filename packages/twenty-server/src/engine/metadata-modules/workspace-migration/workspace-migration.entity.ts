@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
@@ -14,7 +14,6 @@ export enum WorkspaceMigrationColumnActionType {
   CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
   DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
-  CREATE_COMMENT = 'CREATE_COMMENT',
 }
 export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
 export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
@@ -57,16 +56,15 @@ export type WorkspaceMigrationColumnAlter = {
   alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
-export type WorkspaceMigrationColumnCreateRelation = {
+export type WorkspaceMigrationColumnCreateForeignKey = {
   action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY;
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
-  isUnique?: boolean;
   onDelete?: RelationOnDeleteAction;
 };
 
-export type WorkspaceMigrationColumnDropRelation = {
+export type WorkspaceMigrationColumnDropForeignKey = {
   action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY;
   columnName: string;
 };
@@ -74,11 +72,6 @@ export type WorkspaceMigrationColumnDropRelation = {
 export type WorkspaceMigrationColumnDrop = {
   action: WorkspaceMigrationColumnActionType.DROP;
   columnName: string;
-};
-
-export type WorkspaceMigrationCreateComment = {
-  action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
-  comment: string;
 };
 
 export type WorkspaceMigrationForeignColumnDefinition =
@@ -108,10 +101,9 @@ export type WorkspaceMigrationColumnAction = {
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
-  | WorkspaceMigrationColumnCreateRelation
-  | WorkspaceMigrationColumnDropRelation
+  | WorkspaceMigrationColumnCreateForeignKey
+  | WorkspaceMigrationColumnDropForeignKey
   | WorkspaceMigrationColumnDrop
-  | WorkspaceMigrationCreateComment
 );
 
 /**

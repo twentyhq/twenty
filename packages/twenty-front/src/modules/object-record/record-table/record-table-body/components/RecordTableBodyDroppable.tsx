@@ -1,4 +1,5 @@
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
+import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { Droppable } from '@hello-pangea/dnd';
@@ -36,8 +37,11 @@ export const RecordTableBodyDroppable = ({
           {...provided.droppableProps}
           onMouseLeave={() => setRecordTableHoverPosition(null)}
         >
-          {children}
-          {provided.placeholder}
+          <RecordTableBodyDroppableContextProvider
+            value={{ droppablePlaceholder: provided.placeholder }}
+          >
+            {children}
+          </RecordTableBodyDroppableContextProvider>
         </RecordTableBody>
       )}
     </Droppable>

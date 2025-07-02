@@ -1,4 +1,5 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableCellArrowKeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellArrowKeysEffect';
 import { RecordTableCellEditModePortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditModePortal';
 import { RecordTableCellHoveredPortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
@@ -16,7 +17,12 @@ export const RecordTableCellPortals = () => {
     <>
       <RecordTableCellHoveredPortal />
 
-      {isRecordTableFocusActive && <RecordTableCellEditModePortal />}
+      {isRecordTableFocusActive && (
+        <>
+          <RecordTableCellEditModePortal />
+          <RecordTableCellArrowKeysEffect />
+        </>
+      )}
     </>
   );
 };

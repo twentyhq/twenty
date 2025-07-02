@@ -6071,7 +6071,7 @@ export type RelationConnection = {
 };
 
 export type RelationDefinition = {
-  direction: RelationDefinitionType;
+  direction: RelationType;
   relationId: Scalars['UUID'];
   sourceFieldMetadata: Field;
   sourceObjectMetadata: Object;
@@ -6080,7 +6080,7 @@ export type RelationDefinition = {
 };
 
 /** Relation definition type */
-export enum RelationDefinitionType {
+export enum RelationType {
   ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',

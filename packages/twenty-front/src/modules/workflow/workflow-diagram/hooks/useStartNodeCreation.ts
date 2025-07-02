@@ -4,13 +4,14 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const setWorkflowCreateStepFromParentStepId = useSetRecoilComponentStateV2(
-    workflowCreateStepFromParentStepIdComponentState,
+  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
+    workflowInsertStepIdsComponentState,
   );
+
   const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
@@ -22,8 +23,14 @@ export const useStartNodeCreation = () => {
    * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
    */
   const startNodeCreation = useCallback(
-    (parentNodeId: string) => {
-      setWorkflowCreateStepFromParentStepId(parentNodeId);
+    ({
+      parentStepId,
+      nextStepId,
+    }: {
+      parentStepId: string | undefined;
+      nextStepId: string | undefined;
+    }) => {
+      setWorkflowInsertStepIds({ parentStepId, nextStepId });
 
       if (isDefined(workflowVisualizerWorkflowId)) {
         openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
@@ -31,7 +38,7 @@ export const useStartNodeCreation = () => {
       }
     },
     [
-      setWorkflowCreateStepFromParentStepId,
+      setWorkflowInsertStepIds,
       workflowVisualizerWorkflowId,
       openStepSelectInCommandMenu,
     ],

@@ -15,7 +15,7 @@ export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { disableChipClick } = useContext(FieldContext);
+  const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
@@ -94,6 +94,7 @@ export const RelationFromManyFieldDisplay = () => {
               objectNameSingular={recordChipData.objectNameSingular}
               record={record}
               forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
             />
           );
         })}

@@ -2,22 +2,24 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { FieldMetadataType } from '~/generated/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -31,9 +33,13 @@ type WorkflowEditActionCreateRecordProps = {
       };
 };
 
+type RelationManyToOneField = {
+  id: string;
+};
+
 type CreateRecordFormData = {
   objectName: string;
-  [field: string]: unknown;
+  [field: string]: RelationManyToOneField | JsonValue;
 };
 
 const sortByViewFieldPosition = (
@@ -59,6 +65,8 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
+  const theme = useTheme();
+
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -75,6 +83,7 @@ export const WorkflowEditActionCreateRecord = ({
     objectName: action.settings.input.objectName,
     ...action.settings.input.objectRecord,
   });
+
   const isFormDisabled = actionOptions.readonly;
 
   const objectNameSingular = formData.objectName;
@@ -92,11 +101,8 @@ export const WorkflowEditActionCreateRecord = ({
   const viewFields = indexView?.viewFields ?? [];
 
   const inlineFieldMetadataItems = objectMetadataItem?.fields
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive,
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
     )
     .map((fieldMetadataItem) => {
       const viewField = viewFields.find(
@@ -124,9 +130,27 @@ export const WorkflowEditActionCreateRecord = ({
     fieldName: keyof CreateRecordFormData,
     updatedValue: JsonValue,
   ) => {
+    const fieldDefinition = inlineFieldDefinitions?.find(
+      (definition) => definition.metadata.fieldName === fieldName,
+    );
+
+    if (!isDefined(fieldDefinition)) {
+      return;
+    }
+
+    const isFieldRelationManyToOne =
+      isFieldRelation(fieldDefinition) &&
+      fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
+
+    const fieldValue = isFieldRelationManyToOne
+      ? {
+          id: updatedValue,
+        }
+      : updatedValue;
+
     const newFormData: CreateRecordFormData = {
       ...formData,
-      [fieldName]: updatedValue,
+      [fieldName]: fieldValue,
     };
 
     setFormData(newFormData);
@@ -162,10 +186,11 @@ export const WorkflowEditActionCreateRecord = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Create Record',
+    });
 
   return (
     <>
@@ -205,20 +230,32 @@ export const WorkflowEditActionCreateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         <HorizontalSeparator noMargin />
 
-        {inlineFieldDefinitions?.map((field) => {
-          const currentValue = formData[field.metadata.fieldName] as JsonValue;
+        {inlineFieldDefinitions?.map((fieldDefinition) => {
+          const isFieldRelationManyToOne =
+            isFieldRelation(fieldDefinition) &&
+            fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
+
+          const currentValue = isFieldRelationManyToOne
+            ? (
+                formData[
+                  fieldDefinition.metadata.fieldName
+                ] as RelationManyToOneField
+              )?.id
+            : (formData[fieldDefinition.metadata.fieldName] as JsonValue);
 
           return (
             <FormFieldInput
-              key={field.metadata.fieldName}
+              key={fieldDefinition.metadata.fieldName}
               defaultValue={currentValue}
-              field={field}
+              field={fieldDefinition}
               onChange={(value) => {
-                handleFieldChange(field.metadata.fieldName, value);
+                handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}

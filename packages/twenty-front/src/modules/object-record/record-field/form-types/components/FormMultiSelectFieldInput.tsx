@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
+import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -11,10 +12,12 @@ import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldM
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
+import { isArray } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
@@ -54,14 +57,20 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
 const StyledSelectInputContainer = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${({ theme }) => theme.spacing(8)};
+  top: ${({ theme }) => theme.spacing(9)};
 `;
 
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
+
+const safeParsedValue = (value: string) => {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return value;
+  }
+};
 
 export const FormMultiSelectFieldInput = ({
   label,
@@ -87,7 +96,7 @@ export const FormMultiSelectFieldInput = ({
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
-        value: FieldMultiSelectValue;
+        value: FieldMultiSelectValue | string;
         editingMode: 'view' | 'edit';
       }
     | {
@@ -171,10 +180,14 @@ export const FormMultiSelectFieldInput = ({
   };
 
   const selectedNames =
-    draftValue.type === 'static' ? draftValue.value : undefined;
+    draftValue.type === 'static' && isDefined(draftValue.value)
+      ? isArray(draftValue.value)
+        ? draftValue.value
+        : safeParsedValue(draftValue.value)
+      : undefined;
 
   const selectedOptions =
-    isDefined(selectedNames) && isDefined(options)
+    isDefined(selectedNames) && isDefined(options) && isArray(selectedNames)
       ? options.filter((option) =>
           selectedNames.some((name) => option.value === name),
         )
@@ -242,11 +255,12 @@ export const FormMultiSelectFieldInput = ({
                   selectableListComponentInstanceId={
                     SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
                   }
-                  hotkeyScope={hotkeyScope}
+                  focusId={hotkeyScope}
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
-                  values={draftValue.value}
+                  values={selectedNames}
+                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
                 />
               </OverlayContainer>
             )}

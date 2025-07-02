@@ -7,8 +7,11 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -17,8 +20,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -47,8 +48,6 @@ export const Attachments = ({
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
   };
@@ -62,6 +61,16 @@ export const Attachments = ({
   };
 
   const isAttachmentsEmpty = !attachments || attachments.length === 0;
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (loading && isAttachmentsEmpty) {
     return <SkeletonLoader />;
@@ -94,7 +103,7 @@ export const Attachments = ({
               onChange={handleFileChange}
               type="file"
             />
-            {!hasObjectReadOnlyPermission && (
+            {hasObjectUpdatePermissions && (
               <Button
                 Icon={IconPlus}
                 title="Add file"
@@ -120,7 +129,7 @@ export const Attachments = ({
         title="All"
         attachments={attachments ?? []}
         button={
-          !hasObjectReadOnlyPermission && (
+          hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"

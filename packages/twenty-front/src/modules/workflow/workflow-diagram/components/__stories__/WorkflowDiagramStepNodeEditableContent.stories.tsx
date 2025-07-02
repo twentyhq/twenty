@@ -68,6 +68,11 @@ const ALL_STEPS = [
     actionType: 'CODE',
     name: 'Code',
   },
+  {
+    nodeType: 'action',
+    actionType: 'HTTP_REQUEST',
+    name: 'HTTP Request',
+  },
 ] satisfies WorkflowDiagramStepNodeData[];
 
 export const Catalog: CatalogStory<Story, typeof Wrapper> = {

@@ -1,7 +1,9 @@
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -15,9 +17,14 @@ export const SettingsRoleCreateEffect = ({
   const setSettingsDraftRole = useSetRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
+
+  const setSettingsPersistedRole = useSetRecoilState(
+    settingsPersistedRoleFamilyState(roleId),
+  );
+
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -31,21 +38,28 @@ export const SettingsRoleCreateEffect = ({
 
     const newRole = {
       id: roleId,
-      label: '',
+      label: t`Untitled role`,
       description: '',
       icon: 'IconUser',
-      canUpdateAllSettings: false,
-      canReadAllObjectRecords: false,
-      canUpdateAllObjectRecords: false,
-      canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
+      canUpdateAllSettings: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: true,
       workspaceMembers: [],
     };
 
+    setSettingsPersistedRole(undefined);
     setSettingsDraftRole(newRole);
     setIsInitialized(true);
-  }, [isInitialized, roleId, setActiveTabId, setSettingsDraftRole]);
+  }, [
+    isInitialized,
+    roleId,
+    setActiveTabId,
+    setSettingsDraftRole,
+    setSettingsPersistedRole,
+  ]);
 
   return null;
 };

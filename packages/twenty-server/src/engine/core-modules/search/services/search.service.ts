@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import chunk from 'lodash.chunk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import { Brackets, ObjectLiteral } from 'typeorm';
-import chunk from 'lodash.chunk';
 
 import {
   ObjectRecord,
@@ -12,38 +12,30 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import {
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
+import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
+import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
+import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
   SearchException,
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import {
-  decodeCursor,
-  encodeCursorData,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
-import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -58,33 +50,15 @@ const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 export class SearchService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly fileService: FileService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async getObjectMetadataItemWithFieldMaps(workspace: Workspace) {
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
-
-    if (currentCacheVersion === undefined) {
-      throw new WorkspaceMetadataVersionException(
-        `Metadata version not found for workspace ${workspace.id}`,
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspace.id,
-        currentCacheVersion,
       );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        `Object metadata map not found for workspace ${workspace.id} and metadata version ${currentCacheVersion}`,
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
-      );
-    }
 
     return Object.values(objectMetadataMaps.byId);
   }
@@ -189,9 +163,13 @@ export class SearchService {
     const queryBuilder = entityManager.createQueryBuilder();
 
     const queryParser = new GraphqlQueryParser(
-      objectMetadataItem.fieldsByName,
-      objectMetadataItem.fieldsByJoinColumnName,
-      generateObjectMetadataMaps([objectMetadataItem]),
+      objectMetadataItem,
+      generateObjectMetadataMaps([
+        {
+          ...objectMetadataItem,
+          fields: Object.values(objectMetadataItem.fieldsById),
+        },
+      ]),
     );
 
     queryParser.applyFilterToBuilder(
@@ -365,11 +343,10 @@ export class SearchService {
   }
 
   private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
-    const avatarUrlToken = this.fileService.encodeFileToken({
+    return this.fileService.signFileUrl({
+      url: avatarUrl,
       workspaceId,
     });
-
-    return `${avatarUrl}?token=${avatarUrlToken}`;
   }
 
   getImageIdentifierValue(
@@ -384,7 +361,8 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    return imageIdentifierField
+    return imageIdentifierField &&
+      isNonEmptyString(record[imageIdentifierField])
       ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
       : '';
   }

@@ -5,14 +5,17 @@ type Leaf = {
   type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
+  description?: string;
   value: any;
 };
 
 type Node = {
   isLeaf: false;
+  type?: InputSchemaPropertyType;
   icon?: string;
   label?: string;
   value: OutputSchema;
+  description?: string;
 };
 
 type Link = {

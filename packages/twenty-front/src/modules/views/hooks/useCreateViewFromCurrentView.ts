@@ -26,9 +26,9 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
@@ -52,7 +52,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { findManyRecords } = useLazyFindManyRecords({
+  const { findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
     fetchPolicy: 'network-only',
   });
@@ -125,6 +125,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               : undefined,
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
+          openRecordIn: sourceView.openRecordIn,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -204,14 +205,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewSortRecords(viewSortsToCreate, newView);
         }
 
-        await findManyRecords();
+        await findManyRecordsLazy();
         set(isPersistingViewFieldsState, false);
       },
     [
       currentViewIdCallbackState,
       createOneRecord,
       createViewFieldRecords,
-      findManyRecords,
+      findManyRecordsLazy,
       objectMetadataItem.fields,
       createViewGroupRecords,
       createViewSortRecords,

@@ -23,10 +23,10 @@ import { IconList } from 'twenty-ui/display';
 const mockCloseDropdown = jest.fn();
 const mockResetContextStoreStates = jest.fn();
 const mockResetSelectedItem = jest.fn();
-const mockEmitRightDrawerCloseEvent = jest.fn();
+const mockEmitSidePanelCloseEvent = jest.fn();
 
-jest.mock('@/ui/layout/dropdown/hooks/useDropdownV2', () => ({
-  useDropdownV2: () => ({
+jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
+  useCloseDropdown: () => ({
     closeDropdown: mockCloseDropdown,
   }),
 }));
@@ -43,9 +43,9 @@ jest.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
   }),
 }));
 
-jest.mock('@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent', () => ({
-  emitRightDrawerCloseEvent: () => {
-    mockEmitRightDrawerCloseEvent();
+jest.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
+  emitSidePanelCloseEvent: () => {
+    mockEmitSidePanelCloseEvent();
   },
 }));
 
@@ -224,7 +224,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     expect(mockCloseDropdown).toHaveBeenCalledTimes(1);
     expect(mockResetContextStoreStates).toHaveBeenCalledTimes(2);
     expect(mockResetSelectedItem).toHaveBeenCalledTimes(1);
-    expect(mockEmitRightDrawerCloseEvent).toHaveBeenCalledTimes(1);
+    expect(mockEmitSidePanelCloseEvent).toHaveBeenCalledTimes(1);
 
     expect(mockCloseDropdown).toHaveBeenCalledWith(
       COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,

@@ -19,4 +19,5 @@ export enum PageHotkeyScope {
   TraceablePage = 'traceable-page',
   LinkLogsPage = 'linklogs-page',
   IntegrationsPage = 'integrations-page',
+  RecordShowPage = 'record-show-page',
 }

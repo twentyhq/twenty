@@ -2,7 +2,7 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useOpenDropdownFromOutside } from '@/ui/layout/dropdown/hooks/useOpenDropdownFromOutside';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,7 +20,7 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
-  const { openDropdownFromOutside } = useOpenDropdownFromOutside();
+  const { openDropdown } = useOpenDropdown();
 
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
@@ -37,13 +37,18 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       );
     }
 
-    const existingRecordFilter = currentRecordFilters.find(
-      (recordFilter) => recordFilter.fieldMetadataId === fieldMetadataItemId,
+    const existingNonAdvancedRecordFilter = currentRecordFilters.find(
+      (recordFilter) =>
+        recordFilter.fieldMetadataId === fieldMetadataItemId &&
+        !isDefined(recordFilter.recordFilterGroupId),
     );
 
-    if (isDefined(existingRecordFilter)) {
-      setEditableFilterChipDropdownStates(existingRecordFilter);
-      openDropdownFromOutside(existingRecordFilter.id);
+    if (isDefined(existingNonAdvancedRecordFilter)) {
+      setEditableFilterChipDropdownStates(existingNonAdvancedRecordFilter);
+      openDropdown({
+        dropdownComponentInstanceIdFromProps:
+          existingNonAdvancedRecordFilter.id,
+      });
       return;
     }
 
@@ -54,7 +59,7 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     upsertRecordFilter(newRecordFilter);
 
     setEditableFilterChipDropdownStates(newRecordFilter);
-    openDropdownFromOutside(newRecordFilter.id);
+    openDropdown({ dropdownComponentInstanceIdFromProps: newRecordFilter.id });
   };
 
   return { openRecordFilterChipFromTableHeader };

@@ -601,7 +601,9 @@ export const OpenChat = () => {
               <StyledMessageContainer
                 isSender={isSender}
                 key={index}
-                ref={(el) => (messageRefs.current[index] = el)}
+                ref={(el) => {
+                  messageRefs.current[index] = el;
+                }}
                 style={{
                   backgroundColor:
                     index === goingToMessageIndex ? '#F1F1F1' : 'transparent',

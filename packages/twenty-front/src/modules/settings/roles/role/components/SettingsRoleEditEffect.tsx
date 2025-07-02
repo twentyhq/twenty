@@ -1,7 +1,7 @@
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
@@ -22,7 +22,7 @@ export const SettingsRoleEditEffect = ({
   const role = useRecoilValue(settingsPersistedRoleFamilyState(roleId));
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
   const updateDraftRoleIfNeeded = useRecoilCallback(
@@ -45,7 +45,7 @@ export const SettingsRoleEditEffect = ({
       return;
     }
 
-    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT);
+    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS);
     updateDraftRoleIfNeeded(role);
     setIsInitialized(true);
   }, [isInitialized, role, setActiveTabId, updateDraftRoleIfNeeded]);

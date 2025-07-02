@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EmailAddress } from 'addressparser';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -9,6 +10,7 @@ import { MicrosoftImportDriverException } from 'src/modules/messaging/message-im
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
@@ -78,37 +80,42 @@ export class MicrosoftGetMessagesService {
         );
       }
 
-      const participants = [
-        ...formatAddressObjectAsParticipants(
-          response?.from?.emailAddress,
-          'from',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.toRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'to',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.ccRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'cc',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.bccRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'bcc',
-        ),
-      ];
+      const safeParseFrom = response?.from?.emailAddress
+        ? [safeParseEmailAddress(response.from.emailAddress)]
+        : [];
 
-      const safeParticipantsFormat = participants.filter((participant) => {
-        return participant.handle.includes('@');
-      });
+      const safeParseTo = response?.toRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
+      const safeParseCc = response?.ccRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
+      const safeParseBcc = response?.bccRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
+      const participants = [
+        ...(safeParseFrom
+          ? formatAddressObjectAsParticipants(safeParseFrom, 'from')
+          : []),
+        ...(safeParseTo
+          ? formatAddressObjectAsParticipants(safeParseTo, 'to')
+          : []),
+        ...(safeParseCc
+          ? formatAddressObjectAsParticipants(safeParseCc, 'cc')
+          : []),
+        ...(safeParseBcc
+          ? formatAddressObjectAsParticipants(safeParseBcc, 'bcc')
+          : []),
+      ];
 
       return {
         externalId: response.id,
@@ -124,7 +131,7 @@ export class MicrosoftGetMessagesService {
               connectedAccount,
             )
           : MessageDirection.INCOMING,
-        participants: safeParticipantsFormat,
+        participants,
         attachments: [],
       };
     });
@@ -143,8 +150,8 @@ export class MicrosoftGetMessagesService {
         return response.body;
       }
 
-      if (!response.body) {
-        this.logger.error(`No body found for response`, response);
+      if (response.status !== 503 && response.status !== 429) {
+        this.logger.error(`Microsoft parseBatchResponse error`, response);
       }
 
       const errorParsed = response?.body?.error

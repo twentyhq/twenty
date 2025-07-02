@@ -7,12 +7,10 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledModal = styled(Modal)`
-  height: 61%;
   min-height: 600px;
   min-width: 800px;
   padding: 0;
   position: relative;
-  width: 63%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     min-width: auto;
     min-height: auto;
@@ -30,7 +28,7 @@ const StyledRtlLtr = styled.div`
 type SpreadSheetImportModalWrapperProps = {
   children: React.ReactNode;
   modalId: string;
-  onClose?: () => void;
+  onClose: () => void;
 };
 
 export const SpreadSheetImportModalWrapper = ({
@@ -42,10 +40,11 @@ export const SpreadSheetImportModalWrapper = ({
 
   return (
     <StyledModal
-      size="large"
+      size="extraLarge"
       modalId={modalId}
       isClosable={true}
       onClose={onClose}
+      shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
         <SpreadSheetImportModalCloseButton onClose={onClose} />

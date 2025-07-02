@@ -5,7 +5,9 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -19,12 +21,28 @@ export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const nonReadableObjectMetadataItemsNameSingular = useMemo(() => {
+    return Object.values(objectMetadataItems)
+      .filter((objectMetadataItem) => {
+        const objectPermission =
+          objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+
+        return !objectPermission?.canReadObjectRecords;
+      })
+      .map((objectMetadataItem) => objectMetadataItem.nameSingular);
+  }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
   const { data: searchData, loading } = useSearchQuery({
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: ['workspaceMember'],
+      excludedObjectNameSingulars: [
+        'workspaceMember',
+        ...nonReadableObjectMetadataItemsNameSingular,
+      ],
     },
   });
 
@@ -53,7 +71,6 @@ export const useCommandMenuSearchRecords = () => {
           ),
           shouldBeRegistered: () => true,
           description: capitalize(searchRecord.objectNameSingular),
-          shouldCloseCommandMenuOnClick: true,
         };
 
         if (
@@ -76,7 +93,7 @@ export const useCommandMenuSearchRecords = () => {
                         objectNameSingular: CoreObjectNameSingular.Note,
                       });
                 }}
-                preventCommandMenuClosing
+                closeSidePanelOnCommandMenuListActionExecution={false}
               />
             ),
           };

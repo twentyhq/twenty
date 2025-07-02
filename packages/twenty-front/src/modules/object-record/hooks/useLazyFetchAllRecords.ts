@@ -34,7 +34,7 @@ export const useLazyFetchAllRecords = <T>({
   const [progress, setProgress] = useState<ExportProgress>({
     displayType: 'number',
   });
-  const { fetchMore, findManyRecords } = useLazyFindManyRecords({
+  const { fetchMoreRecordsLazy, findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular,
     filter,
     orderBy,
@@ -47,12 +47,12 @@ export const useLazyFetchAllRecords = <T>({
   });
 
   const fetchAllRecords = useCallback(async () => {
-    if (!isDefined(findManyRecords)) {
+    if (!isDefined(findManyRecordsLazy)) {
       return [];
     }
     setIsDownloading(true);
 
-    const findManyRecordsDataResult = await findManyRecords();
+    const findManyRecordsDataResult = await findManyRecordsLazy();
 
     const firstQueryResult =
       findManyRecordsDataResult?.data?.[objectMetadataItem.namePlural];
@@ -84,7 +84,7 @@ export const useLazyFetchAllRecords = <T>({
         break;
       }
 
-      if (!isDefined(fetchMore)) {
+      if (!isDefined(fetchMoreRecordsLazy)) {
         break;
       }
 
@@ -92,16 +92,11 @@ export const useLazyFetchAllRecords = <T>({
         await sleep(delayMs);
       }
 
-      const rawResult = await fetchMore({
-        variables: {
-          lastCursor: lastCursor,
-          limit,
-        },
-      });
+      const rawResult = await fetchMoreRecordsLazy();
 
-      const fetchMoreResult = rawResult?.data?.[objectMetadataItem.namePlural];
+      const fetchMoreResult = rawResult?.data;
 
-      for (const edge of fetchMoreResult.edges) {
+      for (const edge of fetchMoreResult?.edges ?? []) {
         records.push(edge.node);
       }
 
@@ -111,11 +106,11 @@ export const useLazyFetchAllRecords = <T>({
         displayType: totalCount ? 'percentage' : 'number',
       });
 
-      if (fetchMoreResult.pageInfo.hasNextPage === false) {
+      if (fetchMoreResult?.pageInfo.hasNextPage === false) {
         break;
       }
 
-      lastCursor = fetchMoreResult.pageInfo.endCursor ?? null;
+      lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
     }
 
     setIsDownloading(false);
@@ -126,8 +121,8 @@ export const useLazyFetchAllRecords = <T>({
     return records;
   }, [
     delayMs,
-    fetchMore,
-    findManyRecords,
+    fetchMoreRecordsLazy,
+    findManyRecordsLazy,
     objectMetadataItem.namePlural,
     limit,
     maximumRequests,
