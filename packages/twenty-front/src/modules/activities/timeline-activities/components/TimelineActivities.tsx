@@ -23,7 +23,6 @@ const StyledMainContainer = styled.div`
     useIsMobile() ? `1px solid ${theme.border.color.medium}` : 'none'};
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow: auto;
 
   justify-content: center;
