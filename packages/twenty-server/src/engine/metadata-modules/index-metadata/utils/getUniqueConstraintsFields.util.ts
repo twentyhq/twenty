@@ -10,6 +10,10 @@ export const getUniqueConstraintsFields = (
     (index) => index.isUnique,
   );
 
+  const fieldsMapById = new Map(
+    objectMetadata.fields.map((field) => [field.id, field]),
+  );
+
   const primaryKeyConstraintField = objectMetadata.fields.find(
     (field) => field.name === 'id',
   );
@@ -22,9 +26,7 @@ export const getUniqueConstraintsFields = (
 
   const otherUniqueConstraintsFields = uniqueIndexes.map((index) =>
     index.indexFieldMetadatas.map((field) => {
-      const indexField = objectMetadata.fields.find(
-        (f) => f.id === field.fieldMetadataId,
-      );
+      const indexField = fieldsMapById.get(field.fieldMetadataId);
 
       if (!isDefined(indexField)) {
         throw new Error(
