@@ -107,76 +107,75 @@ export const WorkflowEditActionAiAgent = ({
         behaveAsLinks={false}
         componentInstanceId={WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}
       />
-      {activeTabId !== WorkflowAiAgentTabId.CHAT && (
-        <WorkflowStepHeader
-          onTitleChange={(newName: string) => {
-            if (actionOptions.readonly === true) {
-              return;
-            }
-            actionOptions.onActionUpdate?.({ ...action, name: newName });
-          }}
-          Icon={getIcon(headerIcon)}
-          iconColor={headerIconColor}
-          initialTitle={headerTitle}
-          headerType={headerType}
-          disabled={actionOptions.readonly}
-        />
-      )}
-      {activeTabId !== WorkflowAiAgentTabId.CHAT && (
-        <WorkflowStepBody>
-          {activeTabId === WorkflowAiAgentTabId.SETTINGS && (
-            <>
-              <div>
-                <Select
-                  dropdownId="select-model"
-                  label={t`AI Model`}
-                  options={modelOptions}
-                  value={formValues.modelId}
-                  onChange={(value) => handleFieldChange('modelId', value)}
-                  disabled={actionOptions.readonly || noModelsAvailable}
-                  emptyOption={{
-                    label: t`No AI models available`,
-                    value: '',
-                  }}
-                />
-
-                {noModelsAvailable && (
-                  <StyledErrorMessage>
-                    {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
-                  </StyledErrorMessage>
-                )}
-              </div>
-              <FormTextFieldInput
-                key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
-                label={t`Instructions for AI`}
-                placeholder={t`Describe what you want the AI to do...`}
-                readonly={actionOptions.readonly}
-                defaultValue={formValues.prompt}
-                onChange={(value) => handleFieldChange('prompt', value)}
-                VariablePicker={WorkflowVariablePicker}
-                multiline
-              />
-              <WorkflowOutputSchemaBuilder
-                fields={outputFields}
-                onChange={handleOutputSchemaChange}
-                readonly={actionOptions.readonly}
-              />
-            </>
-          )}
-          {activeTabId === WorkflowAiAgentTabId.TOOLS && (
-            <Select
-              dropdownId="select-agent-role"
-              label={t`Assign Role`}
-              options={[{ label: t`No role`, value: '' }, ...rolesOptions]}
-              value={selectedRole || ''}
-              onChange={handleRoleChange}
-              disabled={actionOptions.readonly}
-            />
-          )}
-        </WorkflowStepBody>
-      )}
-      {activeTabId === WorkflowAiAgentTabId.CHAT && (
+      {activeTabId === WorkflowAiAgentTabId.CHAT ? (
         <AIChatTab agentId={agentId} />
+      ) : (
+        <>
+          <WorkflowStepHeader
+            onTitleChange={(newName: string) => {
+              if (actionOptions.readonly === true) {
+                return;
+              }
+              actionOptions.onActionUpdate?.({ ...action, name: newName });
+            }}
+            Icon={getIcon(headerIcon)}
+            iconColor={headerIconColor}
+            initialTitle={headerTitle}
+            headerType={headerType}
+            disabled={actionOptions.readonly}
+          />
+          <WorkflowStepBody>
+            {activeTabId === WorkflowAiAgentTabId.SETTINGS && (
+              <>
+                <div>
+                  <Select
+                    dropdownId="select-model"
+                    label={t`AI Model`}
+                    options={modelOptions}
+                    value={formValues.modelId}
+                    onChange={(value) => handleFieldChange('modelId', value)}
+                    disabled={actionOptions.readonly || noModelsAvailable}
+                    emptyOption={{
+                      label: t`No AI models available`,
+                      value: '',
+                    }}
+                  />
+
+                  {noModelsAvailable && (
+                    <StyledErrorMessage>
+                      {t`You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable.`}
+                    </StyledErrorMessage>
+                  )}
+                </div>
+                <FormTextFieldInput
+                  key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
+                  label={t`Instructions for AI`}
+                  placeholder={t`Describe what you want the AI to do...`}
+                  readonly={actionOptions.readonly}
+                  defaultValue={formValues.prompt}
+                  onChange={(value) => handleFieldChange('prompt', value)}
+                  VariablePicker={WorkflowVariablePicker}
+                  multiline
+                />
+                <WorkflowOutputSchemaBuilder
+                  fields={outputFields}
+                  onChange={handleOutputSchemaChange}
+                  readonly={actionOptions.readonly}
+                />
+              </>
+            )}
+            {activeTabId === WorkflowAiAgentTabId.TOOLS && (
+              <Select
+                dropdownId="select-agent-role"
+                label={t`Assign Role`}
+                options={[{ label: t`No role`, value: '' }, ...rolesOptions]}
+                value={selectedRole || ''}
+                onChange={handleRoleChange}
+                disabled={actionOptions.readonly}
+              />
+            )}
+          </WorkflowStepBody>
+        </>
       )}
     </>
   );
