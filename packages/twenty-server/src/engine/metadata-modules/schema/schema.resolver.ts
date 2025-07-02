@@ -1,6 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
-import { introspectionFromSchema, IntrospectionQuery, printSchema } from 'graphql';
+import { writeFileSync } from 'fs';
+import {
+  IntrospectionQuery,
+  introspectionFromSchema,
+  printSchema,
+} from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
@@ -13,7 +18,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @Resolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class SchemaResolver {
-  constructor(private readonly workspaceSchemaFactory: WorkspaceSchemaFactory) {}
+  constructor(
+    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
+  ) {}
 
   @Query(() => String)
   async workspaceSchema(
@@ -23,7 +30,10 @@ export class SchemaResolver {
       workspace,
     });
 
-    return printSchema(schema);
+    const schemaString = printSchema(schema);
+    writeFileSync('schema.graphql', schemaString);
+
+    return schemaString;
   }
 
   @Query(() => GraphQLJSON)
@@ -36,4 +46,4 @@ export class SchemaResolver {
 
     return introspectionFromSchema(schema);
   }
-} 
+}

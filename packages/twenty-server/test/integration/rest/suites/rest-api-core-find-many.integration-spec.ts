@@ -21,6 +21,7 @@ describe('Core REST API Find Many endpoint', () => {
     TEST_PERSON_4_ID,
   ];
   const testPersonCities: Record<string, string> = {};
+  const testPersonEmails: Record<string, { primaryEmail: string; additionalEmails: string[] }> = {};
 
   beforeAll(async () => {
     await deleteAllRecords('person');
@@ -40,8 +41,14 @@ describe('Core REST API Find Many endpoint', () => {
 
     for (const personId of testPersonIds) {
       const city = generateRecordName(personId);
+      const primaryEmail = `test${index}@example.com`;
+      const additionalEmails = [`additional${index}@example.com`];
 
       testPersonCities[personId] = city;
+      testPersonEmails[personId] = {
+        primaryEmail,
+        additionalEmails,
+      };
 
       await makeRestAPIRequest({
         method: 'post',
@@ -51,6 +58,10 @@ describe('Core REST API Find Many endpoint', () => {
           city: city,
           position: index,
           companyId: TEST_COMPANY_1_ID,
+          emails: {
+            primaryEmail,
+            additionalEmails,
+          },
         },
       });
       index++;
@@ -478,5 +489,48 @@ describe('Core REST API Find Many endpoint', () => {
     const depth2Person = person.company.people.find((p) => p.id === person.id);
 
     expect(depth2Person).toBeDefined();
+  });
+
+  it('should filter results based on primary email using ilike operator', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?filter=emails.primaryEmail[ilike]:test1',
+    }).expect(200);
+
+    const filteredPeople = response.body.data.people;
+
+    expect(filteredPeople).toBeDefined();
+    expect(Array.isArray(filteredPeople)).toBe(true);
+    expect(filteredPeople.length).toBe(1);
+    expect(filteredPeople[0].emails.primaryEmail).toBe(testPersonEmails[TEST_PERSON_2_ID].primaryEmail);
+  });
+
+  it('should filter results based on additional emails using like operator', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?filter=emails.additionalEmails[like]:additional0',
+    }).expect(200);
+
+    const filteredPeople = response.body.data.people;
+
+    expect(filteredPeople).toBeDefined();
+    expect(Array.isArray(filteredPeople)).toBe(true);
+    expect(filteredPeople.length).toBe(1);
+    expect(filteredPeople[0].id).toBe(TEST_PERSON_1_ID);
+    expect(filteredPeople[0].emails.additionalEmails).toContain(testPersonEmails[TEST_PERSON_1_ID].additionalEmails[0]);
+  });
+
+  it('should filter results using OR condition on both primary and additional emails', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?filter=or(emails.primaryEmail[ilike]:test1,emails.additionalEmails[like]:additional1)',
+    }).expect(200);
+
+    const filteredPeople = response.body.data.people;
+
+    expect(filteredPeople).toBeDefined();
+    expect(Array.isArray(filteredPeople)).toBe(true);
+    expect(filteredPeople.length).toBe(1);
+    expect(filteredPeople[0].id).toBe(TEST_PERSON_2_ID);
   });
 });
