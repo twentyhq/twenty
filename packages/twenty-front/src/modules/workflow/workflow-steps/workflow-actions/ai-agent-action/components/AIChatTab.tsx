@@ -237,7 +237,6 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           placeholder="Enter a question..."
           value={input}
           onChange={handleInputChange}
-          disabled={sendingMessage}
         />
         <Button
           variant="primary"

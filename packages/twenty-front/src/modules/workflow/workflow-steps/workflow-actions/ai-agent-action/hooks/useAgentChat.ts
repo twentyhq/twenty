@@ -74,7 +74,6 @@ export const useAgentChat = (agentId: string) => {
             return [...realMessages, ...newMessages];
           });
         }
-        scrollToBottom();
       },
       onError: () => {
         setAgentChatMessages((prevMessages) =>
@@ -139,10 +138,14 @@ export const useAgentChat = (agentId: string) => {
         },
       },
     });
+
+    setTimeout(scrollToBottom, 100);
   };
 
   const handleSendMessage = async () => {
-    if (!agentChatInput.trim()) return;
+    if (!agentChatInput.trim() || sendingMessage) {
+      return;
+    }
     const message = agentChatInput.trim();
     setAgentChatInput('');
     await sendChatMessage(message);
