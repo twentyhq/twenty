@@ -95,7 +95,7 @@ export const WorkflowEditActionAiAgent = ({
       Icon: IconSettings,
     },
     { id: WorkflowAiAgentTabId.TOOLS, title: t`Tools`, Icon: IconTool },
-    { id: WorkflowAiAgentTabId.CHAT, title: t`AI Chat`, Icon: IconSparkles },
+    { id: WorkflowAiAgentTabId.CHAT, title: t`Ask AI`, Icon: IconSparkles },
   ];
 
   return loading ? (
