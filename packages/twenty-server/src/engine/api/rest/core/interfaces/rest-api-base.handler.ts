@@ -242,11 +242,12 @@ export abstract class RestApiBaseHandler {
 
   public getAuthContextFromRequest(request: Request): AuthContext {
     return {
-      user: request.user,
-      workspace: request.workspace,
-      apiKey: request.apiKey,
-      workspaceMemberId: request.workspaceMemberId,
-      userWorkspaceId: request.userWorkspaceId,
+      user: request.user ?? null,
+      workspace: request.workspace ?? undefined,
+      apiKey: request.apiKey ?? undefined,
+      workspaceMemberId: request.workspaceMemberId ?? undefined,
+      userWorkspaceId: request.userWorkspaceId ?? undefined,
+      locale: request.locale ?? 'en',
     };
   }
 

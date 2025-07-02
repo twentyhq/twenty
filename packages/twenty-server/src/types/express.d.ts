@@ -5,9 +5,10 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 
 declare module 'express-serve-static-core' {
   interface Request {
+    locale?: string;
     user?: User | null;
-    apiKey?: ApiKeyWorkspaceEntity | null;
     workspace?: Workspace;
+    apiKey?: ApiKeyWorkspaceEntity | null;
     workspaceId?: string;
     workspaceMetadataVersion?: number;
     workspaceMemberId?: string;
