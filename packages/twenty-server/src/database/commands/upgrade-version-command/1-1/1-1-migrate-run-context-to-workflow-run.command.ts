@@ -20,12 +20,15 @@ import {
   WorkflowRunStepInfo,
 } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
+const DEFAULT_CHUNK_SIZE = 500;
+
 @Command({
   name: 'upgrade:1-1:migrate-run-context-to-workflow-run',
   description: 'Populate runContext column in workflow run records',
 })
 export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private afterDate: string | undefined;
+  private chunkSize = DEFAULT_CHUNK_SIZE;
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -54,6 +57,22 @@ export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWork
     return afterDate;
   }
 
+  @Option({
+    flags: '--chunk-size [chunk_size]',
+    description:
+      'Split workflowRuns into chunks for each workspaces (default 500)',
+    required: false,
+  })
+  parseChunkSize(val: number): number {
+    if (isNaN(val) || val <= 0) {
+      throw new Error(`Invalid chunk size: ${val}. Should be greater than 0`);
+    }
+
+    this.chunkSize = val;
+
+    return this.chunkSize;
+  }
+
   override async runOnWorkspace({
     workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
@@ -66,18 +85,14 @@ export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWork
 
     const workflowRunCount = await workflowRunRepository.count();
 
-    const CHUNK_SIZE = 500;
-
-    const chunkCount = Math.ceil(workflowRunCount / CHUNK_SIZE);
+    const chunkCount = Math.ceil(workflowRunCount / this.chunkSize);
 
     this.logger.log(
-      `Migrate ${workflowRunCount} workflowRun runContext in ${chunkCount} chunks`,
+      `Migrate ${workflowRunCount} workflowRun runContext in ${chunkCount} chunks of size ${this.chunkSize}`,
     );
 
-    for (let offset = 0; offset < workflowRunCount; offset += CHUNK_SIZE) {
-      this.logger.log(
-        `- Proceeding chunk ${offset / CHUNK_SIZE + 1}/${chunkCount}`,
-      );
+    for (let offset = 0; offset < chunkCount; offset += 1) {
+      this.logger.log(`- Proceeding chunk ${offset + 1}/${chunkCount}`);
 
       const findOption = isDefined(this.afterDate)
         ? { where: { startedAt: MoreThan(this.afterDate) } }
@@ -85,8 +100,8 @@ export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWork
 
       const workflowRuns = await workflowRunRepository.find({
         ...findOption,
-        skip: offset,
-        take: CHUNK_SIZE,
+        skip: offset * this.chunkSize,
+        take: this.chunkSize,
       });
 
       for (const workflowRun of workflowRuns) {
