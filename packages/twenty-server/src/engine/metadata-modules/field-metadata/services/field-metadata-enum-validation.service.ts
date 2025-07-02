@@ -91,7 +91,7 @@ export class FieldMetadataEnumValidationService {
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: t`Option label "${sanitizedLabel}" exceeds 63 characters`,
+        message: t`Option label exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
@@ -120,7 +120,7 @@ export class FieldMetadataEnumValidationService {
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: t`Option value "${sanitizedValue}" exceeds 63 characters`,
+        message: t`Option value exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,

@@ -137,7 +137,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "displayedErrorMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
     "name": "UserInputError",
@@ -216,6 +216,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "INTERNAL_SERVER_ERROR",
+      "displayedErrorMessage": "An error occurred.",
       "exceptionEventId": "mocked-exception-id",
     },
     "message": "label.includes is not a function",
@@ -305,7 +306,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "displayedErrorMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
     "name": "UserInputError",
@@ -342,7 +343,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
       "code": "BAD_USER_INPUT",
       
     },
-    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option label exceeds 63 characters",
   },
 ]
 `;
@@ -353,7 +354,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option value exceeds 63 characters",
   },
 ]
 `;
