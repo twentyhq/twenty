@@ -1,6 +1,7 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,7 +10,6 @@ import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordF
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useApolloClient } from '@apollo/client';
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { NoteTarget } from '@/activities/types/NoteTarget';
@@ -55,7 +55,7 @@ export const useCreateActivityInDB = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const cache = useApolloClient().cache;
+  const cache = useApolloCoreClient().cache;
 
   const createActivityInDB = useRecoilCallback(
     ({ set }) =>

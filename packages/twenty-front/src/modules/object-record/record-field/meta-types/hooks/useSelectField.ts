@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { FieldSelectValue } from '../../types/FieldMetadata';

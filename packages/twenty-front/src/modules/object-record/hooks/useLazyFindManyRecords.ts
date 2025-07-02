@@ -1,6 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
@@ -30,6 +31,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const apolloCoreClient = useApolloCoreClient();
 
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
@@ -68,6 +71,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       fetchPolicy: 'cache-first',
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
+      client: apolloCoreClient,
     });
 
   const { fetchMoreRecordsLazy } = useLazyFetchMoreRecordsWithPagination<T>({

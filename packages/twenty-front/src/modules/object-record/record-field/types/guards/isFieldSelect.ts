@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldMetadata, FieldSelectMetadata } from '../FieldMetadata';

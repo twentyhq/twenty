@@ -4,6 +4,7 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
+import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
 
 import { ArgsFactory } from './args.factory';
@@ -25,6 +26,7 @@ export const workspaceSchemaBuilderFactories = [
   InputTypeFactory,
   InputTypeDefinitionFactory,
   CompositeInputTypeDefinitionFactory,
+  RelationConnectInputTypeDefinitionFactory,
   OutputTypeFactory,
   ObjectTypeDefinitionFactory,
   CompositeObjectTypeDefinitionFactory,

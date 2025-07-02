@@ -1,3 +1,4 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
@@ -25,6 +26,7 @@ export const useAggregateRecordsQuery = ({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
   const availableAggregations = useMemo(
     () => getAvailableAggregationsFromObjectFields(objectMetadataItem.fields),
     [objectMetadataItem.fields],
@@ -48,6 +50,9 @@ export const useAggregateRecordsQuery = ({
 
         recordGqlFields[fieldToQuery] = true;
       });
+    },
+    {
+      client: apolloCoreClient,
     },
   );
 

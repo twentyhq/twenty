@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 import {
   FindOneServerlessFunctionSourceCodeQuery,
@@ -15,7 +15,7 @@ export const useGetOneServerlessFunctionSourceCode = ({
   version: string;
   onCompleted?: (data: FindOneServerlessFunctionSourceCodeQuery) => void;
 }) => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
   const { data, loading } = useQuery<
     FindOneServerlessFunctionSourceCodeQuery,
     FindOneServerlessFunctionSourceCodeQueryVariables

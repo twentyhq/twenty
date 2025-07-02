@@ -1,9 +1,9 @@
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { AppPath } from '@/types/AppPath';
-import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
