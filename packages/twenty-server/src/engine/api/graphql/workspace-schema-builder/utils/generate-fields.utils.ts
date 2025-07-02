@@ -42,12 +42,19 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
 
 export const generateFields = <
   T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
->(
-  objectMetadata: ObjectMetadataInterface,
-  kind: T,
-  options: WorkspaceBuildSchemaOptions,
-  typeFactory: TypeFactory<T>,
-): T extends InputTypeDefinitionKind
+>({
+  objectMetadata,
+  kind,
+  options,
+  typeFactory,
+  isRelationConnectEnabled = false,
+}: {
+  objectMetadata: ObjectMetadataInterface;
+  kind: T;
+  options: WorkspaceBuildSchemaOptions;
+  typeFactory: TypeFactory<T>;
+  isRelationConnectEnabled?: boolean;
+}): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,14 +67,20 @@ export const generateFields = <
     if (
       isFieldMetadataInterfaceOfType(fieldMetadata, FieldMetadataType.RELATION)
     ) {
-      generatedField = generateRelationField(
+      generatedField = generateRelationField({
         fieldMetadata,
         kind,
         options,
         typeFactory,
-      );
+        isRelationConnectEnabled,
+      });
     } else {
-      generatedField = generateField(fieldMetadata, kind, options, typeFactory);
+      generatedField = generateField({
+        fieldMetadata,
+        kind,
+        options,
+        typeFactory,
+      });
     }
 
     Object.assign(allGeneratedFields, generatedField);
@@ -109,12 +122,17 @@ const getTypeFactoryOptions = <T extends FieldMetadataType>(
 
 const generateField = <
   T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
->(
-  fieldMetadata: FieldMetadataInterface,
-  kind: T,
-  options: WorkspaceBuildSchemaOptions,
-  typeFactory: TypeFactory<T>,
-) => {
+>({
+  fieldMetadata,
+  kind,
+  options,
+  typeFactory,
+}: {
+  fieldMetadata: FieldMetadataInterface;
+  kind: T;
+  options: WorkspaceBuildSchemaOptions;
+  typeFactory: TypeFactory<T>;
+}) => {
   const target = getTarget(fieldMetadata);
 
   const typeFactoryOptions = getTypeFactoryOptions(fieldMetadata, kind);
@@ -137,12 +155,19 @@ const generateField = <
 
 const generateRelationField = <
   T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
->(
-  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
-  kind: T,
-  options: WorkspaceBuildSchemaOptions,
-  typeFactory: TypeFactory<T>,
-) => {
+>({
+  fieldMetadata,
+  kind,
+  options,
+  typeFactory,
+  isRelationConnectEnabled,
+}: {
+  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>;
+  kind: T;
+  options: WorkspaceBuildSchemaOptions;
+  typeFactory: TypeFactory<T>;
+  isRelationConnectEnabled: boolean;
+}) => {
   const relationField = {};
 
   if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
@@ -158,7 +183,7 @@ const generateRelationField = <
   const target = getTarget(fieldMetadata);
   const typeFactoryOptions = getTypeFactoryOptions(fieldMetadata, kind);
 
-  const type = typeFactory.create(
+  let type = typeFactory.create(
     target,
     fieldMetadata.type,
     kind,
@@ -176,9 +201,10 @@ const generateRelationField = <
     [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
       kind as InputTypeDefinitionKind,
     ) &&
-    isDefined(fieldMetadata.relationTargetObjectMetadataId)
+    isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
+    isRelationConnectEnabled
   ) {
-    const connectType = typeFactory.create(
+    type = typeFactory.create(
       formatRelationConnectInputTarget(
         fieldMetadata.relationTargetObjectMetadataId,
       ),
@@ -190,13 +216,13 @@ const generateRelationField = <
         isRelationConnectField: true,
       },
     );
-
-    // @ts-expect-error legacy noImplicitAny
-    relationField[fieldMetadata.name] = {
-      type: connectType,
-      description: fieldMetadata.description,
-    };
   }
+
+  // @ts-expect-error legacy noImplicitAny
+  relationField[fieldMetadata.name] = {
+    type: type,
+    description: fieldMetadata.description,
+  };
 
   return relationField;
 };
