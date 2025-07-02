@@ -5,13 +5,12 @@ import React, { useState } from 'react';
 import { Avatar, IconSparkles } from 'twenty-ui/display';
 
 import { Button } from 'twenty-ui/input';
+import { useAgentChat } from '../hooks/useAgentChat';
+import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
-  display: flex;
-  flex-direction: column;
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledEmptyState = styled.div`
@@ -21,6 +20,7 @@ const StyledEmptyState = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   justify-content: center;
+  height: calc(100% - 200px);
 `;
 
 const StyledSparkleIcon = styled.div`
@@ -48,10 +48,15 @@ const StyledDescription = styled.div`
 `;
 
 const StyledInputArea = styled.div`
+  align-items: flex-end;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  width: calc(100% - 24px);
+  padding: ${({ theme }) => theme.spacing(3)};
+  background: ${({ theme }) => theme.background.primary};
 `;
 
 const StyledMessageList = styled.div`
@@ -60,6 +65,8 @@ const StyledMessageList = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -97,22 +104,26 @@ const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
   position: relative;
 `;
 
-export const AIChatTab: React.FC = () => {
-  const [input, setInput] = useState('');
-    const messages = [
-      {
-        id: 1,
-        sender: 'ai',
-        text: 'Hello! How can I help you today?',
-      },
-      {
-        id: 2,
-        sender: 'user',
-        text: 'Can you give me an update on my deals?',
-      },
-    ];
+type AIChatTabProps = {
+  agentId: string;
+};
 
+export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
+  const [input, setInput] = useState('');
   const theme = useTheme();
+
+  const { messages, messagesLoading, sendingMessage, sendChatMessage } =
+    useAgentChat(agentId);
+
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+
+    const message = input.trim();
+    setInput('');
+    await sendChatMessage(message);
+  };
+
+  const isLoading = messagesLoading || sendingMessage;
 
   return (
     <StyledContainer>
@@ -137,13 +148,24 @@ export const AIChatTab: React.FC = () => {
                 </StyledAvatarContainer>
               )}
               <StyledMessageText isUser={msg.sender === 'user'}>
-                {msg.text}
+                {msg.sender === 'ai' && msg.message === '...' ? (
+                  <span
+                    style={{
+                      fontStyle: 'italic',
+                      color: theme.font.color.secondary,
+                    }}
+                  >
+                    AI is thinking...
+                  </span>
+                ) : (
+                  msg.message
+                )}
               </StyledMessageText>
             </StyledMessageBubble>
           ))}
         </StyledMessageList>
       )}
-      {messages.length === 0 && (
+      {messages.length === 0 && !isLoading && (
         <StyledEmptyState>
           <StyledSparkleIcon>
             <IconSparkles size={theme.icon.size.lg} color={theme.color.blue} />
@@ -155,19 +177,23 @@ export const AIChatTab: React.FC = () => {
           </StyledDescription>
         </StyledEmptyState>
       )}
+      {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
+
       <StyledInputArea>
         <TextArea
           placeholder="Enter a question..."
           value={input}
           onChange={(value) => setInput(value)}
+          disabled={sendingMessage}
         />
         <Button
           variant="primary"
           accent="blue"
           size="small"
-          hotkeys={input ? ['⏎'] : undefined}
-          disabled={!input}
+          hotkeys={input && !sendingMessage ? ['⏎'] : undefined}
+          disabled={!input || sendingMessage}
           title="Send"
+          onClick={handleSendMessage}
         />
       </StyledInputArea>
     </StyledContainer>

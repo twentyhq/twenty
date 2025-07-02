@@ -175,7 +175,9 @@ export const WorkflowEditActionAiAgent = ({
           )}
         </WorkflowStepBody>
       )}
-      {activeTabId === WorkflowAiAgentTabId.CHAT && <AIChatTab />}
+      {activeTabId === WorkflowAiAgentTabId.CHAT && (
+        <AIChatTab agentId={agentId} />
+      )}
     </>
   );
 };
