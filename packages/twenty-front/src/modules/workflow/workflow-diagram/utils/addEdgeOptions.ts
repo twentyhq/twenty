@@ -6,9 +6,14 @@ export const addEdgeOptions = ({
 }: WorkflowDiagram): WorkflowDiagram => {
   return {
     nodes,
-    edges: edges.map((edge) => ({
-      ...edge,
-      data: { shouldDisplayEdgeOptions: true },
-    })),
+    edges: edges.map((edge) => {
+      return {
+        ...edge,
+        data: {
+          ...edge.data,
+          shouldDisplayEdgeOptions: true,
+        },
+      };
+    }),
   };
 };
