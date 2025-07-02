@@ -11,7 +11,12 @@ import {
 
 import { AgentChatThreadsEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
-@Entity('agent_chat_messages')
+export enum AgentChatMessageRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+}
+
+@Entity('agentChatMessage')
 export class AgentChatMessagesEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,11 +31,11 @@ export class AgentChatMessagesEntity {
   @JoinColumn({ name: 'threadId' })
   thread: Relation<AgentChatThreadsEntity>;
 
-  @Column({ type: 'varchar', length: 8 })
-  sender: 'user' | 'ai';
+  @Column({ type: 'enum', enum: AgentChatMessageRole })
+  role: AgentChatMessageRole;
 
   @Column('text')
-  message: string;
+  content: string;
 
   @CreateDateColumn()
   createdAt: Date;

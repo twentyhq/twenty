@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { AgentChatMessagesEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+import {
+  AgentChatMessageRole,
+  AgentChatMessagesEntity,
+} from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadsEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
 import { AgentExecutionService } from './agent-execution.service';
@@ -31,11 +34,15 @@ export class AgentChatService {
     });
   }
 
-  async addMessage(threadId: string, sender: 'user' | 'ai', text: string) {
+  async addMessage(
+    threadId: string,
+    role: AgentChatMessageRole,
+    content: string,
+  ) {
     const message = this.messageRepository.create({
       threadId,
-      sender,
-      message: text,
+      role,
+      content,
     });
 
     return this.messageRepository.save(message);
@@ -49,7 +56,11 @@ export class AgentChatService {
   }
 
   async addUserMessageAndAIResponse(threadId: string, userMessage: string) {
-    const userMsg = await this.addMessage(threadId, 'user', userMessage);
+    const userMsg = await this.addMessage(
+      threadId,
+      AgentChatMessageRole.USER,
+      userMessage,
+    );
     const thread = await this.threadRepository.findOneOrFail({
       where: { id: threadId },
       relations: ['messages'],
@@ -59,7 +70,11 @@ export class AgentChatService {
       userMessage,
       messages: thread.messages,
     });
-    const aiMsg = await this.addMessage(threadId, 'ai', aiResponseText);
+    const aiMsg = await this.addMessage(
+      threadId,
+      AgentChatMessageRole.ASSISTANT,
+      aiResponseText,
+    );
 
     return [userMsg, aiMsg];
   }

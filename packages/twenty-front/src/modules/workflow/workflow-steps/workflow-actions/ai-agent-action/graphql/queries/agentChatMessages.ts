@@ -5,8 +5,8 @@ export const AGENT_CHAT_MESSAGES = gql`
     agentChatMessages(threadId: $threadId) {
       id
       threadId
-      sender
-      message
+      role
+      content
       createdAt
     }
   }

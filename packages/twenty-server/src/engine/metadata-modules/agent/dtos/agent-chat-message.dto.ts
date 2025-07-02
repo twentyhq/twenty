@@ -9,10 +9,10 @@ export class AgentChatMessageDTO {
   threadId: string;
 
   @Field()
-  sender: string;
+  role: string;
 
   @Field()
-  message: string;
+  content: string;
 
   @Field()
   createdAt: Date;

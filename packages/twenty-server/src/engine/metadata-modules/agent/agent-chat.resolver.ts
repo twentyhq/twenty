@@ -36,8 +36,8 @@ export class AgentChatResolver {
   @Mutation(() => [AgentChatMessageDTO])
   async sendAgentChatMessage(
     @Args('threadId', { type: () => ID }) threadId: string,
-    @Args('message', { type: () => String }) message: string,
+    @Args('content', { type: () => String }) content: string,
   ) {
-    return this.chatService.addUserMessageAndAIResponse(threadId, message);
+    return this.chatService.addUserMessageAndAIResponse(threadId, content);
   }
 }

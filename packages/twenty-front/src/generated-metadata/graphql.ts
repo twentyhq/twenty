@@ -68,10 +68,10 @@ export type Agent = {
 
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
+  content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  message: Scalars['String'];
-  sender: Scalars['String'];
+  role: Scalars['String'];
   threadId: Scalars['ID'];
 };
 
@@ -1379,7 +1379,7 @@ export type MutationSaveImapSmtpCaldavArgs = {
 
 
 export type MutationSendAgentChatMessageArgs = {
-  message: Scalars['String'];
+  content: Scalars['String'];
   threadId: Scalars['ID'];
 };
 
@@ -3538,11 +3538,11 @@ export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleF
 
 export type SendAgentChatMessageMutationVariables = Exact<{
   threadId: Scalars['ID'];
-  message: Scalars['String'];
+  content: Scalars['String'];
 }>;
 
 
-export type SendAgentChatMessageMutation = { __typename?: 'Mutation', sendAgentChatMessage: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, sender: string, message: string, createdAt: string }> };
+export type SendAgentChatMessageMutation = { __typename?: 'Mutation', sendAgentChatMessage: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string }> };
 
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
@@ -3556,7 +3556,7 @@ export type AgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type AgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, sender: string, message: string, createdAt: string }> };
+export type AgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string }> };
 
 export type AgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['ID'];
@@ -7727,12 +7727,12 @@ export type RemoveRoleFromAgentMutationHookResult = ReturnType<typeof useRemoveR
 export type RemoveRoleFromAgentMutationResult = Apollo.MutationResult<RemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
 export const SendAgentChatMessageDocument = gql`
-    mutation SendAgentChatMessage($threadId: ID!, $message: String!) {
-  sendAgentChatMessage(threadId: $threadId, message: $message) {
+    mutation SendAgentChatMessage($threadId: ID!, $content: String!) {
+  sendAgentChatMessage(threadId: $threadId, content: $content) {
     id
     threadId
-    sender
-    message
+    role
+    content
     createdAt
   }
 }
@@ -7753,7 +7753,7 @@ export type SendAgentChatMessageMutationFn = Apollo.MutationFunction<SendAgentCh
  * const [sendAgentChatMessageMutation, { data, loading, error }] = useSendAgentChatMessageMutation({
  *   variables: {
  *      threadId: // value for 'threadId'
- *      message: // value for 'message'
+ *      content: // value for 'content'
  *   },
  * });
  */
@@ -7807,8 +7807,8 @@ export const AgentChatMessagesDocument = gql`
   agentChatMessages(threadId: $threadId) {
     id
     threadId
-    sender
-    message
+    role
+    content
     createdAt
   }
 }

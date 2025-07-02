@@ -68,10 +68,10 @@ export type Agent = {
 
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
+  content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  message: Scalars['String'];
-  sender: Scalars['String'];
+  role: Scalars['String'];
   threadId: Scalars['ID'];
 };
 
@@ -1310,7 +1310,7 @@ export type MutationSaveImapSmtpCaldavArgs = {
 
 
 export type MutationSendAgentChatMessageArgs = {
-  message: Scalars['String'];
+  conent: Scalars['String'];
   threadId: Scalars['ID'];
 };
 

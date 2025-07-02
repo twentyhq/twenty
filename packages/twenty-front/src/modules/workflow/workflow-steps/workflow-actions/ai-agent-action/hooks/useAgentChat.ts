@@ -11,6 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
@@ -24,12 +25,11 @@ export const useAgentChat = (agentId: string) => {
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
 
-  const { data: threadsData, refetch: refetchThreads } =
-    useAgentChatThreadsQuery({
-      variables: {
-        agentId,
-      },
-    });
+  const { data: threadsData } = useAgentChatThreadsQuery({
+    variables: {
+      agentId,
+    },
+  });
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
 
@@ -75,13 +75,13 @@ export const useAgentChat = (agentId: string) => {
       },
     });
 
-  const sendChatMessage = async (message: string) => {
+  const sendChatMessage = async (content: string) => {
     const optimisticUserMessage: AgentChatMessage = {
       __typename: 'AgentChatMessage',
       id: `temp-${v4()}`,
       threadId: currentThreadId,
-      sender: 'user',
-      message: message,
+      role: AgentChatMessageRole.USER,
+      content,
       createdAt: new Date().toISOString(),
     };
 
@@ -89,8 +89,8 @@ export const useAgentChat = (agentId: string) => {
       __typename: 'AgentChatMessage',
       id: `temp-${v4()}`,
       threadId: currentThreadId,
-      sender: 'ai',
-      message: '',
+      role: AgentChatMessageRole.ASSISTANT,
+      content: '',
       createdAt: new Date().toISOString(),
     };
 
@@ -105,7 +105,7 @@ export const useAgentChat = (agentId: string) => {
     await sendMessage({
       variables: {
         threadId: currentThreadId,
-        message,
+        content,
       },
     });
 
@@ -116,9 +116,9 @@ export const useAgentChat = (agentId: string) => {
     if (!agentChatInput.trim() || sendingMessage) {
       return;
     }
-    const message = agentChatInput.trim();
+    const content = agentChatInput.trim();
     setAgentChatInput('');
-    await sendChatMessage(message);
+    await sendChatMessage(content);
   };
 
   useScopedHotkeys(

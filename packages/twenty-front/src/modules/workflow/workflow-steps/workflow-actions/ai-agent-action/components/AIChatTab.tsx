@@ -6,6 +6,7 @@ import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { formatChatMessageDate } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatChatMessageString';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
@@ -178,9 +179,12 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
       {messages.length !== 0 && (
         <StyledScrollWrapper componentInstanceId={agentId}>
           {messages.map((msg) => (
-            <StyledMessageBubble key={msg.id} isUser={msg.sender === 'user'}>
+            <StyledMessageBubble
+              key={msg.id}
+              isUser={msg.role === AgentChatMessageRole.USER}
+            >
               <StyledMessageRow>
-                {msg.sender === 'ai' && (
+                {msg.role === AgentChatMessageRole.ASSISTANT && (
                   <StyledAvatarContainer>
                     <Avatar
                       size="sm"
@@ -190,25 +194,28 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                     />
                   </StyledAvatarContainer>
                 )}
-                {msg.sender === 'user' && (
+                {msg.role === AgentChatMessageRole.USER && (
                   <StyledAvatarContainer isUser>
                     <Avatar size="sm" placeholder="U" type="rounded" />
                   </StyledAvatarContainer>
                 )}
                 <StyledMessageContainer>
-                  <StyledMessageText isUser={msg.sender === 'user'}>
-                    {msg.sender === 'ai' && !msg.message ? (
+                  <StyledMessageText
+                    isUser={msg.role === AgentChatMessageRole.USER}
+                  >
+                    {msg.role === AgentChatMessageRole.ASSISTANT &&
+                    !msg.content ? (
                       <StyledDotsIconContainer>
                         <StyledDotsIcon size={theme.icon.size.xl} />
                       </StyledDotsIconContainer>
                     ) : (
-                      msg.message
+                      msg.content
                     )}
                   </StyledMessageText>
-                  {msg.message && (
+                  {msg.content && (
                     <StyledMessageFooter className="message-footer">
                       <span>{formatChatMessageDate(msg.createdAt)}</span>
-                      <LightCopyIconButton copyText={msg.message} />
+                      <LightCopyIconButton copyText={msg.content} />
                     </StyledMessageFooter>
                   )}
                 </StyledMessageContainer>
