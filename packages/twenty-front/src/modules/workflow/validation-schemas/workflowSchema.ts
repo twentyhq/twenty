@@ -138,6 +138,13 @@ export const workflowAiAgentActionSettingsSchema =
     }),
   });
 
+export const workflowFilterActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      filter: z.record(z.any()),
+    }),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -190,6 +197,11 @@ export const workflowAiAgentActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowAiAgentActionSettingsSchema,
 });
 
+export const workflowFilterActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('FILTER'),
+  settings: workflowFilterActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -201,6 +213,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowFormActionSchema,
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
+  workflowFilterActionSchema,
 ]);
 
 // Trigger schemas

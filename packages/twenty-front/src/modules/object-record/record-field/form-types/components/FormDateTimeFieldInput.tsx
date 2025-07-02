@@ -149,6 +149,10 @@ export const FormDateTimeFieldInput = ({
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,
+    excludedClickOutsideIds: [
+      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+    ],
   });
 
   const handlePickerChange = (newDate: Nullable<Date>) => {

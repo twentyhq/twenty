@@ -5,6 +5,7 @@ import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
@@ -76,20 +77,32 @@ export const AbsoluteDatePickerHeader = ({
       )}
 
       <StyledCustomDatePickerHeader>
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-          options={getMonthSelectOptions()}
-          onChange={onChangeMonth}
-          value={endOfDayInLocalTimezone.getMonth()}
-          fullWidth
-        />
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-          onChange={onChangeYear}
-          value={endOfDayInLocalTimezone.getFullYear()}
-          options={years}
-          fullWidth
-        />
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+          }}
+        >
+          <Select
+            dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+            options={getMonthSelectOptions()}
+            onChange={onChangeMonth}
+            value={endOfDayInLocalTimezone.getMonth()}
+            fullWidth
+          />
+        </ClickOutsideListenerContext.Provider>
+        <ClickOutsideListenerContext.Provider
+          value={{
+            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+          }}
+        >
+          <Select
+            dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+            onChange={onChangeYear}
+            value={endOfDayInLocalTimezone.getFullYear()}
+            options={years}
+            fullWidth
+          />
+        </ClickOutsideListenerContext.Provider>
         <LightIconButton
           Icon={IconChevronLeft}
           onClick={onSubtractMonth}
