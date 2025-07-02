@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
+import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+
 @ObjectType('AgentChatMessage')
 export class AgentChatMessageDTO {
   @Field(() => ID)
@@ -9,7 +11,7 @@ export class AgentChatMessageDTO {
   threadId: string;
 
   @Field()
-  role: string;
+  role: AgentChatMessageRole;
 
   @Field()
   content: string;
