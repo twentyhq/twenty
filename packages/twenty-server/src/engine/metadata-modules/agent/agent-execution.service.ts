@@ -125,8 +125,14 @@ export class AgentExecutionService {
 
     llmMessages.push({ role: 'user', content: userMessage });
 
+    const tools = await this.agentToolService.generateToolsForAgent(
+      agent.id,
+      agent.workspaceId,
+    );
+
     const textResponse = await generateText({
       system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+      tools,
       model: this.getModel(agent.modelId, provider),
       messages: llmMessages,
       maxSteps: AGENT_CONFIG.MAX_STEPS,
