@@ -7,10 +7,10 @@ export class AddAgentChatMessageAndThreadTable1751467467020
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."agentChatMessage_sender_enum" AS ENUM('user', 'assistant')`,
+      `CREATE TYPE "core"."agentChatMessage_role_enum" AS ENUM('user', 'assistant')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."agentChatMessage" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "threadId" uuid NOT NULL, "role" "core"."agentChatMessage_sender_enum" NOT NULL, "content" text NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f54a95b34e98d94251bce37a180" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."agentChatMessage" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "threadId" uuid NOT NULL, "role" "core"."agentChatMessage_role_enum" NOT NULL, "content" text NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f54a95b34e98d94251bce37a180" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_cd5b23d4e471b630137b3017ba" ON "core"."agentChatMessage" ("threadId") `,
@@ -44,6 +44,6 @@ export class AddAgentChatMessageAndThreadTable1751467467020
       `DROP INDEX "core"."IDX_cd5b23d4e471b630137b3017ba"`,
     );
     await queryRunner.query(`DROP TABLE "core"."agentChatMessage"`);
-    await queryRunner.query(`DROP TYPE "core"."agentChatMessage_sender_enum"`);
+    await queryRunner.query(`DROP TYPE "core"."agentChatMessage_role_enum"`);
   }
 }
