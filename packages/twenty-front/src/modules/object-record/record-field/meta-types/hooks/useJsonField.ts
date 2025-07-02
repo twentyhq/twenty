@@ -33,6 +33,7 @@ export const useJsonField = () => {
   const persistField = usePersistField();
 
   const persistJsonField = (nextValue: string) => {
+    if (!nextValue) persistField(null);
 
     try {
       persistField(JSON.parse(nextValue));
