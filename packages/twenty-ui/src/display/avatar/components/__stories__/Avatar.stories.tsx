@@ -15,7 +15,7 @@ const meta: Meta<typeof Avatar> = {
   args: {
     avatarUrl: AVATAR_URL_MOCK,
     size: 'md',
-    placeholder: 'L',
+    placeholder: 'E',
     type: 'rounded',
   },
 };

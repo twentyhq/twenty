@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-import { useValidateApprovedAccessDomainMutation } from '~/generated/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSearchParams } from 'react-router-dom';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =

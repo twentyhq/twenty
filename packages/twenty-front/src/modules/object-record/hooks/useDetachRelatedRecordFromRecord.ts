@@ -1,5 +1,6 @@
-import { Reference, useApolloClient } from '@apollo/client';
+import { Reference } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
@@ -14,7 +15,7 @@ export const useDetachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
   fieldNameOnRecordObject,
 }: useDetachRelatedRecordFromRecordProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: recordObjectNameSingular,
@@ -49,7 +50,7 @@ export const useDetachRelatedRecordFromRecord = ({
   }) => {
     modifyRecordFromCache({
       objectMetadataItem,
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
       fieldModifiers: {
         [fieldNameOnRecordObject]: (
           fieldNameOnRecordObjectConnection,

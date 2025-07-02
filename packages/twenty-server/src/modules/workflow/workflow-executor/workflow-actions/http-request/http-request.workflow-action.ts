@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
@@ -52,7 +53,9 @@ export class HttpRequestWorkflowAction implements WorkflowExecutor {
       };
 
       if (['POST', 'PUT', 'PATCH'].includes(method) && body) {
-        axiosConfig.data = body;
+        const parsedBody = isString(body) ? JSON.parse(body) : body;
+
+        axiosConfig.data = parsedBody;
       }
 
       const response = await axios(axiosConfig);

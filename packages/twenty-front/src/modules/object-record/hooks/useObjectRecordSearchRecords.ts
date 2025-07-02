@@ -1,5 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -33,6 +34,8 @@ export const useObjectRecordSearchRecords = ({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, previousData } = useSearchQuery({
@@ -48,6 +51,7 @@ export const useObjectRecordSearchRecords = ({
       includedObjectNameSingulars: [objectNameSingular],
     },
     fetchPolicy: fetchPolicy,
+    client: apolloCoreClient,
     onError: (error) => {
       logError(
         `useSearchRecords for "${objectMetadataItem.namePlural}" error : ` +

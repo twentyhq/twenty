@@ -7,11 +7,15 @@ import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
+import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
+import { shouldDisplayRawJsonByDefault } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/shouldDisplayRawJsonByDefault';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
+import { parseJson } from 'twenty-shared/utils';
 import { IconFileText, IconKey } from 'twenty-ui/display';
+import { JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 const StyledContainer = styled.div`
@@ -26,8 +30,8 @@ const StyledSelectDropdown = styled(Select)`
 
 type BodyInputProps = {
   label?: string;
-  defaultValue?: HttpRequestBody;
-  onChange: (value?: HttpRequestBody) => void;
+  defaultValue?: HttpRequestBody | string;
+  onChange: (value?: string) => void;
   readonly?: boolean;
 };
 
@@ -36,11 +40,17 @@ export const BodyInput = ({
   onChange,
   readonly,
 }: BodyInputProps) => {
-  const [isRawJson, setIsRawJson] = useState<boolean>(() =>
-    hasNonStringValues(defaultValue),
+  const defaultValueParsed = isString(defaultValue)
+    ? (parseJson<JsonValue>(defaultValue) ?? {})
+    : defaultValue;
+
+  const [isRawJson, setIsRawJson] = useState(
+    shouldDisplayRawJsonByDefault(defaultValue),
   );
   const [jsonString, setJsonString] = useState<string | null>(
-    JSON.stringify(defaultValue, null, 2),
+    isString(defaultValue)
+      ? defaultValue
+      : JSON.stringify(defaultValue, null, 2),
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
@@ -51,7 +61,8 @@ export const BodyInput = ({
     }
 
     try {
-      JSON.parse(value);
+      parseHttpJsonBodyWithoutVariablesOrThrow(value);
+
       setErrorMessage(undefined);
       return true;
     } catch (e) {
@@ -61,7 +72,7 @@ export const BodyInput = ({
   };
 
   const handleKeyValueChange = (value: Record<string, string>) => {
-    onChange(value);
+    onChange(JSON.stringify(value, null, 2));
     setErrorMessage(undefined);
   };
 
@@ -75,8 +86,9 @@ export const BodyInput = ({
     }
 
     try {
-      const parsed = JSON.parse(value);
-      onChange(parsed);
+      parseHttpJsonBodyWithoutVariablesOrThrow(value);
+
+      onChange(value);
     } catch {
       // Do nothing, validation will happen on blur
     }
@@ -121,7 +133,7 @@ export const BodyInput = ({
           />
         ) : (
           <KeyValuePairInput
-            defaultValue={defaultValue as Record<string, string>}
+            defaultValue={defaultValueParsed as Record<string, string>}
             onChange={handleKeyValueChange}
             readonly={readonly}
             keyPlaceholder="Property name"
