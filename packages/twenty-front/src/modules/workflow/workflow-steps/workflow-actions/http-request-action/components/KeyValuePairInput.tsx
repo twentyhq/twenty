@@ -2,6 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
@@ -14,11 +15,18 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledKeyValueContainer = styled.div`
+const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) ${({ theme }) =>
-      theme.spacing(8)};
   gap: ${({ theme }) => theme.spacing(2)};
+
+  ${({ readonly, theme }) =>
+    readonly
+      ? css`
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        `
+      : css`
+          grid-template-columns: repeat(2, minmax(0, 1fr)) ${theme.spacing(8)};
+        `};
 `;
 
 export type KeyValuePair = {
@@ -112,7 +120,7 @@ export const KeyValuePairInput = ({
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
         {pairs.map((pair) => (
-          <StyledKeyValueContainer key={pair.id}>
+          <StyledKeyValueContainer key={pair.id} readonly={readonly}>
             <FormTextFieldInput
               placeholder={keyPlaceholder}
               readonly={readonly}
@@ -138,7 +146,7 @@ export const KeyValuePairInput = ({
                 onClick={() => handleRemovePair(pair.id)}
                 Icon={IconTrash}
               />
-            ) : pairs.length > 1 ? null : null}
+            ) : null}
           </StyledKeyValueContainer>
         ))}
       </StyledContainer>
