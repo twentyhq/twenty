@@ -177,6 +177,7 @@ export class WorkflowRunWorkspaceService {
           ...workflowRunToUpdate.runContext?.stepInfos,
           trigger: {
             ...workflowRunToUpdate.runContext?.stepInfos.trigger,
+            status: StepStatus.SUCCESS,
             result: payload,
           },
         },
