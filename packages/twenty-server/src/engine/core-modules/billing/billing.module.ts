@@ -9,7 +9,7 @@ import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modul
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
-import { CheckInterPaymentExpirationCommand } from 'src/engine/core-modules/billing/crons/commands/check-expired-subscriptions.command';
+import { CheckExpiredSubscriptionsCronCommand } from 'src/engine/core-modules/billing/crons/commands/check-expired-subscriptions.cron.command';
 import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
@@ -84,7 +84,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
-    CheckInterPaymentExpirationCommand,
+    CheckExpiredSubscriptionsCronCommand,
     // TODO: This is not the optimal solution, find a way to import InterModule here instead.
     InterInstanceService,
     InterService,

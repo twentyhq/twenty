@@ -2,9 +2,11 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { CheckExpiredSubscriptionsCronCommand } from 'src/engine/core-modules/billing/crons/commands/check-expired-subscriptions.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
+import { ChargeEmmitRecurrentBillsCronCommand } from 'src/modules/charges/cron/command/charge-emmit-bills.cron.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
@@ -25,6 +27,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly checkExpiredSubscriptionsCronCommand: CheckExpiredSubscriptionsCronCommand,
+    private readonly chargeEmmitReccurrentsBillCronCommand: ChargeEmmitRecurrentBillsCronCommand,
   ) {
     super();
   }
@@ -33,6 +37,14 @@ export class CronRegisterAllCommand extends CommandRunner {
     this.logger.log('Registering all background sync cron jobs...');
 
     const commands = [
+      {
+        name: 'CheckExpiredSubscriptions',
+        command: this.checkExpiredSubscriptionsCronCommand,
+      },
+      {
+        name: 'ChargeEmmitRecurrentBills',
+        command: this.chargeEmmitReccurrentsBillCronCommand,
+      },
       {
         name: 'MessagingMessagesImport',
         command: this.messagingMessagesImportCronCommand,

@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
   name: 'cron:billing:check-inter-payment-expiration',
   description: 'Starts a cron job to check for expired Inter payments',
 })
-export class CheckInterPaymentExpirationCommand extends CommandRunner {
+export class CheckExpiredSubscriptionsCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
