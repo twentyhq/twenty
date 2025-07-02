@@ -11,7 +11,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  WorkflowRunContext,
+  WorkflowRunState,
   WorkflowRunOutput,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -23,10 +23,10 @@ import {
 const DEFAULT_CHUNK_SIZE = 500;
 
 @Command({
-  name: 'upgrade:1-1:migrate-run-context-to-workflow-run',
-  description: 'Populate runContext column in workflow run records',
+  name: 'upgrade:1-1:migrate-workflow-run-state',
+  description: 'Migrate state column in workflow run records',
 })
-export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private afterDate: string | undefined;
   private chunkSize = DEFAULT_CHUNK_SIZE;
 
@@ -88,7 +88,7 @@ export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWork
     const chunkCount = Math.ceil(workflowRunCount / this.chunkSize);
 
     this.logger.log(
-      `Migrate ${workflowRunCount} workflowRun runContext in ${chunkCount} chunks of size ${this.chunkSize}`,
+      `Migrate ${workflowRunCount} workflowRun state in ${chunkCount} chunks of size ${this.chunkSize}`,
     );
 
     for (let offset = 0; offset < chunkCount; offset += 1) {
@@ -111,16 +111,16 @@ export class MigrateRunContextToWorkflowRunCommand extends ActiveOrSuspendedWork
           continue;
         }
 
-        const runContext = this.getStepInfosFromOutput(output);
+        const state = this.buildRunStateFromOutput(output);
 
-        await workflowRunRepository.update(workflowRun.id, { runContext });
+        await workflowRunRepository.update(workflowRun.id, {
+          state,
+        });
       }
     }
   }
 
-  private getStepInfosFromOutput(
-    output: WorkflowRunOutput,
-  ): WorkflowRunContext {
+  private buildRunStateFromOutput(output: WorkflowRunOutput): WorkflowRunState {
     const stepInfos: Record<string, WorkflowRunStepInfo> = Object.fromEntries(
       output.flow.steps.map((step) => {
         const stepOutput = output.stepsOutput?.[step.id];

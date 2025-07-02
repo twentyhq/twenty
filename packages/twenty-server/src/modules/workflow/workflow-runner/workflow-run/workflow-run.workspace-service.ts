@@ -17,7 +17,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
-  WorkflowRunContext,
+  WorkflowRunState,
   WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
@@ -124,7 +124,7 @@ export class WorkflowRunWorkspaceService {
       workflowId: workflow.id,
       status,
       position,
-      runContext: this.initRunContext(workflowVersion),
+      state: this.getInitState(workflowVersion),
       context,
     });
 
@@ -176,12 +176,12 @@ export class WorkflowRunWorkspaceService {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
       output,
-      runContext: {
-        ...workflowRunToUpdate.runContext,
+      state: {
+        ...workflowRunToUpdate.state,
         stepInfos: {
-          ...workflowRunToUpdate.runContext?.stepInfos,
+          ...workflowRunToUpdate.state?.stepInfos,
           trigger: {
-            ...workflowRunToUpdate.runContext?.stepInfos.trigger,
+            ...workflowRunToUpdate.state?.stepInfos.trigger,
             status: StepStatus.SUCCESS,
             result: payload,
           },
@@ -233,8 +233,8 @@ export class WorkflowRunWorkspaceService {
         ...(workflowRunToUpdate.output ?? {}),
         error,
       },
-      runContext: {
-        ...workflowRunToUpdate.runContext,
+      state: {
+        ...workflowRunToUpdate.state,
         workflowRunError: error,
       },
     };
@@ -243,7 +243,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['status', 'endedAt', 'output', 'runContext'],
+      updatedFields: ['status', 'endedAt', 'output', 'state'],
     });
 
     await this.metricsService.incrementCounter({
@@ -298,10 +298,10 @@ export class WorkflowRunWorkspaceService {
           [stepOutput.id]: stepOutput.output,
         },
       },
-      runContext: {
-        ...workflowRunToUpdate.runContext,
+      state: {
+        ...workflowRunToUpdate.state,
         stepInfos: {
-          ...workflowRunToUpdate.runContext?.stepInfos,
+          ...workflowRunToUpdate.state?.stepInfos,
           [stepOutput.id]: {
             result: stepOutput.output?.result,
             error: stepOutput.output?.error,
@@ -316,7 +316,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['context', 'output', 'runContext'],
+      updatedFields: ['context', 'output', 'state'],
     });
   }
 
@@ -369,10 +369,10 @@ export class WorkflowRunWorkspaceService {
           steps: updatedSteps,
         },
       },
-      runContext: {
-        ...workflowRunToUpdate.runContext,
+      state: {
+        ...workflowRunToUpdate.state,
         flow: {
-          ...(workflowRunToUpdate.runContext?.flow ?? {}),
+          ...(workflowRunToUpdate.state?.flow ?? {}),
           steps: updatedSteps,
         },
       },
@@ -382,7 +382,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.emitWorkflowRunUpdatedEvent({
       workflowRunBefore: workflowRunToUpdate,
-      updatedFields: ['output', 'runContext'],
+      updatedFields: ['output', 'state'],
     });
   }
 
@@ -484,9 +484,9 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  private initRunContext(
+  private getInitState(
     workflowVersion: WorkflowVersionWorkspaceEntity,
-  ): WorkflowRunContext | undefined {
+  ): WorkflowRunState | undefined {
     if (
       !isDefined(workflowVersion.trigger) ||
       !isDefined(workflowVersion.steps)

@@ -55,7 +55,7 @@ export type WorkflowRunOutput = {
   error?: string;
 };
 
-export type WorkflowRunContext = {
+export type WorkflowRunState = {
   flow: {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
@@ -183,14 +183,14 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   context: Record<string, any> | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.runContext,
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
-    label: msg`Run context`,
-    description: msg`Run context`,
+    label: msg`State`,
+    description: msg`State of the workflow run`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsNullable()
-  runContext: WorkflowRunContext | null;
+  state: WorkflowRunState | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,

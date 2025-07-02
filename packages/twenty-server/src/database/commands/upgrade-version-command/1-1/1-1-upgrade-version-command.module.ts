@@ -14,7 +14,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { MigrateRunContextToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-run-context-to-workflow-run.command';
+import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 
 @Module({
   imports: [
@@ -38,12 +38,12 @@ import { MigrateRunContextToWorkflowRunCommand } from 'src/database/commands/upg
   providers: [
     FixUpdateStandardFieldsIsLabelSyncedWithName,
     FixSchemaArrayTypeCommand,
-    MigrateRunContextToWorkflowRunCommand,
+    MigrateWorkflowRunStatesCommand,
   ],
   exports: [
     FixUpdateStandardFieldsIsLabelSyncedWithName,
     FixSchemaArrayTypeCommand,
-    MigrateRunContextToWorkflowRunCommand,
+    MigrateWorkflowRunStatesCommand,
   ],
 })
 export class V1_1_UpgradeVersionCommandModule {}
