@@ -1,3 +1,6 @@
+import { t } from '@lingui/core/macro';
+import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
+
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -14,9 +17,9 @@ export const generateGraphQLErrorFromError = (
 
   if (error instanceof CustomException) {
     graphqlError.extensions.displayedErrorMessage =
-      error.displayedErrorMessage ?? 'An error occurred.';
+      error.displayedErrorMessage ?? t`${DEFAULT_DISPLAYED_ERROR_MESSAGE}`;
   } else {
-    graphqlError.extensions.displayedErrorMessage = 'An error occurred.';
+    graphqlError.extensions.displayedErrorMessage = t`${DEFAULT_DISPLAYED_ERROR_MESSAGE}`;
   }
 
   return graphqlError;

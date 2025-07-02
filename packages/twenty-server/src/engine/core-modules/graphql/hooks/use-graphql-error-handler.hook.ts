@@ -4,6 +4,7 @@ import {
   OnExecuteDoneHookResultOnNextHook,
   Plugin,
 } from '@envelop/core';
+import { t } from '@lingui/core/macro';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
 
@@ -198,7 +199,7 @@ export const useGraphQLErrorHandlerHook = <
                         ...error.extensions,
                         displayedErrorMessage:
                           error.extensions.displayedErrorMessage ??
-                          DEFAULT_DISPLAYED_ERROR_MESSAGE,
+                          t`${DEFAULT_DISPLAYED_ERROR_MESSAGE}`,
                       },
                     }
                   : generateGraphQLErrorFromError(error);

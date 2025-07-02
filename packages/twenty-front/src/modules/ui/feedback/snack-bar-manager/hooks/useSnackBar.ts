@@ -11,6 +11,7 @@ import {
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { DEFAULT_DISPLAYED_ERROR_MESSAGE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
@@ -127,7 +128,7 @@ export const useSnackBar = () => {
         ? message
         : apolloError
           ? getErrorMessageFromApolloError(apolloError)
-          : t`An error occurred`;
+          : t`${DEFAULT_DISPLAYED_ERROR_MESSAGE}`;
       setSnackBarQueue({
         id: uuidv4(),
         message: errorMessage,
