@@ -84,7 +84,6 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     !isUser ? 'none' : `1px solid ${theme.border.color.light}`};
   color: ${({ theme, isUser }) =>
     isUser ? theme.font.color.light : theme.font.color.primary};
-  max-width: 320px;
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
 `;
 
@@ -97,7 +96,7 @@ const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
   display: flex;
   justify-content: center;
   height: 24px;
-  width: 24px;
+  min-width: 24px;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: 1px;
   position: relative;
