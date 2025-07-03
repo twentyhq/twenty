@@ -117,17 +117,6 @@ describe('agentResolver', () => {
     const testAgentId = 'test-agent-id';
     const workspaceId = 'test-workspace-id';
 
-    const originalAgent = {
-      id: testAgentId,
-      name: 'Original Test Agent',
-      description: 'Original description',
-      prompt: 'Original prompt',
-      modelId: 'gpt-4o',
-      roleId: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     const updatedAgent = {
       id: testAgentId,
       name: 'Updated Test Agent Admin',
