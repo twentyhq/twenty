@@ -7,21 +7,21 @@ import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/typ
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { t } from '@lingui/core/macro';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigateSettings();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
 
   const form = useForm<SettingSecurityNewSSOIdentityFormValues>({
@@ -48,8 +48,8 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
 
       navigate(SettingsPath.Security);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };

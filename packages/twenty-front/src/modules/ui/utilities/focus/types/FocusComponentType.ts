@@ -9,4 +9,5 @@ export enum FocusComponentType {
   RECORD_TABLE_CELL = 'record-table-cell',
   RECORD_BOARD = 'record-board',
   RECORD_BOARD_CARD = 'record-board-card',
+  ACTIVITY_RICH_TEXT_EDITOR = 'activity-rich-text-editor',
 }

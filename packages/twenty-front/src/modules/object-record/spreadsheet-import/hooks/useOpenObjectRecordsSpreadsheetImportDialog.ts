@@ -8,7 +8,6 @@ import { SpreadsheetImportCreateRecordsBatchSize } from '@/spreadsheet-import/co
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -17,7 +16,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog<any>();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -79,8 +78,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             upsert: true,
           });
         } catch (error: any) {
-          enqueueSnackBar(error?.message || 'Something went wrong', {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            apolloError: error,
           });
         }
       },

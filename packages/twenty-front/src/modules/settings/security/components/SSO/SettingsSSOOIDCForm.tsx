@@ -1,16 +1,15 @@
 /* @license Enterprise */
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconCopy } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -37,7 +36,7 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSSOOIDCForm = () => {
   const { control } = useFormContext();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const theme = useTheme();
   const { t } = useLingui();
 
@@ -66,10 +65,12 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar(t`Authorized URL copied to clipboard`, {
-                    variant: SnackBarVariant.Success,
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
+                  enqueueSuccessSnackBar({
+                    message: t`Authorized URL copied to clipboard`,
+                    options: {
+                      icon: <IconCopy size={theme.icon.size.md} />,
+                      duration: 2000,
+                    },
                   });
                   navigator.clipboard.writeText(authorizedUrl);
                 }}
@@ -91,10 +92,12 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar(t`Redirect Url copied to clipboard`, {
-                    variant: SnackBarVariant.Success,
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
+                  enqueueSuccessSnackBar({
+                    message: t`Redirect Url copied to clipboard`,
+                    options: {
+                      icon: <IconCopy size={theme.icon.size.md} />,
+                      duration: 2000,
+                    },
                   });
                   navigator.clipboard.writeText(redirectionUrl);
                 }}
