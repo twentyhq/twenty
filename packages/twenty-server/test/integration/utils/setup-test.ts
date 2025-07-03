@@ -18,7 +18,7 @@ export default async (_, projectConfig: JestConfigWithTsJest) => {
 
   await rawDataSource.initialize();
 
-  await app.listen(projectConfig.globals.APP_PORT);
+  await app.listen(projectConfig.globals.APP_PORT as number);
 
   // @ts-expect-error legacy noImplicitAny
   global.app = app;
