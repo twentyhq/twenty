@@ -68,15 +68,11 @@ describe('destroyManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.destroyPeople).toBeDefined();
     expect(response.body.data.destroyPeople).toHaveLength(2);
-    expect(
-      response.body.data.destroyPeople.some(
-        (person: { id: string }) => person.id === personId1,
-      ),
-    ).toBe(true);
-    expect(
-      response.body.data.destroyPeople.some(
-        (person: { id: string }) => person.id === personId2,
-      ),
-    ).toBe(true);
+    expect(response.body.data.destroyPeople).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: personId1 }),
+        expect.objectContaining({ id: personId2 }),
+      ]),
+    );
   });
 });

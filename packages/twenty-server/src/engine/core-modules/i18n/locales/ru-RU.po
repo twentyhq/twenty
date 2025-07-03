@@ -1942,6 +1942,16 @@ msgstr "\\"
 msgid "Start Date"
 msgstr "\\"
 
+#. js-lingui-id: RS0o7b
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State"
+msgstr ""
+
+#. js-lingui-id: nY8GL/
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "State of the workflow run"
+msgstr ""
+
 #. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Status"
