@@ -13,6 +13,7 @@ import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-a
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
 import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
 import { ExportNoteActionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordAction';
+import { ExportSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportSingleRecordAction';
 import { NavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordAction';
 import { NavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordAction';
 import { RemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordAction';
@@ -153,7 +154,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    component: <ExportMultipleRecordsAction />,
+    component: <ExportSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,

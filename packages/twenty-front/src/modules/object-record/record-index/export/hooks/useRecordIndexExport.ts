@@ -7,8 +7,8 @@ import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dr
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   UseRecordDataOptions,
-  useExportFetchRecords,
-} from '@/object-record/record-index/export/hooks/useExportFetchRecords';
+  useRecordIndexFetch,
+} from '@/object-record/record-index/export/hooks/useRecordIndexFetch';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
@@ -121,7 +121,7 @@ type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
   filename: string;
 };
 
-export const useExportRecords = ({
+export const useRecordIndexExport = ({
   delayMs,
   filename,
   maximumRequests = 100,
@@ -144,7 +144,7 @@ export const useExportRecords = ({
     [filename, processRecordsForCSVExport],
   );
 
-  const { getTableData: download, progress } = useExportFetchRecords({
+  const { getTableData: download, progress } = useRecordIndexFetch({
     delayMs,
     maximumRequests,
     objectMetadataItem,

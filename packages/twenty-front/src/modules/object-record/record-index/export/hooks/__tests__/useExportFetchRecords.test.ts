@@ -1,10 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import {
-  percentage,
-  sleep,
-  useExportFetchRecords,
-} from '../useExportFetchRecords';
+import { percentage, sleep, useRecordIndexFetch } from '../useRecordIndexFetch';
 
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -107,7 +103,7 @@ describe('useRecordData', () => {
 
       const { result } = renderHook(
         () =>
-          useExportFetchRecords({
+          useRecordIndexFetch({
             recordIndexId,
             objectMetadataItem,
             pageSize: 30,
@@ -134,7 +130,7 @@ describe('useRecordData', () => {
       mockFetchAllRecords.mockReturnValue([mockPerson]);
       const { result } = renderHook(
         () =>
-          useExportFetchRecords({
+          useRecordIndexFetch({
             recordIndexId,
             objectMetadataItem,
             callback,
@@ -167,7 +163,7 @@ describe('useRecordData', () => {
             );
 
           return {
-            tableData: useExportFetchRecords({
+            tableData: useRecordIndexFetch({
               recordIndexId,
               objectMetadataItem,
               callback,
@@ -260,7 +256,7 @@ describe('useRecordData', () => {
             );
 
           return {
-            tableData: useExportFetchRecords({
+            tableData: useRecordIndexFetch({
               recordIndexId,
               objectMetadataItem,
               callback,

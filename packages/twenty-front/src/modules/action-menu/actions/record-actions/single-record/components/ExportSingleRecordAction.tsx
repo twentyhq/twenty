@@ -1,11 +1,13 @@
-import { Action } from '@/action-menu/actions/components/Action';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecordIndexExport } from '@/object-record/record-index/export/hooks/useRecordIndexExport';
+import { useExportSingleRecord } from '@/object-record/record-index/export/hooks/useExportSingleRecord';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const ExportMultipleRecordsAction = () => {
+import { Action } from '@/action-menu/actions/components/Action';
+
+export const ExportSingleRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
@@ -15,15 +17,18 @@ export const ExportMultipleRecordsAction = () => {
   if (!contextStoreCurrentViewId) {
     throw new Error('Current view ID is not defined');
   }
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    objectMetadataItem.namePlural,
+    contextStoreCurrentViewId,
+  );
+  const recordId = useSelectedRecordIdOrThrow();
 
-  const { download } = useRecordIndexExport({
-    delayMs: 100,
+  const filename = `${objectMetadataItem.nameSingular}.csv`;
+  const { download } = useExportSingleRecord({
+    filename,
     objectMetadataItem,
-    recordIndexId: getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
-      contextStoreCurrentViewId,
-    ),
-    filename: `${objectMetadataItem.nameSingular}.csv`,
+    recordId,
+    recordIndexId,
   });
 
   return <Action onClick={download} />;

@@ -39,7 +39,7 @@ export type UseRecordDataOptions = {
   viewType?: ViewType;
 };
 
-export const useExportFetchRecords = ({
+export const useRecordIndexFetch = ({
   objectMetadataItem,
   delayMs,
   maximumRequests = 100,
