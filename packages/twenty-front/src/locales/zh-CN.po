@@ -115,8 +115,8 @@ msgstr ""
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -301,6 +301,11 @@ msgstr "删除账户"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
 msgstr "账户"
+
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -620,8 +625,15 @@ msgstr "允许用户使用电子邮件和密码登录。"
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
-msgstr "更新密码时发生错误"
+#~ msgid "An error occurred while updating password"
+#~ msgstr "更新密码时发生错误"
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
+msgstr ""
 
 #. js-lingui-id: mJ6m4C
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -711,6 +723,11 @@ msgstr "接口"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "外观"
+
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr ""
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1064,6 +1081,11 @@ msgstr ""
 msgid "Check your Emails"
 msgstr ""
 
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -1400,6 +1422,11 @@ msgstr ""
 #. js-lingui-id: iX2opZ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
+msgstr ""
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -2174,6 +2201,11 @@ msgstr "电子邮件或域已在拦截列表中"
 msgid "Email verification"
 msgstr "电子邮件验证"
 
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
+msgstr ""
+
 #. js-lingui-id: hn6Eox
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Email Verification Failed"
@@ -2317,8 +2349,13 @@ msgstr "复制到剪贴板时出错"
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
-msgstr "删除 API 密钥时出错： {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr "删除 API 密钥时出错： {err}"
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
+msgstr ""
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2342,13 +2379,23 @@ msgstr ""
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
-msgstr "重新生成 API 密钥时出错： {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr "重新生成 API 密钥时出错： {err}"
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
+msgstr ""
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "重新发送邀请时出错"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -3432,6 +3479,8 @@ msgstr "浅色"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr "链接已复制到剪贴板"
 
@@ -3951,6 +4000,11 @@ msgstr "没有可用的指标数据"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 #~ msgid "No more members to assign"
 #~ msgstr "没有更多成员可分配"
+
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -5657,8 +5711,8 @@ msgstr "更新密码时出错。"
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr "出现问题"
+#~ msgid "There was an issue"
+#~ msgstr "出现问题"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -6163,6 +6217,31 @@ msgstr "我们将发送您一个链接以验证域名所有权"
 #~ msgid "Webhook"
 #~ msgstr "Webhook"
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr ""
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr ""
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr ""
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr ""
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6316,6 +6395,16 @@ msgstr "是"
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
+msgstr ""
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr ""
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
 msgstr ""
 
 #. js-lingui-id: qsAug0

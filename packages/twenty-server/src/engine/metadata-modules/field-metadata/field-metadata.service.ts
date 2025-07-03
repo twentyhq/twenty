@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
 import { APP_LOCALES } from 'twenty-shared/translations';
@@ -363,6 +364,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         throw new FieldMetadataException(
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          {
+            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+          },
         );
       }
 
@@ -574,6 +578,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
+            },
           );
         }
 
