@@ -1,12 +1,12 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-    NotFoundError,
-    UserInputError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export const handleWorkflowTriggerException = (

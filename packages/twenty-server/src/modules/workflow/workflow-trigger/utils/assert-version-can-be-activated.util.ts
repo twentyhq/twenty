@@ -1,17 +1,17 @@
 import { t } from '@lingui/core/macro';
 
 import {
-    WorkflowVersionStatus,
-    WorkflowVersionWorkspaceEntity,
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
-    WorkflowAction,
-    WorkflowActionType,
+  WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';

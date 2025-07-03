@@ -4,19 +4,19 @@ import { t } from '@lingui/core/macro';
 import { IsNull, Not } from 'typeorm';
 
 import {
-    CreateOneResolverArgs,
-    DeleteOneResolverArgs,
-    UpdateOneResolverArgs,
+  CreateOneResolverArgs,
+  DeleteOneResolverArgs,
+  UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    WorkflowQueryValidationException,
-    WorkflowQueryValidationExceptionCode,
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import {
-    WorkflowVersionStatus,
-    WorkflowVersionWorkspaceEntity,
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';

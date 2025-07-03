@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 

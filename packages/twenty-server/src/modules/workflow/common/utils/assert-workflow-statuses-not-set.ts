@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 
 import {
-    WorkflowQueryValidationException,
-    WorkflowQueryValidationExceptionCode,
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 

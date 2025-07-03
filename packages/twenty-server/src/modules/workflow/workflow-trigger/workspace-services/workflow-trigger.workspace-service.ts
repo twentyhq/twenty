@@ -14,8 +14,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
-    WorkflowVersionStatus,
-    WorkflowVersionWorkspaceEntity,
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
@@ -26,8 +26,8 @@ import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-statu
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';

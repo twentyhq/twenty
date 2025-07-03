@@ -14,8 +14,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    WorkflowVersionStepException,
-    WorkflowVersionStepExceptionCode,
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -23,15 +23,15 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-    WorkflowAction,
-    WorkflowActionType,
-    WorkflowFormAction,
+  WorkflowAction,
+  WorkflowActionType,
+  WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const TRIGGER_STEP_ID = 'trigger';
 

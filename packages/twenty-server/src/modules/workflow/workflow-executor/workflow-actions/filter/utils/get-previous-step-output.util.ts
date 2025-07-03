@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 
 import {
-    WorkflowStepExecutorException,
-    WorkflowStepExecutorExceptionCode,
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 

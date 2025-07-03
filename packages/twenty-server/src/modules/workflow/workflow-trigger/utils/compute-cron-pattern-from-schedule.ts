@@ -2,8 +2,8 @@ import { t } from '@lingui/core/macro';
 import cron from 'cron-validate';
 
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
