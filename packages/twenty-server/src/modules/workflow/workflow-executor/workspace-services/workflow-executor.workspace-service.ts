@@ -43,6 +43,26 @@ export class WorkflowExecutorWorkspaceService {
   ) {}
 
   async execute({
+    stepIdsToExecute,
+    steps,
+    context,
+    workflowRunId,
+  }: Omit<WorkflowExecutorInput, 'currentStepId'> & {
+    stepIdsToExecute: string[];
+  }) {
+    await Promise.all(
+      stepIdsToExecute.map(async (stepIdToExecute) => {
+        await this.executeBranch({
+          currentStepId: stepIdToExecute,
+          steps,
+          context,
+          workflowRunId,
+        });
+      }),
+    );
+  }
+
+  private async executeBranch({
     currentStepId,
     steps,
     context,
@@ -176,7 +196,7 @@ export class WorkflowExecutorWorkspaceService {
           : StepStatus.FAILED,
       });
 
-      if (!isDefined(step.nextStepIds?.[0])) {
+      if (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0) {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
           workspaceId,
@@ -186,10 +206,9 @@ export class WorkflowExecutorWorkspaceService {
         return;
       }
 
-      // TODO: handle multiple next steps
       await this.execute({
         workflowRunId,
-        currentStepId: step.nextStepIds[0],
+        stepIdsToExecute: step.nextStepIds,
         steps,
         context: updatedContext,
       });
@@ -201,7 +220,7 @@ export class WorkflowExecutorWorkspaceService {
       step.settings.errorHandlingOptions.retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
-      await this.execute({
+      await this.executeBranch({
         workflowRunId,
         currentStepId,
         steps,

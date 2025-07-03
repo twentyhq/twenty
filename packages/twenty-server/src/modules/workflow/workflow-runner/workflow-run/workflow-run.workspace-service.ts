@@ -353,13 +353,14 @@ export class WorkflowRunWorkspaceService {
         stepInfos: {
           ...workflowRunToUpdate.state?.stepInfos,
           [stepOutput.id]: {
+            ...(workflowRunToUpdate.state?.stepInfos[stepOutput.id] || {}),
             result: stepOutput.output?.result,
             error: stepOutput.output?.error,
             status: stepStatus,
           },
         },
       },
-      context,
+      context: { ...workflowRunToUpdate.context, ...context },
     };
 
     await workflowRunRepository.update(workflowRunId, partialUpdate);
