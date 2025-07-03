@@ -11,7 +11,6 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 
 @Injectable()
@@ -56,7 +55,7 @@ export class McpService {
   ) {
     if (apiKey) {
       const roles = await this.roleService.getWorkspaceRoles(workspaceId);
-      const adminRole = roles.find(role => role.label === ADMIN_ROLE_LABEL);
+      const adminRole = roles.find((role) => role.label === ADMIN_ROLE_LABEL);
 
       if (!adminRole) {
         throw new HttpException('Admin role not found', HttpStatus.FORBIDDEN);
