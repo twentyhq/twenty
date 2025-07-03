@@ -5,14 +5,15 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWebhook';
+import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
+import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
+import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '../useWebhookForm';
 
 // Mock dependencies
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSnackBar = jest.fn();
-const mockCreateOneRecord = jest.fn();
-const mockUpdateOneRecord = jest.fn();
-const mockDeleteOneRecord = jest.fn();
 
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
@@ -24,32 +25,108 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   }),
 }));
 
-jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
-  useCreateOneRecord: () => ({
-    createOneRecord: mockCreateOneRecord,
-  }),
-}));
+const createMockWebhookData = (overrides = {}) => ({
+  id: 'test-webhook-id',
+  targetUrl: 'https://test.com/webhook',
+  operations: ['person.created'],
+  description: 'Test webhook',
+  secret: 'test-secret',
+  ...overrides,
+});
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: () => ({
-    updateOneRecord: mockUpdateOneRecord,
-  }),
-}));
+const createSuccessfulCreateMock = (webhookData = {}) => ({
+  request: {
+    query: CREATE_WEBHOOK,
+    variables: {
+      input: {
+        targetUrl: 'https://test.com/webhook',
+        operations: ['person.created'],
+        description: 'Test webhook',
+        secret: 'test-secret',
+        ...webhookData,
+      },
+    },
+  },
+  result: {
+    data: {
+      createWebhook: createMockWebhookData(webhookData),
+    },
+  },
+});
 
-jest.mock('@/object-record/hooks/useDeleteOneRecord', () => ({
-  useDeleteOneRecord: () => ({
-    deleteOneRecord: mockDeleteOneRecord,
-  }),
-}));
+const createSuccessfulUpdateMock = (webhookId: string, webhookData = {}) => ({
+  request: {
+    query: UPDATE_WEBHOOK,
+    variables: {
+      input: {
+        id: webhookId,
+        targetUrl: 'https://updated.com/webhook',
+        operations: ['person.updated'],
+        description: 'Updated webhook',
+        secret: 'updated-secret',
+        ...webhookData,
+      },
+    },
+  },
+  result: {
+    data: {
+      updateWebhook: createMockWebhookData({
+        id: webhookId,
+        targetUrl: 'https://updated.com/webhook',
+        operations: ['person.updated'],
+        description: 'Updated webhook',
+        secret: 'updated-secret',
+        ...webhookData,
+      }),
+    },
+  },
+});
 
-jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
-  useFindOneRecord: () => ({
-    loading: false,
-  }),
-}));
+const createSuccessfulDeleteMock = (webhookId: string) => ({
+  request: {
+    query: DELETE_WEBHOOK,
+    variables: {
+      input: {
+        id: webhookId,
+      },
+    },
+  },
+  result: {
+    data: {
+      deleteWebhook: {
+        id: webhookId,
+      },
+    },
+  },
+});
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider addTypename={false}>
+const createGetWebhookMock = (webhookId: string, webhookData = {}) => ({
+  request: {
+    query: GET_WEBHOOK,
+    variables: {
+      input: {
+        id: webhookId,
+      },
+    },
+  },
+  result: {
+    data: {
+      webhook: createMockWebhookData({
+        id: webhookId,
+        ...webhookData,
+      }),
+    },
+  },
+});
+
+const Wrapper = ({
+  children,
+  mocks = [],
+}: {
+  children: ReactNode;
+  mocks?: any[];
+}) => (
+  <MockedProvider mocks={mocks} addTypename={false}>
     <RecoilRoot>
       <MemoryRouter>{children}</MemoryRouter>
     </RecoilRoot>
@@ -65,7 +142,7 @@ describe('useWebhookForm', () => {
     it('should initialize with default values in create mode', () => {
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
       expect(result.current.isCreationMode).toBe(true);
@@ -78,15 +155,15 @@ describe('useWebhookForm', () => {
     });
 
     it('should handle webhook creation successfully', async () => {
-      const mockCreatedWebhook = {
-        id: 'new-webhook-id',
-        targetUrl: 'https://test.com/webhook',
-      };
-      mockCreateOneRecord.mockResolvedValue(mockCreatedWebhook);
+      const mocks = [createSuccessfulCreateMock()];
 
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       const formData = {
@@ -98,14 +175,6 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockCreateOneRecord).toHaveBeenCalledWith({
-        id: expect.any(String),
-        targetUrl: 'https://test.com/webhook',
-        description: 'Test webhook',
-        operations: ['person.created'],
-        secret: 'test-secret',
-      });
-
       expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
         'Webhook https://test.com/webhook created successfully',
         { variant: 'success' },
@@ -113,12 +182,30 @@ describe('useWebhookForm', () => {
     });
 
     it('should handle creation errors', async () => {
-      const error = new Error('Creation failed');
-      mockCreateOneRecord.mockRejectedValue(error);
+      const errorMock = {
+        request: {
+          query: CREATE_WEBHOOK,
+          variables: {
+            input: {
+              targetUrl: 'https://test.com/webhook',
+              operations: ['person.created'],
+              description: 'Test webhook',
+              secret: 'test-secret',
+            },
+          },
+        },
+        error: new Error('Creation failed'),
+      };
+
+      const mocks = [errorMock];
 
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       const formData = {
@@ -136,11 +223,19 @@ describe('useWebhookForm', () => {
     });
 
     it('should clean and format operations correctly', async () => {
-      mockCreateOneRecord.mockResolvedValue({ id: 'test-id' });
+      const mocks = [
+        createSuccessfulCreateMock({
+          operations: ['person.created', 'company.updated'],
+        }),
+      ];
 
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       const formData = {
@@ -157,13 +252,10 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockCreateOneRecord).toHaveBeenCalledWith({
-        id: expect.any(String),
-        targetUrl: 'https://test.com/webhook',
-        description: 'Test webhook',
-        operations: ['person.created', 'company.updated'],
-        secret: 'test-secret',
-      });
+      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
+        'Webhook https://test.com/webhook created successfully',
+        { variant: 'success' },
+      );
     });
   });
 
@@ -171,20 +263,29 @@ describe('useWebhookForm', () => {
     const webhookId = 'test-webhook-id';
 
     it('should initialize correctly in edit mode', () => {
+      const mocks = [createGetWebhookMock(webhookId)];
+
       const { result } = renderHook(
         () =>
           useWebhookForm({
             mode: WebhookFormMode.Edit,
             webhookId,
           }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       expect(result.current.isCreationMode).toBe(false);
     });
 
     it('should handle webhook update successfully', async () => {
-      mockUpdateOneRecord.mockResolvedValue({});
+      const mocks = [
+        createGetWebhookMock(webhookId),
+        createSuccessfulUpdateMock(webhookId),
+      ];
 
       const { result } = renderHook(
         () =>
@@ -192,7 +293,11 @@ describe('useWebhookForm', () => {
             mode: WebhookFormMode.Edit,
             webhookId,
           }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       const formData = {
@@ -204,20 +309,31 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockUpdateOneRecord).toHaveBeenCalledWith({
-        idToUpdate: webhookId,
-        updateOneRecordInput: {
-          targetUrl: 'https://updated.com/webhook',
-          description: 'Updated webhook',
-          operations: ['person.updated'],
-          secret: 'updated-secret',
-        },
-      });
+      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
+        'Webhook https://updated.com/webhook updated successfully',
+        { variant: 'success' },
+      );
     });
 
     it('should handle update errors', async () => {
-      const error = new Error('Update failed');
-      mockUpdateOneRecord.mockRejectedValue(error);
+      const getWebhookMock = createGetWebhookMock(webhookId);
+      const updateErrorMock = {
+        request: {
+          query: UPDATE_WEBHOOK,
+          variables: {
+            input: {
+              id: webhookId,
+              targetUrl: 'https://test.com/webhook',
+              operations: ['person.created'],
+              description: 'Test webhook',
+              secret: 'test-secret',
+            },
+          },
+        },
+        error: new Error('Update failed'),
+      };
+
+      const mocks = [getWebhookMock, updateErrorMock];
 
       const { result } = renderHook(
         () =>
@@ -225,7 +341,11 @@ describe('useWebhookForm', () => {
             mode: WebhookFormMode.Edit,
             webhookId,
           }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
       const formData = {
@@ -247,7 +367,7 @@ describe('useWebhookForm', () => {
     it('should update operations correctly', () => {
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
       result.current.updateOperation(0, 'object', 'person');
@@ -259,7 +379,7 @@ describe('useWebhookForm', () => {
     it('should remove operations correctly', () => {
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
       result.current.formConfig.setValue('operations', [
@@ -283,7 +403,10 @@ describe('useWebhookForm', () => {
     const webhookId = 'test-webhook-id';
 
     it('should delete webhook successfully', async () => {
-      mockDeleteOneRecord.mockResolvedValue({});
+      const mocks = [
+        createGetWebhookMock(webhookId),
+        createSuccessfulDeleteMock(webhookId),
+      ];
 
       const { result } = renderHook(
         () =>
@@ -291,12 +414,15 @@ describe('useWebhookForm', () => {
             mode: WebhookFormMode.Edit,
             webhookId,
           }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
-      await result.current.deleteWebhook();
+      await result.current.handleDelete();
 
-      expect(mockDeleteOneRecord).toHaveBeenCalledWith(webhookId);
       expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
         'Webhook deleted successfully',
         { variant: 'success' },
@@ -306,10 +432,10 @@ describe('useWebhookForm', () => {
     it('should handle deletion without webhookId', async () => {
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
-      await result.current.deleteWebhook();
+      await result.current.handleDelete();
 
       expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
         'Webhook ID is required for deletion',
@@ -318,8 +444,19 @@ describe('useWebhookForm', () => {
     });
 
     it('should handle deletion errors', async () => {
-      const error = new Error('Deletion failed');
-      mockDeleteOneRecord.mockRejectedValue(error);
+      const errorMock = {
+        request: {
+          query: DELETE_WEBHOOK,
+          variables: {
+            input: {
+              id: webhookId,
+            },
+          },
+        },
+        error: new Error('Deletion failed'),
+      };
+
+      const mocks = [createGetWebhookMock(webhookId), errorMock];
 
       const { result } = renderHook(
         () =>
@@ -327,10 +464,14 @@ describe('useWebhookForm', () => {
             mode: WebhookFormMode.Edit,
             webhookId,
           }),
-        { wrapper: Wrapper },
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
       );
 
-      await result.current.deleteWebhook();
+      await result.current.handleDelete();
 
       expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Deletion failed', {
         variant: 'error',
@@ -342,7 +483,7 @@ describe('useWebhookForm', () => {
     it('should validate canSave property', () => {
       const { result } = renderHook(
         () => useWebhookForm({ mode: WebhookFormMode.Create }),
-        { wrapper: Wrapper },
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
       // Initially canSave should be false (form is not valid)

@@ -2,6 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
+import {
+  createWebhookCreateInput,
+  createWebhookUpdateInput,
+} from '@/settings/developers/utils/createWebhookInput';
+import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
   webhookFormSchema,
   WebhookFormValues,
@@ -9,8 +15,6 @@ import {
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import {
   useCreateWebhookMutation,
   useDeleteWebhookMutation,
@@ -18,12 +22,17 @@ import {
   useUpdateWebhookMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 type UseWebhookFormProps = {
   webhookId?: string;
   mode: WebhookFormMode;
+};
+
+const DEFAULT_FORM_VALUES: WebhookFormValues = {
+  targetUrl: '',
+  description: '',
+  operations: [{ object: '*', action: '*' }],
+  secret: '',
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
@@ -33,48 +42,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const isCreationMode = mode === WebhookFormMode.Create;
 
   const [createWebhook] = useCreateWebhookMutation();
-
   const [updateWebhook] = useUpdateWebhookMutation();
-
   const [deleteWebhook] = useDeleteWebhookMutation();
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
     resolver: zodResolver(webhookFormSchema),
-    defaultValues: {
-      targetUrl: '',
-      description: '',
-      operations: [
-        {
-          object: '*',
-          action: '*',
-        },
-      ],
-      secret: '',
-    },
+    defaultValues: DEFAULT_FORM_VALUES,
   });
-
-  const addEmptyOperationIfNecessary = (
-    newOperations: WebhookOperationType[],
-  ): WebhookOperationType[] => {
-    if (
-      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
-      !newOperations.some((op) => op.object === null)
-    ) {
-      return [...newOperations, WEBHOOK_EMPTY_OPERATION];
-    }
-    return newOperations;
-  };
-
-  const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
-    return Array.from(
-      new Set(
-        operations
-          .filter((op) => isDefined(op.object) && isDefined(op.action))
-          .map((op) => `${op.object}.${op.action}`),
-      ),
-    );
-  };
 
   const { loading, error } = useGetWebhookQuery({
     skip: isCreationMode || !webhookId,
@@ -85,13 +60,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       const webhook = data.webhook;
       if (!webhook) return;
 
-      const baseOperations =
-        webhook?.operations && webhook.operations.length > 0
-          ? webhook.operations.map((op: string) => {
-              const [object, action] = op.split('.');
-              return { object, action };
-            })
-          : [];
+      const baseOperations = webhook?.operations?.length
+        ? parseOperationsFromStrings(webhook.operations)
+        : [];
       const operations = addEmptyOperationIfNecessary(baseOperations);
 
       formConfig.reset({
@@ -115,29 +86,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleCreate = async (formValues: WebhookFormValues) => {
     try {
-      const cleanedOperations = cleanAndFormatOperations(formValues.operations);
-
-      const webhookData = {
-        id: v4(),
-        targetUrl: formValues.targetUrl.trim(),
-        operations: cleanedOperations,
-        description: formValues.description,
-        secret: formValues.secret,
-      };
-
-      const { data: createdWebhookData } = await createWebhook({
-        variables: {
-          input: webhookData,
-        },
-      });
-
-      const createdWebhook = createdWebhookData?.createWebhook;
+      const input = createWebhookCreateInput(formValues);
+      const { data } = await createWebhook({ variables: { input } });
+      const createdWebhook = data?.createWebhook;
 
       enqueueSnackBar(
         `Webhook ${createdWebhook?.targetUrl} created successfully`,
-        {
-          variant: SnackBarVariant.Success,
-        },
+        { variant: SnackBarVariant.Success },
       );
 
       navigate(
@@ -160,31 +115,15 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
 
     try {
-      const cleanedOperations = cleanAndFormatOperations(formValues.operations);
-
-      const webhookData = {
-        id: webhookId,
-        targetUrl: formValues.targetUrl.trim(),
-        operations: cleanedOperations,
-        description: formValues.description,
-        secret: formValues.secret,
-      };
-
-      const { data: updatedWebhookData } = await updateWebhook({
-        variables: {
-          input: webhookData,
-        },
-      });
-
-      const updatedWebhook = updatedWebhookData?.updateWebhook;
+      const input = createWebhookUpdateInput(formValues, webhookId);
+      const { data } = await updateWebhook({ variables: { input } });
+      const updatedWebhook = data?.updateWebhook;
 
       formConfig.reset(formValues);
 
       enqueueSnackBar(
         `Webhook ${updatedWebhook?.targetUrl} updated successfully`,
-        {
-          variant: SnackBarVariant.Success,
-        },
+        { variant: SnackBarVariant.Success },
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
@@ -236,11 +175,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
     try {
       await deleteWebhook({
-        variables: {
-          input: {
-            id: webhookId,
-          },
-        },
+        variables: { input: { id: webhookId } },
       });
       enqueueSnackBar('Webhook deleted successfully', {
         variant: SnackBarVariant.Success,
