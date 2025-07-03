@@ -3,8 +3,8 @@ import { within } from '@storybook/test';
 
 import { SettingsDevelopersWebhookNew } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
