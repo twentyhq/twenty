@@ -12,6 +12,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { isDefined } from 'twenty-shared/utils';
 
 export type UseSingleExportTableDataOptions = {
   filename: string;
@@ -73,7 +74,7 @@ export const useExportSingleRecord = ({
     withSoftDeleted: true,
   });
   const download = () => {
-    if (error || !record) {
+    if (isDefined(error) || !isDefined(record)) {
       return;
     }
     downloadCsv(record, finalColumns);
