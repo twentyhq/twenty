@@ -31,6 +31,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowRunStepInfo } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -52,6 +53,15 @@ export type WorkflowRunOutput = {
   };
   stepsOutput?: Record<string, WorkflowExecutorOutput>;
   error?: string;
+};
+
+export type WorkflowRunState = {
+  flow: {
+    trigger: WorkflowTrigger;
+    steps: WorkflowAction[];
+  };
+  stepInfos: Record<string, WorkflowRunStepInfo>;
+  workflowRunError?: string;
 };
 
 const NAME_FIELD_NAME = 'name';
@@ -171,6 +181,16 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any> | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`State`,
+    description: msg`State of the workflow run`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsNullable()
+  state: WorkflowRunState | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
