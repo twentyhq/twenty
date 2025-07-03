@@ -4,11 +4,10 @@ import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
 import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
-import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 
 import { McpController } from './mcp.controller';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('McpController', () => {
   let controller: McpController;
@@ -30,13 +29,12 @@ describe('McpController', () => {
           provide: AccessTokenService,
           useValue: jest.fn(),
         },
+        {
+          provide: WorkspaceCacheStorageService,
+          useValue: jest.fn(),
+        },
       ],
-    })
-      .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: jest.fn().mockReturnValue(true) })
-      .overrideGuard(WorkspaceAuthGuard)
-      .useValue({ canActivate: jest.fn().mockReturnValue(true) })
-      .compile();
+    }).compile();
 
     controller = module.get<McpController>(McpController);
     mcpService = module.get(McpService);

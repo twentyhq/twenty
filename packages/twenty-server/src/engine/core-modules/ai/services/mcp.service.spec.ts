@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -14,6 +13,7 @@ import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/consta
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 import { McpService } from './mcp.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('McpService', () => {
   let service: McpService;
@@ -41,9 +41,10 @@ describe('McpService', () => {
       getRoleIdForUserWorkspace: jest.fn(),
     };
 
-    const mockRoleService = {
-      getWorkspaceRoles: jest.fn(),
-    };
+    const mockAdminRole = {
+      id: mockAdminRoleId,
+      label: ADMIN_ROLE_LABEL,
+    } as RoleEntity;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -61,18 +62,9 @@ describe('McpService', () => {
           useValue: mockUserRoleService,
         },
         {
-          provide: RoleService,
-          useValue: mockRoleService,
-        },
-        {
           provide: getRepositoryToken(RoleEntity, 'core'),
           useValue: {
-            find: jest.fn().mockResolvedValue([
-              {
-                id: 'admin-role-1',
-                label: ADMIN_ROLE_LABEL,
-              },
-            ]),
+            find: jest.fn().mockResolvedValue([mockAdminRole]),
           },
         },
       ],
@@ -82,7 +74,6 @@ describe('McpService', () => {
     featureFlagService = module.get(FeatureFlagService);
     toolService = module.get(ToolService);
     userRoleService = module.get(UserRoleService);
-    roleService = module.get(RoleService);
   });
 
   it('should be defined', () => {
@@ -163,16 +154,14 @@ describe('McpService', () => {
       );
     });
 
-    it('should throw when admin role is not found with apiKey', async () => {
-      roleService.getWorkspaceRoles.mockResolvedValue([
-        { id: 'other-role', label: 'Other' } as RoleEntity,
-      ]);
-
-      await expect(
-        service.getRoleId('workspace-1', undefined, mockApiKey),
-      ).rejects.toThrow(
-        new HttpException('Admin role not found', HttpStatus.FORBIDDEN),
+    it('should return admin role ID when apiKey is provided', async () => {
+      const result = await service.getRoleId(
+        'workspace-1',
+        undefined,
+        mockApiKey,
       );
+
+      expect(result).toBe(mockAdminRoleId);
     });
   });
 
@@ -256,12 +245,6 @@ describe('McpService', () => {
 
     it('should handle tools/call method with apiKey', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
-      const mockAdminRole = {
-        id: mockAdminRoleId,
-        label: ADMIN_ROLE_LABEL,
-      } as RoleEntity;
-
-      roleService.getWorkspaceRoles.mockResolvedValue([mockAdminRole]);
 
       const mockTool = {
         description: 'Test tool',
@@ -302,9 +285,6 @@ describe('McpService', () => {
         },
       });
 
-      expect(roleService.getWorkspaceRoles).toHaveBeenCalledWith(
-        mockWorkspace.id,
-      );
       expect(toolService.listTools).toHaveBeenCalledWith(
         mockAdminRoleId,
         mockWorkspace.id,

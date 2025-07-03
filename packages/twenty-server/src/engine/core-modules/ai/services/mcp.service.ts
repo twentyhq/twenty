@@ -1,7 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { ToolSet } from 'ai';
+import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -11,7 +13,7 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Injectable()
 export class McpService {
@@ -19,7 +21,8 @@ export class McpService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly toolService: ToolService,
     private readonly userRoleService: UserRoleService,
-    private readonly roleService: RoleService,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
@@ -54,14 +57,19 @@ export class McpService {
     apiKey?: string,
   ) {
     if (apiKey) {
-      const roles = await this.roleService.getWorkspaceRoles(workspaceId);
-      const adminRole = roles.find((role) => role.label === ADMIN_ROLE_LABEL);
+      const roles = await this.roleRepository.find({
+        where: {
+          workspaceId,
+          label: ADMIN_ROLE_LABEL,
+        },
+        relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
+      });
 
-      if (!adminRole) {
+      if (roles.length === 0) {
         throw new HttpException('Admin role not found', HttpStatus.FORBIDDEN);
       }
 
-      return adminRole.id;
+      return roles[0].id;
     }
 
     if (!userWorkspaceId) {
