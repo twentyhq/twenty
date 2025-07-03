@@ -62,7 +62,6 @@ export class McpService {
           workspaceId,
           label: ADMIN_ROLE_LABEL,
         },
-        relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
       });
 
       if (roles.length === 0) {
