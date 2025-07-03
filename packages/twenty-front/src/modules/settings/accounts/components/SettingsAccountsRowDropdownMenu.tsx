@@ -67,7 +67,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                     navigate(SettingsPath.EditSmtpConnection, {
                       connectedAccountId: account.id,
                     });
-                    closeDropdown(dropdownId)
+                    closeDropdown(dropdownId);
                   }}
                 />
               ) : (
@@ -76,7 +76,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   text={t`Emails settings`}
                   onClick={() => {
                     navigate(SettingsPath.AccountsEmails);
-                    closeDropdown(dropdownId)
+                    closeDropdown(dropdownId);
                   }}
                 />
               )}
