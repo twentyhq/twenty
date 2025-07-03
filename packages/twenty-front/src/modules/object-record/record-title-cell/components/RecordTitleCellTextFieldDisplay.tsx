@@ -1,9 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -40,18 +38,16 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
   const isEmpty =
     recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
-  const { openInlineCell } = useInlineCell();
-
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { openRecordTitleCell } = useRecordTitleCell();
 
   return (
     <StyledDiv
       onClick={() => {
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: TitleInputHotkeyScope.TitleInput,
-          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+        openRecordTitleCell({
+          recordId,
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          containerType: RecordTitleCellContainerType.ShowPage,
         });
-        openInlineCell();
       }}
     >
       {isEmpty ? (
