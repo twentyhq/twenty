@@ -23,7 +23,7 @@ export interface CreateObjectAction {
 
 export interface UpdateObjectAction {
   type: 'update_object';
-  object: FromTo<Partial<ObjectMetadataEntity>>;
+  updates: (FromTo<Partial<ObjectMetadataEntity>> & {property: string})[];
 }
 
 export interface DeleteObjectAction {

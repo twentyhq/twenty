@@ -51,35 +51,34 @@ const compareTwoWorkspaceMigrationObjectInput = ({
       objectPropertiesToIgnore.includes(property),
   });
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
-  const objectPropertiesToUpdate: UpdateObjectAction['object'] = {
-    from: {},
-    to: {},
-  };
 
-  return objectMetadataDifference.reduce((acc, difference) => {
+  return objectMetadataDifference.flatMap<
+    UpdateObjectAction['updates'][number]
+  >((difference) => {
     switch (difference.type) {
       case 'CHANGE': {
         if (
           difference.oldValue === null &&
           (difference.value === null || difference.value === undefined)
         ) {
-          return acc;
+          return [];
         }
         const property = difference.path[0];
 
         // TODO investigate why it would be a number, in case of array I guess ?
         if (typeof property === 'number') {
-          return acc;
+          return [];
         }
 
         // Could be handled directly from the diff we do above
         if (
           !allowedObjectProps.includes(property as keyof ObjectMetadataEntity)
         ) {
-          return acc;
+          return [];
         }
 
         return {
+          property,
           from: difference.oldValue,
           to: difference.value,
         };
@@ -87,13 +86,13 @@ const compareTwoWorkspaceMigrationObjectInput = ({
       case 'CREATE':
       case 'REMOVE': {
         // Should never occurs ?
-        return acc;
+        return [];
       }
       default: {
         assertUnreachable(difference, 'TODO');
       }
     }
-  }, objectPropertiesToUpdate);
+  });
 };
 
 const objectMetadataDispatcher = ({
@@ -164,13 +163,15 @@ export const buildWorkspaceObjectMigrationV2 = (
     });
   });
 
-  const updateMigrationsDiffResults = updated.map(
-    compareTwoWorkspaceMigrationObjectInput,
-  );
-  updateMigrationsDiffResults.forEach((objectUpdatedProperties) => {
+  updated.forEach(({ from, to }) => {
+    const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
+      from,
+      to,
+    });
+
     actions.push({
       type: 'update_object',
-      object: objectUpdatedProperties,
+      updates: objectUpdatedProperties,
     });
   });
 
