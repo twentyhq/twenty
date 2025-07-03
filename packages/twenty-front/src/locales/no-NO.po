@@ -4001,6 +4001,11 @@ msgstr "Ingen metrikkdata tilgjengelig"
 #~ msgid "No more members to assign"
 #~ msgstr "Ingen flere medlemmer å tildele"
 
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
+
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
