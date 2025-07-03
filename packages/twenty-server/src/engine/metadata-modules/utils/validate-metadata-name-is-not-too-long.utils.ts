@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -7,7 +9,7 @@ import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modu
 export const validateMetadataNameIsNotTooLongOrThrow = (name: string) => {
   if (exceedsDatabaseIdentifierMaximumLength(name)) {
     throw new InvalidMetadataException(
-      `String "${name}" exceeds 63 characters limit`,
+      t`Name is too long: it exceeds the 63 characters limit.`,
       InvalidMetadataExceptionCode.EXCEEDS_MAX_LENGTH,
     );
   }

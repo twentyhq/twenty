@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -14,7 +16,7 @@ export const validateMetadataNameStartWithLowercaseLetterAndContainDigitsNorLett
       )
     ) {
       throw new InvalidMetadataException(
-        `String "${name}" is not valid: must start with lowercase letter and contain only alphanumeric letters`,
+        t`String "${name}" is not valid: must start with lowercase letter and contain only alphanumeric letters`,
         InvalidMetadataExceptionCode.INVALID_STRING,
       );
     }

@@ -1,6 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 
@@ -20,7 +19,7 @@ import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificatio
 export const VerifyEmailEffect = () => {
   const { getLoginTokenFromEmailVerificationToken } = useAuth();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
@@ -39,9 +38,11 @@ export const VerifyEmailEffect = () => {
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        enqueueSnackBar(t`Invalid email verification link.`, {
-          dedupeKey: 'email-verification-link-dedupe-key',
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: t`Invalid email verification link.`,
+          options: {
+            dedupeKey: 'email-verification-link-dedupe-key',
+          },
         });
         return navigate(AppPath.SignInUp);
       }
@@ -53,9 +54,11 @@ export const VerifyEmailEffect = () => {
             email,
           );
 
-        enqueueSnackBar(t`Email verified.`, {
-          dedupeKey: 'email-verification-dedupe-key',
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Email verified.`,
+          options: {
+            dedupeKey: 'email-verification-dedupe-key',
+          },
         });
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
@@ -71,14 +74,13 @@ export const VerifyEmailEffect = () => {
 
         verifyLoginToken(loginToken.token);
       } catch (error) {
-        const message: string =
-          error instanceof ApolloError
-            ? error.message
-            : 'Email verification failed';
-
-        enqueueSnackBar(t`${message}`, {
-          dedupeKey: 'email-verification-error-dedupe-key',
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          ...(error instanceof ApolloError
+            ? { apolloError: error }
+            : { message: t`Email verification failed` }),
+          options: {
+            dedupeKey: 'email-verification-error-dedupe-key',
+          },
         });
         if (
           error instanceof ApolloError &&

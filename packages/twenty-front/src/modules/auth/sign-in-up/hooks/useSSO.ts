@@ -2,16 +2,15 @@
 
 import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 
 export const useSSO = () => {
   const apolloClient = useApolloClient();
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { redirect } = useRedirect();
   const redirectToSSOLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSSOResult;
@@ -26,8 +25,8 @@ export const useSSO = () => {
         },
       });
     } catch (error: any) {
-      return enqueueSnackBar(error?.message ?? 'Unknown error', {
-        variant: SnackBarVariant.Error,
+      return enqueueErrorSnackBar({
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
       });
     }
 

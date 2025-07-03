@@ -3,7 +3,6 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -65,7 +64,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   };
 
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
 
   const isDefaultView = currentView?.key === 'INDEX';
 
@@ -171,10 +170,12 @@ export const ObjectOptionsDropdownMenuContent = () => {
             onEnter={() => {
               const currentUrl = window.location.href;
               navigator.clipboard.writeText(currentUrl);
-              enqueueSnackBar('Link copied to clipboard', {
-                variant: SnackBarVariant.Success,
-                icon: <IconCopy size={theme.icon.size.md} />,
-                duration: 2000,
+              enqueueSuccessSnackBar({
+                message: t`Link copied to clipboard`,
+                options: {
+                  icon: <IconCopy size={theme.icon.size.md} />,
+                  duration: 2000,
+                },
               });
             }}
           >
@@ -183,10 +184,12 @@ export const ObjectOptionsDropdownMenuContent = () => {
               onClick={() => {
                 const currentUrl = window.location.href;
                 navigator.clipboard.writeText(currentUrl);
-                enqueueSnackBar('Link copied to clipboard', {
-                  variant: SnackBarVariant.Success,
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
+                enqueueSuccessSnackBar({
+                  message: t`Link copied to clipboard`,
+                  options: {
+                    icon: <IconCopy size={theme.icon.size.md} />,
+                    duration: 2000,
+                  },
                 });
               }}
               LeftIcon={IconCopy}
