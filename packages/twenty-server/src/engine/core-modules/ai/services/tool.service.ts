@@ -156,38 +156,6 @@ export class ToolService {
           },
         };
       }
-
-      if (objectPermission.canDestroy) {
-        tools[`destroy_${objectMetadata.nameSingular}`] = {
-          description: `Permanently delete a ${objectMetadata.labelSingular} record from the database. This action is irreversible and completely removes all data. Use with extreme caution - consider soft delete for temporary removal.`,
-          parameters: z.object({
-            id: z
-              .string()
-              .describe('The unique UUID of the record to permanently delete'),
-          }),
-          execute: async (parameters) => {
-            return this.destroyRecord(
-              objectMetadata.nameSingular,
-              parameters,
-              workspaceId,
-              roleId,
-            );
-          },
-        };
-
-        tools[`destroy_many_${objectMetadata.nameSingular}`] = {
-          description: `Permanently delete multiple ${objectMetadata.labelSingular} records at once by providing an array of record IDs. This action is irreversible and completely removes all data from all specified records. Use with extreme caution.`,
-          parameters: generateBulkDeleteToolSchema(),
-          execute: async (parameters) => {
-            return this.destroyManyRecords(
-              objectMetadata.nameSingular,
-              parameters,
-              workspaceId,
-              roleId,
-            );
-          },
-        };
-      }
     });
 
     return tools;

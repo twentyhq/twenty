@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AGENT_GQL_FIELDS } from 'test/integration/constants/agent-gql-fields.constants';
 
-import { AgentService } from '../../../../../src/engine/metadata-modules/agent/agent.service';
-import { AgentResolver } from '../../../../../src/engine/metadata-modules/agent/agent.resolver';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentResolver } from 'src/engine/metadata-modules/agent/agent.resolver';
 import {
   AgentException,
   AgentExceptionCode,
-} from '../../../../../src/engine/metadata-modules/agent/agent.exception';
+} from 'src/engine/metadata-modules/agent/agent.exception';
 
 // Mock the agent service
 jest.mock('../../../../../src/engine/metadata-modules/agent/agent.service');
@@ -43,8 +42,7 @@ describe('agentResolver', () => {
           },
         },
       ],
-    })
-    .compile();
+    }).compile();
 
     // Get the mocked services from the module
     agentService = module.get<AgentService>(AgentService);
