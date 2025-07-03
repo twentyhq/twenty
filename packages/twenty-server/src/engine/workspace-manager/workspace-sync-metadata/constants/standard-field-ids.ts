@@ -486,6 +486,7 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
   output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
   context: '20202020-189c-478a-b867-d72feaf5926a',
+  state: '20202020-611f-45f3-9cde-d64927e8ec57',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
   searchVector: '20202020-0b91-4ded-b1ac-cbd5efa58cb9',

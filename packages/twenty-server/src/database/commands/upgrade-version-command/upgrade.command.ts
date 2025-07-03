@@ -30,6 +30,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 
 const execPromise = promisify(exec);
 
@@ -145,6 +146,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
 
     // 1.2 Commands
+    protected readonly migrateWorkflowRunStatesCommand: MigrateWorkflowRunStatesCommand,
     protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
 
     // 1.3 Commands
@@ -199,7 +201,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_120: VersionCommands = {
       beforeSyncMetadata: [this.addEnqueuedStatusToWorkflowRunCommand],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
     };
 
     const commands_130: VersionCommands = {
