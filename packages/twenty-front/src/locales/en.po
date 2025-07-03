@@ -1762,6 +1762,11 @@ msgstr "delete"
 msgid "Delete"
 msgstr "Delete"
 
+#. js-lingui-id: 2nRIIp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Delete {objectLabel}"
+msgstr "Delete {objectLabel}"
+
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -1797,8 +1802,8 @@ msgstr "Delete records"
 
 #. js-lingui-id: 0ptEoK
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete Records on {objectLabel}"
-msgstr "Delete Records on {objectLabel}"
+#~ msgid "Delete Records on {objectLabel}"
+#~ msgstr "Delete Records on {objectLabel}"
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -1922,10 +1927,15 @@ msgstr "destroy"
 msgid "Destroy"
 msgstr "Destroy"
 
+#. js-lingui-id: vI0W/N
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Destroy {objectLabel}"
+msgstr "Destroy {objectLabel}"
+
 #. js-lingui-id: fq4Wxy
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy Records on {objectLabel}"
-msgstr "Destroy Records on {objectLabel}"
+#~ msgid "Destroy Records on {objectLabel}"
+#~ msgstr "Destroy Records on {objectLabel}"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2061,6 +2071,11 @@ msgstr "Earliest date"
 msgid "Edit"
 msgstr "Edit"
 
+#. js-lingui-id: fGxkii
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Edit {objectLabel}"
+msgstr "Edit {objectLabel}"
+
 #. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Edit billing interval"
@@ -2094,8 +2109,8 @@ msgstr "Edit payment method, see your invoices and more"
 
 #. js-lingui-id: MGkYcE
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit Records on {objectLabel}"
-msgstr "Edit Records on {objectLabel}"
+#~ msgid "Edit Records on {objectLabel}"
+#~ msgstr "Edit Records on {objectLabel}"
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -4903,6 +4918,11 @@ msgstr "Security"
 msgid "see"
 msgstr "see"
 
+#. js-lingui-id: rJnbMG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "See {objectLabel}"
+msgstr "See {objectLabel}"
+
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4931,8 +4951,8 @@ msgstr "See deleted workflows"
 
 #. js-lingui-id: FvBwjM
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See Records on {objectLabel}"
-msgstr "See Records on {objectLabel}"
+#~ msgid "See Records on {objectLabel}"
+#~ msgstr "See Records on {objectLabel}"
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx

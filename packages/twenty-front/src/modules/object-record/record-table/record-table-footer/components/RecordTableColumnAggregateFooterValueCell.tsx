@@ -3,7 +3,7 @@ import { RECORD_TABLE_TD_WIDTH } from '@/object-record/record-table/record-table
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -60,7 +60,12 @@ export const RecordTableColumnAggregateFooterValueCell = ({
   isFirstCell: boolean;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { isDropdownOpen } = useDropdown(dropdownId);
+
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
+  );
+
   const theme = useTheme();
   const { viewFieldId, fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,

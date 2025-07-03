@@ -17,16 +17,8 @@ export class MicrosoftClientProvider {
       'refreshToken' | 'id'
     >,
   ): Promise<Client> {
-    try {
-      return await this.microsoftOAuth2ClientManagerService.getOAuth2Client(
-        connectedAccount.refreshToken,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to get Microsoft client: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      );
-    }
+    return await this.microsoftOAuth2ClientManagerService.getOAuth2Client(
+      connectedAccount.refreshToken,
+    );
   }
 }

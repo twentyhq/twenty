@@ -1,4 +1,4 @@
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -87,7 +87,7 @@ export const TabList = ({
   const hasHiddenTabs = hiddenTabsCount > 0;
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -215,7 +215,7 @@ export const TabList = ({
               <TabListDropdown
                 dropdownId={dropdownId}
                 onClose={() => {
-                  closeDropdown();
+                  closeDropdown(dropdownId);
                 }}
                 overflow={{
                   hiddenTabsCount,

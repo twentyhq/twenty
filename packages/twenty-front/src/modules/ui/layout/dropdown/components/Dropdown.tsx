@@ -3,11 +3,14 @@ import { DropdownInternalContainer } from '@/ui/layout/dropdown/components/inter
 import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownResizeMinHeight';
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
@@ -24,7 +27,6 @@ import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useDropdown } from '../hooks/useDropdown';
 
 type Width = `${string}px` | `${number}%` | 'auto' | number;
 const StyledDropdownFallbackAnchor = styled.div`
@@ -75,7 +77,12 @@ export const Dropdown = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownProps) => {
-  const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
+  );
+
+  const { toggleDropdown } = useToggleDropdown();
 
   const isUsingOffset =
     isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
@@ -147,10 +154,12 @@ export const Dropdown = ({
       event.stopPropagation();
       event.preventDefault();
 
-      toggleDropdown(globalHotkeysConfig);
-      onClickOutside?.();
+      toggleDropdown({
+        dropdownComponentInstanceIdFromProps: dropdownId,
+        globalHotkeysConfig,
+      });
     },
-    [globalHotkeysConfig, onClickOutside, toggleDropdown],
+    [globalHotkeysConfig, toggleDropdown, dropdownId],
   );
 
   return (

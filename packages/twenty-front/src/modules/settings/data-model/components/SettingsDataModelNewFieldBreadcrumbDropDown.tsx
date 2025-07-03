@@ -3,7 +3,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -66,7 +66,7 @@ const StyledButton = styled(Button)`
 
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const dropdownId = `settings-object-new-field-breadcrumb-dropdown`;
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
   const navigate = useNavigateSettings();
   const location = useLocation();
   const { objectNamePlural = '' } = useParams();
@@ -90,7 +90,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         fieldType ? { fieldType } : undefined,
       );
     }
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (

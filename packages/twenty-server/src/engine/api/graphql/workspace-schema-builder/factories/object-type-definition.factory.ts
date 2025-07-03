@@ -37,12 +37,12 @@ export class ObjectTypeDefinitionFactory {
       type: new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        fields: generateFields(
+        fields: generateFields({
           objectMetadata,
           kind,
           options,
-          this.outputTypeFactory,
-        ),
+          typeFactory: this.outputTypeFactory,
+        }),
       }),
     };
   }

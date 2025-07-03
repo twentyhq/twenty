@@ -1,10 +1,11 @@
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import {
   DeleteOneFieldMetadataItemMutation,
   DeleteOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -25,7 +26,7 @@ export const useDeleteOneFieldMetadataItem = () => {
     setRecordIndexKanbanAggregateOperation,
   ] = useRecoilState(recordIndexKanbanAggregateOperationState);
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
@@ -36,7 +37,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         fieldMetadataId: null,
       });
     }
-    await apolloClient.refetchQueries({
+    await apolloCoreClient.refetchQueries({
       include: ['FindManyViews'],
     });
   };

@@ -4,7 +4,8 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -43,12 +44,8 @@ export const UpdateViewButtonGroup = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { closeDropdown: closeUpdateViewButtonDropdown } = useDropdown(
-    UPDATE_VIEW_BUTTON_DROPDOWN_ID,
-  );
-  const { openDropdown: openViewPickerDropdown } = useDropdown(
-    VIEW_PICKER_DROPDOWN_ID,
-  );
+  const { closeDropdown: closeUpdateViewButtonDropdown } = useCloseDropdown();
+  const { openDropdown: openViewPickerDropdown } = useOpenDropdown();
   const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
@@ -60,11 +57,13 @@ export const UpdateViewButtonGroup = () => {
       return;
     }
 
-    openViewPickerDropdown();
+    openViewPickerDropdown({
+      dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
+    });
     setViewPickerReferenceViewId(currentViewId);
     setViewPickerMode('create-from-current');
 
-    closeUpdateViewButtonDropdown();
+    closeUpdateViewButtonDropdown(UPDATE_VIEW_BUTTON_DROPDOWN_ID);
   };
 
   const handleCreateViewClick = () => {
