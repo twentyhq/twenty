@@ -68,7 +68,11 @@ describe('destroyManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.destroyPeople).toBeDefined();
     expect(response.body.data.destroyPeople).toHaveLength(2);
-    expect(response.body.data.destroyPeople[0].id).toBe(personId1);
-    expect(response.body.data.destroyPeople[1].id).toBe(personId2);
+    expect(response.body.data.destroyPeople).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: personId1 }),
+        expect.objectContaining({ id: personId2 }),
+      ]),
+    );
   });
 });

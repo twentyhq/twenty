@@ -3,7 +3,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -41,7 +41,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
   const [editedEnvVariable, setEditedEnvVariable] = useState(envVariable);
   const [editMode, setEditMode] = useState(initialEditMode);
   const dropDownId = `settings-environment-variable-dropdown-${envVariable.id}`;
-  const { closeDropdown } = useDropdown(dropDownId);
+  const { closeDropdown } = useCloseDropdown();
 
   return editMode ? (
     <StyledEditModeTableRow>
@@ -117,7 +117,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
                   LeftIcon={IconPencil}
                   onClick={() => {
                     setEditMode(true);
-                    closeDropdown();
+                    closeDropdown(dropDownId);
                   }}
                 />
                 <MenuItem
@@ -125,7 +125,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
                   LeftIcon={IconTrash}
                   onClick={() => {
                     onDelete();
-                    closeDropdown();
+                    closeDropdown(dropDownId);
                   }}
                 />
               </DropdownMenuItemsContainer>

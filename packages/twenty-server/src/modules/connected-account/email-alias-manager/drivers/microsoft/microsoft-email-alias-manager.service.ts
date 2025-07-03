@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 
 @Injectable()
 export class MicrosoftEmailAliasManagerService {
@@ -19,6 +24,12 @@ export class MicrosoftEmailAliasManagerService {
       .api('/me?$select=proxyAddresses')
       .get()
       .catch((error) => {
+        if (isAccessTokenRefreshingError(error?.message)) {
+          throw new MessageImportDriverException(
+            error.message,
+            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+          );
+        }
         throw new Error(`Failed to fetch email aliases: ${error.message}`);
       });
 
