@@ -9,6 +9,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
+import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -95,58 +96,12 @@ const compareTwoWorkspaceMigrationObjectInput = ({
   });
 };
 
-const objectMetadataDispatcher = ({
-  from,
-  to,
-}: BuildWorkspaceMigrationV2Args) => {
-  const initialDispatcher: {
-    deleted: WorkspaceMigrationObjectInput[];
-    created: WorkspaceMigrationObjectInput[];
-    updated: FromTo<WorkspaceMigrationObjectInput>[];
-  } = {
-    deleted: [],
-    updated: [],
-    created: [],
-  };
-
-  // Create maps for faster lookups
-  const fromMap = new Map(from.map((obj) => [obj.uniqueIdentifier, obj]));
-  const toMap = new Map(to.map((obj) => [obj.uniqueIdentifier, obj]));
-
-  // Find deleted objects (exist in 'from' but not in 'to')
-  for (const [identifier, fromObj] of fromMap) {
-    if (!toMap.has(identifier)) {
-      initialDispatcher.deleted.push(fromObj);
-    }
-  }
-
-  // Find created objects (exist in 'to' but not in 'from')
-  for (const [identifier, toObj] of toMap) {
-    if (!fromMap.has(identifier)) {
-      initialDispatcher.created.push(toObj);
-    }
-  }
-
-  // Find updated objects (exist in both, need to compare)
-  for (const [identifier, fromObj] of fromMap) {
-    const toObj = toMap.get(identifier);
-    if (toObj) {
-      initialDispatcher.updated.push({
-        from: fromObj,
-        to: toObj,
-      });
-    }
-  }
-
-  return initialDispatcher;
-};
-
 // Should return WorkspaceObjectMigrationV2 ?
-export const buildWorkspaceObjectMigrationV2 = (
-  objectMetadataInputs: BuildWorkspaceMigrationV2Args,
-): WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] => {
-  const { created, deleted, updated } =
-    objectMetadataDispatcher(objectMetadataInputs);
+export const buildWorkspaceObjectMigrationV2 = ({
+  created,
+  deleted,
+  updated,
+}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] => {
   const objectWorkspaceMigrations: WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] =
     [];
 
@@ -164,7 +119,6 @@ export const buildWorkspaceObjectMigrationV2 = (
 
   deleted.forEach((objectMetadata) => {
     objectWorkspaceMigrations.push({
-      uniqueIdentifier: objectMetadata.uniqueIdentifier,
       actions: [
         {
           type: 'delete_object',
@@ -181,7 +135,6 @@ export const buildWorkspaceObjectMigrationV2 = (
     });
 
     objectWorkspaceMigrations.push({
-      uniqueIdentifier: to.uniqueIdentifier,
       actions: [
         {
           type: 'update_object',

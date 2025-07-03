@@ -7,6 +7,5 @@ export interface WorkspaceMigrationV2<
   // createdAt: string;
   // name: string;
   // description?: string;
-  uniqueIdentifier: string
   actions: TActions[];
 }
