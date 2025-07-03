@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse } from 'msw';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -9,7 +9,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { graphqlMocks } from '~/testing/graphqlMocks';
+import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 
 const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
@@ -53,7 +53,7 @@ export const EditMode: Story = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('GetWebhook', () => {
+        metadataGraphql.query('GetWebhook', () => {
           return HttpResponse.json({
             data: {
               webhook: {

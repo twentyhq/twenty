@@ -73,9 +73,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         secret: webhook.secret || '',
       });
     },
-    onError: (error) => {
+    onError: () => {
       enqueueErrorSnackBar({
-        message: t`Failed to load webhook}`,
+        message: t`Failed to load webhook`,
       });
     },
   });

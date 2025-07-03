@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse } from 'msw';
 
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { SettingsDevelopersWebhookDetail } from '../../webhooks/components/SettingsDevelopersWebhookDetail';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -21,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('GetWebhook', () => {
+        metadataGraphql.query('GetWebhook', () => {
           return HttpResponse.json({
             data: {
               webhook: {
