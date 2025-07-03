@@ -11,20 +11,20 @@ import { v4 } from 'uuid';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  PASSWORD_REGEX,
-  compareHash,
-  hashPassword,
+    PASSWORD_REGEX,
+    compareHash,
+    hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrPartialUserWithPicture,
-  PartialUserWithPicture,
-  SignInUpBaseParams,
-  SignInUpNewUserPayload,
+    AuthProviderWithPasswordType,
+    ExistingUserOrPartialUserWithPicture,
+    PartialUserWithPicture,
+    SignInUpBaseParams,
+    SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -69,7 +69,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          displayedErrorMessage: t`Email is required`,
+          userFriendlyMessage: t`Email is required`,
         },
       );
     }
@@ -116,7 +116,7 @@ export class SignInUpService {
         'Password too weak',
         AuthExceptionCode.INVALID_INPUT,
         {
-          displayedErrorMessage: t`Password too weak`,
+          userFriendlyMessage: t`Password too weak`,
         },
       );
     }
@@ -138,7 +138,7 @@ export class SignInUpService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          displayedErrorMessage: t`Wrong password`,
+          userFriendlyMessage: t`Wrong password`,
         },
       );
     }
@@ -164,7 +164,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          displayedErrorMessage: t`Email is required`,
+          userFriendlyMessage: t`Email is required`,
         },
       );
     }
@@ -208,7 +208,7 @@ export class SignInUpService {
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          displayedErrorMessage: t`Workspace is not ready to welcome new members`,
+          userFriendlyMessage: t`Workspace is not ready to welcome new members`,
         },
       );
     }
@@ -224,7 +224,7 @@ export class SignInUpService {
         'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          displayedErrorMessage: t`User is not part of the workspace`,
+          userFriendlyMessage: t`User is not part of the workspace`,
         },
       );
     }
@@ -360,7 +360,7 @@ export class SignInUpService {
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
         {
-          displayedErrorMessage: t`Email is required`,
+          userFriendlyMessage: t`Email is required`,
         },
       );
     }

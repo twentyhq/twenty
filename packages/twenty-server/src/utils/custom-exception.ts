@@ -1,10 +1,10 @@
 export class CustomException extends Error {
   code: string;
-  displayedErrorMessage?: string;
+  userFriendlyMessage?: string;
 
-  constructor(message: string, code: string, displayedErrorMessage?: string) {
+  constructor(message: string, code: string, userFriendlyMessage?: string) {
     super(message);
     this.code = code;
-    this.displayedErrorMessage = displayedErrorMessage;
+    this.userFriendlyMessage = userFriendlyMessage;
   }
 }

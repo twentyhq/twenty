@@ -44,7 +44,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED,
         {
-          displayedErrorMessage: t`Approved access domain has already been validated`,
+          userFriendlyMessage: t`Approved access domain has already been validated`,
         },
       );
     }
@@ -54,7 +54,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain does not match email domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
         {
-          displayedErrorMessage: t`Approved access domain does not match email domain`,
+          userFriendlyMessage: t`Approved access domain does not match email domain`,
         },
       );
     }
@@ -126,7 +126,7 @@ export class ApprovedAccessDomainService {
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED,
         {
-          displayedErrorMessage: t`Approved access domain has already been validated`,
+          userFriendlyMessage: t`Approved access domain has already been validated`,
         },
       );
     }

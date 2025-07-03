@@ -15,10 +15,10 @@ export const generateGraphQLErrorFromError = (
   );
 
   if (error instanceof CustomException) {
-    graphqlError.extensions.displayedErrorMessage =
-      error.displayedErrorMessage ?? t`An error occurred.`;
+    graphqlError.extensions.userFriendlyMessage =
+      error.userFriendlyMessage ?? t`An error occurred.`;
   } else {
-    graphqlError.extensions.displayedErrorMessage = t`An error occurred.`;
+    graphqlError.extensions.userFriendlyMessage = t`An error occurred.`;
   }
 
   return graphqlError;

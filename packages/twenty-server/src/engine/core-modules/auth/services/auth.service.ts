@@ -170,7 +170,7 @@ export class AuthService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          displayedErrorMessage: t`Wrong password`,
+          userFriendlyMessage: t`Wrong password`,
         },
       );
     }

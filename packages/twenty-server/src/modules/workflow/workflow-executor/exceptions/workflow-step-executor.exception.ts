@@ -4,9 +4,9 @@ export class WorkflowStepExecutorException extends CustomException {
   constructor(
     message: string,
     code: WorkflowStepExecutorExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 

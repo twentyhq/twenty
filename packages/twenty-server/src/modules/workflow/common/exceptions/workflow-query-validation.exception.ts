@@ -4,9 +4,9 @@ export class WorkflowQueryValidationException extends CustomException {
   constructor(
     message: string,
     code: WorkflowQueryValidationExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 

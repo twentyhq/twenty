@@ -5,9 +5,9 @@ export class WorkflowTriggerException extends CustomException {
   constructor(
     message: string,
     code: WorkflowTriggerExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 

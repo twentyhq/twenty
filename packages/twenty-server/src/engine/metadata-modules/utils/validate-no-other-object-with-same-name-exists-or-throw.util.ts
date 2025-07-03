@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
@@ -33,7 +33,7 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
       'Object already exists',
       ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
       {
-        displayedErrorMessage: t`Object already exists`,
+        userFriendlyMessage: t`Object already exists`,
       },
     );
   }

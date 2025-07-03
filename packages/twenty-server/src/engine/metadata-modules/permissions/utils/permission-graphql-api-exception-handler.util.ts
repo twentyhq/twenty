@@ -16,11 +16,11 @@ export const permissionGraphqlApiExceptionHandler = (
   switch (error.code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
       throw new ForbiddenError(error.message, {
-        displayedErrorMessage: 'User does not have permission.',
+        userFriendlyMessage: 'User does not have permission.',
       });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
       throw new ForbiddenError(error.message, {
-        displayedErrorMessage: t`A role with this label already exists.`,
+        userFriendlyMessage: t`A role with this label already exists.`,
       });
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
     case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:

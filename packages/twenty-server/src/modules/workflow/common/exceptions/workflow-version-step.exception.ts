@@ -4,9 +4,9 @@ export class WorkflowVersionStepException extends CustomException {
   constructor(
     message: string,
     code: WorkflowVersionStepExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 export enum WorkflowVersionStepExceptionCode {

@@ -4,9 +4,9 @@ export class InvalidMetadataException extends CustomException {
   constructor(
     message: string,
     code: InvalidMetadataExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 

@@ -60,7 +60,7 @@ export class FieldMetadataEnumValidationService {
         message,
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          displayedErrorMessage: message,
+          userFriendlyMessage: message,
         },
       );
     }

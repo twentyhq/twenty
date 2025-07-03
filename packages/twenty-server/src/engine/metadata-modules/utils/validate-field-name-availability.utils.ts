@@ -46,7 +46,7 @@ export const validateFieldNameAvailabilityOrThrow = (
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
       {
-        displayedErrorMessage: t`This name is not available.`,
+        userFriendlyMessage: t`This name is not available.`,
       },
     );
   }

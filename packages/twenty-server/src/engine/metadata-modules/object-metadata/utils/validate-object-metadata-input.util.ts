@@ -35,7 +35,7 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
         errorMessage,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         {
-          displayedErrorMessage: errorMessage,
+          userFriendlyMessage: errorMessage,
         },
       );
     }
@@ -68,7 +68,7 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         {
-          displayedErrorMessage: error.displayedErrorMessage,
+          userFriendlyMessage: error.userFriendlyMessage,
         },
       );
     }

@@ -181,7 +181,7 @@ describe('updateOne', () => {
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "Default value "'OPTION_2'" must be one of the option values",
+      "userFriendlyMessage": "Default value "'OPTION_2'" must be one of the option values",
     },
     "message": "Default value "'OPTION_2'" must be one of the option values",
     "name": "UserInputError",

@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
+    WorkflowTriggerException,
+    WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export function assertWorkflowVersionHasSteps(
@@ -17,7 +17,7 @@ export function assertWorkflowVersionHasSteps(
       'Workflow version does not contain at least one step',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        displayedErrorMessage: t`Workflow version does not contain at least one step`,
+        userFriendlyMessage: t`Workflow version does not contain at least one step`,
       },
     );
   }

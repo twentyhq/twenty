@@ -1,17 +1,17 @@
 import { t } from '@lingui/core/macro';
 
 import {
-  WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
+    WorkflowVersionStatus,
+    WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
-  WorkflowAction,
-  WorkflowActionType,
+    WorkflowAction,
+    WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
+    WorkflowTriggerException,
+    WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
@@ -36,7 +36,7 @@ export function assertVersionCanBeActivated(
       'Cannot activate non-draft or non-last-published version',
       WorkflowTriggerExceptionCode.INVALID_INPUT,
       {
-        displayedErrorMessage: t`Cannot activate non-draft or non-last-published version`,
+        userFriendlyMessage: t`Cannot activate non-draft or non-last-published version`,
       },
     );
   }
@@ -48,7 +48,7 @@ function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
       'Workflow version does not contain trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        displayedErrorMessage: t`Workflow version does not contain trigger`,
+        userFriendlyMessage: t`Workflow version does not contain trigger`,
       },
     );
   }
@@ -58,7 +58,7 @@ function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
       'No trigger type provided',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        displayedErrorMessage: t`No trigger type provided`,
+        userFriendlyMessage: t`No trigger type provided`,
       },
     );
   }
@@ -68,7 +68,7 @@ function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
       'No steps provided in workflow version',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        displayedErrorMessage: t`No steps provided in workflow version`,
+        userFriendlyMessage: t`No steps provided in workflow version`,
       },
     );
   }
@@ -103,7 +103,7 @@ function assertTriggerSettingsAreValid(
         'Invalid trigger type for enabling workflow trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
         {
-          displayedErrorMessage: t`Invalid trigger type for enabling workflow trigger`,
+          userFriendlyMessage: t`Invalid trigger type for enabling workflow trigger`,
         },
       );
   }
@@ -116,7 +116,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
       'No setting type provided in cron trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        displayedErrorMessage: t`No setting type provided in cron trigger`,
+        userFriendlyMessage: t`No setting type provided in cron trigger`,
       },
     );
   }
@@ -127,7 +127,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'No pattern provided in CUSTOM cron trigger',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`No pattern provided in CUSTOM cron trigger`,
+            userFriendlyMessage: t`No pattern provided in CUSTOM cron trigger`,
           },
         );
       }
@@ -141,7 +141,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'No schedule provided in cron trigger',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`No schedule provided in cron trigger`,
+            userFriendlyMessage: t`No schedule provided in cron trigger`,
           },
         );
       }
@@ -150,7 +150,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid day value. Should be integer greater than 1',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid day value. Should be integer greater than 1`,
+            userFriendlyMessage: t`Invalid day value. Should be integer greater than 1`,
           },
         );
       }
@@ -159,7 +159,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid hour value. Should be integer between 0 and 23',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid hour value. Should be integer between 0 and 23`,
+            userFriendlyMessage: t`Invalid hour value. Should be integer between 0 and 23`,
           },
         );
       }
@@ -168,7 +168,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid minute value. Should be integer between 0 and 59',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid minute value. Should be integer between 0 and 59`,
+            userFriendlyMessage: t`Invalid minute value. Should be integer between 0 and 59`,
           },
         );
       }
@@ -182,7 +182,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'No schedule provided in cron trigger',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid hour value. Should be integer greater than 1`,
+            userFriendlyMessage: t`Invalid hour value. Should be integer greater than 1`,
           },
         );
       }
@@ -191,7 +191,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid hour value. Should be integer greater than 1',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid hour value. Should be integer greater than 1`,
+            userFriendlyMessage: t`Invalid hour value. Should be integer greater than 1`,
           },
         );
       }
@@ -201,7 +201,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid minute value. Should be integer between 0 and 59',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid minute value. Should be integer between 0 and 59`,
+            userFriendlyMessage: t`Invalid minute value. Should be integer between 0 and 59`,
           },
         );
       }
@@ -215,7 +215,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'No schedule provided in cron trigger',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid minute value. Should be integer greater than 1`,
+            userFriendlyMessage: t`Invalid minute value. Should be integer greater than 1`,
           },
         );
       }
@@ -225,7 +225,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
           'Invalid minute value. Should be integer greater than 1',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            displayedErrorMessage: t`Invalid minute value. Should be integer greater than 1`,
+            userFriendlyMessage: t`Invalid minute value. Should be integer greater than 1`,
           },
         );
       }
@@ -238,7 +238,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
         'Invalid setting type provided in cron trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
         {
-          displayedErrorMessage: t`Invalid setting type provided in cron trigger`,
+          userFriendlyMessage: t`Invalid setting type provided in cron trigger`,
         },
       );
   }
@@ -251,7 +251,7 @@ function assertDatabaseEventTriggerSettingsAreValid(settings: any) {
       'No event name provided in database event trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        displayedErrorMessage: t`No event name provided in database event trigger`,
+        userFriendlyMessage: t`No event name provided in database event trigger`,
       },
     );
   }

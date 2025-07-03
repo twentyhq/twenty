@@ -19,19 +19,19 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND:
         throw new NotFoundError(error.message, {
-          displayedErrorMessage: error.displayedErrorMessage,
+          userFriendlyMessage: error.userFriendlyMessage,
         });
       case FieldMetadataExceptionCode.INVALID_FIELD_INPUT:
         throw new UserInputError(error.message, {
-          displayedErrorMessage: error.displayedErrorMessage,
+          userFriendlyMessage: error.userFriendlyMessage,
         });
       case FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED:
         throw new ForbiddenError(error.message, {
-          displayedErrorMessage: error.displayedErrorMessage,
+          userFriendlyMessage: error.userFriendlyMessage,
         });
       case FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS:
         throw new ConflictError(error.message, {
-          displayedErrorMessage: error.displayedErrorMessage,
+          userFriendlyMessage: error.userFriendlyMessage,
         });
       case FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
       case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:

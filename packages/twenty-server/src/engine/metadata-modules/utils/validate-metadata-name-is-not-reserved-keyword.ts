@@ -74,7 +74,7 @@ export const validateMetadataNameIsNotReservedKeywordOrThrow = (
       `The name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
       {
-        displayedErrorMessage: t`This name is not available.`,
+        userFriendlyMessage: t`This name is not available.`,
       },
     );
   }

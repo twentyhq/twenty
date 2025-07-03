@@ -5,9 +5,9 @@ export class FieldMetadataException extends CustomException {
   constructor(
     message: string,
     code: FieldMetadataExceptionCode,
-    { displayedErrorMessage }: { displayedErrorMessage?: string } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
   ) {
-    super(message, code, displayedErrorMessage);
+    super(message, code, userFriendlyMessage);
   }
 }
 

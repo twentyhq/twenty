@@ -20,7 +20,7 @@ export function assertWorkflowVersionTriggerIsDefined(
       'Workflow version does not contain trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       {
-        displayedErrorMessage: t`Workflow version does not contain trigger`,
+        userFriendlyMessage: t`Workflow version does not contain trigger`,
       },
     );
   }

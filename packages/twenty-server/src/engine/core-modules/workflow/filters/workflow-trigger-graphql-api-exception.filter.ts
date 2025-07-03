@@ -1,12 +1,12 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
-  NotFoundError,
-  UserInputError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
+    WorkflowTriggerException,
+    WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export const handleWorkflowTriggerException = (
@@ -21,13 +21,13 @@ export const handleWorkflowTriggerException = (
     case WorkflowTriggerExceptionCode.FORBIDDEN:
       throw new UserInputError(exception.message, {
         extensions: {
-          displayedErrorMessage: exception.displayedErrorMessage,
+          userFriendlyMessage: exception.userFriendlyMessage,
         },
       });
     case WorkflowTriggerExceptionCode.NOT_FOUND:
       throw new NotFoundError(exception.message, {
         extensions: {
-          displayedErrorMessage: exception.displayedErrorMessage,
+          userFriendlyMessage: exception.userFriendlyMessage,
         },
       });
     case WorkflowTriggerExceptionCode.INTERNAL_ERROR:

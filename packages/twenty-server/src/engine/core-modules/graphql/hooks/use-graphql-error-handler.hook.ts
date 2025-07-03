@@ -25,8 +25,7 @@ import {
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
-const SCHEMA_MISMATCH_ERROR =
-  'Your workspace has been updated with a new data model. Please refresh the page.';
+const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
 
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
@@ -196,8 +195,8 @@ export const useGraphQLErrorHandlerHook = <
                       ...error,
                       extensions: {
                         ...error.extensions,
-                        displayedErrorMessage:
-                          error.extensions.displayedErrorMessage ??
+                        userFriendlyMessage:
+                          error.extensions.userFriendlyMessage ??
                           t`An error occurred.`,
                       },
                     }
@@ -236,7 +235,11 @@ export const useGraphQLErrorHandlerHook = <
           requestMetadataVersion &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
-          throw new GraphQLError(SCHEMA_MISMATCH_ERROR);
+          throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
+            extensions: {
+              userFriendlyMessage: t`Your workspace has been updated with a new data model. Please refresh the page.`,
+            },
+          });
         }
       }
     },

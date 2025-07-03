@@ -14,7 +14,7 @@ export const computeMetadataNameFromLabel = (label: string): string => {
       'Label is required',
       InvalidMetadataExceptionCode.LABEL_REQUIRED,
       {
-        displayedErrorMessage: t`Label is required`,
+        userFriendlyMessage: t`Label is required`,
       },
     );
   }
@@ -36,7 +36,7 @@ export const computeMetadataNameFromLabel = (label: string): string => {
       `Invalid label: "${label}"`,
       InvalidMetadataExceptionCode.INVALID_LABEL,
       {
-        displayedErrorMessage: t`Invalid label: "${label}"`,
+        userFriendlyMessage: t`Invalid label: "${label}"`,
       },
     );
   }

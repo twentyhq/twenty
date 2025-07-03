@@ -5,7 +5,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Name "collisionfieldlabel" is not available",
     "name": "UserInputError",
@@ -18,7 +18,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Invalid label: "   "",
     "name": "UserInputError",
@@ -31,7 +31,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Name is too long: it exceeds the 63 characters limit.",
     "name": "UserInputError",
@@ -44,7 +44,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "displayedErrorMessage": "An error occurred.",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Input is too short: """,
     "name": "UserInputError",
@@ -57,7 +57,7 @@ exports[`Field metadata relation creation should fail relation when targetObject
   {
     "extensions": {
       "code": "INTERNAL_SERVER_ERROR",
-      "displayedErrorMessage": "An error occurred.",
+      "userFriendlyMessage": "An error occurred.",
       "exceptionEventId": "mocked-exception-id",
     },
     "message": "Cannot read properties of undefined (reading 'fieldsById')",

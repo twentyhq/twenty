@@ -19,7 +19,7 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
         throw new ForbiddenError(exception.message, {
           extensions: {
-            displayedErrorMessage: exception.displayedErrorMessage,
+            userFriendlyMessage: exception.userFriendlyMessage,
           },
         });
       default: {
