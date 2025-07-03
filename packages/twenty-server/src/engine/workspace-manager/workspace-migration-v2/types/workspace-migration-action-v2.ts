@@ -1,17 +1,6 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type WorkspaceMigrationActionV2 =
-  | WorkspaceMigrationObjectActionV2
-  | CreateFieldAction
-  | UpdateFieldAction
-  | DeleteFieldAction;
-
-export type WorkspaceMigrationObjectActionV2 =
-  | CreateObjectAction
-  | UpdateObjectAction
-  | DeleteObjectAction;
-
 export type FromTo<T> = {
   from: T;
   to: T;
@@ -23,13 +12,18 @@ export interface CreateObjectAction {
 
 export interface UpdateObjectAction {
   type: 'update_object';
-  updates: (FromTo<Partial<ObjectMetadataEntity>> & {property: string})[];
+  updates: (FromTo<Partial<ObjectMetadataEntity>> & { property: string })[];
 }
 
 export interface DeleteObjectAction {
   type: 'delete_object';
   objectMetadataId: string;
 }
+
+export type WorkspaceMigrationObjectActionV2 =
+  | CreateObjectAction
+  | UpdateObjectAction
+  | DeleteObjectAction;
 
 export interface CreateFieldAction {
   type: 'create_field';
@@ -45,3 +39,58 @@ export interface DeleteFieldAction {
   type: 'delete_field';
   fieldMetadataId: string;
 }
+
+export type WorkspaceMigrationFieldActionV2 =
+  | CreateFieldAction
+  | UpdateFieldAction
+  | DeleteFieldAction;
+
+export interface CreateRelationAction {
+  type: 'create_relation';
+}
+
+export interface UpdateRelationAction {
+  type: 'update_relation';
+}
+
+export interface DeleteRelationAction {
+  type: 'delete_relation';
+}
+
+export type WorkspaceMigrationRelationActionV2 =
+  | CreateRelationAction
+  | UpdateRelationAction
+  | DeleteRelationAction;
+
+export interface CreateIndexAction {
+  type: 'create_index';
+}
+
+export interface DeleteIndexAction {
+  type: 'delete_index';
+}
+
+export type WorkspaceMigrationIndexActionV2 =
+  | CreateIndexAction
+  | DeleteIndexAction;
+
+export interface AddUniquenessConstraintAction {
+  type: 'add_uniqueness_constraint';
+}
+
+export interface RemoveUniquenessConstraintAction {
+  type: 'remove_uniqueness_constraint';
+}
+
+export type WorkspaceMigrationUniquenessActionV2 =
+  | CreateIndexAction
+  | DeleteIndexAction;
+
+export type WorkspaceMigrationActionV2 =
+  | WorkspaceMigrationRelationActionV2
+  | WorkspaceMigrationObjectActionV2
+  | WorkspaceMigrationFieldActionV2
+  | WorkspaceMigrationUniquenessActionV2
+  | WorkspaceMigrationIndexActionV2;
+
+export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionV2['type']
