@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { HttpResponse } from 'msw';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -9,7 +8,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
@@ -36,7 +35,7 @@ export const CreateMode: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('New Webhook', undefined, { timeout: 10000 });
+    await canvas.findByText('New Webhook', undefined, { timeout: 3000 });
     await canvas.findByPlaceholderText('https://example.com/webhook');
     await canvas.findByPlaceholderText('Write a description');
 
@@ -49,33 +48,21 @@ export const EditMode: Story = {
     mode: WebhookFormMode.Edit,
     webhookId: '1234',
   },
-  parameters: {
-    msw: {
-      handlers: [
-        ...graphqlMocks.handlers,
-        metadataGraphql.query('GetWebhook', () => {
-          return HttpResponse.json({
-            data: {
-              webhook: {
-                __typename: 'Webhook',
-                id: '1234',
-                targetUrl: 'https://example.com/webhook',
-                operations: ['*.created', '*.updated'],
-                description: 'A Sample Description',
-                secret: 'sample-secret',
-              },
-            },
-          });
-        }),
-      ],
-    },
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByDisplayValue('https://example.com/webhook', undefined, {
-      timeout: 10000,
-    });
-    await canvas.findByDisplayValue('A Sample Description');
+    await canvas.findByDisplayValue(
+      'https://api.slackbot.io/webhooks/twenty',
+      undefined,
+      {
+        timeout: 3000,
+      },
+    );
+    await canvas.findByDisplayValue('Slack notifications for lead updates');
+
+    const allObjectsLabels = await canvas.findAllByText('All Objects');
+    expect(allObjectsLabels).toHaveLength(2);
+    await canvas.findByText('Created');
+    await canvas.findByText('Updated');
 
     await canvas.findByText('Danger zone');
     await canvas.findByText('Delete this webhook');

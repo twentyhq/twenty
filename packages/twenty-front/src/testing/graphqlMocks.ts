@@ -651,26 +651,6 @@ export const graphqlMocks = {
         });
       },
     ),
-    graphql.query<GraphQLQuery, { objectRecordId: string }>(
-      'FindOneWebhook',
-      ({ variables: { objectRecordId } }) => {
-        return HttpResponse.json({
-          data: {
-            webhook: {
-              __typename: 'Webhook',
-              id: objectRecordId,
-              createdAt: '2021-08-27T12:00:00Z',
-              updatedAt: '2021-08-27T12:00:00Z',
-              deletedAt: null,
-              targetUrl: 'https://example.com/webhook',
-              description: 'A Sample Description',
-              operations: ['*.created', '*.updated'],
-              secret: 'sample-secret',
-            },
-          },
-        });
-      },
-    ),
     graphql.query('FindManyWorkflows', () => {
       return HttpResponse.json({
         data: workflowQueryResult,
@@ -712,7 +692,7 @@ export const graphqlMocks = {
         { status: 200 },
       );
     }),
-    graphql.query('GetApiKeys', () => {
+    metadataGraphql.query('GetApiKeys', () => {
       return HttpResponse.json({
         data: {
           apiKeys: mockedApiKeys.map((apiKey) => ({
@@ -723,7 +703,7 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('GetApiKey', ({ variables }) => {
+    metadataGraphql.query('GetApiKey', ({ variables }) => {
       const apiKeyId = variables.input?.id;
       const apiKey = mockedApiKeys.find((key) => key.id === apiKeyId);
 
@@ -739,23 +719,23 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('GetWebhooks', () => {
+    metadataGraphql.query('GetWebhooks', () => {
       return HttpResponse.json({
         data: {
           webhooks: [
             {
               __typename: 'Webhook',
               id: '1234',
-              targetUrl: 'https://example.com/webhook',
+              targetUrl: 'https://api.slackbot.io/webhooks/twenty',
               operations: ['*.created', '*.updated'],
-              description: 'A Sample Description',
+              description: 'Slack notifications for lead updates',
               secret: 'sample-secret',
             },
           ],
         },
       });
     }),
-    graphql.query('GetWebhook', ({ variables }) => {
+    metadataGraphql.query('GetWebhook', ({ variables }) => {
       const webhookId = variables.input?.id;
 
       return HttpResponse.json({
@@ -763,9 +743,9 @@ export const graphqlMocks = {
           webhook: {
             __typename: 'Webhook',
             id: webhookId || '1234',
-            targetUrl: 'https://example.com/webhook',
+            targetUrl: 'https://api.slackbot.io/webhooks/twenty',
             operations: ['*.created', '*.updated'],
-            description: 'A Sample Description',
+            description: 'Slack notifications for lead updates',
             secret: 'sample-secret',
           },
         },
