@@ -1,5 +1,6 @@
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
@@ -40,7 +41,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
+  const apolloCoreClient = useApolloCoreClient();
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
@@ -94,6 +95,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       fetchPolicy: fetchPolicy,
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
+      client: apolloCoreClient,
     });
 
   const { fetchMoreRecords, records, hasNextPage } =

@@ -1,6 +1,6 @@
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
@@ -21,7 +21,7 @@ export const FavoriteFolderPickerFooter = ({
   );
   const { openNavigationSection } = useNavigationSection('Favorites');
   const theme = useTheme();
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   return (
     <DropdownMenuItemsContainer scrollable={false}>
@@ -31,7 +31,7 @@ export const FavoriteFolderPickerFooter = ({
           setIsNavigationDrawerExpanded(true);
           openNavigationSection();
           setIsFavoriteFolderCreating(true);
-          closeDropdown();
+          closeDropdown(dropdownId);
         }}
         text="Add folder"
         LeftIcon={() => <IconPlus size={theme.icon.size.md} />}

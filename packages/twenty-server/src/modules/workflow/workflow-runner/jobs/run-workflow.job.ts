@@ -16,14 +16,14 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
+import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-root-steps.utils';
+import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
   workflowRunId: string;
-  payload?: object;
   lastExecutedStepId?: string;
 };
 
@@ -36,12 +36,12 @@ export class RunWorkflowJob {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
+    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
   @Process(RunWorkflowJob.name)
   async handle({
     workflowRunId,
-    payload,
     lastExecutedStepId,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
@@ -56,7 +56,6 @@ export class RunWorkflowJob {
         await this.startWorkflowExecution({
           workflowRunId,
           workspaceId,
-          payload: payload ?? {},
         });
       }
     } catch (error) {
@@ -66,22 +65,20 @@ export class RunWorkflowJob {
         status: WorkflowRunStatus.FAILED,
         error: error.message,
       });
+    } finally {
+      await this.workflowRunQueueWorkspaceService.decreaseWorkflowRunQueuedCount(
+        workspaceId,
+      );
     }
   }
 
   private async startWorkflowExecution({
     workflowRunId,
     workspaceId,
-    payload,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    payload: object;
   }): Promise<void> {
-    const context = {
-      trigger: payload,
-    };
-
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -106,10 +103,11 @@ export class RunWorkflowJob {
       triggerType: workflowVersion.trigger.type,
     });
 
+    const triggerPayload = workflowRun.context?.trigger ?? {};
+
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
-      context,
       output: {
         flow: {
           trigger: workflowVersion.trigger,
@@ -117,10 +115,11 @@ export class RunWorkflowJob {
         },
         stepsOutput: {
           trigger: {
-            result: payload,
+            result: triggerPayload,
           },
         },
       },
+      payload: triggerPayload,
     });
 
     await this.throttleExecution(workflowVersion.workflowId);
@@ -131,7 +130,9 @@ export class RunWorkflowJob {
       workflowRunId,
       stepIdsToExecute: rootSteps.map((step) => step.id),
       steps: workflowVersion.steps,
-      context,
+      context: workflowRun.context ?? {
+        trigger: triggerPayload,
+      },
     });
   }
 

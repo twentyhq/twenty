@@ -1,3 +1,4 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -6,17 +7,17 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteWorkflowVersionStepInput,
   DeleteWorkflowVersionStepMutation,
   DeleteWorkflowVersionStepMutationVariables,
   WorkflowAction,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useDeleteWorkflowVersionStep = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -29,7 +30,7 @@ export const useDeleteWorkflowVersionStep = () => {
     DeleteWorkflowVersionStepMutation,
     DeleteWorkflowVersionStepMutationVariables
   >(DELETE_WORKFLOW_VERSION_STEP, {
-    client: apolloClient,
+    client: apolloCoreClient,
   });
   const deleteWorkflowVersionStep = async (
     input: DeleteWorkflowVersionStepInput,
@@ -80,7 +81,7 @@ export const useDeleteWorkflowVersionStep = () => {
     updateRecordFromCache({
       objectMetadataItems,
       objectMetadataItem,
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
       record: newCachedRecord,
       recordGqlFields,
       objectPermissionsByObjectMetadataId,

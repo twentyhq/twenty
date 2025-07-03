@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
@@ -31,6 +32,8 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     objectNameSingular,
   });
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { aggregateQuery, gqlFieldToFieldMap } = useAggregateRecordsQuery({
     objectNameSingular,
     recordGqlFieldsAggregate,
@@ -49,6 +52,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
       variables: {
         filter,
       },
+      client: apolloCoreClient,
     },
   );
 

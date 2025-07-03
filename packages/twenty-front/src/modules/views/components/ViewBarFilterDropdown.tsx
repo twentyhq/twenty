@@ -3,7 +3,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 
-import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
@@ -53,7 +52,6 @@ export const ViewBarFilterDropdown = () => {
       dropdownComponents={<ViewBarFilterDropdownContent />}
       dropdownOffset={{ y: 8 }}
       onClickOutside={handleDropdownClickOutside}
-      excludedClickOutsideIds={[OPERAND_DROPDOWN_CLICK_OUTSIDE_ID]}
     />
   );
 };

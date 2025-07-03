@@ -1,7 +1,7 @@
-import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
@@ -24,7 +24,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   return (record: ObjectRecord) => {
     const prefilledRecord = prefillRecord({
@@ -60,7 +60,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
       ...recordToCreateWithNestedConnections,
     };
 
-    apolloClient.writeFragment({
+    apolloCoreClient.writeFragment({
       id: `${capitalize(objectMetadataItem.nameSingular)}:${record.id}`,
       fragment,
       data: cachedObjectRecord,

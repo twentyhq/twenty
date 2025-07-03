@@ -7,7 +7,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
+import { useDeleteCurrentWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
 

@@ -23,6 +23,7 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -95,6 +96,17 @@ export class WorkflowExecutorWorkspaceService {
 
     let actionOutput: WorkflowExecutorOutput;
 
+    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workflowRunId,
+      stepOutput: {
+        id: step.id,
+        output: {},
+      },
+      context,
+      workspaceId,
+      stepStatus: StepStatus.RUNNING,
+    });
+
     try {
       actionOutput = await workflowExecutor.execute({
         currentStepId,
@@ -117,13 +129,24 @@ export class WorkflowExecutorWorkspaceService {
     const { continueOnFailure, retryOnFailure } =
       step.settings.errorHandlingOptions;
 
-    const shouldExecuteNextSteps =
-      isDefined(actionOutput.result) || continueOnFailure.value;
+    const isPendingEvent = actionOutput.pendingEvent;
+
+    const actionOutputSuccess = isDefined(actionOutput.result);
+
+    const actionOutputError = isDefined(actionOutput.error);
+
+    const shouldContinue = actionOutputSuccess || continueOnFailure.value;
 
     const shouldRetry =
-      isDefined(actionOutput.error) &&
+      actionOutputError &&
       retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE;
+
+    const stepStatus = isPendingEvent
+      ? StepStatus.PENDING
+      : actionOutputSuccess
+        ? StepStatus.SUCCESS
+        : StepStatus.FAILED;
 
     if (shouldRetry) {
       await this.execute({
@@ -148,17 +171,28 @@ export class WorkflowExecutorWorkspaceService {
             }
           : context,
         workspaceId,
+        stepStatus,
       });
 
-    if (!actionOutput.error) {
+    if (!actionOutputError) {
       this.sendWorkflowNodeRunEvent(workspaceId);
     }
 
-    if (actionOutput.pendingEvent) {
+    if (isPendingEvent) {
       return;
     }
 
-    if (shouldExecuteNextSteps) {
+    if (shouldContinue) {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput,
+        context: updatedContext,
+        workspaceId,
+        stepStatus: actionOutputSuccess
+          ? StepStatus.SUCCESS
+          : StepStatus.FAILED,
+      });
+
       if (!isDefined(step.nextStepIds) || step.nextStepIds.length === 0) {
         await this.endWorkflowRunIfCompleted({
           context: updatedContext,
@@ -179,6 +213,14 @@ export class WorkflowExecutorWorkspaceService {
 
       return;
     }
+
+    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workflowRunId,
+      stepOutput,
+      context,
+      workspaceId,
+      stepStatus: StepStatus.FAILED,
+    });
 
     await this.workflowRunWorkspaceService.endWorkflowRun({
       workflowRunId,
@@ -271,6 +313,7 @@ export class WorkflowExecutorWorkspaceService {
           output: billingOutput,
         },
         context,
+        stepStatus: StepStatus.FAILED,
       });
 
       await this.workflowRunWorkspaceService.endWorkflowRun({

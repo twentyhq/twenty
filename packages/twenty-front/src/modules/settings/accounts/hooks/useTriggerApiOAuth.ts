@@ -9,7 +9,7 @@ import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   useGenerateTransientTokenMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const getProviderUrl = (provider: ConnectedAccountProvider) => {
   switch (provider) {

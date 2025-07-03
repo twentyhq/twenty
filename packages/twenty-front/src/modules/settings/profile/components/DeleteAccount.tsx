@@ -7,7 +7,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useDeleteUserAccountMutation } from '~/generated/graphql';
+import { useDeleteUserAccountMutation } from '~/generated-metadata/graphql';
 
 const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
 export const DeleteAccount = () => {

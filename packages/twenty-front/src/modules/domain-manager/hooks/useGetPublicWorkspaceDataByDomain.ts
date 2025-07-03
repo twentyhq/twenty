@@ -7,7 +7,7 @@ import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectTo
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated/graphql';
+import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();

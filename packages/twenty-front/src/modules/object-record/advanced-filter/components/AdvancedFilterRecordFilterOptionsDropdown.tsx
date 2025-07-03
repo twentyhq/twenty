@@ -9,7 +9,7 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advance
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
@@ -25,7 +25,7 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
 }: AdvancedFilterRecordFilterOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-record-filter-options-${recordFilterId}`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
@@ -47,7 +47,7 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
     useRemoveRootRecordFilterGroupIfEmpty();
 
   const handleRemove = async () => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     if (isDefined(currentRecordFilter?.recordFilterGroupId)) {
       const isOnlyViewFilterInGroup =

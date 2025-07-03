@@ -1,4 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -13,13 +14,12 @@ import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/work
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
 
@@ -41,7 +41,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
         const workflowRunRecord = getRecordFromCache<WorkflowRun>({
           objectMetadataItem,
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           recordId,
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
@@ -117,7 +117,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         });
       },
     [
-      apolloClient.cache,
+      apolloCoreClient.cache,
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
       objectPermissionsByObjectMetadataId,

@@ -1,6 +1,5 @@
-import { useApolloClient } from '@apollo/client';
-
 import { CustomError } from '@/error-handler/CustomError';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -20,7 +19,7 @@ export const useAttachRelatedRecordFromRecord = ({
   recordObjectNameSingular,
   fieldNameOnRecordObject,
 }: useAttachRelatedRecordFromRecordProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: recordObjectNameSingular,
@@ -98,7 +97,7 @@ export const useAttachRelatedRecordFromRecord = ({
       updateRecordFromCache({
         objectMetadataItems,
         objectMetadataItem: relatedObjectMetadataItem,
-        cache: apolloClient.cache,
+        cache: apolloCoreClient.cache,
         record: {
           ...cachedRelatedRecord,
           [fieldOnRelatedObject]: previousRecord,

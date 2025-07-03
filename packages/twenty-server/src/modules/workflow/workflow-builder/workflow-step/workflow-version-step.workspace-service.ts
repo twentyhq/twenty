@@ -30,6 +30,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -334,6 +335,7 @@ export class WorkflowVersionStepWorkspaceService {
       workflowRunId,
       stepOutput: newStepOutput,
       context: updatedContext,
+      stepStatus: StepStatus.SUCCESS,
     });
 
     await this.workflowRunnerWorkspaceService.resume({
@@ -573,6 +575,21 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: [],
+          },
+        };
+      }
+      case WorkflowActionType.FILTER: {
+        return {
+          id: newStepId,
+          name: 'Filter',
+          type: WorkflowActionType.FILTER,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              filterGroups: [],
+              filters: [],
+            },
           },
         };
       }

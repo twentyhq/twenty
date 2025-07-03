@@ -36,7 +36,7 @@ import {
   FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;

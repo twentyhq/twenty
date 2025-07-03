@@ -3,7 +3,7 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
 
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};

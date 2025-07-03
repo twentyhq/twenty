@@ -6,7 +6,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
@@ -22,13 +22,13 @@ export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
   const { dropdownId, resetContent } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
       resetContent();
-      closeDropdown();
+      closeDropdown(dropdownId);
     },
     TableOptionsHotkeyScope.Dropdown,
   );
