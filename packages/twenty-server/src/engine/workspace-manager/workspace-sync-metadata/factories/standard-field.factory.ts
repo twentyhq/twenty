@@ -7,8 +7,8 @@ import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/wo
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import {
-    PartialComputedFieldMetadata,
-    PartialFieldMetadata,
+  PartialComputedFieldMetadata,
+  PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
