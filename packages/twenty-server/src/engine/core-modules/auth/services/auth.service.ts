@@ -169,6 +169,9 @@ export class AuthService {
       throw new AuthException(
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Wrong password`,
+        },
       );
     }
 

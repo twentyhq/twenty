@@ -1,4 +1,3 @@
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -33,15 +32,17 @@ export const SettingsAdminConfigCopyableText = ({
   multiline = false,
   maxRows,
 }: SettingsAdminConfigCopyableTextProps) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const theme = useTheme();
   const { t } = useLingui();
 
   const copyToClipboardDebounced = useDebouncedCallback((value: string) => {
     navigator.clipboard.writeText(value);
-    enqueueSnackBar(t`Copied to clipboard!`, {
-      variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
+    enqueueSuccessSnackBar({
+      message: t`Copied to clipboard!`,
+      options: {
+        icon: <IconCopy size={theme.icon.size.md} />,
+      },
     });
   }, 200);
 

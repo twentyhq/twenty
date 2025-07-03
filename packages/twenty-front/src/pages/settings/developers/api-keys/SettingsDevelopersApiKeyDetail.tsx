@@ -11,7 +11,6 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -50,7 +49,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -100,9 +99,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         navigate(SettingsPath.APIs);
       }
     } catch (err) {
-      enqueueSnackBar(t`Error deleting api key: ${err}`, {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -161,8 +158,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch (err) {
-      enqueueSnackBar(t`Error regenerating api key: ${err}`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error regenerating api key.`,
       });
     } finally {
       setIsLoading(false);

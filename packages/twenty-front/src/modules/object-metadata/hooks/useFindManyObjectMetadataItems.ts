@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   ObjectMetadataItemsQuery,
@@ -17,7 +16,7 @@ export const useFindManyObjectMetadataItems = ({
 }: {
   skip?: boolean;
 } = {}) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { data, loading, error, refetch } = useQuery<
     ObjectMetadataItemsQuery,
@@ -26,8 +25,8 @@ export const useFindManyObjectMetadataItems = ({
     skip,
     onError: (error) => {
       logError('useFindManyObjectMetadataItems error : ' + error);
-      enqueueSnackBar(`${error.message}`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error,
       });
     },
   });

@@ -9,6 +9,7 @@ import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWe
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
+import { error } from 'console';
 import { useWebhookForm } from '../useWebhookForm';
 
 const mockNavigateSettings = jest.fn();
@@ -20,7 +21,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
 
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   useSnackBar: () => ({
-    enqueueSnackBar: mockEnqueueSnackBar,
+    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
+    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
   }),
 }));
 
@@ -216,8 +218,8 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Creation failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
 
@@ -356,8 +358,8 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Update failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
   });
@@ -436,10 +438,9 @@ describe('useWebhookForm', () => {
 
       await result.current.handleDelete();
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook ID is required for deletion',
-        { variant: 'error' },
-      );
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook ID is required for deletion',
+      });
     });
 
     it('should handle deletion errors', async () => {
@@ -472,8 +473,8 @@ describe('useWebhookForm', () => {
 
       await result.current.handleDelete();
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Deletion failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
   });
