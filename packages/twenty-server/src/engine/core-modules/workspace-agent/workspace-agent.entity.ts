@@ -46,7 +46,7 @@ export class WorkspaceAgent {
   updatedAt: Date;
 
   @Field(() => Workspace)
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, (workspace) => workspace.workspaceAgents)
   workspace: Relation<Workspace>;
 
   @Field(() => [Sector])
