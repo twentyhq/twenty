@@ -5,6 +5,7 @@ import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 import {
   getCompaniesMock,
   getCompanyDuplicateMock,
@@ -710,6 +711,65 @@ export const graphqlMocks = {
         `,
         { status: 200 },
       );
+    }),
+    graphql.query('GetApiKeys', () => {
+      return HttpResponse.json({
+        data: {
+          apiKeys: mockedApiKeys.map((apiKey) => ({
+            __typename: 'ApiKey',
+            ...apiKey,
+            revokedAt: null,
+          })),
+        },
+      });
+    }),
+    graphql.query('GetApiKey', ({ variables }) => {
+      const apiKeyId = variables.input?.id;
+      const apiKey = mockedApiKeys.find((key) => key.id === apiKeyId);
+
+      return HttpResponse.json({
+        data: {
+          apiKey: apiKey
+            ? {
+                __typename: 'ApiKey',
+                ...apiKey,
+                revokedAt: null,
+              }
+            : null,
+        },
+      });
+    }),
+    graphql.query('GetWebhooks', () => {
+      return HttpResponse.json({
+        data: {
+          webhooks: [
+            {
+              __typename: 'Webhook',
+              id: '1234',
+              targetUrl: 'https://example.com/webhook',
+              operations: ['*.created', '*.updated'],
+              description: 'A Sample Description',
+              secret: 'sample-secret',
+            },
+          ],
+        },
+      });
+    }),
+    graphql.query('GetWebhook', ({ variables }) => {
+      const webhookId = variables.input?.id;
+
+      return HttpResponse.json({
+        data: {
+          webhook: {
+            __typename: 'Webhook',
+            id: webhookId || '1234',
+            targetUrl: 'https://example.com/webhook',
+            operations: ['*.created', '*.updated'],
+            description: 'A Sample Description',
+            secret: 'sample-secret',
+          },
+        },
+      });
     }),
   ],
 };

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { HttpResponse, graphql } from 'msw';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -49,7 +50,25 @@ export const EditMode: Story = {
     webhookId: '1234',
   },
   parameters: {
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        ...graphqlMocks.handlers,
+        graphql.query('GetWebhook', () => {
+          return HttpResponse.json({
+            data: {
+              webhook: {
+                __typename: 'Webhook',
+                id: '1234',
+                targetUrl: 'https://example.com/webhook',
+                operations: ['*.created', '*.updated'],
+                description: 'A Sample Description',
+                secret: 'sample-secret',
+              },
+            },
+          });
+        }),
+      ],
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

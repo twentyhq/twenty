@@ -24,20 +24,24 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('FindOneApiKey', () => {
-          return HttpResponse.json({
-            data: {
-              apiKey: {
-                __typename: 'ApiKey',
-                id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
-                revokedAt: null,
-                expiresAt: '2024-03-10T09:23:10.511Z',
-                name: 'sfsfdsf',
-                updatedAt: '2024-02-24T10:23:10.673Z',
-                createdAt: '2024-02-24T10:23:10.673Z',
+        graphql.query('GetApiKey', ({ variables }) => {
+          const apiKeyId = variables.input?.id;
+          if (apiKeyId === 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570') {
+            return HttpResponse.json({
+              data: {
+                apiKey: {
+                  __typename: 'ApiKey',
+                  id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
+                  revokedAt: null,
+                  expiresAt: '2024-03-10T09:23:10.511Z',
+                  name: 'sfsfdsf',
+                  updatedAt: '2024-02-24T10:23:10.673Z',
+                  createdAt: '2024-02-24T10:23:10.673Z',
+                },
               },
-            },
-          });
+            });
+          }
+          return HttpResponse.json({ data: { apiKey: null } });
         }),
       ],
     },
