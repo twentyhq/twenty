@@ -21,7 +21,7 @@ export interface UpdateObjectAction {
 
 export interface DeleteObjectAction {
   type: 'delete_object';
-  objectId: string;
+  objectMetadataId: string;
 }
 
 export interface CreateFieldAction {
@@ -36,5 +36,5 @@ export interface UpdateFieldAction {
 
 export interface DeleteFieldAction {
   type: 'delete_field';
-  fieldId: string;
+  fieldMetadataId: string;
 }

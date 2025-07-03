@@ -9,7 +9,6 @@ export type WorkspaceMigrationActionTypeV2 =
   | 'update_relation'
   | 'delete_relation'
   | 'create_index'
-  | 'update_index'
   | 'delete_index'
   | 'add_uniqueness_constraint'
   | 'remove_uniqueness_constraint';
