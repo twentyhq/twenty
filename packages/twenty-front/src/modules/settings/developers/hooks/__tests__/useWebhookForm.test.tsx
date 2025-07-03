@@ -11,7 +11,6 @@ import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWe
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '../useWebhookForm';
 
-// Mock dependencies
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSnackBar = jest.fn();
 
