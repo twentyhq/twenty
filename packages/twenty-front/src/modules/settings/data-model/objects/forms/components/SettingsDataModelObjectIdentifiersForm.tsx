@@ -7,9 +7,9 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +48,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
   });
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const handleSave = async (
@@ -67,12 +67,12 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       formConfig.reset(undefined, { keepValues: true });
     } catch (error) {
       if (error instanceof ZodError) {
-        enqueueSnackBar(error.issues[0].message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: error.issues[0].message,
         });
       } else {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     }

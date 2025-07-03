@@ -5,11 +5,13 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { ApolloError } from '@apollo/client';
 import { useWebhookForm } from '../useWebhookForm';
 
 // Mock dependencies
 const mockNavigateSettings = jest.fn();
-const mockEnqueueSnackBar = jest.fn();
+const mockEnqueueSuccessSnackBar = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 const mockCreateOneRecord = jest.fn();
 const mockUpdateOneRecord = jest.fn();
 const mockDeleteOneRecord = jest.fn();
@@ -20,7 +22,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
 
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   useSnackBar: () => ({
-    enqueueSnackBar: mockEnqueueSnackBar,
+    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
+    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
   }),
 }));
 
@@ -106,14 +109,15 @@ describe('useWebhookForm', () => {
         secret: 'test-secret',
       });
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook https://test.com/webhook created successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook https://test.com/webhook created successfully',
+      });
     });
 
     it('should handle creation errors', async () => {
-      const error = new Error('Creation failed');
+      const error = new ApolloError({
+        graphQLErrors: [{ message: 'Creation failed' }],
+      });
       mockCreateOneRecord.mockRejectedValue(error);
 
       const { result } = renderHook(
@@ -130,8 +134,8 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Creation failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
 
@@ -216,7 +220,9 @@ describe('useWebhookForm', () => {
     });
 
     it('should handle update errors', async () => {
-      const error = new Error('Update failed');
+      const error = new ApolloError({
+        graphQLErrors: [{ message: 'Update failed' }],
+      });
       mockUpdateOneRecord.mockRejectedValue(error);
 
       const { result } = renderHook(
@@ -237,8 +243,8 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Update failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
   });
@@ -297,10 +303,9 @@ describe('useWebhookForm', () => {
       await result.current.deleteWebhook();
 
       expect(mockDeleteOneRecord).toHaveBeenCalledWith(webhookId);
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook deleted successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook deleted successfully',
+      });
     });
 
     it('should handle deletion without webhookId', async () => {
@@ -311,14 +316,15 @@ describe('useWebhookForm', () => {
 
       await result.current.deleteWebhook();
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook ID is required for deletion',
-        { variant: 'error' },
-      );
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook ID is required for deletion',
+      });
     });
 
     it('should handle deletion errors', async () => {
-      const error = new Error('Deletion failed');
+      const error = new ApolloError({
+        graphQLErrors: [{ message: 'Deletion failed' }],
+      });
       mockDeleteOneRecord.mockRejectedValue(error);
 
       const { result } = renderHook(
@@ -332,8 +338,8 @@ describe('useWebhookForm', () => {
 
       await result.current.deleteWebhook();
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Deletion failed', {
-        variant: 'error',
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: error,
       });
     });
   });

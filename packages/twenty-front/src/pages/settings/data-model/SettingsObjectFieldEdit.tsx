@@ -23,9 +23,9 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
@@ -47,7 +47,7 @@ export const SettingsObjectFieldEdit = () => {
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
@@ -147,8 +147,8 @@ export const SettingsObjectFieldEdit = () => {
         });
       }
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };
