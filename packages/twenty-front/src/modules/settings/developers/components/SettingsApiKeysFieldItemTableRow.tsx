@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
@@ -41,6 +42,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   to: string;
 }) => {
   const theme = useTheme();
+  const formattedExpiration = formatExpiration(fieldItem.expiresAt || null);
 
   return (
     <StyledApisFieldTableRow to={to}>
@@ -49,12 +51,12 @@ export const SettingsApiKeysFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell
         color={
-          new Date(fieldItem.expiresAt) < new Date()
+          formattedExpiration === 'Expired'
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }
       >
-        {fieldItem.expiresAt}
+        {formattedExpiration}
       </TableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
