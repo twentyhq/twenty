@@ -5,9 +5,9 @@ import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 import { McpController } from './mcp.controller';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('McpController', () => {
   let controller: McpController;

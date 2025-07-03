@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -8,19 +9,16 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 import { McpService } from './mcp.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('McpService', () => {
   let service: McpService;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
   let toolService: jest.Mocked<ToolService>;
   let userRoleService: jest.Mocked<UserRoleService>;
-  let roleService: jest.Mocked<RoleService>;
 
   const mockWorkspace = { id: 'workspace-1' } as Workspace;
   const mockUserWorkspaceId = 'user-workspace-1';
