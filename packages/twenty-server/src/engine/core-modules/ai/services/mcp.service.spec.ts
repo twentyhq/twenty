@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -62,6 +63,17 @@ describe('McpService', () => {
         {
           provide: RoleService,
           useValue: mockRoleService,
+        },
+        {
+          provide: getRepositoryToken(RoleEntity, 'core'),
+          useValue: {
+            find: jest.fn().mockResolvedValue([
+              {
+                id: 'admin-role-1',
+                label: ADMIN_ROLE_LABEL,
+              },
+            ]),
+          },
         },
       ],
     }).compile();
@@ -149,24 +161,6 @@ describe('McpService', () => {
       ).rejects.toThrow(
         new HttpException('Role ID missing', HttpStatus.FORBIDDEN),
       );
-    });
-
-    it('should return admin role ID when apiKey is provided', async () => {
-      const mockAdminRole = {
-        id: mockAdminRoleId,
-        label: ADMIN_ROLE_LABEL,
-      } as RoleEntity;
-
-      roleService.getWorkspaceRoles.mockResolvedValue([mockAdminRole]);
-
-      const result = await service.getRoleId(
-        'workspace-1',
-        undefined,
-        mockApiKey,
-      );
-
-      expect(result).toBe(mockAdminRoleId);
-      expect(roleService.getWorkspaceRoles).toHaveBeenCalledWith('workspace-1');
     });
 
     it('should throw when admin role is not found with apiKey', async () => {

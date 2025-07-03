@@ -1,9 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { ToolSet } from 'ai';
-import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -14,6 +12,7 @@ import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 
 @Injectable()
 export class McpService {
@@ -21,8 +20,7 @@ export class McpService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly toolService: ToolService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(RoleEntity, 'core')
-    private readonly roleRepository: Repository<RoleEntity>,
+    private readonly roleService: RoleService,
   ) {}
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
@@ -57,19 +55,14 @@ export class McpService {
     apiKey?: string,
   ) {
     if (apiKey) {
-      const roles = await this.roleRepository.find({
-        where: {
-          workspaceId,
-          label: ADMIN_ROLE_LABEL,
-        },
-        relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
-      });
+      const roles = await this.roleService.getWorkspaceRoles(workspaceId);
+      const adminRole = roles.find(role => role.label === ADMIN_ROLE_LABEL);
 
-      if (roles.length === 0) {
+      if (!adminRole) {
         throw new HttpException('Admin role not found', HttpStatus.FORBIDDEN);
       }
 
-      return roles[0].id;
+      return adminRole.id;
     }
 
     if (!userWorkspaceId) {
