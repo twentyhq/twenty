@@ -1,9 +1,10 @@
-import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { useFindOneAgentQuery } from '~/generated-metadata/graphql';
-import { UPDATE_ONE_AGENT } from '../graphql/mutations/updateOneAgent';
+import {
+  useFindOneAgentQuery,
+  useUpdateOneAgentMutation,
+} from '~/generated-metadata/graphql';
 
 type AgentFormValues = {
   name: string;
@@ -39,9 +40,9 @@ export const useAgentUpdateFormState = ({
     },
   });
 
-  const [updateAgent] = useMutation(UPDATE_ONE_AGENT);
+  const [updateAgent] = useUpdateOneAgentMutation();
 
-  const updateAgentMutation = async (updates: Partial<AgentFormValues>) => {
+  const updateAgentMutation = async (updates: AgentFormValues) => {
     if (!agentId) {
       return;
     }

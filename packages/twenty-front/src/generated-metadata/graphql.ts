@@ -435,14 +435,6 @@ export type ConnectionParametersOutput = {
   username: Scalars['String'];
 };
 
-export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-};
-
 export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime'];
 };
@@ -688,6 +680,7 @@ export enum FeatureFlagKey {
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED'
@@ -1007,7 +1000,6 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
-  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1020,7 +1012,6 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
-  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1154,11 +1145,6 @@ export type MutationCreateObjectEventArgs = {
 };
 
 
-export type MutationCreateOneAgentArgs = {
-  input: CreateAgentInput;
-};
-
-
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
@@ -1211,11 +1197,6 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-};
-
-
-export type MutationDeleteOneAgentArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -1745,7 +1726,6 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
-  findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
