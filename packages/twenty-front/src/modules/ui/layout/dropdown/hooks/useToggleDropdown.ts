@@ -7,6 +7,11 @@ import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
+type ToggleDropdownArgs = {
+  dropdownComponentInstanceIdFromProps?: string;
+  globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
+};
+
 export const useToggleDropdown = () => {
   const dropdownComponentInstanceIdFromContext =
     useAvailableComponentInstanceId(DropdownComponentInstanceContext);
@@ -16,15 +21,9 @@ export const useToggleDropdown = () => {
 
   const toggleDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      ({
-        dropdownComponentInstanceIdFromProps,
-        globalHotkeysConfig,
-      }: {
-        dropdownComponentInstanceIdFromProps?: string;
-        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
-      }) => {
+      (args?: ToggleDropdownArgs | null | undefined) => {
         const dropdownComponentInstanceId =
-          dropdownComponentInstanceIdFromProps ??
+          args?.dropdownComponentInstanceIdFromProps ??
           dropdownComponentInstanceIdFromContext;
 
         if (!isDefined(dropdownComponentInstanceId)) {
@@ -44,7 +43,7 @@ export const useToggleDropdown = () => {
         } else {
           openDropdown({
             dropdownComponentInstanceIdFromProps: dropdownComponentInstanceId,
-            globalHotkeysConfig,
+            globalHotkeysConfig: args?.globalHotkeysConfig,
           });
         }
       },

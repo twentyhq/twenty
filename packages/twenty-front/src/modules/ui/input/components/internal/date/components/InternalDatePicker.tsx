@@ -3,13 +3,12 @@ import { DateTime } from 'luxon';
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
   VariableDateViewFilterValueDirection,
@@ -342,12 +341,8 @@ export const DateTimePicker = ({
   const { timeZone } = useContext(UserContext);
   const theme = useTheme();
 
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
+  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
 
   const handleClear = () => {
     closeDropdowns();
@@ -355,8 +350,8 @@ export const DateTimePicker = ({
   };
 
   const closeDropdowns = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
   };
 
   const handleClose = (newDate: Date) => {

@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArchive,
@@ -31,21 +31,21 @@ export const SettingsObjectFieldActiveActionDropdown = ({
 }: SettingsObjectFieldActiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleEdit = () => {
     onEdit();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleSetAsLabelIdentifier = () => {
     onSetAsLabelIdentifier?.();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (

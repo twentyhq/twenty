@@ -12,7 +12,8 @@ import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDrop
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -40,13 +41,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
   );
 
-  const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
-    ADVANCED_FILTER_DROPDOWN_ID,
-  );
+  const { openDropdown: openAdvancedFilterDropdown } = useOpenDropdown();
 
-  const { closeDropdown: closeObjectFilterDropdown } = useDropdown(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
+  const { closeDropdown: closeObjectFilterDropdown } = useCloseDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -118,8 +115,10 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
     }
 
-    closeObjectFilterDropdown();
-    openAdvancedFilterDropdown();
+    closeObjectFilterDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
+    openAdvancedFilterDropdown({
+      dropdownComponentInstanceIdFromProps: ADVANCED_FILTER_DROPDOWN_ID,
+    });
   };
 
   return (

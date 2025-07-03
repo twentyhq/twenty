@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -19,9 +20,11 @@ import {
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -56,6 +59,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -334,6 +338,7 @@ export class WorkflowVersionStepWorkspaceService {
       workflowRunId,
       stepOutput: newStepOutput,
       context: updatedContext,
+      stepStatus: StepStatus.SUCCESS,
     });
 
     await this.workflowRunnerWorkspaceService.resume({
@@ -576,6 +581,21 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.FILTER: {
+        return {
+          id: newStepId,
+          name: 'Filter',
+          type: WorkflowActionType.FILTER,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              filterGroups: [],
+              filters: [],
+            },
+          },
+        };
+      }
       case WorkflowActionType.HTTP_REQUEST: {
         return {
           id: newStepId,
@@ -661,6 +681,18 @@ export class WorkflowVersionStepWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
+          const objectMetadataInfo =
+            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+              field.settings.objectName,
+              workspaceId,
+            );
+
+          const relationFieldsNames = Object.values(
+            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
+          )
+            .filter((field) => field.type === FieldMetadataType.RELATION)
+            .map((field) => field.name);
+
           const repository =
             await this.twentyORMGlobalManager.getRepositoryForWorkspace(
               workspaceId,
@@ -671,6 +703,7 @@ export class WorkflowVersionStepWorkspaceService {
           const record = await repository.findOne({
             // @ts-expect-error legacy noImplicitAny
             where: { id: response[key].id },
+            relations: relationFieldsNames,
           });
 
           return { key, value: record };
