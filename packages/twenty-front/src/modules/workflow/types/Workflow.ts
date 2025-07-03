@@ -10,6 +10,8 @@ import {
   workflowDeleteRecordActionSchema,
   workflowDeleteRecordActionSettingsSchema,
   workflowExecutorOutputSchema,
+  workflowFilterActionSchema,
+  workflowFilterActionSettingsSchema,
   workflowFindRecordsActionSchema,
   workflowFindRecordsActionSettingsSchema,
   workflowFormActionSchema,
@@ -48,6 +50,9 @@ export type WorkflowDeleteRecordActionSettings = z.infer<
 export type WorkflowFindRecordsActionSettings = z.infer<
   typeof workflowFindRecordsActionSettingsSchema
 >;
+export type WorkflowFilterActionSettings = z.infer<
+  typeof workflowFilterActionSettingsSchema
+>;
 export type WorkflowFormActionSettings = z.infer<
   typeof workflowFormActionSettingsSchema
 >;
@@ -68,6 +73,7 @@ export type WorkflowDeleteRecordAction = z.infer<
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
+export type WorkflowFilterAction = z.infer<typeof workflowFilterActionSchema>;
 export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 export type WorkflowHttpRequestAction = z.infer<
   typeof workflowHttpRequestActionSchema
@@ -86,6 +92,7 @@ export type WorkflowAction =
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
   | WorkflowFindRecordsAction
+  | WorkflowFilterAction
   | WorkflowFormAction
   | WorkflowHttpRequestAction
   | WorkflowAiAgentAction;

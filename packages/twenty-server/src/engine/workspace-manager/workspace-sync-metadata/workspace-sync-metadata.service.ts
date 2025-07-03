@@ -191,15 +191,17 @@ export class WorkspaceSyncMetadataService {
         };
       }
 
-      await queryRunner.commitTransaction();
-
       // Execute migrations
       this.logger.log('Executing pending migrations');
       const executeMigrationsStart = performance.now();
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         context.workspaceId,
+        queryRunner,
       );
+
+      await queryRunner.commitTransaction();
+
       const executeMigrationsEnd = performance.now();
 
       this.logger.log(

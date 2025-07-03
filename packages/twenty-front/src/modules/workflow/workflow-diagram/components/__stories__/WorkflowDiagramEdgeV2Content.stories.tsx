@@ -1,17 +1,17 @@
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import {
   ComponentDecorator,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEdgeV2 } from '../WorkflowDiagramEdgeV2';
+import { WorkflowDiagramEdgeV2Content } from '../WorkflowDiagramEdgeV2Content';
 
-const meta: Meta<typeof WorkflowDiagramEdgeV2> = {
-  title: 'Modules/Workflow/WorkflowDiagramEdgeV2',
-  component: WorkflowDiagramEdgeV2,
+const meta: Meta<typeof WorkflowDiagramEdgeV2Content> = {
+  title: 'Modules/Workflow/WorkflowDiagramEdgeV2Content',
+  component: WorkflowDiagramEdgeV2Content,
   decorators: [
     ComponentDecorator,
     ReactflowDecorator,
@@ -35,11 +35,14 @@ const meta: Meta<typeof WorkflowDiagramEdgeV2> = {
     labelY: 0,
     parentStepId: 'parent-step-id',
     nextStepId: 'next-step-id',
+    onCreateFilter: fn(),
+    onDeleteFilter: fn(),
+    onCreateNode: fn(),
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof WorkflowDiagramEdgeV2>;
+type Story = StoryObj<typeof WorkflowDiagramEdgeV2Content>;
 
 export const ButtonsAppearOnHover: Story = {
   play: async ({ canvasElement }) => {
@@ -57,7 +60,7 @@ export const ButtonsAppearOnHover: Story = {
 };
 
 export const CreateFilter: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
     const buttons = await canvas.findAllByRole('button');
@@ -71,12 +74,14 @@ export const CreateFilter: Story = {
 
     userEvent.click(filterButton);
 
-    // TODO: Assert we created a filter
+    await waitFor(() => {
+      expect(args.onCreateFilter).toHaveBeenCalledTimes(1);
+    });
   },
 };
 
 export const AddNodeAction: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
     const buttons = await canvas.findAllByRole('button');
@@ -98,6 +103,10 @@ export const AddNodeAction: Story = {
 
     await waitFor(() => {
       expect(canvas.queryByText('Add Node')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(args.onCreateNode).toHaveBeenCalledTimes(1);
     });
   },
 };

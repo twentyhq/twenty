@@ -16,7 +16,7 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -54,7 +54,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
     recordId,
   });
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const dropdownPlacement = useRecoilComponentValueV2(
     dropdownPlacementComponentStateV2,
@@ -80,7 +80,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
   const handleRelationPickerEntitySelected = (
     selectedRelationEntity?: SingleRecordPickerRecord,
   ) => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     if (!selectedRelationEntity?.id || !relationFieldMetadataItem?.name) return;
 
@@ -107,7 +107,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
   };
 
   const handleCreateNew = (searchString?: string) => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     createNewRecordAndOpenRightDrawer?.(searchString);
   };
@@ -138,7 +138,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
             onRecordSelected={handleRelationPickerEntitySelected}
             objectNameSingular={relationObjectMetadataNameSingular}
             recordPickerInstanceId={dropdownId}
-            onCancel={closeDropdown}
+            onCancel={() => closeDropdown(dropdownId)}
             onCreate={shouldAllowCreateNew ? handleCreateNew : undefined}
             layoutDirection={
               dropdownPlacement?.includes('end')

@@ -8,7 +8,7 @@ import { MatchColumnSelectFieldSelectDropdownContent } from '@/spreadsheet-impor
 import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
@@ -39,7 +39,7 @@ export const MatchColumnToFieldSelect = ({
 }: MatchColumnToFieldSelectProps) => {
   const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
@@ -81,7 +81,7 @@ export const MatchColumnToFieldSelect = ({
       setSelectedFieldMetadataItem(null);
 
       onChange(correspondingOption);
-      closeDropdown();
+      closeDropdown(dropdownId);
     }
   };
 
@@ -89,13 +89,13 @@ export const MatchColumnToFieldSelect = ({
     selectedSuggestedOption: SelectOption,
   ) => {
     onChange(selectedSuggestedOption);
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleDoNotImportSelect = () => {
     if (isDefined(doNotImportOption)) {
       onChange(doNotImportOption);
-      closeDropdown();
+      closeDropdown(dropdownId);
     }
   };
 
@@ -109,7 +109,7 @@ export const MatchColumnToFieldSelect = ({
 
   const handleCancelSelectClick = () => {
     setSelectedFieldMetadataItem(null);
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const doNotImportOption = options.find(
