@@ -9,6 +9,11 @@ export type WorkspaceMigrationActionV2 =
   | UpdateFieldAction
   | DeleteFieldAction;
 
+type FromTo<T> = {
+    from: T,
+    to: T
+}
+
 export interface CreateObjectAction {
   type: 'create_object';
   object: ObjectMetadataEntity;
@@ -16,7 +21,7 @@ export interface CreateObjectAction {
 
 export interface UpdateObjectAction {
   type: 'update_object';
-  object: Partial<ObjectMetadataEntity>;
+  object: FromTo<Partial<ObjectMetadataEntity>>;
 }
 
 export interface DeleteObjectAction {

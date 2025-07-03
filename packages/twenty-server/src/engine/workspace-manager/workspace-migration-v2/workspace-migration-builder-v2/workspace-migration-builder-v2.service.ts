@@ -4,19 +4,26 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+import {
+  UpdateObjectAction,
+  WorkspaceMigrationActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
+type WorkspaceMigrationBuilderV2ServiceArgs = {
+  from: WorkspaceMigrationObjectInput;
+  to: WorkspaceMigrationObjectInput;
+};
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
   constructor() {}
 
-  build(
-    from: WorkspaceMigrationObjectInput,
-    to: WorkspaceMigrationObjectInput,
-  ): WorkspaceMigrationV2[] {
+  build({
+    from,
+    to,
+  }: WorkspaceMigrationBuilderV2ServiceArgs): WorkspaceMigrationV2[] {
     const actions: WorkspaceMigrationActionV2[] = [];
 
     const objectPropertiesToIgnore = [
@@ -29,61 +36,78 @@ export class WorkspaceMigrationBuilderV2Service {
       'fields',
     ];
 
-    const partialFrom = transformMetadataForComparison(from, {
+    const fromCompare = transformMetadataForComparison(from, {
       shouldIgnoreProperty: (property) =>
         objectPropertiesToIgnore.includes(property),
     });
-    const partialTo = transformMetadataForComparison(to, {
+    const toCompare = transformMetadataForComparison(to, {
       shouldIgnoreProperty: (property) =>
         objectPropertiesToIgnore.includes(property),
     });
 
     const objectMetadataDifference = diff(
-      partialFrom,
-      omit(partialTo, 'fields'),
+      fromCompare,
+      omit(toCompare, 'fields'),
     );
 
-    const objectPropertiesToUpdate: Partial<WorkspaceMigrationObjectInput> = {};
+    const objectPropertiesToUpdate: UpdateObjectAction['object'] = {
+      from: {},
+      to: {},
+    };
 
-    for (const difference of objectMetadataDifference) {
-      if (difference.type === 'CHANGE') {
-        if (
-          difference.oldValue === null &&
-          (difference.value === null || difference.value === undefined)
-        ) {
-          continue;
+    const allowedObjectProps: (keyof Partial<ObjectMetadataEntity>)[] = [
+      'nameSingular',
+      'namePlural',
+      'labelSingular',
+      'labelPlural',
+      'description',
+    ];
+
+    const objectUpdatedProperties = objectMetadataDifference.reduce(
+      (acc, difference) => {
+        switch (difference.type) {
+          case 'CHANGE': {
+            if (
+              difference.oldValue === null &&
+              (difference.value === null || difference.value === undefined)
+            ) {
+              return acc;
+            }
+            const property = difference.path[0];
+
+            // TODO investigate why it would be a number, in case of array I guess ?
+            if (typeof property === 'number') {
+              return acc;
+            }
+
+            // Could be handled directly from the diff we do above
+            if (
+              !allowedObjectProps.includes(
+                property as keyof ObjectMetadataEntity,
+              )
+            ) {
+              return acc;
+            }
+
+            return {
+              from: difference.oldValue,
+              to: difference.value,
+            };
+          }
+          case 'CREATE':
+          case 'REMOVE':
+          default: {
+            return acc;
+          }
         }
-        const property = difference.path[0];
+      },
+      objectPropertiesToUpdate,
+    );
 
-        // @ts-expect-error legacy noImplicitAny
-        objectPropertiesToUpdate[property] = to[property];
-      }
-    }
-
-    if (Object.keys(objectPropertiesToUpdate).length > 0) {
-      // Only include properties that exist on ObjectMetadataEntity and are relevant for update
-      const allowedObjectProps: (keyof Partial<ObjectMetadataEntity>)[] = [
-        'nameSingular',
-        'namePlural',
-        'labelSingular',
-        'labelPlural',
-        'description',
-      ];
-      const filteredObjectPropertiesToUpdate: Partial<ObjectMetadataEntity> =
-        {};
-
-      for (const key of allowedObjectProps) {
-        if (key in objectPropertiesToUpdate) {
-          // @ts-expect-error legacy noImplicitAny
-          filteredObjectPropertiesToUpdate[key] =
-            objectPropertiesToUpdate[
-              key as keyof WorkspaceMigrationObjectInput
-            ];
-        }
-      }
+    if (Object.keys(objectUpdatedProperties).length > 0) {
       actions.push({
         type: 'update_object',
-        object: filteredObjectPropertiesToUpdate,
+        object: objectUpdatedProperties,
       });
     }
 

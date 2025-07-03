@@ -30,14 +30,17 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ...from,
       nameSingular: 'Person',
     };
-    const result = service.build(from, to);
+    const result = service.build({ from, to });
 
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].actions.length).toBeGreaterThan(0);
     expect(result[0].actions[0].type).toBe('update_object');
+        expect(
+      (result[0].actions[0] as UpdateObjectAction).object.from,
+    ).toBe('Contact');
     expect(
-      (result[0].actions[0] as UpdateObjectAction).object.nameSingular,
+      (result[0].actions[0] as UpdateObjectAction).object.to,
     ).toBe('Person');
   });
 });
