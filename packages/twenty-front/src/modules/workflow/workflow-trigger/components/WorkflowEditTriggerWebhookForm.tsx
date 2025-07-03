@@ -8,6 +8,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
@@ -18,6 +19,7 @@ import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTri
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -162,22 +164,17 @@ export const WorkflowEditTriggerWebhookForm = ({
                 return;
               }
 
-              let formattedExpectedBody = {};
-              try {
-                formattedExpectedBody = JSON.parse(
-                  newExpectedBody || '{}',
-                  (key, value) => {
-                    if (isDefined(key) && key.includes(' ')) {
-                      throw new Error(t`JSON keys cannot contain spaces`);
-                    }
-                    return value;
-                  },
+              const parsingResult =
+                parseAndValidateVariableFriendlyStringifiedJson(
+                  isNonEmptyString(newExpectedBody) ? newExpectedBody : '{}',
                 );
-              } catch (e) {
+
+              if (!parsingResult.isValid) {
                 setErrorMessages((prev) => ({
                   ...prev,
-                  expectedBody: String(e),
+                  expectedBody: parsingResult.error,
                 }));
+
                 return;
               }
 
@@ -186,18 +183,17 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = getFunctionOutputSchema(
-                formattedExpectedBody,
-              );
+              const outputSchema = getFunctionOutputSchema(parsingResult.data);
 
               triggerOptions.onTriggerUpdate(
                 {
                   ...trigger,
                   settings: {
                     ...trigger.settings,
-                    expectedBody: formattedExpectedBody,
+                    httpMethod: 'POST',
+                    expectedBody: parsingResult.data,
                     outputSchema,
-                  } as WorkflowWebhookTrigger['settings'],
+                  } satisfies WorkflowWebhookTrigger['settings'],
                 },
                 { computeOutputSchema: false },
               );
