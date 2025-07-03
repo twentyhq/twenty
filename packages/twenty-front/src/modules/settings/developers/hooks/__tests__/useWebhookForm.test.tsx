@@ -9,11 +9,11 @@ import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWe
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
-import { error } from 'console';
 import { useWebhookForm } from '../useWebhookForm';
 
 const mockNavigateSettings = jest.fn();
-const mockEnqueueSnackBar = jest.fn();
+const mockEnqueueSuccessSnackBar = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
@@ -176,10 +176,9 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook https://test.com/webhook created successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook https://test.com/webhook created successfully',
+      });
     });
 
     it('should handle creation errors', async () => {
@@ -219,7 +218,7 @@ describe('useWebhookForm', () => {
       await result.current.handleSave(formData);
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: error,
+        apolloError: expect.any(Error),
       });
     });
 
@@ -253,10 +252,9 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook https://test.com/webhook created successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook https://test.com/webhook created successfully',
+      });
     });
   });
 
@@ -310,10 +308,9 @@ describe('useWebhookForm', () => {
 
       await result.current.handleSave(formData);
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook https://updated.com/webhook updated successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook https://updated.com/webhook updated successfully',
+      });
     });
 
     it('should handle update errors', async () => {
@@ -359,7 +356,7 @@ describe('useWebhookForm', () => {
       await result.current.handleSave(formData);
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: error,
+        apolloError: expect.any(Error),
       });
     });
   });
@@ -424,10 +421,9 @@ describe('useWebhookForm', () => {
 
       await result.current.handleDelete();
 
-      expect(mockEnqueueSnackBar).toHaveBeenCalledWith(
-        'Webhook deleted successfully',
-        { variant: 'success' },
-      );
+      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
+        message: 'Webhook deleted successfully',
+      });
     });
 
     it('should handle deletion without webhookId', async () => {
@@ -474,7 +470,7 @@ describe('useWebhookForm', () => {
       await result.current.handleDelete();
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: error,
+        apolloError: expect.any(Error),
       });
     });
   });
