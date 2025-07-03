@@ -32,7 +32,6 @@ const StyledExpandDiv = styled.div<{ expanded: boolean }>`
   flex-direction: column;
   width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
 export const ResolvedChats = () => {

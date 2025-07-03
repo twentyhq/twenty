@@ -27,7 +27,8 @@ export interface Message {
 }
 
 export type TDateFirestore = {
-  toDate: () => string;
+  seconds: number;
+  nanoseconds: number;
 };
 
 export interface IChatPreview {

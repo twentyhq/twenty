@@ -1,7 +1,7 @@
 import { TDateFirestore } from '@/chat/internal/types/chat';
 
 export const formatDate = (date: TDateFirestore) => {
-  const parsedDate = new Date(date.toDate());
+  const parsedDate = new Date(date.seconds * 1000);
 
   const hours = parsedDate.getHours().toString().padStart(2, '0');
   const minutes = parsedDate.getMinutes().toString().padStart(2, '0');

@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 
-import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
-
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { DeprecatedTab } from '@/ui/layout/tab/components/Tab';
 
 type TabItemProps = {
   id: string;
-  name: string;
+  title: string;
   incomingMessages?: number;
 };
 
@@ -48,7 +47,7 @@ export const PaneSideTabs = ({
           <DeprecatedTab
             id={tab.id.toString()}
             key={tab.id}
-            title={tab.name}
+            title={tab.title}
             active={tab.id.toString() === activeTabId}
             onClick={() => setActiveTabId(tab.id)}
             disabled={loading}
