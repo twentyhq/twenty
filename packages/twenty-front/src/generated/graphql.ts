@@ -2343,9 +2343,9 @@ export type UpdateAgentInput = {
 };
 
 export type UpdateApiKeyDto = {
-  expiresAt: Scalars['String'];
+  expiresAt?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 

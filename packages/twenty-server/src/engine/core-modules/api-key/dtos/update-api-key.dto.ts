@@ -14,14 +14,15 @@ export class UpdateApiKeyDTO {
   @IsString()
   id: string;
 
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   @IsString()
-  name: string;
+  @IsOptional()
+  name?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsDateString()
-  expiresAt: string;
+  @IsOptional()
+  expiresAt?: string;
 
   @Field({ nullable: true })
   @IsOptional()

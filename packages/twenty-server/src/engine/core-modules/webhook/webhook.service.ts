@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ArrayContains, Repository } from 'typeorm';
+import { ArrayContains, IsNull, Repository } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
 
@@ -35,7 +35,10 @@ export class WebhookService {
 
   async findByWorkspaceId(workspaceId: string): Promise<Webhook[]> {
     return this.webhookRepository.find({
-      where: { workspaceId },
+      where: {
+        workspaceId,
+        deletedAt: IsNull(),
+      },
     });
   }
 
@@ -47,13 +50,18 @@ export class WebhookService {
       where: operations.map((operation) => ({
         workspaceId,
         operations: ArrayContains([operation]),
+        deletedAt: IsNull(),
       })),
     });
   }
 
   async findById(id: string, workspaceId: string): Promise<Webhook | null> {
     const webhook = await this.webhookRepository.findOne({
-      where: { id, workspaceId },
+      where: {
+        id,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
     });
 
     return webhook || null;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ArrayContains } from 'typeorm';
+import { ArrayContains, IsNull } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
 import { WebhookService } from './webhook.service';
@@ -125,7 +125,10 @@ describe('WebhookService', () => {
       const result = await service.findByWorkspaceId(mockWorkspaceId);
 
       expect(mockWebhookRepository.find).toHaveBeenCalledWith({
-        where: { workspaceId: mockWorkspaceId },
+        where: {
+          workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
+        },
       });
       expect(result).toEqual(mockWebhooks);
     });
@@ -147,6 +150,7 @@ describe('WebhookService', () => {
         where: operations.map((operation) => ({
           workspaceId: mockWorkspaceId,
           operations: ArrayContains([operation]),
+          deletedAt: IsNull(),
         })),
       });
       expect(result).toEqual(mockWebhooks);
@@ -167,6 +171,7 @@ describe('WebhookService', () => {
           {
             workspaceId: mockWorkspaceId,
             operations: ArrayContains(['create']),
+            deletedAt: IsNull(),
           },
         ],
       });
@@ -181,7 +186,11 @@ describe('WebhookService', () => {
       const result = await service.findById(mockWebhookId, mockWorkspaceId);
 
       expect(mockWebhookRepository.findOne).toHaveBeenCalledWith({
-        where: { id: mockWebhookId, workspaceId: mockWorkspaceId },
+        where: {
+          id: mockWebhookId,
+          workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
+        },
       });
       expect(result).toEqual(mockWebhook);
     });
@@ -322,7 +331,11 @@ describe('WebhookService', () => {
       const result = await service.delete(mockWebhookId, mockWorkspaceId);
 
       expect(mockWebhookRepository.findOne).toHaveBeenCalledWith({
-        where: { id: mockWebhookId, workspaceId: mockWorkspaceId },
+        where: {
+          id: mockWebhookId,
+          workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
+        },
       });
       expect(mockWebhookRepository.softDelete).toHaveBeenCalledWith(
         mockWebhookId,

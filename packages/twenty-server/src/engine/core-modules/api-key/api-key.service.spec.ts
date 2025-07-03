@@ -111,6 +111,7 @@ describe('ApiKeyService', () => {
         where: {
           id: mockApiKeyId,
           workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
         },
       });
       expect(result).toEqual(mockApiKey);
@@ -136,6 +137,7 @@ describe('ApiKeyService', () => {
       expect(mockApiKeyRepository.find).toHaveBeenCalledWith({
         where: {
           workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
         },
       });
       expect(result).toEqual(mockApiKeys);
@@ -227,6 +229,7 @@ describe('ApiKeyService', () => {
         where: {
           id: mockApiKeyId,
           workspaceId: mockWorkspaceId,
+          deletedAt: IsNull(),
         },
       });
       expect(mockApiKeyRepository.softDelete).toHaveBeenCalledWith(
