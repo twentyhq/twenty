@@ -1,7 +1,7 @@
 import { WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import {
-    createWebhookCreateInput,
-    createWebhookUpdateInput,
+  createWebhookCreateInput,
+  createWebhookUpdateInput,
 } from '../createWebhookInput';
 
 describe('createWebhookInput', () => {

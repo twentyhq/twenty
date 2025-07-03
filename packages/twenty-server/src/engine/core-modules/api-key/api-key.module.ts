@@ -9,6 +9,6 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 @Module({
   imports: [TypeOrmModule.forFeature([ApiKey], 'core'), JwtModule],
   providers: [ApiKeyService, ApiKeyResolver],
-  exports: [ApiKeyService],
+  exports: [ApiKeyService, TypeOrmModule],
 })
 export class ApiKeyModule {}

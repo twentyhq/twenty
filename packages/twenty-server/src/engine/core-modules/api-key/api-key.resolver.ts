@@ -4,7 +4,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
 import { DeleteApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/delete-api-key.dto';
 import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
+import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
 import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -27,7 +29,13 @@ export class ApiKeyResolver {
     @Args('input') input: GetApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey | null> {
-    return this.apiKeyService.findById(input.id, workspace.id);
+    const apiKey = await this.apiKeyService.findById(input.id, workspace.id);
+
+    if (!apiKey) {
+      throw new NotFoundError(`API Key with id ${input.id} not found`);
+    }
+
+    return apiKey;
   }
 
   @Mutation(() => ApiKey)
@@ -68,5 +76,13 @@ export class ApiKeyResolver {
     const result = await this.apiKeyService.delete(input.id, workspace.id);
 
     return result !== null;
+  }
+
+  @Mutation(() => ApiKey, { nullable: true })
+  async revokeApiKey(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('input') input: RevokeApiKeyDTO,
+  ): Promise<ApiKey | null> {
+    return this.apiKeyService.revoke(input.id, workspace.id);
   }
 }
