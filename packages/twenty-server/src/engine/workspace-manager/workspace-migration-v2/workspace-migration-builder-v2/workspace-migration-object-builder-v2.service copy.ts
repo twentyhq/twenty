@@ -147,19 +147,30 @@ export const buildWorkspaceObjectMigrationV2 = (
 ): WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] => {
   const { created, deleted, updated } =
     objectMetadataDispatcher(objectMetadataInputs);
-  const actions: WorkspaceMigrationObjectActionV2[] = [];
+  const objectWorkspaceMigrations: WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] =
+    [];
 
   created.forEach((objectMetadata) => {
-    actions.push({
-      type: 'create_object',
-      object: objectMetadata, // TODO
+    objectWorkspaceMigrations.push({
+      uniqueIdentifier: objectMetadata.uniqueIdentifier,
+      actions: [
+        {
+          type: 'create_object',
+          object: objectMetadata, // TODO // Question should this contain field create migrations too or ?
+        },
+      ],
     });
   });
 
   deleted.forEach((objectMetadata) => {
-    actions.push({
-      type: 'delete_object',
-      objectMetadataId: objectMetadata.uniqueIdentifier,
+    objectWorkspaceMigrations.push({
+      uniqueIdentifier: objectMetadata.uniqueIdentifier,
+      actions: [
+        {
+          type: 'delete_object',
+          objectMetadataId: objectMetadata.uniqueIdentifier,
+        },
+      ],
     });
   });
 
@@ -169,13 +180,16 @@ export const buildWorkspaceObjectMigrationV2 = (
       to,
     });
 
-    actions.push({
-      type: 'update_object',
-      updates: objectUpdatedProperties,
+    objectWorkspaceMigrations.push({
+      uniqueIdentifier: to.uniqueIdentifier,
+      actions: [
+        {
+          type: 'update_object',
+          updates: objectUpdatedProperties,
+        },
+      ],
     });
   });
 
-  if (actions.length === 0) return [];
-
-  return [{ actions }];
+  return objectWorkspaceMigrations;
 };
