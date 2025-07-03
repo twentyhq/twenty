@@ -12,9 +12,19 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { WhatsappEmmitResolvedChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-resolved-status.cron.job';
+import { WhatsappEmmitWaitingChatsCronJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-chats-emmit-waiting-status.cron.job';
+import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -37,7 +47,16 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, BillingSubscription], 'core'),
+    TypeOrmModule.forFeature(
+      [
+        Workspace,
+        BillingSubscription,
+        WhatsappIntegration,
+        Sector,
+        WorkspaceAgent,
+      ],
+      'core',
+    ),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -61,6 +80,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
+    MetaModule,
+    MessageQueueModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
@@ -70,6 +91,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     CheckExpiredSubscriptionsJob,
+    WhatsappService,
+    GoogleStorageService,
+    FirebaseService,
+    WhatsappEmmitWaitingChatsCronJob,
+    WhatsappEmmitResolvedChatsCronJob,
   ],
 })
 export class JobsModule {

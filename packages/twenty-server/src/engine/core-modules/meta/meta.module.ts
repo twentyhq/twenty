@@ -9,7 +9,11 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
+import { WhatsappCronCommand } from 'src/engine/core-modules/meta/whatsapp/cron/command/whatsapp.cron.command';
+import { WhatsappEmmitResolvedchatsJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
+import { WhatsappEmmitWaitingStatusJob } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
@@ -33,8 +37,9 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
       ],
     }),
     WorkspaceModule,
+    MessageQueueModule,
   ],
-  exports: [],
+  exports: [WhatsappService],
   controllers: [WhatsappController],
   providers: [
     TypeORMService,
@@ -45,6 +50,9 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     WhatsappResolver,
     GoogleStorageService,
     FirebaseService,
+    WhatsappEmmitWaitingStatusJob,
+    WhatsappEmmitResolvedchatsJob,
+    WhatsappCronCommand,
   ],
 })
 export class MetaModule {}
