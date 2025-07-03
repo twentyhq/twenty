@@ -132,7 +132,6 @@ export class RunWorkflowJob {
       context: workflowRun.context ?? {
         trigger: triggerPayload,
       },
-      workspaceId,
     });
   }
 
@@ -186,7 +185,6 @@ export class RunWorkflowJob {
       currentStepId: nextStepId,
       steps: workflowRun.output?.flow?.steps ?? [],
       context: workflowRun.context ?? {},
-      workspaceId,
     });
   }
 
@@ -195,32 +193,18 @@ export class RunWorkflowJob {
     currentStepId,
     steps,
     context,
-    workspaceId,
   }: {
     workflowRunId: string;
     currentStepId: string;
     steps: WorkflowAction[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
-    workspaceId: string;
   }) {
-    const { error, pendingEvent } =
-      await this.workflowExecutorWorkspaceService.execute({
-        workflowRunId,
-        currentStepId,
-        steps,
-        context,
-      });
-
-    if (pendingEvent) {
-      return;
-    }
-
-    await this.workflowRunWorkspaceService.endWorkflowRun({
+    await this.workflowExecutorWorkspaceService.execute({
       workflowRunId,
-      workspaceId,
-      status: error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
-      error,
+      currentStepId,
+      steps,
+      context,
     });
   }
 
