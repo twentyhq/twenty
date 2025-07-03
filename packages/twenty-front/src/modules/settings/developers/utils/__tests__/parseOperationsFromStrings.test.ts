@@ -40,4 +40,3 @@ describe('parseOperationsFromStrings', () => {
     expect(result).toEqual([{ object: 'person', action: 'created' }]);
   });
 });
- 

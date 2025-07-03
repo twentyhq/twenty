@@ -8,4 +8,3 @@ export const parseOperationsFromStrings = (
     return { object, action };
   });
 };
- 
