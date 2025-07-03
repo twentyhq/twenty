@@ -80,14 +80,6 @@ const priorityOptions: SelectOption[] = [
   { value: 'urgent', label: 'Urgent', color: 'red' },
 ];
 
-const statusOptions: SelectOption[] = [
-  { value: 'draft', label: 'Draft', color: 'gray' },
-  { value: 'in-progress', label: 'In Progress', color: 'blue' },
-  { value: 'review', label: 'Under Review', color: 'yellow' },
-  { value: 'approved', label: 'Approved', color: 'green' },
-  { value: 'rejected', label: 'Rejected', color: 'red' },
-];
-
 const Render = ({
   values,
   options,
