@@ -38,11 +38,15 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.TS_VECTOR,
   ].includes(fieldType);
 
+  const isRelation =
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.MORPH_RELATION);
+
   if (fieldIsSimpleValue) {
     return field.name;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.MANY_TO_ONE
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;
@@ -69,7 +73,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     }`;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.ONE_TO_MANY
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;
