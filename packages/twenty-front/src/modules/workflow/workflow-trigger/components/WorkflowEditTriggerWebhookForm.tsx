@@ -152,7 +152,11 @@ export const WorkflowEditTriggerWebhookForm = ({
             }
             onBlur={onBlur}
             readonly={triggerOptions.readonly}
-            defaultValue={JSON.stringify(trigger.settings.expectedBody)}
+            defaultValue={JSON.stringify(
+              trigger.settings.expectedBody,
+              null,
+              2,
+            )}
             onChange={(newExpectedBody) => {
               if (triggerOptions.readonly === true) {
                 return;
