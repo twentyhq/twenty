@@ -2,17 +2,20 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export type WorkspaceMigrationActionV2 =
-  | CreateObjectAction
-  | UpdateObjectAction
-  | DeleteObjectAction
+  | WorkspaceMigrationObjectActionV2
   | CreateFieldAction
   | UpdateFieldAction
   | DeleteFieldAction;
 
+export type WorkspaceMigrationObjectActionV2 =
+  | CreateObjectAction
+  | UpdateObjectAction
+  | DeleteObjectAction;
+
 export type FromTo<T> = {
-    from: T,
-    to: T
-}
+  from: T;
+  to: T;
+};
 export interface CreateObjectAction {
   type: 'create_object';
   object: ObjectMetadataEntity;

@@ -5,7 +5,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   FromTo,
   UpdateObjectAction,
-  WorkspaceMigrationActionV2,
+  WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
@@ -96,25 +96,75 @@ const compareTwoWorkspaceMigrationObjectInput = ({
   }, objectPropertiesToUpdate);
 };
 
-// Should return WorkspaceObjectMigrationV2 ?
-export const buildWorkspaceObjectMigrationV2 = ({
+const objectMetadataDispatcher = ({
   from,
   to,
-}: BuildWorkspaceMigrationV2Args): WorkspaceMigrationV2[] => {
-  const deletedObjectMetadata = from.filter((fromObject) =>
-    to.find(
-      (toObject) => toObject.uniqueIdentifier === fromObject.uniqueIdentifier,
-    ),
-  );
-  const createdObjectMetadata = to.filter((toObject) =>
-    from.find(
-      (fromObject) => fromObject.uniqueIdentifier === toObject.uniqueIdentifier,
-    ),
-  );
-  const updatedObjectMetadat: FromTo<WorkspaceMigrationObjectInput>[] = []; // Get by elimination
+}: BuildWorkspaceMigrationV2Args) => {
+  const initialDispatcher: {
+    deleted: WorkspaceMigrationObjectInput[];
+    created: WorkspaceMigrationObjectInput[];
+    updated: FromTo<WorkspaceMigrationObjectInput>[];
+  } = {
+    deleted: [],
+    updated: [],
+    created: [],
+  };
 
-  const actions: WorkspaceMigrationActionV2[] = [];
-  const updateMigrationsDiffResults = updatedObjectMetadat.map(
+  // Create maps for faster lookups
+  const fromMap = new Map(from.map((obj) => [obj.uniqueIdentifier, obj]));
+  const toMap = new Map(to.map((obj) => [obj.uniqueIdentifier, obj]));
+
+  // Find deleted objects (exist in 'from' but not in 'to')
+  for (const [identifier, fromObj] of fromMap) {
+    if (!toMap.has(identifier)) {
+      initialDispatcher.deleted.push(fromObj);
+    }
+  }
+
+  // Find created objects (exist in 'to' but not in 'from')
+  for (const [identifier, toObj] of toMap) {
+    if (!fromMap.has(identifier)) {
+      initialDispatcher.created.push(toObj);
+    }
+  }
+
+  // Find updated objects (exist in both, need to compare)
+  for (const [identifier, fromObj] of fromMap) {
+    const toObj = toMap.get(identifier);
+    if (toObj) {
+      initialDispatcher.updated.push({
+        from: fromObj,
+        to: toObj,
+      });
+    }
+  }
+
+  return initialDispatcher;
+};
+
+// Should return WorkspaceObjectMigrationV2 ?
+export const buildWorkspaceObjectMigrationV2 = (
+  objectMetadataInputs: BuildWorkspaceMigrationV2Args,
+): WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] => {
+  const { created, deleted, updated } =
+    objectMetadataDispatcher(objectMetadataInputs);
+  const actions: WorkspaceMigrationObjectActionV2[] = [];
+
+  created.forEach((objectMetadata) => {
+    actions.push({
+      type: 'create_object',
+      object: objectMetadata, // TODO
+    });
+  });
+
+  deleted.forEach((objectMetadata) => {
+    actions.push({
+      type: 'delete_object',
+      objectMetadataId: objectMetadata.uniqueIdentifier,
+    });
+  });
+
+  const updateMigrationsDiffResults = updated.map(
     compareTwoWorkspaceMigrationObjectInput,
   );
   updateMigrationsDiffResults.forEach((objectUpdatedProperties) => {
