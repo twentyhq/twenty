@@ -1,0 +1,9 @@
+import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+
+export interface WorkspaceMigrationV2 {
+  // formatVersion: 1;
+  // createdAt: string;
+  // name: string;
+  // description?: string;
+  actions: WorkspaceMigrationActionV2[];
+}
