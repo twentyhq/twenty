@@ -10,7 +10,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -23,11 +22,14 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity('fieldMetadata')
-@Unique('IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE', [
-  'name',
-  'objectMetadataId',
-  'workspaceId',
-])
+@Index(
+  'IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
+  ['name', 'objectMetadataId', 'workspaceId'],
+  {
+    unique: true,
+    where: `"type" <> ''MORPH_RELATION''`,
+  },
+)
 @Index('IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID', [
   'relationTargetFieldMetadataId',
 ])
