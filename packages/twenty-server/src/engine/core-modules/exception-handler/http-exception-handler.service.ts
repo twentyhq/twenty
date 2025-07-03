@@ -1,4 +1,10 @@
-import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+  Scope,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
 import { Response } from 'express';
@@ -16,6 +22,34 @@ interface RequestAndParams {
   params: any;
 }
 
+const getErrorNameFromStatusCode = (statusCode: number) => {
+  switch (statusCode) {
+    case 400:
+      return 'BadRequestException';
+    case 401:
+      return 'UnauthorizedException';
+    case 403:
+      return 'ForbiddenException';
+    case 404:
+      return 'NotFoundException';
+    case 405:
+      return 'MethodNotAllowedException';
+    case 409:
+      return 'ConflictException';
+    case 422:
+      return 'UnprocessableEntityException';
+    case 500:
+      return 'InternalServerErrorException';
+    default: {
+      if (statusCode >= 500) {
+        return 'InternalServerErrorException';
+      }
+
+      return 'BadRequestException';
+    }
+  }
+};
+
 @Injectable({ scope: Scope.REQUEST })
 export class HttpExceptionHandlerService {
   constructor(
@@ -25,14 +59,12 @@ export class HttpExceptionHandlerService {
   ) {}
 
   handleError = (
-    exception: Error,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    exception: Error | HttpException,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
@@ -62,7 +94,7 @@ export class HttpExceptionHandlerService {
 
     return response.status(statusCode).send({
       statusCode,
-      error: exception.name || 'BadRequestException',
+      error: exception.name ?? getErrorNameFromStatusCode(statusCode),
       messages: [exception?.message],
     });
   };

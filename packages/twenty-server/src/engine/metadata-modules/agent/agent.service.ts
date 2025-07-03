@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -13,6 +14,8 @@ export class AgentService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
   ) {}
 
   async findManyAgents(workspaceId: string) {
@@ -34,7 +37,18 @@ export class AgentService {
       );
     }
 
-    return agent;
+    const roleTarget = await this.roleTargetsRepository.findOne({
+      where: {
+        agentId: id,
+        workspaceId,
+      },
+      select: ['roleId'],
+    });
+
+    return {
+      ...agent,
+      roleId: roleTarget?.roleId || null,
+    };
   }
 
   async createOneAgent(

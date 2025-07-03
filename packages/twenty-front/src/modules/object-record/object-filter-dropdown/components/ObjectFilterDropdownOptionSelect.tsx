@@ -4,7 +4,6 @@ import { Key } from 'ts-key-enum';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -15,6 +14,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -64,7 +64,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     [objectFilterDropdownCurrentRecordFilter?.value],
   );
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 

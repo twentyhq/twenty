@@ -1,9 +1,13 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { CustomException } from 'src/utils/custom-exception';
 
 @Catch()
 export class RestApiExceptionFilter implements ExceptionFilter {
@@ -15,10 +19,13 @@ export class RestApiExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    const statusCode =
+      exception instanceof HttpException ? exception.getStatus() : 400; // should actually default to 500 but we dont have input validation yet and dont want to be flooded with errors from input https://github.com/twentyhq/core-team-issues/issues/1027
+
     return this.httpExceptionHandlerService.handleError(
-      exception as CustomException,
+      exception as Error | HttpException,
       response,
-      400,
+      statusCode,
     );
   }
 }

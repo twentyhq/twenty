@@ -3,23 +3,23 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { IconHelpCircle, IconMessage } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const SupportDropdown = () => {
   const dropdownId = `support-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const handleTalkToUs = () => {
     window.FrontChat?.('show');
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleUserGuide = () => {
     window.open('https://twenty.com/user-guide', '_blank');
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (

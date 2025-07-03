@@ -16,11 +16,13 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
+
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
@@ -138,6 +140,10 @@ describe('MessagingMessagesImportService', () => {
         useValue: {
           handleDriverException: jest.fn().mockResolvedValue(undefined),
         },
+      },
+      {
+        provide: MessagingAccountAuthenticationService,
+        useClass: MessagingAccountAuthenticationService,
       },
     ];
     const module: TestingModule = await Test.createTestingModule({

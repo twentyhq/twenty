@@ -23,6 +23,11 @@ export const getActionIconColorOrThrow = ({
       return theme.color.blue;
     case 'AI_AGENT':
       return theme.color.pink;
+    case 'FILTER': {
+      throw new Error(
+        "The Filter action isn't meant to be displayed as a node.",
+      );
+    }
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

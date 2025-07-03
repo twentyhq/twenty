@@ -81,9 +81,9 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
     const testData: ImportedStructuredRow<string>[] = [
-      { 'Link URL (domainName)': 'duplicaTe.com', id: '1' },
-      { 'Link URL (domainName)': 'duplicate.com ', id: '2' },
-      { 'Link URL (domainName)': 'other.com', id: '3' },
+      { 'Link URL (domainName)': 'duplicaTe.com' },
+      { 'Link URL (domainName)': 'duplicate.com ' },
+      { 'Link URL (domainName)': 'other.com' },
     ];
 
     const addErrorMock = jest.fn();

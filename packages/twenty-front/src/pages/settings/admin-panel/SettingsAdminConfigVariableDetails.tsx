@@ -22,7 +22,7 @@ import { Button } from 'twenty-ui/input';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const StyledForm = styled(Form)`
   display: flex;

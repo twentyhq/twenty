@@ -12,7 +12,7 @@ import {
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { useDateParser } from '@/ui/input/components/internal/hooks/useDateParser';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -129,12 +129,8 @@ export const FormDateTimeFieldInput = ({
     }
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
+  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
 
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
@@ -148,11 +144,15 @@ export const FormDateTimeFieldInput = ({
     callback: (event) => {
       event.stopImmediatePropagation();
 
-      closeDropdownYearSelect();
-      closeDropdownMonthSelect();
+      closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+      closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,
+    excludedClickOutsideIds: [
+      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+    ],
   });
 
   const handlePickerChange = (newDate: Nullable<Date>) => {
