@@ -11,12 +11,20 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 
   it('should return a migration when nameSingular changes', () => {
     const from: WorkspaceMigrationObjectInput = {
+      uniqueIdentifier: '123e4567-e89b-12d3-a456-426614175000',
       nameSingular: 'Contact',
       namePlural: 'Contacts',
       labelSingular: 'Contact',
       labelPlural: 'Contacts',
       description: 'A contact',
-      fields: [{ name: 'firstName', label: 'First Name', type: 'string' }],
+      fields: [
+        {
+          uniqueIdentifier: '123e4567-e89b-12d3-a456-426614174000',
+          name: 'firstName',
+          label: 'First Name',
+          type: 'string',
+        },
+      ],
     };
     const to: WorkspaceMigrationObjectInput = {
       ...from,

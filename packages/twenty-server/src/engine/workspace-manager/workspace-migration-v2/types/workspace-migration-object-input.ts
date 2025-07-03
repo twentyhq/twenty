@@ -1,4 +1,5 @@
 export type WorkspaceMigrationObjectFieldInput = {
+  uniqueIdentifier: string;
   name: string;
   label: string;
   type: string;
@@ -6,6 +7,7 @@ export type WorkspaceMigrationObjectFieldInput = {
 };
 
 export type WorkspaceMigrationObjectInput = {
+  uniqueIdentifier: string;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
