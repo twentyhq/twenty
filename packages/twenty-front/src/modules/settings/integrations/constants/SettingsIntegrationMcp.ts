@@ -18,7 +18,7 @@ export const SETTINGS_INTEGRATION_AI_CATEGORY: SettingsIntegrationCategory = {
           mcpServers: {
             twenty: {
               type: 'remote',
-              url: `${REACT_APP_SERVER_BASE_URL}/mcp/`,
+              url: `${REACT_APP_SERVER_BASE_URL}/mcp`,
               headers: {
                 Authorization: 'Bearer [API_KEY]',
               },
