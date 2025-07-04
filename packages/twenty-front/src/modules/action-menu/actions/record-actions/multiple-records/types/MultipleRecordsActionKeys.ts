@@ -1,6 +1,6 @@
 export enum MultipleRecordsActionKeys {
   DELETE = 'delete-multiple-records',
-  EXPORT_FROM_RECORD_INDEX = 'export-from-record-index-multiple-records',
+  EXPORT = 'export-multiple-records',
   DESTROY = 'destroy-multiple-records',
   RESTORE = 'restore-multiple-records',
 }
