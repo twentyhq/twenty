@@ -34,11 +34,15 @@ export class AgentChatService {
     });
   }
 
-  async addMessage(
-    threadId: string,
-    role: AgentChatMessageRole,
-    content: string,
-  ) {
+  async addMessage({
+    threadId,
+    role,
+    content,
+  }: {
+    threadId: string;
+    role: AgentChatMessageRole;
+    content: string;
+  }) {
     const message = this.messageRepository.create({
       threadId,
       role,
@@ -56,11 +60,11 @@ export class AgentChatService {
   }
 
   async addUserMessageAndAIResponse(threadId: string, userMessage: string) {
-    const userMsg = await this.addMessage(
+    const userMsg = await this.addMessage({
       threadId,
-      AgentChatMessageRole.USER,
-      userMessage,
-    );
+      role: AgentChatMessageRole.USER,
+      content: userMessage,
+    });
     const thread = await this.threadRepository.findOneOrFail({
       where: { id: threadId },
       relations: ['messages'],
@@ -70,11 +74,11 @@ export class AgentChatService {
       userMessage,
       messages: thread.messages,
     });
-    const aiMsg = await this.addMessage(
+    const aiMsg = await this.addMessage({
       threadId,
-      AgentChatMessageRole.ASSISTANT,
-      aiResponseText,
-    );
+      role: AgentChatMessageRole.ASSISTANT,
+      content: aiResponseText,
+    });
 
     return [userMsg, aiMsg];
   }
