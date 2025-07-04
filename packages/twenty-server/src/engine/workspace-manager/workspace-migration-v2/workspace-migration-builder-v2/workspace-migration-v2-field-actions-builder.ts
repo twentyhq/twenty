@@ -9,6 +9,7 @@ import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { matrixMapDispatcher } from './utils/matrix-map-dispatcher.util';
 
 const commonFieldPropertiesToIgnore = [
   'id',
@@ -127,45 +128,22 @@ type FieldInputOperationMatrix = {
 };
 
 const updatedFieldMetadataMatriceMapDispatcher = (
-  updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updatedObjectMetadata'],
+  updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updated'],
 ): FieldInputOperationMatrix[] => {
   const matriceAccumulator: FieldInputOperationMatrix[] = [];
 
   for (const { from, to } of updatedObjectMetadata) {
-    const initialDispatcher: FieldInputOperationMatrix = {
-      createdFieldMetadata: [],
-      deletedFieldMetadata: [],
-      updatedFieldMetadata: [],
+    const matrixResult = matrixMapDispatcher({
+      from: from.fields,
+      to: to.fields,
+    });
+
+    matriceAccumulator.push({
       objectMetadataUniqueIdentifier: from.uniqueIdentifier,
-    };
-    const fromFieldsMap = new Map(
-      from.fields.map((field) => [field.uniqueIdentifier, field]),
-    );
-    const toFielsdMap = new Map(
-      to.fields.map((field) => [field.uniqueIdentifier, field]),
-    );
-
-    for (const [identifier, fromObj] of fromFieldsMap) {
-      if (!toFielsdMap.has(identifier)) {
-        initialDispatcher.deletedFieldMetadata.push(fromObj);
-      }
-    }
-
-    for (const [identifier, toObj] of toFielsdMap) {
-      if (!fromFieldsMap.has(identifier)) {
-        initialDispatcher.createdFieldMetadata.push(toObj);
-      }
-    }
-
-    for (const [identifier, fromObj] of fromFieldsMap) {
-      const toObj = toFielsdMap.get(identifier);
-      if (toObj) {
-        initialDispatcher.updatedFieldMetadata.push({
-          from: fromObj,
-          to: toObj,
-        });
-      }
-    }
+      createdFieldMetadata: matrixResult.created,
+      deletedFieldMetadata: matrixResult.deleted,
+      updatedFieldMetadata: matrixResult.updated,
+    });
   }
 
   return matriceAccumulator;
@@ -173,7 +151,7 @@ const updatedFieldMetadataMatriceMapDispatcher = (
 
 // Should return WorkspaceObjectMigrationV2 ?
 export const buildWorkspaceMigrationV2FieldActions = (
-  updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updatedObjectMetadata'],
+  updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updated'],
 ): WorkspaceMigrationFieldActionV2[] => {
   const fieldMatrix = updatedFieldMetadataMatriceMapDispatcher(
     updatedObjectMetadata,
