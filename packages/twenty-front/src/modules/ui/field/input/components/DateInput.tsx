@@ -94,7 +94,6 @@ export const DateInput = ({
     [
       closeDropdownYearSelect,
       closeDropdownMonthSelect,
-      onEscape,
       onClickOutside,
       internalValue,
     ],
