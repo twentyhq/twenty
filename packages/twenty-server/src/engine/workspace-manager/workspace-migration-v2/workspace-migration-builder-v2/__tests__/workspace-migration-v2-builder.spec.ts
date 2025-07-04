@@ -1,6 +1,7 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;

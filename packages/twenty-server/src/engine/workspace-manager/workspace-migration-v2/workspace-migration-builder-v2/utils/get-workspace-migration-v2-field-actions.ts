@@ -1,3 +1,4 @@
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   CreateFieldAction,
   DeleteFieldAction,
@@ -13,7 +14,7 @@ export const getWorkspaceMigrationV2FieldCreateAction = ({
   objectMetadataUniqueIdentifier,
 }: FieldInputAndObjectUniqueIdentifier): CreateFieldAction => ({
   type: 'create_field',
-  field: field as any, // TODO
+  field: field as unknown as FieldMetadataEntity, // TODO prastoin
   fieldMetadataUniqueIdentifier: field.uniqueIdentifier,
   objectMetadataUniqueIdentifier,
 });

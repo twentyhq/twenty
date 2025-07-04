@@ -1,5 +1,6 @@
 import omit from 'lodash.omit';
 import diff from 'microdiff';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -15,7 +16,6 @@ import {
   getWorkspaceMigrationV2ObjectDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 // Start TODO prastoin refactor and strictly type
 const objectPropertiesToIgnore = [

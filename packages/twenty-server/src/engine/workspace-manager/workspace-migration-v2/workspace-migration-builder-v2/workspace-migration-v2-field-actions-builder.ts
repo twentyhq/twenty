@@ -1,4 +1,6 @@
 import diff from 'microdiff';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import {
   FromTo,
   WorkspaceMigrationFieldActionV2,
@@ -11,7 +13,7 @@ import {
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { CreatedDeletedUpdatedObjectMetadataInputMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
@@ -82,6 +84,7 @@ export const compareTwoWorkspaceMigrationFieldInput = ({
   );
 
   const fieldMetadataDifference = diff(fromCompare, toCompare);
+
   return fieldMetadataDifference;
 };
 
@@ -99,6 +102,7 @@ const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
     from,
     to,
   });
+
   return fieldMetadataDifferences.flatMap<WorkspaceMigrationFieldActionV2>(
     (difference) => {
       switch (difference.type) {
@@ -170,6 +174,7 @@ export const buildWorkspaceMigrationV2FieldActions = ({
 
   const allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
     [];
+
   for (const {
     createdFieldMetadata,
     deletedFieldMetadata,

@@ -43,6 +43,7 @@ export const deletedCreatedUpdatedMatrixDispatcher = <
 
   for (const [identifier, fromObj] of fromMap) {
     const toObj = toMap.get(identifier);
+
     if (toObj) {
       initialDispatcher.updated.push({
         from: fromObj,

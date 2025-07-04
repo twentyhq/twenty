@@ -4,7 +4,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 type UniqueIdentifierRecord<TTarget extends string> = {
   [P in `${TTarget}UniqueIdentifier`]: string;
 };
+
 type ObjectMetadataUniqueIdentifier = UniqueIdentifierRecord<'objectMetadata'>;
+
 type FieldMetadataUniqueIdentifier = UniqueIdentifierRecord<'fieldMetadata'>;
 
 export type FromTo<T> = {

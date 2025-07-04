@@ -1,3 +1,4 @@
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   CreateObjectAction,
   DeleteObjectAction,
@@ -9,7 +10,7 @@ export const getWorkspaceMigrationV2ObjectCreateAction = (
 ): CreateObjectAction => ({
   type: 'create_object',
   objectMetadataUniqueIdentifier: input.uniqueIdentifier,
-  object: input as any, // TODO,
+  object: input as unknown as ObjectMetadataEntity, // TODO prastoin
 });
 
 export const getWorkspaceMigrationV2ObjectDeleteAction = (
