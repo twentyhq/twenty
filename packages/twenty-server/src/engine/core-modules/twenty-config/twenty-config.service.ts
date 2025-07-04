@@ -206,7 +206,7 @@ export class TwentyConfigService {
       case NodeEnvironment.TEST:
         return [];
       default:
-        return ['error'];
+        return ['error', 'query'];
     }
   }
 

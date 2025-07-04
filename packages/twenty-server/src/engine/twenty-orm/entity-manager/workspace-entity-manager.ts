@@ -32,6 +32,7 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -43,6 +44,9 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
+import { findConnectNestedQueries } from 'src/engine/twenty-orm/utils/find-connect-nested-queries.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -165,11 +169,75 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
-  override insert<Entity extends ObjectLiteral>(
+  override async insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
+    const featureFlagMap = this.getFeatureFlagMap();
+
+    if (featureFlagMap[FeatureFlagKey.IS_RELATION_CONNECT_ENABLED]) {
+      if (!Array.isArray(entity)) {
+        entity = [entity];
+      }
+
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        target,
+        this.internalContext,
+      );
+      const objectMetadataMap = this.internalContext.objectMetadataMaps;
+
+      const connectNestedQueries = findConnectNestedQueries(
+        entity,
+        objectMetadata,
+        objectMetadataMap,
+      );
+
+      if (isDefined(connectNestedQueries)) {
+        for (const connectNestedQuery of Object.values(connectNestedQueries)) {
+          const { clause, parameters } = createSqlWhereTupleInClause(
+            connectNestedQuery.recordToConnectConditions,
+            connectNestedQuery.targetObjectName,
+          );
+
+          const queryBuilder = this.createQueryBuilder(
+            connectNestedQuery.targetObjectName,
+            connectNestedQuery.targetObjectName,
+            undefined,
+            permissionOptions,
+          );
+
+          const recordsToConnectTo = await queryBuilder
+            .select('*')
+            .where(clause, parameters)
+            .getRawMany();
+
+          for (const [entityIndex, recordToConnectCondition] of Object.entries(
+            connectNestedQuery.recordToConnectConditonByEntityIndex,
+          )) {
+            const numericEntityIndex = Number(entityIndex);
+            const recordToConnect = recordsToConnectTo.filter((record) =>
+              recordToConnectCondition.every(
+                (condition) => record[condition[0]] === condition[1],
+              ),
+            );
+
+            if (recordToConnect.length !== 1) {
+              throw new Error(
+                `Expected 1 record to connect to ${connectNestedQuery.connectFieldName}, but found ${recordToConnect.length}`,
+              );
+            }
+
+            Object.assign(entity[numericEntityIndex], {
+              ...entity[numericEntityIndex],
+              [connectNestedQuery.relationFieldName]: recordToConnect[0]['id'],
+              [connectNestedQuery.connectFieldName]: null,
+            });
+          }
+        }
+      }
+    }
+
     return this.createQueryBuilder(
       undefined,
       undefined,
