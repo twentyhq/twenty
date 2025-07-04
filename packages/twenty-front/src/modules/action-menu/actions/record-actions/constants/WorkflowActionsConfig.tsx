@@ -159,6 +159,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
+        isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
+        workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
         ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
           !isDefined(
             workflowWithCurrentVersion.currentVersion.trigger.settings
