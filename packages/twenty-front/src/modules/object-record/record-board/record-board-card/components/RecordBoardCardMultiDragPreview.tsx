@@ -20,17 +20,11 @@ const StyledMultiDragPreview = styled.div`
   font-size: 12px;
   font-weight: 600;
   z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-
-  &.show {
-    opacity: 1;
-  }
 `;
 
-interface RecordBoardCardMultiDragPreviewProps {
+type RecordBoardCardMultiDragPreviewProps = {
   isDragging: boolean;
-}
+};
 
 export const RecordBoardCardMultiDragPreview = ({
   isDragging,
@@ -47,19 +41,11 @@ export const RecordBoardCardMultiDragPreview = ({
   const isCurrentCardSelected = selectedRecordIds.includes(recordId);
   const selectedCount = selectedRecordIds.length;
 
-  // Only show the preview if:
-  // 1. Currently dragging
-  // 2. This card is selected
-  // 3. There are multiple cards selected
   const shouldShow = isDragging && isCurrentCardSelected && selectedCount > 1;
 
   if (!shouldShow) {
     return null;
   }
 
-  return (
-    <StyledMultiDragPreview className="show">
-      {selectedCount}
-    </StyledMultiDragPreview>
-  );
+  return <StyledMultiDragPreview>{selectedCount}</StyledMultiDragPreview>;
 };

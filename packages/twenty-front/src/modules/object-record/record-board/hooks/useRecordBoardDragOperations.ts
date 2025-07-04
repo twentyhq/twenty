@@ -100,7 +100,7 @@ export const useRecordBoardDragOperations = () => {
           return {
             operationType: 'multi',
             recordsUpdated: multiDragResult.recordUpdates.map(
-              (u) => u.recordId,
+              (recordUpdate) => recordUpdate.recordId,
             ),
           };
         }
