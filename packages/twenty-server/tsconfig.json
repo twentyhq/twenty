@@ -33,5 +33,16 @@
     "files": true,
     "require": ["tsconfig-paths/register"]
   },
-  "exclude": ["dist"]
+  "exclude": ["dist"],
+  "include": [
+    "src/**/*.ts",
+    "src/engine/types/**/*.d.ts",
+    "test/**/*.ts",
+    "test/global.d.ts",
+    "@types/**/*.d.ts",
+    "jest-integration.config.ts",
+    "jest.config.ts",
+    "lingui.config.ts",
+    "scripts/**/*.ts"
+  ]
 }

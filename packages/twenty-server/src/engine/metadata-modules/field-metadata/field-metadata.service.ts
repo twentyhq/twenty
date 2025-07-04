@@ -129,7 +129,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): Promise<FieldMetadataEntity> {
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        { workspaceId: fieldMetadataInput.workspaceId },
+        { workspaceId: fieldMetadataInput.workspaceId, locale: 'en' },
       );
 
     let existingFieldMetadata: FieldMetadataInterface | undefined;
@@ -907,7 +907,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        { workspaceId: fieldMetadataInputs[0].workspaceId },
+        { workspaceId: fieldMetadataInputs[0].workspaceId, locale: 'en' },
       );
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;

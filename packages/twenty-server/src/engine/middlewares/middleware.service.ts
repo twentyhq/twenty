@@ -108,6 +108,7 @@ export class MiddlewareService {
     if (metadataVersion === undefined && isDefined(data.workspace)) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache({
         workspaceId: data.workspace.id,
+        locale: request.headers['x-locale'] as string, // Added locale
       });
       throw new Error('Metadata cache version not found');
     }
@@ -149,14 +150,16 @@ export class MiddlewareService {
     request: Request,
     metadataVersion: number | undefined,
   ) {
-    request.user = data.user;
-    request.apiKey = data.apiKey;
-    request.workspace = data.workspace;
-    request.workspaceId = data.workspace?.id;
-    request.workspaceMetadataVersion = metadataVersion;
-    request.workspaceMemberId = data.workspaceMemberId;
-    request.userWorkspaceId = data.userWorkspaceId;
-    request.authProvider = data.authProvider;
+    request.user = data.user ?? undefined;
+    request.apiKey = data.apiKey ?? undefined;
+    request.workspace = data.workspace ?? undefined;
+    request.workspaceId = data.workspace?.id ?? undefined;
+    request.workspaceMetadataVersion = metadataVersion ?? undefined;
+    request.workspaceMemberId = data.workspaceMemberId ?? undefined;
+    request.userWorkspaceId = data.userWorkspaceId ?? undefined;
+    request.authProvider = data.authProvider ?? undefined;
+    request.locale = (request.headers['x-locale'] as string) ?? 'en'; // Added locale from request headers
+    data.locale = (request.headers['x-locale'] as string) ?? 'en'; // Also add to AuthContext
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
