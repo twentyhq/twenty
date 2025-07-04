@@ -201,6 +201,11 @@ export class WorkflowRunWorkspaceService {
           },
         },
       },
+      context: payload
+        ? {
+            trigger: payload,
+          }
+        : (workflowRunToUpdate.context ?? {}),
     };
 
     await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);

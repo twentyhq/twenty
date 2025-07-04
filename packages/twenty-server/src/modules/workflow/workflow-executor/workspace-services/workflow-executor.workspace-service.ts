@@ -24,6 +24,7 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -44,18 +45,15 @@ export class WorkflowExecutorWorkspaceService {
 
   async execute({
     stepIdsToExecute,
-    steps,
-    context,
     workflowRunId,
-  }: Omit<WorkflowExecutorInput, 'currentStepId'> & {
+  }: {
+    workflowRunId: string;
     stepIdsToExecute: string[];
   }) {
     await Promise.all(
       stepIdsToExecute.map(async (stepIdToExecute) => {
         await this.executeBranch({
           currentStepId: stepIdToExecute,
-          steps,
-          context,
           workflowRunId,
         });
       }),
@@ -64,11 +62,13 @@ export class WorkflowExecutorWorkspaceService {
 
   private async executeBranch({
     currentStepId,
-    steps,
-    context,
     attemptCount = 1,
     workflowRunId,
-  }: WorkflowExecutorInput) {
+  }: {
+    currentStepId: string;
+    attemptCount?: number;
+    workflowRunId: string;
+  }) {
     ///////////// START REFACTOR BLOCK /////////////
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
@@ -78,6 +78,40 @@ export class WorkflowExecutorWorkspaceService {
         WorkflowTriggerExceptionCode.INTERNAL_ERROR,
       );
     }
+    ///////////// END REFACTOR BLOCK /////////////
+
+    ///////////// START REFACTOR BLOCK /////////////
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (!isDefined(workflowRun)) {
+      throw new WorkflowTriggerException(
+        `WorkflowRun ${workflowRunId} not found`,
+        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const steps = workflowRun.output?.flow.steps;
+
+    const context = workflowRun.context;
+
+    if (!isDefined(steps)) {
+      throw new WorkflowTriggerException(
+        `WorkflowRun ${workflowRunId} steps undefined`,
+        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (!isDefined(context)) {
+      throw new WorkflowTriggerException(
+        'Context undefined',
+        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      );
+    }
+
     ///////////// END REFACTOR BLOCK /////////////
 
     ///////////// START REFACTOR BLOCK /////////////
@@ -94,6 +128,10 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
     ///////////// END REFACTOR BLOCK /////////////
+
+    if (!this.canExecuteStep({ step, steps, context })) {
+      return;
+    }
 
     ///////////// START REFACTOR BLOCK /////////////
     if (
@@ -209,8 +247,6 @@ export class WorkflowExecutorWorkspaceService {
       await this.execute({
         workflowRunId,
         stepIdsToExecute: step.nextStepIds,
-        steps,
-        context: updatedContext,
       });
 
       return;
@@ -223,8 +259,6 @@ export class WorkflowExecutorWorkspaceService {
       await this.executeBranch({
         workflowRunId,
         currentStepId,
-        steps,
-        context,
         attemptCount: attemptCount + 1,
       });
 
@@ -264,6 +298,22 @@ export class WorkflowExecutorWorkspaceService {
     return this.billingService.canBillMeteredProduct(
       workspaceId,
       BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+  }
+
+  private canExecuteStep({
+    context,
+    step,
+    steps,
+  }: Pick<WorkflowExecutorInput, 'context' | 'steps'> & {
+    step: WorkflowAction;
+  }) {
+    const parentSteps = steps.filter((parentStep) =>
+      parentStep.nextStepIds?.includes(step.id),
+    );
+
+    return parentSteps.every((parentStep) =>
+      Object.keys(context).includes(parentStep.id),
     );
   }
 }

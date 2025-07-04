@@ -129,10 +129,6 @@ export class RunWorkflowJob {
     await this.workflowExecutorWorkspaceService.execute({
       workflowRunId,
       stepIdsToExecute: rootSteps.map((step) => step.id),
-      steps: workflowVersion.steps,
-      context: workflowRun.context ?? {
-        trigger: triggerPayload,
-      },
     });
   }
 
@@ -185,8 +181,6 @@ export class RunWorkflowJob {
     await this.workflowExecutorWorkspaceService.execute({
       workflowRunId,
       stepIdsToExecute: lastExecutedStep.nextStepIds,
-      steps: workflowRun.output?.flow?.steps ?? [],
-      context: workflowRun.context ?? {},
     });
   }
 
