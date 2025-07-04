@@ -927,8 +927,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     for (const relation of morphRelationsCreationPayload) {
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        fieldMetadataForCreate,
+        omit(fieldMetadataForCreate, 'id'),
       );
+
       const targetFieldMetadataName = computeMetadataNameFromLabel(
         relation.targetFieldLabel,
       );
