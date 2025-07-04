@@ -166,13 +166,11 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
   const {
     messages,
     messagesLoading,
-    sendingMessage,
     handleSendMessage,
     input,
     handleInputChange,
+    aiStreamingMessage,
   } = useAgentChat(agentId);
-
-  const isLoading = messagesLoading || sendingMessage;
 
   return (
     <StyledContainer>
@@ -203,14 +201,13 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                   <StyledMessageText
                     isUser={msg.role === AgentChatMessageRole.USER}
                   >
-                    {msg.role === AgentChatMessageRole.ASSISTANT &&
-                    !msg.content ? (
-                      <StyledDotsIconContainer>
-                        <StyledDotsIcon size={theme.icon.size.xl} />
-                      </StyledDotsIconContainer>
-                    ) : (
-                      msg.content
-                    )}
+                    {msg.role === AgentChatMessageRole.ASSISTANT && !msg.content
+                      ? aiStreamingMessage || (
+                          <StyledDotsIconContainer>
+                            <StyledDotsIcon size={theme.icon.size.xl} />
+                          </StyledDotsIconContainer>
+                        )
+                      : msg.content}
                   </StyledMessageText>
                   {msg.content && (
                     <StyledMessageFooter className="message-footer">
@@ -226,7 +223,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           ))}
         </StyledScrollWrapper>
       )}
-      {messages.length === 0 && !isLoading && (
+      {messages.length === 0 && !messagesLoading && (
         <StyledEmptyState>
           <StyledSparkleIcon>
             <IconSparkles size={theme.icon.size.lg} color={theme.color.blue} />
@@ -238,7 +235,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           </StyledDescription>
         </StyledEmptyState>
       )}
-      {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
+      {messagesLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
       <StyledInputArea>
         <TextArea
@@ -250,8 +247,8 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           variant="primary"
           accent="blue"
           size="small"
-          hotkeys={input && !sendingMessage ? ['⏎'] : undefined}
-          disabled={!input || sendingMessage}
+          hotkeys={input && !messagesLoading ? ['⏎'] : undefined}
+          disabled={!input || messagesLoading}
           title={t`Send`}
           onClick={handleSendMessage}
         />
