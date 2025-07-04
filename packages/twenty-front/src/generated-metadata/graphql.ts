@@ -1,5 +1,6 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
+import { CreateApiKeyDto } from '~/generated/graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -446,20 +447,6 @@ export type ConnectionParametersOutput = {
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
   username: Scalars['String'];
-};
-
-export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-};
-
-export type CreateApiKeyDto = {
-  expiresAt: Scalars['String'];
-  name: Scalars['String'];
-  revokedAt?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateAppTokenInput = {
@@ -1052,7 +1039,6 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
-  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1067,7 +1053,6 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
-  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1210,11 +1195,6 @@ export type MutationCreateObjectEventArgs = {
 };
 
 
-export type MutationCreateOneAgentArgs = {
-  input: CreateAgentInput;
-};
-
-
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
@@ -1277,11 +1257,6 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-};
-
-
-export type MutationDeleteOneAgentArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -1833,7 +1808,6 @@ export type Query = {
   field: Field;
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
-  findManyAgents: Array<Agent>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
