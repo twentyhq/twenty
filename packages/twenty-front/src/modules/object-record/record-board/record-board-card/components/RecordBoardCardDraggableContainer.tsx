@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardCardHotkeysEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHotkeysEffect';
+import { RecordBoardCardMultiDragPreview } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragPreview';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -12,6 +13,7 @@ import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRec
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 
 const StyledDraggableContainer = styled.div`
+  position: relative;
   scroll-margin-left: 8px;
   scroll-margin-right: 8px;
   scroll-margin-top: 40px;
@@ -46,7 +48,7 @@ export const RecordBoardCardDraggableContainer = ({
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
     >
       <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
-        {(draggableProvided) => (
+        {(draggableProvided, snapshot) => (
           <StyledDraggableContainer
             id={`record-board-card-${columnIndex}-${rowIndex}`}
             ref={draggableProvided?.innerRef}
@@ -59,6 +61,7 @@ export const RecordBoardCardDraggableContainer = ({
           >
             {isRecordBoardCardFocusActive && <RecordBoardCardHotkeysEffect />}
             <RecordBoardCard />
+            <RecordBoardCardMultiDragPreview isDragging={snapshot.isDragging} />
           </StyledDraggableContainer>
         )}
       </Draggable>

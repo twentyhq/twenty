@@ -18,6 +18,7 @@ import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -112,6 +113,11 @@ export const RecordBoard = () => {
     currentRecordSortsComponentState,
   );
 
+  const selectedRecordIds = useRecoilComponentValueV2(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
+
   useListenClickOutside({
     excludedClickOutsideIds: [
       ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
@@ -142,56 +148,131 @@ export const RecordBoard = () => {
           return;
         }
 
+        // Check if we should use multi-drag logic
         const draggedRecordId = result.draggableId;
-        const sourceRecordGroupId = result.source.droppableId;
-        const destinationRecordGroupId = result.destination.droppableId;
-        const destinationIndexInColumn = result.destination.index;
+        const isDraggedItemSelected =
+          selectedRecordIds.includes(draggedRecordId);
+        const hasMultipleSelected = selectedRecordIds.length > 1;
 
-        if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
+        if (isDraggedItemSelected && hasMultipleSelected) {
+          // Use multi-drag logic - inline implementation to avoid callback interface issues
+          const sourceRecordGroupId = result.source.droppableId;
+          const destinationRecordGroupId = result.destination.droppableId;
+          const destinationIndexInColumn = result.destination.index;
 
-        const recordGroup = getSnapshotValue(
-          snapshot,
-          recordGroupDefinitionFamilyState(destinationRecordGroupId),
-        );
+          if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
 
-        if (!recordGroup) return;
+          const recordGroup = getSnapshotValue(
+            snapshot,
+            recordGroupDefinitionFamilyState(destinationRecordGroupId),
+          );
 
-        const destinationRecordByGroupIds = getSnapshotValue(
-          snapshot,
-          recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
-        );
-        const otherRecordIdsInDestinationColumn =
-          sourceRecordGroupId === destinationRecordGroupId
-            ? destinationRecordByGroupIds.filter(
-                (recordId) => recordId !== draggedRecordId,
-              )
-            : destinationRecordByGroupIds;
+          if (!recordGroup) return;
 
-        const { before: recordBeforeId, after: recordAfterId } =
-          getIndexNeighboursElementsFromArray({
-            index: destinationIndexInColumn,
-            array: otherRecordIdsInDestinationColumn,
+          // Determine which records to move
+          const recordsToMove = selectedRecordIds;
+
+          // Get destination column records
+          const destinationRecordByGroupIds = getSnapshotValue(
+            snapshot,
+            recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
+          ) as string[];
+
+          // Filter out records that are being moved to avoid position conflicts
+          const otherRecordIdsInDestinationColumn =
+            destinationRecordByGroupIds.filter(
+              (recordId: string) => !recordsToMove.includes(recordId),
+            );
+
+          // Calculate base position for the group
+          const { before: recordBeforeId, after: recordAfterId } =
+            getIndexNeighboursElementsFromArray({
+              index: destinationIndexInColumn,
+              array: otherRecordIdsInDestinationColumn,
+            });
+
+          const recordBefore = recordBeforeId
+            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
+            : null;
+
+          const recordAfter = recordAfterId
+            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
+            : null;
+
+          // Calculate positions for all records being moved
+          const basePosition = getDraggedRecordPosition(
+            recordBefore?.position,
+            recordAfter?.position,
+          );
+
+          // Update all selected records
+          recordsToMove.forEach((recordId, index) => {
+            // For multiple records, slightly offset their positions to maintain order
+            const position =
+              recordsToMove.length > 1
+                ? basePosition + index * 0.0001 // Small incremental offset
+                : basePosition;
+
+            updateOneRecord({
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [selectFieldMetadataItem.name]: recordGroup.value,
+                position,
+              },
+            });
           });
-        const recordBefore = recordBeforeId
-          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
-          : null;
+        } else {
+          // Use original single-drag logic
+          const sourceRecordGroupId = result.source.droppableId;
+          const destinationRecordGroupId = result.destination.droppableId;
+          const destinationIndexInColumn = result.destination.index;
 
-        const recordAfter = recordAfterId
-          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
-          : null;
+          if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
 
-        const draggedRecordPosition = getDraggedRecordPosition(
-          recordBefore?.position,
-          recordAfter?.position,
-        );
+          const recordGroup = getSnapshotValue(
+            snapshot,
+            recordGroupDefinitionFamilyState(destinationRecordGroupId),
+          );
 
-        updateOneRecord({
-          idToUpdate: draggedRecordId,
-          updateOneRecordInput: {
-            [selectFieldMetadataItem.name]: recordGroup.value,
-            position: draggedRecordPosition,
-          },
-        });
+          if (!recordGroup) return;
+
+          const destinationRecordByGroupIds = getSnapshotValue(
+            snapshot,
+            recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
+          );
+          const otherRecordIdsInDestinationColumn =
+            sourceRecordGroupId === destinationRecordGroupId
+              ? destinationRecordByGroupIds.filter(
+                  (recordId) => recordId !== draggedRecordId,
+                )
+              : destinationRecordByGroupIds;
+
+          const { before: recordBeforeId, after: recordAfterId } =
+            getIndexNeighboursElementsFromArray({
+              index: destinationIndexInColumn,
+              array: otherRecordIdsInDestinationColumn,
+            });
+          const recordBefore = recordBeforeId
+            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
+            : null;
+
+          const recordAfter = recordAfterId
+            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
+            : null;
+
+          const draggedRecordPosition = getDraggedRecordPosition(
+            recordBefore?.position,
+            recordAfter?.position,
+          );
+
+          updateOneRecord({
+            idToUpdate: draggedRecordId,
+            updateOneRecordInput: {
+              [selectFieldMetadataItem.name]: recordGroup.value,
+              position: draggedRecordPosition,
+            },
+          });
+        }
       },
     [
       recordIndexRecordIdsByGroupFamilyState,
@@ -199,6 +280,7 @@ export const RecordBoard = () => {
       updateOneRecord,
       openModal,
       currentRecordSorts,
+      selectedRecordIds,
     ],
   );
 
