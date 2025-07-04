@@ -884,10 +884,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return [createdFieldMetadataItemUpdated, targetFieldMetadata];
     }
 
-    const fieldMetadataForCreateWithoutId = omit(fieldMetadataForCreate, 'id');
-
     return await this.createMorphRelationFieldMetadataItems({
-      fieldMetadataForCreate: fieldMetadataForCreateWithoutId,
+      fieldMetadataForCreate,
       morphRelationsCreationPayload:
         fieldMetadataInput.morphRelationsCreationPayload,
       objectMetadata,
