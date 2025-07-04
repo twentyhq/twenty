@@ -8,8 +8,8 @@ describe('apiKeysResolver (e2e)', () => {
     if (createdApiKeyId) {
       await makeMetadataAPIRequest({
         query: gql`
-          mutation RevokeApiKey($input: RevokeApiKeyDTO!) {
-            revokeApiKey(input: $input)
+          mutation DeleteApiKey($input: DeleteApiKeyDTO!) {
+            deleteApiKey(input: $input)
           }
         `,
         variables: {
