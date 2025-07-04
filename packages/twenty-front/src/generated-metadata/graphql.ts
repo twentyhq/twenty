@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -463,11 +463,11 @@ export type CreateFieldInput = {
   isSystem?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphRelationsCreationPayload?: InputMaybe<Scalars['JSON']>;
   name: Scalars['String'];
   objectMetadataId: Scalars['String'];
   options?: InputMaybe<Scalars['JSON']>;
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
-  morphRelationsCreationPayload?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
 };
@@ -679,7 +679,6 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
-  IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
