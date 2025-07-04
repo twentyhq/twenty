@@ -1,5 +1,5 @@
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationObjectInput } from "src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input";
+import { WorkspaceMigrationBuilderV2Service } from "src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service";
 
 describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;
@@ -34,23 +34,21 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     const result = service.build({ from: [from], to: [to] });
 
     expect(result).toMatchInlineSnapshot(`
-[
-  {
-    "actions": [
-      {
-        "type": "update_object",
-        "updates": [
-          {
-            "from": "Contact",
-            "property": "nameSingular",
-            "to": "Person",
-          },
-        ],
-      },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
-  },
-]
+{
+  "actions": [
+    {
+      "type": "update_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "updates": [
+        {
+          "from": "Contact",
+          "property": "nameSingular",
+          "to": "Person",
+        },
+      ],
+    },
+  ],
+}
 `);
   });
 
@@ -75,32 +73,30 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     const result = service.build({ from: [], to: [newObject] });
 
     expect(result).toMatchInlineSnapshot(`
-[
-  {
-    "actions": [
-      {
-        "object": {
-          "description": "A company",
-          "fields": [
-            {
-              "label": "Name",
-              "name": "name",
-              "type": "string",
-              "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
-            },
-          ],
-          "labelPlural": "Companies",
-          "labelSingular": "Company",
-          "namePlural": "Companies",
-          "nameSingular": "Company",
-          "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
-        },
-        "type": "create_object",
+{
+  "actions": [
+    {
+      "object": {
+        "description": "A company",
+        "fields": [
+          {
+            "label": "Name",
+            "name": "name",
+            "type": "string",
+            "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+          },
+        ],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
       },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
-  },
-]
+      "type": "create_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+    },
+  ],
+}
 `);
   });
 
@@ -108,17 +104,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     const result = service.build({ from: [baseObject], to: [] });
 
     expect(result).toMatchInlineSnapshot(`
-[
-  {
-    "actions": [
-      {
-        "objectMetadataId": "123e4567-e89b-12d3-a456-426614175000",
-        "type": "delete_object",
-      },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
-  },
-]
+{
+  "actions": [
+    {
+      "objectMetadataId": "123e4567-e89b-12d3-a456-426614175000",
+      "type": "delete_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+    },
+  ],
+}
 `);
   });
 
@@ -151,56 +145,46 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-[
-  {
-    "actions": [
-      {
-        "object": {
-          "description": "A company",
-          "fields": [
-            {
-              "label": "Name",
-              "name": "name",
-              "type": "string",
-              "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
-            },
-          ],
-          "labelPlural": "Companies",
-          "labelSingular": "Company",
-          "namePlural": "Companies",
-          "nameSingular": "Company",
-          "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
-        },
-        "type": "create_object",
-      },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
-  },
-  {
-    "actions": [
-      {
-        "objectMetadataId": "123e4567-e89b-12d3-a456-426614175002",
-        "type": "delete_object",
-      },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175002",
-  },
-  {
-    "actions": [
-      {
-        "type": "update_object",
-        "updates": [
+{
+  "actions": [
+    {
+      "object": {
+        "description": "A company",
+        "fields": [
           {
-            "from": "Contact",
-            "property": "nameSingular",
-            "to": "Person",
+            "label": "Name",
+            "name": "name",
+            "type": "string",
+            "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
           },
         ],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
       },
-    ],
-    "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
-  },
-]
+      "type": "create_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
+    },
+    {
+      "objectMetadataId": "123e4567-e89b-12d3-a456-426614175002",
+      "type": "delete_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175002",
+    },
+    {
+      "type": "update_object",
+      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "updates": [
+        {
+          "from": "Contact",
+          "property": "nameSingular",
+          "to": "Person",
+        },
+      ],
+    },
+  ],
+}
 `);
   });
 });

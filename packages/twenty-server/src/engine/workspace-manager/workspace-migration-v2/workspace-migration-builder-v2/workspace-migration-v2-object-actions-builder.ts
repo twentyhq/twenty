@@ -5,18 +5,12 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   FromTo,
   UpdateObjectAction,
-  WorkspaceMigrationObjectActionV2,
+  WorkspaceMigrationV2ObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
-import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { assertUnreachable } from 'twenty-shared/utils';
-
-type BuildWorkspaceMigrationV2Args = {
-  from: WorkspaceMigrationObjectInput[];
-  to: WorkspaceMigrationObjectInput[];
-};
 
 const objectPropertiesToIgnore = [
   'id',
@@ -97,52 +91,41 @@ const compareTwoWorkspaceMigrationObjectInput = ({
 };
 
 // Should return WorkspaceObjectMigrationV2 ?
-export const buildWorkspaceObjectMigrationV2 = ({
+export const buildWorkspaceMigrationV2ObjectActions = ({
   created,
   deleted,
   updated,
-}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] => {
-  const objectWorkspaceMigrations: WorkspaceMigrationV2<WorkspaceMigrationObjectActionV2>[] =
-    [];
+}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationV2ObjectAction[] => {
+  const objectWorkspaceActions: WorkspaceMigrationV2ObjectAction[] = [];
 
-  created.forEach((objectMetadata) => {
-    objectWorkspaceMigrations.push({
-      uniqueIdentifier: objectMetadata.uniqueIdentifier,
-      actions: [
-        {
-          type: 'create_object',
-          object: objectMetadata, // TODO // Question should this contain field create migrations too or ?
-        },
-      ],
+  created.forEach((objectMetadata, uniqueIdentifier) => {
+    objectWorkspaceActions.push({
+      uniqueIdentifier,
+      type: 'create_object',
+      object: objectMetadata, // TODO // Question should this contain field create migrations too or ?
     });
   });
 
-  deleted.forEach((objectMetadata) => {
-    objectWorkspaceMigrations.push({
-      actions: [
-        {
-          type: 'delete_object',
-          objectMetadataId: objectMetadata.uniqueIdentifier,
-        },
-      ],
+  deleted.forEach((objectMetadata, uniqueIdentifier) => {
+    objectWorkspaceActions.push({
+      type: 'delete_object',
+      uniqueIdentifier,
+      objectMetadataId: objectMetadata.uniqueIdentifier,
     });
   });
 
-  updated.forEach(({ from, to }) => {
+  updated.forEach(({ from, to }, uniqueIdentifier) => {
     const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
       from,
       to,
     });
 
-    objectWorkspaceMigrations.push({
-      actions: [
-        {
-          type: 'update_object',
-          updates: objectUpdatedProperties,
-        },
-      ],
+    objectWorkspaceActions.push({
+      uniqueIdentifier,
+      type: 'update_object',
+      updates: objectUpdatedProperties,
     });
   });
 
-  return objectWorkspaceMigrations;
+  return objectWorkspaceActions;
 };

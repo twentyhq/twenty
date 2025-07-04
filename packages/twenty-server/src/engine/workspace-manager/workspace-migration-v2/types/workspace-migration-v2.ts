@@ -8,4 +8,5 @@ export interface WorkspaceMigrationV2<
   // name: string;
   // description?: string;
   actions: TActions[];
+  // objectActions: TActions[] // could be cool ?
 }

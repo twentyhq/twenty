@@ -3,7 +3,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
-import { buildWorkspaceObjectMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-object-builder-v2.service copy';
+import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 
 type WorkspaceMigrationBuilderV2ServiceArgs = {
   from: WorkspaceMigrationObjectInput[];
@@ -67,14 +67,17 @@ export class WorkspaceMigrationBuilderV2Service {
 
   build(
     objectMetadataFromToInputs: WorkspaceMigrationBuilderV2ServiceArgs,
-  ): WorkspaceMigrationV2[] {
+  ): WorkspaceMigrationV2 {
+    // This method should instantiate only migration and push actions accordingly in it.
     const objectMetadataCreatedUpdatedDeletedMatrice =
       objectMetadataMatriceMapDispatcher(objectMetadataFromToInputs);
-      
-    const objectMetadataActions = buildWorkspaceObjectMigrationV2(
+
+    const objectWorkspaceMigration = buildWorkspaceMigrationV2ObjectActions(
       objectMetadataCreatedUpdatedDeletedMatrice,
     );
 
-    return objectMetadataActions;
+    return {
+      actions: [...objectWorkspaceMigration],
+    };
   }
 }

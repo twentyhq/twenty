@@ -20,10 +20,13 @@ export interface DeleteObjectAction {
   objectMetadataId: string;
 }
 
-export type WorkspaceMigrationObjectActionV2 =
+export type WorkspaceMigrationV2ObjectAction = (
   | CreateObjectAction
   | UpdateObjectAction
-  | DeleteObjectAction;
+  | DeleteObjectAction
+) & {
+  uniqueIdentifier: string;
+};
 
 export interface CreateFieldAction {
   type: 'create_field';
@@ -88,9 +91,9 @@ export type WorkspaceMigrationUniquenessActionV2 =
 
 export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationRelationActionV2
-  | WorkspaceMigrationObjectActionV2
+  | WorkspaceMigrationV2ObjectAction
   | WorkspaceMigrationFieldActionV2
   | WorkspaceMigrationUniquenessActionV2
   | WorkspaceMigrationIndexActionV2;
 
-export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionV2['type']
+export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionV2['type'];
