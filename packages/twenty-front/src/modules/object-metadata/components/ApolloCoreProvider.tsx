@@ -10,7 +10,7 @@ export const ApolloCoreProvider = ({
 }) => {
   const apolloCoreClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-    connectToDevTools: true, // @Felix I am not sure if this is correct, should be false?
+    connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
   });
 
   return (
