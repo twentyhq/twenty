@@ -16,6 +16,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
@@ -24,6 +25,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
   imports: [
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationV2Module,
     ObjectMetadataModule,
     DevSeederModule,
     DataSourceModule,
