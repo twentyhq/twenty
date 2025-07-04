@@ -1,13 +1,13 @@
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 
-export type DeleledCreatedUpdatedMatrix<T> = {
+export type DeletedCreatedUpdatedMatrix<T> = {
   created: T[];
   deleted: T[];
   updated: FromTo<T>[];
 };
 
 export type CustomDeletedCreatedUpdatedMatrix<TLabel extends string, TInput> = {
-  [P in keyof DeleledCreatedUpdatedMatrix<TInput> as `${P}${Capitalize<TLabel>}`]: DeleledCreatedUpdatedMatrix<TInput>[P];
+  [P in keyof DeletedCreatedUpdatedMatrix<TInput> as `${P}${Capitalize<TLabel>}`]: DeletedCreatedUpdatedMatrix<TInput>[P];
 };
 
 export type UniqueIdentifierItem = {
@@ -19,8 +19,8 @@ export const deletedCreatedUpdatedMatrixDispatcher = <
 >({
   from,
   to,
-}: FromTo<T[]>): DeleledCreatedUpdatedMatrix<T> => {
-  const initialDispatcher: DeleledCreatedUpdatedMatrix<T> = {
+}: FromTo<T[]>): DeletedCreatedUpdatedMatrix<T> => {
+  const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     created: [],
     updated: [],
     deleted: [],

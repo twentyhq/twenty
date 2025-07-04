@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
 import {
-  DeleledCreatedUpdatedMatrix,
+  DeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
@@ -15,7 +15,7 @@ type WorkspaceMigrationBuilderV2ServiceArgs = {
 };
 
 export type UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher =
-  DeleledCreatedUpdatedMatrix<WorkspaceMigrationObjectInput>;
+  DeletedCreatedUpdatedMatrix<WorkspaceMigrationObjectInput>;
 
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {

@@ -172,7 +172,7 @@ export const buildWorkspaceMigrationV2FieldActions = ({
   const objectMetadataDeletedCreatedUpdatedFields =
     updatedFieldMetadataMatriceMapDispatcher(updatedObjectMetadata);
 
-  const allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
+  let allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
     [];
 
   for (const {
@@ -205,11 +205,12 @@ export const buildWorkspaceMigrationV2FieldActions = ({
       }),
     );
 
-    allUpdatedObjectMetadataFieldActions.concat([
-      ...createFieldAction,
-      ...deleteFieldAction,
-      ...updateFieldAction,
-    ]);
+    allUpdatedObjectMetadataFieldActions =
+      allUpdatedObjectMetadataFieldActions.concat([
+        ...createFieldAction,
+        ...deleteFieldAction,
+        ...updateFieldAction,
+      ]);
   }
 
   return allUpdatedObjectMetadataFieldActions;

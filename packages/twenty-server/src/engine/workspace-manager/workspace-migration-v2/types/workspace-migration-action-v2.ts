@@ -93,8 +93,8 @@ export interface RemoveUniquenessConstraintAction {
 }
 
 export type WorkspaceMigrationUniquenessActionV2 =
-  | CreateIndexAction
-  | DeleteIndexAction;
+  | RemoveUniquenessConstraintAction
+  | AddUniquenessConstraintAction;
 
 export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationRelationActionV2

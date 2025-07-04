@@ -7,7 +7,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;
 
   const baseObject: WorkspaceMigrationObjectInput = {
-    uniqueIdentifier: '123e4567-e89b-12d3-a456-426614175000',
+    uniqueIdentifier: '20202020-e89b-12d3-a456-426614175000',
     nameSingular: 'Contact',
     namePlural: 'Contacts',
     labelSingular: 'Contact',
@@ -15,7 +15,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     description: 'A contact',
     fields: [
       {
-        uniqueIdentifier: '123e4567-e89b-12d3-a456-426614174000',
+        uniqueIdentifier: '20202020-e89b-12d3-a456-426614174000',
         name: 'firstName',
         label: 'First Name',
         type: FieldMetadataType.FULL_NAME,
@@ -41,7 +41,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
       "type": "update_object",
       "updates": [
         {
@@ -58,7 +58,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 
   it('should return a migration when creating a new object', () => {
     const newObject: WorkspaceMigrationObjectInput = {
-      uniqueIdentifier: '123e4567-e89b-12d3-a456-426614175001',
+      uniqueIdentifier: '20202020-e89b-12d3-a456-426614175001',
       nameSingular: 'Company',
       namePlural: 'Companies',
       labelSingular: 'Company',
@@ -66,7 +66,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       description: 'A company',
       fields: [
         {
-          uniqueIdentifier: '123e4567-e89b-12d3-a456-426614174001',
+          uniqueIdentifier: '20202020-e89b-12d3-a456-426614174001',
           name: 'name',
           label: 'Name',
           type: FieldMetadataType.ADDRESS,
@@ -91,16 +91,16 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
             "label": "Name",
             "name": "name",
             "type": "ADDRESS",
-            "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
           },
         ],
         "labelPlural": "Companies",
         "labelSingular": "Company",
         "namePlural": "Companies",
         "nameSingular": "Company",
-        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
       },
-      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
       "type": "create_object",
     },
     {
@@ -110,10 +110,10 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "label": "Name",
         "name": "name",
         "type": "ADDRESS",
-        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
       },
-      "fieldMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
-      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "fieldMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
       "type": "create_field",
     },
   ],
@@ -128,7 +128,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
       "type": "delete_object",
     },
   ],
@@ -223,7 +223,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "delete_object",
     },
     {
-      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
       "type": "update_object",
       "updates": [
         {
@@ -232,6 +232,19 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
           "to": "Person",
         },
       ],
+    },
+    {
+      "field": {
+        "defaultValue": "",
+        "description": "new field description",
+        "label": "New field",
+        "name": "newField",
+        "type": "NUMBER",
+        "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
+      },
+      "fieldMetadataUniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
+      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "type": "create_field",
     },
   ],
 }
