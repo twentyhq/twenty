@@ -2,15 +2,15 @@ import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { Card } from 'twenty-ui/layout';
 import { IconLifebuoy } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 export const ToggleImpersonate = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -35,8 +35,8 @@ export const ToggleImpersonate = () => {
         allowImpersonation: value,
       });
     } catch (err: any) {
-      enqueueSnackBar(err?.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
       });
     }
   };

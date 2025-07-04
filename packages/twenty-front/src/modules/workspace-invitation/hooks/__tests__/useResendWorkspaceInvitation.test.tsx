@@ -1,19 +1,18 @@
-import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { renderHook } from '@testing-library/react';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationResendWorspaceInvitationCallSpy = jest.fn();
 
-jest.mock('~/generated/graphql', () => ({
+jest.mock('~/generated-metadata/graphql', () => ({
   useResendWorkspaceInvitationMutation: () => [
     mutationResendWorspaceInvitationCallSpy,
   ],
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useResendWorkspaceInvitation', () => {
   afterEach(() => {

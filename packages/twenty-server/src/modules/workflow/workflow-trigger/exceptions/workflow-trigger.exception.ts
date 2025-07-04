@@ -2,8 +2,12 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkflowTriggerException extends CustomException {
   declare code: WorkflowTriggerExceptionCode;
-  constructor(message: string, code: WorkflowTriggerExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: WorkflowTriggerExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+  ) {
+    super(message, code, userFriendlyMessage);
   }
 }
 

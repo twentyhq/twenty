@@ -4,13 +4,13 @@ import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import {
   ConnectionParameters,
   useSaveImapSmtpCaldavMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '~/modules/auth/states/currentWorkspaceState';
@@ -38,7 +38,7 @@ export const useImapConnectionForm = ({
 }: UseImapConnectionFormProps = {}) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -70,16 +70,12 @@ export const useImapConnectionForm = ({
     formValues: ConnectionParameters & { handle: string },
   ) => {
     if (!currentWorkspace?.id) {
-      enqueueSnackBar('Workspace ID is missing', {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({});
       return;
     }
 
     if (!currentWorkspaceMember?.id) {
-      enqueueSnackBar('Workspace member ID is missing', {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({});
       return;
     }
 
@@ -112,19 +108,16 @@ export const useImapConnectionForm = ({
         },
       });
 
-      enqueueSnackBar(
-        connectedAccountId
+      enqueueSuccessSnackBar({
+        message: connectedAccountId
           ? t`IMAP connection successfully updated`
           : t`IMAP connection successfully created`,
-        {
-          variant: SnackBarVariant.Success,
-        },
-      );
+      });
 
       navigate(SettingsPath.Accounts);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };

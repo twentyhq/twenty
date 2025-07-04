@@ -4,7 +4,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('useSearchRecordGroupField', () => {
   const renderWithContext = (contextValue: any) =>

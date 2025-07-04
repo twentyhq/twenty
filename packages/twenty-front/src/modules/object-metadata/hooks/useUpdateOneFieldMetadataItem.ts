@@ -8,6 +8,7 @@ import {
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -18,11 +19,10 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { isDefined } from 'twenty-shared/utils';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
@@ -48,9 +48,7 @@ export const useUpdateOneFieldMetadataItem = () => {
   const [mutate] = useMutation<
     UpdateOneFieldMetadataItemMutation,
     UpdateOneFieldMetadataItemMutationVariables
-  >(UPDATE_ONE_FIELD_METADATA_ITEM, {
-    client: apolloMetadataClient ?? undefined,
-  });
+  >(UPDATE_ONE_FIELD_METADATA_ITEM);
 
   const updateOneFieldMetadataItem = async ({
     objectMetadataId,
@@ -83,7 +81,7 @@ export const useUpdateOneFieldMetadataItem = () => {
     const { data } = await apolloClient.query({ query: GET_CURRENT_USER });
     setCurrentWorkspace(data?.currentUser?.currentWorkspace);
 
-    const { data: viewConnection } = await apolloClient.query<{
+    const { data: viewConnection } = await apolloCoreClient.query<{
       views: RecordGqlConnection;
     }>({
       query: findManyViewsQuery,

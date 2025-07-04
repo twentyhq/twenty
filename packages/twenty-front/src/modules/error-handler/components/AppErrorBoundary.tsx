@@ -1,5 +1,6 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { CustomError } from '@/error-handler/CustomError';
+import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,6 +36,13 @@ export const AppErrorBoundary = ({
     } catch (sentryError) {
       // eslint-disable-next-line no-console
       console.error('Failed to capture exception with Sentry:', sentryError);
+    }
+
+    const isViteStaleChunkLazyLoadingError =
+      checkIfItsAViteStaleChunkLazyLoadingError(error);
+
+    if (isViteStaleChunkLazyLoadingError) {
+      window.location.reload();
     }
   };
 

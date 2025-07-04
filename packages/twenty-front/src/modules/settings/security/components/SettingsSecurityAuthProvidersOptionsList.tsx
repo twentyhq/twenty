@@ -2,22 +2,24 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AuthProviders } from '~/generated-metadata/graphql';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { capitalize } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Card } from 'twenty-ui/layout';
+import { capitalize } from 'twenty-shared/utils';
 import {
   IconGoogle,
   IconLink,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
+import {
+  AuthProviders,
+  useUpdateWorkspaceMutation,
+} from '~/generated-metadata/graphql';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -28,7 +30,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
 
@@ -70,12 +72,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       allAuthProvidersEnabled.filter((isAuthEnabled) => isAuthEnabled).length <=
         1
     ) {
-      return enqueueSnackBar(
-        t`At least one authentication method must be enabled`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      return enqueueErrorSnackBar({
+        message: t`At least one authentication method must be enabled`,
+      });
     }
 
     setCurrentWorkspace({
@@ -95,8 +94,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      enqueueSnackBar(err?.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
       });
     });
   };
@@ -118,8 +117,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      enqueueSnackBar(err?.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
       });
     }
   };

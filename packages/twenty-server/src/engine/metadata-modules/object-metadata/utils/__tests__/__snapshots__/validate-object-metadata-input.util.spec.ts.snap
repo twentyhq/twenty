@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`validateObjectMetadataInputOrThrow should fail when name exceeds maximum length 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
+exports[`validateObjectMetadataInputOrThrow should fail when name exceeds maximum length 1`] = `"Name is too long: it exceeds the 63 characters limit."`;
 
 exports[`validateObjectMetadataInputOrThrow should fail when namePlural has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 

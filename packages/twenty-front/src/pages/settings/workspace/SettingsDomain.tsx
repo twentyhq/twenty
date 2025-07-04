@@ -6,7 +6,6 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -18,7 +17,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
@@ -60,7 +59,7 @@ export const SettingsDomain = () => {
     })
     .required();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -105,11 +104,11 @@ export const SettingsDomain = () => {
           customDomain:
             customDomain && customDomain.length > 0 ? customDomain : null,
         });
-        enqueueSnackBar(t`Custom domain updated`, {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Custom domain updated`,
         });
       },
-      onError: (error) => {
+      onError: (error: ApolloError) => {
         if (
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
@@ -119,8 +118,8 @@ export const SettingsDomain = () => {
             message: t`Subdomain already taken`,
           });
         }
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error,
         });
       },
     });
@@ -136,7 +135,7 @@ export const SettingsDomain = () => {
           subdomain,
         },
       },
-      onError: (error) => {
+      onError: (error: ApolloError) => {
         if (
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
@@ -147,8 +146,8 @@ export const SettingsDomain = () => {
             message: t`Subdomain already taken`,
           });
         }
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error,
         });
       },
       onCompleted: async () => {
@@ -163,8 +162,8 @@ export const SettingsDomain = () => {
           subdomain,
         });
 
-        enqueueSnackBar(t`Subdomain updated`, {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Subdomain updated`,
         });
 
         await redirectToWorkspaceDomain(currentUrl.toString());
@@ -179,14 +178,14 @@ export const SettingsDomain = () => {
       subdomainValue === currentWorkspace?.subdomain &&
       customDomainValue === currentWorkspace?.customDomain
     ) {
-      return enqueueSnackBar(t`No change detected`, {
-        variant: SnackBarVariant.Error,
+      return enqueueErrorSnackBar({
+        message: t`No change detected`,
       });
     }
 
     if (!values || !currentWorkspace) {
-      return enqueueSnackBar(t`Invalid form values`, {
-        variant: SnackBarVariant.Error,
+      return enqueueErrorSnackBar({
+        message: t`Invalid form values`,
       });
     }
 

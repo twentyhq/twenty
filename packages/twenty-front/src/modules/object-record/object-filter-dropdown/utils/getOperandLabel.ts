@@ -9,10 +9,10 @@ export const getOperandLabel = (
       return t`Contains`;
     case ViewFilterOperand.DoesNotContain:
       return t`Doesn't contain`;
-    case ViewFilterOperand.GreaterThan:
-      return t`Greater than`;
-    case ViewFilterOperand.LessThan:
-      return t`Less than`;
+    case ViewFilterOperand.GreaterThanOrEqual:
+      return t`Greater than or equal`;
+    case ViewFilterOperand.LessThanOrEqual:
+      return t`Less than or equal`;
     case ViewFilterOperand.IsBefore:
       return t`Is before`;
     case ViewFilterOperand.IsAfter:
@@ -56,10 +56,10 @@ export const getOperandLabelShort = (
       return t`: NotEmpty`;
     case ViewFilterOperand.IsEmpty:
       return t`: Empty`;
-    case ViewFilterOperand.GreaterThan:
-      return '\u00A0> ';
-    case ViewFilterOperand.LessThan:
-      return '\u00A0< ';
+    case ViewFilterOperand.GreaterThanOrEqual:
+      return '\u00A0≥ ';
+    case ViewFilterOperand.LessThanOrEqual:
+      return '\u00A0≤ ';
     case ViewFilterOperand.IsBefore:
       return '\u00A0< ';
     case ViewFilterOperand.IsAfter:

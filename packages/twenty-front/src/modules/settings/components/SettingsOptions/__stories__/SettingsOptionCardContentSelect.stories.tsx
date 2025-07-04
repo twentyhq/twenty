@@ -1,5 +1,6 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { Select, SelectValue } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
+import { SelectValue } from '@/ui/input/components/internal/select/types';
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';

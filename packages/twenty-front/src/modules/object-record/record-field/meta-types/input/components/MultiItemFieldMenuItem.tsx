@@ -1,7 +1,9 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import React, { useState } from 'react';
 import {
   IconBookmark,
@@ -33,7 +35,11 @@ export const MultiItemFieldMenuItem = <T,>({
   showSetAsPrimaryButton,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
+  );
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
@@ -44,7 +50,7 @@ export const MultiItemFieldMenuItem = <T,>({
     event.stopPropagation();
     event.preventDefault();
 
-    closeDropdown();
+    closeDropdown(dropdownId);
     setIsHovered(false);
     onDelete?.();
   };
@@ -53,7 +59,7 @@ export const MultiItemFieldMenuItem = <T,>({
     event.stopPropagation();
     event.preventDefault();
 
-    closeDropdown();
+    closeDropdown(dropdownId);
     onSetAsPrimary?.();
   };
 
@@ -61,7 +67,7 @@ export const MultiItemFieldMenuItem = <T,>({
     event.stopPropagation();
     event.preventDefault();
 
-    closeDropdown();
+    closeDropdown(dropdownId);
     onEdit?.();
   };
 

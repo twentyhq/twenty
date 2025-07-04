@@ -4,7 +4,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -85,7 +85,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.GreaterThan,
+      operand: ViewFilterOperand.GreaterThanOrEqual,
       type: FieldMetadataType.NUMBER,
       label: 'Employees',
     };
@@ -1119,7 +1119,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.GreaterThan,
+      operand: ViewFilterOperand.GreaterThanOrEqual,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1129,7 +1129,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.LessThan,
+      operand: ViewFilterOperand.LessThanOrEqual,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1205,7 +1205,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId?.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.GreaterThan,
+      operand: RecordFilterOperand.GreaterThanOrEqual,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'
@@ -1219,7 +1219,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId?.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.LessThan,
+      operand: RecordFilterOperand.LessThanOrEqual,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'

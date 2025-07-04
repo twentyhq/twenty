@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
@@ -12,7 +11,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { Key } from 'ts-key-enum';
@@ -29,11 +27,19 @@ import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActiv
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
+import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
+import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import type { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
@@ -59,7 +65,7 @@ export const ActivityRichTextEditor = ({
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
 
-  const cache = useApolloClient().cache;
+  const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
 
   const { objectMetadataItem: objectMetadataItemActivity } =
@@ -86,6 +92,10 @@ export const ActivityRichTextEditor = ({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
   const { fetchAllRecords: findSoftDeletedAttachments } =
     useLazyFetchAllRecords({
       objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -95,11 +105,6 @@ export const ActivityRichTextEditor = ({
         },
       },
     });
-
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
 
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
@@ -354,16 +359,60 @@ export const ActivityRichTextEditor = ({
       preventDefault: false,
     },
   );
+  const { labelIdentifierFieldMetadataItem } = useRecordShowContainerData({
+    objectNameSingular: activityObjectNameSingular,
+    objectRecordId: activityId,
+  });
 
-  const handleBlockEditorFocus = () => {
-    setHotkeyScopeAndMemorizePreviousScope({
-      scope: ActivityEditorHotkeyScope.ActivityBody,
-    });
-  };
+  const recordTitleCellId = getRecordTitleCellId(
+    activityId,
+    labelIdentifierFieldMetadataItem?.id,
+    RecordTitleCellContainerType.ShowPage,
+  );
 
-  const handlerBlockEditorBlur = () => {
-    goBackToPreviousHotkeyScope();
-  };
+  const handleBlockEditorFocus = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isRecordTitleCellOpen = snapshot
+          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getValue();
+
+        if (isRecordTitleCellOpen) {
+          editor.domElement?.blur();
+          return;
+        }
+
+        pushFocusItemToFocusStack({
+          component: {
+            instanceId: activityId,
+            type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
+          },
+          focusId: activityId,
+          hotkeyScope: {
+            scope: ActivityEditorHotkeyScope.ActivityBody,
+          },
+        });
+      },
+    [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],
+  );
+
+  const handlerBlockEditorBlur = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isRecordTitleCellOpen = snapshot
+          .getLoadable(isInlineCellInEditModeScopedState(recordTitleCellId))
+          .getValue();
+
+        if (isRecordTitleCellOpen) {
+          return;
+        }
+
+        removeFocusItemFromFocusStackById({
+          focusId: activityId,
+        });
+      },
+    [activityId, recordTitleCellId, removeFocusItemFromFocusStackById],
+  );
 
   return (
     <>

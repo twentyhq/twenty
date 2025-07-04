@@ -7,10 +7,10 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ApolloError } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,7 +28,7 @@ import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
 
@@ -78,7 +78,7 @@ const StyledMainButton = styled(MainButton)`
 
 export const PasswordReset = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
@@ -108,8 +108,8 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken || isTokenValid,
     onError: (error) => {
-      enqueueSnackBar(error?.message ?? 'Token Invalid', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error,
       });
       navigate(AppPath.Index);
     },
@@ -137,15 +137,15 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        enqueueSnackBar(t`There was an error while updating password.`, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: t`There was an error while updating password.`,
         });
         return;
       }
 
       if (isLoggedIn) {
-        enqueueSnackBar(t`Password has been updated`, {
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Password has been updated`,
         });
         navigate(AppPath.Index);
         return;
@@ -161,14 +161,9 @@ export const PasswordReset = () => {
       navigate(AppPath.Index);
     } catch (err) {
       logError(err);
-      enqueueSnackBar(
-        err instanceof Error
-          ? err.message
-          : t`An error occurred while updating password`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
+      });
     }
   };
 
