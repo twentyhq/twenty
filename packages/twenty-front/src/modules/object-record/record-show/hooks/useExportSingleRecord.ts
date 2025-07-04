@@ -1,32 +1,24 @@
 import { useMemo } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
-import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { csvDownloader } from '@/object-record/record-index/export/hooks/useRecordIndexExport';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { csvDownloader } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 export type UseSingleExportTableDataOptions = {
   filename: string;
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
-  recordIndexId: string;
-  viewType?: ViewType;
 };
 export const useExportSingleRecord = ({
   filename,
   objectMetadataItem,
   recordId,
-  recordIndexId,
-  viewType = ViewType.Table,
 }: UseSingleExportTableDataOptions) => {
   const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
     objectMetadataItem.nameSingular,
@@ -34,7 +26,13 @@ export const useExportSingleRecord = ({
 
   const downloadCsv = useMemo(
     () =>
-      (record: ObjectRecord, columns: ColumnDefinition<FieldMetadata>[]) => {
+      (
+        record: ObjectRecord,
+        columns: Pick<
+          ColumnDefinition<FieldMetadata>,
+          'size' | 'label' | 'type' | 'metadata'
+        >[],
+      ) => {
         const recordToArray = [record];
         const recordsProcessedForExport =
           processRecordsForCSVExport(recordToArray);
@@ -43,31 +41,19 @@ export const useExportSingleRecord = ({
       },
     [filename, processRecordsForCSVExport],
   );
-  const { hiddenBoardFields } = useObjectOptionsForBoard({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordBoardId: recordIndexId,
-    viewBarId: recordIndexId,
-  });
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
-    recordGroupFieldMetadataComponentState,
-    recordIndexId,
-  );
-
-  const hiddenKanbanFieldColumn = hiddenBoardFields.find(
-    (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
-  );
-  const columns = useRecoilComponentValueV2(
-    visibleTableColumnsComponentSelector,
-    recordIndexId,
-  );
-
-  const finalColumns = [
-    ...columns,
-    ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
-      ? [hiddenKanbanFieldColumn]
-      : []),
-  ];
+  const columns: Pick<
+    ColumnDefinition<FieldMetadata>,
+    'size' | 'label' | 'type' | 'metadata'
+  >[] = objectMetadataItem.fields
+    .filter((field) => field.isActive)
+    .map((field, index) =>
+      formatFieldMetadataItemAsColumnDefinition({
+        field,
+        objectMetadataItem,
+        position: index,
+      }),
+    );
   const { record, error } = useFindOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
     objectRecordId: recordId,
@@ -77,7 +63,7 @@ export const useExportSingleRecord = ({
     if (isDefined(error) || !isDefined(record)) {
       return;
     }
-    downloadCsv(record, finalColumns);
+    downloadCsv(record, columns);
   };
   return { download };
 };

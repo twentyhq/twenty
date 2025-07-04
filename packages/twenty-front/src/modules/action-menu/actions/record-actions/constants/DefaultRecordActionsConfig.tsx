@@ -138,10 +138,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ],
     component: <RemoveFromFavoritesSingleRecordAction />,
   },
-  [SingleRecordActionKeys.EXPORT]: {
+  [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
     type: ActionType.Standard,
     scope: ActionScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT,
+    key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
     position: 4,
@@ -150,10 +150,22 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: ({ selectedRecord }) =>
       isDefined(selectedRecord) && !selectedRecord.isRemote,
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
+    availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
+    component: <ExportMultipleRecordsAction />,
+  },
+  [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    key: SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
+    label: msg`Export`,
+    shortLabel: msg`Export`,
+    position: 4,
+    Icon: IconFileExport,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({ selectedRecord }) =>
+      isDefined(selectedRecord) && !selectedRecord.isRemote,
+    availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.EXPORT]: {

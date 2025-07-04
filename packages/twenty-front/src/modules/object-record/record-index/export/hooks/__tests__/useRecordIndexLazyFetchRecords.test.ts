@@ -1,6 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { percentage, sleep, useRecordIndexFetch } from '../useRecordIndexFetch';
+import {
+  percentage,
+  sleep,
+  useRecordIndexLazyFetchRecords,
+} from '../useRecordIndexLazyFetchRecords';
 
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -103,7 +107,7 @@ describe('useRecordData', () => {
 
       const { result } = renderHook(
         () =>
-          useRecordIndexFetch({
+          useRecordIndexLazyFetchRecords({
             recordIndexId,
             objectMetadataItem,
             pageSize: 30,
@@ -130,7 +134,7 @@ describe('useRecordData', () => {
       mockFetchAllRecords.mockReturnValue([mockPerson]);
       const { result } = renderHook(
         () =>
-          useRecordIndexFetch({
+          useRecordIndexLazyFetchRecords({
             recordIndexId,
             objectMetadataItem,
             callback,
@@ -163,7 +167,7 @@ describe('useRecordData', () => {
             );
 
           return {
-            tableData: useRecordIndexFetch({
+            tableData: useRecordIndexLazyFetchRecords({
               recordIndexId,
               objectMetadataItem,
               callback,
@@ -256,7 +260,7 @@ describe('useRecordData', () => {
             );
 
           return {
-            tableData: useRecordIndexFetch({
+            tableData: useRecordIndexLazyFetchRecords({
               recordIndexId,
               objectMetadataItem,
               callback,

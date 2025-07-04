@@ -6,13 +6,10 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
@@ -39,7 +36,7 @@ export type UseRecordDataOptions = {
   viewType?: ViewType;
 };
 
-export const useRecordIndexFetch = ({
+export const useRecordIndexLazyFetchRecords = ({
   objectMetadataItem,
   delayMs,
   maximumRequests = 100,
@@ -81,30 +78,12 @@ export const useRecordIndexFetch = ({
     objectMetadataItem.nameSingular,
   );
 
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
-
-  const currentRecordFilters = useRecoilComponentValueV2(
-    currentRecordFiltersComponentState,
-    recordIndexId,
-  );
-
-  const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
-
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
     filterValueDependencies,
   );
-
-  const deletedAtFilter: RecordGqlOperationFilter = {
-    deletedAt: { is: 'NOT_NULL' },
-  };
-
-  const graphqlFilter = {
-    ...queryFilter,
-    ...(deletedFilter ? deletedAtFilter : {}),
-  };
 
   const finalColumns = [
     ...columns,
@@ -115,7 +94,7 @@ export const useRecordIndexFetch = ({
 
   const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
     ...findManyRecordsParams,
-    filter: graphqlFilter,
+    filter: queryFilter,
     limit: pageSize,
     delayMs,
     maximumRequests,
