@@ -1,7 +1,7 @@
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -32,6 +32,8 @@ export const useAgentChat = (agentId: string) => {
     aiStreamingMessageState,
   );
 
+  const [isStreaming, setIsStreaming] = useState(false);
+
   const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
 
   const { data: threads = [], isLoading: threadsLoading } =
@@ -43,6 +45,8 @@ export const useAgentChat = (agentId: string) => {
     isLoading: messagesLoading,
     refetch: refetchMessages,
   } = useAgentChatMessages(currentThreadId);
+
+  const isLoading = messagesLoading || threadsLoading || isStreaming;
 
   const scrollToBottom = useCallback(() => {
     scrollWrapperHTMLElement?.scroll({
@@ -78,11 +82,15 @@ export const useAgentChat = (agentId: string) => {
       return '';
     }
 
+    setIsStreaming(true);
+
     await agentChatApi.streamResponse(currentThreadId, content, (chunk) => {
       setAiStreamingMessage(chunk);
       scrollToBottom();
     });
     refetchMessages();
+
+    setIsStreaming(false);
   };
 
   const sendChatMessage = async (content: string) => {
@@ -101,7 +109,7 @@ export const useAgentChat = (agentId: string) => {
   };
 
   const handleSendMessage = async () => {
-    if (!agentChatInput.trim() || messagesLoading || threadsLoading) {
+    if (!agentChatInput.trim() || isLoading) {
       return;
     }
     const content = agentChatInput.trim();
@@ -118,7 +126,7 @@ export const useAgentChat = (agentId: string) => {
       }
     },
     InputHotkeyScope.TextInput,
-    [agentChatInput, messagesLoading, threadsLoading],
+    [agentChatInput, isLoading],
   );
 
   useEffect(() => {
@@ -134,7 +142,7 @@ export const useAgentChat = (agentId: string) => {
     messages: agentChatMessages,
     input: agentChatInput,
     handleSendMessage,
-    messagesLoading: messagesLoading || threadsLoading,
+    isLoading,
     aiStreamingMessage,
   };
 };
