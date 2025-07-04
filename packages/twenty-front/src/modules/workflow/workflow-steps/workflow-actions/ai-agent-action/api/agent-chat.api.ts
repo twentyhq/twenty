@@ -1,8 +1,10 @@
-import axios from 'axios';
-
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { renewToken } from '@/auth/services/AuthService';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import axios from 'axios';
+import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { cookieStorage } from '~/utils/cookie-storage';
 
 export interface AgentChatMessage {
   id: string;
@@ -19,17 +21,53 @@ export interface AgentChatThread {
   updatedAt: string;
 }
 
+const handleTokenRenewal = async () => {
+  const tokenPair = getTokenPair();
+  if (!isDefined(tokenPair?.refreshToken?.token)) {
+    throw new Error('No refresh token available');
+  }
+
+  const newTokens = await renewToken(
+    `${REACT_APP_SERVER_BASE_URL}/graphql`,
+    tokenPair,
+  );
+
+  if (!isDefined(newTokens)) {
+    throw new Error('Token renewal failed');
+  }
+
+  cookieStorage.setItem('tokenPair', JSON.stringify(newTokens));
+  return newTokens;
+};
+
 const apiClient = axios.create({
   baseURL: `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat`,
 });
 
 apiClient.interceptors.request.use((config) => {
-  const token = getTokenPair()?.accessToken.token;
-  if (token !== undefined && token !== null) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const tokenPair = getTokenPair();
+  if (isDefined(tokenPair?.accessToken?.token)) {
+    config.headers.Authorization = `Bearer ${tokenPair.accessToken.token}`;
   }
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      try {
+        const newTokens = await handleTokenRenewal();
+        const originalRequest = error.config;
+        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken.token}`;
+        return apiClient(originalRequest);
+      } catch (renewalError) {
+        window.location.href = '/sign-in';
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const agentChatKeys = {
   all: ['agent-chat'] as const,
@@ -55,13 +93,15 @@ export const agentChatApi = {
     userMessage: string,
     onChunk: (chunk: string) => void,
   ): Promise<string> => {
+    const tokenPair = getTokenPair();
+
     const response = await fetch(
       `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat/stream`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${getTokenPair()?.accessToken.token}`,
+          Authorization: `Bearer ${tokenPair?.accessToken.token || ''}`,
         },
         body: JSON.stringify({
           threadId,
@@ -70,23 +110,61 @@ export const agentChatApi = {
       },
     );
 
-    const reader = response.body?.getReader();
-    const decoder = new TextDecoder();
-    let accumulated = '';
+    if (response.status === 401) {
+      try {
+        const newTokens = await handleTokenRenewal();
+        const retryResponse = await fetch(
+          `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat/stream`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${newTokens.accessToken.token}`,
+            },
+            body: JSON.stringify({
+              threadId,
+              userMessage,
+            }),
+          },
+        );
 
-    if (reader !== undefined && reader !== null) {
-      let done = false;
-      while (!done) {
-        const { value, done: isDone } = await reader.read();
-        done = isDone;
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        accumulated += chunk;
-        onChunk(accumulated);
+        if (retryResponse.ok) {
+          return handleStreamResponse(retryResponse, onChunk);
+        }
+      } catch (renewalError) {
+        window.location.href = '/sign-in';
       }
+      throw new Error('Authentication failed');
     }
 
-    return accumulated;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return handleStreamResponse(response, onChunk);
   },
+};
+
+const handleStreamResponse = async (
+  response: Response,
+  onChunk: (chunk: string) => void,
+): Promise<string> => {
+  const reader = response.body?.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = '';
+
+  if (isDefined(reader)) {
+    let done = false;
+    while (!done) {
+      const { value, done: isDone } = await reader.read();
+      done = isDone;
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      accumulated += chunk;
+      onChunk(accumulated);
+    }
+  }
+
+  return accumulated;
 };
