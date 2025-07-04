@@ -5,6 +5,7 @@ import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -39,6 +40,7 @@ import { AgentService } from './agent.service';
     ObjectMetadataModule,
     WorkspacePermissionsCacheModule,
   ],
+  controllers: [AgentChatController],
   providers: [
     AgentResolver,
     AgentService,

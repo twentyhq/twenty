@@ -46,7 +46,7 @@ export class AgentExecutionService {
     private readonly agentChatmessageRepository: Repository<AgentChatMessageEntity>,
   ) {}
 
-  private getModel = (modelId: ModelId, provider: ModelProvider) => {
+  getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
