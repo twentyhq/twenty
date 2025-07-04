@@ -17,6 +17,11 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
+import {
+  WorkflowStep,
+  WorkflowTrigger,
+  WorkflowWithCurrentVersion,
+} from '@/workflow/types/Workflow';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -27,6 +32,21 @@ import {
   IconPower,
   IconVersions,
 } from 'twenty-ui/display';
+
+const areWorkflowTriggerAndStepsDefined = (
+  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined,
+): workflowWithCurrentVersion is WorkflowWithCurrentVersion & {
+  currentVersion: {
+    trigger: WorkflowTrigger;
+    steps: Array<WorkflowStep>;
+  };
+} => {
+  return (
+    isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
+    isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
+    workflowWithCurrentVersion.currentVersion.steps.length > 0
+  );
+};
 
 export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
@@ -40,9 +60,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
-        isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-        isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
-        workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
+        areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
           !workflowWithCurrentVersion.versions?.some(
             (version) => version.status === 'ACTIVE',
@@ -158,9 +176,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
-        isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-        isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
-        workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
+        areWorkflowTriggerAndStepsDefined(workflowWithCurrentVersion) &&
         ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
           !isDefined(
             workflowWithCurrentVersion.currentVersion.trigger.settings
