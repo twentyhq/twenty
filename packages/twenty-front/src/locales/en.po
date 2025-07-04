@@ -2881,8 +2881,13 @@ msgstr "GraphQL API Playground"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Greater than"
+#~ msgid "Greater than"
+#~ msgstr "Greater than"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr "Greater than or equal"
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3463,8 +3468,13 @@ msgstr "Layout"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Less than"
+#~ msgid "Less than"
+#~ msgstr "Less than"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr "Less than or equal"
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx

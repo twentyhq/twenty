@@ -2886,8 +2886,13 @@ msgstr "Περιβάλλον GraphQL API"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Μεγαλύτερο από"
+#~ msgid "Greater than"
+#~ msgstr "Μεγαλύτερο από"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3468,8 +3473,13 @@ msgstr "Διάταξη"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Μικρότερο από"
+#~ msgid "Less than"
+#~ msgstr "Μικρότερο από"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx

@@ -2886,8 +2886,13 @@ msgstr "GraphQL API 플레이그라운드"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "보다 큼"
+#~ msgid "Greater than"
+#~ msgstr "보다 큼"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3468,8 +3473,13 @@ msgstr "레이아웃"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "보다 작음"
+#~ msgid "Less than"
+#~ msgstr "보다 작음"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
