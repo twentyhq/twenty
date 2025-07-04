@@ -107,18 +107,18 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   deletedObjectMetadata,
   updatedObjectMetadata,
 }: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationActionV2[] => {
-  const createObjectActions = createdObjectMetadata.flatMap(
+  const createdObjectActions = createdObjectMetadata.flatMap(
     (objectMetadata) => {
       const createObjectAction =
         getWorkspaceMigrationV2ObjectCreateAction(objectMetadata);
-      const createdFields = objectMetadata.fields.map((field) =>
+      const createFieldActions = objectMetadata.fields.map((field) =>
         getWorkspaceMigrationV2FieldCreateAction({
           field,
           objectMetadataUniqueIdentifier: objectMetadata.uniqueIdentifier,
         }),
       );
 
-      return [createObjectAction, ...createdFields];
+      return [createObjectAction, ...createFieldActions];
     },
   );
 
@@ -142,7 +142,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   );
 
   return [
-    ...createObjectActions,
+    ...createdObjectActions,
     ...deletedObjectActions,
     ...updatedObjectActions,
   ];

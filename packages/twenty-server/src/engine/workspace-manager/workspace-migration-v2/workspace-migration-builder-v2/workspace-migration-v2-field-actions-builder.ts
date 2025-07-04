@@ -158,24 +158,24 @@ const updatedFieldMetadataMatriceMapDispatcher = (
   return matriceAccumulator;
 };
 
-// Should return WorkspaceObjectMigrationV2 ?
-export const buildWorkspaceMigrationV2FieldActions = ({
-  updatedObjectMetadata,
-}: Pick<
+type BuildWorkspaceMigrationV2FieldActionsArgs = Pick<
   CreatedDeletedUpdatedObjectMetadataInputMatrix,
   'updatedObjectMetadata'
->): WorkspaceMigrationFieldActionV2[] => {
-  const updatedObjectMetadataFieldMatrix =
+>;
+export const buildWorkspaceMigrationV2FieldActions = ({
+  updatedObjectMetadata,
+}: BuildWorkspaceMigrationV2FieldActionsArgs): WorkspaceMigrationFieldActionV2[] => {
+  const objectMetadataDeletedCreatedUpdatedFields =
     updatedFieldMetadataMatriceMapDispatcher(updatedObjectMetadata);
 
-  const allUpdatedObjectMetadataFieldAction: WorkspaceMigrationFieldActionV2[] =
+  const allUpdatedObjectMetadataFieldActions: WorkspaceMigrationFieldActionV2[] =
     [];
   for (const {
     createdFieldMetadata,
     deletedFieldMetadata,
     objectMetadataUniqueIdentifier,
     updatedFieldMetadata,
-  } of updatedObjectMetadataFieldMatrix) {
+  } of objectMetadataDeletedCreatedUpdatedFields) {
     const updateFieldAction =
       updatedFieldMetadata.flatMap<WorkspaceMigrationFieldActionV2>(
         ({ from, to }) =>
@@ -200,12 +200,12 @@ export const buildWorkspaceMigrationV2FieldActions = ({
       }),
     );
 
-    allUpdatedObjectMetadataFieldAction.concat([
+    allUpdatedObjectMetadataFieldActions.concat([
       ...createFieldAction,
       ...deleteFieldAction,
       ...updateFieldAction,
     ]);
   }
 
-  return allUpdatedObjectMetadataFieldAction;
+  return allUpdatedObjectMetadataFieldActions;
 };

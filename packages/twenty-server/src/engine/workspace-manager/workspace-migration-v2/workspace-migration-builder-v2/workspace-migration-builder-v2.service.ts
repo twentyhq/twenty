@@ -28,10 +28,7 @@ export class WorkspaceMigrationBuilderV2Service {
       created: createdObjectMetadata,
       deleted: deletedObjectMetadata,
       updated: updatedObjectMetadata,
-    } = deletedCreatedUpdatedMatrixDispatcher({
-      from: objectMetadataFromToInputs.from,
-      to: objectMetadataFromToInputs.to,
-    });
+    } = deletedCreatedUpdatedMatrixDispatcher(objectMetadataFromToInputs);
 
     const objectWorkspaceMigrationActions =
       buildWorkspaceMigrationV2ObjectActions({
