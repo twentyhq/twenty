@@ -6,7 +6,7 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-executor.factory';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -17,7 +17,7 @@ import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflo
 
 describe('WorkflowExecutorWorkspaceService', () => {
   let service: WorkflowExecutorWorkspaceService;
-  let workflowExecutorFactory: WorkflowExecutorFactory;
+  let workflowActionFactory: WorkflowActionFactory;
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let workflowRunWorkspaceService: WorkflowRunWorkspaceService;
 
@@ -54,7 +54,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       providers: [
         WorkflowExecutorWorkspaceService,
         {
-          provide: WorkflowExecutorFactory,
+          provide: WorkflowActionFactory,
           useValue: {
             get: jest.fn().mockReturnValue(mockWorkflowExecutor),
           },
@@ -81,8 +81,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
     service = module.get<WorkflowExecutorWorkspaceService>(
       WorkflowExecutorWorkspaceService,
     );
-    workflowExecutorFactory = module.get<WorkflowExecutorFactory>(
-      WorkflowExecutorFactory,
+    workflowActionFactory = module.get<WorkflowActionFactory>(
+      WorkflowActionFactory,
     );
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
@@ -147,7 +147,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       // execute first step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.CODE,
       );
       expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
@@ -201,7 +201,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(result).toEqual({ result: { success: true } });
 
       // execute second step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -290,7 +290,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       // No recursive call to execute should happen
-      expect(workflowExecutorFactory.get).not.toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -363,7 +363,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(result).toEqual({ result: { success: true } });
 
       // execute second step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -392,13 +392,13 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       // Should call execute again with increased attemptCount
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.CODE,
       );
-      expect(workflowExecutorFactory.get).not.toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(2);
+      expect(workflowActionFactory.get).toHaveBeenCalledTimes(2);
     });
 
     it('should stop retrying after MAX_RETRIES_ON_FAILURE', async () => {
@@ -427,7 +427,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       // Should not retry anymore
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
+      expect(workflowActionFactory.get).toHaveBeenCalledTimes(1);
       expect(
         workflowRunWorkspaceService.updateWorkflowRunStepStatus,
       ).toHaveBeenCalledTimes(1);
@@ -466,7 +466,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         stepIdsToExecute: ['step-1'],
       });
 
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
+      expect(workflowActionFactory.get).toHaveBeenCalledTimes(1);
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledTimes(1);

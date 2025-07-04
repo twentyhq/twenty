@@ -12,12 +12,10 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
-  WorkflowRunOutput,
   WorkflowRunStatus,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-executor.factory';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import {
   WorkflowTriggerException,
@@ -25,31 +23,24 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowBranchExecutorInput,
+  WorkflowExecutorInput,
+} from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 
 const MAX_RETRIES_ON_FAILURE = 3;
-
-export type WorkflowExecutorState = {
-  stepsOutput: WorkflowRunOutput['stepsOutput'];
-  status: WorkflowRunStatus;
-};
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
-    private readonly workflowExecutorFactory: WorkflowExecutorFactory,
+    private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
   ) {}
 
-  async execute({
-    stepIdsToExecute,
-    workflowRunId,
-  }: {
-    workflowRunId: string;
-    stepIdsToExecute: string[];
-  }) {
+  async execute({ stepIdsToExecute, workflowRunId }: WorkflowExecutorInput) {
     await Promise.all(
       stepIdsToExecute.map(async (stepIdToExecute) => {
         await this.executeBranch({
@@ -64,11 +55,7 @@ export class WorkflowExecutorWorkspaceService {
     currentStepId,
     attemptCount = 1,
     workflowRunId,
-  }: {
-    currentStepId: string;
-    attemptCount?: number;
-    workflowRunId: string;
-  }) {
+  }: WorkflowBranchExecutorInput) {
     ///////////// START REFACTOR BLOCK /////////////
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
@@ -163,9 +150,9 @@ export class WorkflowExecutorWorkspaceService {
     }
     ///////////// END REFACTOR BLOCK /////////////
 
-    const workflowExecutor = this.workflowExecutorFactory.get(step.type);
+    const workflowExecutor = this.workflowActionFactory.get(step.type);
 
-    let actionOutput: WorkflowExecutorOutput;
+    let actionOutput: WorkflowActionOutput;
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepStatus({
       workflowRunId,
@@ -179,8 +166,6 @@ export class WorkflowExecutorWorkspaceService {
         currentStepId,
         steps,
         context,
-        attemptCount,
-        workflowRunId,
       });
     } catch (error) {
       actionOutput = {
@@ -294,7 +279,9 @@ export class WorkflowExecutorWorkspaceService {
     context,
     step,
     steps,
-  }: Pick<WorkflowExecutorInput, 'context' | 'steps'> & {
+  }: {
+    steps: WorkflowAction[];
+    context: Record<string, unknown>;
     step: WorkflowAction;
   }) {
     const parentSteps = steps.filter((parentStep) =>
