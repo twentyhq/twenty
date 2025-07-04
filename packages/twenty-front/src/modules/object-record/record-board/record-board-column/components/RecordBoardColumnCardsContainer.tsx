@@ -8,6 +8,7 @@ import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-
 import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useFilteredRecordIds } from '@/object-record/record-board/record-board-column/hooks/useFilteredRecordIds';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
@@ -46,6 +47,8 @@ export const RecordBoardColumnCardsContainer = ({
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const columnId = columnDefinition.id;
+
+  const filteredRecordIds = useFilteredRecordIds(recordIds);
 
   const isRecordIndexBoardColumnLoading = useRecoilValue(
     isRecordIndexBoardColumnLoadingFamilyState(columnId),
@@ -87,12 +90,12 @@ export const RecordBoardColumnCardsContainer = ({
           ),
         )
       ) : (
-        <RecordBoardColumnCardsMemo recordIds={recordIds} />
+        <RecordBoardColumnCardsMemo recordIds={filteredRecordIds} />
       )}
       <RecordBoardColumnFetchMoreLoader />
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
-        index={recordIds.length}
+        index={filteredRecordIds.length}
         isDragDisabled={true}
       >
         {(draggableProvided) => (
