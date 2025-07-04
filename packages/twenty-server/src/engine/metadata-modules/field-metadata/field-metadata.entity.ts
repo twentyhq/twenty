@@ -22,8 +22,9 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity('fieldMetadata')
+// max length of index is 63 characters
 @Index(
-  'IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
+  'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
   ['name', 'objectMetadataId', 'workspaceId'],
   {
     unique: true,
