@@ -92,7 +92,7 @@ export const MainNavigationDrawerFixedItems = () => {
             label="Chatbot"
             to={chatbotPath}
             onClick={() => {
-              setNavigationMemorizedUrl(location.pathname + location.search);
+              navigate(chatbotPath);
             }}
             Icon={IconRobot}
           />
@@ -106,7 +106,7 @@ export const MainNavigationDrawerFixedItems = () => {
           label="Traceable link"
           to={traceablePath}
           onClick={() => {
-            setNavigationMemorizedUrl(location.pathname + location.search);
+            navigate(traceablePath);
           }}
           Icon={IconLink}
         />
