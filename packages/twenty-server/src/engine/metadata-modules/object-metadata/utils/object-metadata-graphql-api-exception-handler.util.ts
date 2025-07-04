@@ -20,11 +20,15 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT:
-        throw new UserInputError(error.message);
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       case ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
         throw new ForbiddenError(error.message);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
-        throw new ConflictError(error.message);
+        throw new ConflictError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
         throw error;
       default: {

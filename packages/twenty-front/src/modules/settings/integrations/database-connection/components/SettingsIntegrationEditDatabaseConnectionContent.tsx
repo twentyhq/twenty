@@ -9,13 +9,14 @@ import {
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
+import { H2Title, Info } from 'twenty-ui/display';
 import { z } from 'zod';
 import {
   RemoteServer,
@@ -24,7 +25,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title, Info } from 'twenty-ui/display';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
@@ -37,7 +37,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   databaseKey: string;
   tables: RemoteTable[];
 }) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
 
   const editConnectionSchema = getEditionSchemaForForm(databaseKey);
@@ -87,8 +87,8 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         connectionId: connection?.id,
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };

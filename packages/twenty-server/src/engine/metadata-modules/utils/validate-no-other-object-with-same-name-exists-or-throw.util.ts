@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -30,6 +32,9 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
     throw new ObjectMetadataException(
       'Object already exists',
       ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+      {
+        userFriendlyMessage: t`Object already exists`,
+      },
     );
   }
 };

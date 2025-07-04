@@ -115,8 +115,8 @@ msgstr ""
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -301,6 +301,11 @@ msgstr "Kontosletting"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
 msgstr "Kontoer"
+
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -620,8 +625,15 @@ msgstr "Tillat brukere å logge inn med en e-post og passord."
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
-msgstr "Det oppstod en feil under oppdatering av passordet"
+#~ msgid "An error occurred while updating password"
+#~ msgstr "Det oppstod en feil under oppdatering av passordet"
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
+msgstr ""
 
 #. js-lingui-id: mJ6m4C
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -711,6 +723,11 @@ msgstr "API-er"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Utseende"
+
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr ""
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1064,6 +1081,11 @@ msgstr ""
 msgid "Check your Emails"
 msgstr ""
 
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -1400,6 +1422,11 @@ msgstr ""
 #. js-lingui-id: iX2opZ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
+msgstr ""
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -2174,6 +2201,11 @@ msgstr "E-post eller domene er allerede i svartelisten"
 msgid "Email verification"
 msgstr "E-postbekreftelse"
 
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
+msgstr ""
+
 #. js-lingui-id: hn6Eox
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Email Verification Failed"
@@ -2317,8 +2349,13 @@ msgstr "Feil ved kopiering til utklippstavlen"
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
-msgstr "Feil ved sletting av API-nøkkel: {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr "Feil ved sletting av API-nøkkel: {err}"
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
+msgstr ""
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2342,13 +2379,23 @@ msgstr ""
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
-msgstr "Feil ved regenerering av API-nøkkel: {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr "Feil ved regenerering av API-nøkkel: {err}"
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
+msgstr ""
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Feil ved sending av invitasjon på nytt"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2484,9 +2531,11 @@ msgid "Expires in"
 msgstr "Utløper om"
 
 #. js-lingui-id: GS+Mus
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2507,6 +2556,7 @@ msgstr "Eksporter oppføringer"
 
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Eksportkjøring"
 
@@ -2521,6 +2571,7 @@ msgid "Export to PDF"
 msgstr "Eksporter til PDF"
 
 #. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Eksportversjon"
@@ -2538,6 +2589,7 @@ msgid "Export view"
 msgstr "Eksporter visning"
 
 #. js-lingui-id: +FMXdE
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Eksporter arbeidsflyt"
@@ -2839,8 +2891,13 @@ msgstr "GraphQL API-lekeplass"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Større enn"
+#~ msgid "Greater than"
+#~ msgstr "Større enn"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3234,6 +3291,16 @@ msgstr "Er ikke"
 msgid "is not a valid array"
 msgstr ""
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr ""
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr ""
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3252,6 +3319,11 @@ msgstr ""
 #. js-lingui-id: 96g038
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
 msgstr ""
 
 #. js-lingui-id: Ir+3AW
@@ -3306,8 +3378,8 @@ msgstr ""
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr ""
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3421,8 +3493,13 @@ msgstr "Oppsett"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Mindre enn"
+#~ msgid "Less than"
+#~ msgstr "Mindre enn"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -3432,6 +3509,8 @@ msgstr "Lys"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr "Lenke kopiert til utklippstavlen"
 
@@ -3679,8 +3758,8 @@ msgstr ""
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr ""
+#~ msgid "must contain only numbers"
+#~ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -3951,6 +4030,11 @@ msgstr "Ingen metrikkdata tilgjengelig"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 #~ msgid "No more members to assign"
 #~ msgstr "Ingen flere medlemmer å tildele"
+
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -5657,8 +5741,8 @@ msgstr "Det var en feil under oppdatering av passord."
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr "Det var et problem"
+#~ msgid "There was an issue"
+#~ msgstr "Det var et problem"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -6163,6 +6247,31 @@ msgstr "Vi vil sende deg en lenke for å verifisere domeneeierskap"
 #~ msgid "Webhook"
 #~ msgstr "Webhook"
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr ""
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr ""
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr ""
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr ""
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6316,6 +6425,16 @@ msgstr "ja"
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
+msgstr ""
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr ""
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
 msgstr ""
 
 #. js-lingui-id: qsAug0

@@ -11,17 +11,17 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { AppPath } from '@/types/AppPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
@@ -66,9 +66,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         captchaToken: token,
       },
       onError: (error) => {
-        enqueueSnackBar(`${error.message}`, {
-          variant: SnackBarVariant.Error,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
       onCompleted: (data) => {
         setSignInUpMode(
@@ -83,7 +81,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     readCaptchaToken,
     form,
     checkUserExistsQuery,
-    enqueueSnackBar,
+    enqueueErrorSnackBar,
     setSignInUpStep,
     setSignInUpMode,
   ]);
@@ -145,9 +143,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           captchaToken: token,
           verifyEmailNextPath,
         });
-      } catch (err: any) {
-        enqueueSnackBar(err?.message, {
-          variant: SnackBarVariant.Error,
+      } catch (error: any) {
+        enqueueErrorSnackBar({
+          ...(error instanceof ApolloError ? { apolloError: error } : {}),
         });
       }
     },
@@ -161,7 +159,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
     ],
