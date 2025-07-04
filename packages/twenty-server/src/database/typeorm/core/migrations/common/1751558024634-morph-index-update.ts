@@ -5,7 +5,7 @@ export class MorphIndexUpdate1751558024634 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE"`,
+      `ALTER TABLE "core"."fieldMetadata" DROP CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE"`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE" ON "core"."fieldMetadata" ("name", "objectMetadataId", "workspaceId") WHERE "type" <> 'MORPH_RELATION'`,
@@ -17,7 +17,7 @@ export class MorphIndexUpdate1751558024634 implements MigrationInterface {
       `DROP INDEX "core"."IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE"`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE" ON "core"."fieldMetadata" ("objectMetadataId", "name", "workspaceId") WHERE ((type)::text <> 'MORPH_RELATION'::text)`,
+      `ALTER TABLE "core"."fieldMetadata" ADD CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE" UNIQUE ("name", "objectMetadataId", "workspaceId")`,
     );
   }
 }
