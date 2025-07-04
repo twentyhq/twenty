@@ -3,7 +3,7 @@ import { FieldActorForInputValue } from '@/object-record/record-field/types/Fiel
 import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { parsePhoneNumberWithError } from 'libphonenumber-js';
+import { CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -176,34 +176,46 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         recordToBuild[field.name] = compositeData;
 
-        // To meet backend requirements, handle case where user provides only a primaryPhoneNumber without calling code
         const primaryPhoneNumber =
           importedStructuredRow[
             getSubFieldOptionKey(field, 'primaryPhoneNumber')
           ];
 
-        const hasUserProvidedCallingCode =
-          isDefined(
-            importedStructuredRow[
-              getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
-            ],
-          ) &&
-          isNonEmptyString(
-            importedStructuredRow[
-              getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
-            ],
-          );
+        const primaryPhoneCallingCode =
+          importedStructuredRow[
+            getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
+          ];
 
-        if (isDefined(primaryPhoneNumber) && !hasUserProvidedCallingCode) {
+        const hasUserProvidedPrimaryPhoneNumberWithoutCallingCode =
+          isDefined(primaryPhoneNumber) &&
+          (!isDefined(primaryPhoneCallingCode) ||
+            !isNonEmptyString(primaryPhoneCallingCode));
+
+        // To meet backend requirements, handle case where user provides only a primaryPhoneNumber without calling code
+        if (hasUserProvidedPrimaryPhoneNumberWithoutCallingCode) {
+          const primaryPhoneCountryCode =
+            importedStructuredRow[
+              getSubFieldOptionKey(field, 'primaryPhoneCountryCode')
+            ];
+
+          const hasUserProvidedPrimaryPhoneCountryCode =
+            isDefined(primaryPhoneCountryCode) &&
+            isNonEmptyString(primaryPhoneCountryCode);
+
           try {
             const {
               number: parsedNumber,
               countryCallingCode: parsedCountryCallingCode,
-            } = parsePhoneNumberWithError(primaryPhoneNumber as string);
+            } = parsePhoneNumberWithError(
+              primaryPhoneNumber as string,
+              hasUserProvidedPrimaryPhoneCountryCode
+                ? (primaryPhoneCountryCode as CountryCode)
+                : undefined,
+            );
 
             recordToBuild[field.name] = {
               primaryPhoneNumber: parsedNumber,
-              primaryPhoneCallingCode: parsedCountryCallingCode,
+              primaryPhoneCallingCode: `+${parsedCountryCallingCode}`,
             };
           } catch {
             recordToBuild[field.name] = {
