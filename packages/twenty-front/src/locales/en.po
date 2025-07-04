@@ -3286,6 +3286,16 @@ msgstr "Is not"
 msgid "is not a valid array"
 msgstr "is not a valid array"
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr "is not a valid calling code"
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr "is not a valid country code"
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3305,6 +3315,11 @@ msgstr "is not a valid email"
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
 msgstr "is not a valid JSON"
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
+msgstr "is not a valid phone number"
 
 #. js-lingui-id: Ir+3AW
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
@@ -3738,8 +3753,8 @@ msgstr "must be an array of valid emails"
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr "must contain only numbers"
+#~ msgid "must contain only numbers"
+#~ msgstr "must contain only numbers"
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
