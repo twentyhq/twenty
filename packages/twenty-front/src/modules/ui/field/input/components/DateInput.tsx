@@ -88,7 +88,6 @@ export const DateInput = ({
         if (hotkeyScope?.scope === TableHotkeyScope.CellEditMode) {
           closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
           closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-          onEscape(internalValue);
           onClickOutside(event, internalValue);
         }
       },
