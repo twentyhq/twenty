@@ -86,11 +86,8 @@ describe('restoreManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.restorePeople).toBeDefined();
     expect(response.body.data.restorePeople).toHaveLength(2);
-    expect(response.body.data.restorePeople).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ id: personId1 }),
-        expect.objectContaining({ id: personId2 }),
-      ]),
-    );
+    expect(
+      response.body.data.restorePeople.map((person: any) => person.id),
+    ).toEqual(expect.arrayContaining([personId1, personId2]));
   });
 });

@@ -47,7 +47,7 @@ const StyledTitle = styled.div`
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   text-align: center;
-  max-width: 410px;
+  max-width: 85%;
   font-size: ${({ theme }) => theme.font.size.md};
 `;
 
@@ -108,20 +108,16 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
 `;
 
 const StyledMessageFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: space-between;
   margin-top: ${({ theme }) => theme.spacing(1)};
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
-  &.message-footer {
-    opacity: 0;
-    pointer-events: none;
-  }
+  transition: opacity 0.3s ease-in-out;
+  width: 100%;
 `;
 
 const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
@@ -228,10 +224,9 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           <StyledSparkleIcon>
             <IconSparkles size={theme.icon.size.lg} color={theme.color.blue} />
           </StyledSparkleIcon>
-          <StyledTitle>{t`Ask AI`}</StyledTitle>
+          <StyledTitle>{t`Chat`}</StyledTitle>
           <StyledDescription>
-            {t`Start a conversation to get instant insights, support, or updates
-            about your deals. How can I help you today?`}
+            {t`Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance`}
           </StyledDescription>
         </StyledEmptyState>
       )}

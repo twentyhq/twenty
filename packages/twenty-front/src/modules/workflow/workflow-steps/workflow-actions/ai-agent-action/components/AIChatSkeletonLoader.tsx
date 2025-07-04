@@ -20,6 +20,8 @@ const StyledMessageSkeleton = styled.div`
   width: 100%;
 `;
 
+const NUMBER_OF_SKELETONS = 6;
+
 export const AIChatSkeletonLoader = () => {
   const theme = useTheme();
 
@@ -30,7 +32,7 @@ export const AIChatSkeletonLoader = () => {
       borderRadius={4}
     >
       <StyledSkeletonContainer>
-        {Array.from({ length: 6 }).map((_, index) => (
+        {Array.from({ length: NUMBER_OF_SKELETONS }).map((_, index) => (
           <StyledMessageBubble key={index}>
             <Skeleton width={24} height={24} borderRadius={4} />
 

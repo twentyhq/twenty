@@ -452,14 +452,6 @@ export type ConnectionParametersOutput = {
   username: Scalars['String'];
 };
 
-export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-};
-
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -983,7 +975,6 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
-  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -995,7 +986,6 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
-  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1130,11 +1120,6 @@ export type MutationCreateObjectEventArgs = {
 };
 
 
-export type MutationCreateOneAgentArgs = {
-  input: CreateAgentInput;
-};
-
-
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1172,11 +1157,6 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-};
-
-
-export type MutationDeleteOneAgentArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -1688,7 +1668,6 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;

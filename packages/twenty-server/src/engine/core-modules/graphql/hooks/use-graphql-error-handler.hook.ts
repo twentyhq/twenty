@@ -4,6 +4,7 @@ import {
   OnExecuteDoneHookResultOnNextHook,
   Plugin,
 } from '@envelop/core';
+import { t } from '@lingui/core/macro';
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
@@ -24,8 +25,7 @@ import {
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
-const SCHEMA_MISMATCH_ERROR =
-  'Your workspace has been updated with a new data model. Please refresh the page.';
+const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
 
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
@@ -191,11 +191,22 @@ export const useGraphQLErrorHandlerHook = <
             const transformedErrors = processedErrors.map((error) => {
               const graphqlError =
                 error instanceof BaseGraphQLError
-                  ? error
+                  ? {
+                      ...error,
+                      extensions: {
+                        ...error.extensions,
+                        userFriendlyMessage:
+                          error.extensions.userFriendlyMessage ??
+                          t`An error occurred.`,
+                      },
+                    }
                   : generateGraphQLErrorFromError(error);
 
               if (error.eventId && eventIdKey) {
-                graphqlError.extensions[eventIdKey] = error.eventId;
+                graphqlError.extensions = {
+                  ...graphqlError.extensions,
+                  [eventIdKey]: error.eventId,
+                };
               }
 
               return graphqlError;
@@ -224,7 +235,11 @@ export const useGraphQLErrorHandlerHook = <
           requestMetadataVersion &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
-          throw new GraphQLError(SCHEMA_MISMATCH_ERROR);
+          throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
+            extensions: {
+              userFriendlyMessage: t`Your workspace has been updated with a new data model. Please refresh the page.`,
+            },
+          });
         }
       }
     },

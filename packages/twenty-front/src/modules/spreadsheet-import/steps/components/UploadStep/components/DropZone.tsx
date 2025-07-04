@@ -7,7 +7,6 @@ import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constan
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
@@ -113,7 +112,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const [loading, setLoading] = useState(false);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { downloadSample } = useDownloadFakeRecords();
 
@@ -132,9 +131,11 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     onDropRejected: (fileRejections) => {
       setLoading(false);
       fileRejections.forEach((fileRejection) => {
-        enqueueSnackBar(`${fileRejection.file.name} upload rejected`, {
-          detailedMessage: fileRejection.errors[0].message,
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          message: `${fileRejection.file.name} upload rejected`,
+          options: {
+            detailedMessage: fileRejection.errors[0].message,
+          },
         });
       });
     },

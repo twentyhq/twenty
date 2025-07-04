@@ -115,8 +115,8 @@ msgstr ""
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -301,6 +301,11 @@ msgstr "Smazání účtu"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
 msgstr "Účty"
+
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -620,8 +625,15 @@ msgstr "Povolit uživatelům přihlášení pomocí e-mailu a hesla."
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
-msgstr "Při aktualizaci hesla došlo k chybě"
+#~ msgid "An error occurred while updating password"
+#~ msgstr "Při aktualizaci hesla došlo k chybě"
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
+msgstr ""
 
 #. js-lingui-id: mJ6m4C
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -711,6 +723,11 @@ msgstr "API"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Vzhled"
+
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr ""
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1064,6 +1081,11 @@ msgstr ""
 msgid "Check your Emails"
 msgstr ""
 
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -1400,6 +1422,11 @@ msgstr ""
 #. js-lingui-id: iX2opZ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
+msgstr ""
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -1767,6 +1794,11 @@ msgstr ""
 msgid "Delete"
 msgstr "Smazat"
 
+#. js-lingui-id: 2nRIIp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Delete {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -1802,8 +1834,8 @@ msgstr "Smazat záznamy"
 
 #. js-lingui-id: 0ptEoK
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete Records on {objectLabel}"
-msgstr ""
+#~ msgid "Delete Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -1927,10 +1959,15 @@ msgstr ""
 msgid "Destroy"
 msgstr "\"\""
 
+#. js-lingui-id: vI0W/N
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Destroy {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: fq4Wxy
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy Records on {objectLabel}"
-msgstr ""
+#~ msgid "Destroy Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2066,6 +2103,11 @@ msgstr "Nejstarší datum"
 msgid "Edit"
 msgstr "Upravit"
 
+#. js-lingui-id: fGxkii
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Edit {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Edit billing interval"
@@ -2099,8 +2141,8 @@ msgstr "Upravit způsob platby, zobrazit faktury a další"
 
 #. js-lingui-id: MGkYcE
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit Records on {objectLabel}"
-msgstr ""
+#~ msgid "Edit Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2158,6 +2200,11 @@ msgstr "E-mail nebo doména již je v seznamu blokovaných"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
 msgstr "Ověření e-mailu"
+
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
+msgstr ""
 
 #. js-lingui-id: hn6Eox
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -2302,8 +2349,13 @@ msgstr "Chyba při kopírování do schránky"
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
-msgstr "Chyba při odstraňování klíče API: {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr "Chyba při odstraňování klíče API: {err}"
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
+msgstr ""
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2327,13 +2379,23 @@ msgstr ""
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
-msgstr "Chyba při obnovování klíče API: {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr "Chyba při obnovování klíče API: {err}"
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
+msgstr ""
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Chyba při opětovném odeslání pozvánky"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -3417,6 +3479,8 @@ msgstr "Světlý"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr "Odkaz byl zkopírován do schránky"
 
@@ -3936,6 +4000,11 @@ msgstr "Žádná data metrik nejsou k dispozici"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 #~ msgid "No more members to assign"
 #~ msgstr "Žádní další členové k přiřazení"
+
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4908,6 +4977,11 @@ msgstr "Bezpečnost"
 msgid "see"
 msgstr ""
 
+#. js-lingui-id: rJnbMG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "See {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4936,8 +5010,8 @@ msgstr "Zobrazit smazané pracovní postupy"
 
 #. js-lingui-id: FvBwjM
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See Records on {objectLabel}"
-msgstr ""
+#~ msgid "See Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -5637,8 +5711,8 @@ msgstr "Během aktualizace hesla došlo k chybě."
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr "Došlo k problému"
+#~ msgid "There was an issue"
+#~ msgstr "Došlo k problému"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -6143,6 +6217,31 @@ msgstr "Pošleme vám odkaz pro ověření vlastnictví domény"
 #~ msgid "Webhook"
 #~ msgstr "Webhook"
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr ""
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr ""
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr ""
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr ""
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6296,6 +6395,16 @@ msgstr "ano"
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
+msgstr ""
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr ""
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
 msgstr ""
 
 #. js-lingui-id: qsAug0

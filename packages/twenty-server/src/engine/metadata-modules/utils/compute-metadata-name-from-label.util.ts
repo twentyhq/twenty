@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +13,9 @@ export const computeMetadataNameFromLabel = (label: string): string => {
     throw new InvalidMetadataException(
       'Label is required',
       InvalidMetadataExceptionCode.LABEL_REQUIRED,
+      {
+        userFriendlyMessage: t`Label is required`,
+      },
     );
   }
 
@@ -31,6 +35,9 @@ export const computeMetadataNameFromLabel = (label: string): string => {
     throw new InvalidMetadataException(
       `Invalid label: "${label}"`,
       InvalidMetadataExceptionCode.INVALID_LABEL,
+      {
+        userFriendlyMessage: t`Invalid label: "${label}"`,
+      },
     );
   }
 

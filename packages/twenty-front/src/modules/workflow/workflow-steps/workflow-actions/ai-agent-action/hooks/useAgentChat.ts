@@ -19,6 +19,10 @@ import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { aiStreamingMessageState } from '../states/agentChatStreamingState';
 
+interface OptimisticMessage extends AgentChatMessage {
+  isPending: boolean;
+}
+
 export const useAgentChat = (agentId: string) => {
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
@@ -49,6 +53,20 @@ export const useAgentChat = (agentId: string) => {
     });
   };
 
+  const isPendingMessage = (
+    message: AgentChatMessage | OptimisticMessage,
+  ): boolean => {
+    return 'isPending' in message && message.isPending;
+  };
+
+  const filterOutPendingMessages = (
+    messages: (AgentChatMessage | OptimisticMessage)[],
+  ): AgentChatMessage[] => {
+    return messages.filter(
+      (msg) => !isPendingMessage(msg),
+    ) as AgentChatMessage[];
+  };
+
   const { loading: messagesLoading, refetch: refetchMessages } =
     useAgentChatMessagesQuery({
       variables: {
@@ -64,22 +82,22 @@ export const useAgentChat = (agentId: string) => {
     });
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
-    const optimisticUserMessage: AgentChatMessage = {
-      __typename: 'AgentChatMessage',
-      id: `temp-${v4()}`,
+    const optimisticUserMessage: OptimisticMessage = {
+      id: v4(),
       threadId: currentThreadId,
       role: AgentChatMessageRole.USER,
       content,
       createdAt: new Date().toISOString(),
+      isPending: true,
     };
 
-    const optimisticAiMessage: AgentChatMessage = {
-      __typename: 'AgentChatMessage',
-      id: `temp-${v4()}`,
+    const optimisticAiMessage: OptimisticMessage = {
+      id: v4(),
       threadId: currentThreadId,
       role: AgentChatMessageRole.ASSISTANT,
       content: '',
       createdAt: new Date().toISOString(),
+      isPending: true,
     };
 
     return [optimisticUserMessage, optimisticAiMessage];

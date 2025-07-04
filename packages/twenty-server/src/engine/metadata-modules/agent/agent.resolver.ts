@@ -14,7 +14,6 @@ import { AgentService } from './agent.service';
 
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
-import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
@@ -31,21 +30,6 @@ export class AgentResolver {
     return this.agentService.findOneAgent(id, workspaceId);
   }
 
-  @Query(() => [AgentDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async findManyAgents(@AuthWorkspace() { id: workspaceId }: Workspace) {
-    return this.agentService.findManyAgents(workspaceId);
-  }
-
-  @Mutation(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async createOneAgent(
-    @Args('input') input: CreateAgentInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    return this.agentService.createOneAgent(input, workspaceId);
-  }
-
   @Mutation(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async updateOneAgent(
@@ -53,14 +37,5 @@ export class AgentResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.agentService.updateOneAgent(input, workspaceId);
-  }
-
-  @Mutation(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async deleteOneAgent(
-    @Args('input') { id }: AgentIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    return this.agentService.deleteOneAgent(id, workspaceId);
   }
 }

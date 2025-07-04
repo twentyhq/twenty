@@ -5,7 +5,6 @@ import { RecoilRoot } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
@@ -36,14 +35,16 @@ const renderHooks = () => {
 };
 
 describe('useHandleResetPassword', () => {
-  const enqueueSnackBarMock = jest.fn();
+  const enqueueErrorSnackBarMock = jest.fn();
+  const enqueueSuccessSnackBarMock = jest.fn();
   const emailPasswordResetLinkMock = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueSnackBar: enqueueSnackBarMock,
+      enqueueErrorSnackBar: enqueueErrorSnackBarMock,
+      enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
     });
     (useEmailPasswordResetLinkMutation as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
@@ -54,8 +55,8 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('')());
 
-    expect(enqueueSnackBarMock).toHaveBeenCalledWith('Invalid email', {
-      variant: SnackBarVariant.Error,
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+      message: 'Invalid email',
     });
   });
 
@@ -67,10 +68,9 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueSnackBarMock).toHaveBeenCalledWith(
-      'Password reset link has been sent to the email',
-      { variant: SnackBarVariant.Success },
-    );
+    expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
+      message: 'Password reset link has been sent to the email',
+    });
   });
 
   it('should show error message if sending reset link fails', async () => {
@@ -81,9 +81,7 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueSnackBarMock).toHaveBeenCalledWith('There was an issue', {
-      variant: SnackBarVariant.Error,
-    });
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
   });
 
   it('should show error message in case of request error', async () => {
@@ -93,8 +91,6 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueSnackBarMock).toHaveBeenCalledWith(errorMessage, {
-      variant: SnackBarVariant.Error,
-    });
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
   });
 });
