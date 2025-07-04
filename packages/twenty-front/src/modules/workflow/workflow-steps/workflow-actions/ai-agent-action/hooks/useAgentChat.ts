@@ -17,6 +17,10 @@ import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 
+interface OptimisticMessage extends AgentChatMessage {
+  isPending: boolean;
+}
+
 export const useAgentChat = (agentId: string) => {
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
@@ -42,6 +46,20 @@ export const useAgentChat = (agentId: string) => {
     });
   };
 
+  const isPendingMessage = (
+    message: AgentChatMessage | OptimisticMessage,
+  ): boolean => {
+    return 'isPending' in message && message.isPending;
+  };
+
+  const filterOutPendingMessages = (
+    messages: (AgentChatMessage | OptimisticMessage)[],
+  ): AgentChatMessage[] => {
+    return messages.filter(
+      (msg) => !isPendingMessage(msg),
+    ) as AgentChatMessage[];
+  };
+
   const { loading: messagesLoading } = useAgentChatMessagesQuery({
     variables: {
       threadId: currentThreadId as string,
@@ -61,37 +79,37 @@ export const useAgentChat = (agentId: string) => {
         if (isDefined(data?.sendAgentChatMessage)) {
           const newMessages = data.sendAgentChatMessage;
           setAgentChatMessages((prevMessages) => {
-            const realMessages = prevMessages.filter(
-              (msg) => !msg.id.startsWith('temp-'),
-            );
-            return [...realMessages, ...newMessages];
+            const confirmedMessages = filterOutPendingMessages(prevMessages);
+            return [...confirmedMessages, ...newMessages];
           });
         }
       },
       onError: () => {
         setAgentChatMessages((prevMessages) =>
-          prevMessages.filter((msg) => !msg.id.startsWith('temp-')),
+          filterOutPendingMessages(prevMessages),
         );
       },
     });
 
   const sendChatMessage = async (content: string) => {
-    const optimisticUserMessage: AgentChatMessage = {
+    const optimisticUserMessage: OptimisticMessage = {
       __typename: 'AgentChatMessage',
-      id: `temp-${v4()}`,
+      id: v4(),
       threadId: currentThreadId,
       role: AgentChatMessageRole.USER,
       content,
       createdAt: new Date().toISOString(),
+      isPending: true,
     };
 
-    const optimisticAiMessage: AgentChatMessage = {
+    const optimisticAiMessage: OptimisticMessage = {
       __typename: 'AgentChatMessage',
-      id: `temp-${v4()}`,
+      id: v4(),
       threadId: currentThreadId,
       role: AgentChatMessageRole.ASSISTANT,
       content: '',
       createdAt: new Date().toISOString(),
+      isPending: true,
     };
 
     setAgentChatMessages((prevMessages) => [
