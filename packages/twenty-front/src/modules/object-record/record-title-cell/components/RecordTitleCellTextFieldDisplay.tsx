@@ -1,7 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordTitleCellContext } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -40,13 +40,15 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
+  const { containerType } = useContext(RecordTitleCellContext);
+
   return (
     <StyledDiv
       onClick={() => {
         openRecordTitleCell({
           recordId,
           fieldMetadataId: fieldDefinition.fieldMetadataId,
-          containerType: RecordTitleCellContainerType.ShowPage,
+          containerType,
         });
       }}
     >
