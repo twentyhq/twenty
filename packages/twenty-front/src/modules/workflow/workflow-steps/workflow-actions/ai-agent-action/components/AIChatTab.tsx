@@ -108,20 +108,16 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
 `;
 
 const StyledMessageFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: space-between;
   margin-top: ${({ theme }) => theme.spacing(1)};
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
-  &.message-footer {
-    opacity: 0;
-    pointer-events: none;
-  }
+  transition: opacity 0.3s ease-in-out;
+  width: 100%;
 `;
 
 const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
