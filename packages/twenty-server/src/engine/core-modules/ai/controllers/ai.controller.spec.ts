@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AiService } from 'src/engine/core-modules/ai/ai.service';
+import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 import { AiController } from './ai.controller';
