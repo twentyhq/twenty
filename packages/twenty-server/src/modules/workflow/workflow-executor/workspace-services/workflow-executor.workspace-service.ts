@@ -168,9 +168,9 @@ export class WorkflowExecutorWorkspaceService {
     let actionOutput: WorkflowExecutorOutput;
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepStatus({
+      workflowRunId,
       stepId: step.id,
       workspaceId,
-      workflowRunId,
       stepStatus: StepStatus.RUNNING,
     });
 
