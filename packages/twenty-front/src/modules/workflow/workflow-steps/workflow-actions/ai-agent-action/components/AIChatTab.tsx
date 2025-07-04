@@ -47,7 +47,7 @@ const StyledTitle = styled.div`
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   text-align: center;
-  max-width: 410px;
+  max-width: 85%;
   font-size: ${({ theme }) => theme.font.size.md};
 `;
 
