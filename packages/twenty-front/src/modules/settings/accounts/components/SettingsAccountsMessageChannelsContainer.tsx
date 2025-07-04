@@ -44,6 +44,9 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       connectedAccountId: {
         in: accounts.map((account) => account.id),
       },
+      isSyncEnabled: {
+        eq: true,
+      },
     },
     skip: !accounts.length,
   });

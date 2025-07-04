@@ -1,12 +1,12 @@
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { ConnectionParameters } from '~/generated/graphql';
 
 const StyledFormContainer = styled.form`
   display: flex;
@@ -14,34 +14,89 @@ const StyledFormContainer = styled.form`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type SetttingsAccountsImapConnectionFormProps = {
-  control: Control<ConnectionParameters & { handle: string }>;
-  isEditing: boolean;
-  defaultValues?: Partial<ConnectionParameters & { handle: string }>;
+const DEFAULT_IMAP_PORT = 993;
+const DEFAULT_SMTP_PORT = 587;
+
+type ConnectionType = 'IMAP' | 'SMTP';
+
+type ConnectionFormData = {
+  handle: string;
+  host: string;
+  port: number;
+  password: string;
+  secure: boolean;
 };
 
-export const SetttingsAccountsImapConnectionForm = ({
+type SettingsAccountsConnectionFormProps = {
+  control: Control<ConnectionFormData>;
+  connectionType: ConnectionType;
+  isEditing: boolean;
+};
+
+export const SettingsAccountsConnectionForm = ({
   control,
+  connectionType,
   isEditing,
-  defaultValues,
-}: SetttingsAccountsImapConnectionFormProps) => {
+}: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
+
+  const getTitle = () => {
+    return connectionType === 'IMAP'
+      ? t`IMAP Connection Details`
+      : t`SMTP Connection Details`;
+  };
+
+  const getDescription = () => {
+    if (isEditing) {
+      return connectionType === 'IMAP'
+        ? t`Update your IMAP email account configuration`
+        : t`Update your SMTP email account configuration`;
+    }
+    return connectionType === 'IMAP'
+      ? t`Configure your IMAP email account`
+      : t`Configure your SMTP email account for sending emails`;
+  };
+
+  const getServerLabel = () => {
+    return connectionType === 'IMAP' ? t`IMAP Server` : t`SMTP Server`;
+  };
+
+  const getServerPlaceholder = () => {
+    return connectionType === 'IMAP'
+      ? t`imap.example.com`
+      : t`smtp.example.com`;
+  };
+
+  const getPortLabel = () => {
+    return connectionType === 'IMAP' ? t`IMAP Port` : t`SMTP Port`;
+  };
+
+  const getPortPlaceholder = () => {
+    return connectionType === 'IMAP'
+      ? t`${DEFAULT_IMAP_PORT}`
+      : t`${DEFAULT_SMTP_PORT}`;
+  };
+
+  const getEncryptionOptions = () => {
+    if (connectionType === 'IMAP') {
+      return [
+        { label: 'SSL/TLS', value: true },
+        { label: 'None', value: false },
+      ];
+    }
+    return [
+      { label: 'SSL/TLS', value: true },
+      { label: 'STARTTLS', value: false },
+    ];
+  };
 
   return (
     <Section>
-      <H2Title
-        title={t`IMAP Connection Details`}
-        description={
-          isEditing
-            ? t`Update your IMAP email account configuration`
-            : t`Configure your IMAP email account`
-        }
-      />
+      <H2Title title={getTitle()} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="handle"
           control={control}
-          defaultValue={defaultValues?.handle}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`Email Address`}
@@ -55,11 +110,10 @@ export const SetttingsAccountsImapConnectionForm = ({
         <Controller
           name="host"
           control={control}
-          defaultValue={defaultValues?.host}
           render={({ field, fieldState }) => (
             <TextInput
-              label={t`IMAP Server`}
-              placeholder={t`imap.example.com`}
+              label={getServerLabel()}
+              placeholder={getServerPlaceholder()}
               value={field.value}
               onChange={field.onChange}
               error={fieldState.error?.message}
@@ -69,12 +123,11 @@ export const SetttingsAccountsImapConnectionForm = ({
         <Controller
           name="port"
           control={control}
-          defaultValue={defaultValues?.port ?? 993}
           render={({ field, fieldState }) => (
             <TextInput
-              label={t`IMAP Port`}
+              label={getPortLabel()}
               type="number"
-              placeholder={t`993`}
+              placeholder={getPortPlaceholder()}
               value={field.value.toString()}
               onChange={(value) => field.onChange(Number(value))}
               error={fieldState.error?.message}
@@ -84,14 +137,10 @@ export const SetttingsAccountsImapConnectionForm = ({
         <Controller
           name="secure"
           control={control}
-          defaultValue={defaultValues?.secure}
           render={({ field }) => (
             <Select
               label={t`Encryption`}
-              options={[
-                { label: 'SSL/TLS', value: true },
-                { label: 'None', value: false },
-              ]}
+              options={getEncryptionOptions()}
               value={field.value}
               onChange={field.onChange}
               dropdownId="secure-dropdown"
@@ -101,7 +150,6 @@ export const SetttingsAccountsImapConnectionForm = ({
         <Controller
           name="password"
           control={control}
-          defaultValue={defaultValues?.password}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`Password`}

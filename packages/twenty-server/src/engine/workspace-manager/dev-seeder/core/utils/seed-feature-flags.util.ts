@@ -46,7 +46,7 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_IMAP_ENABLED,
+        key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

@@ -10,11 +10,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
   IconRefresh,
+  IconSettings,
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -57,14 +59,27 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={IconMail}
-                text={t`Emails settings`}
-                onClick={() => {
-                  navigate(SettingsPath.AccountsEmails);
-                  closeDropdown(dropdownId);
-                }}
-              />
+              {isDefined(account.connectionParameters?.SMTP) ? (
+                <MenuItem
+                  text={t`Connection settings`}
+                  LeftIcon={IconSettings}
+                  onClick={() => {
+                    navigate(SettingsPath.EditSmtpConnection, {
+                      connectedAccountId: account.id,
+                    });
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              ) : (
+                <MenuItem
+                  LeftIcon={IconMail}
+                  text={t`Emails settings`}
+                  onClick={() => {
+                    navigate(SettingsPath.AccountsEmails);
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              )}
               <MenuItem
                 LeftIcon={IconCalendarEvent}
                 text={t`Calendar settings`}
