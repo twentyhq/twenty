@@ -167,7 +167,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
               .objectType,
           )) ||
           workflowWithCurrentVersion.currentVersion.trigger.type ===
-            'WEBHOOK') &&
+            'WEBHOOK' ||
+          workflowWithCurrentVersion.currentVersion.trigger.type === 'CRON') &&
         !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
