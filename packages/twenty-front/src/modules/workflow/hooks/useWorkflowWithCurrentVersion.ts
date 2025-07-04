@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
+  disabled?: boolean,
 ): WorkflowWithCurrentVersion | undefined => {
   const { record: workflow } = useFindOneRecord<Workflow>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
@@ -30,7 +31,7 @@ export const useWorkflowWithCurrentVersion = (
         updatedAt: true,
       },
     },
-    skip: !isDefined(workflowId),
+    skip: !isDefined(workflowId) || disabled,
   });
 
   return useMemo(() => {

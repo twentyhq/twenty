@@ -47,7 +47,7 @@ export const useRunWorkflowRecordActions = ({
         activeWorkflowVersion: WorkflowVersion,
       ) => {
         for (const selectedRecordId of selectedRecordIds) {
-          const selectedRecord = snapshot
+          const selectedRecord = snapshot 
             .getLoadable(recordStoreFamilyState(selectedRecordId))
             .getValue();
 
