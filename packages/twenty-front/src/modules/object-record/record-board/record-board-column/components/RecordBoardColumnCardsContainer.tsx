@@ -8,12 +8,12 @@ import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-
 import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useFilteredRecordIds } from '@/object-record/record-board/record-board-column/hooks/useFilteredRecordIds';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
 const StyledColumnCardsContainer = styled.div`
   display: flex;
   flex: 1;
@@ -47,8 +47,6 @@ export const RecordBoardColumnCardsContainer = ({
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const columnId = columnDefinition.id;
-
-  const filteredRecordIds = useFilteredRecordIds(recordIds);
 
   const isRecordIndexBoardColumnLoading = useRecoilValue(
     isRecordIndexBoardColumnLoadingFamilyState(columnId),
@@ -90,12 +88,12 @@ export const RecordBoardColumnCardsContainer = ({
           ),
         )
       ) : (
-        <RecordBoardColumnCardsMemo recordIds={filteredRecordIds} />
+        <RecordBoardColumnCardsMemo recordIds={recordIds} />
       )}
       <RecordBoardColumnFetchMoreLoader />
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
-        index={filteredRecordIds.length}
+        index={recordIds.length}
         isDragDisabled={true}
       >
         {(draggableProvided) => (

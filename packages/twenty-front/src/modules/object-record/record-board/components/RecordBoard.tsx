@@ -4,7 +4,7 @@ import {
   DragStart,
   OnDragEndResponder,
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { createContext, useContext, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
@@ -13,9 +13,12 @@ import { RecordBoardHeader } from '@/object-record/record-board/components/Recor
 import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
+import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { useMultiDragState } from '@/object-record/record-board/hooks/useMultiDragState';
+import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
@@ -23,13 +26,9 @@ import { RecordBoardColumn } from '@/object-record/record-board/record-board-col
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -45,7 +44,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
-import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,28 +74,11 @@ const StyledBoardContentContainer = styled.div`
   flex: 1;
 `;
 
-// Context to share multi-drag state with cards
-export const MultiDragStateContext = createContext<{
-  isDragging: boolean;
-  draggedRecordIds: string[];
-  primaryDraggedRecordId: string | null;
-}>({
-  isDragging: false,
-  draggedRecordIds: [],
-  primaryDraggedRecordId: null,
-});
-
 export const RecordBoard = () => {
-  const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
-    useContext(RecordBoardContext);
+  const { recordBoardId } = useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
   const [dragStartSelection, setDragStartSelection] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [multiDragState, setMultiDragState] = useState({
-    isDragging: false,
-    draggedRecordIds: [] as string[],
-    primaryDraggedRecordId: null as string | null,
-  });
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
@@ -110,7 +91,6 @@ export const RecordBoard = () => {
 
   const handleDragSelectionStart = () => {
     closeAnyOpenDropdown();
-
     toggleClickOutside(false);
   };
 
@@ -122,11 +102,6 @@ export const RecordBoard = () => {
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
-
-  const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
-      recordIndexRecordIdsByGroupComponentFamilyState,
-    );
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
@@ -141,6 +116,10 @@ export const RecordBoard = () => {
       recordBoardId,
     );
 
+  const { multiDragState, startDrag, endDrag } = useMultiDragState();
+
+  const { processDragOperation } = useRecordBoardDragOperations();
+
   useListenClickOutside({
     excludedClickOutsideIds: [
       ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
@@ -153,7 +132,6 @@ export const RecordBoard = () => {
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
     callback: () => {
-      // Don't reset selection during drag operations
       if (!isDragging) {
         resetRecordSelection();
         deactivateBoardCard();
@@ -169,188 +147,38 @@ export const RecordBoard = () => {
       (start: DragStart) => {
         setIsDragging(true);
 
-        // Store current selection at drag start
         const currentSelectedRecordIds = getSnapshotValue(
           snapshot,
           recordBoardSelectedRecordIdsSelector,
         );
         setDragStartSelection(currentSelectedRecordIds);
 
-        const draggedRecordId = start.draggableId;
-        const isDraggedItemSelected =
-          currentSelectedRecordIds.includes(draggedRecordId);
-        const hasMultipleSelected = currentSelectedRecordIds.length > 1;
-
-        // Set multi-drag state for visual feedback
-        if (isDraggedItemSelected && hasMultipleSelected) {
-          setMultiDragState({
-            isDragging: true,
-            draggedRecordIds: currentSelectedRecordIds,
-            primaryDraggedRecordId: draggedRecordId,
-          });
-        } else {
-          setMultiDragState({
-            isDragging: true,
-            draggedRecordIds: [draggedRecordId],
-            primaryDraggedRecordId: draggedRecordId,
-          });
-        }
+        startDrag(start, currentSelectedRecordIds);
       },
-    [recordBoardSelectedRecordIdsSelector],
+    [recordBoardSelectedRecordIdsSelector, startDrag],
   );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
-    ({ snapshot }) =>
-      (result) => {
-        setIsDragging(false);
+    () => (result) => {
+      setIsDragging(false);
 
-        // Clear multi-drag state
-        setMultiDragState({
-          isDragging: false,
-          draggedRecordIds: [],
-          primaryDraggedRecordId: null,
-        });
+      endDrag();
 
-        if (!result.destination) return;
+      if (!result.destination) return;
 
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-          return;
-        }
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
 
-        // Check if we should use multi-drag logic
-        const draggedRecordId = result.draggableId;
-        const currentSelectedRecordIds = dragStartSelection;
-        const isDraggedItemSelected =
-          currentSelectedRecordIds.includes(draggedRecordId);
-        const hasMultipleSelected = currentSelectedRecordIds.length > 1;
-
-        if (isDraggedItemSelected && hasMultipleSelected) {
-          // Use multi-drag logic - inline implementation to avoid callback interface issues
-          const destinationRecordGroupId = result.destination.droppableId;
-          const destinationIndexInColumn = result.destination.index;
-
-          if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
-
-          const recordGroup = getSnapshotValue(
-            snapshot,
-            recordGroupDefinitionFamilyState(destinationRecordGroupId),
-          );
-
-          if (!recordGroup) return;
-
-          // Determine which records to move
-          const recordsToMove = currentSelectedRecordIds;
-
-          // Get destination column records
-          const destinationRecordByGroupIds = getSnapshotValue(
-            snapshot,
-            recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
-          ) as string[];
-
-          // Filter out records that are being moved to avoid position conflicts
-          const otherRecordIdsInDestinationColumn =
-            destinationRecordByGroupIds.filter(
-              (recordId: string) => !recordsToMove.includes(recordId),
-            );
-
-          // Calculate base position for the group
-          const { before: recordBeforeId, after: recordAfterId } =
-            getIndexNeighboursElementsFromArray({
-              index: destinationIndexInColumn,
-              array: otherRecordIdsInDestinationColumn,
-            });
-
-          const recordBefore = recordBeforeId
-            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
-            : null;
-
-          const recordAfter = recordAfterId
-            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
-            : null;
-
-          // Calculate positions for all records being moved
-          const basePosition = getDraggedRecordPosition(
-            recordBefore?.position,
-            recordAfter?.position,
-          );
-
-          // Update all selected records
-          recordsToMove.forEach((recordId: string, index: number) => {
-            // For multiple records, slightly offset their positions to maintain order
-            const position =
-              recordsToMove.length > 1
-                ? basePosition + index * 0.0001 // Small incremental offset
-                : basePosition;
-
-            updateOneRecord({
-              idToUpdate: recordId,
-              updateOneRecordInput: {
-                [selectFieldMetadataItem.name]: recordGroup.value,
-                position,
-              },
-            });
-          });
-        } else {
-          // Use original single-drag logic
-          const sourceRecordGroupId = result.source.droppableId;
-          const destinationRecordGroupId = result.destination.droppableId;
-          const destinationIndexInColumn = result.destination.index;
-
-          if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
-
-          const recordGroup = getSnapshotValue(
-            snapshot,
-            recordGroupDefinitionFamilyState(destinationRecordGroupId),
-          );
-
-          if (!recordGroup) return;
-
-          const destinationRecordByGroupIds = getSnapshotValue(
-            snapshot,
-            recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
-          );
-          const otherRecordIdsInDestinationColumn =
-            sourceRecordGroupId === destinationRecordGroupId
-              ? destinationRecordByGroupIds.filter(
-                  (recordId) => recordId !== draggedRecordId,
-                )
-              : destinationRecordByGroupIds;
-
-          const { before: recordBeforeId, after: recordAfterId } =
-            getIndexNeighboursElementsFromArray({
-              index: destinationIndexInColumn,
-              array: otherRecordIdsInDestinationColumn,
-            });
-          const recordBefore = recordBeforeId
-            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
-            : null;
-
-          const recordAfter = recordAfterId
-            ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
-            : null;
-
-          const draggedRecordPosition = getDraggedRecordPosition(
-            recordBefore?.position,
-            recordAfter?.position,
-          );
-
-          updateOneRecord({
-            idToUpdate: draggedRecordId,
-            updateOneRecordInput: {
-              [selectFieldMetadataItem.name]: recordGroup.value,
-              position: draggedRecordPosition,
-            },
-          });
-        }
-      },
+      processDragOperation(result, dragStartSelection);
+    },
     [
-      recordIndexRecordIdsByGroupFamilyState,
-      selectFieldMetadataItem,
-      updateOneRecord,
-      openModal,
-      currentRecordSorts,
+      processDragOperation,
       dragStartSelection,
+      endDrag,
+      currentRecordSorts,
+      openModal,
     ],
   );
 
