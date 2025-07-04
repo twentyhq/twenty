@@ -13,8 +13,9 @@ import {
   WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -28,7 +29,7 @@ type UseWebhookFormProps = {
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const navigate = useNavigateSettings();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
@@ -134,28 +135,29 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         ...webhookData,
       });
 
-      enqueueSnackBar(
-        `Webhook ${createdWebhook?.targetUrl} created successfully`,
-        {
-          variant: SnackBarVariant.Success,
-        },
-      );
+      const targetUrl = createdWebhook?.targetUrl
+        ? `${createdWebhook?.targetUrl}`
+        : '';
+
+      enqueueSuccessSnackBar({
+        message: t`Webhook ${targetUrl} created successfully`,
+      });
 
       navigate(
         createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.Webhooks,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
       );
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };
 
   const handleUpdate = async (formValues: WebhookFormValues) => {
     if (!webhookId) {
-      enqueueSnackBar('Webhook ID is required for updates', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Webhook ID is required for updates`,
       });
       return;
     }
@@ -177,12 +179,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
       formConfig.reset(formValues);
 
-      enqueueSnackBar(`Webhook ${webhookData.targetUrl} updated successfully`, {
-        variant: SnackBarVariant.Success,
+      const targetUrl = webhookData.targetUrl ? `${webhookData.targetUrl}` : '';
+
+      enqueueSuccessSnackBar({
+        message: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };
@@ -222,22 +226,22 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const deleteWebhook = async () => {
     if (!webhookId) {
-      enqueueSnackBar('Webhook ID is required for deletion', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Webhook ID is required for deletion`,
       });
       return;
     }
 
     try {
       await deleteOneWebhook(webhookId);
-      enqueueSnackBar('Webhook deleted successfully', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Webhook deleted successfully`,
       });
 
       navigate(SettingsPath.Webhooks);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };

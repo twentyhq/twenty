@@ -1,13 +1,13 @@
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
@@ -23,10 +23,8 @@ export const useSignUpInNewWorkspace = () => {
           newTab ? '_blank' : '_self',
         );
       },
-      onError: (error: Error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-        });
+      onError: (error: ApolloError) => {
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

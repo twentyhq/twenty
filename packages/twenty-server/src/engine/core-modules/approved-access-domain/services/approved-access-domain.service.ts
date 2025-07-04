@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
@@ -18,8 +19,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isWorkDomain } from 'src/utils/is-work-email';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -42,6 +43,9 @@ export class ApprovedAccessDomainService {
       throw new ApprovedAccessDomainException(
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED,
+        {
+          userFriendlyMessage: t`Approved access domain has already been validated`,
+        },
       );
     }
 
@@ -49,6 +53,9 @@ export class ApprovedAccessDomainService {
       throw new ApprovedAccessDomainException(
         'Approved access domain does not match email domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
+        {
+          userFriendlyMessage: t`Approved access domain does not match email domain`,
+        },
       );
     }
 
@@ -118,6 +125,9 @@ export class ApprovedAccessDomainService {
       throw new ApprovedAccessDomainException(
         'Approved access domain has already been validated',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED,
+        {
+          userFriendlyMessage: t`Approved access domain has already been validated`,
+        },
       );
     }
 

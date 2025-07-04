@@ -1,7 +1,7 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
   BillingPlanKey,
@@ -21,7 +21,7 @@ export const useHandleCheckoutSession = ({
 }) => {
   const { redirect } = useRedirect();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [checkoutSession] = useCheckoutSessionMutation();
 
@@ -39,12 +39,9 @@ export const useHandleCheckoutSession = ({
     });
     setIsSubmitting(false);
     if (!data?.checkoutSession.url) {
-      enqueueSnackBar(
-        'Checkout session error. Please retry or contact Twenty team',
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        message: t`Checkout session error. Please retry or contact Twenty team`,
+      });
       return;
     }
     redirect(data.checkoutSession.url);

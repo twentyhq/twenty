@@ -15,9 +15,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
-import { MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -39,6 +40,8 @@ export const MultiSelectInput = ({
   onOptionSelected,
   dropdownWidth,
 }: MultiSelectInputProps) => {
+  const { t } = useLingui();
+
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
@@ -124,29 +127,33 @@ export const MultiSelectInput = ({
         />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
-          {filteredOptionsInDropDown.map((option) => {
-            return (
-              <SelectableListItem
-                key={option.value}
-                itemId={option.value}
-                onEnter={() => {
-                  onOptionSelected(formatNewSelectedOptions(option.value));
-                }}
-              >
-                <MenuItemMultiSelectTag
+          {filteredOptionsInDropDown.length === 0 ? (
+            <MenuItem disabled text={t`No option found`} accent="placeholder" />
+          ) : (
+            filteredOptionsInDropDown.map((option) => {
+              return (
+                <SelectableListItem
                   key={option.value}
-                  selected={values?.includes(option.value) || false}
-                  text={option.label}
-                  color={option.color ?? 'transparent'}
-                  Icon={option.Icon ?? undefined}
-                  onClick={() =>
-                    onOptionSelected(formatNewSelectedOptions(option.value))
-                  }
-                  isKeySelected={selectedItemId === option.value}
-                />
-              </SelectableListItem>
-            );
-          })}
+                  itemId={option.value}
+                  onEnter={() => {
+                    onOptionSelected(formatNewSelectedOptions(option.value));
+                  }}
+                >
+                  <MenuItemMultiSelectTag
+                    key={option.value}
+                    selected={values?.includes(option.value) || false}
+                    text={option.label}
+                    color={option.color ?? 'transparent'}
+                    Icon={option.Icon ?? undefined}
+                    onClick={() =>
+                      onOptionSelected(formatNewSelectedOptions(option.value))
+                    }
+                    isKeySelected={selectedItemId === option.value}
+                  />
+                </SelectableListItem>
+              );
+            })
+          )}
         </DropdownMenuItemsContainer>
       </DropdownContent>
     </SelectableList>
