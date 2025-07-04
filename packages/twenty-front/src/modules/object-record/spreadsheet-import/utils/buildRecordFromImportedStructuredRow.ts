@@ -182,22 +182,28 @@ export const buildRecordFromImportedStructuredRow = ({
             getSubFieldOptionKey(field, 'primaryPhoneNumber')
           ];
 
-        if (
-          isDefined(primaryPhoneNumber) &&
-          !isDefined(
+        const hasUserProvidedCallingCode =
+          isDefined(
             importedStructuredRow[
-              getSubFieldOptionKey(field, 'primaryPhoneCountryCode')
+              getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
             ],
-          )
-        ) {
+          ) &&
+          isNonEmptyString(
+            importedStructuredRow[
+              getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
+            ],
+          );
+
+        if (isDefined(primaryPhoneNumber) && !hasUserProvidedCallingCode) {
           try {
             const {
               number: parsedNumber,
               countryCallingCode: parsedCountryCallingCode,
             } = parsePhoneNumberWithError(primaryPhoneNumber as string);
+
             recordToBuild[field.name] = {
               primaryPhoneNumber: parsedNumber,
-              primaryPhoneCountryCode: parsedCountryCallingCode,
+              primaryPhoneCallingCode: parsedCountryCallingCode,
             };
           } catch {
             recordToBuild[field.name] = {
