@@ -31,26 +31,26 @@ const StyledInnerContainer = styled.div`
   height: 250px;
   width: 100%;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 `;
 
 export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
+  const menuItemsContainerRef = useRef<HTMLDivElement>(null);
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
 
-  const menuItemsContainerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (
-      menuItemsContainerRef.current &&
+      menuItemsContainerRef.current !== null &&
       typeof props.selectedIndex === 'number' &&
       props.selectedIndex >= 0
     ) {
       const item = menuItemsContainerRef.current.children[
         props.selectedIndex
       ] as HTMLElement | undefined;
-      if (item) {
+      if (item != null) {
         item.scrollIntoView({
           block: 'nearest',
           inline: 'nearest',
