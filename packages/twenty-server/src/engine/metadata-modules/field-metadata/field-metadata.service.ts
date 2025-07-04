@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
+import omit from 'lodash.omit';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,6 +15,8 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { settings } from 'src/engine/constants/settings';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -103,6 +106,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
     private readonly viewService: ViewService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -624,6 +628,44 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
+    if (
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION &&
+      isDefined(
+        (fieldMetadataInput as unknown as CreateFieldInput)
+          .morphRelationsCreationPayload,
+      )
+    ) {
+      const morphRelationsCreationPayload = (
+        fieldMetadataInput as unknown as CreateFieldInput
+      ).morphRelationsCreationPayload;
+
+      if (
+        isDefined(morphRelationsCreationPayload) &&
+        Array.isArray(morphRelationsCreationPayload) &&
+        morphRelationsCreationPayload.length > 0
+      ) {
+        for (const relation of morphRelationsCreationPayload) {
+          await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
+            relation,
+          );
+
+          const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+            relation.targetFieldLabel,
+          );
+
+          validateMetadataNameOrThrow(computedMetadataNameFromLabel);
+
+          const objectMetadataTarget =
+            objectMetadataMaps.byId[relation.targetObjectMetadataId];
+
+          validateFieldNameAvailabilityOrThrow(
+            computedMetadataNameFromLabel,
+            objectMetadataTarget,
+          );
+        }
+      }
+    }
+
     return fieldMetadataInput;
   }
 
@@ -777,57 +819,189 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
-    const createdFieldMetadataItem = await fieldMetadataRepository.save(
-      fieldMetadataForCreate,
-    );
+    const isRelation =
+      fieldMetadataForCreate.type === FieldMetadataType.RELATION ||
+      fieldMetadataForCreate.type === FieldMetadataType.MORPH_RELATION;
 
-    if (fieldMetadataForCreate.type !== FieldMetadataType.RELATION) {
+    if (!isRelation) {
+      const createdFieldMetadataItem = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
+
       return [createdFieldMetadataItem];
     }
 
-    const relationCreationPayload = fieldMetadataInput.relationCreationPayload;
+    if (fieldMetadataForCreate.type === FieldMetadataType.RELATION) {
+      const createdFieldMetadataItem = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
 
-    if (!isDefined(relationCreationPayload)) {
+      const relationCreationPayload =
+        fieldMetadataInput.relationCreationPayload;
+
+      if (!isDefined(relationCreationPayload)) {
+        throw new FieldMetadataException(
+          'Relation creation payload is not defined',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+      const targetFieldMetadataName = computeMetadataNameFromLabel(
+        relationCreationPayload.targetFieldLabel,
+      );
+
+      const targetFieldMetadataToCreate =
+        this.prepareCustomFieldMetadataForCreation({
+          objectMetadataId: relationCreationPayload.targetObjectMetadataId,
+          type: fieldMetadataForCreate.type,
+          name: targetFieldMetadataName,
+          label: relationCreationPayload.targetFieldLabel,
+          icon: relationCreationPayload.targetFieldIcon,
+          workspaceId: fieldMetadataForCreate.workspaceId,
+          relationCreationPayload: {
+            targetObjectMetadataId: objectMetadata.id,
+            targetFieldLabel: fieldMetadataInput.label,
+            targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
+            type:
+              relationCreationPayload.type === RelationType.ONE_TO_MANY
+                ? RelationType.MANY_TO_ONE
+                : RelationType.ONE_TO_MANY,
+          },
+        });
+
+      const targetFieldMetadata = await this.saveTargetFieldMetadata({
+        fieldMetadataRepository,
+        targetFieldMetadataToCreate,
+        createdFieldMetadataItemId: createdFieldMetadataItem.id,
+      });
+
+      const createdFieldMetadataItemUpdated =
+        await this.updateRelationTargetFieldMetadataId({
+          fieldMetadataRepository,
+          createdFieldMetadataItem,
+          targetFieldMetadataId: targetFieldMetadata.id,
+        });
+
+      return [createdFieldMetadataItemUpdated, targetFieldMetadata];
+    }
+
+    const fieldMetadataForCreateWithoutId = omit(fieldMetadataForCreate, 'id');
+
+    return await this.createMorphRelationFieldMetadataItems({
+      fieldMetadataForCreate: fieldMetadataForCreateWithoutId,
+      morphRelationsCreationPayload:
+        fieldMetadataInput.morphRelationsCreationPayload,
+      objectMetadata,
+      fieldMetadataRepository,
+    });
+  }
+
+  private async createMorphRelationFieldMetadataItems({
+    fieldMetadataForCreate,
+    morphRelationsCreationPayload,
+    objectMetadata,
+    fieldMetadataRepository,
+  }: {
+    fieldMetadataForCreate: CreateFieldInput;
+    morphRelationsCreationPayload: CreateFieldInput['morphRelationsCreationPayload'];
+    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    fieldMetadataRepository: Repository<FieldMetadataEntity>;
+  }): Promise<FieldMetadataEntity[]> {
+    if (
+      !isDefined(morphRelationsCreationPayload) ||
+      !Array.isArray(morphRelationsCreationPayload)
+    ) {
       throw new FieldMetadataException(
-        'Relation creation payload is not defined',
+        'Morph relations creation payload is not defined',
         FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
     }
 
-    const targetFieldMetadataName = computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    );
+    if (morphRelationsCreationPayload.length < 1) {
+      throw new FieldMetadataException(
+        'Morph relations creation payload must not be empty',
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+      );
+    }
 
-    const targetFieldMetadataToCreate =
-      this.prepareCustomFieldMetadataForCreation({
-        objectMetadataId: relationCreationPayload.targetObjectMetadataId,
-        type: FieldMetadataType.RELATION,
-        name: targetFieldMetadataName,
-        label: relationCreationPayload.targetFieldLabel,
-        icon: relationCreationPayload.targetFieldIcon,
-        workspaceId: fieldMetadataForCreate.workspaceId,
-        relationCreationPayload: {
-          targetObjectMetadataId: objectMetadata.id,
-          targetFieldLabel: fieldMetadataInput.label,
-          targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
-          type:
-            relationCreationPayload.type === RelationType.ONE_TO_MANY
-              ? RelationType.MANY_TO_ONE
-              : RelationType.ONE_TO_MANY,
-        },
+    const fieldsCreated: FieldMetadataEntity[] = [];
+
+    for (const relation of morphRelationsCreationPayload) {
+      const createdFieldMetadataItem = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
+      const targetFieldMetadataName = computeMetadataNameFromLabel(
+        relation.targetFieldLabel,
+      );
+
+      const targetFieldMetadataToCreate =
+        this.prepareCustomFieldMetadataForCreation({
+          objectMetadataId: relation.targetObjectMetadataId,
+          type: FieldMetadataType.RELATION,
+          name: targetFieldMetadataName,
+          label: relation.targetFieldLabel,
+          icon: relation.targetFieldIcon,
+          workspaceId: fieldMetadataForCreate.workspaceId,
+          relationCreationPayload: {
+            targetObjectMetadataId: objectMetadata.id,
+            targetFieldLabel: fieldMetadataForCreate.label,
+            targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
+            type:
+              relation.type === RelationType.ONE_TO_MANY
+                ? RelationType.MANY_TO_ONE
+                : RelationType.ONE_TO_MANY,
+          },
+        });
+
+      const targetFieldMetadata = await this.saveTargetFieldMetadata({
+        fieldMetadataRepository,
+        targetFieldMetadataToCreate,
+        createdFieldMetadataItemId: createdFieldMetadataItem.id,
       });
 
-    const targetFieldMetadata = await fieldMetadataRepository.save({
+      const createdFieldMetadataItemUpdated =
+        await this.updateRelationTargetFieldMetadataId({
+          fieldMetadataRepository,
+          createdFieldMetadataItem,
+          targetFieldMetadataId: targetFieldMetadata.id,
+        });
+
+      fieldsCreated.push(createdFieldMetadataItemUpdated, targetFieldMetadata);
+    }
+
+    return fieldsCreated;
+  }
+
+  private async saveTargetFieldMetadata({
+    fieldMetadataRepository,
+    targetFieldMetadataToCreate,
+    createdFieldMetadataItemId,
+  }: {
+    fieldMetadataRepository: Repository<FieldMetadataEntity>;
+    targetFieldMetadataToCreate: Pick<
+      FieldMetadataEntity,
+      'id' | 'name' | 'label' | 'type' | 'settings'
+    > & { icon?: string };
+    createdFieldMetadataItemId: string;
+  }): Promise<FieldMetadataEntity> {
+    return await fieldMetadataRepository.save({
       ...targetFieldMetadataToCreate,
-      relationTargetFieldMetadataId: createdFieldMetadataItem.id,
+      relationTargetFieldMetadataId: createdFieldMetadataItemId,
     });
+  }
 
-    const createdFieldMetadataItemUpdated = await fieldMetadataRepository.save({
+  private async updateRelationTargetFieldMetadataId({
+    fieldMetadataRepository,
+    createdFieldMetadataItem,
+    targetFieldMetadataId,
+  }: {
+    fieldMetadataRepository: Repository<FieldMetadataEntity>;
+    createdFieldMetadataItem: FieldMetadataEntity;
+    targetFieldMetadataId: string;
+  }): Promise<FieldMetadataEntity> {
+    return await fieldMetadataRepository.save({
       ...createdFieldMetadataItem,
-      relationTargetFieldMetadataId: targetFieldMetadata.id,
+      targetFieldMetadataId,
     });
-
-    return [createdFieldMetadataItemUpdated, targetFieldMetadata];
   }
 
   private async createMigrationActions({
@@ -887,6 +1061,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
+
+    const isMorphRelationEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+        workspaceId,
+      );
+
+    const isSomeFieldMetadatInputsMorph = fieldMetadataInputs.some(
+      (fieldMetadataInput) =>
+        fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION,
+    );
+
+    if (isSomeFieldMetadatInputsMorph && !isMorphRelationEnabled) {
+      throw new FieldMetadataException(
+        'Morph Relation feature is not enabled for this workspace',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
