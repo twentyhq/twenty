@@ -4,13 +4,15 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 type UniqueIdentifierRecord<TTarget extends string> = {
   [P in `${TTarget}UniqueIdentifier`]: string;
 };
+type ObjectMetadataUniqueIdentifier = UniqueIdentifierRecord<'objectMetadata'>;
+type FieldMetadataUniqueIdentifier = UniqueIdentifierRecord<'fieldMetadata'>;
 
 export type FromTo<T> = {
   from: T;
   to: T;
 };
 
-type ObjectActionCommon = UniqueIdentifierRecord<'object'>;
+type ObjectActionCommon = ObjectMetadataUniqueIdentifier;
 export type CreateObjectAction = {
   type: 'create_object';
   object: ObjectMetadataEntity;
@@ -32,8 +34,8 @@ export type WorkspaceMigrationV2ObjectAction =
 
 type FieldActionCommon = {
   field: Partial<FieldMetadataEntity>;
-} & UniqueIdentifierRecord<'object'> &
-  UniqueIdentifierRecord<'field'>;
+} & ObjectMetadataUniqueIdentifier &
+  FieldMetadataUniqueIdentifier;
 export type CreateFieldAction = {
   type: 'create_field';
 } & FieldActionCommon;

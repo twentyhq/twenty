@@ -8,7 +8,7 @@ export const getWorkspaceMigrationV2ObjectCreateAction = (
   input: WorkspaceMigrationObjectInput,
 ): CreateObjectAction => ({
   type: 'create_object',
-  objectUniqueIdentifier: input.uniqueIdentifier,
+  objectMetadataUniqueIdentifier: input.uniqueIdentifier,
   object: input as any, // TODO,
 });
 
@@ -16,5 +16,5 @@ export const getWorkspaceMigrationV2ObjectDeleteAction = (
   input: WorkspaceMigrationObjectInput,
 ): DeleteObjectAction => ({
   type: 'delete_object',
-  objectUniqueIdentifier: input.uniqueIdentifier,
+  objectMetadataUniqueIdentifier: input.uniqueIdentifier,
 });

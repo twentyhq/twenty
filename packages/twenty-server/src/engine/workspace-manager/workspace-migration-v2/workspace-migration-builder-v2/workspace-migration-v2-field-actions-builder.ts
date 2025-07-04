@@ -104,10 +104,10 @@ const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
       switch (difference.type) {
         case 'CREATE': {
           return {
-            field: difference.value,
-            fieldUniqueIdentifier: 'TODO',
-            objectUniqueIdentifier: objectMetadataUniqueIdentifier,
             type: 'create_field',
+            field: difference.value,
+            fieldMetadataUniqueIdentifier: 'TODO',
+            objectMetadataUniqueIdentifier,
           };
         }
         case 'CHANGE': {
@@ -116,9 +116,9 @@ const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
         }
         case 'REMOVE': {
           return {
-            fieldUniqueIdentifier: difference.oldValue.uniqueIdentifier,
-            objectUniqueIdentifier: objectMetadataUniqueIdentifier,
             type: 'delete_field',
+            fieldMetadataUniqueIdentifier: difference.oldValue.uniqueIdentifier,
+            objectMetadataUniqueIdentifier,
           };
         }
         default: {

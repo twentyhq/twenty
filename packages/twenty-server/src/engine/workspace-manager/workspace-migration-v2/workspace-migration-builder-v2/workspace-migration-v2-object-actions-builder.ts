@@ -134,7 +134,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
       });
 
       return {
-        objectUniqueIdentifier: from.uniqueIdentifier,
+        objectMetadataUniqueIdentifier: from.uniqueIdentifier,
         type: 'update_object',
         updates: objectUpdatedProperties,
       };

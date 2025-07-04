@@ -14,8 +14,8 @@ export const getWorkspaceMigrationV2FieldCreateAction = ({
 }: FieldInputAndObjectUniqueIdentifier): CreateFieldAction => ({
   type: 'create_field',
   field: field as any, // TODO
-  fieldUniqueIdentifier: field.uniqueIdentifier,
-  objectUniqueIdentifier: objectMetadataUniqueIdentifier,
+  fieldMetadataUniqueIdentifier: field.uniqueIdentifier,
+  objectMetadataUniqueIdentifier,
 });
 
 export const getWorkspaceMigrationV2FieldDeleteAction = ({
@@ -23,6 +23,6 @@ export const getWorkspaceMigrationV2FieldDeleteAction = ({
   objectMetadataUniqueIdentifier,
 }: FieldInputAndObjectUniqueIdentifier): DeleteFieldAction => ({
   type: 'delete_field',
-  fieldUniqueIdentifier: field.uniqueIdentifier,
-  objectUniqueIdentifier: objectMetadataUniqueIdentifier,
+  fieldMetadataUniqueIdentifier: field.uniqueIdentifier,
+  objectMetadataUniqueIdentifier,
 });
