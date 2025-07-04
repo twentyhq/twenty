@@ -4,14 +4,13 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { AppPath } from '@/types/AppPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '../useAuth';
 import { useVerifyLogin } from '../useVerifyLogin';
 
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 jest.mock('../useAuth', () => ({
   useAuth: jest.fn(),
@@ -37,7 +36,7 @@ const renderHooks = () => {
 
 describe('useVerifyLogin', () => {
   const mockGetAuthTokensFromLoginToken = jest.fn();
-  const mockEnqueueSnackBar = jest.fn();
+  const mockEnqueueErrorSnackBar = jest.fn();
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
@@ -48,7 +47,7 @@ describe('useVerifyLogin', () => {
     });
 
     (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueSnackBar: mockEnqueueSnackBar,
+      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
     });
 
     (useNavigateApp as jest.Mock).mockReturnValue(mockNavigate);
@@ -70,8 +69,8 @@ describe('useVerifyLogin', () => {
 
     await result.current.verifyLoginToken('test-token');
 
-    expect(mockEnqueueSnackBar).toHaveBeenCalledWith('Authentication failed', {
-      variant: SnackBarVariant.Error,
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+      message: 'Authentication failed',
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });

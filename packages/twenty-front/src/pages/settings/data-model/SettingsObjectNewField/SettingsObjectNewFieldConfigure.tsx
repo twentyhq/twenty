@@ -13,7 +13,6 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { View } from '@/views/types/View';
@@ -51,7 +50,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const fieldType =
     (searchParams.get('fieldType') as SettingsFieldType) ||
     FieldMetadataType.TEXT;
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -161,14 +160,11 @@ export const SettingsObjectNewFieldConfigure = () => {
         'duplicate key value violates unique constraint "IndexOnNameObjectMetadataIdAndWorkspaceIdUnique"',
       );
 
-      enqueueSnackBar(
-        isDuplicateFieldNameInObject
+      enqueueErrorSnackBar({
+        message: isDuplicateFieldNameInObject
           ? t`Please use different names for your source and destination fields`
-          : (error as Error).message,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+          : undefined,
+      });
     }
   };
   if (!activeObjectMetadataItem) return null;

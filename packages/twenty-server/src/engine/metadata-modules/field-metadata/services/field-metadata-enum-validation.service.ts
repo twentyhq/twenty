@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -26,7 +27,10 @@ import {
 import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
-type Validator<T> = { validator: (str: T) => boolean; message: string };
+type Validator<T> = {
+  validator: (str: T) => boolean;
+  message: string;
+};
 
 type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
 
@@ -55,6 +59,9 @@ export class FieldMetadataEnumValidationService {
       throw new FieldMetadataException(
         message,
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        {
+          userFriendlyMessage: message,
+        },
       );
     }
   }
@@ -80,23 +87,23 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (label) => !isDefined(label),
-        message: 'Option label is required',
+        message: t`Option label is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: `Option label "${sanitizedLabel}" exceeds 63 characters`,
+        message: t`Option label exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: `Option label "${sanitizedLabel}" is beneath 1 character`,
+        message: t`Option label "${sanitizedLabel}" is beneath 1 character`,
       },
       {
         validator: (label) => label.includes(','),
-        message: 'Label must not contain a comma',
+        message: t`Label must not contain a comma`,
       },
       {
         validator: (label) => !isNonEmptyString(label) || label === ' ',
-        message: 'Label must not be empty',
+        message: t`Label must not be empty`,
       },
     ];
 
@@ -109,15 +116,15 @@ export class FieldMetadataEnumValidationService {
     const validators: Validator<string>[] = [
       {
         validator: (value) => !isDefined(value),
-        message: 'Option value is required',
+        message: t`Option value is required`,
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: `Option value "${sanitizedValue}" exceeds 63 characters`,
+        message: t`Option value exceeds 63 characters`,
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: `Option value "${sanitizedValue}" is beneath 1 character`,
+        message: t`Option value "${sanitizedValue}" is beneath 1 character`,
       },
       {
         validator: (value) => !isSnakeCaseString(value),

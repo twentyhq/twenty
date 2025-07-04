@@ -6,7 +6,6 @@ import {
 } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -43,7 +42,7 @@ export const useBatchCreateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueWarningSnackBar } = useSnackBar();
 
   const batchCreateManyRecords = async ({
     recordsToCreate,
@@ -84,13 +83,12 @@ export const useBatchCreateManyRecords = <
     } catch (error) {
       if (error instanceof ApolloError && error.message.includes('aborted')) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
-        enqueueSnackBar(
-          t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
-          {
-            variant: SnackBarVariant.Warning,
+        enqueueWarningSnackBar({
+          message: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
+          options: {
             duration: 5000,
           },
-        );
+        });
       } else {
         throw error;
       }

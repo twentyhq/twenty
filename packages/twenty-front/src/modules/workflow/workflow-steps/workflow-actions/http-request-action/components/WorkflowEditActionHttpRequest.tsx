@@ -6,8 +6,10 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useTheme } from '@emotion/react';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
@@ -18,8 +20,6 @@ import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
 import { BodyInput } from './BodyInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -109,7 +109,7 @@ export const WorkflowEditActionHttpRequest = ({
         )}
 
         <FormRawJsonFieldInput
-          label="Expected Body Output"
+          label="Expected Response Body"
           placeholder={JSON_RESPONSE_PLACEHOLDER}
           defaultValue={outputSchema}
           onChange={handleOutputSchemaChange}

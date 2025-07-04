@@ -51110,7 +51110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-phone-number-input@npm:^3.3.4":
+"react-phone-number-input@npm:3.4.5":
   version: 3.4.5
   resolution: "react-phone-number-input@npm:3.4.5"
   dependencies:
@@ -51123,6 +51123,22 @@ __metadata:
     react: ">=16.8"
     react-dom: ">=16.8"
   checksum: 10c0/5131c863bee990af0e938e2c3ee61044e9f113965fe52294e6c3ed2a617ccfc2b8c163f601972bc4f5eedc6bc6b746da4b072c5135dcc77966f1f742df6b1d39
+  languageName: node
+  linkType: hard
+
+"react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch":
+  version: 3.4.5
+  resolution: "react-phone-number-input@patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch::version=3.4.5&hash=4d6a74"
+  dependencies:
+    classnames: "npm:^2.5.1"
+    country-flag-icons: "npm:^1.5.11"
+    input-format: "npm:^0.3.10"
+    libphonenumber-js: "npm:^1.11.5"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10c0/24d6cc7fcae591eb9c34f00ad781dcc0578fab0516bba3d4594dfe5c0e9debfb9d0c7ebe531a886e4694078dcba5b2e9b1d6d632759cc8d2de3d8b86448371a8
   languageName: node
   linkType: hard
 
@@ -57214,7 +57230,7 @@ __metadata:
     react-imask: "npm:^7.6.0"
     react-intersection-observer: "npm:^9.15.1"
     react-loading-skeleton: "npm:^3.3.1"
-    react-phone-number-input: "npm:^3.3.4"
+    react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#~/.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-responsive: "npm:^9.0.2"
     react-router-dom: "npm:^6.4.4"
     react-textarea-autosize: "npm:^8.4.1"

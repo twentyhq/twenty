@@ -29,9 +29,14 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
     validateMetadataNameOrThrow(name);
   } catch (error) {
     if (error instanceof InvalidMetadataException) {
+      const errorMessage = error.message;
+
       throw new ObjectMetadataException(
-        error.message,
+        errorMessage,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          userFriendlyMessage: errorMessage,
+        },
       );
     }
 
@@ -62,6 +67,9 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
       throw new ObjectMetadataException(
         error.message,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+        },
       );
     }
 

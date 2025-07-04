@@ -12,7 +12,7 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
 
   const apolloClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
-    connectToDevTools: true,
+    connectToDevTools: true, // should this be default , ie dependant on IS_DEBUG_MODE?
     extraLinks: [captchaRefreshLink],
   });
 
