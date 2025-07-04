@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
-import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useContext, useRef } from 'react';
+import {
+  DragDropContext,
+  DragStart,
+  OnDragEndResponder,
+} from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import { createContext, useContext, useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
@@ -72,10 +76,28 @@ const StyledBoardContentContainer = styled.div`
   flex: 1;
 `;
 
+// Context to share multi-drag state with cards
+export const MultiDragStateContext = createContext<{
+  isDragging: boolean;
+  draggedRecordIds: string[];
+  primaryDraggedRecordId: string | null;
+}>({
+  isDragging: false,
+  draggedRecordIds: [],
+  primaryDraggedRecordId: null,
+});
+
 export const RecordBoard = () => {
   const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
+  const [dragStartSelection, setDragStartSelection] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [multiDragState, setMultiDragState] = useState({
+    isDragging: false,
+    draggedRecordIds: [] as string[],
+    primaryDraggedRecordId: null as string | null,
+  });
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
@@ -113,10 +135,11 @@ export const RecordBoard = () => {
     currentRecordSortsComponentState,
   );
 
-  const selectedRecordIds = useRecoilComponentValueV2(
-    recordBoardSelectedRecordIdsComponentSelector,
-    recordBoardId,
-  );
+  const recordBoardSelectedRecordIdsSelector =
+    useRecoilComponentCallbackStateV2(
+      recordBoardSelectedRecordIdsComponentSelector,
+      recordBoardId,
+    );
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -130,17 +153,64 @@ export const RecordBoard = () => {
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
     callback: () => {
-      resetRecordSelection();
-      deactivateBoardCard();
-      unfocusBoardCard();
+      // Don't reset selection during drag operations
+      if (!isDragging) {
+        resetRecordSelection();
+        deactivateBoardCard();
+        unfocusBoardCard();
+      }
     },
   });
 
   const { openModal } = useModal();
 
+  const handleDragStart = useRecoilCallback(
+    ({ snapshot }) =>
+      (start: DragStart) => {
+        setIsDragging(true);
+
+        // Store current selection at drag start
+        const currentSelectedRecordIds = getSnapshotValue(
+          snapshot,
+          recordBoardSelectedRecordIdsSelector,
+        );
+        setDragStartSelection(currentSelectedRecordIds);
+
+        const draggedRecordId = start.draggableId;
+        const isDraggedItemSelected =
+          currentSelectedRecordIds.includes(draggedRecordId);
+        const hasMultipleSelected = currentSelectedRecordIds.length > 1;
+
+        // Set multi-drag state for visual feedback
+        if (isDraggedItemSelected && hasMultipleSelected) {
+          setMultiDragState({
+            isDragging: true,
+            draggedRecordIds: currentSelectedRecordIds,
+            primaryDraggedRecordId: draggedRecordId,
+          });
+        } else {
+          setMultiDragState({
+            isDragging: true,
+            draggedRecordIds: [draggedRecordId],
+            primaryDraggedRecordId: draggedRecordId,
+          });
+        }
+      },
+    [recordBoardSelectedRecordIdsSelector],
+  );
+
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
+        setIsDragging(false);
+
+        // Clear multi-drag state
+        setMultiDragState({
+          isDragging: false,
+          draggedRecordIds: [],
+          primaryDraggedRecordId: null,
+        });
+
         if (!result.destination) return;
 
         if (currentRecordSorts.length > 0) {
@@ -150,13 +220,13 @@ export const RecordBoard = () => {
 
         // Check if we should use multi-drag logic
         const draggedRecordId = result.draggableId;
+        const currentSelectedRecordIds = dragStartSelection;
         const isDraggedItemSelected =
-          selectedRecordIds.includes(draggedRecordId);
-        const hasMultipleSelected = selectedRecordIds.length > 1;
+          currentSelectedRecordIds.includes(draggedRecordId);
+        const hasMultipleSelected = currentSelectedRecordIds.length > 1;
 
         if (isDraggedItemSelected && hasMultipleSelected) {
           // Use multi-drag logic - inline implementation to avoid callback interface issues
-          const sourceRecordGroupId = result.source.droppableId;
           const destinationRecordGroupId = result.destination.droppableId;
           const destinationIndexInColumn = result.destination.index;
 
@@ -170,7 +240,7 @@ export const RecordBoard = () => {
           if (!recordGroup) return;
 
           // Determine which records to move
-          const recordsToMove = selectedRecordIds;
+          const recordsToMove = currentSelectedRecordIds;
 
           // Get destination column records
           const destinationRecordByGroupIds = getSnapshotValue(
@@ -206,7 +276,7 @@ export const RecordBoard = () => {
           );
 
           // Update all selected records
-          recordsToMove.forEach((recordId, index) => {
+          recordsToMove.forEach((recordId: string, index: number) => {
             // For multiple records, slightly offset their positions to maintain order
             const position =
               recordsToMove.length > 1
@@ -280,7 +350,7 @@ export const RecordBoard = () => {
       updateOneRecord,
       openModal,
       currentRecordSorts,
-      selectedRecordIds,
+      dragStartSelection,
     ],
   );
 
@@ -291,51 +361,56 @@ export const RecordBoard = () => {
   // }
 
   return (
-    <RecordBoardScope
-      recordBoardScopeId={recordBoardId}
-      onColumnsChange={() => {}}
-      onFieldsChange={() => {}}
-    >
-      <RecordBoardComponentInstanceContext.Provider
-        value={{ instanceId: recordBoardId }}
+    <MultiDragStateContext.Provider value={multiDragState}>
+      <RecordBoardScope
+        recordBoardScopeId={recordBoardId}
+        onColumnsChange={() => {}}
+        onFieldsChange={() => {}}
       >
-        <ScrollWrapper
-          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+        <RecordBoardComponentInstanceContext.Provider
+          value={{ instanceId: recordBoardId }}
         >
-          <RecordBoardStickyHeaderEffect />
-          <RecordBoardScrollToFocusedCardEffect />
-          <RecordBoardDeactivateBoardCardEffect />
-          <StyledContainerContainer>
-            <RecordBoardHeader />
-            <StyledBoardContentContainer>
-              <StyledContainer ref={boardRef}>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <StyledColumnContainer>
-                    {visibleRecordGroupIds.map((recordGroupId, index) => (
-                      <RecordBoardColumn
-                        key={recordGroupId}
-                        recordBoardColumnId={recordGroupId}
-                        recordBoardColumnIndex={index}
-                      />
-                    ))}
-                  </StyledColumnContainer>
-                </DragDropContext>
+          <ScrollWrapper
+            componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+          >
+            <RecordBoardStickyHeaderEffect />
+            <RecordBoardScrollToFocusedCardEffect />
+            <RecordBoardDeactivateBoardCardEffect />
+            <StyledContainerContainer>
+              <RecordBoardHeader />
+              <StyledBoardContentContainer>
+                <StyledContainer ref={boardRef}>
+                  <DragDropContext
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <StyledColumnContainer>
+                      {visibleRecordGroupIds.map((recordGroupId, index) => (
+                        <RecordBoardColumn
+                          key={recordGroupId}
+                          recordBoardColumnId={recordGroupId}
+                          recordBoardColumnIndex={index}
+                        />
+                      ))}
+                    </StyledColumnContainer>
+                  </DragDropContext>
 
-                <DragSelect
-                  selectableItemsContainerRef={boardRef}
-                  onDragSelectionEnd={handleDragSelectionEnd}
-                  onDragSelectionChange={setRecordAsSelected}
-                  onDragSelectionStart={handleDragSelectionStart}
-                  scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
-                  selectionBoundaryClass={
-                    RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS
-                  }
-                />
-              </StyledContainer>
-            </StyledBoardContentContainer>
-          </StyledContainerContainer>
-        </ScrollWrapper>
-      </RecordBoardComponentInstanceContext.Provider>
-    </RecordBoardScope>
+                  <DragSelect
+                    selectableItemsContainerRef={boardRef}
+                    onDragSelectionEnd={handleDragSelectionEnd}
+                    onDragSelectionChange={setRecordAsSelected}
+                    onDragSelectionStart={handleDragSelectionStart}
+                    scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+                    selectionBoundaryClass={
+                      RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS
+                    }
+                  />
+                </StyledContainer>
+              </StyledBoardContentContainer>
+            </StyledContainerContainer>
+          </ScrollWrapper>
+        </RecordBoardComponentInstanceContext.Provider>
+      </RecordBoardScope>
+    </MultiDragStateContext.Provider>
   );
 };

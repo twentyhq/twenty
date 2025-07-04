@@ -9,6 +9,7 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 
+import { MultiDragStateContext } from '@/object-record/record-board/components/RecordBoard';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
@@ -31,6 +32,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
+  shouldHide?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -38,6 +40,13 @@ const StyledBoardCard = styled.div<{
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
+
+  ${({ shouldHide }) =>
+    shouldHide &&
+    `
+    opacity: 0;
+    pointer-events: none;
+  `}
 
   &[data-selected='true'] {
     background-color: ${({ theme }) => theme.accent.quaternary};
@@ -91,6 +100,8 @@ export const RecordBoardCard = () => {
   const { recordId, rowIndex, columnIndex } = useContext(
     RecordBoardCardContext,
   );
+
+  const multiDragState = useContext(MultiDragStateContext);
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -198,6 +209,10 @@ export const RecordBoardCard = () => {
           data-active={isCurrentCardActive}
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
+          shouldHide={
+            multiDragState.isDragging &&
+            multiDragState.draggedRecordIds.includes(recordId)
+          }
         >
           <RecordBoardCardHeader
             isCardExpanded={isCardExpanded}
