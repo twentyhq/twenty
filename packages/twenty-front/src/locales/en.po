@@ -110,8 +110,8 @@ msgstr "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount}
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr "{message}"
+#~ msgid "{message}"
+#~ msgstr "{message}"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -296,6 +296,11 @@ msgstr "Account Deletion"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
 msgstr "Accounts"
+
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
+msgstr "ACS Url copied to clipboard"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -615,8 +620,15 @@ msgstr "Allow users to sign in with an email and password."
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
-msgstr "An error occurred while updating password"
+#~ msgid "An error occurred while updating password"
+#~ msgstr "An error occurred while updating password"
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
+msgstr "An error occurred."
 
 #. js-lingui-id: mJ6m4C
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -706,6 +718,11 @@ msgstr "APIs"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Appearance"
+
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr "Approved access domain validated"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1059,6 +1076,11 @@ msgstr "Change to Yearly?"
 msgid "Check your Emails"
 msgstr "Check your Emails"
 
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
+msgstr "Checkout session error. Please retry or contact Twenty team"
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -1396,6 +1418,11 @@ msgstr "Cost"
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
 msgstr "Cost per 1k Extra Credits"
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
+msgstr "Could not delete approved access domain"
 
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
@@ -2169,6 +2196,11 @@ msgstr "Email or domain is already in blocklist"
 msgid "Email verification"
 msgstr "Email verification"
 
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
+msgstr "Email verification failed"
+
 #. js-lingui-id: hn6Eox
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Email Verification Failed"
@@ -2312,8 +2344,13 @@ msgstr "Error copying to clipboard"
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
-msgstr "Error deleting api key: {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr "Error deleting api key: {err}"
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
+msgstr "Error deleting api key."
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2337,13 +2374,23 @@ msgstr "Error loading message"
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
-msgstr "Error regenerating api key: {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr "Error regenerating api key: {err}"
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
+msgstr "Error regenerating api key."
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Error resending invitation"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr "Error validating approved access domain"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2834,8 +2881,13 @@ msgstr "GraphQL API Playground"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Greater than"
+#~ msgid "Greater than"
+#~ msgstr "Greater than"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr "Greater than or equal"
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3301,8 +3353,8 @@ msgstr "john.doe@example.com"
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr "JSON keys cannot contain spaces"
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr "JSON keys cannot contain spaces"
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3416,8 +3468,13 @@ msgstr "Layout"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Less than"
+#~ msgid "Less than"
+#~ msgstr "Less than"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr "Less than or equal"
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -3427,6 +3484,8 @@ msgstr "Light"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr "Link copied to clipboard"
 
@@ -3946,6 +4005,11 @@ msgstr "No metrics data available"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 #~ msgid "No more members to assign"
 #~ msgstr "No more members to assign"
+
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr "No option found"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -5652,8 +5716,8 @@ msgstr "There was an error while updating password."
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr "There was an issue"
+#~ msgid "There was an issue"
+#~ msgstr "There was an issue"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -6158,6 +6222,31 @@ msgstr "We will send your a link to verify domain ownership"
 #~ msgid "Webhook"
 #~ msgstr "Webhook"
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr "Webhook {targetUrl} created successfully"
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr "Webhook {targetUrl} updated successfully"
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr "Webhook deleted successfully"
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr "Webhook ID is required for deletion"
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr "Webhook ID is required for updates"
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6312,6 +6401,16 @@ msgstr "yes"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
 msgstr "Yesterday"
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr "You already belong to the workspace {workspaceDisplayName}"
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
+msgstr "You already belong to this workspace"
 
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx

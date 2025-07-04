@@ -255,6 +255,56 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
+  async updateWorkflowRunStepStatus({
+    workflowRunId,
+    workspaceId,
+    stepId,
+    stepStatus,
+  }: {
+    workflowRunId: string;
+    stepId: string;
+    workspaceId: string;
+    stepStatus: StepStatus;
+  }) {
+    const workflowRunRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
+        'workflowRun',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
+      id: workflowRunId,
+    });
+
+    if (!workflowRunToUpdate) {
+      throw new WorkflowRunException(
+        'No workflow run to save',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+      );
+    }
+
+    const partialUpdate = {
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          [stepId]: {
+            ...(workflowRunToUpdate.state?.stepInfos?.[stepId] || {}),
+            status: stepStatus,
+          },
+        },
+      },
+    };
+
+    await workflowRunRepository.update(workflowRunId, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      updatedFields: ['state'],
+    });
+  }
+
   async saveWorkflowRunState({
     workflowRunId,
     stepOutput,

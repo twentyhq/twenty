@@ -8,8 +8,6 @@ import {
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 
-import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
-
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
@@ -18,6 +16,7 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 
@@ -36,35 +35,50 @@ export const RecordTitleCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { closeInlineCell } = useInlineCell(
-    getRecordTitleCellId(
-      recordId,
-      fieldDefinition?.fieldMetadataId,
-      containerType,
-    ),
-  );
+  const { closeRecordTitleCell } = useRecordTitleCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    closeInlineCell();
+    closeRecordTitleCell({
+      recordId,
+      fieldMetadataId: fieldDefinition?.fieldMetadataId,
+      containerType,
+    });
     persistField();
   };
 
-  const handleEscape = () => {
-    closeInlineCell();
+  const handleEscape: FieldInputEvent = (persistField) => {
+    closeRecordTitleCell({
+      recordId,
+      fieldMetadataId: fieldDefinition?.fieldMetadataId,
+      containerType,
+    });
+    persistField();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    closeInlineCell();
+    closeRecordTitleCell({
+      recordId,
+      fieldMetadataId: fieldDefinition?.fieldMetadataId,
+      containerType,
+    });
     persistField();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    closeInlineCell();
+    closeRecordTitleCell({
+      recordId,
+      fieldMetadataId: fieldDefinition?.fieldMetadataId,
+      containerType,
+    });
     persistField();
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = (persistField) => {
-    closeInlineCell();
+    closeRecordTitleCell({
+      recordId,
+      fieldMetadataId: fieldDefinition?.fieldMetadataId,
+      containerType,
+    });
     persistField();
   };
 
@@ -83,6 +97,7 @@ export const RecordTitleCell = ({
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
     isReadOnly,
+    containerType,
   };
 
   return (

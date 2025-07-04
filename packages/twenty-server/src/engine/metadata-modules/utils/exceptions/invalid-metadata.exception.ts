@@ -1,8 +1,12 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class InvalidMetadataException extends CustomException {
-  constructor(message: string, code: InvalidMetadataExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: InvalidMetadataExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: string } = {},
+  ) {
+    super(message, code, userFriendlyMessage);
   }
 }
 

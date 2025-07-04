@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
 import cron from 'cron-validate';
 
-import { WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const validatePattern = (pattern: string) => {
   const cronValidator = cron(pattern);
@@ -13,6 +14,9 @@ const validatePattern = (pattern: string) => {
     throw new WorkflowTriggerException(
       `Cron pattern '${pattern}' is invalid`,
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+      {
+        userFriendlyMessage: t`Cron pattern '${pattern}' is invalid`,
+      },
     );
   }
 };
@@ -51,6 +55,9 @@ export const computeCronPatternFromSchedule = (
       throw new WorkflowTriggerException(
         'Unsupported cron schedule type',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        {
+          userFriendlyMessage: t`Unsupported cron schedule type`,
+        },
       );
   }
 };

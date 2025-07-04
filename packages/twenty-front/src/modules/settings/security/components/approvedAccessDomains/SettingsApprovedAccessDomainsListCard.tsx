@@ -7,8 +7,8 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -22,7 +22,7 @@ const StyledLink = styled(Link)`
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
 
@@ -36,8 +36,8 @@ export const SettingsApprovedAccessDomainsListCard = () => {
       setApprovedAccessDomains(data?.getApprovedAccessDomains ?? []);
     },
     onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     },
   });

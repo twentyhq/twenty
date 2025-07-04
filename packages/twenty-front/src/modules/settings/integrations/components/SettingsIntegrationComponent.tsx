@@ -8,10 +8,12 @@ import { Button } from 'twenty-ui/input';
 import {
   IconArrowUpRight,
   IconBolt,
+  IconCopy,
   IconPlus,
   Status,
 } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
@@ -64,6 +66,7 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
+  const { copyToClipboard } = useCopyToClipboard();
   return (
     <StyledContainer
       to={integration.type === 'Active' ? integration.link : undefined}
@@ -98,6 +101,17 @@ export const SettingsIntegrationComponent = ({
           target="_blank"
           Icon={IconBolt}
           title="Use"
+          size="small"
+        />
+      ) : integration.type === 'Copy' ? (
+        <Button
+          onClick={() => {
+            if (isDefined(integration.content)) {
+              copyToClipboard(integration.content);
+            }
+          }}
+          Icon={IconCopy}
+          title={integration.linkText}
           size="small"
         />
       ) : (

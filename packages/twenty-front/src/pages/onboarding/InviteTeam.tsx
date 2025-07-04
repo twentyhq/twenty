@@ -4,7 +4,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -65,7 +64,7 @@ type FormInput = z.infer<typeof validationSchema>;
 export const InviteTeam = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -120,10 +119,12 @@ export const InviteTeam = () => {
     if (isDefined(currentWorkspace?.inviteHash)) {
       const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
       navigator.clipboard.writeText(inviteLink);
-      enqueueSnackBar(t`Link copied to clipboard`, {
-        variant: SnackBarVariant.Success,
-        icon: <IconCopy size={theme.icon.size.md} />,
-        duration: 2000,
+      enqueueSuccessSnackBar({
+        message: t`Link copied to clipboard`,
+        options: {
+          icon: <IconCopy size={theme.icon.size.md} />,
+          duration: 2000,
+        },
       });
     }
   };
@@ -143,15 +144,17 @@ export const InviteTeam = () => {
         throw result.errors;
       }
       if (emails.length > 0) {
-        enqueueSnackBar(t`Invite link sent to email addresses`, {
-          variant: SnackBarVariant.Success,
-          duration: 2000,
+        enqueueSuccessSnackBar({
+          message: t`Invite link sent to email addresses`,
+          options: {
+            duration: 2000,
+          },
         });
       }
 
       setNextOnboardingStatus();
     },
-    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus, t],
+    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
   );
 
   const handleSkip = async () => {
