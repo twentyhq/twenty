@@ -3,6 +3,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
+import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 
 type WorkspaceMigrationBuilderV2ServiceArgs = {
@@ -12,12 +13,10 @@ type WorkspaceMigrationBuilderV2ServiceArgs = {
 
 type ObjectMetadataUniqueIdentifier = string;
 export type UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher = {
-  deleted: Map<ObjectMetadataUniqueIdentifier, WorkspaceMigrationObjectInput>;
-  created: Map<ObjectMetadataUniqueIdentifier, WorkspaceMigrationObjectInput>;
-  updated: Map<
-    ObjectMetadataUniqueIdentifier,
-    FromTo<WorkspaceMigrationObjectInput>
-  >;
+  // Note no need for a map tbh
+  deletedObjectMetadata: WorkspaceMigrationObjectInput[];
+  createdObjectMetadata: WorkspaceMigrationObjectInput[];
+  updatedObjectMetadata: FromTo<WorkspaceMigrationObjectInput>[];
 };
 
 const objectMetadataMatriceMapDispatcher = ({
@@ -26,9 +25,9 @@ const objectMetadataMatriceMapDispatcher = ({
 }: WorkspaceMigrationBuilderV2ServiceArgs) => {
   const initialDispatcher: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher =
     {
-      created: new Map(),
-      updated: new Map(),
-      deleted: new Map(),
+      createdObjectMetadata: [],
+      updatedObjectMetadata: [],
+      deletedObjectMetadata: [],
     };
   // Create maps for faster lookups
   const fromMap = new Map(from.map((obj) => [obj.uniqueIdentifier, obj]));
@@ -37,14 +36,14 @@ const objectMetadataMatriceMapDispatcher = ({
   // Find deleted objects (exist in 'from' but not in 'to')
   for (const [identifier, fromObj] of fromMap) {
     if (!toMap.has(identifier)) {
-      initialDispatcher.deleted.set(identifier, fromObj);
+      initialDispatcher.deletedObjectMetadata.push(fromObj);
     }
   }
 
   // Find created objects (exist in 'to' but not in 'from')
   for (const [identifier, toObj] of toMap) {
     if (!fromMap.has(identifier)) {
-      initialDispatcher.created.set(identifier, toObj);
+      initialDispatcher.createdObjectMetadata.push(toObj);
     }
   }
 
@@ -52,7 +51,7 @@ const objectMetadataMatriceMapDispatcher = ({
   for (const [identifier, fromObj] of fromMap) {
     const toObj = toMap.get(identifier);
     if (toObj) {
-      initialDispatcher.updated.set(identifier, {
+      initialDispatcher.updatedObjectMetadata.push({
         from: fromObj,
         to: toObj,
       });
@@ -72,12 +71,21 @@ export class WorkspaceMigrationBuilderV2Service {
     const objectMetadataCreatedUpdatedDeletedMatrice =
       objectMetadataMatriceMapDispatcher(objectMetadataFromToInputs);
 
-    const objectWorkspaceMigration = buildWorkspaceMigrationV2ObjectActions(
-      objectMetadataCreatedUpdatedDeletedMatrice,
-    );
+    const objectWorkspaceMigrationActions =
+      buildWorkspaceMigrationV2ObjectActions(
+        objectMetadataCreatedUpdatedDeletedMatrice,
+      );
+
+    const fieldWorkspaceMigrationActions =
+      buildWorkspaceMigrationV2FieldActions(
+        objectMetadataCreatedUpdatedDeletedMatrice.updatedObjectMetadata,
+      );
 
     return {
-      actions: [...objectWorkspaceMigration],
+      actions: [
+        ...objectWorkspaceMigrationActions,
+        ...fieldWorkspaceMigrationActions,
+      ],
     };
   }
 }

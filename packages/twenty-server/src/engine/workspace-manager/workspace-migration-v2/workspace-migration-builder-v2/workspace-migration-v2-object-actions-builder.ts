@@ -3,9 +3,12 @@ import diff from 'microdiff';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
+  CreateFieldAction,
+  CreateObjectAction,
+  DeleteObjectAction,
   FromTo,
   UpdateObjectAction,
-  WorkspaceMigrationV2ObjectAction,
+  WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
@@ -92,40 +95,57 @@ const compareTwoWorkspaceMigrationObjectInput = ({
 
 // Should return WorkspaceObjectMigrationV2 ?
 export const buildWorkspaceMigrationV2ObjectActions = ({
-  created,
-  deleted,
-  updated,
-}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationV2ObjectAction[] => {
-  const objectWorkspaceActions: WorkspaceMigrationV2ObjectAction[] = [];
-
-  created.forEach((objectMetadata, uniqueIdentifier) => {
-    objectWorkspaceActions.push({
-      uniqueIdentifier,
+  createdObjectMetadata,
+  deletedObjectMetadata,
+  updatedObjectMetadata,
+}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationActionV2[] => {
+  const createObjectActions = createdObjectMetadata.flatMap<
+    CreateObjectAction | CreateFieldAction
+  >((objectMetadata) => {
+    const createObjectAction: CreateObjectAction = {
       type: 'create_object',
-      object: objectMetadata, // TODO // Question should this contain field create migrations too or ?
-    });
+      objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
+      object: objectMetadata as any, // TODO,
+    };
+    const createdFields = objectMetadata.fields.map<CreateFieldAction>(
+      (field) => {
+        return {
+          type: 'create_field',
+          field: field as any, // TODO
+          fieldUniqueIdentifier: field.uniqueIdentifier,
+          objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
+        };
+      },
+    );
+
+    return [createObjectAction, ...createdFields];
   });
 
-  deleted.forEach((objectMetadata, uniqueIdentifier) => {
-    objectWorkspaceActions.push({
+  const deletedObjectActions = deletedObjectMetadata.map<DeleteObjectAction>(
+    (objectMetadata) => ({
       type: 'delete_object',
-      uniqueIdentifier,
-      objectMetadataId: objectMetadata.uniqueIdentifier,
-    });
-  });
+      objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
+    }),
+  );
 
-  updated.forEach(({ from, to }, uniqueIdentifier) => {
-    const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
-      from,
-      to,
-    });
+  const updatedObjectActions = updatedObjectMetadata.map<UpdateObjectAction>(
+    ({ from, to }) => {
+      const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
+        from,
+        to,
+      });
 
-    objectWorkspaceActions.push({
-      uniqueIdentifier,
-      type: 'update_object',
-      updates: objectUpdatedProperties,
-    });
-  });
+      return {
+        objectUniqueIdentifier: from.uniqueIdentifier,
+        type: 'update_object',
+        updates: objectUpdatedProperties,
+      };
+    },
+  );
 
-  return objectWorkspaceActions;
+  return [
+    ...createObjectActions,
+    ...deletedObjectActions,
+    ...updatedObjectActions,
+  ];
 };

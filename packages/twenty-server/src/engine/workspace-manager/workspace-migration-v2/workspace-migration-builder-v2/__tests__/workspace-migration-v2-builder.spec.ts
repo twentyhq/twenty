@@ -37,8 +37,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "update_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "updates": [
         {
           "from": "Contact",
@@ -93,7 +93,29 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
       },
       "type": "create_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "uniqueIdentifier": 0,
+    },
+    {
+      "field": {
+        "label": "Name",
+        "name": "name",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "type": "create_field",
+    },
+    {
+      "field": {
+        "label": "Name",
+        "name": "name",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "type": "update_field",
     },
   ],
 }
@@ -107,9 +129,19 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataId": "123e4567-e89b-12d3-a456-426614175000",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "delete_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+    },
+    {
+      "field": {
+        "label": "First Name",
+        "name": "firstName",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174000",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174000",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "type": "delete_field",
     },
   ],
 }
@@ -165,16 +197,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
       },
       "type": "create_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
+      "uniqueIdentifier": 0,
     },
     {
-      "objectMetadataId": "123e4567-e89b-12d3-a456-426614175002",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175002",
       "type": "delete_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175002",
     },
     {
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "update_object",
-      "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "updates": [
         {
           "from": "Contact",
@@ -182,6 +213,39 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
           "to": "Person",
         },
       ],
+    },
+    {
+      "field": {
+        "label": "First Name",
+        "name": "firstName",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174000",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174000",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175002",
+      "type": "delete_field",
+    },
+    {
+      "field": {
+        "label": "Name",
+        "name": "name",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
+      "type": "create_field",
+    },
+    {
+      "field": {
+        "label": "Name",
+        "name": "name",
+        "type": "string",
+        "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
+      },
+      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174003",
+      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175003",
+      "type": "update_field",
     },
   ],
 }

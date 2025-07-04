@@ -1,8 +1,10 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 export type WorkspaceMigrationObjectFieldInput = {
   uniqueIdentifier: string;
   name: string;
   label: string;
-  type: string;
+  type: FieldMetadataType;
   description?: string;
 };
 
@@ -13,5 +15,5 @@ export type WorkspaceMigrationObjectInput = {
   labelSingular: string;
   labelPlural: string;
   description?: string;
-  fields?: WorkspaceMigrationObjectFieldInput[];
+  fields: WorkspaceMigrationObjectFieldInput[];
 };

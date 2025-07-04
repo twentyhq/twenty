@@ -1,47 +1,50 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+type UniqueIdentifierRecord<TTarget extends string> = {
+  [P in `${TTarget}UniqueIdentifier`]: string;
+};
+
 export type FromTo<T> = {
   from: T;
   to: T;
 };
-export interface CreateObjectAction {
+
+type ObjectActionCommon = UniqueIdentifierRecord<'object'>;
+export type CreateObjectAction = {
   type: 'create_object';
   object: ObjectMetadataEntity;
-}
+} & ObjectActionCommon;
 
-export interface UpdateObjectAction {
+export type UpdateObjectAction = {
   type: 'update_object';
   updates: (FromTo<Partial<ObjectMetadataEntity>> & { property: string })[];
-}
+} & ObjectActionCommon;
 
-export interface DeleteObjectAction {
+export type DeleteObjectAction = {
   type: 'delete_object';
-  objectMetadataId: string;
-}
+} & ObjectActionCommon;
 
-export type WorkspaceMigrationV2ObjectAction = (
+export type WorkspaceMigrationV2ObjectAction =
   | CreateObjectAction
   | UpdateObjectAction
-  | DeleteObjectAction
-) & {
-  uniqueIdentifier: string;
-};
+  | DeleteObjectAction;
 
-export interface CreateFieldAction {
-  type: 'create_field';
-  field: FieldMetadataEntity;
-}
-
-export interface UpdateFieldAction {
-  type: 'update_field';
+type FieldActionCommon = {
   field: Partial<FieldMetadataEntity>;
-}
+} & UniqueIdentifierRecord<'object'> &
+  UniqueIdentifierRecord<'field'>;
+export type CreateFieldAction = {
+  type: 'create_field';
+} & FieldActionCommon;
 
-export interface DeleteFieldAction {
+export type UpdateFieldAction = {
+  type: 'update_field';
+} & FieldActionCommon;
+
+export type DeleteFieldAction = {
   type: 'delete_field';
-  fieldMetadataId: string;
-}
+} & FieldActionCommon;
 
 export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction
