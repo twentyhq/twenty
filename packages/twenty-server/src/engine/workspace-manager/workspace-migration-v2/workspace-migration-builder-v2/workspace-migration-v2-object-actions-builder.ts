@@ -3,18 +3,21 @@ import diff from 'microdiff';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  CreateFieldAction,
-  CreateObjectAction,
-  DeleteObjectAction,
   FromTo,
   UpdateObjectAction,
   WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
-import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
+import {
+  getWorkspaceMigrationV2ObjectCreateAction,
+  getWorkspaceMigrationV2ObjectDeleteAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+// Start TODO prastoin refactor and strictly type
 const objectPropertiesToIgnore = [
   'id',
   'createdAt',
@@ -33,6 +36,7 @@ const allowedObjectProps: (keyof Partial<ObjectMetadataEntity>)[] = [
   'labelPlural',
   'description',
 ];
+/// End
 
 type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
 
@@ -83,7 +87,7 @@ const compareTwoWorkspaceMigrationObjectInput = ({
       }
       case 'CREATE':
       case 'REMOVE': {
-        // Should never occurs ?
+        // Should never occurs ? should throw ?
         return [];
       }
       default: {
@@ -93,39 +97,33 @@ const compareTwoWorkspaceMigrationObjectInput = ({
   });
 };
 
-// Should return WorkspaceObjectMigrationV2 ?
+export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
+  CustomDeletedCreatedUpdatedMatrix<
+    'objectMetadata',
+    WorkspaceMigrationObjectInput
+  >;
 export const buildWorkspaceMigrationV2ObjectActions = ({
   createdObjectMetadata,
   deletedObjectMetadata,
   updatedObjectMetadata,
-}: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher): WorkspaceMigrationActionV2[] => {
-  const createObjectActions = createdObjectMetadata.flatMap<
-    CreateObjectAction | CreateFieldAction
-  >((objectMetadata) => {
-    const createObjectAction: CreateObjectAction = {
-      type: 'create_object',
-      objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
-      object: objectMetadata as any, // TODO,
-    };
-    const createdFields = objectMetadata.fields.map<CreateFieldAction>(
-      (field) => {
-        return {
-          type: 'create_field',
-          field: field as any, // TODO
-          fieldUniqueIdentifier: field.uniqueIdentifier,
-          objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
-        };
-      },
-    );
+}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationActionV2[] => {
+  const createObjectActions = createdObjectMetadata.flatMap(
+    (objectMetadata) => {
+      const createObjectAction =
+        getWorkspaceMigrationV2ObjectCreateAction(objectMetadata);
+      const createdFields = objectMetadata.fields.map((field) =>
+        getWorkspaceMigrationV2FieldCreateAction({
+          field,
+          objectMetadataUniqueIdentifier: objectMetadata.uniqueIdentifier,
+        }),
+      );
 
-    return [createObjectAction, ...createdFields];
-  });
+      return [createObjectAction, ...createdFields];
+    },
+  );
 
-  const deletedObjectActions = deletedObjectMetadata.map<DeleteObjectAction>(
-    (objectMetadata) => ({
-      type: 'delete_object',
-      objectUniqueIdentifier: objectMetadata.uniqueIdentifier,
-    }),
+  const deletedObjectActions = deletedObjectMetadata.map(
+    getWorkspaceMigrationV2ObjectDeleteAction,
   );
 
   const updatedObjectActions = updatedObjectMetadata.map<UpdateObjectAction>(

@@ -1,16 +1,23 @@
 import diff from 'microdiff';
 import {
-  CreateFieldAction,
-  DeleteFieldAction,
   FromTo,
   WorkspaceMigrationFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
 import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import {
+  getWorkspaceMigrationV2FieldCreateAction,
+  getWorkspaceMigrationV2FieldDeleteAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { CreatedDeletedUpdatedObjectMetadataInputMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { matrixMapDispatcher } from './utils/matrix-map-dispatcher.util';
+import {
+  CustomDeletedCreatedUpdatedMatrix,
+  deletedCreatedUpdatedMatrixDispatcher,
+} from './utils/deleted-created-updated-matrix-dispatcher.util';
 
+// Start TODO prastoin refactor and strictly type
 const commonFieldPropertiesToIgnore = [
   'id',
   'createdAt',
@@ -24,7 +31,7 @@ const commonFieldPropertiesToIgnore = [
   'asExpression',
   'generatedType',
   'isLabelSyncedWithName',
-  // uniqueIdentifier
+  // uniqueIdentifier ?
 ];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
@@ -39,6 +46,7 @@ const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
 };
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
+/// End
 
 export const compareTwoWorkspaceMigrationFieldInput = ({
   from,
@@ -81,6 +89,7 @@ type BuildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadataArgs =
   FromTo<WorkspaceMigrationObjectFieldInput> & {
     objectMetadataUniqueIdentifier: string;
   };
+// Still in wip
 const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
   objectMetadataUniqueIdentifier,
   from,
@@ -120,20 +129,20 @@ const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
   );
 };
 
-type FieldInputOperationMatrix = {
+type DeletedCreatedUpdatedFieldInputMatrix = {
   objectMetadataUniqueIdentifier: string;
-  deletedFieldMetadata: WorkspaceMigrationObjectFieldInput[];
-  createdFieldMetadata: WorkspaceMigrationObjectFieldInput[];
-  updatedFieldMetadata: FromTo<WorkspaceMigrationObjectFieldInput>[];
-};
+} & CustomDeletedCreatedUpdatedMatrix<
+  'fieldMetadata',
+  WorkspaceMigrationObjectFieldInput
+>;
 
 const updatedFieldMetadataMatriceMapDispatcher = (
   updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updated'],
-): FieldInputOperationMatrix[] => {
-  const matriceAccumulator: FieldInputOperationMatrix[] = [];
+): DeletedCreatedUpdatedFieldInputMatrix[] => {
+  const matriceAccumulator: DeletedCreatedUpdatedFieldInputMatrix[] = [];
 
   for (const { from, to } of updatedObjectMetadata) {
-    const matrixResult = matrixMapDispatcher({
+    const matrixResult = deletedCreatedUpdatedMatrixDispatcher({
       from: from.fields,
       to: to.fields,
     });
@@ -150,12 +159,14 @@ const updatedFieldMetadataMatriceMapDispatcher = (
 };
 
 // Should return WorkspaceObjectMigrationV2 ?
-export const buildWorkspaceMigrationV2FieldActions = (
-  updatedObjectMetadata: UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher['updated'],
-): WorkspaceMigrationFieldActionV2[] => {
-  const fieldMatrix = updatedFieldMetadataMatriceMapDispatcher(
-    updatedObjectMetadata,
-  );
+export const buildWorkspaceMigrationV2FieldActions = ({
+  updatedObjectMetadata,
+}: Pick<
+  CreatedDeletedUpdatedObjectMetadataInputMatrix,
+  'updatedObjectMetadata'
+>): WorkspaceMigrationFieldActionV2[] => {
+  const updatedObjectMetadataFieldMatrix =
+    updatedFieldMetadataMatriceMapDispatcher(updatedObjectMetadata);
 
   const allUpdatedObjectMetadataFieldAction: WorkspaceMigrationFieldActionV2[] =
     [];
@@ -164,7 +175,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
     deletedFieldMetadata,
     objectMetadataUniqueIdentifier,
     updatedFieldMetadata,
-  } of fieldMatrix) {
+  } of updatedObjectMetadataFieldMatrix) {
     const updateFieldAction =
       updatedFieldMetadata.flatMap<WorkspaceMigrationFieldActionV2>(
         ({ from, to }) =>
@@ -175,27 +186,23 @@ export const buildWorkspaceMigrationV2FieldActions = (
           }),
       );
 
-    const createFieldAction = createdFieldMetadata.map<CreateFieldAction>(
-      (field) => ({
-        field: field as any, // TODO
-        fieldUniqueIdentifier: field.uniqueIdentifier,
-        objectUniqueIdentifier: objectMetadataUniqueIdentifier,
-        type: 'create_field',
+    const createFieldAction = createdFieldMetadata.map((field) =>
+      getWorkspaceMigrationV2FieldCreateAction({
+        field,
+        objectMetadataUniqueIdentifier,
       }),
     );
 
-    const deletedFieldAction = deletedFieldMetadata.map<DeleteFieldAction>(
-      (field) => ({
-        field: field as any, // TODO
-        fieldUniqueIdentifier: field.uniqueIdentifier,
-        objectUniqueIdentifier: objectMetadataUniqueIdentifier,
-        type: 'delete_field',
+    const deleteFieldAction = deletedFieldMetadata.map((field) =>
+      getWorkspaceMigrationV2FieldDeleteAction({
+        field,
+        objectMetadataUniqueIdentifier,
       }),
     );
 
     allUpdatedObjectMetadataFieldAction.concat([
       ...createFieldAction,
-      ...deletedFieldAction,
+      ...deleteFieldAction,
       ...updateFieldAction,
     ]);
   }
