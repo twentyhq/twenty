@@ -22,11 +22,11 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowBranchExecutorInput,
   WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -116,7 +116,7 @@ export class WorkflowExecutorWorkspaceService {
     }
     ///////////// END REFACTOR BLOCK /////////////
 
-    if (!this.canExecuteStep({ step, steps, context })) {
+    if (!canExecuteStep({ stepId: step.id, steps, context })) {
       return;
     }
 
@@ -150,7 +150,7 @@ export class WorkflowExecutorWorkspaceService {
     }
     ///////////// END REFACTOR BLOCK /////////////
 
-    const workflowExecutor = this.workflowActionFactory.get(step.type);
+    const workflowAction = this.workflowActionFactory.get(step.type);
 
     let actionOutput: WorkflowActionOutput;
 
@@ -162,7 +162,7 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      actionOutput = await workflowExecutor.execute({
+      actionOutput = await workflowAction.execute({
         currentStepId,
         steps,
         context,
@@ -272,24 +272,6 @@ export class WorkflowExecutorWorkspaceService {
     return this.billingService.canBillMeteredProduct(
       workspaceId,
       BillingProductKey.WORKFLOW_NODE_EXECUTION,
-    );
-  }
-
-  private canExecuteStep({
-    context,
-    step,
-    steps,
-  }: {
-    steps: WorkflowAction[];
-    context: Record<string, unknown>;
-    step: WorkflowAction;
-  }) {
-    const parentSteps = steps.filter((parentStep) =>
-      parentStep.nextStepIds?.includes(step.id),
-    );
-
-    return parentSteps.every((parentStep) =>
-      Object.keys(context).includes(parentStep.id),
     );
   }
 }
