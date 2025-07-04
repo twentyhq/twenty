@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Res,
   UseFilters,
@@ -17,7 +19,10 @@ import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.co
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+import {
+  AgentChatMessageEntity,
+  AgentChatMessageRole,
+} from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 
@@ -27,7 +32,7 @@ import { AgentExecutionService } from './agent-execution.service';
 import { AGENT_CONFIG } from './constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from './constants/agent-system-prompts.const';
 
-@Controller('rest/agent-chat/stream')
+@Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
 export class AgentChatController {
@@ -36,13 +41,38 @@ export class AgentChatController {
     private readonly agentExecutionService: AgentExecutionService,
     @InjectRepository(AgentChatThreadEntity, 'core')
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
+    @InjectRepository(AgentChatMessageEntity, 'core')
+    private readonly messageRepository: Repository<AgentChatMessageEntity>,
     private readonly agentToolService: AgentToolService,
   ) {}
 
-  @Post()
+  @Get('threads/:agentId')
+  async getThreadsForAgent(@Param('agentId') agentId: string) {
+    return this.agentChatService.getThreadsForAgent(agentId);
+  }
+
+  @Get('messages/:threadId')
+  async getMessagesForThread(@Param('threadId') threadId: string) {
+    return this.agentChatService.getMessagesForThread(threadId);
+  }
+
+  @Post('threads')
+  async createThread(@Body() body: { agentId: string }) {
+    return this.agentChatService.createThread(body.agentId);
+  }
+
+  @Post('messages')
+  async sendMessage(@Body() body: { threadId: string; content: string }) {
+    return this.agentChatService.addUserMessageAndAIResponse(
+      body.threadId,
+      body.content,
+    );
+  }
+
+  @Post('stream')
   async streamAgentChat(
     @Body()
-    body: { agentId: string; threadId: string; userMessage: string },
+    body: { threadId: string; userMessage: string },
     @Res() res: Response,
   ) {
     const { threadId, userMessage } = body;
