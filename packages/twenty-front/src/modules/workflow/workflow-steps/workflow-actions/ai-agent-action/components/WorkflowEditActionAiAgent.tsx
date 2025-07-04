@@ -13,8 +13,8 @@ import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
+  IconMessage,
   IconSettings,
-  IconSparkles,
   IconTool,
   useIcons,
 } from 'twenty-ui/display';
@@ -95,7 +95,7 @@ export const WorkflowEditActionAiAgent = ({
       Icon: IconSettings,
     },
     { id: WorkflowAiAgentTabId.TOOLS, title: t`Tools`, Icon: IconTool },
-    { id: WorkflowAiAgentTabId.CHAT, title: t`Ask AI`, Icon: IconSparkles },
+    { id: WorkflowAiAgentTabId.CHAT, title: t`Chat`, Icon: IconMessage },
   ];
 
   return loading ? (

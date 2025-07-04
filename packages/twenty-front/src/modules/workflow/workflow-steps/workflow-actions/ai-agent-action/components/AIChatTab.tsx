@@ -227,10 +227,9 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
           <StyledSparkleIcon>
             <IconSparkles size={theme.icon.size.lg} color={theme.color.blue} />
           </StyledSparkleIcon>
-          <StyledTitle>{t`Ask AI`}</StyledTitle>
+          <StyledTitle>{t`Chat`}</StyledTitle>
           <StyledDescription>
-            {t`Start a conversation to get instant insights, support, or updates
-            about your deals. How can I help you today?`}
+            {t`Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance`}
           </StyledDescription>
         </StyledEmptyState>
       )}
