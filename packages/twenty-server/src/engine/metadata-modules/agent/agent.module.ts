@@ -17,6 +17,7 @@ import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
+import { AgentStreamingService } from './agent-streaming.service';
 import { AgentToolService } from './agent-tool.service';
 import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
@@ -50,12 +51,14 @@ import { AgentService } from './agent.service';
     AgentExecutionService,
     AgentToolService,
     AgentChatService,
+    AgentStreamingService,
   ],
   exports: [
     AgentService,
     AgentExecutionService,
     AgentToolService,
     AgentChatService,
+    AgentStreamingService,
     TypeOrmModule.forFeature(
       [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
       'core',
