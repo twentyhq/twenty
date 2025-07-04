@@ -40,7 +40,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "update_object",
       "updates": [
         {
@@ -99,7 +99,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "nameSingular": "Company",
         "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
       },
-      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
       "type": "create_object",
     },
     {
@@ -111,8 +111,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
       },
-      "fieldUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
-      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
+      "fieldMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614174001",
+      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175001",
       "type": "create_field",
     },
   ],
@@ -127,7 +127,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "delete_object",
     },
   ],
@@ -201,7 +201,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "nameSingular": "Company",
         "uniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
       },
-      "objectUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
+      "objectMetadataUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
       "type": "create_object",
     },
     {
@@ -213,16 +213,16 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
       },
-      "fieldUniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
-      "objectUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
+      "fieldMetadataUniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
+      "objectMetadataUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
       "type": "create_field",
     },
     {
-      "objectUniqueIdentifier": "20202020-59ef-4a14-a509-0a02acb248d5",
+      "objectMetadataUniqueIdentifier": "20202020-59ef-4a14-a509-0a02acb248d5",
       "type": "delete_object",
     },
     {
-      "objectUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
+      "objectMetadataUniqueIdentifier": "123e4567-e89b-12d3-a456-426614175000",
       "type": "update_object",
       "updates": [
         {
