@@ -5,6 +5,8 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-wo
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -12,6 +14,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { ChargeModule } from 'src/modules/charges/charge.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 
@@ -23,6 +26,9 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     AutomatedTriggerModule,
+    MessageQueueModule,
+    BillingModule,
+    ChargeModule,
 
     // Only needed for the data seed command
     TypeORMModule,

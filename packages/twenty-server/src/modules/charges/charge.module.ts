@@ -31,6 +31,6 @@ import { InterApiService } from './inter/services/inter-api.service';
     ChargeEmmitYearlyBillCronJob,
     ChargeEmmitRecurrentBillsCronCommand,
   ],
-  exports: [InterApiService],
+  exports: [InterApiService, ChargeEmmitRecurrentBillsCronCommand],
 })
 export class ChargeModule {}

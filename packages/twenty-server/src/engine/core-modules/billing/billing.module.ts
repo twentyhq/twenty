@@ -95,6 +95,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingService,
     BillingUsageService,
     BillingPlanService,
+    CheckExpiredSubscriptionsCronCommand,
   ],
 })
 export class BillingModule {}
