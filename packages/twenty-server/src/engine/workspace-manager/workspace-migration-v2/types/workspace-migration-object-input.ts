@@ -4,8 +4,10 @@ export type WorkspaceMigrationObjectFieldInput = {
   uniqueIdentifier: string;
   name: string;
   label: string;
+  defaultValue: unknown;
   type: FieldMetadataType;
   description?: string;
+  // TODO this should extend FieldMetadataEntity
 };
 
 export type WorkspaceMigrationObjectInput = {
@@ -16,4 +18,5 @@ export type WorkspaceMigrationObjectInput = {
   labelPlural: string;
   description?: string;
   fields: WorkspaceMigrationObjectFieldInput[];
+  // TODO this should extend ObjectMetadataEntity
 };

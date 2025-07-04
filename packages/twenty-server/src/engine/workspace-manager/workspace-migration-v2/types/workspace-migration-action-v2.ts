@@ -44,7 +44,7 @@ export type UpdateFieldAction = {
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-} & FieldActionCommon;
+} & Omit<FieldActionCommon, 'field'>;
 
 export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction

@@ -76,12 +76,47 @@ export const compareTwoWorkspaceMigrationFieldInput = ({
   return fieldMetadataDifference;
 };
 
-const buildWorkspaceMigrationV2FieldActionFromUpdated = ({
+type BuildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadataArgs =
+  FromTo<WorkspaceMigrationObjectFieldInput> & {
+    objectMetadataUniqueIdentifier: string;
+  };
+const buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata = ({
+  objectMetadataUniqueIdentifier,
   from,
   to,
-}: FieldInputOperationMatrix['updatedFieldMetadata'][number]): WorkspaceMigrationFieldActionV2[] => {
-  const diff = compareTwoWorkspaceMigrationFieldInput({ from, to });
-  return [];
+}: BuildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadataArgs) => {
+  const fieldMetadataDifferences = compareTwoWorkspaceMigrationFieldInput({
+    from,
+    to,
+  });
+  return fieldMetadataDifferences.flatMap<WorkspaceMigrationFieldActionV2>(
+    (difference) => {
+      switch (difference.type) {
+        case 'CREATE': {
+          return {
+            field: difference.value,
+            fieldUniqueIdentifier: 'TODO',
+            objectUniqueIdentifier: objectMetadataUniqueIdentifier,
+            type: 'create_field',
+          };
+        }
+        case 'CHANGE': {
+          // TODO prastoin
+          return [];
+        }
+        case 'REMOVE': {
+          return {
+            fieldUniqueIdentifier: difference.oldValue.uniqueIdentifier,
+            objectUniqueIdentifier: objectMetadataUniqueIdentifier,
+            type: 'delete_field',
+          };
+        }
+        default: {
+          return [];
+        }
+      }
+    },
+  );
 };
 
 type FieldInputOperationMatrix = {
@@ -152,6 +187,16 @@ export const buildWorkspaceMigrationV2FieldActions = (
     objectMetadataUniqueIdentifier,
     updatedFieldMetadata,
   } of fieldMatrix) {
+    const updateFieldAction =
+      updatedFieldMetadata.flatMap<WorkspaceMigrationFieldActionV2>(
+        ({ from, to }) =>
+          buildWorkspaceMigrationV2FieldActionFromUpdatedFieldMetadata({
+            from,
+            to,
+            objectMetadataUniqueIdentifier: objectMetadataUniqueIdentifier,
+          }),
+      );
+
     const createFieldAction = createdFieldMetadata.map<CreateFieldAction>(
       (field) => ({
         field: field as any, // TODO
@@ -173,6 +218,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
     allUpdatedObjectMetadataFieldAction.concat([
       ...createFieldAction,
       ...deletedFieldAction,
+      ...updateFieldAction,
     ]);
   }
 
