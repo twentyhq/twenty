@@ -40,6 +40,22 @@ const handleTokenRenewal = async () => {
   return newTokens;
 };
 
+const createStreamRequest = (
+  threadId: string,
+  userMessage: string,
+  accessToken: string,
+) => ({
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  },
+  body: JSON.stringify({
+    threadId,
+    userMessage,
+  }),
+});
+
 const apiClient = axios.create({
   baseURL: `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat`,
 });
@@ -92,40 +108,29 @@ export const agentChatApi = {
     threadId: string,
     userMessage: string,
     onChunk: (chunk: string) => void,
-  ): Promise<string> => {
+  ) => {
     const tokenPair = getTokenPair();
+    const accessToken = tokenPair?.accessToken.token || '';
 
     const response = await fetch(
       `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat/stream`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokenPair?.accessToken.token || ''}`,
-        },
-        body: JSON.stringify({
-          threadId,
-          userMessage,
-        }),
-      },
+      createStreamRequest(threadId, userMessage, accessToken),
     );
+
+    if (response.ok) {
+      return handleStreamResponse(response, onChunk);
+    }
 
     if (response.status === 401) {
       try {
         const newTokens = await handleTokenRenewal();
         const retryResponse = await fetch(
           `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat/stream`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${newTokens.accessToken.token}`,
-            },
-            body: JSON.stringify({
-              threadId,
-              userMessage,
-            }),
-          },
+          createStreamRequest(
+            threadId,
+            userMessage,
+            newTokens.accessToken.token,
+          ),
         );
 
         if (retryResponse.ok) {
@@ -136,12 +141,6 @@ export const agentChatApi = {
       }
       throw new Error('Authentication failed');
     }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return handleStreamResponse(response, onChunk);
   },
 };
 
