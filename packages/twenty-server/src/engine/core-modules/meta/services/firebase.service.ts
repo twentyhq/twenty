@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()

@@ -1,15 +1,21 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PRODUCT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const productsAllView = (
-  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataItems: ObjectMetadataEntity[],
 ) => {
+  const productObjectMetadata = objectMetadataItems.find(
+    (object) => object.standardId === STANDARD_OBJECT_IDS.product,
+  );
+
+  if (!productObjectMetadata) {
+    throw new Error('Products object metadata not found');
+  }
+
   return {
     name: 'All',
-    objectMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].id,
+    objectMetadataId: productObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -19,45 +25,47 @@ export const productsAllView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.name
-          ],
+          productObjectMetadata.fields.find(
+            (field) => field.standardId === PRODUCT_STANDARD_FIELD_IDS.name,
+          )?.id ?? '',
         position: 0,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.salePrice
-          ],
+          productObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === PRODUCT_STANDARD_FIELD_IDS.salePrice,
+          )?.id ?? '',
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.cost
-          ],
+          productObjectMetadata.fields.find(
+            (field) => field.standardId === PRODUCT_STANDARD_FIELD_IDS.cost,
+          )?.id ?? '',
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.unitOfMeasure
-          ],
+          productObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === PRODUCT_STANDARD_FIELD_IDS.unitOfMeasure,
+          )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.product].fields[
-            PRODUCT_STANDARD_FIELD_IDS.status
-          ],
+          productObjectMetadata.fields.find(
+            (field) => field.standardId === PRODUCT_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
         position: 4,
         isVisible: true,
         size: 150,
