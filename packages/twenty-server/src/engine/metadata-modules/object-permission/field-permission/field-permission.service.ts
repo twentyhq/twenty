@@ -7,9 +7,9 @@ import { In, Repository } from 'typeorm';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
+    PermissionsException,
+    PermissionsExceptionCode,
+    PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -67,18 +67,9 @@ export class FieldPermissionService {
       workspaceId,
     }));
 
-    const result = await this.fieldPermissionsRepository.upsert(
-      fieldPermissions,
-      {
-        conflictPaths: ['fieldMetadataId', 'roleId'],
-      },
-    );
-
-    const fieldPermissionId = result.generatedMaps?.[0]?.id;
-
-    if (!isDefined(fieldPermissionId)) {
-      throw new Error('Failed to upsert object permission');
-    }
+    await this.fieldPermissionsRepository.upsert(fieldPermissions, {
+      conflictPaths: ['fieldMetadataId', 'roleId'],
+    });
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
