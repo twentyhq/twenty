@@ -42,6 +42,7 @@
     "@nivo/line": "^0.87.0",
     "@react-pdf/renderer": "^4.1.6",
     "@scalar/api-reference-react": "^0.4.36",
+    "@tanstack/react-query": "^5.81.5",
     "@tiptap/core": "^2.10.4",
     "@tiptap/extension-document": "^2.10.4",
     "@tiptap/extension-hard-break": "^2.10.4",
