@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { CoreMessage, generateObject, generateText } from 'ai';
+import { CoreMessage, generateObject, generateText, streamText } from 'ai';
 import { Repository } from 'typeorm';
 
 import {
@@ -97,18 +97,17 @@ export class AgentExecutionService {
     }
   }
 
-  async getChatResponse({
-    agentId,
-    userMessage,
+  async prepareAIRequestConfig({
     messages,
+    prompt,
+    system,
+    agent,
   }: {
-    agentId: string;
-    userMessage: string;
-    messages: AgentChatMessageEntity[];
-  }): Promise<string> {
-    const agent = await this.agentRepository.findOneOrFail({
-      where: { id: agentId },
-    });
+    system: string;
+    agent: AgentEntity;
+    prompt?: string;
+    messages?: CoreMessage[];
+  }) {
     const aiModel = getAIModelById(agent.modelId);
 
     if (!aiModel) {
@@ -121,6 +120,34 @@ export class AgentExecutionService {
 
     await this.validateApiKey(provider);
 
+    const tools = await this.agentToolService.generateToolsForAgent(
+      agent.id,
+      agent.workspaceId,
+    );
+
+    return {
+      system,
+      tools,
+      model: this.getModel(agent.modelId, aiModel.provider),
+      ...(messages && { messages }),
+      ...(prompt && { prompt }),
+      maxSteps: AGENT_CONFIG.MAX_STEPS,
+    };
+  }
+
+  async streamChatResponse({
+    agentId,
+    userMessage,
+    messages,
+  }: {
+    agentId: string;
+    userMessage: string;
+    messages: AgentChatMessageEntity[];
+  }) {
+    const agent = await this.agentRepository.findOneOrFail({
+      where: { id: agentId },
+    });
+
     const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
       role,
       content,
@@ -131,18 +158,45 @@ export class AgentExecutionService {
       content: userMessage,
     });
 
-    const tools = await this.agentToolService.generateToolsForAgent(
-      agent.id,
-      agent.workspaceId,
-    );
-
-    const textResponse = await generateText({
+    const aiRequestConfig = await this.prepareAIRequestConfig({
       system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
-      tools,
-      model: this.getModel(agent.modelId, provider),
+      agent,
       messages: llmMessages,
-      maxSteps: AGENT_CONFIG.MAX_STEPS,
     });
+
+    return streamText(aiRequestConfig);
+  }
+
+  async getChatResponse({
+    agentId,
+    userMessage,
+    messages,
+  }: {
+    agentId: string;
+    userMessage: string;
+    messages: AgentChatMessageEntity[];
+  }): Promise<string> {
+    const agent = await this.agentRepository.findOneOrFail({
+      where: { id: agentId },
+    });
+
+    const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
+      role,
+      content,
+    }));
+
+    llmMessages.push({
+      role: AgentChatMessageRole.USER,
+      content: userMessage,
+    });
+
+    const aiRequestConfig = await this.prepareAIRequestConfig({
+      system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+      messages: llmMessages,
+      agent,
+    });
+
+    const textResponse = await generateText(aiRequestConfig);
 
     return textResponse.text;
   }
@@ -157,28 +211,12 @@ export class AgentExecutionService {
     schema: OutputSchema;
   }): Promise<AgentExecutionResult> {
     try {
-      const aiModel = getAIModelById(agent.modelId);
-
-      if (!aiModel) {
-        throw new AgentException(
-          `AI model with id ${agent.modelId} not found`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-      const provider = aiModel.provider;
-
-      await this.validateApiKey(provider);
-      const tools = await this.agentToolService.generateToolsForAgent(
-        agent.id,
-        agent.workspaceId,
-      );
-      const textResponse = await generateText({
-        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
-        model: this.getModel(agent.modelId, provider),
+      const aiRequestConfig = await this.prepareAIRequestConfig({
+        system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+        agent,
         prompt: resolveInput(agent.prompt, context) as string,
-        tools,
-        maxSteps: AGENT_CONFIG.MAX_STEPS,
       });
+      const textResponse = await generateText(aiRequestConfig);
 
       if (Object.keys(schema).length === 0) {
         return {
@@ -188,7 +226,7 @@ export class AgentExecutionService {
       }
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
-        model: this.getModel(agent.modelId, provider),
+        model: aiRequestConfig.model,
         prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${textResponse.text}
