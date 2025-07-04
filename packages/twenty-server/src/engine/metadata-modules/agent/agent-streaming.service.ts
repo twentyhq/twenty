@@ -6,8 +6,8 @@ import { Response } from 'express';
 import { Repository } from 'typeorm';
 
 import {
-    AIModelConfig,
-    ModelProvider,
+  AIModelConfig,
+  ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
@@ -51,7 +51,7 @@ export class AgentStreamingService {
     threadId,
     userMessage,
     res,
-  }: StreamAgentChatOptions): Promise<StreamAgentChatResult> {
+  }: StreamAgentChatOptions) {
     try {
       const thread = await this.threadRepository.findOneOrFail({
         where: { id: threadId },
@@ -64,16 +64,21 @@ export class AgentStreamingService {
         content: userMessage,
       });
 
-      const aiContext = this.prepareAIContext(thread, userMessage);
-
       this.setupStreamingHeaders(res);
 
-      const tools = await this.agentToolService.generateToolsForAgent(
-        thread.agent.id,
-        thread.agent.workspaceId,
-      );
+      const { textStream } =
+        await this.agentExecutionService.streamChatResponse({
+          agentId: thread.agent.id,
+          userMessage,
+          messages: thread.messages,
+        });
 
-      const aiResponse = await this.streamAIResponse(aiContext, tools, res);
+      let aiResponse = '';
+
+      for await (const chunk of textStream) {
+        aiResponse += chunk;
+        res.write(chunk);
+      }
 
       await this.agentChatService.addMessage({
         threadId,
@@ -81,7 +86,7 @@ export class AgentStreamingService {
         content: aiResponse,
       });
 
-      return { success: true, aiResponse };
+      res.end();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
