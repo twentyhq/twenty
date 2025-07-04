@@ -149,7 +149,6 @@ export class WorkflowExecutorWorkspaceService {
           id: step.id,
           output: billingOutput,
         },
-        context,
         stepStatus: StepStatus.FAILED,
       });
 
@@ -202,7 +201,6 @@ export class WorkflowExecutorWorkspaceService {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput,
-        context,
         workspaceId,
         stepStatus: StepStatus.PENDING,
       });
@@ -217,17 +215,9 @@ export class WorkflowExecutorWorkspaceService {
       step.settings.errorHandlingOptions.continueOnFailure.value;
 
     if (shouldContinue) {
-      const updatedContext = isDefined(actionOutput.result)
-        ? {
-            ...context,
-            [step.id]: actionOutput.result,
-          }
-        : context;
-
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput,
-        context: updatedContext,
         workspaceId,
         stepStatus: isDefined(actionOutput.result)
           ? StepStatus.SUCCESS
@@ -268,7 +258,6 @@ export class WorkflowExecutorWorkspaceService {
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workflowRunId,
       stepOutput,
-      context,
       workspaceId,
       stepStatus: StepStatus.FAILED,
     });

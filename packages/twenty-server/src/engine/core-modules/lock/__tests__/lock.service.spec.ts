@@ -45,9 +45,7 @@ describe('LockService', () => {
 
     const ttl = 100;
 
-    const result = await service.withLock(fn, {
-      workspaceId: 'workspaceId',
-      recordId: 'recordId',
+    const result = await service.withLock(fn, 'key', {
       ttl,
     });
 

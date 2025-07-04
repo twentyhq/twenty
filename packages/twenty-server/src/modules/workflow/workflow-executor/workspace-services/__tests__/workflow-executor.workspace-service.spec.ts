@@ -125,8 +125,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-2'],
-        steps: mockSteps,
-        context: mockContext,
       });
 
       expect(result).toEqual({
@@ -146,8 +144,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: mockSteps,
-        context: mockContext,
       });
 
       // execute first step
@@ -157,8 +153,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: mockSteps,
-        context: mockContext,
+
         attemptCount: 1,
       });
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -219,8 +214,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: mockSteps,
-        context: mockContext,
       });
 
       expect(result).toEqual({
@@ -251,7 +244,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
             error: 'Step execution failed',
           },
         },
-        context: mockContext,
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.FAILED,
       });
@@ -267,8 +259,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: mockSteps,
-        context: mockContext,
       });
 
       expect(result).toEqual(mockPendingEvent);
@@ -337,8 +327,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: stepsWithContinueOnFailure,
-        context: mockContext,
       });
 
       expect(
@@ -401,8 +389,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: stepsWithRetryOnFailure,
-        context: mockContext,
       });
 
       // Should call execute again with increased attemptCount
@@ -438,9 +424,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: stepsWithRetryOnFailure,
-        context: mockContext,
-        attemptCount: 3, // MAX_RETRIES_ON_FAILURE is 3
       });
 
       // Should not retry anymore
@@ -481,8 +464,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       const result = await service.execute({
         workflowRunId: mockWorkflowRunId,
         stepIdsToExecute: ['step-1'],
-        steps: mockSteps,
-        context: mockContext,
       });
 
       expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);

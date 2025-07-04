@@ -108,17 +108,6 @@ export class RunWorkflowJob {
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
-      output: {
-        flow: {
-          trigger: workflowVersion.trigger,
-          steps: workflowVersion.steps,
-        },
-        stepsOutput: {
-          trigger: {
-            result: triggerPayload,
-          },
-        },
-      },
       payload: triggerPayload,
     });
 
