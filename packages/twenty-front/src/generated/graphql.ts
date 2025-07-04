@@ -574,10 +574,6 @@ export type DateFilter = {
   neq?: InputMaybe<Scalars['Date']>;
 };
 
-export type DeleteApiKeyDto = {
-  id: Scalars['String'];
-};
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String'];
 };
@@ -1009,7 +1005,6 @@ export type Mutation = {
   createWebhook: Webhook;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
-  deleteApiKey: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
@@ -1182,11 +1177,6 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
-};
-
-
-export type MutationDeleteApiKeyArgs = {
-  input: DeleteApiKeyDto;
 };
 
 

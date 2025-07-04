@@ -8,8 +8,8 @@ describe('apiKeysResolver (e2e)', () => {
     if (createdApiKeyId) {
       await makeMetadataAPIRequest({
         query: gql`
-          mutation DeleteApiKey($input: DeleteApiKeyDTO!) {
-            deleteApiKey(input: $input)
+          mutation RevokeApiKey($input: RevokeApiKeyDTO!) {
+            revokeApiKey(input: $input)
           }
         `,
         variables: {
@@ -275,68 +275,6 @@ describe('apiKeysResolver (e2e)', () => {
       expect(revokedApiKey.name).toBe(createdApiKey.name);
       expect(revokedApiKey.expiresAt).toBe(createdApiKey.expiresAt);
       expect(revokedApiKey.revokedAt).not.toBeNull();
-    });
-  });
-
-  describe('deleteApiKey mutation', () => {
-    it('should delete an API key successfully', async () => {
-      const createResponse = await makeMetadataAPIRequest({
-        query: gql`
-          mutation CreateApiKey($input: CreateApiKeyDTO!) {
-            createApiKey(input: $input) {
-              id
-              name
-              expiresAt
-              revokedAt
-            }
-          }
-        `,
-        variables: {
-          input: {
-            name: 'Test API Key',
-            expiresAt: '2025-12-31T23:59:59Z',
-          },
-        },
-      });
-
-      const createdApiKey = createResponse.body.data.createApiKey;
-
-      const deleteResponse = await makeMetadataAPIRequest({
-        query: gql`
-          mutation DeleteApiKey($input: DeleteApiKeyDTO!) {
-            deleteApiKey(input: $input)
-          }
-        `,
-        variables: {
-          input: { id: createdApiKey.id },
-        },
-      });
-
-      expect(deleteResponse.status).toBe(200);
-      expect(deleteResponse.body.data).toBeDefined();
-      expect(deleteResponse.body.errors).toBeUndefined();
-
-      const queryResponse = await makeMetadataAPIRequest({
-        query: gql`
-          query GetApiKey($input: GetApiKeyDTO!) {
-            apiKey(input: $input) {
-              id
-              name
-              expiresAt
-              revokedAt
-            }
-          }
-        `,
-        variables: {
-          input: { id: createdApiKey.id },
-        },
-      });
-
-      expect(queryResponse.status).toBe(200);
-      expect(queryResponse.body.errors).toBeDefined();
-      expect(queryResponse.body.errors.length).toBeGreaterThan(0);
-
-      createdApiKeyId = undefined;
     });
   });
 });

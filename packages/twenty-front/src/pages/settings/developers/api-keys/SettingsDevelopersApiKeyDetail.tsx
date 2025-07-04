@@ -23,9 +23,9 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   useCreateApiKeyMutation,
-  useDeleteApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetApiKeyQuery,
+  useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -68,7 +68,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const [createApiKey] = useCreateApiKeyMutation();
-  const [deleteApiKey] = useDeleteApiKeyMutation();
+  const [revokeApiKey] = useRevokeApiKeyMutation();
   const { data: apiKeyData } = useGetApiKeyQuery({
     variables: {
       input: {
@@ -88,7 +88,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     setIsLoading(true);
 
     try {
-      await deleteApiKey({
+      await revokeApiKey({
         variables: {
           input: {
             id: apiKeyId,

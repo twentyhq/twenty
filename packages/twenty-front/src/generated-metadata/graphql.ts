@@ -610,10 +610,6 @@ export type DateFilter = {
   neq?: InputMaybe<Scalars['Date']>;
 };
 
-export type DeleteApiKeyDto = {
-  id: Scalars['String'];
-};
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String'];
 };
@@ -1053,7 +1049,6 @@ export type Mutation = {
   createWebhook: Webhook;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
-  deleteApiKey: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
@@ -1246,11 +1241,6 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
-};
-
-
-export type MutationDeleteApiKeyArgs = {
-  input: DeleteApiKeyDto;
 };
 
 
@@ -3336,13 +3326,6 @@ export type CreateWebhookMutationVariables = Exact<{
 
 
 export type CreateWebhookMutation = { __typename?: 'Mutation', createWebhook: { __typename?: 'Webhook', id: any, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
-
-export type DeleteApiKeyMutationVariables = Exact<{
-  input: DeleteApiKeyDto;
-}>;
-
-
-export type DeleteApiKeyMutation = { __typename?: 'Mutation', deleteApiKey: boolean };
 
 export type DeleteWebhookMutationVariables = Exact<{
   input: DeleteWebhookDto;
@@ -6531,37 +6514,6 @@ export function useCreateWebhookMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateWebhookMutationHookResult = ReturnType<typeof useCreateWebhookMutation>;
 export type CreateWebhookMutationResult = Apollo.MutationResult<CreateWebhookMutation>;
 export type CreateWebhookMutationOptions = Apollo.BaseMutationOptions<CreateWebhookMutation, CreateWebhookMutationVariables>;
-export const DeleteApiKeyDocument = gql`
-    mutation DeleteApiKey($input: DeleteApiKeyDTO!) {
-  deleteApiKey(input: $input)
-}
-    `;
-export type DeleteApiKeyMutationFn = Apollo.MutationFunction<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>;
-
-/**
- * __useDeleteApiKeyMutation__
- *
- * To run a mutation, you first call `useDeleteApiKeyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteApiKeyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteApiKeyMutation, { data, loading, error }] = useDeleteApiKeyMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteApiKeyMutation(baseOptions?: Apollo.MutationHookOptions<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>(DeleteApiKeyDocument, options);
-      }
-export type DeleteApiKeyMutationHookResult = ReturnType<typeof useDeleteApiKeyMutation>;
-export type DeleteApiKeyMutationResult = Apollo.MutationResult<DeleteApiKeyMutation>;
-export type DeleteApiKeyMutationOptions = Apollo.BaseMutationOptions<DeleteApiKeyMutation, DeleteApiKeyMutationVariables>;
 export const DeleteWebhookDocument = gql`
     mutation DeleteWebhook($input: DeleteWebhookDTO!) {
   deleteWebhook(input: $input)

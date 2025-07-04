@@ -218,36 +218,6 @@ describe('ApiKeyService', () => {
     });
   });
 
-  describe('delete', () => {
-    it('should soft delete an API key', async () => {
-      mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
-      mockApiKeyRepository.softDelete.mockResolvedValue({ affected: 1 });
-
-      const result = await service.delete(mockApiKeyId, mockWorkspaceId);
-
-      expect(mockApiKeyRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id: mockApiKeyId,
-          workspaceId: mockWorkspaceId,
-          deletedAt: IsNull(),
-        },
-      });
-      expect(mockApiKeyRepository.softDelete).toHaveBeenCalledWith(
-        mockApiKeyId,
-      );
-      expect(result).toEqual(mockApiKey);
-    });
-
-    it('should return null if API key to delete does not exist', async () => {
-      mockApiKeyRepository.findOne.mockResolvedValue(null);
-
-      const result = await service.delete('non-existent', mockWorkspaceId);
-
-      expect(mockApiKeyRepository.softDelete).not.toHaveBeenCalled();
-      expect(result).toBeNull();
-    });
-  });
-
   describe('validateApiKey', () => {
     it('should validate an active API key', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
