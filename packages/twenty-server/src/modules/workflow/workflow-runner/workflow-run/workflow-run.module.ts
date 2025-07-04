@@ -8,6 +8,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { LockModule } from 'src/engine/core-modules/lock/lock.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     RecordPositionModule,
     MetricsModule,
+    LockModule,
   ],
   providers: [WorkflowRunWorkspaceService, ScopedWorkspaceContextFactory],
   exports: [WorkflowRunWorkspaceService],

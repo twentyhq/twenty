@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { LockService } from 'src/engine/core-modules/lock/lock.service';
 
 @Module({
-  imports: [WorkspaceCacheStorageModule],
+  imports: [],
+  providers: [LockService],
+  exports: [LockService],
 })
 export class LockModule {}

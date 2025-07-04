@@ -30,6 +30,7 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { LockService } from 'src/engine/core-modules/lock/lock.service';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -42,6 +43,7 @@ export class WorkflowRunWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly lockService: LockService,
   ) {}
 
   async createWorkflowRun({
@@ -133,7 +135,19 @@ export class WorkflowRunWorkspaceService {
     return workflowRun.id;
   }
 
-  async startWorkflowRun({
+  async startWorkflowRun(params: {
+    workflowRunId: string;
+    workspaceId: string;
+    output: WorkflowRunOutput;
+    payload: object;
+  }) {
+    await this.lockService.withLock(
+      async () => await this.startWorkflowRunWithoutLock(params),
+      params.workflowRunId,
+    );
+  }
+
+  private async startWorkflowRunWithoutLock({
     workflowRunId,
     workspaceId,
     output,
@@ -197,7 +211,19 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async endWorkflowRun({
+  async endWorkflowRun(params: {
+    workflowRunId: string;
+    workspaceId: string;
+    status: WorkflowRunStatus;
+    error?: string;
+  }) {
+    await this.lockService.withLock(
+      async () => await this.endWorkflowRunWithoutLock(params),
+      params.workflowRunId,
+    );
+  }
+
+  private async endWorkflowRunWithoutLock({
     workflowRunId,
     workspaceId,
     status,
@@ -255,7 +281,19 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async updateWorkflowRunStepStatus({
+  async updateWorkflowRunStepStatus(params: {
+    workflowRunId: string;
+    stepId: string;
+    workspaceId: string;
+    stepStatus: StepStatus;
+  }) {
+    await this.lockService.withLock(
+      async () => await this.updateWorkflowRunStepStatusWithoutLock(params),
+      params.workflowRunId,
+    );
+  }
+
+  private async updateWorkflowRunStepStatusWithoutLock({
     workflowRunId,
     workspaceId,
     stepId,
@@ -305,7 +343,21 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async saveWorkflowRunState({
+  async saveWorkflowRunState(params: {
+    workflowRunId: string;
+    stepOutput: StepOutput;
+    workspaceId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context: Record<string, any>;
+    stepStatus: StepStatus;
+  }) {
+    await this.lockService.withLock(
+      async () => await this.saveWorkflowRunStateWithoutLock(params),
+      params.workflowRunId,
+    );
+  }
+
+  private async saveWorkflowRunStateWithoutLock({
     workflowRunId,
     stepOutput,
     workspaceId,
@@ -371,7 +423,18 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async updateWorkflowRunStep({
+  async updateWorkflowRunStep(params: {
+    workflowRunId: string;
+    step: WorkflowAction;
+    workspaceId: string;
+  }) {
+    await this.lockService.withLock(
+      async () => await this.updateWorkflowRunStepWithoutLock(params),
+      params.workflowRunId,
+    );
+  }
+
+  private async updateWorkflowRunStepWithoutLock({
     workflowRunId,
     step,
     workspaceId,
