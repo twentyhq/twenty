@@ -26,7 +26,6 @@ describe('ApiKeyService', () => {
     workspaceId: mockWorkspaceId,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-    deletedAt: undefined,
     workspace: {} as any,
   };
 
@@ -110,7 +109,6 @@ describe('ApiKeyService', () => {
         where: {
           id: mockApiKeyId,
           workspaceId: mockWorkspaceId,
-          deletedAt: IsNull(),
         },
       });
       expect(result).toEqual(mockApiKey);
@@ -136,7 +134,6 @@ describe('ApiKeyService', () => {
       expect(mockApiKeyRepository.find).toHaveBeenCalledWith({
         where: {
           workspaceId: mockWorkspaceId,
-          deletedAt: IsNull(),
         },
       });
       expect(result).toEqual(mockApiKeys);

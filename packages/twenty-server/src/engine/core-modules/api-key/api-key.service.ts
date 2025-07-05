@@ -27,7 +27,6 @@ export class ApiKeyService {
       where: {
         id,
         workspaceId,
-        deletedAt: IsNull(),
       },
     });
   }
@@ -36,7 +35,6 @@ export class ApiKeyService {
     return await this.apiKeyRepository.find({
       where: {
         workspaceId,
-        deletedAt: IsNull(),
       },
     });
   }

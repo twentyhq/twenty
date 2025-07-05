@@ -4,7 +4,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -48,10 +47,6 @@ export class ApiKey {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @Field(() => Date, { nullable: true })
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date;
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, (workspace) => workspace.apiKeys, {
