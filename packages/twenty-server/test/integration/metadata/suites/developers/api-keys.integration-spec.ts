@@ -6,16 +6,9 @@ describe('apiKeysResolver (e2e)', () => {
 
   afterEach(async () => {
     if (createdApiKeyId) {
-      await makeMetadataAPIRequest({
-        query: gql`
-          mutation DeleteApiKey($input: DeleteApiKeyDTO!) {
-            deleteApiKey(input: $input)
-          }
-        `,
-        variables: {
-          input: { id: createdApiKeyId },
-        },
-      }).catch(() => {});
+      await testDataSource
+        .query('DELETE FROM core."apiKey" WHERE id = $1', [createdApiKeyId])
+        .catch(() => {});
       createdApiKeyId = undefined;
     }
   });

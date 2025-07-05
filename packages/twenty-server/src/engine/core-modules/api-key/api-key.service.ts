@@ -72,18 +72,6 @@ export class ApiKeyService {
     });
   }
 
-  async delete(id: string, workspaceId: string): Promise<ApiKey | null> {
-    const apiKey = await this.findById(id, workspaceId);
-
-    if (!apiKey) {
-      return null;
-    }
-
-    await this.apiKeyRepository.softDelete(id);
-
-    return apiKey;
-  }
-
   async validateApiKey(id: string, workspaceId: string): Promise<ApiKey> {
     const apiKey = await this.findById(id, workspaceId);
 
