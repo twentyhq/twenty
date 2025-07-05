@@ -344,16 +344,6 @@ describe('ApiKeyService', () => {
 
         expect(result).toBe(false);
       });
-
-      it('should return false for API key without expiration', () => {
-        const apiKeyWithoutExpiration = {
-          ...mockApiKey,
-          expiresAt: undefined,
-        } as any;
-        const result = service.isExpired(apiKeyWithoutExpiration);
-
-        expect(result).toBe(false);
-      });
     });
 
     describe('isRevoked', () => {

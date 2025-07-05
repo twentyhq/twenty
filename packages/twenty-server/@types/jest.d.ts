@@ -11,7 +11,7 @@ declare module '@jest/types' {
       MEMBER_ACCESS_TOKEN: string;
       GUEST_ACCESS_TOKEN: string;
       API_KEY_ACCESS_TOKEN: string;
-      testDataSource: DataSource;
+      testDataSource?: DataSource;
     }
   }
 }

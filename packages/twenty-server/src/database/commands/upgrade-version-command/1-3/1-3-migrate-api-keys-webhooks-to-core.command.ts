@@ -118,13 +118,14 @@ export class MigrateApiKeysWebhooksToCoreCommand extends ActiveOrSuspendedWorksp
         id: workspaceApiKey.id,
         name: workspaceApiKey.name,
         expiresAt: workspaceApiKey.expiresAt,
-        revokedAt: workspaceApiKey.revokedAt,
+        revokedAt: workspaceApiKey.revokedAt
+          ? new Date(workspaceApiKey.revokedAt)
+          : workspaceApiKey.deletedAt
+            ? new Date(workspaceApiKey.deletedAt)
+            : undefined,
         workspaceId,
         createdAt: new Date(workspaceApiKey.createdAt),
         updatedAt: new Date(workspaceApiKey.updatedAt),
-        deletedAt: workspaceApiKey.deletedAt
-          ? new Date(workspaceApiKey.deletedAt)
-          : undefined,
       });
 
       const deletedStatus = workspaceApiKey.deletedAt ? ' (DELETED)' : '';

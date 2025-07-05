@@ -95,7 +95,7 @@ export class ApiKeyService {
       );
     }
 
-    if (apiKey.expiresAt && new Date() > apiKey.expiresAt) {
+    if (new Date() > apiKey.expiresAt) {
       throw new ApiKeyException(
         'This API Key has expired',
         ApiKeyExceptionCode.API_KEY_EXPIRED,
@@ -152,7 +152,7 @@ export class ApiKeyService {
   }
 
   isExpired(apiKey: ApiKey): boolean {
-    return apiKey.expiresAt ? new Date() > apiKey.expiresAt : false;
+    return new Date() > apiKey.expiresAt;
   }
 
   isRevoked(apiKey: ApiKey): boolean {

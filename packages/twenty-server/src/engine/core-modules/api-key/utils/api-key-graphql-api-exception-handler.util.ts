@@ -1,11 +1,11 @@
 import {
-    ApiKeyException,
-    ApiKeyExceptionCode,
+  ApiKeyException,
+  ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import {
-    ForbiddenError,
-    NotFoundError,
-    UserInputError,
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
