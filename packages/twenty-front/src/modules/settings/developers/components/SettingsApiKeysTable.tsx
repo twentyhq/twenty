@@ -1,9 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { formatExpirations } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -12,6 +7,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
@@ -33,10 +29,9 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 export const SettingsApiKeysTable = () => {
-  const { records: apiKeys } = useFindManyRecords<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-    filter: { revokedAt: { is: 'NULL' } },
-  });
+  const { data: apiKeysData } = useGetApiKeysQuery();
+
+  const apiKeys = apiKeysData?.apiKeys;
 
   return (
     <Table>
@@ -49,14 +44,14 @@ export const SettingsApiKeysTable = () => {
         </TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
-      {!!apiKeys.length && (
+      {!!apiKeys?.length && (
         <StyledTableBody>
-          {formatExpirations(apiKeys).map((fieldItem) => (
+          {apiKeys.map((apiKey) => (
             <SettingsApiKeysFieldItemTableRow
-              key={fieldItem.id}
-              fieldItem={fieldItem as ApiFieldItem}
+              key={apiKey.id}
+              apiKey={apiKey}
               to={getSettingsPath(SettingsPath.ApiKeyDetail, {
-                apiKeyId: fieldItem.id,
+                apiKeyId: apiKey.id,
               })}
             />
           ))}

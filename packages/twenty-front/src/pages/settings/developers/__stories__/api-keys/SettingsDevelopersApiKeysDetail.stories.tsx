@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, userEvent, within } from '@storybook/test';
-import { HttpResponse, graphql } from 'msw';
 
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import {
@@ -21,26 +20,7 @@ const meta: Meta<PageDecoratorArgs> = {
     },
   },
   parameters: {
-    msw: {
-      handlers: [
-        ...graphqlMocks.handlers,
-        graphql.query('FindOneApiKey', () => {
-          return HttpResponse.json({
-            data: {
-              apiKey: {
-                __typename: 'ApiKey',
-                id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
-                revokedAt: null,
-                expiresAt: '2024-03-10T09:23:10.511Z',
-                name: 'sfsfdsf',
-                updatedAt: '2024-02-24T10:23:10.673Z',
-                createdAt: '2024-02-24T10:23:10.673Z',
-              },
-            },
-          });
-        }),
-      ],
-    },
+    msw: graphqlMocks,
   },
 };
 export default meta;
@@ -50,14 +30,14 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
+    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
   },
 };
 
 export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
-    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
+    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
@@ -85,7 +65,7 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
+    await canvas.findByText('Zapier Integration', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Delete'));
 

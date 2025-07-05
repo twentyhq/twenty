@@ -49,6 +49,7 @@ export class StandardFieldFactory {
           isGatedAndNotEnabled(
             workspaceEntityMetadataArgs.gate,
             context.featureFlags,
+            'database',
           )
         ) {
           return acc;

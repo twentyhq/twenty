@@ -1,11 +1,11 @@
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 type BuildCreatedByFromApiKeyArgs = {
-  apiKey: ApiKeyWorkspaceEntity;
+  apiKey: ApiKey;
 };
 export const buildCreatedByFromApiKey = ({
   apiKey,
