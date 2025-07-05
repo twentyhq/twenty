@@ -4,9 +4,8 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceGateOptions {
   featureFlag: string;
-  excludeFromDatabase?: boolean; // default: true (current behavior)
-  excludeFromGraphQL?: boolean; // default: true (current behavior)
-  excludeFromORM?: boolean; // default: true (current behavior)
+  excludeFromDatabase?: boolean;
+  excludeFromGraphQL?: boolean;
 }
 
 export function WorkspaceGate(options: WorkspaceGateOptions) {
@@ -19,12 +18,10 @@ export function WorkspaceGate(options: WorkspaceGateOptions) {
     );
   }
 
-  // Default to excluding from everything for backwards compatibility
   const gateOptions = {
     featureFlag: options.featureFlag,
     excludeFromDatabase: options.excludeFromDatabase ?? true,
     excludeFromGraphQL: options.excludeFromGraphQL ?? true,
-    excludeFromORM: options.excludeFromORM ?? true,
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

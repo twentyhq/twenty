@@ -1,6 +1,6 @@
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
-export type GateContext = 'database' | 'graphql' | 'orm';
+export type GateContext = 'database' | 'graphql';
 
 export const isGatedAndNotEnabled = (
   gate: Gate | undefined,
@@ -22,11 +22,6 @@ export const isGatedAndNotEnabled = (
     case 'graphql':
       if (gate.excludeFromGraphQL === false) {
         return false; // Not gated for GraphQL
-      }
-      break;
-    case 'orm':
-      if (gate.excludeFromORM === false) {
-        return false; // Not gated for ORM
       }
       break;
   }
