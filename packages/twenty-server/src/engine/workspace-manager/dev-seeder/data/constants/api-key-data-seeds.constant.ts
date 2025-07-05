@@ -18,6 +18,8 @@ export const API_KEY_DATA_SEEDS: ApiKeyDataSeed[] = [
   {
     id: API_KEY_DATA_SEED_IDS.ID_1,
     name: 'My api key',
-    expiresAt: new Date('2025-12-31T23:59:59Z'), // Use Z format directly
+    expiresAt: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 100, // 100 years from now
+    ),
   },
 ];

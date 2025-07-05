@@ -28,5 +28,4 @@ declare global {
   const testDataSource: DataSource;
 }
 
-export { };
-
+export {};
