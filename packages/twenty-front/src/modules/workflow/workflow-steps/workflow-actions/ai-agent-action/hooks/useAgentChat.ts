@@ -1,7 +1,7 @@
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -36,24 +36,25 @@ export const useAgentChat = (agentId: string) => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
 
-  const { data: threads = [], isLoading: threadsLoading } =
-    useAgentChatThreads(agentId);
-  const currentThreadId = threads[0]?.id;
-
-  const {
-    data: messages = [],
-    isLoading: messagesLoading,
-    refetch: refetchMessages,
-  } = useAgentChatMessages(currentThreadId);
-
-  const isLoading = messagesLoading || threadsLoading || isStreaming;
-
   const scrollToBottom = useCallback(() => {
     scrollWrapperHTMLElement?.scroll({
       top: scrollWrapperHTMLElement.scrollHeight,
       behavior: 'smooth',
     });
   }, [scrollWrapperHTMLElement]);
+
+  const { data: threads = [], isLoading: threadsLoading } =
+    useAgentChatThreads(agentId);
+  const currentThreadId = threads[0]?.id;
+
+  const { isLoading: messagesLoading, refetch: refetchMessages } =
+    useAgentChatMessages(currentThreadId, (data) => {
+      setAgentChatMessages(data);
+      scrollToBottom();
+      setAiStreamingMessage('');
+    });
+
+  const isLoading = messagesLoading || threadsLoading || isStreaming;
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -128,14 +129,6 @@ export const useAgentChat = (agentId: string) => {
     InputHotkeyScope.TextInput,
     [agentChatInput, isLoading],
   );
-
-  useEffect(() => {
-    if (messages.length > 0) {
-      setAgentChatMessages(messages);
-      scrollToBottom();
-    }
-    setAiStreamingMessage('');
-  }, [messages, setAgentChatMessages, scrollToBottom, setAiStreamingMessage]);
 
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),
