@@ -23,11 +23,13 @@ import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/comm
 import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
+import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 
 const execPromise = promisify(exec);
 
@@ -141,6 +143,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.1 Commands
     protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
+
+    // 1.2 Commands
+    protected readonly migrateWorkflowRunStatesCommand: MigrateWorkflowRunStatesCommand,
+    protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
   ) {
     super(
       workspaceRepository,
@@ -189,6 +195,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_120: VersionCommands = {
+      beforeSyncMetadata: [this.addEnqueuedStatusToWorkflowRunCommand],
+      afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -196,6 +207,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '0.60.0': commands_060,
       '1.0.0': commands_100,
       '1.1.0': commands_110,
+      '1.2.0': commands_120,
     };
   }
 

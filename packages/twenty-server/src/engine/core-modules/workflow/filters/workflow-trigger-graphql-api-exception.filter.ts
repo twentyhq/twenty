@@ -19,9 +19,17 @@ export const handleWorkflowTriggerException = (
     case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
     case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS:
     case WorkflowTriggerExceptionCode.FORBIDDEN:
-      throw new UserInputError(exception.message);
+      throw new UserInputError(exception.message, {
+        extensions: {
+          userFriendlyMessage: exception.userFriendlyMessage,
+        },
+      });
     case WorkflowTriggerExceptionCode.NOT_FOUND:
-      throw new NotFoundError(exception.message);
+      throw new NotFoundError(exception.message, {
+        extensions: {
+          userFriendlyMessage: exception.userFriendlyMessage,
+        },
+      });
     case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
       throw exception;
     default: {

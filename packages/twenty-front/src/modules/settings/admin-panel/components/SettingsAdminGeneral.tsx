@@ -1,7 +1,6 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -12,7 +11,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
+import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
@@ -40,7 +39,7 @@ const StyledContainer = styled.div`
 
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
@@ -76,8 +75,8 @@ export const SettingsAdminGeneral = () => {
       },
       onError: (error) => {
         setIsUserLookupLoading(false);
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error,
         });
       },
     });

@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -8,6 +10,9 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
+import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
@@ -39,6 +44,8 @@ export class TypeDefinitionsGenerator {
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
     private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
     private readonly extendObjectTypeDefinitionV2Factory: ExtendObjectTypeDefinitionV2Factory,
+    private readonly relationConnectInputTypeDefinitionFactory: RelationConnectInputTypeDefinitionFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async generate(
@@ -49,6 +56,8 @@ export class TypeDefinitionsGenerator {
     await this.generateCompositeTypeDefs(options);
     // Generate metadata objects
     await this.generateMetadataTypeDefs(objectMetadataCollection, options);
+
+    this.generateRelationConnectInputTypeDefs(objectMetadataCollection);
   }
 
   /**
@@ -96,10 +105,10 @@ export class TypeDefinitionsGenerator {
   }
 
   private generateCompositeInputTypeDefs(
-    compisteTypes: CompositeType[],
+    compositeTypes: CompositeType[],
     options: WorkspaceBuildSchemaOptions,
   ) {
-    const inputTypeDefs = compisteTypes
+    const inputTypeDefs = compositeTypes
       .map((compositeType) => {
         const optionalExtendedObjectMetadata = {
           ...compositeType,
@@ -159,7 +168,7 @@ export class TypeDefinitionsGenerator {
     this.generateEnumTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
+    await this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
     await this.generateExtendedObjectTypeDefs(
       dynamicObjectMetadataCollection,
       options,
@@ -200,10 +209,17 @@ export class TypeDefinitionsGenerator {
     this.typeDefinitionsStorage.addObjectTypes(connectionTypeDefs);
   }
 
-  private generateInputTypeDefs(
+  private async generateInputTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
+    const isRelationConnectEnabled = isDefined(options.workspaceId)
+      ? await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_RELATION_CONNECT_ENABLED,
+          options.workspaceId,
+        )
+      : false;
+
     const inputTypeDefs = objectMetadataCollection
       .map((objectMetadata) => {
         const optionalExtendedObjectMetadata = {
@@ -216,29 +232,31 @@ export class TypeDefinitionsGenerator {
 
         return [
           // Input type for create
-          this.inputTypeDefinitionFactory.create(
+          this.inputTypeDefinitionFactory.create({
             objectMetadata,
-            InputTypeDefinitionKind.Create,
+            kind: InputTypeDefinitionKind.Create,
             options,
-          ),
+            isRelationConnectEnabled,
+          }),
           // Input type for update
-          this.inputTypeDefinitionFactory.create(
-            optionalExtendedObjectMetadata,
-            InputTypeDefinitionKind.Update,
+          this.inputTypeDefinitionFactory.create({
+            objectMetadata: optionalExtendedObjectMetadata,
+            kind: InputTypeDefinitionKind.Update,
+            isRelationConnectEnabled,
             options,
-          ),
+          }),
           // Filter input type
-          this.inputTypeDefinitionFactory.create(
-            optionalExtendedObjectMetadata,
-            InputTypeDefinitionKind.Filter,
+          this.inputTypeDefinitionFactory.create({
+            objectMetadata: optionalExtendedObjectMetadata,
+            kind: InputTypeDefinitionKind.Filter,
             options,
-          ),
+          }),
           // OrderBy input type
-          this.inputTypeDefinitionFactory.create(
-            optionalExtendedObjectMetadata,
-            InputTypeDefinitionKind.OrderBy,
+          this.inputTypeDefinitionFactory.create({
+            objectMetadata: optionalExtendedObjectMetadata,
+            kind: InputTypeDefinitionKind.OrderBy,
             options,
-          ),
+          }),
         ];
       })
       .flat();
@@ -282,5 +300,17 @@ export class TypeDefinitionsGenerator {
     );
 
     this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+  }
+
+  private generateRelationConnectInputTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+  ) {
+    const relationWhereInputTypeDefs = objectMetadataCollection
+      .map((objectMetadata) =>
+        this.relationConnectInputTypeDefinitionFactory.create(objectMetadata),
+      )
+      .flat();
+
+    this.typeDefinitionsStorage.addInputTypes(relationWhereInputTypeDefs);
   }
 }

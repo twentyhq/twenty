@@ -7,7 +7,7 @@ import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-re
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
@@ -25,13 +25,13 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
     fieldMetadataType,
     resetContent,
   } = useContext(RecordTableColumnAggregateFooterDropdownContext);
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      closeDropdown(dropdownId);
     },
     TableOptionsHotkeyScope.Dropdown,
   );
@@ -106,7 +106,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           onClick={() => {
             updateViewFieldAggregateOperation(null);
             resetContent();
-            closeDropdown();
+            closeDropdown(dropdownId);
           }}
           text={t`None`}
           RightIcon={

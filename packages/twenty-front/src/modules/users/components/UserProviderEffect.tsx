@@ -1,6 +1,7 @@
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
@@ -24,12 +25,13 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
+import {
+  useGetCurrentUserQuery,
+  WorkspaceMember,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const UserProviderEffect = () => {
   const location = useLocation();

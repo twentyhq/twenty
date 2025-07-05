@@ -1,4 +1,4 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useQuery } from '@apollo/client';
 import { FIND_MANY_AVAILABLE_PACKAGES } from '@/settings/serverless-functions/graphql/queries/findManyAvailablePackages';
 import {
@@ -8,7 +8,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useGetAvailablePackages = (input: ServerlessFunctionIdInput) => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloMetadataClient = useApolloCoreClient();
   const { data } = useQuery<
     FindManyAvailablePackagesQuery,
     FindManyAvailablePackagesQueryVariables

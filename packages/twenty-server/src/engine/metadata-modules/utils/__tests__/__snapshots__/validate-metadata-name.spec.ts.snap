@@ -10,7 +10,7 @@ exports[`validateMetadataNameOrThrow throws error when string has spaces 1`] = `
 
 exports[`validateMetadataNameOrThrow throws error when string is a reserved word 1`] = `"The name "role" is not available"`;
 
-exports[`validateMetadataNameOrThrow throws error when string is above 63 characters 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
+exports[`validateMetadataNameOrThrow throws error when string is above 63 characters 1`] = `"Name is too long: it exceeds the 63 characters limit."`;
 
 exports[`validateMetadataNameOrThrow throws error when string is empty 1`] = `"Input is too short: """`;
 

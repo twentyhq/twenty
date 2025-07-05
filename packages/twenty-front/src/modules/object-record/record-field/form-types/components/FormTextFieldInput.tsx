@@ -91,7 +91,7 @@ export const FormTextFieldInput = ({
         ) : null}
       </FormFieldInputRowContainer>
       {hint && <InputHint>{hint}</InputHint>}
-      <InputErrorHelper>{error}</InputErrorHelper>
+      {error && <InputErrorHelper>{error}</InputErrorHelper>}
     </FormFieldInputContainer>
   );
 };

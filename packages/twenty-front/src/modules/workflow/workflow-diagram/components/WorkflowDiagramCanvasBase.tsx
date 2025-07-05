@@ -8,6 +8,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
+import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import {
   WorkflowDiagram,
@@ -131,6 +132,9 @@ export const WorkflowDiagramCanvasBase = ({
 
   const workflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
+  );
+  const workflowDiagramPanOnDrag = useRecoilComponentValueV2(
+    workflowDiagramPanOnDragComponentState,
   );
   const workflowDiagramState = useRecoilComponentCallbackStateV2(
     workflowDiagramComponentState,
@@ -383,6 +387,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
+        panOnDrag={workflowDiagramPanOnDrag}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}

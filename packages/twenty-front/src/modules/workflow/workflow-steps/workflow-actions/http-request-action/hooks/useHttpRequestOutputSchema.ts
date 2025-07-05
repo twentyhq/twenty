@@ -1,5 +1,7 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { convertOutputSchemaToJson } from '../utils/convertOutputSchemaToJson';
 import { getHttpRequestOutputSchema } from '../utils/getHttpRequestOutputSchema';
@@ -30,27 +32,29 @@ export const useHttpRequestOutputSchema = ({
   const [error, setError] = useState<string | undefined>();
 
   const handleOutputSchemaChange = (value: string | null) => {
-    if (value === null || value === '' || readonly === true) {
-      setError(undefined);
+    if (readonly === true) {
       return;
     }
 
     setOutputSchema(value);
 
-    try {
-      const parsedJson = JSON.parse(value);
-      const outputSchema = getHttpRequestOutputSchema(parsedJson);
-      onActionUpdate?.({
-        ...action,
-        settings: {
-          ...action.settings,
-          outputSchema,
-        },
-      });
-      setError(undefined);
-    } catch (error) {
-      setError(String(error));
+    const parsingResult = parseAndValidateVariableFriendlyStringifiedJson(
+      isNonEmptyString(value) ? value : '{}',
+    );
+
+    if (!parsingResult.isValid) {
+      setError(parsingResult.error);
+      return;
     }
+
+    setError(undefined);
+    onActionUpdate?.({
+      ...action,
+      settings: {
+        ...action.settings,
+        outputSchema: getHttpRequestOutputSchema(parsingResult.data),
+      },
+    });
   };
 
   return {

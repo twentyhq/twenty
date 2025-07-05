@@ -1,8 +1,9 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { Tag } from 'twenty-ui/components';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 
 const StyledTag = styled(Tag)`
   width: 100%;
@@ -21,7 +22,10 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   value?: string | number;
   tooltip?: string;
 }) => {
-  const { isDropdownOpen } = useDropdown(dropdownId);
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownId,
+  );
 
   return (
     <StyledHeader id={dropdownId} isUnfolded={isDropdownOpen}>

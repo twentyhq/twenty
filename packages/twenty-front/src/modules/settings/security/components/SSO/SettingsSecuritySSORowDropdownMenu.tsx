@@ -1,12 +1,11 @@
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { UnwrapRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,9 +23,9 @@ export const SettingsSecuritySSORowDropdownMenu = ({
 }: SettingsSecuritySSORowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${SSOIdp.id}`;
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
   const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
@@ -40,9 +39,11 @@ export const SettingsSecuritySSORowDropdownMenu = ({
       identityProviderId,
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error deleting SSO Identity Provider`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error deleting SSO Identity Provider`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
@@ -58,9 +59,11 @@ export const SettingsSecuritySSORowDropdownMenu = ({
           : SsoIdentityProviderStatus.Active,
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar(t`Error editing SSO Identity Provider`, {
-        variant: SnackBarVariant.Error,
-        duration: 2000,
+      enqueueErrorSnackBar({
+        message: t`Error editing SSO Identity Provider`,
+        options: {
+          duration: 2000,
+        },
       });
     }
   };
@@ -81,7 +84,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
               text={SSOIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
               onClick={() => {
                 toggleSSOIdentityProviderStatus(SSOIdp.id);
-                closeDropdown();
+                closeDropdown(dropdownId);
               }}
             />
             <MenuItem
@@ -90,7 +93,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
               text={t`Delete`}
               onClick={() => {
                 handleDeleteSSOIdentityProvider(SSOIdp.id);
-                closeDropdown();
+                closeDropdown(dropdownId);
               }}
             />
           </DropdownMenuItemsContainer>

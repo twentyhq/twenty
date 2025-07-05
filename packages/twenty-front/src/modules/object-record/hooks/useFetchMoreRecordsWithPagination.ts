@@ -127,7 +127,6 @@ export const useFetchMoreRecordsWithPagination = <
                   prev?.[objectMetadataItem.namePlural]?.edges;
                 const nextEdges =
                   fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
-
                 let newEdges: RecordGqlEdge[] = previousEdges ?? [];
 
                 if (isNonEmptyArray(nextEdges)) {

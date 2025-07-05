@@ -8,7 +8,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { IconCheck } from 'twenty-ui/display';
 
@@ -41,7 +41,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const handleOptionSelect = (newValue: boolean) => {
     applyObjectFilterDropdownFilterValue(

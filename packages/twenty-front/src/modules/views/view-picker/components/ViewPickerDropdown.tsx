@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
@@ -51,7 +52,8 @@ export const ViewPickerDropdown = () => {
 
   const { totalCount } = useGetRecordIndexTotalCount();
 
-  const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
     VIEW_PICKER_DROPDOWN_ID,
   );
 
@@ -61,7 +63,7 @@ export const ViewPickerDropdown = () => {
   const CurrentViewIcon = getIcon(currentView?.icon);
 
   const handleClickOutside = async () => {
-    if (isViewsListDropdownOpen && viewPickerMode === 'edit') {
+    if (isDropdownOpen && viewPickerMode === 'edit') {
       await updateViewFromCurrentState();
     }
     setViewPickerMode('list');
@@ -74,7 +76,7 @@ export const ViewPickerDropdown = () => {
       dropdownPlacement="bottom-start"
       onClickOutside={handleClickOutside}
       clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isViewsListDropdownOpen}>
+        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           {currentView && CurrentViewIcon ? (
             <CurrentViewIcon size={theme.icon.size.md} />
           ) : (

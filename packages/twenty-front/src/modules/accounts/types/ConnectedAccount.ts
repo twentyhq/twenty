@@ -1,6 +1,7 @@
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { MessageChannel } from './MessageChannel';
+import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
   id: string;
@@ -14,5 +15,6 @@ export type ConnectedAccount = {
   messageChannels: MessageChannel[];
   calendarChannels: CalendarChannel[];
   scopes: string[] | null;
+  connectionParameters?: ImapSmtpCaldavAccount;
   __typename: 'ConnectedAccount';
 };

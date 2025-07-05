@@ -1,3 +1,4 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -6,17 +7,17 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
 import { WorkflowRun } from '@/workflow/types/Workflow';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
   UpdateWorkflowRunStepInput,
   UpdateWorkflowRunStepMutation,
   UpdateWorkflowRunStepMutationVariables,
   WorkflowAction,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useUpdateWorkflowRunStep = () => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
@@ -26,7 +27,7 @@ export const useUpdateWorkflowRunStep = () => {
     UpdateWorkflowRunStepMutation,
     UpdateWorkflowRunStepMutationVariables
   >(UPDATE_WORKFLOW_RUN_STEP, {
-    client: apolloClient,
+    client: apolloCoreClient,
   });
 
   const getRecordFromCache = useGetRecordFromCache({
@@ -75,7 +76,7 @@ export const useUpdateWorkflowRunStep = () => {
     updateRecordFromCache({
       objectMetadataItems,
       objectMetadataItem,
-      cache: apolloClient.cache,
+      cache: apolloCoreClient.cache,
       record: newCachedRecord,
       recordGqlFields,
       objectPermissionsByObjectMetadataId,

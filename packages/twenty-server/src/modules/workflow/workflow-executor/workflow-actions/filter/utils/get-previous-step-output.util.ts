@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -18,6 +20,9 @@ export const getPreviousStepOutput = (
     throw new WorkflowStepExecutorException(
       'Filter action must have a previous step',
       WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
+      {
+        userFriendlyMessage: t`Filter action must have a previous step`,
+      },
     );
   }
 
@@ -25,6 +30,9 @@ export const getPreviousStepOutput = (
     throw new WorkflowStepExecutorException(
       'Filter action must have only one previous step',
       WorkflowStepExecutorExceptionCode.FAILED_TO_EXECUTE_STEP,
+      {
+        userFriendlyMessage: t`Filter action must have only one previous step`,
+      },
     );
   }
 

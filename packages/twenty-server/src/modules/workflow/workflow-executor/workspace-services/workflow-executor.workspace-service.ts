@@ -25,6 +25,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -87,10 +88,18 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
           output: billingOutput,
         },
         context,
+        stepStatus: StepStatus.FAILED,
       });
 
       return billingOutput;
     }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepStatus({
+      workflowRunId,
+      stepId: step.id,
+      workspaceId,
+      stepStatus: StepStatus.RUNNING,
+    });
 
     try {
       actionOutput = await workflowExecutor.execute({
@@ -121,13 +130,16 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         stepOutput,
         context,
         workspaceId,
+        stepStatus: StepStatus.PENDING,
       });
 
       return actionOutput;
     }
 
+    const actionOutputSuccess = isDefined(actionOutput.result);
+
     const shouldContinue =
-      isDefined(actionOutput.result) ||
+      actionOutputSuccess ||
       step.settings.errorHandlingOptions.continueOnFailure.value;
 
     if (shouldContinue) {
@@ -143,6 +155,9 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         stepOutput,
         context: updatedContext,
         workspaceId,
+        stepStatus: isDefined(actionOutput.result)
+          ? StepStatus.SUCCESS
+          : StepStatus.FAILED,
       });
 
       if (!isDefined(step.nextStepIds?.[0])) {
@@ -176,6 +191,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       stepOutput,
       context,
       workspaceId,
+      stepStatus: StepStatus.FAILED,
     });
 
     return actionOutput;

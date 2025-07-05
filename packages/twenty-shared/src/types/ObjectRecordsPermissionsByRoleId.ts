@@ -1,4 +1,4 @@
-import { ObjectRecordsPermissions } from "@/types/ObjectRecordsPermissions";
+import { ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
 
 type RoleId = string;
 export type ObjectRecordsPermissionsByRoleId = Record<
