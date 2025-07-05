@@ -36,9 +36,6 @@ export class AddAgentChatMessageAndThreadTable1751467467020
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatMessage" DROP CONSTRAINT "FK_cd5b23d4e471b630137b3017ba6"`,
     );
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_9c716045fa8012bc198108b203"`,
-    );
     await queryRunner.query(`DROP TABLE "core"."agentChatThread"`);
     await queryRunner.query(
       `DROP INDEX "core"."IDX_cd5b23d4e471b630137b3017ba"`,
