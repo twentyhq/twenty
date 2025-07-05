@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
 import { selectorFamily } from 'recoil';
@@ -10,7 +9,6 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
     get:
       ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
       ({ get }) => {
-        const currentWorkspace = get(currentWorkspaceState);
         const objectMetadataItems = get(objectMetadataItemsState);
 
         const objectMetadataItem = objectMetadataItems.find(
