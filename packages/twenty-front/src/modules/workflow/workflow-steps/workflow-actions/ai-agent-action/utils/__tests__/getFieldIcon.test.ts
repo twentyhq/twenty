@@ -24,6 +24,8 @@ describe('getFieldIcon', () => {
     FieldMetadataType.ARRAY,
   ] as const;
 
+  type UnsupportedFieldType = (typeof UNSUPPORTED_FIELD_TYPES)[number];
+
   describe('FieldMetadataType field types', () => {
     it('should return IconAbc for TEXT field type', () => {
       const result = getFieldIcon(FieldMetadataType.TEXT);
@@ -199,7 +201,7 @@ describe('getFieldIcon', () => {
       const unsupportedTypes = UNSUPPORTED_FIELD_TYPES;
 
       unsupportedTypes.forEach((fieldType) => {
-        const result = getFieldIcon(fieldType as any);
+        const result = getFieldIcon(fieldType as UnsupportedFieldType);
         expect(result).toBe('IconQuestionMark');
       });
     });
@@ -227,7 +229,7 @@ describe('getFieldIcon', () => {
       ] as const;
 
       allPossibleTypes.forEach((fieldType) => {
-        const result = getFieldIcon(fieldType as any);
+        const result = getFieldIcon(fieldType as UnsupportedFieldType);
         expect(typeof result).toBe('string');
         expect(result.length).toBeGreaterThan(0);
       });
