@@ -262,6 +262,48 @@ describe('getActionIconColorOrThrow', () => {
       ).toBe(GRAY_SCALE.gray40);
     });
 
+    it('should return undefined when blue color is missing for SEND_EMAIL action', () => {
+      const themeWithoutBlue: Theme = {
+        color: {
+          orange: COLOR.orange,
+          pink: COLOR.pink,
+        },
+        font: {
+          color: {
+            tertiary: GRAY_SCALE.gray40,
+          },
+        },
+      } as Theme;
+
+      const result = getActionIconColorOrThrow({
+        theme: themeWithoutBlue,
+        actionType: 'SEND_EMAIL',
+      });
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined when pink color is missing for AI_AGENT action', () => {
+      const themeWithoutPink: Theme = {
+        color: {
+          orange: COLOR.orange,
+          blue: COLOR.blue,
+        },
+        font: {
+          color: {
+            tertiary: GRAY_SCALE.gray40,
+          },
+        },
+      } as Theme;
+
+      const result = getActionIconColorOrThrow({
+        theme: themeWithoutPink,
+        actionType: 'AI_AGENT',
+      });
+
+      expect(result).toBeUndefined();
+    });
+
     it('should handle null or undefined theme gracefully', () => {
       expect(() => {
         getActionIconColorOrThrow({
