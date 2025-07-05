@@ -110,7 +110,12 @@ export const agentChatApi = {
     onChunk: (chunk: string) => void,
   ) => {
     const tokenPair = getTokenPair();
-    const accessToken = tokenPair?.accessToken.token || '';
+
+    if (!isDefined(tokenPair?.accessToken?.token)) {
+      throw new Error('No access token available');
+    }
+
+    const accessToken = tokenPair.accessToken.token;
 
     const response = await fetch(
       `${REACT_APP_SERVER_BASE_URL}/rest/agent-chat/stream`,
