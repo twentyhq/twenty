@@ -1,5 +1,6 @@
 import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import styled from '@emotion/styled';
+import { ElementRef, forwardRef } from 'react';
 
 const StyledExternalContainer = styled.div<{
   maxHeight?: number;
@@ -40,17 +41,17 @@ const StyledInternalContainer = styled.div`
   width: 100%;
 `;
 
-export const DropdownMenuItemsContainer = ({
-  children,
-  hasMaxHeight,
-  scrollable = true,
-}: {
-  children: React.ReactNode;
-  hasMaxHeight?: boolean;
-  scrollable?: boolean;
-}) => {
+export const DropdownMenuItemsContainer = forwardRef<
+  ElementRef<'div'>,
+  {
+    children: React.ReactNode;
+    hasMaxHeight?: boolean;
+    scrollable?: boolean;
+  }
+>(({ children, hasMaxHeight, scrollable = true }, ref) => {
   return scrollable === true ? (
     <StyledScrollableContainer
+      ref={ref}
       maxHeight={
         hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
       }
@@ -60,8 +61,10 @@ export const DropdownMenuItemsContainer = ({
       </StyledExternalContainer>
     </StyledScrollableContainer>
   ) : (
-    <StyledExternalContainer role="listbox">
+    <StyledExternalContainer role="listbox" ref={ref}>
       <StyledInternalContainer>{children}</StyledInternalContainer>
     </StyledExternalContainer>
   );
-};
+});
+
+DropdownMenuItemsContainer.displayName = 'DropdownMenuItemsContainer';

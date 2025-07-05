@@ -7,6 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
@@ -29,13 +30,34 @@ const StyledInnerContainer = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   height: 250px;
   width: 100%;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 `;
 
 export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
+  const menuItemsContainerRef = useRef<HTMLDivElement>(null);
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
+
+  useEffect(() => {
+    if (
+      menuItemsContainerRef.current !== null &&
+      typeof props.selectedIndex === 'number' &&
+      props.selectedIndex >= 0
+    ) {
+      const item = menuItemsContainerRef.current.children[
+        props.selectedIndex
+      ] as HTMLElement | undefined;
+      if (item != null) {
+        item.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+        });
+      }
+    }
+  }, [props.selectedIndex]);
 
   return (
     <StyledContainer ref={refs.setReference}>
@@ -52,7 +74,7 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
           >
             <StyledInnerContainer>
               <DropdownContent>
-                <DropdownMenuItemsContainer>
+                <DropdownMenuItemsContainer ref={menuItemsContainerRef}>
                   {props.items.map((item, index) => (
                     <MenuItemSuggestion
                       key={item.title}
