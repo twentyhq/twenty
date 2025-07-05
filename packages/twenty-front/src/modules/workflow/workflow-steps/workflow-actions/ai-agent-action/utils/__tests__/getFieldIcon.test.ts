@@ -2,6 +2,28 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { getFieldIcon } from '../getFieldIcon';
 
 describe('getFieldIcon', () => {
+  const UNSUPPORTED_FIELD_TYPES = [
+    'string',
+    'number',
+    'boolean',
+    'object',
+    'array',
+    'unknown',
+    FieldMetadataType.DATE_TIME,
+    FieldMetadataType.EMAILS,
+    FieldMetadataType.PHONES,
+    FieldMetadataType.LINKS,
+    FieldMetadataType.CURRENCY,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+    FieldMetadataType.RELATION,
+    FieldMetadataType.UUID,
+    FieldMetadataType.RAW_JSON,
+    FieldMetadataType.FULL_NAME,
+    FieldMetadataType.ADDRESS,
+    FieldMetadataType.ARRAY,
+  ] as const;
+
   describe('FieldMetadataType field types', () => {
     it('should return IconAbc for TEXT field type', () => {
       const result = getFieldIcon(FieldMetadataType.TEXT);
@@ -174,27 +196,7 @@ describe('getFieldIcon', () => {
     });
 
     it('should return IconQuestionMark for all unsupported field types', () => {
-      const unsupportedTypes = [
-        'string',
-        'number',
-        'boolean',
-        'object',
-        'array',
-        'unknown',
-        FieldMetadataType.DATE_TIME,
-        FieldMetadataType.EMAILS,
-        FieldMetadataType.PHONES,
-        FieldMetadataType.LINKS,
-        FieldMetadataType.CURRENCY,
-        FieldMetadataType.SELECT,
-        FieldMetadataType.MULTI_SELECT,
-        FieldMetadataType.RELATION,
-        FieldMetadataType.UUID,
-        FieldMetadataType.RAW_JSON,
-        FieldMetadataType.FULL_NAME,
-        FieldMetadataType.ADDRESS,
-        FieldMetadataType.ARRAY,
-      ] as const;
+      const unsupportedTypes = UNSUPPORTED_FIELD_TYPES;
 
       unsupportedTypes.forEach((fieldType) => {
         const result = getFieldIcon(fieldType as any);
@@ -217,29 +219,11 @@ describe('getFieldIcon', () => {
 
     it('should handle all possible InputSchemaPropertyType values', () => {
       const allPossibleTypes = [
-        'string',
-        'number',
-        'boolean',
-        'object',
-        'array',
-        'unknown',
+        ...UNSUPPORTED_FIELD_TYPES,
         FieldMetadataType.TEXT,
         FieldMetadataType.NUMBER,
         FieldMetadataType.BOOLEAN,
         FieldMetadataType.DATE,
-        FieldMetadataType.DATE_TIME,
-        FieldMetadataType.EMAILS,
-        FieldMetadataType.PHONES,
-        FieldMetadataType.LINKS,
-        FieldMetadataType.CURRENCY,
-        FieldMetadataType.SELECT,
-        FieldMetadataType.MULTI_SELECT,
-        FieldMetadataType.RELATION,
-        FieldMetadataType.UUID,
-        FieldMetadataType.RAW_JSON,
-        FieldMetadataType.FULL_NAME,
-        FieldMetadataType.ADDRESS,
-        FieldMetadataType.ARRAY,
       ] as const;
 
       allPossibleTypes.forEach((fieldType) => {
