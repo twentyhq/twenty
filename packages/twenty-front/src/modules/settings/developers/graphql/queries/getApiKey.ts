@@ -1,13 +1,12 @@
 import gql from 'graphql-tag';
+import { API_KEY_FRAGMENT } from '../fragments/apiKeyFragment';
 
 export const GET_API_KEY = gql`
   query GetApiKey($input: GetApiKeyDTO!) {
     apiKey(input: $input) {
-      id
-      name
+      ...ApiKeyFragment
       createdAt
-      expiresAt
-      revokedAt
     }
   }
+  ${API_KEY_FRAGMENT}
 `;

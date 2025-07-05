@@ -35,19 +35,19 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 `;
 
 export const SettingsApiKeysFieldItemTableRow = ({
-  fieldItem,
+  apiKey,
   to,
 }: {
-  fieldItem: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'>;
+  apiKey: Pick<ApiKey, 'id' | 'name' | 'expiresAt' | 'revokedAt'>;
   to: string;
 }) => {
   const theme = useTheme();
-  const formattedExpiration = formatExpiration(fieldItem.expiresAt || null);
+  const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledNameTableCell>
-        <OverflowingTextWithTooltip text={fieldItem.name} />
+        <OverflowingTextWithTooltip text={apiKey.name} />
       </StyledNameTableCell>
       <TableCell
         color={

@@ -46,12 +46,12 @@ export const SettingsApiKeysTable = () => {
       </StyledTableRow>
       {!!apiKeys?.length && (
         <StyledTableBody>
-          {apiKeys.map((fieldItem) => (
+          {apiKeys.map((apiKey) => (
             <SettingsApiKeysFieldItemTableRow
-              key={fieldItem.id}
-              fieldItem={fieldItem}
+              key={apiKey.id}
+              apiKey={apiKey}
               to={getSettingsPath(SettingsPath.ApiKeyDetail, {
-                apiKeyId: fieldItem.id,
+                apiKeyId: apiKey.id,
               })}
             />
           ))}

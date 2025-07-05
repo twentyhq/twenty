@@ -1,13 +1,11 @@
 import gql from 'graphql-tag';
+import { WEBHOOK_FRAGMENT } from '../fragments/webhookFragment';
 
 export const GET_WEBHOOKS = gql`
   query GetWebhooks {
     webhooks {
-      id
-      targetUrl
-      operations
-      description
-      secret
+      ...WebhookFragment
     }
   }
+  ${WEBHOOK_FRAGMENT}
 `;

@@ -3324,6 +3324,10 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
+export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: any, name: string, expiresAt: string, revokedAt?: string | null };
+
+export type WebhookFragmentFragment = { __typename?: 'Webhook', id: any, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
+
 export type CreateApiKeyMutationVariables = Exact<{
   input: CreateApiKeyDto;
 }>;
@@ -3371,7 +3375,7 @@ export type GetApiKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetApiKeyQuery = { __typename?: 'Query', apiKey?: { __typename?: 'ApiKey', id: any, name: string, createdAt: string, expiresAt: string, revokedAt?: string | null } | null };
+export type GetApiKeyQuery = { __typename?: 'Query', apiKey?: { __typename?: 'ApiKey', createdAt: string, id: any, name: string, expiresAt: string, revokedAt?: string | null } | null };
 
 export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3811,6 +3815,23 @@ export const RemoteTableFieldsFragmentDoc = gql`
   schema
   status
   schemaPendingUpdates
+}
+    `;
+export const ApiKeyFragmentFragmentDoc = gql`
+    fragment ApiKeyFragment on ApiKey {
+  id
+  name
+  expiresAt
+  revokedAt
+}
+    `;
+export const WebhookFragmentFragmentDoc = gql`
+    fragment WebhookFragment on Webhook {
+  id
+  targetUrl
+  operations
+  description
+  secret
 }
     `;
 export const SettingPermissionFragmentFragmentDoc = gql`
@@ -6455,13 +6476,10 @@ export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealt
 export const CreateApiKeyDocument = gql`
     mutation CreateApiKey($input: CreateApiKeyDTO!) {
   createApiKey(input: $input) {
-    id
-    name
-    expiresAt
-    revokedAt
+    ...ApiKeyFragment
   }
 }
-    `;
+    ${ApiKeyFragmentFragmentDoc}`;
 export type CreateApiKeyMutationFn = Apollo.MutationFunction<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 
 /**
@@ -6491,14 +6509,10 @@ export type CreateApiKeyMutationOptions = Apollo.BaseMutationOptions<CreateApiKe
 export const CreateWebhookDocument = gql`
     mutation CreateWebhook($input: CreateWebhookDTO!) {
   createWebhook(input: $input) {
-    id
-    targetUrl
-    operations
-    description
-    secret
+    ...WebhookFragment
   }
 }
-    `;
+    ${WebhookFragmentFragmentDoc}`;
 export type CreateWebhookMutationFn = Apollo.MutationFunction<CreateWebhookMutation, CreateWebhookMutationVariables>;
 
 /**
@@ -6592,13 +6606,10 @@ export type RevokeApiKeyMutationOptions = Apollo.BaseMutationOptions<RevokeApiKe
 export const UpdateApiKeyDocument = gql`
     mutation UpdateApiKey($input: UpdateApiKeyDTO!) {
   updateApiKey(input: $input) {
-    id
-    name
-    expiresAt
-    revokedAt
+    ...ApiKeyFragment
   }
 }
-    `;
+    ${ApiKeyFragmentFragmentDoc}`;
 export type UpdateApiKeyMutationFn = Apollo.MutationFunction<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>;
 
 /**
@@ -6628,14 +6639,10 @@ export type UpdateApiKeyMutationOptions = Apollo.BaseMutationOptions<UpdateApiKe
 export const UpdateWebhookDocument = gql`
     mutation UpdateWebhook($input: UpdateWebhookDTO!) {
   updateWebhook(input: $input) {
-    id
-    targetUrl
-    operations
-    description
-    secret
+    ...WebhookFragment
   }
 }
-    `;
+    ${WebhookFragmentFragmentDoc}`;
 export type UpdateWebhookMutationFn = Apollo.MutationFunction<UpdateWebhookMutation, UpdateWebhookMutationVariables>;
 
 /**
@@ -6665,14 +6672,11 @@ export type UpdateWebhookMutationOptions = Apollo.BaseMutationOptions<UpdateWebh
 export const GetApiKeyDocument = gql`
     query GetApiKey($input: GetApiKeyDTO!) {
   apiKey(input: $input) {
-    id
-    name
+    ...ApiKeyFragment
     createdAt
-    expiresAt
-    revokedAt
   }
 }
-    `;
+    ${ApiKeyFragmentFragmentDoc}`;
 
 /**
  * __useGetApiKeyQuery__
@@ -6704,13 +6708,10 @@ export type GetApiKeyQueryResult = Apollo.QueryResult<GetApiKeyQuery, GetApiKeyQ
 export const GetApiKeysDocument = gql`
     query GetApiKeys {
   apiKeys {
-    id
-    name
-    expiresAt
-    revokedAt
+    ...ApiKeyFragment
   }
 }
-    `;
+    ${ApiKeyFragmentFragmentDoc}`;
 
 /**
  * __useGetApiKeysQuery__
@@ -6741,14 +6742,10 @@ export type GetApiKeysQueryResult = Apollo.QueryResult<GetApiKeysQuery, GetApiKe
 export const GetWebhookDocument = gql`
     query GetWebhook($input: GetWebhookDTO!) {
   webhook(input: $input) {
-    id
-    targetUrl
-    operations
-    description
-    secret
+    ...WebhookFragment
   }
 }
-    `;
+    ${WebhookFragmentFragmentDoc}`;
 
 /**
  * __useGetWebhookQuery__
@@ -6780,14 +6777,10 @@ export type GetWebhookQueryResult = Apollo.QueryResult<GetWebhookQuery, GetWebho
 export const GetWebhooksDocument = gql`
     query GetWebhooks {
   webhooks {
-    id
-    targetUrl
-    operations
-    description
-    secret
+    ...WebhookFragment
   }
 }
-    `;
+    ${WebhookFragmentFragmentDoc}`;
 
 /**
  * __useGetWebhooksQuery__

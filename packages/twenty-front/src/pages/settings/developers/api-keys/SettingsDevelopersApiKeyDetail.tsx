@@ -82,6 +82,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     },
   });
 
+  const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
 
   const deleteIntegration = async (redirect = true) => {
@@ -139,21 +140,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
-      if (isNonEmptyString(apiKeyData?.apiKey?.name)) {
+      if (isNonEmptyString(apiKey?.name)) {
         const newExpiresAt = computeNewExpirationDate(
-          apiKeyData?.apiKey?.expiresAt,
-          apiKeyData?.apiKey?.createdAt,
+          apiKey?.expiresAt,
+          apiKey?.createdAt,
         );
-        const apiKey = await createIntegration(
-          apiKeyData?.apiKey?.name,
-          newExpiresAt,
-        );
+        const newApiKey = await createIntegration(apiKey?.name, newExpiresAt);
         await deleteIntegration(false);
 
-        if (isNonEmptyString(apiKey?.token)) {
-          setApiKeyTokenCallback(apiKey.id, apiKey.token);
+        if (isNonEmptyString(newApiKey?.token)) {
+          setApiKeyTokenCallback(newApiKey.id, newApiKey.token);
           navigate(SettingsPath.ApiKeyDetail, {
-            apiKeyId: apiKey.id,
+            apiKeyId: newApiKey.id,
           });
         }
       }
@@ -170,9 +168,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   return (
     <>
-      {apiKeyData?.apiKey?.name && (
+      {apiKey?.name && (
         <SubMenuTopBarContainer
-          title={apiKeyData?.apiKey?.name}
+          title={apiKey?.name}
           links={[
             {
               children: t`Workspace`,
@@ -208,11 +206,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                       onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
                     />
                     <StyledInfo>
-                      {formatExpiration(
-                        apiKeyData?.apiKey?.expiresAt || '',
-                        true,
-                        false,
-                      )}
+                      {formatExpiration(apiKey?.expiresAt || '', true, false)}
                     </StyledInfo>
                   </StyledInputContainer>
                 </>
@@ -222,7 +216,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <H2Title title={t`Name`} description={t`Name of your API key`} />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
-                apiKeyId={apiKeyData?.apiKey?.id}
+                apiKeyId={apiKey?.id}
                 disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
@@ -234,11 +228,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
               <TextInput
                 placeholder={t`E.g. backoffice integration`}
-                value={formatExpiration(
-                  apiKeyData?.apiKey?.expiresAt || '',
-                  true,
-                  false,
-                )}
+                value={formatExpiration(apiKey?.expiresAt || '', true, false)}
                 disabled
                 fullWidth
               />
