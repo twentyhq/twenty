@@ -212,7 +212,7 @@ export class AgentExecutionService {
   }): Promise<AgentExecutionResult> {
     try {
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+        system: AGENT_SYSTEM_PROMPTS.AGENT_EXECUTION,
         agent,
         prompt: resolveInput(agent.prompt, context) as string,
       });
