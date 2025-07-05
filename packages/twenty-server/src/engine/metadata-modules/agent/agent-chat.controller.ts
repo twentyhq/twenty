@@ -56,7 +56,7 @@ export class AgentChatController {
     body: { threadId: string; userMessage: string },
     @Res() res: Response,
   ) {
-    this.agentStreamingService.streamAgentChat({
+    await this.agentStreamingService.streamAgentChat({
       threadId: body.threadId,
       userMessage: body.userMessage,
       res,
