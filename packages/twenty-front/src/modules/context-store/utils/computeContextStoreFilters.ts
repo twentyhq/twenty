@@ -34,19 +34,21 @@ export const computeContextStoreFilters = (
     ]);
   }
   if (contextStoreTargetedRecordsRule.mode === 'selection') {
-    queryFilter =
+    queryFilter = makeAndFilterVariables([
       contextStoreTargetedRecordsRule.selectedRecordIds.length > 0
         ? {
             id: {
               in: contextStoreTargetedRecordsRule.selectedRecordIds,
             },
           }
-        : computeRecordGqlOperationFilter({
-            filterValueDependencies,
-            fields: objectMetadataItem?.fields ?? [],
-            recordFilters: contextStoreFilters,
-            recordFilterGroups: [],
-          });
+        : undefined,
+      computeRecordGqlOperationFilter({
+        filterValueDependencies,
+        fields: objectMetadataItem?.fields ?? [],
+        recordFilters: contextStoreFilters,
+        recordFilterGroups: [],
+      }),
+    ]);
   }
 
   return queryFilter;

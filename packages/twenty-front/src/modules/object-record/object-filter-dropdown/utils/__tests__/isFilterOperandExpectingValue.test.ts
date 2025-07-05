@@ -6,8 +6,8 @@ describe('isFilterOperandExpectingValue', () => {
   const testCases = [
     { operand: ViewFilterOperand.Contains, expectedResult: true },
     { operand: ViewFilterOperand.DoesNotContain, expectedResult: true },
-    { operand: ViewFilterOperand.GreaterThan, expectedResult: true },
-    { operand: ViewFilterOperand.LessThan, expectedResult: true },
+    { operand: ViewFilterOperand.GreaterThanOrEqual, expectedResult: true },
+    { operand: ViewFilterOperand.LessThanOrEqual, expectedResult: true },
     { operand: ViewFilterOperand.Is, expectedResult: true },
     { operand: ViewFilterOperand.IsNot, expectedResult: true },
     { operand: ViewFilterOperand.IsRelative, expectedResult: true },

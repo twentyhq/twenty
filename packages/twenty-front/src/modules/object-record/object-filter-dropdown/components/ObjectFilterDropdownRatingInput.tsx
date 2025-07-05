@@ -15,14 +15,14 @@ const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
 ): string => rating.split('_')[1];
 
-export const convertGreaterThanRatingToArrayOfRatingValues = (
+export const convertGreaterThanOrEqualRatingToArrayOfRatingValues = (
   greaterThanValue: number,
 ) =>
   RATING_VALUES.filter(
     (ratingValue) => +ratingValue.split('_')[1] >= greaterThanValue,
   );
 
-export const convertLessThanRatingToArrayOfRatingValues = (
+export const convertLessThanOrEqualRatingToArrayOfRatingValues = (
   lessThanValue: number,
 ) =>
   RATING_VALUES.filter(

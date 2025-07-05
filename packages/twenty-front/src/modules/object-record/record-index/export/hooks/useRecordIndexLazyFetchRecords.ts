@@ -36,7 +36,7 @@ export type UseRecordDataOptions = {
   viewType?: ViewType;
 };
 
-export const useExportFetchRecords = ({
+export const useRecordIndexLazyFetchRecords = ({
   objectMetadataItem,
   delayMs,
   maximumRequests = 100,
@@ -74,15 +74,15 @@ export const useExportFetchRecords = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const findManyRecordsParams = useFindManyRecordIndexTableParams(
+    objectMetadataItem.nameSingular,
+  );
+
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
     filterValueDependencies,
-  );
-
-  const findManyRecordsParams = useFindManyRecordIndexTableParams(
-    objectMetadataItem.nameSingular,
   );
 
   const finalColumns = [

@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "libphonenumber-js": "^1.10.26",
     "zod": "3.23.8"
   },
   "preconstruct": {

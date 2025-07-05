@@ -97,6 +97,7 @@ export const RecordTitleCell = ({
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
     isReadOnly,
+    containerType,
   };
 
   return (

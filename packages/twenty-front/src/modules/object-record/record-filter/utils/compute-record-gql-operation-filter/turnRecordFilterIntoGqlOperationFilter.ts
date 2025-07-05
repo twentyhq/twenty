@@ -24,8 +24,8 @@ import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateIL
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
-  convertGreaterThanRatingToArrayOfRatingValues,
-  convertLessThanRatingToArrayOfRatingValues,
+  convertGreaterThanOrEqualRatingToArrayOfRatingValues,
+  convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -268,18 +268,18 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
-        case RecordFilterOperand.GreaterThan:
+        case RecordFilterOperand.GreaterThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
-              in: convertGreaterThanRatingToArrayOfRatingValues(
+              in: convertGreaterThanOrEqualRatingToArrayOfRatingValues(
                 parseFloat(recordFilter.value),
               ),
             } as RatingFilter,
           };
-        case RecordFilterOperand.LessThan:
+        case RecordFilterOperand.LessThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
-              in: convertLessThanRatingToArrayOfRatingValues(
+              in: convertLessThanOrEqualRatingToArrayOfRatingValues(
                 parseFloat(recordFilter.value),
               ),
             } as RatingFilter,
@@ -291,13 +291,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'NUMBER':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.GreaterThan:
+        case RecordFilterOperand.GreaterThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
               gte: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
-        case RecordFilterOperand.LessThan:
+        case RecordFilterOperand.LessThanOrEqual:
           return {
             [correspondingFieldMetadataItem.name]: {
               lte: parseFloat(recordFilter.value),
@@ -401,13 +401,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         !isSubFieldFilter
       ) {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.GreaterThan:
+          case RecordFilterOperand.GreaterThanOrEqual:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { gte: parseFloat(recordFilter.value) * 1000000 },
               } as CurrencyFilter,
             };
-          case RecordFilterOperand.LessThan:
+          case RecordFilterOperand.LessThanOrEqual:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { lte: parseFloat(recordFilter.value) * 1000000 },

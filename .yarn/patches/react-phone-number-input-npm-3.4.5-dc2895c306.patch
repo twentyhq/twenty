@@ -1,0 +1,45 @@
+diff --git a/commonjs/helpers/phoneInputHelpers.js b/commonjs/helpers/phoneInputHelpers.js
+index 8fd1b16ec670ab7d0abcb800a2edd7848e86ce1e..ab6e0dd90def507629c2ead59fba929a739f0759 100644
+--- a/commonjs/helpers/phoneInputHelpers.js
++++ b/commonjs/helpers/phoneInputHelpers.js
+@@ -574,7 +574,9 @@ function onPhoneDigitsChange(phoneDigits, _ref5) {
+   // Generate the new `value` property.
+   var value;
+   if (phoneDigits) {
+-    if (phoneDigits[0] === '+') {
++    if(phoneDigits === prevPhoneDigits) {
++			value = e164(phoneDigits, country, metadata)
++		} else if (phoneDigits[0] === '+') {
+       if (phoneDigits === '+') {
+         value = undefined;
+       } else if (country && (0, _getInternationalPhoneNumberPrefix["default"])(country, metadata).indexOf(phoneDigits) === 0) {
+diff --git a/modules/helpers/phoneInputHelpers.js b/modules/helpers/phoneInputHelpers.js
+index 75e8463f6b5d32c560d1dec2776671bee2af1d07..99af2904807cc3c23aea566bbeebda2a5bc9afa4 100644
+--- a/modules/helpers/phoneInputHelpers.js
++++ b/modules/helpers/phoneInputHelpers.js
+@@ -551,7 +551,9 @@ export function onPhoneDigitsChange(phoneDigits, _ref5) {
+   // Generate the new `value` property.
+   var value;
+   if (phoneDigits) {
+-    if (phoneDigits[0] === '+') {
++    if(phoneDigits === prevPhoneDigits) {
++			value = e164(phoneDigits, country, metadata)
++		} else if (phoneDigits[0] === '+') {
+       if (phoneDigits === '+') {
+         value = undefined;
+       } else if (country && getInternationalPhoneNumberPrefix(country, metadata).indexOf(phoneDigits) === 0) {
+diff --git a/react-styleguidist/project/source/helpers/phoneInputHelpers.js b/react-styleguidist/project/source/helpers/phoneInputHelpers.js
+index b844ef0fd183fe4f45e436bdb2382fc2987dcef2..8960834900e59a57e130521fd369e82fe05f5090 100644
+--- a/react-styleguidist/project/source/helpers/phoneInputHelpers.js
++++ b/react-styleguidist/project/source/helpers/phoneInputHelpers.js
+@@ -505,7 +505,9 @@ export function onPhoneDigitsChange(phoneDigits, {
+ 	// Generate the new `value` property.
+ 	let value
+ 	if (phoneDigits) {
+-		if (phoneDigits[0] === '+') {
++		if(phoneDigits === prevPhoneDigits) {
++			value = e164(phoneDigits, country, metadata)
++		} else if (phoneDigits[0] === '+') {
+ 			if (phoneDigits === '+') {
+ 				value = undefined
+ 			} else if (country && getInternationalPhoneNumberPrefix(country, metadata).indexOf(phoneDigits) !== 0) {

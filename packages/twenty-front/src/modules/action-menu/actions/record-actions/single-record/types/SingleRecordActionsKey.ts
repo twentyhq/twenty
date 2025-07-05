@@ -6,6 +6,7 @@ export enum SingleRecordActionKeys {
   NAVIGATE_TO_NEXT_RECORD = 'navigate-to-next-record-single-record',
   NAVIGATE_TO_PREVIOUS_RECORD = 'navigate-to-previous-record-single-record',
   EXPORT_NOTE_TO_PDF = 'export-note-to-pdf-single-record',
-  EXPORT = 'export-single-record',
+  EXPORT_FROM_RECORD_INDEX = 'export-from-record-index-single-record',
+  EXPORT_FROM_RECORD_SHOW = 'export-from-record-show-single-record',
   RESTORE = 'restore-single-record',
 }
