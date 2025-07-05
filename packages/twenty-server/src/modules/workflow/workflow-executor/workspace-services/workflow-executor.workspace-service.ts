@@ -94,13 +94,9 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       return billingOutput;
     }
 
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepStatus({
       workflowRunId,
-      stepOutput: {
-        id: step.id,
-        output: {},
-      },
-      context,
+      stepId: step.id,
       workspaceId,
       stepStatus: StepStatus.RUNNING,
     });
