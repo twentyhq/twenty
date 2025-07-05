@@ -1,8 +1,9 @@
 import { WorkflowActionType } from '@/workflow/types/Workflow';
+import { Theme } from '@emotion/react';
 import { COLOR, GRAY_SCALE } from 'twenty-ui/theme';
 import { getActionIconColorOrThrow } from '../getActionIconColorOrThrow';
 
-const mockTheme = {
+const mockTheme: Theme = {
   color: {
     orange: COLOR.orange,
     blue: COLOR.blue,
@@ -13,7 +14,7 @@ const mockTheme = {
       tertiary: GRAY_SCALE.gray40,
     },
   },
-} as any;
+} as Theme;
 
 describe('getActionIconColorOrThrow', () => {
   describe('action types that return orange color', () => {
@@ -88,25 +89,11 @@ describe('getActionIconColorOrThrow', () => {
         });
       }).toThrow("The Filter action isn't meant to be displayed as a node.");
     });
-
-    it('should throw the correct error message for FILTER action type', () => {
-      try {
-        getActionIconColorOrThrow({
-          theme: mockTheme,
-          actionType: 'FILTER',
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toBe(
-          "The Filter action isn't meant to be displayed as a node.",
-        );
-      }
-    });
   });
 
   describe('theme object handling', () => {
     it('should use the provided theme colors correctly', () => {
-      const customTheme = {
+      const customTheme: Theme = {
         color: {
           orange: COLOR.red,
           blue: COLOR.purple,
@@ -117,7 +104,7 @@ describe('getActionIconColorOrThrow', () => {
             tertiary: GRAY_SCALE.gray50,
           },
         },
-      } as any;
+      } as Theme;
 
       expect(
         getActionIconColorOrThrow({
@@ -249,7 +236,7 @@ describe('getActionIconColorOrThrow', () => {
 
   describe('error handling edge cases', () => {
     it('should handle theme object with missing properties gracefully', () => {
-      const incompleteTheme = {
+      const incompleteTheme: Theme = {
         color: {
           orange: COLOR.orange,
         },
@@ -258,7 +245,7 @@ describe('getActionIconColorOrThrow', () => {
             tertiary: GRAY_SCALE.gray40,
           },
         },
-      } as any;
+      } as Theme;
 
       expect(
         getActionIconColorOrThrow({
@@ -278,7 +265,7 @@ describe('getActionIconColorOrThrow', () => {
     it('should handle null or undefined theme gracefully', () => {
       expect(() => {
         getActionIconColorOrThrow({
-          theme: null as any,
+          theme: null as unknown as Theme,
           actionType: 'CODE',
         });
       }).toThrow();
