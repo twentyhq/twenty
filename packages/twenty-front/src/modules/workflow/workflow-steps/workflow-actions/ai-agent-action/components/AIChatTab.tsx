@@ -165,7 +165,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
     handleSendMessage,
     input,
     handleInputChange,
-    aiStreamingMessage,
+    agentStreamingMessage,
   } = useAgentChat(agentId);
 
   return (
@@ -198,7 +198,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                     isUser={msg.role === AgentChatMessageRole.USER}
                   >
                     {msg.role === AgentChatMessageRole.ASSISTANT && !msg.content
-                      ? aiStreamingMessage || (
+                      ? agentStreamingMessage || (
                           <StyledDotsIconContainer>
                             <StyledDotsIcon size={theme.icon.size.xl} />
                           </StyledDotsIconContainer>

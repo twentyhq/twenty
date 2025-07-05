@@ -11,7 +11,7 @@ import { v4 } from 'uuid';
 import { AgentChatMessage, agentChatApi } from '../api/agent-chat.api';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
-import { aiStreamingMessageState } from '../states/agentChatStreamingState';
+import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
 import { useAgentChatMessages } from './useAgentChatMessages';
 import { useAgentChatThreads } from './useAgentChatThreads';
 
@@ -28,8 +28,8 @@ export const useAgentChat = (agentId: string) => {
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
 
-  const [aiStreamingMessage, setAiStreamingMessage] = useRecoilState(
-    aiStreamingMessageState,
+  const [agentStreamingMessage, setAgentStreamingMessage] = useRecoilState(
+    agentStreamingMessageState,
   );
 
   const [isStreaming, setIsStreaming] = useState(false);
@@ -51,7 +51,7 @@ export const useAgentChat = (agentId: string) => {
     useAgentChatMessages(currentThreadId, (data) => {
       setAgentChatMessages(data);
       scrollToBottom();
-      setAiStreamingMessage('');
+      setAgentStreamingMessage('');
     });
 
   const isLoading = messagesLoading || threadsLoading || isStreaming;
@@ -86,7 +86,7 @@ export const useAgentChat = (agentId: string) => {
     setIsStreaming(true);
 
     await agentChatApi.streamResponse(currentThreadId, content, (chunk) => {
-      setAiStreamingMessage(chunk);
+      setAgentStreamingMessage(chunk);
       scrollToBottom();
     });
     refetchMessages();
@@ -136,6 +136,6 @@ export const useAgentChat = (agentId: string) => {
     input: agentChatInput,
     handleSendMessage,
     isLoading,
-    aiStreamingMessage,
+    agentStreamingMessage,
   };
 };
