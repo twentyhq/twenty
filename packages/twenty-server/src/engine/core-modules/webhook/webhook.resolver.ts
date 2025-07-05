@@ -5,6 +5,7 @@ import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-we
 import { DeleteWebhookDTO } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
 import { GetWebhookDTO } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
 import { UpdateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
+import { webhookGraphqlApiExceptionHandler } from 'src/engine/core-modules/webhook/utils/webhook-graphql-api-exception-handler.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -35,13 +36,18 @@ export class WebhookResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: CreateWebhookDTO,
   ): Promise<Webhook> {
-    return this.webhookService.create({
-      targetUrl: input.targetUrl,
-      operations: input.operations,
-      description: input.description,
-      secret: input.secret,
-      workspaceId: workspace.id,
-    });
+    try {
+      return await this.webhookService.create({
+        targetUrl: input.targetUrl,
+        operations: input.operations,
+        description: input.description,
+        secret: input.secret,
+        workspaceId: workspace.id,
+      });
+    } catch (error) {
+      webhookGraphqlApiExceptionHandler(error);
+      throw error; // This line will never be reached but satisfies TypeScript
+    }
   }
 
   @Mutation(() => Webhook, { nullable: true })
@@ -49,16 +55,25 @@ export class WebhookResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: UpdateWebhookDTO,
   ): Promise<Webhook | null> {
-    const updateData: Partial<Webhook> = {};
+    try {
+      const updateData: Partial<Webhook> = {};
 
-    if (input.targetUrl !== undefined) updateData.targetUrl = input.targetUrl;
-    if (input.operations !== undefined)
-      updateData.operations = input.operations;
-    if (input.description !== undefined)
-      updateData.description = input.description;
-    if (input.secret !== undefined) updateData.secret = input.secret;
+      if (input.targetUrl !== undefined) updateData.targetUrl = input.targetUrl;
+      if (input.operations !== undefined)
+        updateData.operations = input.operations;
+      if (input.description !== undefined)
+        updateData.description = input.description;
+      if (input.secret !== undefined) updateData.secret = input.secret;
 
-    return this.webhookService.update(input.id, workspace.id, updateData);
+      return await this.webhookService.update(
+        input.id,
+        workspace.id,
+        updateData,
+      );
+    } catch (error) {
+      webhookGraphqlApiExceptionHandler(error);
+      throw error; // This line will never be reached but satisfies TypeScript
+    }
   }
 
   @Mutation(() => Boolean)

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains, IsNull, Repository } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
+import { WebhookException, WebhookExceptionCode } from './webhook.exception';
 
 @Injectable()
 export class WebhookService {
@@ -73,7 +74,11 @@ export class WebhookService {
     );
 
     if (!this.validateTargetUrl(normalizedTargetUrl)) {
-      throw new Error('Invalid target URL provided');
+      throw new WebhookException(
+        'Invalid target URL provided',
+        WebhookExceptionCode.INVALID_TARGET_URL,
+        { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+      );
     }
 
     const webhook = this.webhookRepository.create({
@@ -100,7 +105,11 @@ export class WebhookService {
       const normalizedTargetUrl = this.normalizeTargetUrl(updateData.targetUrl);
 
       if (!this.validateTargetUrl(normalizedTargetUrl)) {
-        throw new Error('Invalid target URL provided');
+        throw new WebhookException(
+          'Invalid target URL provided',
+          WebhookExceptionCode.INVALID_TARGET_URL,
+          { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+        );
       }
 
       updateData.targetUrl = normalizedTargetUrl;

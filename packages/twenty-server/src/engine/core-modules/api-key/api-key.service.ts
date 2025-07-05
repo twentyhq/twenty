@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/api-key.exception';
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -74,15 +78,32 @@ export class ApiKeyService {
     const apiKey = await this.findById(id, workspaceId);
 
     if (!apiKey) {
-      throw new NotFoundException(`API Key with id ${id} not found`);
+      throw new ApiKeyException(
+        `API Key with id ${id} not found`,
+        ApiKeyExceptionCode.API_KEY_NOT_FOUND,
+      );
     }
 
     if (apiKey.revokedAt) {
-      throw new Error('This API Key is revoked');
+      throw new ApiKeyException(
+        'This API Key is revoked',
+        ApiKeyExceptionCode.API_KEY_REVOKED,
+        {
+          userFriendlyMessage:
+            'This API Key has been revoked and can no longer be used.',
+        },
+      );
     }
 
     if (apiKey.expiresAt && new Date() > apiKey.expiresAt) {
-      throw new Error('This API Key has expired');
+      throw new ApiKeyException(
+        'This API Key has expired',
+        ApiKeyExceptionCode.API_KEY_EXPIRED,
+        {
+          userFriendlyMessage:
+            'This API Key has expired. Please create a new one.',
+        },
+      );
     }
 
     return apiKey;

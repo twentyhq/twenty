@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ArrayContains, IsNull } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
+import { WebhookException, WebhookExceptionCode } from './webhook.exception';
 import { WebhookService } from './webhook.service';
 
 describe('WebhookService', () => {
@@ -227,7 +228,7 @@ describe('WebhookService', () => {
       expect(result).toEqual(mockWebhook);
     });
 
-    it('should throw error for invalid target URL', async () => {
+    it('should throw WebhookException for invalid target URL', async () => {
       const webhookData = {
         targetUrl: 'invalid-url',
         operations: ['create'],
@@ -235,22 +236,30 @@ describe('WebhookService', () => {
       };
 
       await expect(service.create(webhookData)).rejects.toThrow(
-        'Invalid target URL provided',
+        WebhookException,
       );
+
+      await expect(service.create(webhookData)).rejects.toMatchObject({
+        code: WebhookExceptionCode.INVALID_TARGET_URL,
+      });
 
       expect(mockWebhookRepository.create).not.toHaveBeenCalled();
       expect(mockWebhookRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should handle webhook data without target URL', async () => {
+    it('should throw WebhookException for webhook data without target URL', async () => {
       const webhookData = {
         operations: ['create'],
         workspaceId: mockWorkspaceId,
       };
 
       await expect(service.create(webhookData)).rejects.toThrow(
-        'Invalid target URL provided',
+        WebhookException,
       );
+
+      await expect(service.create(webhookData)).rejects.toMatchObject({
+        code: WebhookExceptionCode.INVALID_TARGET_URL,
+      });
     });
   });
 
@@ -288,14 +297,20 @@ describe('WebhookService', () => {
       expect(result).toBeNull();
     });
 
-    it('should validate target URL during update', async () => {
+    it('should throw WebhookException for invalid target URL during update', async () => {
       const updateData = { targetUrl: 'invalid-url' };
 
       mockWebhookRepository.findOne.mockResolvedValue(mockWebhook);
 
       await expect(
         service.update(mockWebhookId, mockWorkspaceId, updateData),
-      ).rejects.toThrow('Invalid target URL provided');
+      ).rejects.toThrow(WebhookException);
+
+      await expect(
+        service.update(mockWebhookId, mockWorkspaceId, updateData),
+      ).rejects.toMatchObject({
+        code: WebhookExceptionCode.INVALID_TARGET_URL,
+      });
 
       expect(mockWebhookRepository.update).not.toHaveBeenCalled();
     });

@@ -5,7 +5,7 @@ import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api
 import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
 import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
 import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
-import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,13 +28,18 @@ export class ApiKeyResolver {
     @Args('input') input: GetApiKeyDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ApiKey | null> {
-    const apiKey = await this.apiKeyService.findById(input.id, workspace.id);
+    try {
+      const apiKey = await this.apiKeyService.findById(input.id, workspace.id);
 
-    if (!apiKey) {
-      throw new NotFoundError(`API Key with id ${input.id} not found`);
+      if (!apiKey) {
+        return null;
+      }
+
+      return apiKey;
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
     }
-
-    return apiKey;
   }
 
   @Mutation(() => ApiKey)

@@ -1,9 +1,12 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/api-key.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -226,28 +229,46 @@ describe('ApiKeyService', () => {
       expect(result).toEqual(mockApiKey);
     });
 
-    it('should throw NotFoundException if API key does not exist', async () => {
+    it('should throw ApiKeyException if API key does not exist', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(null);
 
       await expect(
         service.validateApiKey('non-existent', mockWorkspaceId),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(ApiKeyException);
+
+      await expect(
+        service.validateApiKey('non-existent', mockWorkspaceId),
+      ).rejects.toMatchObject({
+        code: ApiKeyExceptionCode.API_KEY_NOT_FOUND,
+      });
     });
 
-    it('should throw error if API key is revoked', async () => {
+    it('should throw ApiKeyException if API key is revoked', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockRevokedApiKey);
 
       await expect(
         service.validateApiKey(mockRevokedApiKey.id, mockWorkspaceId),
-      ).rejects.toThrow('This API Key is revoked');
+      ).rejects.toThrow(ApiKeyException);
+
+      await expect(
+        service.validateApiKey(mockRevokedApiKey.id, mockWorkspaceId),
+      ).rejects.toMatchObject({
+        code: ApiKeyExceptionCode.API_KEY_REVOKED,
+      });
     });
 
-    it('should throw error if API key is expired', async () => {
+    it('should throw ApiKeyException if API key is expired', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockExpiredApiKey);
 
       await expect(
         service.validateApiKey(mockExpiredApiKey.id, mockWorkspaceId),
-      ).rejects.toThrow('This API Key has expired');
+      ).rejects.toThrow(ApiKeyException);
+
+      await expect(
+        service.validateApiKey(mockExpiredApiKey.id, mockWorkspaceId),
+      ).rejects.toMatchObject({
+        code: ApiKeyExceptionCode.API_KEY_EXPIRED,
+      });
     });
   });
 
