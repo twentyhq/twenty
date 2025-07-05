@@ -12,7 +12,7 @@ export const getFilterableFieldsWithVectorSearch = (
 
   return [
     ...objectMetadataItem.fields.filter(
-      getFilterFilterableFieldMetadataItems({ isJsonFilterEnabled: true }),
+      getFilterFilterableFieldMetadataItems(),
     ),
     ...(vectorSearchField ? [vectorSearchField] : []),
   ];
