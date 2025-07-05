@@ -19,7 +19,6 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
@@ -148,7 +147,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
       );
     }
-
+   
     const objectMetadataItemWithFieldMaps =
       objectMetadataMaps.byId[existingFieldMetadata.objectMetadataId];
 
@@ -494,22 +493,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       'type' | 'isNullable' | 'defaultValue' | 'options'
     >,
   ) {
-    const updatableStandardFieldInput: UpdateFieldInput & {
-      standardOverrides?: FieldStandardOverridesDTO;
-    } = {
+    const updatableStandardFieldInput: UpdateFieldInput = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
       settings: fieldMetadataInput.settings,
       isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...('standardOverrides' in fieldMetadataInput && (fieldMetadataInput as any).standardOverrides)
     };
-
-    if ('standardOverrides' in fieldMetadataInput) {
-      updatableStandardFieldInput.standardOverrides =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (fieldMetadataInput as any).standardOverrides;
-    }
 
     if (
       existingFieldMetadata.type === FieldMetadataType.SELECT ||
