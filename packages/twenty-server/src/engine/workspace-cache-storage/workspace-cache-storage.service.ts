@@ -36,7 +36,7 @@ export enum WorkspaceCacheKeys {
   MetadataPermissionsUserWorkspaceRoleMapVersion = 'metadata:permissions:user-workspace-role-map-version',
 }
 
-const TTL_ONE_WEEK = 604800;
+const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 @Injectable()
 export class WorkspaceCacheStorageService {
