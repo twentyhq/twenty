@@ -136,6 +136,7 @@ export class AccessTokenService {
       apiKey,
       workspace,
       workspaceMemberId,
+      userWorkspace,
       userWorkspaceId,
       authProvider,
     } = await this.jwtStrategy.validate(decoded);
@@ -144,6 +145,7 @@ export class AccessTokenService {
       user,
       apiKey,
       workspace,
+      userWorkspace,
       workspaceMemberId,
       userWorkspaceId,
       authProvider,
