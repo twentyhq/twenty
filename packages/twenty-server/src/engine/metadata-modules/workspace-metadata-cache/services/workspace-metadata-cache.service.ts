@@ -39,8 +39,10 @@ export class WorkspaceMetadataCacheService {
     locale, // Added locale parameter
   }: {
     workspaceId: string;
-    locale: string; // Added locale parameter
+    locale?: string; // locale is now optional
   }): Promise<getExistingOrRecomputeMetadataMapsResult> {
+    // Always fallback to 'en' if locale is not provided or falsy
+    const effectiveLocale = locale || 'en';
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -62,7 +64,7 @@ export class WorkspaceMetadataCacheService {
       await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspaceId,
         currentDatabaseVersion,
-        locale, // Passed locale to getObjectMetadataMaps
+        effectiveLocale, // Always use effectiveLocale
       );
 
     if (isDefined(existingObjectMetadataMaps) && !shouldRecompute) {
@@ -75,7 +77,7 @@ export class WorkspaceMetadataCacheService {
     const { objectMetadataMaps, metadataVersion } =
       await this.recomputeMetadataCache({
         workspaceId,
-        locale, // Passed locale to recomputeMetadataCache
+        locale: effectiveLocale, // Always use effectiveLocale
       });
 
     return {
@@ -89,8 +91,10 @@ export class WorkspaceMetadataCacheService {
     locale, // Added locale parameter
   }: {
     workspaceId: string;
-    locale: string; // Added locale parameter
+    locale?: string; // locale is now optional
   }): Promise<getExistingOrRecomputeMetadataMapsResult> {
+    // Always fallback to 'en' if locale is not provided or falsy
+    const effectiveLocale = locale || 'en';
     const currentDatabaseVersion =
       await this.getMetadataVersionFromDatabase(workspaceId);
 
@@ -104,7 +108,7 @@ export class WorkspaceMetadataCacheService {
     await this.workspaceCacheStorageService.flushVersionedMetadata(
       workspaceId,
       currentDatabaseVersion,
-      locale, // Passed locale to flushVersionedMetadata
+      effectiveLocale, // Always use effectiveLocale
     );
 
     const objectMetadataItems = await this.objectMetadataRepository.find({
@@ -139,7 +143,7 @@ export class WorkspaceMetadataCacheService {
       workspaceId,
       currentDatabaseVersion,
       freshObjectMetadataMaps,
-      locale, // Passed locale to setObjectMetadataMaps
+      effectiveLocale, // Always use effectiveLocale
     );
 
     await this.workspaceCacheStorageService.setMetadataVersion(

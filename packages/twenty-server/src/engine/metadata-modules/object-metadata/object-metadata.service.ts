@@ -107,6 +107,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataInput: CreateObjectInput,
     authContext: AuthContext,
   ): Promise<ObjectMetadataEntity> {
+    // Fallback para locale 'en' se não especificado
+    if (!authContext.locale) {
+      authContext.locale = 'en';
+    }
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
@@ -286,6 +290,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
     authContext: AuthContext,
   ): Promise<ObjectMetadataEntity> {
+    // Fallback para locale 'en' se não especificado
+    if (!authContext.locale) {
+      authContext.locale = 'en';
+    }
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
