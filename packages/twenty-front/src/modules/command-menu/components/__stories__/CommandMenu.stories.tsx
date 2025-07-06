@@ -136,7 +136,6 @@ export const LimitedPermissions: Story = {
     expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
     expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
-    expect(await canvas.findByText('Go to People')).toBeVisible();
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
