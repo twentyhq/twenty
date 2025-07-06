@@ -18,10 +18,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     const workspaceMetadataVersion =
       serverContext.req.workspaceMetadataVersion ?? '0';
     const operationName = getOperationName(serverContext);
-    const locale = serverContext.req.headers['x-locale'] ?? '';
-    const localeCacheKey = isDefined(serverContext.req.headers['x-locale'])
-      ? `:${locale}`
-      : '';
+    const locale =
+      serverContext.req.userWorkspace?.locale ??
+      serverContext.req.headers['x-locale'] ??
+      '';
+    const localeCacheKey = isDefined(locale) ? `:${locale}` : '';
     const queryHash = createHash('sha256')
       .update(serverContext.req.body.query)
       .digest('hex');
