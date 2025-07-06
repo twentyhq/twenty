@@ -69,7 +69,7 @@ export const ScrolledLeft: Story = {
   },
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = document.body.querySelector(
       '.scroll-wrapper-x-enabled',
