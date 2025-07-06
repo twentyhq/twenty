@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import { isNonEmptyString, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Plugin } from 'graphql-yoga';
 
 export type CacheMetadataPluginConfig = {
