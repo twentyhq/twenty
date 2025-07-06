@@ -6,6 +6,7 @@ WORKDIR /app
 # Copy only the necessary files for dependency resolution
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
 COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
 
 COPY ./.prettierrc /app/
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
