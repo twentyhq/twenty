@@ -250,4 +250,80 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 }
 `);
   });
+
+  it('should treat objects with the same name but different IDs as distinct', () => {
+    const objectA: WorkspaceMigrationObjectInput = {
+      uniqueIdentifier: 'id-1',
+      nameSingular: 'Duplicate',
+      namePlural: 'Duplicates',
+      labelSingular: 'Duplicate',
+      labelPlural: 'Duplicates',
+      description: 'First object',
+      fields: [
+        {
+          uniqueIdentifier: 'field-1',
+          name: 'fieldA',
+          label: 'Field A',
+          type: FieldMetadataType.FULL_NAME,
+          defaultValue: '',
+          description: '',
+        },
+      ],
+    };
+    const objectB: WorkspaceMigrationObjectInput = {
+      uniqueIdentifier: 'id-2',
+      nameSingular: 'Duplicate',
+      namePlural: 'Duplicates',
+      labelSingular: 'Duplicate',
+      labelPlural: 'Duplicates',
+      description: 'Second object',
+      fields: [
+        {
+          uniqueIdentifier: 'field-2',
+          name: 'fieldB',
+          label: 'Field B',
+          type: FieldMetadataType.ADDRESS,
+          defaultValue: '',
+          description: '',
+        },
+      ],
+    };
+
+    const result = service.build({ from: [], to: [objectA, objectB] });
+
+    expect(result.actions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: 'create_object',
+          objectMetadataUniqueIdentifier: 'id-1',
+        }),
+        expect.objectContaining({
+          type: 'create_object',
+          objectMetadataUniqueIdentifier: 'id-2',
+        }),
+      ]),
+    );
+
+    const deleteResult = service.build({ from: [objectA, objectB], to: [] });
+
+    expect(deleteResult.actions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: 'delete_object',
+          objectMetadataUniqueIdentifier: 'id-1',
+        }),
+        expect.objectContaining({
+          type: 'delete_object',
+          objectMetadataUniqueIdentifier: 'id-2',
+        }),
+      ]),
+    );
+  });
+
+  it('should emit no actions when from and to are deeply equal', () => {
+    const obj: WorkspaceMigrationObjectInput = { ...baseObject };
+    const result = service.build({ from: [obj], to: [obj] });
+
+    expect(result.actions).toEqual([]);
+  });
 });
