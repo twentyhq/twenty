@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import { isDefined } from 'class-validator';
+import { isNonEmptyString, isNonEmptyString } from '@sniptt/guards';
 import { Plugin } from 'graphql-yoga';
 
 export type CacheMetadataPluginConfig = {
@@ -22,7 +22,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       serverContext.req.userWorkspace?.locale ??
       serverContext.req.headers['x-locale'] ??
       '';
-    const localeCacheKey = isDefined(locale) ? `:${locale}` : '';
+    const localeCacheKey = isNonEmptyString(locale) ? `:${locale}` : '';
     const queryHash = createHash('sha256')
       .update(serverContext.req.body.query)
       .digest('hex');
