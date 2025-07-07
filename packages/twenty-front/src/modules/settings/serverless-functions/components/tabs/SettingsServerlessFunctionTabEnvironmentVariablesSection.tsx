@@ -82,7 +82,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
         description="Set your function environment variables"
       />
       <StyledSearchInput
-        inputId="serverless-function-env-var-search"
+        instanceId="serverless-function-env-var-search"
         LeftIcon={IconSearch}
         placeholder="Search a variable"
         value={searchTerm}

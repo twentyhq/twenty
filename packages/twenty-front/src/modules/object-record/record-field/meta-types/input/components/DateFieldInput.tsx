@@ -79,7 +79,7 @@ export const DateFieldInput = ({
 
   return (
     <DateInput
-      inputId={instanceId}
+      instanceId={instanceId}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

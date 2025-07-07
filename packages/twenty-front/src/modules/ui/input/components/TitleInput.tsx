@@ -1,6 +1,6 @@
 import {
-  TextInputV2,
-  TextInputV2Size,
+    TextInputV2,
+    TextInputV2Size,
 } from '@/ui/input/components/TextInputV2';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type InputProps = {
-  inputId: string;
+  instanceId: string;
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -59,7 +59,7 @@ const StyledDiv = styled.div<{
 `;
 
 const Input = ({
-  inputId,
+  instanceId,
   value,
   onChange,
   placeholder,
@@ -87,11 +87,11 @@ const Input = ({
 
   const handleLeaveFocus = () => {
     setIsOpened(false);
-    removeFocusItemFromFocusStackById({ focusId: inputId });
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
   useRegisterInputEvents<string>({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue,
     onEnter: () => {
@@ -137,7 +137,7 @@ const Input = ({
 };
 
 export const TitleInput = ({
-  inputId,
+  instanceId,
   disabled,
   value,
   sizeVariant = 'md',
@@ -158,7 +158,7 @@ export const TitleInput = ({
     <>
       {isOpened ? (
         <Input
-          inputId={inputId}
+          instanceId={instanceId}
           sizeVariant={sizeVariant}
           value={value}
           onChange={onChange}
@@ -179,10 +179,10 @@ export const TitleInput = ({
             if (!disabled) {
               setIsOpened(true);
               pushFocusItemToFocusStack({
-                focusId: inputId,
+                focusId: instanceId,
                 component: {
                   type: FocusComponentType.TEXT_INPUT,
-                  instanceId: inputId,
+                  instanceId: instanceId,
                 },
                 globalHotkeysConfig: {
                   enableGlobalHotkeysConflictingWithKeyboard: false,

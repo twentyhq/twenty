@@ -8,7 +8,7 @@ import { useArrayField } from '@/object-record/record-field/meta-types/hooks/use
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -59,7 +59,7 @@ const ArrayInputWithContext = ({
 }: ArrayInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: 'tags',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -67,19 +67,19 @@ const ArrayInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: inputId,
+      focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: inputId,
+        instanceId: instanceId,
       },
       hotkeyScope: DEFAULT_CELL_SCOPE,
     });
-  }, [pushFocusItemToFocusStack, inputId]);
+  }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId({
+        instanceId: getRecordFieldInputInstanceId({
           recordId,
           fieldName: 'tags',
           prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,

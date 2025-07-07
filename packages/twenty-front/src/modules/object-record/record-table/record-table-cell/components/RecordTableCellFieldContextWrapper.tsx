@@ -6,7 +6,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { ReactNode, useContext } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -25,7 +25,7 @@ export const RecordTableCellFieldContextWrapper = ({
     return null;
   }
 
-  const instanceId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: columnDefinition.metadata.fieldName,
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,

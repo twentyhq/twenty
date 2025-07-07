@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextFieldInputProps = {
-  inputId: string;
+  instanceId: string;
   onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -22,7 +22,7 @@ type RecordTitleCellTextFieldInputProps = {
 };
 
 export const RecordTitleCellTextFieldInput = ({
-  inputId,
+  instanceId,
   sizeVariant,
   onEnter,
   onEscape,
@@ -42,7 +42,7 @@ export const RecordTitleCellTextFieldInput = ({
   const persistField = usePersistField();
 
   useRegisterInputEvents<string>({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: (inputValue) => {

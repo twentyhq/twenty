@@ -5,8 +5,8 @@ import { useTextField } from '../../hooks/useTextField';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+    FieldInputClickOutsideEvent,
+    FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
@@ -65,7 +65,7 @@ export const TextFieldInput = ({
   return (
     <FieldInputContainer>
       <TextAreaInput
-        inputId={instanceId}
+        instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={draftValue ?? ''}

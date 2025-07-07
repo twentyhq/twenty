@@ -178,7 +178,7 @@ export const SettingsObjectFieldTable = ({
   return (
     <>
       <StyledSearchInput
-        inputId="object-field-table-search"
+        instanceId="object-field-table-search"
         LeftIcon={IconSearch}
         placeholder={t`Search a field...`}
         value={searchTerm}

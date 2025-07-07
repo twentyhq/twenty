@@ -29,7 +29,7 @@ export const FormBooleanFieldInput = ({
   readonly,
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -105,7 +105,7 @@ export const FormBooleanFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}

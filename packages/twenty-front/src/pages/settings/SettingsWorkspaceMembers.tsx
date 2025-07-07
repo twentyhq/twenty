@@ -216,7 +216,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <StyledSearchContainer>
             <StyledSearchInput
-              inputId="workspace-members-search"
+              instanceId="workspace-members-search"
               value={searchFilter}
               onChange={handleSearchChange}
               placeholder={t`Search a team member...`}

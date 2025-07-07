@@ -18,7 +18,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -141,7 +141,7 @@ export const FieldsCard = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
-                    componentInstanceId={getRecordFieldInputId({
+                    componentInstanceId={getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,
                       prefix: isInRightDrawer
@@ -187,7 +187,7 @@ export const FieldsCard = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId({
+                    instanceId: getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,
                       prefix: INPUT_ID_PREFIX,
@@ -196,7 +196,7 @@ export const FieldsCard = ({
                 >
                   <RecordInlineCell
                     loading={recordLoading}
-                    inputIdPrefix={INPUT_ID_PREFIX}
+                    instanceIdPrefix={INPUT_ID_PREFIX}
                   />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>

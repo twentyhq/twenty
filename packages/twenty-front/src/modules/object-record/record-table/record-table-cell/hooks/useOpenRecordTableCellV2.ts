@@ -21,7 +21,7 @@ import { viewableRecordNameSingularState } from '@/object-record/record-right-dr
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -176,7 +176,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
-          fieldComponentInstanceId: getRecordFieldInputId({
+          fieldComponentInstanceId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
             prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,

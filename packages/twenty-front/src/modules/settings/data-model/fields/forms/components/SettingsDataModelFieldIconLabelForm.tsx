@@ -136,7 +136,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              inputId={labelTextInputId}
+              instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
               onChange={(value) => {
@@ -171,7 +171,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     render={({ field: { onChange, value } }) => (
                       <>
                         <TextInput
-                          inputId={nameTextInputId}
+                          instanceId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}
                           value={value}

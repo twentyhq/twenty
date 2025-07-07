@@ -84,7 +84,7 @@ export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
   hasError?: boolean;
   hasItem: boolean;
   onChange: (value: string) => void;
-  inputId: string;
+  instanceId: string;
 };
 
 export const MultiItemBaseInput = forwardRef<
@@ -109,7 +109,7 @@ export const MultiItemBaseInput = forwardRef<
       error = '',
       hasError = false,
       hasItem,
-      inputId,
+      instanceId,
     },
     ref,
   ) => {
@@ -117,7 +117,7 @@ export const MultiItemBaseInput = forwardRef<
     const combinedRef = useCombinedRefs(ref, inputRef);
 
     useRegisterInputEvents({
-      focusId: inputId,
+      focusId: instanceId,
       inputRef,
       inputValue: value,
       onEnter,

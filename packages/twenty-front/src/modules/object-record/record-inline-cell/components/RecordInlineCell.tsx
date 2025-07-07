@@ -29,12 +29,12 @@ import {
 
 type RecordInlineCellProps = {
   loading?: boolean;
-  inputIdPrefix?: string;
+  instanceIdPrefix?: string;
 };
 
 export const RecordInlineCell = ({
   loading,
-  inputIdPrefix,
+  instanceIdPrefix,
 }: RecordInlineCellProps) => {
   const {
     fieldDefinition,
@@ -54,7 +54,7 @@ export const RecordInlineCell = ({
         openFieldInput({
           fieldDefinition,
           recordId,
-          prefix: inputIdPrefix,
+          prefix: instanceIdPrefix,
         });
 
   const onCloseEditMode = useCallback(() => {
@@ -63,14 +63,14 @@ export const RecordInlineCell = ({
       : closeFieldInput({
           fieldDefinition,
           recordId,
-          prefix: inputIdPrefix,
+          prefix: instanceIdPrefix,
         });
   }, [
     onCloseEditModeFromContext,
     closeFieldInput,
     fieldDefinition,
     recordId,
-    inputIdPrefix,
+    instanceIdPrefix,
   ]);
 
   const buttonIcon = useGetButtonIcon();

@@ -113,7 +113,7 @@ export const SettingsObjectIndexTable = ({
   return (
     <>
       <StyledSearchInput
-        inputId="object-index-table-search"
+        instanceId="object-index-table-search"
         LeftIcon={IconSearch}
         placeholder={t`Search an index...`}
         value={searchTerm}

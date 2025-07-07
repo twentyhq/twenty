@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
-  ChangeEvent,
-  ClipboardEvent,
-  useEffect,
-  useRef,
-  useState,
+    ChangeEvent,
+    ClipboardEvent,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -29,7 +29,7 @@ const StyledContainer = styled.div`
 `;
 
 type DoubleTextInputProps = {
-  inputId: string;
+  instanceId: string;
   firstValue: string;
   secondValue: string;
   firstValuePlaceholder: string;
@@ -48,7 +48,7 @@ type DoubleTextInputProps = {
 };
 
 export const DoubleTextInput = ({
-  inputId,
+  instanceId,
   firstValue,
   secondValue,
   firstValuePlaceholder,
@@ -98,7 +98,7 @@ export const DoubleTextInput = ({
       });
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEnter, firstInternalValue, secondInternalValue],
   });
 
@@ -111,7 +111,7 @@ export const DoubleTextInput = ({
       });
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEscape, firstInternalValue, secondInternalValue],
   });
 
@@ -129,7 +129,7 @@ export const DoubleTextInput = ({
       }
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [
       onTab,
       firstInternalValue,
@@ -152,7 +152,7 @@ export const DoubleTextInput = ({
       }
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [
       onShiftTab,
       firstInternalValue,

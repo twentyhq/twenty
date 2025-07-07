@@ -16,7 +16,7 @@ export const StyledTextInput = styled.input`
 `;
 
 type TextInputProps = {
-  inputId: string;
+  instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -41,7 +41,7 @@ const getValue = (value: string, shouldTrim: boolean) => {
 };
 
 export const TextInput = ({
-  inputId,
+  instanceId,
   placeholder,
   autoFocus,
   value,
@@ -70,7 +70,7 @@ export const TextInput = ({
   }, [value, shouldTrim]);
 
   useRegisterInputEvents({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     copyRef: copyRef,
     inputValue: internalText,
@@ -85,7 +85,7 @@ export const TextInput = ({
   return (
     <>
       <StyledTextInput
-        id={inputId}
+        id={instanceId}
         autoComplete="off"
         ref={wrapperRef}
         placeholder={placeholder}

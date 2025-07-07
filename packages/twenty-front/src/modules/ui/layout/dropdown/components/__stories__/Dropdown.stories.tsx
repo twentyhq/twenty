@@ -19,9 +19,9 @@ import { SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
+    MenuItem,
+    MenuItemMultiSelectAvatar,
+    MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -301,7 +301,7 @@ export const WithInput: Story = {
     dropdownComponents: (
       <DropdownContent>
         <DropdownMenuInput
-          inputId="dropdown-menu-input"
+          instanceId="dropdown-menu-input"
           value="Lorem ipsum"
           autoFocus
         />

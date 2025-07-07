@@ -130,7 +130,7 @@ export const ConfirmationModal = ({
       {confirmationValue && (
         <Section>
           <TextInput
-            inputId="confirmation-modal-input"
+            instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
             value={inputConfirmationValue}
             onChange={handleInputConfimrationValueChange}

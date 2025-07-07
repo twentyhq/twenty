@@ -11,7 +11,7 @@ import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -61,7 +61,7 @@ const PhoneInputWithContext = ({
   onClickOutside,
 }: PhoneInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: 'phones',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -69,19 +69,19 @@ const PhoneInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: inputId,
+      focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: inputId,
+        instanceId: instanceId,
       },
       hotkeyScope: DEFAULT_CELL_SCOPE,
     });
-  }, [pushFocusItemToFocusStack, inputId]);
+  }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: inputId,
+        instanceId: instanceId,
       }}
     >
       <FieldContext.Provider

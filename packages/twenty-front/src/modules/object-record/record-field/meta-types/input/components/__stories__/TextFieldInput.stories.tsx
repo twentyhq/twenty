@@ -7,7 +7,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -42,7 +42,7 @@ const TextFieldInputWithContext = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const [isReady, setIsReady] = useState(false);
 
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: 'Text',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -51,22 +51,22 @@ const TextFieldInputWithContext = ({
   useEffect(() => {
     if (!isReady) {
       pushFocusItemToFocusStack({
-        focusId: inputId,
+        focusId: instanceId,
         component: {
           type: FocusComponentType.OPENED_FIELD_INPUT,
-          instanceId: inputId,
+          instanceId: instanceId,
         },
         hotkeyScope: DEFAULT_CELL_SCOPE,
       });
 
       setIsReady(true);
     }
-  }, [isReady, pushFocusItemToFocusStack, inputId]);
+  }, [isReady, pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: inputId,
+        instanceId: instanceId,
       }}
     >
       <FieldContext.Provider

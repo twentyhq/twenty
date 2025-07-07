@@ -2,8 +2,8 @@ import { FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
-  TextInputV2,
-  TextInputV2ComponentProps,
+    TextInputV2,
+    TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -13,7 +13,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { isDefined } from 'twenty-shared/utils';
 
 export type TextInputProps = TextInputV2ComponentProps & {
-  inputId: string;
+  instanceId: string;
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
@@ -22,7 +22,7 @@ export type TextInputProps = TextInputV2ComponentProps & {
 };
 
 export const TextInput = ({
-  inputId,
+  instanceId,
   onFocus,
   onBlur,
   onInputEnter,
@@ -59,10 +59,10 @@ export const TextInput = ({
 
     if (!disableHotkeys) {
       pushFocusItemToFocusStack({
-        focusId: inputId,
+        focusId: instanceId,
         component: {
           type: FocusComponentType.TEXT_INPUT,
-          instanceId: inputId,
+          instanceId: instanceId,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -77,7 +77,7 @@ export const TextInput = ({
     setIsFocused(false);
 
     if (!disableHotkeys) {
-      removeFocusItemFromFocusStackById({ focusId: inputId });
+      removeFocusItemFromFocusStackById({ focusId: instanceId });
     }
   };
 
@@ -104,7 +104,7 @@ export const TextInput = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: handleEscape,
-    focusId: inputId,
+    focusId: instanceId,
     scope: InputHotkeyScope.TextInput,
     dependencies: [handleEscape],
     options: {
@@ -115,7 +115,7 @@ export const TextInput = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: handleEnter,
-    focusId: inputId,
+    focusId: instanceId,
     scope: InputHotkeyScope.TextInput,
     dependencies: [handleEnter],
     options: {

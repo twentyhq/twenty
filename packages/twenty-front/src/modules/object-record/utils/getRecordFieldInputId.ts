@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const getRecordFieldInputId = ({
+export const getRecordFieldInputInstanceId = ({
   recordId,
   fieldName,
   prefix,

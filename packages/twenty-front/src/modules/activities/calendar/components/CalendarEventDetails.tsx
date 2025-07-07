@@ -10,7 +10,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -113,14 +113,14 @@ export const CalendarEventDetails = ({
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: getRecordFieldInputId({
+            instanceId: getRecordFieldInputInstanceId({
               recordId: calendarEvent.id,
               fieldName,
               prefix: INPUT_ID_PREFIX,
             }),
           }}
         >
-          <RecordInlineCell inputIdPrefix={INPUT_ID_PREFIX} />
+          <RecordInlineCell instanceIdPrefix={INPUT_ID_PREFIX} />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>

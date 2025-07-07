@@ -10,7 +10,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -45,7 +45,7 @@ const NumberFieldInputWithContext = ({
 
   const [isReady, setIsReady] = useState(false);
 
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: 'Number',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -54,21 +54,21 @@ const NumberFieldInputWithContext = ({
   useEffect(() => {
     if (!isReady) {
       pushFocusItemToFocusStack({
-        focusId: inputId,
+        focusId: instanceId,
         component: {
           type: FocusComponentType.OPENED_FIELD_INPUT,
-          instanceId: inputId,
+          instanceId: instanceId,
         },
         hotkeyScope: DEFAULT_CELL_SCOPE,
       });
       setIsReady(true);
     }
-  }, [isReady, pushFocusItemToFocusStack, inputId]);
+  }, [isReady, pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId({
+        instanceId: getRecordFieldInputInstanceId({
           recordId,
           fieldName: 'Number',
           prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,

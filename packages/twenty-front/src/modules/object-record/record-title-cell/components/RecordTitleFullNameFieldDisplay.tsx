@@ -2,7 +2,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -53,7 +53,7 @@ export const RecordTitleFullNameFieldDisplay = ({
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const recordTitleCellId = getRecordFieldInputId({
+  const recordTitleCellId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition.metadata.fieldName,
     prefix: containerType,

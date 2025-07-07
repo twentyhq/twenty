@@ -14,7 +14,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = ({
@@ -74,7 +74,7 @@ export const RecordBoardCardBody = ({
           >
             <RecordFieldComponentInstanceContext.Provider
               value={{
-                instanceId: getRecordFieldInputId({
+                instanceId: getRecordFieldInputInstanceId({
                   recordId,
                   fieldName: fieldDefinition.metadata.fieldName,
                   prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
@@ -82,7 +82,7 @@ export const RecordBoardCardBody = ({
               }}
             >
               <RecordInlineCell
-                inputIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
+                instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
               />
             </RecordFieldComponentInstanceContext.Provider>
           </FieldContext.Provider>

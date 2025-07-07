@@ -9,7 +9,7 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export type TextAreaInputProps = {
-  inputId: string;
+  instanceId: string;
   disabled?: boolean;
   className?: string;
   placeholder?: string;
@@ -47,7 +47,7 @@ const StyledLightIconButtonContainer = styled.div`
 `;
 
 export const TextAreaInput = ({
-  inputId,
+  instanceId,
   disabled,
   className,
   placeholder,
@@ -85,7 +85,7 @@ export const TextAreaInput = ({
   }, []);
 
   useRegisterInputEvents({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     copyRef: copyRef,
     inputValue: internalText,

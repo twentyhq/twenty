@@ -115,7 +115,7 @@ export const NameFields = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        inputId={firstNameTextInputId}
+        instanceId={firstNameTextInputId}
         label={t`First Name`}
         value={firstName}
         onChange={setFirstName}
@@ -123,7 +123,7 @@ export const NameFields = ({
         fullWidth
       />
       <TextInput
-        inputId={lastNameTextInputId}
+        instanceId={lastNameTextInputId}
         label={t`Last Name`}
         value={lastName}
         onChange={setLastName}

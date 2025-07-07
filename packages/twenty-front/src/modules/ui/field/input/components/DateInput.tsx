@@ -3,9 +3,9 @@ import { useRef, useState } from 'react';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import {
-  DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+    DateTimePicker,
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -13,7 +13,7 @@ import { useRecoilCallback } from 'recoil';
 import { Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
-  inputId: string;
+  instanceId: string;
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
@@ -31,7 +31,7 @@ export type DateInputProps = {
 };
 
 export const DateInput = ({
-  inputId,
+  instanceId,
   value,
   onEnter,
   onEscape,
@@ -104,7 +104,7 @@ export const DateInput = ({
   );
 
   useRegisterInputEvents({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalValue,
     onEnter: handleEnter,

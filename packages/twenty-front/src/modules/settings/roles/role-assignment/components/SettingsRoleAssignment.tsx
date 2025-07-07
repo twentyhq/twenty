@@ -1,6 +1,6 @@
 import {
-  CurrentWorkspaceMember,
-  currentWorkspaceMemberState,
+    CurrentWorkspaceMember,
+    currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
@@ -23,11 +23,11 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  AppTooltip,
-  H2Title,
-  IconPlus,
-  IconSearch,
-  TooltipDelay,
+    AppTooltip,
+    H2Title,
+    IconPlus,
+    IconSearch,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -210,7 +210,7 @@ export const SettingsRoleAssignment = ({
         />
         <StyledSearchContainer>
           <StyledSearchInput
-            inputId="role-assignment-member-search"
+            instanceId="role-assignment-member-search"
             value={searchFilter}
             onChange={handleSearchChange}
             placeholder={t`Search an assigned team member...`}

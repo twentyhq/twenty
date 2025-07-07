@@ -3,7 +3,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -34,7 +34,7 @@ export const useRecordTitleCell = () => {
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordFieldInputId({
+            getRecordFieldInputInstanceId({
               recordId,
               fieldName,
               prefix: containerType,
@@ -44,7 +44,7 @@ export const useRecordTitleCell = () => {
         );
 
         removeFocusItemFromFocusStackById({
-          focusId: getRecordFieldInputId({
+          focusId: getRecordFieldInputInstanceId({
             recordId,
             fieldName,
             prefix: containerType,
@@ -73,14 +73,14 @@ export const useRecordTitleCell = () => {
       }) => {
         if (isDefined(customEditHotkeyScopeForField)) {
           pushFocusItemToFocusStack({
-            focusId: getRecordFieldInputId({
+            focusId: getRecordFieldInputInstanceId({
               recordId,
               fieldName,
               prefix: containerType,
             }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordFieldInputId({
+              instanceId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName,
                 prefix: containerType,
@@ -91,14 +91,14 @@ export const useRecordTitleCell = () => {
           });
         } else {
           pushFocusItemToFocusStack({
-            focusId: getRecordFieldInputId({
+            focusId: getRecordFieldInputInstanceId({
               recordId,
               fieldName,
               prefix: containerType,
             }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordFieldInputId({
+              instanceId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName,
                 prefix: containerType,
@@ -111,7 +111,7 @@ export const useRecordTitleCell = () => {
           });
         }
 
-        const recordTitleCellId = getRecordFieldInputId({
+        const recordTitleCellId = getRecordFieldInputInstanceId({
           recordId,
           fieldName,
           prefix: containerType,

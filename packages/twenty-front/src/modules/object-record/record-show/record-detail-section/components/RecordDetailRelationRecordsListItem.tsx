@@ -13,9 +13,9 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+    FieldContext,
+    RecordUpdateHook,
+    RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
@@ -29,7 +29,7 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -43,11 +43,11 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { createPortal } from 'react-dom';
 import {
-  IconChevronDown,
-  IconComponent,
-  IconDotsVertical,
-  IconTrash,
-  IconUnlink,
+    IconChevronDown,
+    IconComponent,
+    IconDotsVertical,
+    IconTrash,
+    IconUnlink,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -320,14 +320,14 @@ export const RecordDetailRelationRecordsListItem = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId({
+                    instanceId: getRecordFieldInputInstanceId({
                       recordId: relationRecord.id,
                       fieldName: fieldMetadataItem.name,
                       prefix: 'record-detail',
                     }),
                   }}
                 >
-                  <RecordInlineCell inputIdPrefix="record-detail" />
+                  <RecordInlineCell instanceIdPrefix="record-detail" />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),

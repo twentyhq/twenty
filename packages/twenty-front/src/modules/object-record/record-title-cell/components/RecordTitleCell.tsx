@@ -18,7 +18,7 @@ import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/c
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -72,7 +72,7 @@ export const RecordTitleCell = ({
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
-        inputId={getRecordFieldInputId({
+        instanceId={getRecordFieldInputInstanceId({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
           prefix: containerType,
@@ -97,7 +97,7 @@ export const RecordTitleCell = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId({
+        instanceId: getRecordFieldInputInstanceId({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
           prefix: containerType,

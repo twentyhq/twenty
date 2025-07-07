@@ -1,11 +1,11 @@
 import {
-  FieldRelationToOneValue,
-  FieldRelationValue,
+    FieldRelationToOneValue,
+    FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -27,7 +27,7 @@ export const useOpenRelationToOneFieldInput = () => {
         recordId: string;
         prefix?: string;
       }) => {
-        const recordPickerInstanceId = getRecordFieldInputId({
+        const recordPickerInstanceId = getRecordFieldInputInstanceId({
           recordId,
           fieldName,
           prefix,

@@ -84,7 +84,7 @@ export const RecordTitleDoubleTextInput = ({
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
-  const inputId = useAvailableComponentInstanceIdOrThrow(
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
@@ -97,7 +97,7 @@ export const RecordTitleDoubleTextInput = ({
       });
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEnter, firstInternalValue, secondInternalValue],
   });
 
@@ -110,7 +110,7 @@ export const RecordTitleDoubleTextInput = ({
       });
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEscape, firstInternalValue, secondInternalValue],
   });
 
@@ -128,7 +128,7 @@ export const RecordTitleDoubleTextInput = ({
       }
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [
       onTab,
       firstInternalValue,
@@ -151,7 +151,7 @@ export const RecordTitleDoubleTextInput = ({
       }
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [
       onShiftTab,
       firstInternalValue,

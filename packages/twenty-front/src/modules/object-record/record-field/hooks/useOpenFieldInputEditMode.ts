@@ -19,7 +19,7 @@ import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inl
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -77,7 +77,7 @@ export const useOpenFieldInputEditMode = () => {
           });
 
           openActivityTargetCellEditMode({
-            recordPickerInstanceId: getRecordFieldInputId({
+            recordPickerInstanceId: getRecordFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
               prefix,
@@ -115,14 +115,14 @@ export const useOpenFieldInputEditMode = () => {
         }
 
         pushFocusItemToFocusStack({
-          focusId: getRecordFieldInputId({
+          focusId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
             prefix,
           }),
           component: {
             type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId: getRecordFieldInputId({
+            instanceId: getRecordFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
               prefix,
@@ -156,7 +156,7 @@ export const useOpenFieldInputEditMode = () => {
     prefix?: string;
   }) => {
     removeFocusItemFromFocusStackById({
-      focusId: getRecordFieldInputId({
+      focusId: getRecordFieldInputInstanceId({
         recordId,
         fieldName: fieldDefinition.metadata.fieldName,
         prefix,

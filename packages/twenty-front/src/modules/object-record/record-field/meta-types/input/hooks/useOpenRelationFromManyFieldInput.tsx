@@ -1,7 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import {
-  FieldRelationFromManyValue,
-  FieldRelationValue,
+    FieldRelationFromManyValue,
+    FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -10,7 +10,7 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -35,7 +35,7 @@ export const useOpenRelationFromManyFieldInput = () => {
         recordId: string;
         prefix?: string;
       }) => {
-        const recordPickerInstanceId = getRecordFieldInputId({
+        const recordPickerInstanceId = getRecordFieldInputInstanceId({
           recordId,
           fieldName,
           prefix,

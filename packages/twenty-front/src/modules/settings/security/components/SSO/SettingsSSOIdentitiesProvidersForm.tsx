@@ -88,7 +88,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                inputId="sso-identity-provider-name"
+                instanceId="sso-identity-provider-name"
                 autoComplete="off"
                 label={t`Name`}
                 value={value}

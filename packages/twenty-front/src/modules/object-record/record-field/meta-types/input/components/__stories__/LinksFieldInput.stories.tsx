@@ -7,7 +7,7 @@ import { useLinksField } from '@/object-record/record-field/meta-types/hooks/use
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
@@ -70,7 +70,7 @@ const LinksInputWithContext = ({
   onClickOutside,
 }: LinksInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: 'Links',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -78,20 +78,20 @@ const LinksInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: inputId,
+      focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: inputId,
+        instanceId: instanceId,
       },
       hotkeyScope: DEFAULT_CELL_SCOPE,
     });
-  }, [pushFocusItemToFocusStack, inputId]);
+  }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: inputId,
+          instanceId: instanceId,
         }}
       >
         <FieldContext.Provider

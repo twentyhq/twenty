@@ -1,7 +1,7 @@
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { expect } from '@storybook/jest';
@@ -9,14 +9,14 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 import {
-  IconBolt,
-  IconBrandGoogle,
-  IconBrandLinkedin,
-  IconCheck,
-  IconHeart,
-  IconRocket,
-  IconTag,
-  IconTarget,
+    IconBolt,
+    IconBrandGoogle,
+    IconBrandLinkedin,
+    IconCheck,
+    IconHeart,
+    IconRocket,
+    IconTag,
+    IconTarget,
 } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -97,7 +97,7 @@ const Render = ({
       focusId: TableHotkeyScope.CellEditMode,
       component: {
         type: FocusComponentType.DROPDOWN,
-        instanceId: getRecordFieldInputId({
+        instanceId: getRecordFieldInputInstanceId({
           recordId: '123',
           fieldName: 'Relation',
           prefix: 'multi-select-story',
@@ -106,7 +106,7 @@ const Render = ({
       hotkeyScope: {
         scope: TableHotkeyScope.CellEditMode,
       },
-      memoizeKey: getRecordFieldInputId({
+      memoizeKey: getRecordFieldInputInstanceId({
         recordId: '123',
         fieldName: 'Relation',
         prefix: 'multi-select-story',

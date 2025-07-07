@@ -47,7 +47,7 @@ const StyledHalfRowContainer = styled.div`
 `;
 
 export type AddressInputProps = {
-  inputId: string;
+  instanceId: string;
   value: FieldAddressValue;
   onTab: (newAddress: FieldAddressDraftValue) => void;
   onShiftTab: (newAddress: FieldAddressDraftValue) => void;
@@ -63,7 +63,7 @@ export type AddressInputProps = {
 };
 
 export const AddressInput = ({
-  inputId,
+  instanceId,
   value,
   hotkeyScope,
   onTab,
@@ -155,7 +155,7 @@ export const AddressInput = ({
     keys: ['tab'],
     callback: handleTab,
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [handleTab],
   });
 
@@ -163,7 +163,7 @@ export const AddressInput = ({
     keys: ['shift+tab'],
     callback: handleShiftTab,
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [handleShiftTab],
   });
 
@@ -173,7 +173,7 @@ export const AddressInput = ({
       onEnter(internalValue);
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEnter, internalValue],
   });
 
@@ -183,7 +183,7 @@ export const AddressInput = ({
       onEscape(internalValue);
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [onEscape, internalValue],
   });
 

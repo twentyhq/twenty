@@ -7,7 +7,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
   AddressInputProps,
@@ -47,7 +47,7 @@ const AddressInputWithContext = ({
 }: AddressInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const inputId = getRecordFieldInputId({
+  const instanceId = getRecordFieldInputInstanceId({
     recordId: recordId ?? '',
     fieldName: 'Address',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
@@ -55,20 +55,20 @@ const AddressInputWithContext = ({
 
   useEffect(() => {
     pushFocusItemToFocusStack({
-      focusId: inputId,
+      focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: inputId,
+        instanceId: instanceId,
       },
       hotkeyScope: DEFAULT_CELL_SCOPE,
     });
-  }, [inputId, pushFocusItemToFocusStack]);
+  }, [instanceId, pushFocusItemToFocusStack]);
 
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: inputId,
+          instanceId: instanceId,
         }}
       >
         <FieldContext.Provider
@@ -91,7 +91,7 @@ const AddressInputWithContext = ({
         >
           <AddressValueSetterEffect value={value} />
           <AddressInput
-            inputId={inputId}
+            instanceId={instanceId}
             onEnter={onEnter}
             onEscape={onEscape}
             onClickOutside={onClickOutside}

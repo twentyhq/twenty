@@ -28,7 +28,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput inputId="api-key-display" value={apiKey} fullWidth />
+        <TextInput instanceId="api-key-display" value={apiKey} fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}

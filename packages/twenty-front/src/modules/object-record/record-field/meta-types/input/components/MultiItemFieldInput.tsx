@@ -81,12 +81,12 @@ export const MultiItemFieldInput = <T,>({
     listenerId: hotkeyScope,
   });
 
-  const inputId = useAvailableComponentInstanceIdOrThrow(
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
   useHotkeysOnFocusedElement({
-    focusId: inputId,
+    focusId: instanceId,
     keys: [Key.Escape],
     callback: handleDropdownClose,
     scope: hotkeyScope,
@@ -196,10 +196,6 @@ export const MultiItemFieldInput = <T,>({
     onPersist(updatedItems);
   };
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
-
   return (
     <DropdownContent ref={containerRef}>
       {!!items.length && (
@@ -220,7 +216,7 @@ export const MultiItemFieldInput = <T,>({
       )}
       {isInputDisplayed || !items.length ? (
         <MultiItemBaseInput
-          inputId={instanceId}
+          instanceId={instanceId}
           autoFocus
           placeholder={placeholder}
           value={inputValue}

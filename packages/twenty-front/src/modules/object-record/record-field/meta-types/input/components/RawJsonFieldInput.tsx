@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
+    FieldInputClickOutsideEvent,
+    FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -72,7 +72,7 @@ export const RawJsonFieldInput = ({
   const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputId = useAvailableComponentInstanceIdOrThrow(
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
@@ -115,7 +115,7 @@ export const RawJsonFieldInput = ({
       handleEscape(draftValue ?? '');
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [handleEscape, draftValue],
   });
 
@@ -125,7 +125,7 @@ export const RawJsonFieldInput = ({
       handleTab(draftValue ?? '');
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [handleTab, draftValue],
   });
 
@@ -135,7 +135,7 @@ export const RawJsonFieldInput = ({
       handleShiftTab(draftValue ?? '');
     },
     scope: hotkeyScope,
-    focusId: inputId,
+    focusId: instanceId,
     dependencies: [handleShiftTab, draftValue],
   });
 

@@ -117,7 +117,7 @@ export const PlaygroundSetupForm = () => {
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextInput
-            inputId="playground-api-key"
+            instanceId="playground-api-key"
             label={t`API Key`}
             placeholder="Enter your API key"
             value={value}

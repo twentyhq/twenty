@@ -85,7 +85,7 @@ export const TextArea = ({
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, maxRows);
 
-  const inputId = useId();
+  const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -112,10 +112,10 @@ export const TextArea = ({
 
   return (
     <StyledContainer>
-      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
+      {label && <StyledLabel htmlFor={instanceId}>{label}</StyledLabel>}
 
       <StyledTextArea
-        id={inputId}
+        id={instanceId}
         placeholder={placeholder}
         maxRows={maxRows}
         minRows={computedMinRows}

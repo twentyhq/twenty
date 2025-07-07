@@ -37,7 +37,7 @@ const StyledIcon = styled.div`
 `;
 
 export type CurrencyInputProps = {
-  inputId: string;
+  instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -53,7 +53,7 @@ export type CurrencyInputProps = {
 };
 
 export const CurrencyInput = ({
-  inputId,
+  instanceId,
   autoFocus,
   value,
   currencyCode,
@@ -83,7 +83,7 @@ export const CurrencyInput = ({
   };
 
   useRegisterInputEvents({
-    focusId: inputId,
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalText,
     onEnter,

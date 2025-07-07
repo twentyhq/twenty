@@ -61,7 +61,7 @@ export const ApiKeyNameInput = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        inputId={nameTextInputId}
+        instanceId={nameTextInputId}
         placeholder="E.g. backoffice integration"
         onChange={onNameUpdate}
         fullWidth

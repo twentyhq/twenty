@@ -61,7 +61,7 @@ export const NumberFieldInput = ({
   return (
     <FieldInputContainer>
       <TextInput
-        inputId={instanceId}
+        instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={draftValue?.toString() ?? ''}

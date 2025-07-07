@@ -10,12 +10,12 @@ import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  H2Title,
-  HorizontalSeparator,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconUpload,
+    H2Title,
+    HorizontalSeparator,
+    IconCheck,
+    IconCopy,
+    IconDownload,
+    IconUpload,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -169,7 +169,7 @@ export const SettingsSSOSAMLForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                inputId="sso-saml-acs-url"
+                instanceId="sso-saml-acs-url"
                 disabled={true}
                 label="ACS Url"
                 value={acsUrl}
@@ -197,7 +197,7 @@ export const SettingsSSOSAMLForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                inputId="sso-saml-entity-id"
+                instanceId="sso-saml-entity-id"
                 disabled={true}
                 label="Entity ID"
                 value={entityID}

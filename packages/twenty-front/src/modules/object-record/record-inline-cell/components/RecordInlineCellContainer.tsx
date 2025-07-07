@@ -5,16 +5,16 @@ import { useContext } from 'react';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
+    AppTooltip,
+    OverflowingTextWithTooltip,
+    TooltipDelay,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
@@ -123,7 +123,7 @@ export const RecordInlineCellContainer = () => {
   };
 
   const theme = useTheme();
-  const labelId = `label-${getRecordFieldInputId({
+  const labelId = `label-${getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,
   })}`;

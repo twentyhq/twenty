@@ -72,13 +72,13 @@ export const AddressFieldInput = ({
     setDraftValue(convertToAddress(newAddress));
   };
 
-  const inputId = useAvailableComponentInstanceIdOrThrow(
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
   return (
     <AddressInput
-      inputId={inputId}
+      instanceId={instanceId}
       value={convertToAddress(draftValue)}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}

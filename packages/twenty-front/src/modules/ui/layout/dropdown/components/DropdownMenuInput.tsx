@@ -52,7 +52,7 @@ const StyledErrorDiv = styled.div`
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type DropdownMenuInputProps = HTMLInputProps & {
-  inputId: string;
+  instanceId: string;
   hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
@@ -80,7 +80,7 @@ export const DropdownMenuInput = forwardRef<
       className,
       value,
       placeholder,
-      inputId,
+      instanceId,
       hotkeyScope = 'dropdown-menu-input',
       onChange,
       onClickOutside,
@@ -99,7 +99,7 @@ export const DropdownMenuInput = forwardRef<
     const combinedRef = useCombinedRefs(ref, inputRef);
 
     useRegisterInputEvents({
-      focusId: inputId,
+      focusId: instanceId,
       inputRef,
       inputValue: value,
       onEnter,
