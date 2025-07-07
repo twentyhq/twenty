@@ -1,7 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
+import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import { selectorFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const availableFieldMetadataItemsForFilterFamilySelector =
   selectorFamily({
@@ -19,8 +21,15 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
           return [];
         }
 
+        const isJsonFeatureFlagEnabled = checkIfFeatureFlagIsEnabledOnWorkspace(
+          FeatureFlagKey.IS_JSON_FILTER_ENABLED,
+          currentWorkspace,
+        );
+
         const filterFilterableFieldMetadataItems =
-          getFilterFilterableFieldMetadataItems();
+          getFilterFilterableFieldMetadataItems({
+            isJsonFilterEnabled: isJsonFeatureFlagEnabled,
+          });
 
         const availableFieldMetadataItemsForFilter =
           objectMetadataItem.fields.filter(filterFilterableFieldMetadataItems);
