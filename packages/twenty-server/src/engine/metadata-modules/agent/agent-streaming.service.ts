@@ -8,10 +8,15 @@ import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-ch
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
+import {
+  AgentException,
+  AgentExceptionCode,
+} from 'src/engine/metadata-modules/agent/agent.exception';
 
 export type StreamAgentChatOptions = {
   threadId: string;
   userMessage: string;
+  userWorkspaceId: string;
   res: Response;
 };
 
@@ -33,13 +38,24 @@ export class AgentStreamingService {
   async streamAgentChat({
     threadId,
     userMessage,
+    userWorkspaceId,
     res,
   }: StreamAgentChatOptions) {
     try {
-      const thread = await this.threadRepository.findOneOrFail({
-        where: { id: threadId },
+      const thread = await this.threadRepository.findOne({
+        where: {
+          id: threadId,
+          userWorkspaceId,
+        },
         relations: ['messages', 'agent'],
       });
+
+      if (!thread) {
+        throw new AgentException(
+          'Thread not found',
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
 
       await this.agentChatService.addMessage({
         threadId,

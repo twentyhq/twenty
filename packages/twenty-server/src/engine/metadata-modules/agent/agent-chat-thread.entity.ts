@@ -12,6 +12,7 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatMessageEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 
 import { AgentEntity } from './agent.entity';
@@ -30,6 +31,16 @@ export class AgentChatThreadEntity {
   })
   @JoinColumn({ name: 'agentId' })
   agent: Relation<AgentEntity>;
+
+  @Column('uuid')
+  @Index()
+  userWorkspaceId: string;
+
+  @ManyToOne(() => UserWorkspace, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userWorkspaceId' })
+  userWorkspace: Relation<UserWorkspace>;
 
   @OneToMany(() => AgentChatMessageEntity, (message) => message.thread)
   messages: Relation<AgentChatMessageEntity[]>;

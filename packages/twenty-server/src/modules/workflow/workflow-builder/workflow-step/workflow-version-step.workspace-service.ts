@@ -14,6 +14,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.s
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
@@ -63,6 +64,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly agentChatService: AgentChatService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async createWorkflowVersionStep({
@@ -637,7 +639,17 @@ export class WorkflowVersionStepWorkspaceService {
           );
         }
 
-        await this.agentChatService.createThread(newAgent.id);
+        const userWorkspaceId =
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
+
+        if (!userWorkspaceId) {
+          throw new WorkflowVersionStepException(
+            'User workspace ID not found',
+            WorkflowVersionStepExceptionCode.FAILURE,
+          );
+        }
+
+        await this.agentChatService.createThread(newAgent.id, userWorkspaceId);
 
         return {
           id: newStepId,

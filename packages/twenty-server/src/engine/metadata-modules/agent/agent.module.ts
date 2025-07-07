@@ -6,6 +6,7 @@ import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -32,6 +33,7 @@ import { AgentService } from './agent.service';
         RoleTargetsEntity,
         AgentChatMessageEntity,
         AgentChatThreadEntity,
+        UserWorkspace,
       ],
       'core',
     ),
