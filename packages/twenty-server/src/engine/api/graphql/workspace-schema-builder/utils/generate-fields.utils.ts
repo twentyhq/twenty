@@ -64,9 +64,17 @@ export const generateFields = <
   for (const fieldMetadata of objectMetadata.fields) {
     let generatedField;
 
-    if (
-      isFieldMetadataInterfaceOfType(fieldMetadata, FieldMetadataType.RELATION)
-    ) {
+    const isRelation =
+      isFieldMetadataInterfaceOfType(
+        fieldMetadata,
+        FieldMetadataType.RELATION,
+      ) ||
+      isFieldMetadataInterfaceOfType(
+        fieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
+      );
+
+    if (isRelation) {
       generatedField = generateRelationField({
         fieldMetadata,
         kind,
@@ -162,7 +170,9 @@ const generateRelationField = <
   typeFactory,
   isRelationConnectEnabled,
 }: {
-  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>;
+  fieldMetadata: FieldMetadataInterface<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >;
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;

@@ -62,7 +62,11 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
-    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
+    if (
+      isIdField ||
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+    ) {
       return GraphQLID;
     }
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
