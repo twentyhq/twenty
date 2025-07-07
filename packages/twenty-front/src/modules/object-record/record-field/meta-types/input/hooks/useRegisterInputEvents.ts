@@ -67,7 +67,7 @@ export const useRegisterInputEvents = <T>({
   });
 
   useHotkeysOnFocusedElement({
-    keys: [Key.Shift, Key.Tab],
+    keys: [`${Key.Shift}+${Key.Tab}`],
     callback: () => {
       onShiftTab?.(inputValue);
     },
