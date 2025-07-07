@@ -2,13 +2,14 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
@@ -30,7 +31,7 @@ const RatingFieldValueSetterEffect = ({
 
 type RatingFieldInputWithContextProps = RatingFieldInputProps & {
   value: FieldRatingValue;
-  recordId?: string;
+  recordId: string;
 };
 
 const RatingFieldInputWithContext = ({
@@ -38,20 +39,29 @@ const RatingFieldInputWithContext = ({
   value,
   onSubmit,
 }: RatingFieldInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const inputId = getRecordFieldInputId({
+    recordId,
+    fieldName: 'Rating',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+    pushFocusItemToFocusStack({
+      focusId: inputId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: inputId,
+      },
+      hotkeyScope: DEFAULT_CELL_SCOPE,
+    });
+  }, [pushFocusItemToFocusStack, inputId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId({
-          recordId: recordId ?? '',
-          fieldName: 'Rating',
-          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-        }),
+        instanceId: inputId,
       }}
     >
       <FieldContext.Provider
