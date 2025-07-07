@@ -18,9 +18,7 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
         throw new ForbiddenError(exception.message, {
-          extensions: {
-            userFriendlyMessage: exception.userFriendlyMessage,
-          },
+          userFriendlyMessage: exception.userFriendlyMessage,
         });
       default: {
         const _exhaustiveCheck: never = exception.code;
