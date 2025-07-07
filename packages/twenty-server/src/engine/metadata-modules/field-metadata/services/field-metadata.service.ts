@@ -36,6 +36,7 @@ import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadat
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
+import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -183,7 +184,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...optionsForUpdate,
       };
 
-      await this.validateFieldMetadata({
+      await this.fieldMetadataValidationService.validateFieldMetadata({
         fieldMetadataType: existingFieldMetadata.type,
         existingFieldMetadata,
         fieldMetadataInput: fieldMetadataForUpdate,
@@ -638,9 +639,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const fieldMetadataForCreate =
-      this.prepareCustomFieldMetadataForCreation(fieldMetadataInput);
+      prepareCustomFieldMetadataForCreation(fieldMetadataInput);
 
-    await this.validateFieldMetadata({
+    await this.fieldMetadataValidationService.validateFieldMetadata({
       fieldMetadataType: fieldMetadataForCreate.type,
       fieldMetadataInput: fieldMetadataForCreate,
       objectMetadata,
@@ -661,32 +662,37 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
       const relationFieldMetadataForCreate =
-        await this.addCustomRelationFieldMetadataForCreation(
+        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           fieldMetadataForCreate,
           fieldMetadataInput.relationCreationPayload,
         );
 
-      await this.validateFieldMetadataRelationSpecifics({
-        fieldMetadataInput: relationFieldMetadataForCreate,
-        fieldMetadataType: fieldMetadataForCreate.type,
-        objectMetadataMaps,
-      });
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
+        {
+          fieldMetadataInput: relationFieldMetadataForCreate,
+          fieldMetadataType: fieldMetadataForCreate.type,
+          objectMetadataMaps,
+        },
+      );
 
-      return await this.createRelationFieldMetadataItems({
-        fieldMetadataInput: relationFieldMetadataForCreate,
-        objectMetadata,
-        fieldMetadataRepository,
-      });
+      return await this.fieldMetadataRelationService.createRelationFieldMetadataItems(
+        {
+          fieldMetadataInput: relationFieldMetadataForCreate,
+          objectMetadata,
+          fieldMetadataRepository,
+        },
+      );
     }
 
-    return await this.createMorphRelationFieldMetadataItems({
-      fieldMetadataForCreate,
-      morphRelationsCreationPayload:
-        fieldMetadataInput.morphRelationsCreationPayload,
-      objectMetadata,
-      fieldMetadataRepository,
-      objectMetadataMaps,
-    });
+    return await this.fieldMetadataMorphRelationService.createMorphRelationFieldMetadataItems(
+      {
+        fieldMetadataForCreate,
+        morphRelationsCreationPayload:
+          fieldMetadataInput.morphRelationsCreationPayload,
+        objectMetadata,
+        fieldMetadataRepository,
+      },
+    );
   }
 
   private async createMigrationActions({

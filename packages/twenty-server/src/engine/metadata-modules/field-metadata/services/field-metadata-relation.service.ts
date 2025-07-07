@@ -124,7 +124,7 @@ export class FieldMetadataRelationService {
     return [createdFieldMetadataItemUpdated, targetFieldMetadata];
   }
 
-  private async validateFieldMetadataRelationSpecifics<
+  async validateFieldMetadataRelationSpecifics<
     T extends UpdateFieldInput | CreateFieldInput,
   >({
     fieldMetadataInput,
