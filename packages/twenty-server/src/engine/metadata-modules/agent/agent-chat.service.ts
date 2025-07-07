@@ -58,28 +58,4 @@ export class AgentChatService {
       order: { createdAt: 'ASC' },
     });
   }
-
-  async addUserMessageAndAIResponse(threadId: string, userMessage: string) {
-    const userMsg = await this.addMessage({
-      threadId,
-      role: AgentChatMessageRole.USER,
-      content: userMessage,
-    });
-    const thread = await this.threadRepository.findOneOrFail({
-      where: { id: threadId },
-      relations: ['messages'],
-    });
-    const aiResponseText = await this.agentExecutionService.getChatResponse({
-      agentId: thread.agentId,
-      userMessage,
-      messages: thread.messages,
-    });
-    const aiMsg = await this.addMessage({
-      threadId,
-      role: AgentChatMessageRole.ASSISTANT,
-      content: aiResponseText,
-    });
-
-    return [userMsg, aiMsg];
-  }
 }

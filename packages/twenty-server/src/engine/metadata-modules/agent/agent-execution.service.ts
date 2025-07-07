@@ -167,40 +167,6 @@ export class AgentExecutionService {
     return streamText(aiRequestConfig);
   }
 
-  async getChatResponse({
-    agentId,
-    userMessage,
-    messages,
-  }: {
-    agentId: string;
-    userMessage: string;
-    messages: AgentChatMessageEntity[];
-  }): Promise<string> {
-    const agent = await this.agentRepository.findOneOrFail({
-      where: { id: agentId },
-    });
-
-    const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
-      role,
-      content,
-    }));
-
-    llmMessages.push({
-      role: AgentChatMessageRole.USER,
-      content: userMessage,
-    });
-
-    const aiRequestConfig = await this.prepareAIRequestConfig({
-      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,
-      messages: llmMessages,
-      agent,
-    });
-
-    const textResponse = await generateText(aiRequestConfig);
-
-    return textResponse.text;
-  }
-
   async executeAgent({
     agent,
     context,

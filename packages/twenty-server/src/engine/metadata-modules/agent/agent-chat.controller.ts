@@ -42,14 +42,6 @@ export class AgentChatController {
     return this.agentChatService.createThread(body.agentId);
   }
 
-  @Post('messages')
-  async sendMessage(@Body() body: { threadId: string; content: string }) {
-    return this.agentChatService.addUserMessageAndAIResponse(
-      body.threadId,
-      body.content,
-    );
-  }
-
   @Post('stream')
   async streamAgentChat(
     @Body()
