@@ -6,6 +6,7 @@ import {
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { isDefined } from 'twenty-shared/utils';
 
 const separateRelationFieldMetadata = (
   fieldMetadataInputs: WorkspaceMigrationFieldInput[],
@@ -18,7 +19,10 @@ const separateRelationFieldMetadata = (
     otherFields: [],
   };
   return fieldMetadataInputs.reduce((acc, fieldMetadataInput) => {
-    if (isRelationFieldMetadataType(fieldMetadataInput.type)) {
+    if (
+      isDefined(fieldMetadataInput.type) && // TODO could be required in typing
+      isRelationFieldMetadataType(fieldMetadataInput.type)
+    ) {
       return {
         ...acc,
         relationFields: [...acc.relationFields, fieldMetadataInput],
