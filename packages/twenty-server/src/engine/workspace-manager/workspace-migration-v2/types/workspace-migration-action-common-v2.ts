@@ -3,14 +3,6 @@ import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/wo
 import { WorkspaceMigrationV2ObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
 import { WorkspaceMigrationUniquenessActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-uniqueness-action-v2';
 
-type UniqueIdentifierRecord<TTarget extends string> = {
-  [P in `${TTarget}UniqueIdentifier`]: string;
-};
-export type ObjectMetadataUniqueIdentifier =
-  UniqueIdentifierRecord<'objectMetadata'>;
-export type FieldMetadataUniqueIdentifier =
-  UniqueIdentifierRecord<'fieldMetadata'>;
-
 export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationV2ObjectAction
   | WorkspaceMigrationFieldActionV2

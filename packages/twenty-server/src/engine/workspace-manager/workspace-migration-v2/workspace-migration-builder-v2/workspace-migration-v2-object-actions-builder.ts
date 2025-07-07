@@ -1,76 +1,12 @@
-import omit from 'lodash.omit';
-import diff from 'microdiff';
-import { assertUnreachable } from 'twenty-shared/utils';
-
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
-import {
-  ObjectMetadataEntityEditableProperties,
-  WorkspaceMigrationObjectInput,
-  objectMetadataEntityEditableProperties,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import {
   getWorkspaceMigrationV2ObjectCreateAction,
   getWorkspaceMigrationV2ObjectDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
-import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-
-type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
-
-const compareTwoWorkspaceMigrationObjectInput = ({
-  from,
-  to,
-}: ObjectWorkspaceMigrationUpdate) => {
-  const fromCompare = transformMetadataForComparison(from, {});
-  const toCompare = transformMetadataForComparison(to, {});
-  const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
-
-  return objectMetadataDifference.flatMap<
-    UpdateObjectAction['updates'][number]
-  >((difference) => {
-    switch (difference.type) {
-      case 'CHANGE': {
-        if (
-          difference.oldValue === null &&
-          (difference.value === null || difference.value === undefined)
-        ) {
-          return [];
-        }
-        const property = difference.path[0];
-
-        // TODO investigate why it would be a number, in case of array I guess ?
-        if (typeof property === 'number') {
-          return [];
-        }
-
-        // Could be handled directly from the diff we do above
-        if (
-          !objectMetadataEntityEditableProperties.includes(
-            property as ObjectMetadataEntityEditableProperties,
-          )
-        ) {
-          return [];
-        }
-
-        return {
-          property,
-          from: difference.oldValue,
-          to: difference.value,
-        };
-      }
-      case 'CREATE':
-      case 'REMOVE': {
-        // Should never occurs ? should throw ?
-        return [];
-      }
-      default: {
-        assertUnreachable(difference, 'TODO');
-      }
-    }
-  });
-};
+import { compareTwoWorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-object-metadata-input-comparator.util';
 
 export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
   CustomDeletedCreatedUpdatedMatrix<
@@ -102,8 +38,8 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
       }
 
       return {
-        objectMetadataUniqueIdentifier: from.uniqueIdentifier,
         type: 'update_object',
+        objectMetadataInput: to,
         updates: objectUpdatedProperties,
       };
     });
