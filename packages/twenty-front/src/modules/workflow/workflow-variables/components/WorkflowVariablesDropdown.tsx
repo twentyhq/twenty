@@ -37,12 +37,14 @@ export const WorkflowVariablesDropdown = ({
   disabled,
   objectNameSingularToSelect,
   multiline,
+  clickableComponent,
 }: {
   instanceId: string;
   onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
   objectNameSingularToSelect?: string;
   multiline?: boolean;
+  clickableComponent?: React.ReactNode;
 }) => {
   const theme = useTheme();
 
@@ -102,12 +104,14 @@ export const WorkflowVariablesDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <StyledDropdownVariableButtonContainer
-          isUnfolded={isDropdownOpen}
-          transparentBackground
-        >
-          <IconVariablePlus size={theme.icon.size.sm} />
-        </StyledDropdownVariableButtonContainer>
+        clickableComponent ?? (
+          <StyledDropdownVariableButtonContainer
+            isUnfolded={isDropdownOpen}
+            transparentBackground
+          >
+            <IconVariablePlus size={theme.icon.size.sm} />
+          </StyledDropdownVariableButtonContainer>
+        )
       }
       dropdownComponents={
         !isDefined(selectedStep) ? (
