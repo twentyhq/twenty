@@ -1,4 +1,3 @@
-//tododo - unit test
 export const createSqlWhereTupleInClause = (
   conditions: [string, string][][],
   tableName: string,
