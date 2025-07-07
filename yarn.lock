@@ -441,44 +441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.7.0":
-  version: 3.11.4
-  resolution: "@apollo/client@npm:3.11.4"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@wry/caches": "npm:^1.0.0"
-    "@wry/equality": "npm:^0.5.6"
-    "@wry/trie": "npm:^0.5.0"
-    graphql-tag: "npm:^2.12.6"
-    hoist-non-react-statics: "npm:^3.3.2"
-    optimism: "npm:^0.18.0"
-    prop-types: "npm:^15.7.2"
-    rehackt: "npm:^0.1.0"
-    response-iterator: "npm:^0.2.6"
-    symbol-observable: "npm:^4.0.0"
-    ts-invariant: "npm:^0.10.3"
-    tslib: "npm:^2.3.0"
-    zen-observable-ts: "npm:^1.2.5"
-  peerDependencies:
-    graphql: ^15.0.0 || ^16.0.0
-    graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: 10c0/1d0f848a68803e4987f7bceb6c4d76a1c9c584a66cefbcacfe8aebb342b68e4cca96ecb76e7a5a423f5047da8c35e52d971cad3d532248976976c32336eac7d9
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.7.17":
+"@apollo/client@npm:^3.7.0, @apollo/client@npm:^3.7.17":
   version: 3.13.8
   resolution: "@apollo/client@npm:3.13.8"
   dependencies:
@@ -24479,13 +24442,6 @@ __metadata:
   version: 6.9.15
   resolution: "@types/qs@npm:6.9.15"
   checksum: 10c0/49c5ff75ca3adb18a1939310042d273c9fc55920861bd8e5100c8a923b3cda90d759e1a95e18334092da1c8f7b820084687770c83a1ccef04fb2c6908117c823
-  languageName: node
-  linkType: hard
-
-"@types/qs@npm:^6":
-  version: 6.14.0
-  resolution: "@types/qs@npm:6.14.0"
-  checksum: 10c0/5b3036df6e507483869cdb3858201b2e0b64b4793dc4974f188caa5b5732f2333ab9db45c08157975054d3b070788b35088b4bc60257ae263885016ee2131310
   languageName: node
   linkType: hard
 
@@ -50726,7 +50682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.11.2, qs@npm:^6.14.0":
+"qs@npm:^6.11.2":
   version: 6.14.0
   resolution: "qs@npm:6.14.0"
   dependencies:
@@ -52855,13 +52811,6 @@ __metadata:
     is-core-module: "npm:^2.1.0"
     path-parse: "npm:^1.0.6"
   checksum: 10c0/254980f60dd9fdb28b34a511e70df6e3027d9627efce86a40757eea9b87252d172829c84517554560c4541ebfe207868270c19a0f086997b41209367aa8ef74f
-  languageName: node
-  linkType: hard
-
-"response-iterator@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "response-iterator@npm:0.2.6"
-  checksum: 10c0/60e6b552cd610643269d5d916d270cc8a4bea978cbe4779d6ef8083ac6b89006795508034e4c4ebe204eded75ac32bf243589ba82c1184591dde0674f6db785e
   languageName: node
   linkType: hard
 
@@ -56958,13 +56907,11 @@ __metadata:
     "@tiptap/extension-text-style": "npm:^2.10.4"
     "@tiptap/react": "npm:^2.10.4"
     "@types/file-saver": "npm:^2"
-    "@types/qs": "npm:^6"
     "@typescript-eslint/eslint-plugin": "npm:6.21.0"
     "@typescript-eslint/experimental-utils": "npm:^5.62.0"
     "@typescript-eslint/parser": "npm:6.21.0"
     "@typescript-eslint/utils": "npm:6.21.0"
     "@xyflow/react": "npm:^12.4.2"
-    apollo-link-rest: "npm:^0.9.0"
     buffer: "npm:^6.0.3"
     docx: "npm:^9.1.0"
     eslint: "npm:^8.53.0"
@@ -56986,7 +56933,6 @@ __metadata:
     file-saver: "npm:^2.0.5"
     graphql: "npm:^16.11.0"
     optionator: "npm:^0.9.1"
-    qs: "npm:^6.14.0"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
@@ -57322,6 +57268,7 @@ __metadata:
     add: "npm:^2.0.6"
     addressparser: "npm:^1.0.1"
     afterframe: "npm:^1.0.2"
+    apollo-link-rest: "npm:^0.9.0"
     apollo-server-express: "npm:^3.12.0"
     apollo-upload-client: "npm:^17.0.0"
     archiver: "npm:^7.0.1"
