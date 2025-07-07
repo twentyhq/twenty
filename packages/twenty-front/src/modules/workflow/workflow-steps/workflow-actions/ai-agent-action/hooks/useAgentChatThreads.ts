@@ -13,6 +13,5 @@ export const useAgentChatThreads = (agentId: string) => {
   return useQuery<{ threads: AgentChatThread[] }>(GET_AGENT_CHAT_THREADS, {
     variables: { agentId },
     skip: !isDefined(agentId),
-    fetchPolicy: 'cache-and-network',
   });
 };

@@ -48,16 +48,9 @@ export const useAgentChat = (agentId: string) => {
   const currentThreadId = threads[0]?.id;
 
   const { loading: messagesLoading, refetch: refetchMessages } =
-    useAgentChatMessages(currentThreadId, ({ messages }) => {
-      console.log({ newMessages: messages });
-      setAgentChatMessages(messages);
-      scrollToBottom();
-      setAgentStreamingMessage('');
-    });
+    useAgentChatMessages(currentThreadId);
 
   const isLoading = messagesLoading || threadsLoading || isStreaming;
-
-  console.log({ agentChatMessages });
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -92,7 +85,6 @@ export const useAgentChat = (agentId: string) => {
       setAgentStreamingMessage(chunk);
       scrollToBottom();
     });
-    refetchMessages();
 
     setIsStreaming(false);
   };
@@ -109,7 +101,11 @@ export const useAgentChat = (agentId: string) => {
 
     await streamAgentResponse(content);
 
-    refetchMessages();
+    const { data } = await refetchMessages();
+
+    setAgentChatMessages(data?.messages);
+    setAgentStreamingMessage('');
+    scrollToBottom();
   };
 
   const handleSendMessage = async () => {
