@@ -17,6 +17,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
+import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -66,6 +67,7 @@ const MIGRATED_REST_METHODS = [
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     RestApiModule,
+    McpModule,
     DataSourceModule,
     MiddlewareModule,
     WorkspaceMetadataCacheModule,

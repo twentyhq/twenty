@@ -12,7 +12,9 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
+import { z } from 'zod';
 
+import { Tool } from 'src/engine/api/mcp/decorators/tool.decorator';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -39,6 +41,16 @@ export class RestApiCoreController {
   }
 
   @Post('*')
+  @Tool({
+    name: 'create-record',
+    description: 'Creates a new record in the specified object',
+    parameters: z.object({
+      objectName: z
+        .string()
+        .describe('Name of the object to create a record for'),
+      data: z.record(z.any()).describe('Data for the new record'),
+    }),
+  })
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.createOne(request);
 
@@ -46,6 +58,31 @@ export class RestApiCoreController {
   }
 
   @Get('*')
+  @Tool({
+    name: 'get-records',
+    description:
+      'Retrieves records from the specified object with optional filtering',
+    parameters: z.object({
+      objectName: z
+        .string()
+        .describe('Name of the object to retrieve records from'),
+      filters: z
+        .record(z.any())
+        .optional()
+        .describe('Optional filters to apply'),
+      sort: z
+        .array(z.string())
+        .optional()
+        .describe('Optional sorting parameters'),
+      pagination: z
+        .object({
+          page: z.number().optional().default(1),
+          limit: z.number().optional().default(10),
+        })
+        .optional()
+        .describe('Optional pagination parameters'),
+    }),
+  })
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.get(request);
 
@@ -53,6 +90,16 @@ export class RestApiCoreController {
   }
 
   @Delete('*')
+  @Tool({
+    name: 'delete-records',
+    description: 'Deletes records from the specified object',
+    parameters: z.object({
+      objectName: z
+        .string()
+        .describe('Name of the object to delete records from'),
+      ids: z.array(z.string()).describe('IDs of the records to delete'),
+    }),
+  })
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.delete(request);
 
@@ -60,6 +107,17 @@ export class RestApiCoreController {
   }
 
   @Patch('*')
+  @Tool({
+    name: 'update-records',
+    description: 'Updates records in the specified object',
+    parameters: z.object({
+      objectName: z
+        .string()
+        .describe('Name of the object to update records in'),
+      id: z.string().describe('ID of the record to update'),
+      data: z.record(z.any()).describe('Data to update the record with'),
+    }),
+  })
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.update(request);
 
