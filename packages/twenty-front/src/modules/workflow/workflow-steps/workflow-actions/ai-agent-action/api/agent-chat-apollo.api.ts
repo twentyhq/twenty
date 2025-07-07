@@ -20,7 +20,7 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
     messages(threadId: $threadId)
       @rest(
         type: "AgentChatMessage"
-        path: "/agent-chat/messages/{args.threadId}"
+        path: "/agent-chat/threads/{args.threadId}/messages"
       ) {
       id
       threadId

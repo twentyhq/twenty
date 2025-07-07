@@ -36,7 +36,7 @@ export class AgentChatController {
     return this.agentChatService.getThreadsForAgent(agentId, userWorkspaceId);
   }
 
-  @Get('messages/:threadId')
+  @Get('threads/:threadId/messages')
   async getMessagesForThread(
     @Param('threadId') threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
