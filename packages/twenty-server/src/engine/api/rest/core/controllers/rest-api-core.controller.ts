@@ -90,16 +90,6 @@ export class RestApiCoreController {
   }
 
   @Delete('*')
-  @Tool({
-    name: 'delete-records',
-    description: 'Deletes records from the specified object',
-    parameters: z.object({
-      objectName: z
-        .string()
-        .describe('Name of the object to delete records from'),
-      ids: z.array(z.string()).describe('IDs of the records to delete'),
-    }),
-  })
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.delete(request);
 
