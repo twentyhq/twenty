@@ -1,0 +1,268 @@
+import deepEqual from 'deep-equal';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+
+//tododo - move to own type file
+type uniqueFieldCondition = [field: string, value: string];
+
+//tododo - move to own type file
+type uniqueConstraintCondition = uniqueFieldCondition[];
+
+const hasRelationConnect = (value: unknown): value is ConnectObject => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+
+  const obj = value as Record<string, unknown>;
+
+  if (
+    !obj.connect ||
+    typeof obj.connect !== 'object' ||
+    Array.isArray(obj.connect)
+  ) {
+    return false;
+  }
+
+  const connect = obj.connect as Record<string, unknown>;
+
+  if (
+    !connect.where ||
+    typeof connect.where !== 'object' ||
+    Array.isArray(connect.where)
+  ) {
+    return false;
+  }
+
+  const where = connect.where as Record<string, unknown>;
+
+  const whereKeys = Object.keys(where);
+
+  if (whereKeys.length === 0) {
+    return false;
+  }
+
+  return whereKeys.every((key) => {
+    const whereValue = where[key];
+
+    if (typeof whereValue === 'string') {
+      return true;
+    }
+    if (
+      whereValue &&
+      typeof whereValue === 'object' &&
+      !Array.isArray(whereValue)
+    ) {
+      const subObj = whereValue as Record<string, unknown>;
+
+      return Object.values(subObj).every(
+        (subValue) => typeof subValue === 'string',
+      );
+    }
+
+    return false;
+  });
+};
+
+const extractConnectFields = (
+  entity: Record<string, unknown>,
+): { [connectFieldName: string]: ConnectObject }[] => {
+  const connectFields: { [entityKey: number]: ConnectObject }[] = [];
+
+  for (const [key, value] of Object.entries(entity)) {
+    if (hasRelationConnect(value)) {
+      connectFields.push({ [key]: value });
+    }
+  }
+
+  return connectFields;
+};
+
+//tododo - move to own type file
+export type RelationConnectQueryConfig = {
+  targetObjectName: string;
+  recordToConnectConditions: uniqueConstraintCondition[];
+  relationFieldName: string;
+  connectFieldName: string;
+  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[];
+  recordToConnectConditonByEntityIndex: {
+    [entityIndex: number]: uniqueConstraintCondition;
+  };
+};
+
+//tododo - unit test
+export const computeRelationConnectQueryConfigs = (
+  entities: Record<string, unknown>[],
+  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  objectMetadataMap: ObjectMetadataMaps,
+) => {
+  const allConnectNestedQueries: Record<string, RelationConnectQueryConfig> =
+    {};
+
+  for (const [entityIndex, entity] of entities.entries()) {
+    const connectFields = extractConnectFields(entity);
+
+    if (connectFields.length === 0) {
+      continue;
+    }
+
+    for (const connectField of connectFields) {
+      const [connectFieldName, connectObject] = Object.entries(connectField)[0];
+      const field =
+        objectMetadata.fieldsById[
+          objectMetadata.fieldIdByName[connectFieldName]
+        ];
+
+      if (
+        !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+        field.settings?.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        throw new Error(
+          `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
+        );
+      }
+      checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
+
+      const targetObjectMetadata =
+        objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
+
+      if (!isDefined(targetObjectMetadata)) {
+        throw new Error(
+          `Target object metadata not found for ${connectFieldName}`,
+        );
+      }
+
+      const uniqueConstraintFields = checkUniqueConstraintFullyPopulated(
+        targetObjectMetadata,
+        connectObject,
+        connectFieldName,
+      );
+
+      const recordToConnectCondition = computeUniqueConstraintCondition(
+        uniqueConstraintFields,
+        connectObject,
+      );
+
+      if (isDefined(allConnectNestedQueries[connectFieldName])) {
+        checkUniqueConstraintIsSameOrThrow(
+          allConnectNestedQueries[connectFieldName],
+          uniqueConstraintFields,
+        );
+
+        allConnectNestedQueries[
+          connectFieldName
+        ].recordToConnectConditions.push(recordToConnectCondition);
+        allConnectNestedQueries[
+          connectFieldName
+        ].recordToConnectConditonByEntityIndex[entityIndex] =
+          recordToConnectCondition;
+      } else {
+        allConnectNestedQueries[connectFieldName] = {
+          targetObjectName: targetObjectMetadata.nameSingular,
+          recordToConnectConditions: [recordToConnectCondition],
+          relationFieldName: `${connectFieldName}Id`,
+          connectFieldName,
+          uniqueConstraintFields,
+          recordToConnectConditonByEntityIndex: {
+            [entityIndex]: recordToConnectCondition,
+          },
+        };
+      }
+    }
+  }
+
+  return allConnectNestedQueries;
+};
+
+const checkUniqueConstraintFullyPopulated = (
+  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  connectObject: ConnectObject,
+  connectFieldName: string,
+) => {
+  const uniqueConstraintsFields = getUniqueConstraintsFields({
+    ...objectMetadata,
+    fields: Object.values(objectMetadata.fieldsById),
+  });
+
+  const uniqueConstraintFieldFullyPopulated = uniqueConstraintsFields.find(
+    (uniqueConstraintFields) =>
+      uniqueConstraintFields.every((uniqueConstraintField) =>
+        isDefined(connectObject.connect.where[uniqueConstraintField.name]),
+      ),
+  );
+
+  if (!isDefined(uniqueConstraintFieldFullyPopulated)) {
+    throw new Error(
+      `Missing required values: all fields in at least one unique constraint must be provided for '${connectFieldName}'`,
+    );
+  }
+
+  return uniqueConstraintFieldFullyPopulated;
+};
+
+const checkNoRelationFieldConflictOrThrow = (
+  entity: Record<string, unknown>,
+  fieldName: string,
+) => {
+  const hasRelationFieldConflict =
+    isDefined(entity[fieldName]) && isDefined(entity[`${fieldName}Id`]);
+
+  if (hasRelationFieldConflict) {
+    throw new Error(
+      `${fieldName} and ${fieldName}Id cannot be simultaneously set`,
+    );
+  }
+};
+
+const computeUniqueConstraintCondition = (
+  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+  connectObject: ConnectObject,
+): uniqueConstraintCondition => {
+  return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
+    if (isCompositeFieldMetadataType(uniqueConstraintField.type)) {
+      return [
+        ...acc,
+        ...Object.entries(
+          formatCompositeField(
+            connectObject.connect.where[uniqueConstraintField.name],
+            uniqueConstraintField,
+          ),
+        ),
+      ];
+    }
+
+    return [
+      ...acc,
+      [
+        uniqueConstraintField.name,
+        connectObject.connect.where[uniqueConstraintField.name],
+      ],
+    ];
+  }, []);
+};
+
+const checkUniqueConstraintIsSameOrThrow = (
+  relationConnectQueryConfig: RelationConnectQueryConfig,
+  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+) => {
+  if (
+    !deepEqual(
+      relationConnectQueryConfig.uniqueConstraintFields,
+      uniqueConstraintFields,
+    )
+  ) {
+    throw new Error(
+      `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}`,
+    );
+  }
+};

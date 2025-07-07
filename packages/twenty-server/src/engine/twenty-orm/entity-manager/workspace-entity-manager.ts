@@ -32,6 +32,7 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -44,6 +45,12 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import {
+  computeRelationConnectQueryConfigs,
+  RelationConnectQueryConfig,
+} from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts';
+import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -166,13 +173,33 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
-  override insert<Entity extends ObjectLiteral>(
+  override async insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entity:
       | QueryDeepPartialEntityWithRelationConnect<Entity>
       | QueryDeepPartialEntityWithRelationConnect<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
+    const featureFlagMap = this.getFeatureFlagMap();
+
+    let entityWithoutRelationConnect:
+      | QueryDeepPartialEntity<Entity>
+      | QueryDeepPartialEntity<Entity>[];
+
+    if (featureFlagMap[FeatureFlagKey.IS_RELATION_CONNECT_ENABLED]) {
+      if (!Array.isArray(entity)) {
+        entity = [entity];
+      }
+
+      entityWithoutRelationConnect = await this.executeConnectQueries<Entity>(
+        entity,
+        target,
+        permissionOptions,
+      );
+    } else {
+      entityWithoutRelationConnect = entity;
+    }
+
     return this.createQueryBuilder(
       undefined,
       undefined,
@@ -181,7 +208,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(entity)
+      .values(entityWithoutRelationConnect)
       .execute();
   }
 
@@ -1323,5 +1350,85 @@ export class WorkspaceEntityManager extends EntityManager {
       'Method not allowed.',
       PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
     );
+  }
+
+  private async executeConnectQueries<Entity extends ObjectLiteral>(
+    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    target: EntityTarget<Entity>,
+    permissionOptions?: PermissionOptions,
+  ): Promise<QueryDeepPartialEntity<Entity>[]> {
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      target,
+      this.internalContext,
+    );
+
+    const objectMetadataMap = this.internalContext.objectMetadataMaps;
+
+    const relationConnectQueryConfigs = computeRelationConnectQueryConfigs(
+      entities,
+      objectMetadata,
+      objectMetadataMap,
+    );
+
+    if (!isDefined(relationConnectQueryConfigs)) return entities;
+
+    for (const connectQueryConfig of Object.values(
+      relationConnectQueryConfigs,
+    )) {
+      const { clause, parameters } = createSqlWhereTupleInClause(
+        connectQueryConfig.recordToConnectConditions,
+        connectQueryConfig.targetObjectName,
+      );
+
+      const recordsToConnect = await this.createQueryBuilder(
+        connectQueryConfig.targetObjectName,
+        connectQueryConfig.targetObjectName,
+        undefined,
+        permissionOptions,
+      )
+        .select('*')
+        .where(clause, parameters)
+        .getRawMany();
+
+      this.updateEntitiesWithRecordToConnectId(
+        entities,
+        connectQueryConfig,
+        recordsToConnect,
+      );
+    }
+
+    return entities;
+  }
+
+  private updateEntitiesWithRecordToConnectId(
+    entities: QueryDeepPartialEntityWithRelationConnect<ObjectLiteral>[],
+    connectQueryConfig: RelationConnectQueryConfig,
+    recordsToConnect: Record<string, unknown>[],
+  ) {
+    for (const [
+      stringifiedEntityIndex,
+      recordToConnectCondition,
+    ] of Object.entries(
+      connectQueryConfig.recordToConnectConditonByEntityIndex,
+    )) {
+      const entityIndex = Number(stringifiedEntityIndex);
+      const recordToConnect = recordsToConnect.filter((record) =>
+        recordToConnectCondition.every(
+          (condition) => record[condition[0]] === condition[1],
+        ),
+      );
+
+      if (recordToConnect.length !== 1) {
+        throw new Error(
+          `Expected 1 record to connect to ${connectQueryConfig.connectFieldName}, but found ${recordToConnect.length}`,
+        );
+      }
+
+      Object.assign(entities[entityIndex], {
+        ...entities[entityIndex],
+        [connectQueryConfig.relationFieldName]: recordToConnect[0]['id'],
+        [connectQueryConfig.connectFieldName]: null,
+      });
+    }
   }
 }
