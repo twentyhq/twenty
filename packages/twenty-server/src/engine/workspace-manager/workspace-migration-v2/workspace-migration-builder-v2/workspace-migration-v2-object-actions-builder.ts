@@ -108,7 +108,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
     (objectMetadata) => {
       const createObjectAction =
         getWorkspaceMigrationV2ObjectCreateAction(objectMetadata);
-      const createFieldActions = objectMetadata.fields.map((field) =>
+      const createFieldActions = objectMetadata.fieldInputs.map((field) =>
         getWorkspaceMigrationV2FieldCreateAction({
           field,
           objectMetadataUniqueIdentifier: objectMetadata.uniqueIdentifier,

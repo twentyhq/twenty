@@ -3,7 +3,7 @@ import {
   CreateFieldAction,
   DeleteFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
-import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 
 type FieldInputAndObjectUniqueIdentifier = {
   field: WorkspaceMigrationObjectFieldInput;
