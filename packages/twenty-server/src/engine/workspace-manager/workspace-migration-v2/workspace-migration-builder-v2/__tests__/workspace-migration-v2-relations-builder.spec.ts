@@ -73,12 +73,34 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_object",
     },
     {
-      "relationTargetFieldMetadata": {},
-      "relationTargetFieldMetadataId": "",
-      "relationTargetObjectMetadata": {},
-      "relationTargetObjectMetadataId": "",
-      "settings": undefined,
-      "type": "create_relation",
+      "fieldMetadataInput": {
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "Employees",
+        "name": "employees",
+        "relationTargetFieldMetadataId": "field-2",
+        "relationTargetObjectMetadataId": "obj-2",
+        "type": "RELATION",
+        "uniqueIdentifier": "employees",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [
+          {
+            "isActive": true,
+            "isCustom": true,
+            "isNullable": true,
+            "label": "Employees",
+            "name": "employees",
+            "relationTargetFieldMetadataId": "field-2",
+            "relationTargetObjectMetadataId": "obj-2",
+            "type": "RELATION",
+            "uniqueIdentifier": "employees",
+          },
+        ],
+        "uniqueIdentifier": "company",
+      },
+      "type": "create_field",
     },
   ],
 }
@@ -108,7 +130,22 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "type": "delete_relation",
+      "fieldMetadataInput": {
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "Employees",
+        "name": "employees",
+        "relationTargetFieldMetadataId": "field-2",
+        "relationTargetObjectMetadataId": "obj-2",
+        "type": "RELATION",
+        "uniqueIdentifier": "employees",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [],
+        "uniqueIdentifier": "company",
+      },
+      "type": "delete_field",
     },
   ],
 }
@@ -177,23 +214,94 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_object",
     },
     {
-      "relationTargetFieldMetadata": {},
-      "relationTargetFieldMetadataId": "",
-      "relationTargetObjectMetadata": {},
-      "relationTargetObjectMetadataId": "",
-      "settings": undefined,
-      "type": "create_relation",
+      "fieldMetadataInput": {
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "Manager",
+        "name": "manager",
+        "relationTargetFieldMetadataId": "field-3",
+        "relationTargetObjectMetadataId": "obj-3",
+        "type": "RELATION",
+        "uniqueIdentifier": "manager",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [
+          {
+            "isActive": true,
+            "isCustom": true,
+            "isNullable": true,
+            "label": "Manager",
+            "name": "manager",
+            "relationTargetFieldMetadataId": "field-3",
+            "relationTargetObjectMetadataId": "obj-3",
+            "type": "RELATION",
+            "uniqueIdentifier": "manager",
+          },
+        ],
+        "uniqueIdentifier": "person",
+      },
+      "type": "create_field",
     },
     {
-      "relationTargetFieldMetadata": {},
-      "relationTargetFieldMetadataId": "",
-      "relationTargetObjectMetadata": {},
-      "relationTargetObjectMetadataId": "",
-      "settings": undefined,
-      "type": "create_relation",
+      "fieldMetadataInput": {
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "New Relation",
+        "name": "newRelation",
+        "relationTargetFieldMetadataId": "field-2",
+        "relationTargetObjectMetadataId": "obj-2",
+        "type": "RELATION",
+        "uniqueIdentifier": "new-relation",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [
+          {
+            "isActive": true,
+            "isCustom": true,
+            "isNullable": true,
+            "label": "New Relation",
+            "name": "newRelation",
+            "relationTargetFieldMetadataId": "field-2",
+            "relationTargetObjectMetadataId": "obj-2",
+            "type": "RELATION",
+            "uniqueIdentifier": "new-relation",
+          },
+        ],
+        "uniqueIdentifier": "company",
+      },
+      "type": "create_field",
     },
     {
-      "type": "delete_relation",
+      "fieldMetadataInput": {
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "Old Relation",
+        "name": "oldRelation",
+        "relationTargetFieldMetadataId": "field-1",
+        "relationTargetObjectMetadataId": "obj-1",
+        "type": "RELATION",
+        "uniqueIdentifier": "old-relation",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [
+          {
+            "isActive": true,
+            "isCustom": true,
+            "isNullable": true,
+            "label": "New Relation",
+            "name": "newRelation",
+            "relationTargetFieldMetadataId": "field-2",
+            "relationTargetObjectMetadataId": "obj-2",
+            "type": "RELATION",
+            "uniqueIdentifier": "new-relation",
+          },
+        ],
+        "uniqueIdentifier": "company",
+      },
+      "type": "delete_field",
     },
   ],
 }
@@ -230,7 +338,7 @@ describe('Workspace migration builder relations tests suite', () => {
 `);
     });
 
-    it.only('should handle relation field updates', () => {
+    it('should handle relation field updates', () => {
       const baseField = {
         type: FieldMetadataType.RELATION,
         name: 'employees',

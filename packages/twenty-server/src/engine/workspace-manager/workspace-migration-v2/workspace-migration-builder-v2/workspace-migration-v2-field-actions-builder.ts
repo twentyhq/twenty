@@ -9,6 +9,7 @@ import {
   FieldMetadataEntityEditableProperties,
   WorkspaceMigrationFieldInput,
   fieldMetadataEntityEditableProperties,
+  fieldMetadataPropertiesToStringify,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 import {
   getWorkspaceMigrationV2FieldCreateAction,
@@ -31,8 +32,6 @@ const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
     FieldMetadataType.ADDRESS,
   ].includes(type);
 };
-
-const fieldPropertiesToStringify = ['defaultValue'] as const;
 
 export const compareTwoWorkspaceMigrationFieldInput = ({
   from,
@@ -61,7 +60,7 @@ export const compareTwoWorkspaceMigrationFieldInput = ({
 
       return false;
     },
-    propertiesToStringify: fieldPropertiesToStringify,
+    propertiesToStringify: fieldMetadataPropertiesToStringify,
   };
   const fromCompare = transformMetadataForComparison(
     from,

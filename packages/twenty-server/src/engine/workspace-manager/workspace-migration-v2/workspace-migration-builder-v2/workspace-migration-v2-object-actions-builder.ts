@@ -92,15 +92,15 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
     getWorkspaceMigrationV2ObjectDeleteAction,
   );
 
-  const updatedObjectActions = updatedObjectMetadata
-    .map<UpdateObjectAction | null>(({ from, to }) => {
+  const updatedObjectActions =
+    updatedObjectMetadata.flatMap<UpdateObjectAction>(({ from, to }) => {
       const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
         from,
         to,
       });
 
       if (objectUpdatedProperties.length === 0) {
-        return null;
+        return [];
       }
 
       return {
@@ -108,8 +108,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
         type: 'update_object',
         updates: objectUpdatedProperties,
       };
-    })
-    .filter((action): action is UpdateObjectAction => action !== null);
+    });
 
   return [
     ...createdObjectActions,

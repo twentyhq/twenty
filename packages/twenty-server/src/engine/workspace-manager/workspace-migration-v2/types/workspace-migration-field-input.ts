@@ -10,11 +10,13 @@ export const fieldMetadataEntityEditableProperties = [
   'label',
   'name',
   'options',
-  'relationTargetFieldMetadata',
-  'relationTargetFieldMetadataId',
-  'relationTargetObjectMetadata',
-  'relationTargetObjectMetadataId',
-  'settings',
+  // TODO update once we reactivate the relation edition
+  // 'relationTargetFieldMetadata',
+  // 'relationTargetFieldMetadataId',
+  // 'relationTargetObjectMetadata',
+  // 'relationTargetObjectMetadataId',
+  // 'settings',
+  ///
   'standardOverrides',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 export type FieldMetadataEntityEditableProperties =
@@ -26,3 +28,8 @@ export type WorkspaceMigrationFieldInput = Partial<
 > & {
   uniqueIdentifier: string;
 };
+
+export const fieldMetadataPropertiesToStringify = [
+  'defaultValue',
+  'standardOverrides',
+] as const satisfies FieldMetadataEntityEditableProperties[];
