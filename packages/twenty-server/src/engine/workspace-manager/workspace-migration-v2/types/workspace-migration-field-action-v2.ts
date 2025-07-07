@@ -1,5 +1,5 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   FieldMetadataEntityEditableProperties,
   WorkspaceMigrationFieldInput,

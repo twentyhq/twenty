@@ -2,10 +2,8 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import {
-  FromTo,
-  WorkspaceMigrationActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
+import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
 import {
   ObjectMetadataEntityEditableProperties,

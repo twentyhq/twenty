@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';

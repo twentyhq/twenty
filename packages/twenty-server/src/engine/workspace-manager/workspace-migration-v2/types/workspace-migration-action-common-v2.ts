@@ -11,11 +11,6 @@ export type ObjectMetadataUniqueIdentifier =
 export type FieldMetadataUniqueIdentifier =
   UniqueIdentifierRecord<'fieldMetadata'>;
 
-export type FromTo<T> = {
-  from: T;
-  to: T;
-};
-
 export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationV2ObjectAction
   | WorkspaceMigrationFieldActionV2

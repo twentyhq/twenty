@@ -1,5 +1,5 @@
 import diff from 'microdiff';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import {
   FieldMetadataEntityEditableProperties,

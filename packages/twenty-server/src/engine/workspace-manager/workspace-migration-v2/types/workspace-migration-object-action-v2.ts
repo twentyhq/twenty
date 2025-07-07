@@ -1,8 +1,6 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  FromTo,
-  ObjectMetadataUniqueIdentifier,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
+import { ObjectMetadataUniqueIdentifier } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 
 type ObjectActionCommon = ObjectMetadataUniqueIdentifier;
 export type CreateObjectAction = {
