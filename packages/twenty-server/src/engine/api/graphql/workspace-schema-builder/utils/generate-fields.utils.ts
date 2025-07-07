@@ -203,7 +203,7 @@ const generateRelationField = <
   };
 
   if (
-    [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
+    [InputTypeDefinitionKind.Create].includes(
       kind as InputTypeDefinitionKind,
     ) &&
     isDefined(fieldMetadata.relationTargetObjectMetadataId)
