@@ -38,9 +38,7 @@ export const MatchColumnToFieldSelect = ({
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
   const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
-
   const { closeDropdown } = useCloseDropdown();
-
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
 
@@ -56,9 +54,8 @@ export const MatchColumnToFieldSelect = ({
 
       if (isDefined(correspondingOption)) {
         setSelectedFieldMetadataItem(null);
-
         onChange(correspondingOption);
-        closeDropdown();
+        closeDropdown(dropdownId);
       }
     }
   };
@@ -92,6 +89,10 @@ export const MatchColumnToFieldSelect = ({
     closeDropdown(dropdownId);
   };
 
+  const doNotImportOption = options.find(
+    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
+  );
+
   const handleDoNotImportSelect = () => {
     if (isDefined(doNotImportOption)) {
       onChange(doNotImportOption);
@@ -99,26 +100,17 @@ export const MatchColumnToFieldSelect = ({
     }
   };
 
-  const handleClickOutside = () => {
-    setSelectedFieldMetadataItem(null);
-  };
-
-  const handleSubFieldBack = () => {
-    setSelectedFieldMetadataItem(null);
-  };
-
   const handleCancelSelectClick = () => {
     setSelectedFieldMetadataItem(null);
     closeDropdown(dropdownId);
   };
 
-  const doNotImportOption = options.find(
-    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
-  );
+  const handleClickOutside = () => setSelectedFieldMetadataItem(null);
+  const handleSubFieldBack = () => setSelectedFieldMetadataItem(null);
 
-  const shouldDisplaySubFieldMetadataItemSelect =
-    isDefined(selectedFieldMetadataItem?.type) &&
-    isCompositeFieldType(selectedFieldMetadataItem?.type);
+  const showSubField =
+    selectedFieldMetadataItem &&
+    isCompositeFieldType(selectedFieldMetadataItem.type);
 
   return (
     <Dropdown
@@ -133,9 +125,9 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        shouldDisplaySubFieldMetadataItemSelect && selectedFieldMetadataItem ? (
+        showSubField ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
-            fieldMetadataItem={selectedFieldMetadataItem}
+            fieldMetadataItem={selectedFieldMetadataItem!}
             onSubFieldSelect={handleSubFieldSelect}
             options={options}
             onBack={handleSubFieldBack}
