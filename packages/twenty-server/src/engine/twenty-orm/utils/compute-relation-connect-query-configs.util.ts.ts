@@ -10,14 +10,12 @@ import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-me
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
+import {
+  RelationConnectQueryConfig,
+  uniqueConstraintCondition,
+} from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-
-//tododo - move to own type file
-type uniqueFieldCondition = [field: string, value: string];
-
-//tododo - move to own type file
-type uniqueConstraintCondition = uniqueFieldCondition[];
 
 const hasRelationConnect = (value: unknown): value is ConnectObject => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -86,18 +84,6 @@ const extractConnectFields = (
   }
 
   return connectFields;
-};
-
-//tododo - move to own type file
-export type RelationConnectQueryConfig = {
-  targetObjectName: string;
-  recordToConnectConditions: uniqueConstraintCondition[];
-  relationFieldName: string;
-  connectFieldName: string;
-  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[];
-  recordToConnectConditonByEntityIndex: {
-    [entityIndex: number]: uniqueConstraintCondition;
-  };
 };
 
 //tododo - unit test
