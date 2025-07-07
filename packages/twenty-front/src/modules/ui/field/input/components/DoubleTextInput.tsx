@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
-    ChangeEvent,
-    ClipboardEvent,
-    useEffect,
-    useRef,
-    useState,
+  ChangeEvent,
+  ClipboardEvent,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { Key } from 'ts-key-enum';
 

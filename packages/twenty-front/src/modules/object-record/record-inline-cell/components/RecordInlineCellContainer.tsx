@@ -12,9 +12,9 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
-    AppTooltip,
-    OverflowingTextWithTooltip,
-    TooltipDelay,
+  AppTooltip,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';

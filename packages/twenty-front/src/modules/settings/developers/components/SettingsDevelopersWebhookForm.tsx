@@ -17,17 +17,17 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
-    getUrlHostnameOrThrow,
-    isDefined,
-    isValidUrl,
+  getUrlHostnameOrThrow,
+  isDefined,
+  isValidUrl,
 } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconBox,
-    IconNorthStar,
-    IconPlus,
-    IconTrash,
-    useIcons,
+  H2Title,
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconTrash,
+  useIcons,
 } from 'twenty-ui/display';
 import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

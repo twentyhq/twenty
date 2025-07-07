@@ -9,14 +9,14 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 import {
-    IconBolt,
-    IconBrandGoogle,
-    IconBrandLinkedin,
-    IconCheck,
-    IconHeart,
-    IconRocket,
-    IconTag,
-    IconTarget,
+  IconBolt,
+  IconBrandGoogle,
+  IconBrandLinkedin,
+  IconCheck,
+  IconHeart,
+  IconRocket,
+  IconTag,
+  IconTarget,
 } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';

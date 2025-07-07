@@ -11,8 +11,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
-    BooleanFieldInput,
-    BooleanFieldInputProps,
+  BooleanFieldInput,
+  BooleanFieldInputProps,
 } from '../BooleanFieldInput';
 
 const BooleanFieldValueSetterEffect = ({

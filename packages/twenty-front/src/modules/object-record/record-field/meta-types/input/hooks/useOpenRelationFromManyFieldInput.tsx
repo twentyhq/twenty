@@ -1,7 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import {
-    FieldRelationFromManyValue,
-    FieldRelationValue,
+  FieldRelationFromManyValue,
+  FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';

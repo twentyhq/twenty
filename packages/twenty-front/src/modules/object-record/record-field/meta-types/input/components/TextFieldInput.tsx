@@ -5,8 +5,8 @@ import { useTextField } from '../../hooks/useTextField';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
-    FieldInputClickOutsideEvent,
-    FieldInputEvent,
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';

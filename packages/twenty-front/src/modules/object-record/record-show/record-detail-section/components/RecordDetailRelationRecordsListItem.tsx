@@ -13,9 +13,9 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-    FieldContext,
-    RecordUpdateHook,
-    RecordUpdateHookParams,
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
@@ -43,11 +43,11 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { createPortal } from 'react-dom';
 import {
-    IconChevronDown,
-    IconComponent,
-    IconDotsVertical,
-    IconTrash,
-    IconUnlink,
+  IconChevronDown,
+  IconComponent,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';

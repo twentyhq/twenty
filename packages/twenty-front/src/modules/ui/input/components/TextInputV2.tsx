@@ -3,13 +3,13 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    ChangeEvent,
-    FocusEventHandler,
-    InputHTMLAttributes,
-    forwardRef,
-    useId,
-    useRef,
-    useState,
+  ChangeEvent,
+  FocusEventHandler,
+  InputHTMLAttributes,
+  forwardRef,
+  useId,
+  useRef,
+  useState,
 } from 'react';
 import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { AutogrowWrapper } from 'twenty-ui/utilities';

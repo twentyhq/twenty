@@ -2,8 +2,8 @@ import { FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
-    TextInputV2,
-    TextInputV2ComponentProps,
+  TextInputV2,
+  TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';

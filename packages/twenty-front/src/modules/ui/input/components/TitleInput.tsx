@@ -1,6 +1,6 @@
 import {
-    TextInputV2,
-    TextInputV2Size,
+  TextInputV2,
+  TextInputV2Size,
 } from '@/ui/input/components/TextInputV2';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';

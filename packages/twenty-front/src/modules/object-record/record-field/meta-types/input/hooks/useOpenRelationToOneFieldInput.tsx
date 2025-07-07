@@ -1,6 +1,6 @@
 import {
-    FieldRelationToOneValue,
-    FieldRelationValue,
+  FieldRelationToOneValue,
+  FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';

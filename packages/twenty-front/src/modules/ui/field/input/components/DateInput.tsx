@@ -3,9 +3,9 @@ import { useRef, useState } from 'react';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import {
-    DateTimePicker,
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  DateTimePicker,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';

@@ -4,8 +4,8 @@ import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
 import {
-    ImportedStructuredRow,
-    SpreadsheetImportFields,
+  ImportedStructuredRow,
+  SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
 
