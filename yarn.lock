@@ -56931,7 +56931,6 @@ __metadata:
     eslint-plugin-unicorn: "npm:^51.0.1"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
-    graphql: "npm:^16.11.0"
     optionator: "npm:^0.9.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
