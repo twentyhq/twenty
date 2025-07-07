@@ -204,4 +204,29 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       'Field "name" is not defined by type "CompanyWhereUniqueInput".',
     );
   });
+
+  it('should throw an error if too many fields are provided for connect field', async () => {
+    const graphqlOperation = createOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+      data: {
+        id: TEST_PERSON_1_ID,
+        company: {
+          connect: {
+            where: {
+              domainName: { primaryLinkUrl: 'company1.com' },
+              id: TEST_COMPANY_1_ID,
+            },
+          },
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      "Too many fields provided for connect field 'company'. Only fields from one unique constraint are allowed.",
+    );
+  });
 });

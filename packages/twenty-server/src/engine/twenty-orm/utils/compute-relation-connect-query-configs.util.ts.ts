@@ -203,7 +203,16 @@ const checkUniqueConstraintFullyPopulated = (
 
   if (!isDefined(uniqueConstraintFieldFullyPopulated)) {
     throw new Error(
-      `Missing required values: all fields in at least one unique constraint must be provided for '${connectFieldName}'`,
+      `Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
+    );
+  }
+
+  if (
+    uniqueConstraintFieldFullyPopulated.length !==
+    Object.keys(connectObject.connect.where).length
+  ) {
+    throw new Error(
+      `Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
     );
   }
 
