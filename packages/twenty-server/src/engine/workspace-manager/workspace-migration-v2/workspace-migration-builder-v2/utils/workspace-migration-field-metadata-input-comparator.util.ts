@@ -1,11 +1,69 @@
+import diff from 'microdiff';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import {
   FieldMetadataEntityEditableProperties,
   WorkspaceMigrationFieldInput,
+  fieldMetadataEntityEditableProperties,
+  fieldMetadataPropertiesToStringify,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
-import { compareTwoWorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
+import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
+  return [
+    FieldMetadataType.BOOLEAN,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+    FieldMetadataType.CURRENCY,
+    FieldMetadataType.PHONES,
+    FieldMetadataType.ADDRESS,
+  ].includes(type);
+};
+
+const compareTwoWorkspaceMigrationFieldInput = ({
+  from,
+  to,
+}: FromTo<WorkspaceMigrationFieldInput>) => {
+  const compareFieldMetadataOptions = {
+    shouldIgnoreProperty: (
+      property: string,
+      fieldMetadata: WorkspaceMigrationFieldInput,
+    ) => {
+      if (
+        !fieldMetadataEntityEditableProperties.includes(
+          property as FieldMetadataEntityEditableProperties,
+        )
+      ) {
+        return true;
+      }
+
+      if (
+        property === 'defaultValue' &&
+        isDefined(fieldMetadata.type) &&
+        shouldNotOverrideDefaultValue(fieldMetadata.type)
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+    propertiesToStringify: fieldMetadataPropertiesToStringify,
+  };
+  const fromCompare = transformMetadataForComparison(
+    from,
+    compareFieldMetadataOptions,
+  );
+  const toCompare = transformMetadataForComparison(
+    to,
+    compareFieldMetadataOptions,
+  );
+
+  const fieldMetadataDifference = diff(fromCompare, toCompare);
+
+  return fieldMetadataDifference;
+};
 
 type GetWorkspaceMigrationUpdateFieldActionArgs =
   FromTo<WorkspaceMigrationFieldInput>;
