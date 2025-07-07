@@ -33,4 +33,9 @@ export const OTHER_ACTIONS: Array<{
     type: 'AI_AGENT',
     icon: 'IconBrain',
   },
+  {
+    label: 'Filter',
+    type: 'FILTER',
+    icon: 'IconFilter',
+  },
 ];
