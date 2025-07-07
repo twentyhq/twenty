@@ -90,7 +90,7 @@ export const useOpenFieldInputEditMode = () => {
         if (isFieldRelationToOneObject(fieldDefinition)) {
           openRelationToOneFieldInput({
             fieldName: fieldDefinition.metadata.fieldName,
-            recordId: recordId,
+            recordId,
             prefix,
           });
 
@@ -107,7 +107,7 @@ export const useOpenFieldInputEditMode = () => {
               fieldName: fieldDefinition.metadata.fieldName,
               objectNameSingular:
                 fieldDefinition.metadata.relationObjectMetadataNameSingular,
-              recordId: recordId,
+              recordId,
               prefix,
             });
             return;
