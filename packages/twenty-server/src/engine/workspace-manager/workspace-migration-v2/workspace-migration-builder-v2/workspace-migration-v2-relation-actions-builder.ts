@@ -21,7 +21,8 @@ export const buildWorkspaceMigrationV2RelationActions = (
     objectMetadataInput,
   } of objectMetadataDeletedCreatedUpdatedFields) {
     // make more readable
-    const updateFieldActions: UpdateRelationAction[] = [];
+    const updateFieldActions: UpdateRelationAction[] =
+      updatedRelationFieldMetadata();
 
     const createFieldAction = createdRelationFieldMetadata.map(
       (fieldMetadataInput) =>

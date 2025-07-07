@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
@@ -11,10 +12,6 @@ import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-mana
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 import { buildWorkspaceMigrationV2RelationActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-relation-actions-builder';
 
-type WorkspaceMigrationBuilderV2ServiceArgs = {
-  from: WorkspaceMigrationObjectInput[];
-  to: WorkspaceMigrationObjectInput[];
-};
 export type UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher =
   DeletedCreatedUpdatedMatrix<WorkspaceMigrationObjectInput>;
 
@@ -23,7 +20,7 @@ export class WorkspaceMigrationBuilderV2Service {
   constructor() {}
 
   build(
-    objectMetadataFromToInputs: WorkspaceMigrationBuilderV2ServiceArgs,
+    objectMetadataFromToInputs: FromTo<WorkspaceMigrationObjectInput[]>,
   ): WorkspaceMigrationV2 {
     const {
       created: createdObjectMetadata,

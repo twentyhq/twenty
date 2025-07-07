@@ -1,7 +1,8 @@
 import omit from 'lodash.omit';
 import diff from 'microdiff';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import {
   FromTo,
   WorkspaceMigrationActionV2,
@@ -18,6 +19,7 @@ import {
   getWorkspaceMigrationV2ObjectCreateAction,
   getWorkspaceMigrationV2ObjectDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
+import { getWorkspaceMigrationV2RelationCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-relation-actions';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
@@ -90,11 +92,22 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
       const createObjectAction =
         getWorkspaceMigrationV2ObjectCreateAction(objectMetadataInput);
       const createFieldActions = objectMetadataInput.fieldInputs.map(
-        (fieldMetadataInput) =>
-          getWorkspaceMigrationV2FieldCreateAction({
+        (fieldMetadataInput) => {
+          if (
+            isDefined(fieldMetadataInput.type) &&
+            isRelationFieldMetadataType(fieldMetadataInput.type)
+          ) {
+            return getWorkspaceMigrationV2RelationCreateAction({
+              fieldMetadataInput,
+              objectMetadataInput,
+            });
+          }
+
+          return getWorkspaceMigrationV2FieldCreateAction({
             fieldMetadataInput,
             objectMetadataInput,
-          }),
+          });
+        },
       );
 
       return [createObjectAction, ...createFieldActions];
