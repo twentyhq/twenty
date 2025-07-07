@@ -287,6 +287,8 @@ export const WorkflowEditActionServerlessFunction = ({
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);
 
+  const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
+
   return (
     !loading && (
       <>
@@ -350,6 +352,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 <StyledCodeEditorContainer>
                   <InputLabel>Logs</InputLabel>
                   <TextArea
+                    textAreaId={testLogsTextAreaId}
                     value={
                       isTesting ? '' : serverlessFunctionTestData.output.logs
                     }

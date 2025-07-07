@@ -13,6 +13,7 @@ import { useRecoilCallback } from 'recoil';
 import { Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
+  instanceId: string;
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
@@ -30,6 +31,7 @@ export type DateInputProps = {
 };
 
 export const DateInput = ({
+  instanceId,
   value,
   onEnter,
   onEscape,
@@ -102,6 +104,7 @@ export const DateInput = ({
   );
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalValue,
     onEnter: handleEnter,

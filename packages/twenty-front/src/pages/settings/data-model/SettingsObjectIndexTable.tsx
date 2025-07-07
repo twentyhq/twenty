@@ -14,8 +14,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
+import { SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 
 export const StyledObjectIndexTableRow = styled(TableRow)`
   grid-template-columns: 350px 70px 80px;
@@ -113,6 +113,7 @@ export const SettingsObjectIndexTable = ({
   return (
     <>
       <StyledSearchInput
+        instanceId="object-index-table-search"
         LeftIcon={IconSearch}
         placeholder={t`Search an index...`}
         value={searchTerm}

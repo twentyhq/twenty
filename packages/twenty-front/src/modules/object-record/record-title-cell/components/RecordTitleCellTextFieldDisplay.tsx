@@ -1,7 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RecordTitleCellContext } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -30,7 +30,11 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.tertiary};
 `);
 
-export const RecordTitleCellSingleTextDisplayMode = () => {
+export const RecordTitleCellSingleTextDisplayMode = ({
+  containerType,
+}: {
+  containerType: RecordTitleCellContainerType;
+}) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
@@ -40,14 +44,12 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
-  const { containerType } = useContext(RecordTitleCellContext);
-
   return (
     <StyledDiv
       onClick={() => {
         openRecordTitleCell({
           recordId,
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          fieldName: fieldDefinition.metadata.fieldName,
           containerType,
         });
       }}

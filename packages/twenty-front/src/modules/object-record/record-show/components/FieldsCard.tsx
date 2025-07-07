@@ -18,7 +18,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -27,6 +27,8 @@ type FieldsCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
 };
+
+const INPUT_ID_PREFIX = 'fields-card';
 
 export const FieldsCard = ({
   objectNameSingular,
@@ -139,13 +141,13 @@ export const FieldsCard = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
-                    componentInstanceId={getRecordFieldInputId(
-                      objectRecordId,
-                      fieldMetadataItem.name,
-                      isInRightDrawer
+                    componentInstanceId={getRecordFieldInputInstanceId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: isInRightDrawer
                         ? 'right-drawer-fields-card'
                         : 'fields-card',
-                    )}
+                    })}
                     activityObjectNameSingular={
                       objectNameSingular as
                         | CoreObjectNameSingular.Note
@@ -185,14 +187,17 @@ export const FieldsCard = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId(
-                      objectRecordId,
-                      fieldMetadataItem.name,
-                      'fields-card',
-                    ),
+                    instanceId: getRecordFieldInputInstanceId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: INPUT_ID_PREFIX,
+                    }),
                   }}
                 >
-                  <RecordInlineCell loading={recordLoading} />
+                  <RecordInlineCell
+                    loading={recordLoading}
+                    instanceIdPrefix={INPUT_ID_PREFIX}
+                  />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
