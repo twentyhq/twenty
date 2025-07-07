@@ -336,16 +336,10 @@ export class WorkflowVersionStepWorkspaceService {
       },
     };
 
-    const updatedContext = {
-      ...workflowRun.context,
-      [stepId]: enrichedResponse,
-    };
-
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workspaceId,
       workflowRunId,
       stepOutput: newStepOutput,
-      context: updatedContext,
       stepStatus: StepStatus.SUCCESS,
     });
 
