@@ -7,7 +7,6 @@ import { WorkspaceMigrationRelationActionV2 } from 'src/engine/workspace-manager
 type UniqueIdentifierRecord<TTarget extends string> = {
   [P in `${TTarget}UniqueIdentifier`]: string;
 };
-
 export type ObjectMetadataUniqueIdentifier =
   UniqueIdentifierRecord<'objectMetadata'>;
 export type FieldMetadataUniqueIdentifier =
