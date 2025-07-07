@@ -5,14 +5,12 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/src/types';
+import { StepFilterGroup } from 'twenty-shared/src/types';
 
 type WorkflowStepFilterGroupColumnProps = {
   parentStepFilterGroup: StepFilterGroup;
   stepFilterGroup: StepFilterGroup;
   stepFilterGroupIndex: number;
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
 };
 
 const StyledContainer = styled.div`
@@ -26,8 +24,6 @@ export const WorkflowStepFilterGroupColumn = ({
   parentStepFilterGroup,
   stepFilterGroup,
   stepFilterGroupIndex,
-  stepFilterGroups,
-  stepFilters,
 }: WorkflowStepFilterGroupColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
 
@@ -44,11 +40,7 @@ export const WorkflowStepFilterGroupColumn = ({
           />
         )}
       </StyledContainer>
-      <WorkflowStepFilterGroupChildren
-        stepFilterGroupId={stepFilterGroup.id}
-        stepFilterGroups={stepFilterGroups}
-        stepFilters={stepFilters}
-      />
+      <WorkflowStepFilterGroupChildren stepFilterGroupId={stepFilterGroup.id} />
     </WorkflowAdvancedFilterDropdownColumn>
   );
 };

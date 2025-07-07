@@ -1,15 +1,22 @@
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
+import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
 import { StepFilter, StepFilterGroup } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getChildStepFiltersAndChildStepFilterGroups = ({
+export const useChildStepFiltersAndChildStepFilterGroups = ({
   stepFilterGroupId,
-  stepFilterGroups,
-  stepFilters,
 }: {
   stepFilterGroupId: string;
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
 }) => {
+  const stepFilterGroups = useRecoilComponentValueV2(
+    currentStepFilterGroupsComponentState,
+  );
+
+  const stepFilters = useRecoilComponentValueV2(
+    currentStepFiltersComponentState,
+  );
+
   const currentStepFilterGroup = stepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,
   );

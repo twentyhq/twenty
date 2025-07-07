@@ -1,6 +1,7 @@
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
@@ -18,9 +19,9 @@ type WorkflowStepFilterFieldSelectProps = {
 export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
-  const { readonly, upsertStepFilterSettings } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { readonly } = useContext(WorkflowStepFilterContext);
+
+  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const { t } = useLingui();
   const { workflowVersionId } = useWorkflowStepContextOrThrow();
@@ -61,9 +62,9 @@ export const WorkflowStepFilterFieldSelect = ({
 
   return (
     <WorkflowVariablesDropdown
-      inputId={`step-filter-field-${stepFilter.id}`}
+      instanceId={`step-filter-field-${stepFilter.id}`}
       onVariableSelect={handleChange}
-      disabled={readonly}
+      disabled={readonly ?? false}
       clickableComponent={
         <SelectControl
           selectedOption={{

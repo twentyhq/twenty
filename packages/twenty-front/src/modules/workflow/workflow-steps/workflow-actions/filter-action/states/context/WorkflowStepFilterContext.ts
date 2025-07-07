@@ -1,17 +1,9 @@
+import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { createContext } from 'react';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/src/types';
 
 type WorkflowStepFilterContextType = {
+  onFilterSettingsUpdate: (newFilterSettings: FilterSettings) => void;
   readonly?: boolean;
-  upsertStepFilterSettings: ({
-    stepFilterGroupToUpsert,
-    stepFilterToUpsert,
-  }: {
-    stepFilterGroupToUpsert?: StepFilterGroup;
-    stepFilterToUpsert?: StepFilter;
-  }) => void;
-  deleteStepFilter: (stepFilterId: string) => void;
-  deleteStepFilterGroup: (stepFilterGroupId: string) => void;
 };
 
 export const WorkflowStepFilterContext =

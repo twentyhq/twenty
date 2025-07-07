@@ -1,0 +1,82 @@
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
+import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
+import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
+import { useContext } from 'react';
+import { useRecoilCallback } from 'recoil';
+
+export const useRemoveStepFilterGroup = () => {
+  const { readonly, onFilterSettingsUpdate } = useContext(
+    WorkflowStepFilterContext,
+  );
+
+  const currentStepFilterGroupsCallbackState =
+    useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
+
+  const currentStepFiltersCallbackState = useRecoilComponentCallbackStateV2(
+    currentStepFiltersComponentState,
+  );
+
+  const removeStepFilterGroupRecoilCallback = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (stepFilterGroupId: string) => {
+        if (readonly === true) return;
+
+        const stepFilterGroups = getSnapshotValue(
+          snapshot,
+          currentStepFilterGroupsCallbackState,
+        );
+
+        const stepFilters = getSnapshotValue(
+          snapshot,
+          currentStepFiltersCallbackState,
+        );
+
+        const rootStepFilterGroup = stepFilterGroups?.find(
+          (g) => g.parentStepFilterGroupId === null,
+        );
+
+        const updatedStepFilterGroups = (stepFilterGroups ?? []).filter(
+          (g) => g.id !== stepFilterGroupId,
+        );
+
+        const updatedStepFilters = (stepFilters ?? []).filter(
+          (f) => f.stepFilterGroupId !== stepFilterGroupId,
+        );
+
+        const shouldResetStepFilterSettings =
+          updatedStepFilterGroups.length === 1 &&
+          updatedStepFilterGroups[0].id === rootStepFilterGroup?.id &&
+          updatedStepFilters.length === 0;
+
+        if (shouldResetStepFilterSettings) {
+          set(currentStepFilterGroupsCallbackState, []);
+          set(currentStepFiltersCallbackState, []);
+
+          onFilterSettingsUpdate({
+            stepFilterGroups: [],
+            stepFilters: [],
+          });
+        } else {
+          set(currentStepFilterGroupsCallbackState, updatedStepFilterGroups);
+          set(currentStepFiltersCallbackState, updatedStepFilters);
+
+          onFilterSettingsUpdate({
+            stepFilterGroups: updatedStepFilterGroups,
+            stepFilters: updatedStepFilters,
+          });
+        }
+      },
+    [
+      readonly,
+      onFilterSettingsUpdate,
+      currentStepFilterGroupsCallbackState,
+      currentStepFiltersCallbackState,
+    ],
+  );
+
+  return {
+    removeStepFilterGroup: removeStepFilterGroupRecoilCallback,
+  };
+};

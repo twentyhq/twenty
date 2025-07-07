@@ -4,9 +4,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { getChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getChildStepFiltersAndChildStepFilterGroups';
-import { useContext } from 'react';
+import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useChildStepFiltersAndChildStepFilterGroups';
+import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import {
   StepFilter,
   StepFilterGroup,
@@ -25,13 +24,13 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
 export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
-  const { upsertStepFilterSettings } = useContext(WorkflowStepFilterContext);
+  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     stepFilterGroup.id,
   );
 
-  const { lastChildPosition } = getChildStepFiltersAndChildStepFilterGroups({
+  const { lastChildPosition } = useChildStepFiltersAndChildStepFilterGroups({
     stepFilterGroupId: stepFilterGroup.id,
   });
 

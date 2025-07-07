@@ -2,6 +2,7 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advance
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useRemoveStepFilterGroup';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
@@ -15,11 +16,9 @@ type WorkflowStepFilterGroupOptionsDropdownProps = {
 export const WorkflowStepFilterGroupOptionsDropdown = ({
   stepFilterGroupId,
 }: WorkflowStepFilterGroupOptionsDropdownProps) => {
-  const { deleteStepFilterGroup } = useContext(WorkflowStepFilterContext);
+  const { readonly } = useContext(WorkflowStepFilterContext);
 
-  const handleDeleteFilterGroup = () => {
-    deleteStepFilterGroup(stepFilterGroupId);
-  };
+  const { removeStepFilterGroup } = useRemoveStepFilterGroup();
 
   return (
     <Dropdown
@@ -37,7 +36,13 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
             <MenuItem
               LeftIcon={IconTrash}
               text="Delete group"
-              onClick={handleDeleteFilterGroup}
+              onClick={() => {
+                if (readonly === true) {
+                  return;
+                }
+
+                removeStepFilterGroup(stepFilterGroupId);
+              }}
               accent="danger"
             />
           </DropdownMenuItemsContainer>

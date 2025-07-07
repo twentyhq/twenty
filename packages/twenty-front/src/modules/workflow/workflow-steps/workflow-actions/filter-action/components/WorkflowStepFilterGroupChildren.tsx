@@ -1,10 +1,9 @@
 import { WorkflowStepFilterAddFilterRuleSelect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect';
 import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterColumn';
+import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { getChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getChildStepFiltersAndChildStepFilterGroups';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
@@ -22,22 +21,16 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 
 type WorkflowStepFilterGroupChildrenProps = {
   stepFilterGroupId: string;
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
 };
 
 export const WorkflowStepFilterGroupChildren = ({
   stepFilterGroupId,
-  stepFilterGroups,
-  stepFilters,
 }: WorkflowStepFilterGroupChildrenProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { currentStepFilterGroup, childStepFilters } =
-    getChildStepFiltersAndChildStepFilterGroups({
+    useChildStepFiltersAndChildStepFilterGroups({
       stepFilterGroupId,
-      stepFilterGroups: stepFilterGroups ?? [],
-      stepFilters: stepFilters ?? [],
     });
 
   if (!currentStepFilterGroup) {

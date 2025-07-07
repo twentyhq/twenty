@@ -1,6 +1,7 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { StepFilter, StepOperand } from 'twenty-shared/src/types';
@@ -25,9 +26,9 @@ const STEP_OPERAND_OPTIONS = [
 export const WorkflowStepFilterOperandSelect = ({
   stepFilter,
 }: WorkflowStepFilterOperandSelectProps) => {
-  const { readonly, upsertStepFilterSettings } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { readonly } = useContext(WorkflowStepFilterContext);
+
+  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const handleChange = (operand: StepOperand) => {
     upsertStepFilterSettings({

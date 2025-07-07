@@ -1,4 +1,5 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
@@ -13,9 +14,9 @@ export const WorkflowStepFilterValueInput = ({
   stepFilter,
 }: WorkflowStepFilterValueInputProps) => {
   const { t } = useLingui();
-  const { readonly, upsertStepFilterSettings } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { readonly } = useContext(WorkflowStepFilterContext);
+
+  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const handleValueChange = (value: string) => {
     upsertStepFilterSettings({
