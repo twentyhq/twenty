@@ -1,43 +1,29 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 
-const objectMetadataEntityPropertiesToCompare = [
+export const objectMetadataEntityEditableProperties = [
   'description',
   'icon',
-  'id',
   'isActive',
   'isLabelSyncedWithName',
   'labelPlural',
   'labelSingular',
   'namePlural',
   'nameSingular',
-  'standardOverrides',
-  'targetTableName', // not sure
-  'targetRelationFields', // not sure
+  'standardOverrides', // Only if standard
 ] as const satisfies (keyof ObjectMetadataEntity)[];
-type ObjectMetadataEntityPropertiesToCompare =
-  (typeof objectMetadataEntityPropertiesToCompare)[number];
+export type ObjectMetadataEntityEditableProperties =
+  (typeof objectMetadataEntityEditableProperties)[number];
 
-// const objectMetadataEntityEditableProperties = [
-//   'description',
-//   'icon',
-//   'id',
-//   'isActive',
-//   'isLabelSyncedWithName',
-//   'labelPlural',
-//   'labelSingular',
-//   'namePlural',
-//   'nameSingular',
-//   'standardOverrides',
-//   'targetTableName', // not sure
-//   'targetRelationFields',
-// ] as const satisfies (keyof ObjectMetadataEntity)[];
-
-// Maybe we don't want a pick but the whole objectMetadata entity and use the const to scope the diff only
-export type WorkspaceMigrationObjectInput = Pick<
+export type WorkspaceMigrationObjectInput = Omit<
   ObjectMetadataEntity,
-  ObjectMetadataEntityPropertiesToCompare
+  'fields'
 > & {
   uniqueIdentifier: string;
-  fieldInputs: WorkspaceMigrationObjectFieldInput[];
+  fieldInputs: WorkspaceMigrationFieldInput[];
 };
+
+export type WorkspaceMigrationObjectWithoutFields = Omit<
+  WorkspaceMigrationObjectInput,
+  'fields' | 'fieldInputs'
+>;

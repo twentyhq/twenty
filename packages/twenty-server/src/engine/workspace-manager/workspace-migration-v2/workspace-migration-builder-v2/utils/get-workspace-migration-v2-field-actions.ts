@@ -1,29 +1,23 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   CreateFieldAction,
   DeleteFieldAction,
+  FieldAndObjectMetadataWorkspaceMigrationInput,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
-import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 
-type FieldInputAndObjectUniqueIdentifier = {
-  field: WorkspaceMigrationObjectFieldInput;
-  objectMetadataUniqueIdentifier: string;
-};
 export const getWorkspaceMigrationV2FieldCreateAction = ({
-  field,
-  objectMetadataUniqueIdentifier,
-}: FieldInputAndObjectUniqueIdentifier): CreateFieldAction => ({
+  fieldMetadataInput,
+  objectMetadataInput,
+}: FieldAndObjectMetadataWorkspaceMigrationInput): CreateFieldAction => ({
   type: 'create_field',
-  field: field as unknown as FieldMetadataEntity, // TODO prastoin
-  fieldMetadataUniqueIdentifier: field.uniqueIdentifier,
-  objectMetadataUniqueIdentifier,
+  fieldMetadataInput,
+  objectMetadataInput,
 });
 
 export const getWorkspaceMigrationV2FieldDeleteAction = ({
-  field,
-  objectMetadataUniqueIdentifier,
-}: FieldInputAndObjectUniqueIdentifier): DeleteFieldAction => ({
+  fieldMetadataInput,
+  objectMetadataInput,
+}: FieldAndObjectMetadataWorkspaceMigrationInput): DeleteFieldAction => ({
   type: 'delete_field',
-  fieldMetadataUniqueIdentifier: field.uniqueIdentifier,
-  objectMetadataUniqueIdentifier,
+  fieldMetadataInput,
+  objectMetadataInput,
 });

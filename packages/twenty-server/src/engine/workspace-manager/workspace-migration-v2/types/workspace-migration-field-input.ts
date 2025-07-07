@@ -1,12 +1,12 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-const fieldMetadataEntityPropertiesToCompare = [
+export const fieldMetadataEntityEditableProperties = [
   'defaultValue',
   'description',
   'icon',
   'isActive',
   'isLabelSyncedWithName',
-  'isUnique',
+  'isUnique', // unsure
   'label',
   'name',
   'options',
@@ -16,13 +16,13 @@ const fieldMetadataEntityPropertiesToCompare = [
   'relationTargetObjectMetadataId',
   'settings',
   'standardOverrides',
-  'type',
 ] as const satisfies (keyof FieldMetadataEntity)[];
-type FieldMetadataEntityPropertiesToCompare = typeof fieldMetadataEntityPropertiesToCompare[number];
+export type FieldMetadataEntityEditableProperties =
+  (typeof fieldMetadataEntityEditableProperties)[number];
 
-export type WorkspaceMigrationObjectFieldInput = Pick<
+export type WorkspaceMigrationFieldInput = Omit<
   FieldMetadataEntity,
-  FieldMetadataEntityPropertiesToCompare
+  'object'
 > & {
-  uniqueIdentifier: string
-}
+  uniqueIdentifier: string;
+};

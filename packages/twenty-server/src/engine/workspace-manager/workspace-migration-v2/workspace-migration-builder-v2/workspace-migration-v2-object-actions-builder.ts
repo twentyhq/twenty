@@ -2,10 +2,16 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FromTo, WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+import {
+  FromTo,
+  WorkspaceMigrationActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import {
+  ObjectMetadataEntityEditableProperties,
+  WorkspaceMigrationObjectInput,
+  objectMetadataEntityEditableProperties,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import {
@@ -14,41 +20,14 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-// Start TODO prastoin refactor and strictly type
-const objectPropertiesToIgnore = [
-  'id',
-  'createdAt',
-  'updatedAt',
-  'labelIdentifierFieldMetadataId',
-  'imageIdentifierFieldMetadataId',
-  'isActive',
-  'fields',
-];
-
-// Not the same for standard and custom
-const allowedObjectProps: (keyof Partial<ObjectMetadataEntity>)[] = [
-  'nameSingular',
-  'namePlural',
-  'labelSingular',
-  'labelPlural',
-  'description',
-];
-/// End
-
 type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
 
 const compareTwoWorkspaceMigrationObjectInput = ({
   from,
   to,
 }: ObjectWorkspaceMigrationUpdate) => {
-  const fromCompare = transformMetadataForComparison(from, {
-    shouldIgnoreProperty: (property) =>
-      objectPropertiesToIgnore.includes(property),
-  });
-  const toCompare = transformMetadataForComparison(to, {
-    shouldIgnoreProperty: (property) =>
-      objectPropertiesToIgnore.includes(property),
-  });
+  const fromCompare = transformMetadataForComparison(from, {});
+  const toCompare = transformMetadataForComparison(to, {});
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
 
   return objectMetadataDifference.flatMap<
@@ -71,7 +50,9 @@ const compareTwoWorkspaceMigrationObjectInput = ({
 
         // Could be handled directly from the diff we do above
         if (
-          !allowedObjectProps.includes(property as keyof ObjectMetadataEntity)
+          !objectMetadataEntityEditableProperties.includes(
+            property as ObjectMetadataEntityEditableProperties,
+          )
         ) {
           return [];
         }
@@ -105,14 +86,15 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   updatedObjectMetadata,
 }: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationActionV2[] => {
   const createdObjectActions = createdObjectMetadata.flatMap(
-    (objectMetadata) => {
+    (objectMetadataInput) => {
       const createObjectAction =
-        getWorkspaceMigrationV2ObjectCreateAction(objectMetadata);
-      const createFieldActions = objectMetadata.fieldInputs.map((field) =>
-        getWorkspaceMigrationV2FieldCreateAction({
-          field,
-          objectMetadataUniqueIdentifier: objectMetadata.uniqueIdentifier,
-        }),
+        getWorkspaceMigrationV2ObjectCreateAction(objectMetadataInput);
+      const createFieldActions = objectMetadataInput.fieldInputs.map(
+        (fieldMetadataInput) =>
+          getWorkspaceMigrationV2FieldCreateAction({
+            fieldMetadataInput,
+            objectMetadataInput,
+          }),
       );
 
       return [createObjectAction, ...createFieldActions];

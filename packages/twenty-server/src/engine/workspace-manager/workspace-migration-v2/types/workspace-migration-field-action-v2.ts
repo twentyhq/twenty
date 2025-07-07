@@ -1,24 +1,31 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import {
-  FieldMetadataUniqueIdentifier,
-  ObjectMetadataUniqueIdentifier,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
+  FieldMetadataEntityEditableProperties,
+  WorkspaceMigrationFieldInput,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationObjectWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 
-type FieldActionCommon = {
-  field: Partial<FieldMetadataEntity>;
-} & ObjectMetadataUniqueIdentifier &
-  FieldMetadataUniqueIdentifier;
+export type FieldAndObjectMetadataWorkspaceMigrationInput = {
+  fieldMetadataInput: WorkspaceMigrationFieldInput;
+  objectMetadataInput: WorkspaceMigrationObjectWithoutFields;
+};
 export type CreateFieldAction = {
   type: 'create_field';
-} & FieldActionCommon;
+} & FieldAndObjectMetadataWorkspaceMigrationInput;
 
 export type UpdateFieldAction = {
   type: 'update_field';
-} & FieldActionCommon;
+  updates: {
+    [P in FieldMetadataEntityEditableProperties]: {
+      property: P;
+    } & FromTo<FieldMetadataEntity[P]>;
+  }[FieldMetadataEntityEditableProperties][];
+} & FieldAndObjectMetadataWorkspaceMigrationInput;
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-} & Omit<FieldActionCommon, 'field'>;
+} & FieldAndObjectMetadataWorkspaceMigrationInput;
 
 export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction
