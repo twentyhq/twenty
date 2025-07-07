@@ -76,7 +76,6 @@ export const MatchColumnToFieldSelect = ({
 
     if (isDefined(correspondingOption)) {
       setSelectedFieldMetadataItem(null);
-
       onChange(correspondingOption);
       closeDropdown(dropdownId);
     }
@@ -108,10 +107,6 @@ export const MatchColumnToFieldSelect = ({
   const handleClickOutside = () => setSelectedFieldMetadataItem(null);
   const handleSubFieldBack = () => setSelectedFieldMetadataItem(null);
 
-  const showSubField =
-    selectedFieldMetadataItem &&
-    isCompositeFieldType(selectedFieldMetadataItem.type);
-
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -125,9 +120,10 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        showSubField ? (
+        selectedFieldMetadataItem &&
+        isCompositeFieldType(selectedFieldMetadataItem.type) ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
-            fieldMetadataItem={selectedFieldMetadataItem!}
+            fieldMetadataItem={selectedFieldMetadataItem}
             onSubFieldSelect={handleSubFieldSelect}
             options={options}
             onBack={handleSubFieldBack}
