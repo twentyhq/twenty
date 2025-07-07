@@ -32,13 +32,13 @@ const StyledDropdownVariableButtonContainer = styled(
 `;
 
 export const WorkflowVariablesDropdown = ({
-  inputId,
+  instanceId,
   onVariableSelect,
   disabled,
   objectNameSingularToSelect,
   multiline,
 }: {
-  inputId: string;
+  instanceId: string;
   onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
   objectNameSingularToSelect?: string;
@@ -46,7 +46,7 @@ export const WorkflowVariablesDropdown = ({
 }) => {
   const theme = useTheme();
 
-  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
+  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentStateV2,
     dropdownId,

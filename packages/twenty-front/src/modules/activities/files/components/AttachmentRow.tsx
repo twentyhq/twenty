@@ -165,6 +165,7 @@ export const AttachmentRow = ({
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
+              instanceId={`attachment-${attachment.id}-name`}
               value={attachmentFileName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}

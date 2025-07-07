@@ -36,7 +36,7 @@ export const FormTextFieldInput = ({
   readonly,
   VariablePicker,
 }: FormTextFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   const editor = useTextVariableEditor({
     placeholder: placeholder ?? 'Enter text',
@@ -84,7 +84,7 @@ export const FormTextFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             multiline={multiline}
             onVariableSelect={handleVariableTagInsert}
           />

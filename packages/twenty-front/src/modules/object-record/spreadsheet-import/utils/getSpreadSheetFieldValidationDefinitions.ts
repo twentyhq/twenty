@@ -4,7 +4,14 @@ import { emailSchema } from '@/object-record/record-field/validation-schemas/ema
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { t } from '@lingui/core/macro';
 import { isDate, isString } from '@sniptt/guards';
-import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { parsePhoneNumberWithError } from 'libphonenumber-js';
+import {
+  absoluteUrlSchema,
+  getCountryCodesForCallingCode,
+  isDefined,
+  isValidCountryCode,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const getNumberValidationDefinition = (
@@ -15,6 +22,20 @@ const getNumberValidationDefinition = (
   errorMessage: `${fieldName} ${t`must be a number`}`,
   level: 'error',
 });
+
+const isValidPhoneNumber = (value: string) => {
+  try {
+    return isDefined(
+      parsePhoneNumberWithError(value, { defaultCallingCode: '1' }),
+    );
+  } catch {
+    return false;
+  }
+};
+
+const isValidCallingCode = (value: string) => {
+  return getCountryCodesForCallingCode(value).length > 0;
+};
 
 export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,
@@ -143,9 +164,27 @@ export const getSpreadSheetFieldValidationDefinitions = (
         case 'primaryPhoneNumber':
           return [
             {
-              rule: 'regex',
-              value: '^[0-9]+$',
-              errorMessage: `${fieldName} ${t`must contain only numbers`}`,
+              rule: 'function',
+              isValid: isValidPhoneNumber,
+              errorMessage: `${fieldName} ${t`is not a valid phone number`}`,
+              level: 'error',
+            },
+          ];
+        case 'primaryPhoneCallingCode':
+          return [
+            {
+              rule: 'function',
+              isValid: isValidCallingCode,
+              errorMessage: `${fieldName} ${t`is not a valid calling code`}`,
+              level: 'error',
+            },
+          ];
+        case 'primaryPhoneCountryCode':
+          return [
+            {
+              rule: 'function',
+              isValid: isValidCountryCode,
+              errorMessage: `${fieldName} ${t`is not a valid country code`}`,
               level: 'error',
             },
           ];
@@ -165,10 +204,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
                       callingCode: string;
                       countryCode: string;
                     }) =>
-                      isDefined(phone.number) &&
-                      /^[0-9]+$/.test(phone.number) &&
-                      isDefined(phone.callingCode) &&
-                      isDefined(phone.countryCode),
+                      isValidPhoneNumber(phone.number) &&
+                      isValidCallingCode(phone.callingCode) &&
+                      isValidCountryCode(phone.countryCode),
                   );
                 } catch {
                   return false;

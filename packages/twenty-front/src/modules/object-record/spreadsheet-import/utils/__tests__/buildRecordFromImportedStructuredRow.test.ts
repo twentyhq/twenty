@@ -405,4 +405,39 @@ describe('buildRecordFromImportedStructuredRow', () => {
       ratingField: '4',
     });
   });
+
+  it('should handle case where user provides only a primaryPhoneNumber without calling code', () => {
+    const importedStructuredRow: ImportedStructuredRow<string> = {
+      'Primary Phone Number (phoneField)': '5550123',
+    };
+
+    const fields: FieldMetadataItem[] = [
+      {
+        id: '13',
+        name: 'phoneField',
+        label: 'Phone Field',
+        type: FieldMetadataType.PHONES,
+        isNullable: true,
+        isActive: true,
+        isCustom: false,
+        isSystem: false,
+        createdAt: '2023-01-01',
+        updatedAt: '2023-01-01',
+        icon: 'IconPhone',
+        description: null,
+      },
+    ];
+
+    const result = buildRecordFromImportedStructuredRow({
+      importedStructuredRow,
+      fields,
+    });
+
+    expect(result).toEqual({
+      phoneField: {
+        primaryPhoneNumber: '5550123',
+        primaryPhoneCallingCode: '+1',
+      },
+    });
+  });
 });

@@ -150,9 +150,10 @@ const computeValueFromFilterNumber = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.GreaterThan:
+    //TODO: we shouln't create values from those filters as it makes no sense for the user
+    case ViewFilterOperand.GreaterThanOrEqual:
       return Number(value) + 1;
-    case ViewFilterOperand.LessThan:
+    case ViewFilterOperand.LessThanOrEqual:
       return Number(value) - 1;
     case ViewFilterOperand.IsNotEmpty:
       return Number(value);
@@ -205,13 +206,13 @@ const computeValueFromFilterRating = (
     case ViewFilterOperand.Is:
     case ViewFilterOperand.IsNotEmpty:
       return option.value;
-    case ViewFilterOperand.GreaterThan: {
+    case ViewFilterOperand.GreaterThanOrEqual: {
       const plusOne = options?.find(
         (opt) => opt.position === option.position + 1,
       )?.value;
       return plusOne ? plusOne : option.value;
     }
-    case ViewFilterOperand.LessThan: {
+    case ViewFilterOperand.LessThanOrEqual: {
       const minusOne = options?.find(
         (opt) => opt.position === option.position - 1,
       )?.value;
