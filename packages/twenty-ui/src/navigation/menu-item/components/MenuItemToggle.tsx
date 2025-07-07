@@ -4,8 +4,8 @@ import { Toggle, ToggleSize } from '@ui/input';
 import { useId } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
-    StyledMenuItemBase,
-    StyledMenuItemRightContent,
+  StyledMenuItemBase,
+  StyledMenuItemRightContent,
 } from '../internals/components/StyledMenuItemBase';
 
 const StyledToggleContainer = styled.label`
