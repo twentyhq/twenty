@@ -159,7 +159,7 @@ export class AgentExecutionService {
     });
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
-      system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,
       agent,
       messages: llmMessages,
     });
@@ -191,7 +191,7 @@ export class AgentExecutionService {
     });
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
-      system: AGENT_SYSTEM_PROMPTS.AGENT_CHAT,
+      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,
       messages: llmMessages,
       agent,
     });
