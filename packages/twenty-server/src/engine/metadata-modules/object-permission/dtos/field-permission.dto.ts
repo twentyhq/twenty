@@ -15,8 +15,8 @@ export class FieldPermissionDTO {
   roleId: string;
 
   @Field({ nullable: true })
-  canReadFieldRecords?: boolean;
+  canReadFieldValue?: boolean;
 
   @Field({ nullable: true })
-  canUpdateFieldRecords?: boolean;
+  canUpdateFieldValue?: boolean;
 }

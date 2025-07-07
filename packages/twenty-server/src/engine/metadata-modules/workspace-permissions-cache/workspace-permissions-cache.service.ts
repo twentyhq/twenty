@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  ObjectRecordsPermissions,
-  ObjectRecordsPermissionsByRoleId,
+    ObjectRecordsPermissions,
+    ObjectRecordsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
@@ -258,8 +258,8 @@ export class WorkspacePermissionsCacheService {
 
             for (const fieldPermission of fieldPermissions) {
               restrictedFields[fieldPermission.fieldMetadataId] = {
-                canRead: fieldPermission.canReadFieldRecords,
-                canUpdate: fieldPermission.canUpdateFieldRecords,
+                canRead: fieldPermission.canReadFieldValue,
+                canUpdate: fieldPermission.canUpdateFieldValue,
               };
             }
           }

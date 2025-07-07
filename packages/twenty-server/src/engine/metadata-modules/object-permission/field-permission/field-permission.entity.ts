@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,6 +20,8 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
   'fieldMetadataId',
   'roleId',
 ])
+@Index('IDX_FIELD_PERMISSION_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
 export class FieldPermissionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -59,10 +62,10 @@ export class FieldPermissionEntity {
   fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: true, type: 'boolean' })
-  canReadFieldRecords?: boolean;
+  canReadFieldValue?: boolean;
 
   @Column({ nullable: true, type: 'boolean' })
-  canUpdateFieldRecords?: boolean;
+  canUpdateFieldValue?: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

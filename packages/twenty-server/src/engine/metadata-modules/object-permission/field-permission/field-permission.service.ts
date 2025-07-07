@@ -100,8 +100,8 @@ export class FieldPermissionService {
     role: RoleEntity;
   }) {
     if (
-      fieldPermission.canUpdateFieldRecords === true ||
-      fieldPermission.canReadFieldRecords === true
+      fieldPermission.canUpdateFieldValue === true ||
+      fieldPermission.canReadFieldValue === true
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ONLY_FIELD_RESTRICTION_ALLOWED,
@@ -157,7 +157,7 @@ export class FieldPermissionService {
 
     if (
       rolePermissionOnObject.canUpdate === false &&
-      fieldPermission.canUpdateFieldRecords === false
+      fieldPermission.canUpdateFieldValue === false
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
