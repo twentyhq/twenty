@@ -5261,6 +5261,8 @@ export const CreateOneObjectMetadataItemDocument = gql`
     `;
 export type CreateOneObjectMetadataItemMutationFn = Apollo.MutationFunction<CreateOneObjectMetadataItemMutation, CreateOneObjectMetadataItemMutationVariables>;
 
+
+export type BReak = string;
 /**
  * __useCreateOneObjectMetadataItemMutation__
  *
