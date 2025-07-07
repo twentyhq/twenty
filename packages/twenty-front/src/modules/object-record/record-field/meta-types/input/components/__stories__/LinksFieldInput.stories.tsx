@@ -72,7 +72,7 @@ const LinksInputWithContext = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const inputId = getRecordFieldInputId({
     recordId,
-    fieldName: 'links',
+    fieldName: 'Links',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
 
@@ -91,11 +91,7 @@ const LinksInputWithContext = ({
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getRecordFieldInputId({
-            recordId,
-            fieldName: 'Links',
-            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-          }),
+          instanceId: inputId,
         }}
       >
         <FieldContext.Provider
