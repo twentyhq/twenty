@@ -7,8 +7,8 @@ import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dr
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   UseRecordDataOptions,
-  useExportFetchRecords,
-} from '@/object-record/record-index/export/hooks/useExportFetchRecords';
+  useRecordIndexLazyFetchRecords,
+} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
@@ -20,7 +20,10 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {
-  columns: ColumnDefinition<FieldMetadata>[];
+  columns: Pick<
+    ColumnDefinition<FieldMetadata>,
+    'size' | 'label' | 'type' | 'metadata'
+  >[];
   rows: Record<string, any>[];
 };
 
@@ -121,7 +124,7 @@ type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
   filename: string;
 };
 
-export const useExportRecords = ({
+export const useRecordIndexExportRecords = ({
   delayMs,
   filename,
   maximumRequests = 100,
@@ -144,7 +147,7 @@ export const useExportRecords = ({
     [filename, processRecordsForCSVExport],
   );
 
-  const { getTableData: download, progress } = useExportFetchRecords({
+  const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({
     delayMs,
     maximumRequests,
     objectMetadataItem,

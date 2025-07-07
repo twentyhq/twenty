@@ -27,6 +27,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   orderBy,
   limit,
   recordGqlFields,
+  fetchPolicy = 'cache-first',
 }: UseLazyFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -68,7 +69,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         limit,
         orderBy,
       },
-      fetchPolicy: 'cache-first',
+      fetchPolicy,
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
       client: apolloCoreClient,

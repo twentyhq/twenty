@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -19,9 +19,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -40,7 +40,7 @@ const RelationWorkspaceSetterEffect = () => {
 };
 
 const RelationManyFieldInputWithContext = () => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const fieldDefinition = useMemo(
     () => ({
@@ -72,7 +72,14 @@ const RelationManyFieldInputWithContext = () => {
   useEffect(() => {
     setRecordStoreFieldValue([]);
 
-    setHotKeyScope(DropdownHotkeyScope.Dropdown);
+    pushFocusItemToFocusStack({
+      focusId: 'relation-from-many-field-input',
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: 'relation-from-many-field-input',
+      },
+      hotkeyScope: DEFAULT_CELL_SCOPE,
+    });
     openFieldInput({
       fieldDefinition,
       recordId: 'recordId',
@@ -80,7 +87,7 @@ const RelationManyFieldInputWithContext = () => {
   }, [
     fieldDefinition,
     openFieldInput,
-    setHotKeyScope,
+    pushFocusItemToFocusStack,
     setRecordStoreFieldValue,
   ]);
 
@@ -88,10 +95,7 @@ const RelationManyFieldInputWithContext = () => {
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getFieldInputInstanceId({
-            recordId: 'recordId',
-            fieldName: 'people',
-          }),
+          instanceId: 'relation-from-many-field-input',
         }}
       >
         <FieldContext.Provider

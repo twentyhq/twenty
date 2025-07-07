@@ -2,8 +2,10 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Theme, withTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -33,8 +35,12 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.tertiary};
 `);
 
-export const RecordTitleFullNameFieldDisplay = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+export const RecordTitleFullNameFieldDisplay = ({
+  containerType,
+}: {
+  containerType: string;
+}) => {
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { openInlineCell } = useInlineCell();
 
@@ -45,14 +51,29 @@ export const RecordTitleFullNameFieldDisplay = () => {
     .join(' ')
     .trim();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const recordTitleCellId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: fieldDefinition.metadata.fieldName,
+    prefix: containerType,
+  });
+
   return (
     <StyledDiv
       onClick={() => {
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: TitleInputHotkeyScope.TitleInput,
+        pushFocusItemToFocusStack({
+          focusId: recordTitleCellId,
+          component: {
+            type: FocusComponentType.OPENED_FIELD_INPUT,
+            instanceId: recordTitleCellId,
+          },
+          hotkeyScope: {
+            scope: TitleInputHotkeyScope.TitleInput,
+          },
           memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
+
         openInlineCell();
       }}
     >
