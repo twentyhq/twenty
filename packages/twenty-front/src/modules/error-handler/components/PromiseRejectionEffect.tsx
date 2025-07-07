@@ -24,7 +24,7 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      if (error.networkError?.name?.includes('AbortError') === false) {
+      if (error.networkError?.name === 'AbortError') {
         enqueueErrorSnackBar({});
       }
 

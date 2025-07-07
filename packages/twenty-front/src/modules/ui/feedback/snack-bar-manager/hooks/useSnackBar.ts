@@ -123,7 +123,7 @@ export const useSnackBar = () => {
     ) & {
       options?: Omit<SnackBarOptions, 'message' | 'id'>;
     }) => {
-      if (apolloError?.networkError?.name?.includes('AbortError') === true) {
+      if (apolloError?.networkError?.name === 'AbortError') {
         return;
       }
 
