@@ -1,8 +1,8 @@
-export interface AddUniquenessConstraintAction {
+export type AddUniquenessConstraintAction = {
   type: 'add_uniqueness_constraint';
 }
 
-export interface RemoveUniquenessConstraintAction {
+export type RemoveUniquenessConstraintAction = {
   type: 'remove_uniqueness_constraint';
 }
 

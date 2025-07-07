@@ -1,12 +1,12 @@
-export interface CreateRelationAction {
+export type CreateRelationAction = {
   type: 'create_relation';
 }
 
-export interface UpdateRelationAction {
+export type UpdateRelationAction = {
   type: 'update_relation';
 }
 
-export interface DeleteRelationAction {
+export type DeleteRelationAction = {
   type: 'delete_relation';
 }
 

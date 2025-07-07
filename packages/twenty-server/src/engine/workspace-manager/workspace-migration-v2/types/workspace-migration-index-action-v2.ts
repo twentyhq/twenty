@@ -1,8 +1,8 @@
-export interface CreateIndexAction {
+export type CreateIndexAction = {
   type: 'create_index';
 }
 
-export interface DeleteIndexAction {
+export type DeleteIndexAction = {
   type: 'delete_index';
 }
 
