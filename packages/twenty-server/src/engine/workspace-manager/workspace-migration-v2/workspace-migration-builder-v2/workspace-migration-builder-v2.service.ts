@@ -3,18 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
-import { computeUpdatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-field-and-relations-delete-created-updated-matrix.util';
-import {
-  DeletedCreatedUpdatedMatrix,
-  deletedCreatedUpdatedMatrixDispatcher,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
+import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
-
-export type UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher =
-  DeletedCreatedUpdatedMatrix<WorkspaceMigrationObjectInput>;
-
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
   constructor() {}
@@ -46,7 +39,7 @@ export class WorkspaceMigrationBuilderV2Service {
       );
 
     const updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix =
-      computeUpdatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix(
+      computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
         updatedObjectMetadata,
       );
 

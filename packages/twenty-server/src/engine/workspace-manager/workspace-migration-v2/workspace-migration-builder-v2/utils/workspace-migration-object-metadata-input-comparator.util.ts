@@ -49,7 +49,7 @@ export const compareTwoWorkspaceMigrationObjectInput = ({
         }
 
         return {
-          property,
+          property: property as ObjectMetadataEntityEditableProperties,
           from: difference.oldValue,
           to: difference.value,
         };
@@ -60,7 +60,10 @@ export const compareTwoWorkspaceMigrationObjectInput = ({
         return [];
       }
       default: {
-        assertUnreachable(difference, 'TODO');
+        assertUnreachable(
+          difference,
+          `Unexpected difference type: ${difference['type']}`,
+        );
       }
     }
   });

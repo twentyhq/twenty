@@ -81,10 +81,6 @@ export const compareFieldMetadataInputAndGetUpdateFieldActions = ({
     (difference) => {
       switch (difference.type) {
         case 'CHANGE': {
-          // TODO should handle and filter on the side
-          if (from.type === FieldMetadataType.RELATION) {
-            return [];
-          }
           const { oldValue, path, value } = difference;
 
           return {

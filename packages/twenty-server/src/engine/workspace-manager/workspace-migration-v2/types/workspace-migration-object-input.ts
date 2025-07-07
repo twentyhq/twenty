@@ -24,5 +24,5 @@ export type WorkspaceMigrationObjectInput = Partial<
 
 export type WorkspaceMigrationObjectWithoutFields = Omit<
   WorkspaceMigrationObjectInput,
-  'fields' | 'fieldInputs'
+  'fieldInputs'
 >;

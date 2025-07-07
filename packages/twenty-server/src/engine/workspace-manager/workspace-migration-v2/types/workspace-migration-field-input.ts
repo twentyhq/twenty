@@ -22,7 +22,7 @@ export const fieldMetadataEntityEditableProperties = [
 export type FieldMetadataEntityEditableProperties =
   (typeof fieldMetadataEntityEditableProperties)[number];
 
-// TOOD could describe required minimum keys
+// TODO could describe required minimum keys
 export type WorkspaceMigrationFieldInput = Partial<
   Omit<FieldMetadataEntity, 'object'>
 > & {

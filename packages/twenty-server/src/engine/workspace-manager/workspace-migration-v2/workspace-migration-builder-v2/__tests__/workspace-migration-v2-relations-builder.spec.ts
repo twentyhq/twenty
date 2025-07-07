@@ -54,7 +54,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "object": {
+      "objectMetadataInput": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -70,7 +70,6 @@ describe('Workspace migration builder relations tests suite', () => {
         ],
         "uniqueIdentifier": "company",
       },
-      "objectMetadataUniqueIdentifier": "company",
       "type": "create_object",
     },
     {
@@ -195,7 +194,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "object": {
+      "objectMetadataInput": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -211,7 +210,6 @@ describe('Workspace migration builder relations tests suite', () => {
         ],
         "uniqueIdentifier": "person",
       },
-      "objectMetadataUniqueIdentifier": "person",
       "type": "create_object",
     },
     {
@@ -382,7 +380,43 @@ describe('Workspace migration builder relations tests suite', () => {
 
       expect(result).toMatchInlineSnapshot(`
 {
-  "actions": [],
+  "actions": [
+    {
+      "fieldMetadataInput": {
+        "description": "Company employees",
+        "isActive": true,
+        "isCustom": true,
+        "isNullable": true,
+        "label": "Employees",
+        "name": "updatedName",
+        "type": "RELATION",
+        "uniqueIdentifier": "employees",
+      },
+      "objectMetadataInput": {
+        "fieldInputs": [
+          {
+            "description": "Company employees",
+            "isActive": true,
+            "isCustom": true,
+            "isNullable": true,
+            "label": "Employees",
+            "name": "updatedName",
+            "type": "RELATION",
+            "uniqueIdentifier": "employees",
+          },
+        ],
+        "uniqueIdentifier": "company",
+      },
+      "type": "update_field",
+      "updates": [
+        {
+          "from": "employees",
+          "property": "name",
+          "to": "updatedName",
+        },
+      ],
+    },
+  ],
 }
 `);
     });

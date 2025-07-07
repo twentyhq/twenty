@@ -16,11 +16,13 @@ export type CreateFieldAction = {
 
 export type UpdateFieldAction = {
   type: 'update_field';
-  updates: {
-    [P in FieldMetadataEntityEditableProperties]: {
-      property: P;
-    } & FromTo<FieldMetadataEntity[P]>;
-  }[FieldMetadataEntityEditableProperties][];
+  updates: Partial<
+    {
+      [P in FieldMetadataEntityEditableProperties]: {
+        property: P;
+      } & FromTo<FieldMetadataEntity[P]>;
+    }[FieldMetadataEntityEditableProperties]
+  >[];
 } & FieldAndObjectMetadataWorkspaceMigrationInput;
 
 export type DeleteFieldAction = {

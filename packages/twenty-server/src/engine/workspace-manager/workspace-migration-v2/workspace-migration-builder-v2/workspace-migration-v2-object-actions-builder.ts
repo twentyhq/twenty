@@ -1,5 +1,7 @@
-import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
-import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
+import {
+  UpdateObjectAction,
+  WorkspaceMigrationV2ObjectAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import {
@@ -17,7 +19,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   createdObjectMetadata,
   deletedObjectMetadata,
   updatedObjectMetadata,
-}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationActionV2[] => {
+}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationV2ObjectAction[] => {
   const createdObjectActions = createdObjectMetadata.map(
     getWorkspaceMigrationV2ObjectCreateAction,
   );
