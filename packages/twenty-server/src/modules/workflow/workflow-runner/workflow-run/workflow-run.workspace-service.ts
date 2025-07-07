@@ -586,7 +586,7 @@ export class WorkflowRunWorkspaceService {
 
     if (!workflowRunToUpdate) {
       throw new WorkflowRunException(
-        'No workflow run to start',
+        `workflowRun ${workflowRunId} not found`,
         WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
       );
     }

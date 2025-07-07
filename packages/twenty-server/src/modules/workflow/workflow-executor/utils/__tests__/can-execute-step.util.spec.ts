@@ -48,7 +48,7 @@ describe('canExecuteStep', () => {
       'step-2': 'step-2 result',
     };
 
-    const result = canExecuteStep({ context, steps, stepId: 'test-3' });
+    const result = canExecuteStep({ context, steps, stepId: 'step-3' });
 
     expect(result).toBe(true);
   });
