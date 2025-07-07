@@ -91,7 +91,8 @@ jobs:
           fi
       - name: Server / Start
         run: npx nx start:ci twenty-server &
-      - run: |
+      - name: Waiting for server starting...
+        run: |
           for i in {1..10}; do
             if curl -f http://localhost:3000/healthz; then
               echo "Server ready!"

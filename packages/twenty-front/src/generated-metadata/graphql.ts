@@ -678,7 +678,6 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
-  IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
@@ -2561,6 +2560,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
+  locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
@@ -5260,7 +5260,6 @@ export const CreateOneObjectMetadataItemDocument = gql`
 }
     `;
 export type CreateOneObjectMetadataItemMutationFn = Apollo.MutationFunction<CreateOneObjectMetadataItemMutation, CreateOneObjectMetadataItemMutationVariables>;
-
 
 /**
  * __useCreateOneObjectMetadataItemMutation__
