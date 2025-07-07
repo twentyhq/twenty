@@ -234,6 +234,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
 
       <StyledInputArea>
         <TextArea
+          textAreaId={`${agentId}-chat-input`}
           placeholder={t`Enter a question...`}
           value={input}
           onChange={handleInputChange}
