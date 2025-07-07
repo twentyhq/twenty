@@ -4,11 +4,12 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export type TextAreaInputProps = {
+  instanceId: string;
   disabled?: boolean;
   className?: string;
   placeholder?: string;
@@ -46,6 +47,7 @@ const StyledLightIconButtonContainer = styled.div`
 `;
 
 export const TextAreaInput = ({
+  instanceId,
   disabled,
   className,
   placeholder,
@@ -83,6 +85,7 @@ export const TextAreaInput = ({
   }, []);
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     copyRef: copyRef,
     inputValue: internalText,

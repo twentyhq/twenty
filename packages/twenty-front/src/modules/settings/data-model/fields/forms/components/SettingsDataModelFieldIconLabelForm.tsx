@@ -95,6 +95,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const { t } = useLingui();
 
+  const labelTextInputId = `${fieldMetadataItem?.id}-label`;
+  const nameTextInputId = `${fieldMetadataItem?.id}-name`;
+
   const isLabelSyncedWithName =
     watch('isLabelSyncedWithName') ??
     (isDefined(fieldMetadataItem)
@@ -148,6 +151,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
+              instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
               onChange={(value) => {
@@ -178,6 +182,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     render={({ field: { onChange, value } }) => (
                       <>
                         <TextInput
+                          instanceId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}
                           value={value}
