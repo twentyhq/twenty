@@ -426,13 +426,13 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  async getWorkflowRunOrFail({
+  async getWorkflowRun({
     workflowRunId,
     workspaceId,
   }: {
     workflowRunId: string;
     workspaceId: string;
-  }): Promise<WorkflowRunWorkspaceEntity> {
+  }): Promise<WorkflowRunWorkspaceEntity | null> {
     const workflowRunRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
         workspaceId,
@@ -440,8 +440,21 @@ export class WorkflowRunWorkspaceService {
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflowRun = await workflowRunRepository.findOne({
+    return await workflowRunRepository.findOne({
       where: { id: workflowRunId },
+    });
+  }
+
+  async getWorkflowRunOrFail({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<WorkflowRunWorkspaceEntity> {
+    const workflowRun = await this.getWorkflowRun({
+      workflowRunId,
+      workspaceId,
     });
 
     if (!workflowRun) {
