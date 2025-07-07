@@ -2389,6 +2389,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
+  locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
