@@ -25,7 +25,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -157,6 +156,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       user,
       workspace,
       authProvider: payload.authProvider,
+      userWorkspace,
       userWorkspaceId: userWorkspace.id,
       workspaceMemberId: payload.workspaceMemberId,
     };

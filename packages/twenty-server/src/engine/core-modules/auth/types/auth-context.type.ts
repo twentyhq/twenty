@@ -1,4 +1,5 @@
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -9,6 +10,7 @@ export type AuthContext = {
   workspaceMemberId?: string;
   workspace?: Workspace;
   userWorkspaceId?: string;
+  userWorkspace?: UserWorkspace;
   authProvider?: AuthProviderEnum;
 };
 
