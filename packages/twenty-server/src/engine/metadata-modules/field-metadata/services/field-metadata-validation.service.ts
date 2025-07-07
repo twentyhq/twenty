@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   IsEnum,
@@ -10,6 +11,7 @@ import {
   Max,
   Min,
   ValidationError,
+  isDefined,
   validateOrReject,
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -17,10 +19,28 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+
+type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
+  {
+    fieldMetadataType: FieldMetadataType;
+    fieldMetadataInput: T;
+    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    existingFieldMetadata?: FieldMetadataInterface;
+    objectMetadataMaps: ObjectMetadataMaps;
+  };
 
 enum ValueType {
   PERCENTAGE = 'percentage',
@@ -144,5 +164,76 @@ export class FieldMetadataValidationService<
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
+  }
+
+  private async validateFieldMetadata<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >({
+    fieldMetadataInput,
+    fieldMetadataType,
+    objectMetadata,
+    existingFieldMetadata,
+  }: ValidateFieldMetadataArgs<T>): Promise<T> {
+    if (fieldMetadataInput.name) {
+      try {
+        validateMetadataNameOrThrow(fieldMetadataInput.name);
+      } catch (error) {
+        if (error instanceof InvalidMetadataException) {
+          throw new FieldMetadataException(
+            error.message,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
+
+        throw error;
+      }
+
+      try {
+        validateFieldNameAvailabilityOrThrow(
+          fieldMetadataInput.name,
+          objectMetadata,
+        );
+      } catch (error) {
+        if (error instanceof InvalidMetadataException) {
+          throw new FieldMetadataException(
+            `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            {
+              userFriendlyMessage: t`Name is not available, it may be duplicating another field's name.`,
+            },
+          );
+        }
+
+        throw error;
+      }
+    }
+
+    if (fieldMetadataInput.isNullable === false) {
+      if (!isDefined(fieldMetadataInput.defaultValue)) {
+        throw new FieldMetadataException(
+          'Default value is required for non nullable fields',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+    }
+
+    if (isEnumFieldMetadataType(fieldMetadataType)) {
+      await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
+        {
+          fieldMetadataInput,
+          fieldMetadataType,
+          existingFieldMetadata,
+        },
+      );
+    }
+
+    if (fieldMetadataInput.settings) {
+      await this.validateSettingsOrThrow({
+        fieldType: fieldMetadataType,
+        settings: fieldMetadataInput.settings,
+      });
+    }
+
+    return fieldMetadataInput;
   }
 }

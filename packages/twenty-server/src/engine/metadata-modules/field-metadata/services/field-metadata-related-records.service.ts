@@ -1,19 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
+import { isEmpty } from 'rxjs';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { settings } from 'src/engine/constants/settings';
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
@@ -311,7 +315,7 @@ export class FieldMetadataRelatedRecordsService {
     return viewGroups.reduce((max, group) => Math.max(max, group.position), 0);
   }
 
-  private async createViewAndViewFields(
+  async createViewAndViewFields(
     createdFieldMetadatas: FieldMetadataEntity[],
     workspaceId: string,
   ) {

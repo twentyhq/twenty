@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
-import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/utils/prepare-custom-field-metadata-for-options.util';
+import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 
 export const prepareCustomFieldMetadataForCreation = (
   fieldMetadataInput: CreateFieldInput,

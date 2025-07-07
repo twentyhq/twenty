@@ -2,8 +2,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 
 describe('FieldMetadataValidationService', () => {
   let service: FieldMetadataValidationService;

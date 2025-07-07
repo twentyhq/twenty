@@ -15,12 +15,14 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
   {
@@ -151,5 +153,48 @@ export class FieldMetadataRelationService {
     }
 
     return fieldMetadataInput;
+  }
+
+  private addCustomRelationFieldMetadataForCreation(
+    fieldMetadataInput: CreateFieldInput,
+    relationCreationPayload: CreateFieldInput['relationCreationPayload'],
+  ) {
+    const isRelation =
+      isFieldMetadataInterfaceOfType(
+        fieldMetadataInput,
+        FieldMetadataType.RELATION,
+      ) ||
+      isFieldMetadataInterfaceOfType(
+        fieldMetadataInput,
+        FieldMetadataType.MORPH_RELATION,
+      );
+
+    const isManyToOne =
+      isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
+
+    const isOneToMany =
+      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
+
+    return {
+      ...fieldMetadataInput,
+      relationCreationPayload,
+      relationTargetObjectMetadataId:
+        relationCreationPayload?.targetObjectMetadataId,
+      settings: {
+        ...fieldMetadataInput.settings,
+        ...(isOneToMany
+          ? {
+              relationType: RelationType.ONE_TO_MANY,
+            }
+          : {}),
+        ...(isManyToOne
+          ? {
+              relationType: RelationType.MANY_TO_ONE,
+              onDelete: RelationOnDeleteAction.SET_NULL,
+              joinColumnName: `${fieldMetadataInput.name}Id`,
+            }
+          : {}),
+      },
+    };
   }
 }
