@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-    SettingsObjectFieldItemTableRow,
-    StyledObjectFieldTableRow,
+  SettingsObjectFieldItemTableRow,
+  StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';

@@ -13,10 +13,10 @@ import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-    AppTooltip,
-    IconInfoCircle,
-    IconRefresh,
-    TooltipDelay,
+  AppTooltip,
+  IconInfoCircle,
+  IconRefresh,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { StringKeyOf } from 'type-fest';

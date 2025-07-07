@@ -21,11 +21,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconId,
-    IconMail,
-    IconSearch,
-    IconUser,
+  H2Title,
+  IconId,
+  IconMail,
+  IconSearch,
+  IconUser,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

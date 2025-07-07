@@ -10,12 +10,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
-    ColorSample,
-    IconCheck,
-    IconDotsVertical,
-    IconGripVertical,
-    IconTrash,
-    IconX,
+  ColorSample,
+  IconCheck,
+  IconDotsVertical,
+  IconGripVertical,
+  IconTrash,
+  IconX,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';

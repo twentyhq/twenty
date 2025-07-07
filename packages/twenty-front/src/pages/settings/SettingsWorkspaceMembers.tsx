@@ -26,15 +26,15 @@ import { ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    AppTooltip,
-    Avatar,
-    H2Title,
-    IconMail,
-    IconReload,
-    IconSearch,
-    IconTrash,
-    Status,
-    TooltipDelay,
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconMail,
+  IconReload,
+  IconSearch,
+  IconTrash,
+  Status,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

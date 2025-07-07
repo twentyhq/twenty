@@ -10,12 +10,12 @@ import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    H2Title,
-    HorizontalSeparator,
-    IconCheck,
-    IconCopy,
-    IconDownload,
-    IconUpload,
+  H2Title,
+  HorizontalSeparator,
+  IconCheck,
+  IconCopy,
+  IconDownload,
+  IconUpload,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

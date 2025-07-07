@@ -137,7 +137,7 @@ export const RawJsonFieldInput = ({
     scope: hotkeyScope,
     focusId: inputId,
     dependencies: [handleShiftTab, draftValue],
-  }); 
+  });
 
   const showEditingButton = !isWorkflowRunJsonField({
     objectMetadataNameSingular:
