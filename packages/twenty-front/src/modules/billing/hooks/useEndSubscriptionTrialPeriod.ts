@@ -1,14 +1,13 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useEndSubscriptionTrialPeriodMutation } from '~/generated/graphql';
+import { useEndSubscriptionTrialPeriodMutation } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [endSubscriptionTrialPeriod] = useEndSubscriptionTrialPeriodMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -25,12 +24,9 @@ export const useEndSubscriptionTrialPeriod = () => {
       const hasPaymentMethod = endTrialPeriodOutput?.hasPaymentMethod;
 
       if (isDefined(hasPaymentMethod) && hasPaymentMethod === false) {
-        enqueueSnackBar(
-          t`No payment method found. Please update your billing details.`,
-          {
-            variant: SnackBarVariant.Error,
-          },
-        );
+        enqueueErrorSnackBar({
+          message: t`No payment method found. Please update your billing details.`,
+        });
 
         return;
       }
@@ -49,16 +45,13 @@ export const useEndSubscriptionTrialPeriod = () => {
         });
       }
 
-      enqueueSnackBar(t`Subscription activated.`, {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Subscription activated.`,
       });
     } catch {
-      enqueueSnackBar(
-        t`Error while ending trial period. Please contact Twenty team.`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        message: t`Error while ending trial period. Please contact Twenty team.`,
+      });
     } finally {
       setIsLoading(false);
     }

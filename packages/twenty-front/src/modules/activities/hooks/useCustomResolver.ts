@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import {
   DocumentNode,
   OperationVariables,
   TypedDocumentNode,
   useQuery,
 } from '@apollo/client';
+import { useState } from 'react';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CustomResolverQueryResult<
@@ -37,7 +36,7 @@ export const useCustomResolver = <
   isFetchingMore: boolean;
   fetchMoreRecords: () => Promise<void>;
 } => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [page, setPage] = useState({
     pageNumber: 1,
@@ -62,8 +61,8 @@ export const useCustomResolver = <
   } = useQuery<CustomResolverQueryResult<T>>(query, {
     variables: queryVariables,
     onError: (error) => {
-      enqueueSnackBar(error.message || `Error loading ${objectName}`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error,
       });
     },
   });

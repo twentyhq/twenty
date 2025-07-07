@@ -1,6 +1,5 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,7 +8,7 @@ import { ResponsiveLine } from '@nivo/line';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -45,7 +44,7 @@ export const WorkerMetricsGraph = ({
   timeRange,
 }: WorkerMetricsGraphProps) => {
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { loading, data } = useGetQueueMetricsQuery({
     variables: {
@@ -54,8 +53,8 @@ export const WorkerMetricsGraph = ({
     },
     fetchPolicy: 'no-cache',
     onError: (error) => {
-      enqueueSnackBar(`Error fetching worker metrics: ${error.message}`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: `Error fetching worker metrics: ${error.message}`,
       });
     },
   });

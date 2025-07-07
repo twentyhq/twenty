@@ -13,10 +13,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { useActivateWorkspaceMutation } from '~/generated/graphql';
+import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -65,7 +65,7 @@ const StyledPendingCreationLoader = styled(motion.div)`
 
 export const CreateWorkspace = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
@@ -127,14 +127,15 @@ export const CreateWorkspace = () => {
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
+
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     },
     [
       activateWorkspace,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
       loadCurrentUser,
       refreshObjectMetadataItems,
       setNextOnboardingStatus,

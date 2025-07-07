@@ -8,7 +8,7 @@ import {
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldCurrencyMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { isFieldValueEmpty } from '../isFieldValueEmpty';
 

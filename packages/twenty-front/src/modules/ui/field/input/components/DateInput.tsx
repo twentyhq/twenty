@@ -7,7 +7,7 @@ import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useRecoilCallback } from 'recoil';
 import { Nullable } from 'twenty-ui/utilities';
@@ -63,23 +63,19 @@ export const DateInput = ({
     onSubmit?.(newDate);
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
+  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
 
   const handleEnter = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
 
     onEnter(internalValue);
   };
 
   const handleEscape = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
 
     onEscape(internalValue);
   };
@@ -92,8 +88,8 @@ export const DateInput = ({
           .getValue();
 
         if (hotkeyScope?.scope === TableHotkeyScope.CellEditMode) {
-          closeDropdownYearSelect();
-          closeDropdownMonthSelect();
+          closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+          closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
           onEscape(internalValue);
           onClickOutside(event, internalValue);
         }

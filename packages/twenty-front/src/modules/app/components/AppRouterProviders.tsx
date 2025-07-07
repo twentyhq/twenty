@@ -10,7 +10,7 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
-import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
+import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
@@ -44,7 +44,7 @@ export const AppRouterProviders = () => {
             <ChromeExtensionSidecarProvider>
               <UserProvider>
                 <AuthProvider>
-                  <ApolloMetadataClientProvider>
+                  <ApolloCoreProvider>
                     <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
@@ -67,7 +67,7 @@ export const AppRouterProviders = () => {
                       </PrefetchDataProvider>
                       <PageChangeEffect />
                     </ObjectMetadataItemsProvider>
-                  </ApolloMetadataClientProvider>
+                  </ApolloCoreProvider>
                 </AuthProvider>
               </UserProvider>
             </ChromeExtensionSidecarProvider>

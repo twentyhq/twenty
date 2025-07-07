@@ -107,8 +107,8 @@ msgstr ""
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -134,6 +134,11 @@ msgstr ""
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
+msgstr ""
+
+#. js-lingui-id: CwstSL
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "••••••••"
 msgstr ""
 
 #. js-lingui-id: NNQszp
@@ -206,6 +211,11 @@ msgstr ""
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
+msgstr ""
+
+#. js-lingui-id: IbMa7Z
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "993"
 msgstr ""
 
 #. js-lingui-id: nMTB1f
@@ -282,6 +292,11 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
+msgstr ""
+
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
 msgstr ""
 
 #. js-lingui-id: bwRvnp
@@ -602,7 +617,14 @@ msgstr ""
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
+#~ msgid "An error occurred while updating password"
+#~ msgstr ""
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
 msgstr ""
 
 #. js-lingui-id: mJ6m4C
@@ -694,6 +716,11 @@ msgstr ""
 msgid "Appearance"
 msgstr ""
 
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr ""
+
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
@@ -758,6 +785,11 @@ msgstr ""
 #. js-lingui-id: 9ch9Mz
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
+msgstr ""
+
+#. js-lingui-id: 449JVv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Assign Role"
 msgstr ""
 
 #. js-lingui-id: 17M/rH
@@ -1041,6 +1073,11 @@ msgstr ""
 msgid "Check your Emails"
 msgstr ""
 
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -1226,6 +1263,11 @@ msgstr ""
 msgid "Configure your emails and calendar settings."
 msgstr ""
 
+#. js-lingui-id: W4D3v/
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Configure your IMAP email account"
+msgstr ""
+
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
@@ -1248,6 +1290,11 @@ msgstr ""
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
+msgstr ""
+
+#. js-lingui-id: VZvZWq
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with IMAP"
 msgstr ""
 
 #. js-lingui-id: IOfqM8
@@ -1367,6 +1414,11 @@ msgstr ""
 #. js-lingui-id: iX2opZ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
+msgstr ""
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -1734,6 +1786,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+#. js-lingui-id: 2nRIIp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Delete {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -1769,8 +1826,8 @@ msgstr ""
 
 #. js-lingui-id: 0ptEoK
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete Records on {objectLabel}"
-msgstr ""
+#~ msgid "Delete Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -1894,10 +1951,15 @@ msgstr ""
 msgid "Destroy"
 msgstr ""
 
+#. js-lingui-id: vI0W/N
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Destroy {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: fq4Wxy
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy Records on {objectLabel}"
-msgstr ""
+#~ msgid "Destroy Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2033,6 +2095,11 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#. js-lingui-id: fGxkii
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Edit {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Edit billing interval"
@@ -2053,6 +2120,12 @@ msgstr ""
 msgid "Edit Fields"
 msgstr ""
 
+#. js-lingui-id: 8gm+y4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Edit IMAP Connection"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2060,8 +2133,8 @@ msgstr ""
 
 #. js-lingui-id: MGkYcE
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit Records on {objectLabel}"
-msgstr ""
+#~ msgid "Edit Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2083,6 +2156,11 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
+#. js-lingui-id: hzKQCy
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Email Address"
+msgstr ""
+
 #. js-lingui-id: 2SWjdJ
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
@@ -2091,6 +2169,12 @@ msgstr ""
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
+msgstr ""
+
+#. js-lingui-id: Zb5c/r
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
+msgid "Email Connections"
 msgstr ""
 
 #. js-lingui-id: lfQsvW
@@ -2107,6 +2191,11 @@ msgstr ""
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
+msgstr ""
+
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
 msgstr ""
 
 #. js-lingui-id: hn6Eox
@@ -2180,6 +2269,11 @@ msgstr ""
 msgid "Empty Object"
 msgstr ""
 
+#. js-lingui-id: q1srUM
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Encryption"
+msgstr ""
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -2247,7 +2341,12 @@ msgstr ""
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr ""
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
 msgstr ""
 
 #. js-lingui-id: QnVLjD
@@ -2272,12 +2371,22 @@ msgstr ""
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr ""
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
 msgstr ""
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
+msgstr ""
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
 msgstr ""
 
 #. js-lingui-id: QmR+2U
@@ -2414,9 +2523,11 @@ msgid "Expires in"
 msgstr ""
 
 #. js-lingui-id: GS+Mus
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2437,6 +2548,7 @@ msgstr ""
 
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr ""
 
@@ -2451,6 +2563,7 @@ msgid "Export to PDF"
 msgstr ""
 
 #. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr ""
@@ -2468,6 +2581,7 @@ msgid "Export view"
 msgstr ""
 
 #. js-lingui-id: +FMXdE
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr ""
@@ -2769,7 +2883,12 @@ msgstr ""
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
+#~ msgid "Greater than"
+#~ msgstr ""
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
 msgstr ""
 
 #. js-lingui-id: CZXzs4
@@ -2926,6 +3045,36 @@ msgstr ""
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
+msgstr ""
+
+#. js-lingui-id: 3rtE4o
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Connection Details"
+msgstr ""
+
+#. js-lingui-id: jXXECN
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully created"
+msgstr ""
+
+#. js-lingui-id: Fz/wXI
+#: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
+msgid "IMAP connection successfully updated"
+msgstr ""
+
+#. js-lingui-id: TE8s2c
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Port"
+msgstr ""
+
+#. js-lingui-id: /RAwfY
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "IMAP Server"
+msgstr ""
+
+#. js-lingui-id: +8jOVa
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "imap.example.com"
 msgstr ""
 
 #. js-lingui-id: tSVr6t
@@ -3134,6 +3283,16 @@ msgstr ""
 msgid "is not a valid array"
 msgstr ""
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr ""
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr ""
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3152,6 +3311,11 @@ msgstr ""
 #. js-lingui-id: 96g038
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
 msgstr ""
 
 #. js-lingui-id: Ir+3AW
@@ -3199,10 +3363,15 @@ msgstr ""
 msgid "Japanese"
 msgstr ""
 
+#. js-lingui-id: wrLOeW
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "john.doe@example.com"
+msgstr ""
+
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr ""
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3316,7 +3485,12 @@ msgstr ""
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
+#~ msgid "Less than"
+#~ msgstr ""
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
 msgstr ""
 
 #. js-lingui-id: 1njn7W
@@ -3327,6 +3501,8 @@ msgstr ""
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr ""
 
@@ -3574,8 +3750,8 @@ msgstr ""
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr ""
+#~ msgid "must contain only numbers"
+#~ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -3687,6 +3863,12 @@ msgstr ""
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
+msgstr ""
+
+#. js-lingui-id: GeB/fA
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+msgid "New IMAP Connection"
 msgstr ""
 
 #. js-lingui-id: o8MyXb
@@ -3841,6 +4023,11 @@ msgstr ""
 #~ msgid "No more members to assign"
 #~ msgstr ""
 
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
+
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
@@ -3880,6 +4067,11 @@ msgstr ""
 #. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
+msgstr ""
+
+#. js-lingui-id: qq788M
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "No role"
 msgstr ""
 
 #. js-lingui-id: 9mcJ/7
@@ -4150,6 +4342,7 @@ msgstr ""
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr ""
 
@@ -4806,6 +4999,11 @@ msgstr ""
 msgid "see"
 msgstr ""
 
+#. js-lingui-id: rJnbMG
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "See {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4834,8 +5032,8 @@ msgstr ""
 
 #. js-lingui-id: FvBwjM
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See Records on {objectLabel}"
-msgstr ""
+#~ msgid "See Records on {objectLabel}"
+#~ msgstr ""
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -5046,10 +5244,13 @@ msgstr ""
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5532,8 +5733,8 @@ msgstr ""
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr ""
+#~ msgid "There was an issue"
+#~ msgstr ""
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -5656,6 +5857,11 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
+#. js-lingui-id: xdA/+p
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Tools"
+msgstr ""
+
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
@@ -5768,6 +5974,11 @@ msgstr ""
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
+msgstr ""
+
+#. js-lingui-id: Vmsh9w
+#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+msgid "Update your IMAP email account configuration"
 msgstr ""
 
 #. js-lingui-id: +b7T3G
@@ -6028,6 +6239,31 @@ msgstr ""
 #~ msgid "Webhook"
 #~ msgstr ""
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr ""
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr ""
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr ""
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr ""
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6181,6 +6417,16 @@ msgstr ""
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
+msgstr ""
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr ""
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
 msgstr ""
 
 #. js-lingui-id: qsAug0

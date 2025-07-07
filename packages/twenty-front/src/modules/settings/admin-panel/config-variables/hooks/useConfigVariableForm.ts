@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { ConfigVariable } from '~/generated/graphql';
+import { ConfigVariable } from '~/generated-metadata/graphql';
 
 type FormValues = {
   value: ConfigVariableValue;

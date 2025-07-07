@@ -8,17 +8,12 @@ import {
 import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useDeleteOneObjectMetadataItem = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
-
   const [mutate] = useMutation<
     DeleteOneObjectMetadataItemMutation,
     DeleteOneObjectMetadataItemMutationVariables
-  >(DELETE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloMetadataClient,
-  });
+  >(DELETE_ONE_OBJECT_METADATA_ITEM);
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');

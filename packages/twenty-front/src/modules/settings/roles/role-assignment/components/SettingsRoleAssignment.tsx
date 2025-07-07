@@ -13,7 +13,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -92,7 +92,10 @@ export const SettingsRoleAssignment = ({
     useState<SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
       null,
     );
-  const { closeDropdown } = useDropdown('role-member-select');
+
+  const dropdownId = 'role-member-select';
+
+  const { closeDropdown } = useCloseDropdown();
   const [searchFilter, setSearchFilter] = useState('');
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -151,7 +154,7 @@ export const SettingsRoleAssignment = ({
       role: existingRole,
     });
     openModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const isModalOpened = useRecoilComponentValueV2(

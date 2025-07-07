@@ -10,4 +10,5 @@ export enum FocusComponentType {
   TEXT_AREA = 'text-area',
   TEXT_INPUT = 'text-input',
   RECORD_BOARD_CARD = 'record-board-card',
+  ACTIVITY_RICH_TEXT_EDITOR = 'activity-rich-text-editor',
 }

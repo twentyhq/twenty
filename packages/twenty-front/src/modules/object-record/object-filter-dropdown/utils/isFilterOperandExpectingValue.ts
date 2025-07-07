@@ -12,8 +12,8 @@ export const isFilterOperandExpectingValue = (operand: ViewFilterOperand) => {
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.Contains:
     case ViewFilterOperand.DoesNotContain:
-    case ViewFilterOperand.GreaterThan:
-    case ViewFilterOperand.LessThan:
+    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.LessThanOrEqual:
     case ViewFilterOperand.IsBefore:
     case ViewFilterOperand.IsAfter:
     case ViewFilterOperand.Is:

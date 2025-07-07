@@ -133,9 +133,9 @@ export const DefaultWithoutSearch: Story = {
 export const LimitedPermissions: Story = {
   play: async () => {
     const canvas = within(document.body);
-    await expect(canvas.findByText('Go to Opportunities')).rejects.toThrow();
-    await expect(canvas.findByText('Go to Tasks')).rejects.toThrow();
     expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },

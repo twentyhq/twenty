@@ -26,8 +26,8 @@ const StyledFormFieldInputInnerContainer = styled.div<FormFieldInputInnerContain
         `
       : css`
           border-right: none;
-          border-bottom-right-radius: none;
-          border-top-right-radius: none;
+          border-bottom-right-radius: 0;
+          border-top-right-radius: 0;
         `}
 
   box-sizing: border-box;

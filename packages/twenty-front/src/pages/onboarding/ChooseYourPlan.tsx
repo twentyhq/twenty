@@ -27,7 +27,7 @@ import {
   BillingPlanKey,
   BillingPriceLicensedDto,
   useBillingBaseProductPricesQuery,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;

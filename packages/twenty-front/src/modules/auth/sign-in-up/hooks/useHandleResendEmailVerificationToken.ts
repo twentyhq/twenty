@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useResendEmailVerificationTokenMutation } from '~/generated/graphql';
+import { useResendEmailVerificationTokenMutation } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [resendEmailVerificationToken, { loading }] =
     useResendEmailVerificationTokenMutation();
   const { origin } = useOrigin();
@@ -16,8 +16,8 @@ export const useHandleResendEmailVerificationToken = () => {
     (email: string | null) => {
       return async () => {
         if (!email) {
-          enqueueSnackBar(t`Invalid email`, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            message: t`Invalid email`,
           });
           return;
         }
@@ -31,22 +31,25 @@ export const useHandleResendEmailVerificationToken = () => {
           });
 
           if (data?.resendEmailVerificationToken?.success === true) {
-            enqueueSnackBar(t`Email verification link resent!`, {
-              variant: SnackBarVariant.Success,
+            enqueueSuccessSnackBar({
+              message: t`Email verification link resent!`,
             });
           } else {
-            enqueueSnackBar(t`There was an issue`, {
-              variant: SnackBarVariant.Error,
-            });
+            enqueueErrorSnackBar({});
           }
         } catch (error) {
-          enqueueSnackBar((error as Error).message, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            ...(error instanceof ApolloError ? { apolloError: error } : {}),
           });
         }
       };
     },
-    [enqueueSnackBar, resendEmailVerificationToken, origin],
+    [
+      enqueueErrorSnackBar,
+      enqueueSuccessSnackBar,
+      resendEmailVerificationToken,
+      origin,
+    ],
   );
 
   return { handleResendEmailVerificationToken, loading };

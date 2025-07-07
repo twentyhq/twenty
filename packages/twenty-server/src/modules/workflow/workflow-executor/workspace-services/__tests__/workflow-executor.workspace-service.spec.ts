@@ -13,6 +13,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 describe('WorkflowExecutorWorkspaceService', () => {
   let service: WorkflowExecutorWorkspaceService;
@@ -38,6 +39,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   const mockWorkflowRunWorkspaceService = {
     saveWorkflowRunState: jest.fn(),
+    updateWorkflowRunStepStatus: jest.fn(),
   };
 
   const mockBillingService = {
@@ -170,6 +172,20 @@ describe('WorkflowExecutorWorkspaceService', () => {
         'workspace-id',
       );
       expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(2);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(2);
+      expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
@@ -179,10 +195,14 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: {
           data: 'some-data',
-          'step-1': { stepOutput: 'success' },
+          'step-1': {
+            stepOutput: 'success',
+          },
         },
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.SUCCESS,
       });
+
       expect(result).toEqual({ result: { success: true } });
 
       // execute second step
@@ -208,6 +228,20 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
       expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
       expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(1);
+      expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
@@ -219,6 +253,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: mockContext,
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.FAILED,
       });
     });
 
@@ -238,6 +273,20 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       expect(result).toEqual(mockPendingEvent);
       expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(1);
+      expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
@@ -247,6 +296,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: mockContext,
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.PENDING,
       });
 
       // No recursive call to execute should happen
@@ -291,7 +341,23 @@ describe('WorkflowExecutorWorkspaceService', () => {
         context: mockContext,
       });
 
-      // execute first step
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(2);
+
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(2);
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
@@ -304,6 +370,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: mockContext,
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.FAILED,
       });
       expect(result).toEqual({ result: { success: true } });
 
@@ -379,6 +446,20 @@ describe('WorkflowExecutorWorkspaceService', () => {
       // Should not retry anymore
       expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
       expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(1);
+      expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
@@ -388,6 +469,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: mockContext,
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.FAILED,
       });
       expect(result).toEqual(errorOutput);
     });
@@ -406,6 +488,12 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).not.toHaveBeenCalled();
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
@@ -416,6 +504,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         context: mockContext,
         workspaceId: 'workspace-id',
+        stepStatus: StepStatus.FAILED,
       });
       expect(result).toEqual({
         error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,

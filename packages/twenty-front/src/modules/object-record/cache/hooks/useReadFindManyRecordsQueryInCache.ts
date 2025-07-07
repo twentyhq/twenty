@@ -1,5 +1,4 @@
-import { useApolloClient } from '@apollo/client';
-
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -15,7 +14,7 @@ export const useReadFindManyRecordsQueryInCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -38,7 +37,7 @@ export const useReadFindManyRecordsQueryInCache = ({
     });
 
     const existingRecordsQueryResult =
-      apolloClient.readQuery<RecordGqlOperationFindManyResult>({
+      apolloCoreClient.readQuery<RecordGqlOperationFindManyResult>({
         query: findManyRecordsQueryForCacheRead,
         variables: queryVariables,
       });

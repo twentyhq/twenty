@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
+import { useEmailPasswordResetLinkMutation } from '~/generated-metadata/graphql';
 
 export const useHandleResetPassword = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const currentUser = useRecoilValue(currentUserState);
@@ -20,15 +20,15 @@ export const useHandleResetPassword = () => {
     (email = currentUser?.email) => {
       return async () => {
         if (!email) {
-          enqueueSnackBar(t`Invalid email`, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            message: t`Invalid email`,
           });
           return;
         }
 
         if (!workspacePublicData?.id) {
-          enqueueSnackBar(t`Invalid workspace`, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            message: t`Invalid workspace`,
           });
           return;
         }
@@ -39,17 +39,15 @@ export const useHandleResetPassword = () => {
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
-            enqueueSnackBar(t`Password reset link has been sent to the email`, {
-              variant: SnackBarVariant.Success,
+            enqueueSuccessSnackBar({
+              message: t`Password reset link has been sent to the email`,
             });
           } else {
-            enqueueSnackBar(t`There was an issue`, {
-              variant: SnackBarVariant.Error,
-            });
+            enqueueErrorSnackBar({});
           }
         } catch (error) {
-          enqueueSnackBar((error as Error).message, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            ...(error instanceof ApolloError ? { apolloError: error } : {}),
           });
         }
       };
@@ -57,7 +55,8 @@ export const useHandleResetPassword = () => {
     [
       currentUser?.email,
       workspacePublicData?.id,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
+      enqueueSuccessSnackBar,
       t,
       emailPasswordResetLink,
     ],

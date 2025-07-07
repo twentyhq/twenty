@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { Section } from 'twenty-ui/layout';
-import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDetailsContainer = styled.div`

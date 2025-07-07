@@ -12,8 +12,9 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Button } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -41,6 +42,12 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   box-sizing: border-box;
 `;
 
+const ALLOWED_REPLY_PROVIDERS = [
+  ConnectedAccountProvider.GOOGLE,
+  ConnectedAccountProvider.MICROSOFT,
+  ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+];
+
 export const CommandMenuMessageThreadPage = () => {
   const setMessageThread = useSetRecoilComponentStateV2(
     messageThreadComponentState,
@@ -58,6 +65,7 @@ export const CommandMenuMessageThreadPage = () => {
     messageChannelLoading,
     connectedAccountProvider,
     lastMessageExternalId,
+    connectedAccountConnectionParameters,
   } = useEmailThreadInCommandMenu();
 
   useEffect(() => {
@@ -83,10 +91,14 @@ export const CommandMenuMessageThreadPage = () => {
     return (
       connectedAccountHandle &&
       connectedAccountProvider &&
+      ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
+      (connectedAccountProvider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+        isDefined(connectedAccountConnectionParameters?.SMTP)) &&
       lastMessage &&
       messageThreadExternalId != null
     );
   }, [
+    connectedAccountConnectionParameters,
     connectedAccountHandle,
     connectedAccountProvider,
     lastMessage,
@@ -108,6 +120,8 @@ export const CommandMenuMessageThreadPage = () => {
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
         window.open(url, '_blank');
         break;
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        throw new Error('Account provider not supported');
       case null:
         throw new Error('Account provider not provided');
       default:

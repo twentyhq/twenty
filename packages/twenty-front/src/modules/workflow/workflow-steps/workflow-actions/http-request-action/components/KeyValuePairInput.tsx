@@ -2,6 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
@@ -14,21 +15,18 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledRow = styled.div`
-  align-items: flex-start;
-  display: flex;
+const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
+  display: grid;
   gap: ${({ theme }) => theme.spacing(2)};
-`;
 
-const StyledKeyValueContainer = styled.div`
-  display: flex;
-  flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledPlaceholder = styled.div`
-  aspect-ratio: 1;
-  height: ${({ theme }) => theme.spacing(8)};
+  ${({ readonly, theme }) =>
+    readonly
+      ? css`
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        `
+      : css`
+          grid-template-columns: repeat(2, minmax(0, 1fr)) ${theme.spacing(8)};
+        `};
 `;
 
 export type KeyValuePair = {
@@ -39,7 +37,7 @@ export type KeyValuePair = {
 
 export type KeyValuePairInputProps = {
   label?: string;
-  defaultValue?: Record<string, string>;
+  defaultValue?: Record<string, string> | Array<string>;
   onChange: (value: Record<string, string>) => void;
   readonly?: boolean;
   keyPlaceholder?: string;
@@ -122,36 +120,34 @@ export const KeyValuePairInput = ({
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
         {pairs.map((pair) => (
-          <StyledRow key={pair.id}>
-            <StyledKeyValueContainer>
-              <FormTextFieldInput
-                placeholder={keyPlaceholder}
-                readonly={readonly}
-                defaultValue={pair.key}
-                onChange={(value) =>
-                  handlePairChange(pair.id, 'key', value ?? '')
-                }
-                VariablePicker={WorkflowVariablePicker}
+          <StyledKeyValueContainer key={pair.id} readonly={readonly}>
+            <FormTextFieldInput
+              placeholder={keyPlaceholder}
+              readonly={readonly}
+              defaultValue={pair.key}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'key', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+            />
+
+            <FormTextFieldInput
+              placeholder={valuePlaceholder}
+              readonly={readonly}
+              defaultValue={pair.value}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'value', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+            />
+
+            {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
+              <Button
+                onClick={() => handleRemovePair(pair.id)}
+                Icon={IconTrash}
               />
-              <FormTextFieldInput
-                placeholder={valuePlaceholder}
-                readonly={readonly}
-                defaultValue={pair.value}
-                onChange={(value) =>
-                  handlePairChange(pair.id, 'value', value ?? '')
-                }
-                VariablePicker={WorkflowVariablePicker}
-              />
-              {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
-                <Button
-                  onClick={() => handleRemovePair(pair.id)}
-                  Icon={IconTrash}
-                />
-              ) : pairs.length > 1 ? (
-                <StyledPlaceholder />
-              ) : null}
-            </StyledKeyValueContainer>
-          </StyledRow>
+            ) : null}
+          </StyledKeyValueContainer>
         ))}
       </StyledContainer>
     </FormFieldInputContainer>

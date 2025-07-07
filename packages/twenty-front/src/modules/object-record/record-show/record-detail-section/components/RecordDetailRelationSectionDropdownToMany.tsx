@@ -16,7 +16,7 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -52,7 +52,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
     recordId,
   });
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const dropdownPlacement = useRecoilComponentValueV2(
     dropdownPlacementComponentStateV2,
@@ -125,7 +125,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
   };
 
   const handleCreateNew = (searchString?: string) => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     createNewRecordAndOpenRightDrawer?.(searchString);
   };
@@ -150,8 +150,12 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
             componentInstanceId={dropdownId}
             onCreate={handleCreateNew}
             onChange={updateRelation}
-            onSubmit={closeDropdown}
-            onClickOutside={closeDropdown}
+            onSubmit={() => {
+              closeDropdown(dropdownId);
+            }}
+            onClickOutside={() => {
+              closeDropdown(dropdownId);
+            }}
             layoutDirection={
               dropdownPlacement?.includes('end')
                 ? 'search-bar-on-bottom'

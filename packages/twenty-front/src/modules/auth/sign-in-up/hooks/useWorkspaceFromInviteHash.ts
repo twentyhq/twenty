@@ -4,16 +4,16 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { AppPath } from '@/types/AppPath';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -24,9 +24,7 @@ export const useWorkspaceFromInviteHash = () => {
       skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
         navigate(AppPath.Index);
       },
       onCompleted: (data) => {
@@ -35,13 +33,14 @@ export const useWorkspaceFromInviteHash = () => {
           data?.findWorkspaceFromInviteHash &&
           currentWorkspace.id === data.findWorkspaceFromInviteHash.id
         ) {
+          const workspaceDisplayName =
+            data?.findWorkspaceFromInviteHash?.displayName;
           initiallyLoggedIn &&
-            enqueueSnackBar(
-              `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
-              {
-                variant: SnackBarVariant.Info,
-              },
-            );
+            enqueueInfoSnackBar({
+              message: workspaceDisplayName
+                ? t`You already belong to the workspace ${workspaceDisplayName}`
+                : t`You already belong to this workspace`,
+            });
           navigate(AppPath.Index);
         }
       },

@@ -2,7 +2,7 @@ import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { View } from '@/views/types/View';
@@ -33,8 +33,10 @@ export const ViewPickerOptionDropdown = ({
   view,
   handleViewSelect,
 }: ViewPickerOptionDropdownProps) => {
+  const dropdownId = `view-picker-options-${view.id}`;
+
   const { t } = useLingui();
-  const { closeDropdown } = useDropdown(`view-picker-options-${view.id}`);
+  const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
   const [isHovered, setIsHovered] = useState(false);
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
@@ -54,7 +56,7 @@ export const ViewPickerOptionDropdown = ({
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
     deleteViewFromCurrentState();
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleAddToFavorites = () => {
@@ -64,7 +66,7 @@ export const ViewPickerOptionDropdown = ({
       setViewPickerReferenceViewId(view.id);
       setViewPickerMode('favorite-folders-picker');
     }
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   return (
@@ -103,7 +105,7 @@ export const ViewPickerOptionDropdown = ({
                     text={t`Edit`}
                     onClick={(event) => {
                       onEdit(event, view.id);
-                      closeDropdown();
+                      closeDropdown(dropdownId);
                     }}
                   />
                   <MenuItem

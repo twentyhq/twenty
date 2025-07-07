@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
 type EditableFilterDropdownButtonProps = {
@@ -17,12 +17,14 @@ type EditableFilterDropdownButtonProps = {
 export const EditableFilterDropdownButton = ({
   recordFilter,
 }: EditableFilterDropdownButtonProps) => {
-  const { closeDropdown } = useDropdown(recordFilter.id);
+  const dropdownId = recordFilter.id;
+
+  const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const handleRemove = () => {
-    closeDropdown();
+    closeDropdown(dropdownId);
 
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };

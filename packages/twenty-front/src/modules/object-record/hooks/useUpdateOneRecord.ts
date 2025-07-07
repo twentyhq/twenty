@@ -1,7 +1,6 @@
-import { useApolloClient } from '@apollo/client';
-
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -37,7 +36,7 @@ export const useUpdateOneRecord = <
   objectNameSingular,
   recordGqlFields,
 }: useUpdateOneRecordProps) => {
-  const apolloClient = useApolloClient();
+  const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -75,7 +74,7 @@ export const useUpdateOneRecord = <
         objectMetadataItem,
         currentWorkspaceMember: currentWorkspaceMember,
         recordInput: updateOneRecordInput,
-        cache: apolloClient.cache,
+        cache: apolloCoreClient.cache,
         objectMetadataItems,
         objectPermissionsByObjectMetadataId,
       });
@@ -118,14 +117,14 @@ export const useUpdateOneRecord = <
       updateRecordFromCache({
         objectMetadataItems,
         objectMetadataItem,
-        cache: apolloClient.cache,
+        cache: apolloCoreClient.cache,
         record: computedOptimisticRecord,
         recordGqlFields,
         objectPermissionsByObjectMetadataId,
       });
 
       triggerUpdateRecordOptimisticEffect({
-        cache: apolloClient.cache,
+        cache: apolloCoreClient.cache,
         objectMetadataItem,
         currentRecord: cachedRecordWithConnection,
         updatedRecord: optimisticRecordWithConnection,
@@ -142,7 +141,7 @@ export const useUpdateOneRecord = <
         recordInput: updateOneRecordInput,
       }),
     };
-    const updatedRecord = await apolloClient
+    const updatedRecord = await apolloCoreClient
       .mutate({
         mutation: updateOneRecordMutation,
         variables: {
@@ -185,7 +184,7 @@ export const useUpdateOneRecord = <
         updateRecordFromCache({
           objectMetadataItems,
           objectMetadataItem,
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           record: {
             ...cachedRecord,
             ...buildRecordFromKeysWithSameValue(
@@ -198,7 +197,7 @@ export const useUpdateOneRecord = <
         });
 
         triggerUpdateRecordOptimisticEffect({
-          cache: apolloClient.cache,
+          cache: apolloCoreClient.cache,
           objectMetadataItem,
           currentRecord: optimisticRecordWithConnection,
           updatedRecord: cachedRecordWithConnection,

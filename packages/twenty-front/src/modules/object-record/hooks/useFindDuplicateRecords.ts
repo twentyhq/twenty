@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -9,7 +10,6 @@ import { RecordGqlOperationFindDuplicatesResult } from '@/object-record/graphql/
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
@@ -25,6 +25,8 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -33,7 +35,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const queryResponseField = getFindDuplicateRecordsQueryResponseField(
     objectMetadataItem.nameSingular,
@@ -47,6 +49,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
         variables: {
           ids: objectRecordIds,
         },
+        client: apolloCoreClient,
         onCompleted: (data) => {
           onCompleted?.(data[queryResponseField]);
         },
@@ -55,8 +58,8 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
             `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
               error,
           );
-          enqueueSnackBar(`Error finding duplicates:", ${error.message}`, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            apolloError: error,
           });
         },
       },

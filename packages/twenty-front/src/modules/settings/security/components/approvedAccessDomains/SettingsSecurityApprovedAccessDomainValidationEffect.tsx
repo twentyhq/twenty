@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
-import { useValidateApprovedAccessDomainMutation } from '~/generated/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { isDefined } from 'twenty-shared/utils';
+import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =
     useValidateApprovedAccessDomainMutation();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
@@ -23,15 +23,19 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
           },
         },
         onCompleted: () => {
-          enqueueSnackBar('Approved access domain validated', {
-            dedupeKey: 'approved-access-domain-validation-dedupe-key',
-            variant: SnackBarVariant.Success,
+          enqueueSuccessSnackBar({
+            message: t`Approved access domain validated`,
+            options: {
+              dedupeKey: 'approved-access-domain-validation-dedupe-key',
+            },
           });
         },
         onError: () => {
-          enqueueSnackBar('Error validating approved access domain', {
-            dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            message: t`Error validating approved access domain`,
+            options: {
+              dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
+            },
           });
         },
       });

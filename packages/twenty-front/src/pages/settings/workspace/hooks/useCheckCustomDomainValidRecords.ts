@@ -1,5 +1,5 @@
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
-import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
+import { useCheckCustomDomainValidRecordsMutation } from '~/generated-metadata/graphql';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

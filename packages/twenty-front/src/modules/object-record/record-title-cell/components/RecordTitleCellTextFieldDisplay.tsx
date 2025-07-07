@@ -1,6 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
@@ -46,8 +45,6 @@ export const RecordTitleCellSingleTextDisplayMode = ({
   const isEmpty =
     recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
-  const { openInlineCell } = useInlineCell();
-
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   return (
@@ -72,7 +69,6 @@ export const RecordTitleCellSingleTextDisplayMode = ({
           },
           memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
-        openInlineCell();
       }}
     >
       {isEmpty ? (

@@ -34,10 +34,12 @@ import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { createPortal } from 'react-dom';
 import {
@@ -159,7 +161,11 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const dropdownScopeId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useCloseDropdown();
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentStateV2,
+    dropdownScopeId,
+  );
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -171,7 +177,7 @@ export const RecordDetailRelationRecordsListItem = ({
   );
 
   const handleDetach = () => {
-    closeDropdown();
+    closeDropdown(dropdownScopeId);
 
     const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
       ({ id }) => id === relationFieldMetadataId,
@@ -196,7 +202,7 @@ export const RecordDetailRelationRecordsListItem = ({
   };
 
   const handleDelete = async () => {
-    closeDropdown();
+    closeDropdown(dropdownScopeId);
     openModal(getDeleteRelationModalId(relationRecord.id));
   };
 

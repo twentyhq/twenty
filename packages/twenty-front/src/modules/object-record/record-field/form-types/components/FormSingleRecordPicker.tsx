@@ -11,7 +11,7 @@ import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-r
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
@@ -103,7 +103,7 @@ export const FormSingleRecordPicker = ({
   const dropdownId = `form-record-picker-${componentId}`;
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useCloseDropdown();
 
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
     singleRecordPickerSearchFilterComponentState,
@@ -118,7 +118,7 @@ export const FormSingleRecordPicker = ({
     selectedEntity: SingleRecordPickerRecord | null | undefined,
   ) => {
     onChange?.(selectedEntity?.record?.id ?? '');
-    closeDropdown();
+    closeDropdown(dropdownId);
   };
 
   const handleVariableTagInsert = (variable: string) => {
@@ -193,7 +193,7 @@ export const FormSingleRecordPicker = ({
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
                 emptyLabel={'No ' + objectNameSingular}
-                onCancel={() => closeDropdown()}
+                onCancel={() => closeDropdown(dropdownId)}
                 onRecordSelected={handleRecordSelected}
                 objectNameSingular={objectNameSingular}
                 recordPickerInstanceId={dropdownId}
