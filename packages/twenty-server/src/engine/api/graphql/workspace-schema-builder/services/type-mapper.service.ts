@@ -15,7 +15,10 @@ import {
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
@@ -79,7 +82,7 @@ export class TypeMapperService {
         FieldMetadataType.NUMBER,
         getNumberScalarType(
           (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.dataType,
+            ?.dataType ?? NumberDataType.FLOAT,
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
