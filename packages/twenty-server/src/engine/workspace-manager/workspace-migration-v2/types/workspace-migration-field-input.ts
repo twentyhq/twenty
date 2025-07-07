@@ -20,9 +20,8 @@ export const fieldMetadataEntityEditableProperties = [
 export type FieldMetadataEntityEditableProperties =
   (typeof fieldMetadataEntityEditableProperties)[number];
 
-export type WorkspaceMigrationFieldInput = Omit<
-  FieldMetadataEntity,
-  'object'
+export type WorkspaceMigrationFieldInput = Partial<
+  Omit<FieldMetadataEntity, 'object'>
 > & {
   uniqueIdentifier: string;
 };

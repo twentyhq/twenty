@@ -19,6 +19,7 @@ import { transformMetadataForComparison } from 'src/engine/workspace-manager/wor
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import { UpdatedObjectMetadataFieldAndRelationMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-field-and-relations-delete-created-updated-matrix.util';
 import { compareFieldMetadataInputAndGetUpdateFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-field-metadata-input-comparator.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -53,6 +54,7 @@ export const compareTwoWorkspaceMigrationFieldInput = ({
 
       if (
         property === 'defaultValue' &&
+        isDefined(fieldMetadata.type) &&
         shouldNotOverrideDefaultValue(fieldMetadata.type)
       ) {
         return true;
@@ -88,12 +90,16 @@ export const buildWorkspaceMigrationV2FieldActions = (
     updatedFieldMetadata,
     objectMetadataInput,
   } of objectMetadataDeletedCreatedUpdatedFields) {
-    const updateFieldActions = updatedFieldMetadata.map<UpdateFieldAction>(
+    const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
       ({ from, to }) => {
         const updates = compareFieldMetadataInputAndGetUpdateFieldActions({
           from,
           to,
         });
+
+        if (updates.length === 0) {
+          return [];
+        }
 
         return {
           type: 'update_field',

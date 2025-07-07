@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('WorkspaceMigrationBuilderV2Service', () => {
@@ -13,7 +13,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     labelSingular: 'Contact',
     labelPlural: 'Contacts',
     description: 'A contact',
-    fields: [
+    fieldInputs: [
       {
         uniqueIdentifier: '20202020-e89b-12d3-a456-426614174000',
         name: 'firstName',
@@ -64,7 +64,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fields: [
+      fieldInputs: [
         {
           uniqueIdentifier: '20202020-e89b-12d3-a456-426614174001',
           name: 'name',
@@ -84,7 +84,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "object": {
         "description": "A company",
-        "fields": [
+        "fieldInputs": [
           {
             "defaultValue": "",
             "description": "",
@@ -104,7 +104,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "create_object",
     },
     {
-      "field": {
+      "fieldMetadataInput": {
         "defaultValue": "",
         "description": "",
         "label": "Name",
@@ -112,8 +112,24 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
+      "objectMetadataInput": {
+        "description": "A company",
+        "fieldInputs": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "Name",
+            "name": "name",
+            "type": "ADDRESS",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
+          },
+        ],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
+      },
       "type": "create_field",
     },
   ],
@@ -140,8 +156,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     const objectToUpdate: WorkspaceMigrationObjectInput = {
       ...baseObject,
       nameSingular: 'Person',
-      fields: [
-        ...baseObject.fields,
+      fieldInputs: [
+        ...baseObject.fieldInputs,
         {
           defaultValue: '',
           label: 'New field',
@@ -163,7 +179,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fields: [
+      fieldInputs: [
         {
           uniqueIdentifier: '20202020-1016-4f09-bad6-e75681f385f4',
           name: 'name',
@@ -186,7 +202,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "object": {
         "description": "A company",
-        "fields": [
+        "fieldInputs": [
           {
             "defaultValue": "",
             "description": "",
@@ -206,7 +222,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "create_object",
     },
     {
-      "field": {
+      "fieldMetadataInput": {
         "defaultValue": "",
         "description": "",
         "label": "Name",
@@ -214,8 +230,24 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
-      "objectMetadataUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
+      "objectMetadataInput": {
+        "description": "A company",
+        "fieldInputs": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "Name",
+            "name": "name",
+            "type": "ADDRESS",
+            "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
+          },
+        ],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
+      },
       "type": "create_field",
     },
     {
@@ -234,7 +266,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ],
     },
     {
-      "field": {
+      "fieldMetadataInput": {
         "defaultValue": "",
         "description": "new field description",
         "label": "New field",
@@ -242,8 +274,32 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "NUMBER",
         "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "objectMetadataInput": {
+        "description": "A contact",
+        "fieldInputs": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+          {
+            "defaultValue": "",
+            "description": "new field description",
+            "label": "New field",
+            "name": "newField",
+            "type": "NUMBER",
+            "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
+          },
+        ],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Person",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      },
       "type": "create_field",
     },
   ],
@@ -259,7 +315,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
       description: 'First object',
-      fields: [
+      fieldInputs: [
         {
           uniqueIdentifier: 'field-1',
           name: 'fieldA',
@@ -277,7 +333,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
       description: 'Second object',
-      fields: [
+      fieldInputs: [
         {
           uniqueIdentifier: 'field-2',
           name: 'fieldB',
