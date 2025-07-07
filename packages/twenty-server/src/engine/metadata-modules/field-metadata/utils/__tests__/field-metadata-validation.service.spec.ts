@@ -1,16 +1,30 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 
 describe('FieldMetadataValidationService', () => {
   let service: FieldMetadataValidationService;
-  const dummy = {} as any;
 
-  beforeAll(() => {
-    service = new FieldMetadataValidationService(dummy);
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        FieldMetadataValidationService,
+        {
+          provide: FieldMetadataEnumValidationService,
+          useValue: {},
+        },
+      ],
+    }).compile();
+
+    service = module.get<FieldMetadataValidationService>(
+      FieldMetadataValidationService,
+    );
   });
 
   it('should validate NUMBER settings successfully', async () => {

@@ -17,6 +17,7 @@ import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadat
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
+import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
@@ -63,6 +64,8 @@ import { FieldMetadataService } from './services/field-metadata.service';
         IsFieldMetadataDefaultValue,
         FieldMetadataService,
         FieldMetadataRelatedRecordsService,
+        FieldMetadataMorphRelationService,
+        FieldMetadataRelationService,
         FieldMetadataValidationService,
         FieldMetadataEnumValidationService,
       ],
@@ -100,6 +103,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
     FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
+    FieldMetadataMorphRelationService,
     FieldMetadataValidationService,
     FieldMetadataEnumValidationService,
     FieldMetadataResolver,
