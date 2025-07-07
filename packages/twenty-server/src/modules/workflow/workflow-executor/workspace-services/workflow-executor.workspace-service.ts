@@ -34,15 +34,15 @@ export class WorkflowExecutorWorkspaceService {
     private readonly billingService: BillingService,
   ) {}
 
-  async execute({
-    stepIdsToExecute,
+  async executeFromSteps({
+    stepIds,
     workflowRunId,
     workspaceId,
   }: WorkflowExecutorInput) {
     await Promise.all(
-      stepIdsToExecute.map(async (stepIdToExecute) => {
-        await this.executeBranch({
-          currentStepId: stepIdToExecute,
+      stepIds.map(async (stepIdToExecute) => {
+        await this.executeFromStep({
+          stepId: stepIdToExecute,
           workflowRunId,
           workspaceId,
         });
@@ -50,14 +50,14 @@ export class WorkflowExecutorWorkspaceService {
     );
   }
 
-  private async executeBranch({
-    currentStepId,
+  private async executeFromStep({
+    stepId,
     attemptCount = 1,
     workflowRunId,
     workspaceId,
   }: WorkflowBranchExecutorInput) {
     const workflowRunInfo = await this.getWorkflowRunInfoOrEndWorkflowRun({
-      currentStepId,
+      stepId: stepId,
       workflowRunId,
       workspaceId,
     });
@@ -96,7 +96,7 @@ export class WorkflowExecutorWorkspaceService {
 
     try {
       actionOutput = await workflowAction.execute({
-        currentStepId,
+        currentStepId: stepId,
         steps,
         context,
       });
@@ -155,8 +155,8 @@ export class WorkflowExecutorWorkspaceService {
         return;
       }
 
-      await this.execute({
-        stepIdsToExecute: stepToExecute.nextStepIds,
+      await this.executeFromSteps({
+        stepIds: stepToExecute.nextStepIds,
         workflowRunId,
         workspaceId,
       });
@@ -168,8 +168,8 @@ export class WorkflowExecutorWorkspaceService {
       stepToExecute.settings.errorHandlingOptions.retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
-      await this.executeBranch({
-        currentStepId,
+      await this.executeFromStep({
+        stepId,
         attemptCount: attemptCount + 1,
         workflowRunId,
         workspaceId,
@@ -194,11 +194,11 @@ export class WorkflowExecutorWorkspaceService {
   }
 
   private async getWorkflowRunInfoOrEndWorkflowRun({
+    stepId,
     workflowRunId,
     workspaceId,
-    currentStepId,
   }: {
-    currentStepId: string;
+    stepId: string;
     workflowRunId: string;
     workspaceId: string;
   }) {
@@ -244,7 +244,7 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const stepToExecute = steps.find((step) => step.id === currentStepId);
+    const stepToExecute = steps.find((step) => step.id === stepId);
 
     if (!stepToExecute) {
       await this.workflowRunWorkspaceService.endWorkflowRun({

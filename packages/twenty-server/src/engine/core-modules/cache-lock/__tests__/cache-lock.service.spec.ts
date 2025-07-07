@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { LockService } from 'src/engine/core-modules/lock/lock.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
-describe('LockService', () => {
-  let service: LockService;
+describe('CacheLockService', () => {
+  let service: CacheLockService;
   let cacheStorageService: jest.Mocked<CacheStorageService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        LockService,
+        CacheLockService,
         {
           provide: CacheStorageNamespace.EngineLock,
           useValue: {
@@ -29,7 +29,7 @@ describe('LockService', () => {
       ],
     }).compile();
 
-    service = module.get<LockService>(LockService);
+    service = module.get<CacheLockService>(CacheLockService);
     cacheStorageService = module.get(CacheStorageNamespace.EngineLock);
     jest.spyOn(service, 'delay').mockResolvedValue(undefined);
   });

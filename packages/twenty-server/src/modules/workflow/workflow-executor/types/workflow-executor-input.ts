@@ -1,11 +1,11 @@
 export type WorkflowExecutorInput = {
-  stepIdsToExecute: string[];
+  stepIds: string[];
   workflowRunId: string;
   workspaceId: string;
 };
 
 export type WorkflowBranchExecutorInput = {
-  currentStepId: string;
+  stepId: string;
   attemptCount?: number;
   workflowRunId: string;
   workspaceId: string;

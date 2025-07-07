@@ -138,9 +138,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockStepResult);
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -205,9 +205,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         new Error('Step execution failed'),
       );
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -252,9 +252,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockPendingEvent);
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -327,9 +327,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         error: 'Step execution failed but continue',
       });
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -393,9 +393,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
         error: 'Step execution failed, will retry',
       });
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -415,9 +415,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
       mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
       mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 
@@ -456,9 +456,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
     it('should return if step should not be executed', async () => {
       (canExecuteStep as jest.Mock).mockReturnValueOnce(false);
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        stepIdsToExecute: ['step-1'],
+        stepIds: ['step-1'],
         workspaceId: mockWorkspaceId,
       });
 

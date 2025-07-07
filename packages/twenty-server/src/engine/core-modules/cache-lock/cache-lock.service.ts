@@ -4,14 +4,14 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 
-export type LockOptions = {
+export type CacheLockOptions = {
   ms?: number;
   maxRetries?: number;
   ttl?: number;
 };
 
 @Injectable()
-export class LockService {
+export class CacheLockService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineLock)
     private readonly cacheStorageService: CacheStorageService,
@@ -24,7 +24,7 @@ export class LockService {
   async withLock<T>(
     fn: () => Promise<T>,
     key: string,
-    options?: LockOptions,
+    options?: CacheLockOptions,
   ): Promise<T> {
     const { ms = 50, maxRetries = 20, ttl = 500 } = options || {};
 

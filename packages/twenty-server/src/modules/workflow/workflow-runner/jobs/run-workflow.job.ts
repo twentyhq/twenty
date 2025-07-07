@@ -115,8 +115,8 @@ export class RunWorkflowJob {
 
     const rootSteps = getRootSteps(workflowVersion.steps);
 
-    await this.workflowExecutorWorkspaceService.execute({
-      stepIdsToExecute: rootSteps.map((step) => step.id),
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: rootSteps.map((step) => step.id),
       workflowRunId,
       workspaceId,
     });
@@ -168,8 +168,8 @@ export class RunWorkflowJob {
       return;
     }
 
-    await this.workflowExecutorWorkspaceService.execute({
-      stepIdsToExecute: lastExecutedStep.nextStepIds,
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: lastExecutedStep.nextStepIds,
       workflowRunId,
       workspaceId,
     });
