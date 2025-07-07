@@ -1,4 +1,4 @@
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+import { FromTo } from "src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2";
 
 export type DeletedCreatedUpdatedMatrix<T> = {
   created: T[];

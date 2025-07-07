@@ -1,0 +1,11 @@
+export interface AddUniquenessConstraintAction {
+  type: 'add_uniqueness_constraint';
+}
+
+export interface RemoveUniquenessConstraintAction {
+  type: 'remove_uniqueness_constraint';
+}
+
+export type WorkspaceMigrationUniquenessActionV2 =
+  | RemoveUniquenessConstraintAction
+  | AddUniquenessConstraintAction;

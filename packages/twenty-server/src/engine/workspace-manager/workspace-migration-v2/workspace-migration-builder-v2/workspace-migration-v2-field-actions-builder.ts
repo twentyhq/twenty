@@ -2,9 +2,8 @@ import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-  FromTo,
   WorkspaceMigrationFieldActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import {
   getWorkspaceMigrationV2FieldCreateAction,
@@ -14,6 +13,7 @@ import { UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher } from 'src/
 import { CreatedDeletedUpdatedObjectMetadataInputMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-common-v2';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,

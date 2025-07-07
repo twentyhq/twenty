@@ -2,7 +2,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import {
   CreateFieldAction,
   DeleteFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import { WorkspaceMigrationObjectFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 
 type FieldInputAndObjectUniqueIdentifier = {

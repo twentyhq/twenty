@@ -2,7 +2,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   CreateObjectAction,
   DeleteObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 
 export const getWorkspaceMigrationV2ObjectCreateAction = (
