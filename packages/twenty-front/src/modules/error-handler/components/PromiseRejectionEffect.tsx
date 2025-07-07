@@ -24,7 +24,9 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      enqueueErrorSnackBar({});
+      if (error.message.includes('The user aborted a request.') === false) {
+        enqueueErrorSnackBar({});
+      }
 
       try {
         const { captureException } = await import('@sentry/react');
