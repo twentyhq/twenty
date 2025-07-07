@@ -88,10 +88,7 @@ export const generateRandomFieldValue = ({
       return isDefined(field.options[0].value) ? [field.options[0].value] : [];
     }
 
-    case FieldMetadataType.RELATION: {
-      return null;
-    }
-
+    case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
       return null;
     }
