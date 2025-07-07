@@ -32,7 +32,6 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -180,25 +179,16 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithRelationConnect<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
-    const featureFlagMap = this.getFeatureFlagMap();
+    if (!Array.isArray(entity)) {
+      entity = [entity];
+    }
 
-    let entityWithoutRelationConnect:
-      | QueryDeepPartialEntity<Entity>
-      | QueryDeepPartialEntity<Entity>[];
-
-    if (featureFlagMap[FeatureFlagKey.IS_RELATION_CONNECT_ENABLED]) {
-      if (!Array.isArray(entity)) {
-        entity = [entity];
-      }
-
-      entityWithoutRelationConnect = await this.executeConnectQueries<Entity>(
+    const entityWithoutRelationConnect =
+      await this.executeConnectQueries<Entity>(
         entity,
         target,
         permissionOptions,
       );
-    } else {
-      entityWithoutRelationConnect = entity;
-    }
 
     return this.createQueryBuilder(
       undefined,
