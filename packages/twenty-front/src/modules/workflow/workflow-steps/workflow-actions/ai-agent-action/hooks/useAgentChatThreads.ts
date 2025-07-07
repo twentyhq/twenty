@@ -1,11 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import { agentChatApi, agentChatKeys } from '../api/agent-chat.api';
+import { GET_AGENT_CHAT_THREADS } from '../api/agent-chat-apollo.api';
+
+export interface AgentChatThread {
+  id: string;
+  agentId: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const useAgentChatThreads = (agentId: string) => {
-  return useQuery({
-    queryKey: agentChatKeys.threads(agentId),
-    queryFn: () => agentChatApi.getThreads(agentId),
-    enabled: isDefined(agentId),
+  return useQuery<{ threads: AgentChatThread[] }>(GET_AGENT_CHAT_THREADS, {
+    variables: { agentId },
+    skip: !isDefined(agentId),
+    fetchPolicy: 'cache-and-network',
   });
 };

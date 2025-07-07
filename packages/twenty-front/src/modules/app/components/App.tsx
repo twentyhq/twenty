@@ -8,22 +8,12 @@ import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/Sn
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui/display';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 
 initialI18nActivate();
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 3,
-    },
-  },
-});
 
 export const App = () => {
   return (
@@ -33,23 +23,21 @@ export const App = () => {
         FallbackComponent={AppRootErrorFallback}
       >
         <I18nProvider i18n={i18n}>
-          <QueryClientProvider client={queryClient}>
-            <RecoilDebugObserverEffect />
-            <ApolloDevLogEffect />
-            <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-              <IconsProvider>
-                <ExceptionHandlerProvider>
-                  <HelmetProvider>
-                    <ClickOutsideListenerContext.Provider
-                      value={{ excludedClickOutsideId: undefined }}
-                    >
-                      <AppRouter />
-                    </ClickOutsideListenerContext.Provider>
-                  </HelmetProvider>
-                </ExceptionHandlerProvider>
-              </IconsProvider>
-            </SnackBarProviderScope>
-          </QueryClientProvider>
+          <RecoilDebugObserverEffect />
+          <ApolloDevLogEffect />
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <IconsProvider>
+              <ExceptionHandlerProvider>
+                <HelmetProvider>
+                  <ClickOutsideListenerContext.Provider
+                    value={{ excludedClickOutsideId: undefined }}
+                  >
+                    <AppRouter />
+                  </ClickOutsideListenerContext.Provider>
+                </HelmetProvider>
+              </ExceptionHandlerProvider>
+            </IconsProvider>
+          </SnackBarProviderScope>
         </I18nProvider>
       </AppErrorBoundary>
     </RecoilRoot>

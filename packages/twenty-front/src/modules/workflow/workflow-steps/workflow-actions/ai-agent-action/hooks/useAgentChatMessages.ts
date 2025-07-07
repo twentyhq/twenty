@@ -1,22 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
+import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { useQuery } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  agentChatApi,
-  agentChatKeys,
-  AgentChatMessage,
-} from '../api/agent-chat.api';
+import { GET_AGENT_CHAT_MESSAGES } from '../api/agent-chat-apollo.api';
+
+export type AgentChatMessage = {
+  id: string;
+  threadId: string;
+  role: AgentChatMessageRole;
+  content: string;
+  createdAt: string;
+};
 
 export const useAgentChatMessages = (
   threadId: string,
-  onSuccess: (data: AgentChatMessage[]) => void,
+  onCompleted: (data: { messages: AgentChatMessage[] }) => void,
 ) => {
-  return useQuery({
-    queryKey: agentChatKeys.messages(threadId),
-    queryFn: async () => {
-      const response = await agentChatApi.getMessages(threadId);
-      onSuccess(response);
-      return response;
-    },
-    enabled: isDefined(threadId),
+  return useQuery<{ messages: AgentChatMessage[] }>(GET_AGENT_CHAT_MESSAGES, {
+    variables: { threadId },
+    skip: !isDefined(threadId),
+    fetchPolicy: 'cache-and-network',
+    onCompleted,
   });
 };

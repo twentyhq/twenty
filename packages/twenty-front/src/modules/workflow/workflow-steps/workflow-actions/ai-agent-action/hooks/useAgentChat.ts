@@ -43,13 +43,13 @@ export const useAgentChat = (agentId: string) => {
     });
   }, [scrollWrapperHTMLElement]);
 
-  const { data: threads = [], isLoading: threadsLoading } =
+  const { data: { threads = [] } = {}, loading: threadsLoading } =
     useAgentChatThreads(agentId);
   const currentThreadId = threads[0]?.id;
 
-  const { isLoading: messagesLoading, refetch: refetchMessages } =
-    useAgentChatMessages(currentThreadId, (data) => {
-      setAgentChatMessages(data);
+  const { loading: messagesLoading, refetch: refetchMessages } =
+    useAgentChatMessages(currentThreadId, ({ messages }) => {
+      setAgentChatMessages(messages);
       scrollToBottom();
       setAgentStreamingMessage('');
     });
