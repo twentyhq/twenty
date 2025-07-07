@@ -13,8 +13,8 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import {
   AppTooltip,
   IconInfoCircle,
@@ -22,6 +22,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
   existingOtherLabels: string[] = [],
@@ -74,11 +75,11 @@ const StyledAdvancedSettingsContainer = styled.div`
 type SettingsDataModelFieldIconLabelFormProps = {
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
-  canToggleSyncLabelWithName?: boolean;
+  isCreationMode: boolean;
 };
 
 export const SettingsDataModelFieldIconLabelForm = ({
-  canToggleSyncLabelWithName = true,
+  isCreationMode = false,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldIconLabelFormProps) => {
@@ -112,6 +113,20 @@ export const SettingsDataModelFieldIconLabelForm = ({
       });
   };
 
+  const isLabelEditEnabled =
+    isLabelSyncedWithName === false &&
+    fieldMetadataItem?.type !== FieldMetadataType.RELATION;
+
+  const isNameEditEnabled =
+    isLabelSyncedWithName === false &&
+    fieldMetadataItem?.isCustom === true &&
+    fieldMetadataItem.type !== FieldMetadataType.RELATION;
+
+  const canToggleSyncLabelWithName =
+    (isCreationMode &&
+      fieldMetadataItem?.type !== FieldMetadataType.RELATION) ||
+    (!isCreationMode && fieldMetadataItem?.type !== FieldMetadataType.RELATION);
+
   return (
     <>
       <StyledInputsContainer>
@@ -143,11 +158,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={
-                isLabelSyncedWithName === true &&
-                fieldMetadataItem &&
-                !fieldMetadataItem?.isCustom
-              }
+              disabled={!isLabelEditEnabled}
               maxLength={maxLength}
               fullWidth
             />
@@ -171,10 +182,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           placeholder={t`employees`}
                           value={value}
                           onChange={onChange}
-                          disabled={
-                            (isLabelSyncedWithName ?? false) ||
-                            !fieldMetadataItem?.isCustom
-                          }
+                          disabled={!isNameEditEnabled}
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
                           RightIcon={() =>
