@@ -6,8 +6,6 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
-  IsString,
-  IsUUID,
   Max,
   Min,
   ValidationError,
@@ -17,7 +15,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -25,13 +23,13 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
   {
@@ -67,50 +65,13 @@ class TextSettingsValidation {
   displayedMaxRows?: number;
 }
 
-export class RelationCreationPayloadValidation {
-  @IsUUID()
-  targetObjectMetadataId?: string;
-
-  @IsString()
-  targetFieldLabel: string;
-
-  @IsString()
-  targetFieldIcon: string;
-
-  @IsEnum(RelationType)
-  type: RelationType;
-}
-
 @Injectable()
 export class FieldMetadataValidationService<
   T extends FieldMetadataType = FieldMetadataType,
 > {
-  constructor() {}
-
-  async validateRelationCreationPayloadOrThrow(
-    relationCreationPayload: RelationCreationPayloadValidation,
-  ) {
-    try {
-      const relationCreationPayloadInstance = plainToInstance(
-        RelationCreationPayloadValidation,
-        relationCreationPayload,
-      );
-
-      await validateOrReject(relationCreationPayloadInstance);
-    } catch (error) {
-      const errorMessages = Array.isArray(error)
-        ? error
-            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
-            .flat()
-            .join(', ')
-        : error.message;
-
-      throw new FieldMetadataException(
-        `Relation creation payload is invalid: ${errorMessages}`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-  }
+  constructor(
+    private readonly fieldMetadataEnumValidationService: FieldMetadataEnumValidationService,
+  ) {}
 
   async validateSettingsOrThrow({
     fieldType,

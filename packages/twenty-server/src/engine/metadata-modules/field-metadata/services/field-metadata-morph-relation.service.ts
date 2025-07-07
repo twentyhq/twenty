@@ -14,13 +14,16 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 @Injectable()
-export class FieldMetadataRelationService {
-  constructor() {}
+export class FieldMetadataMorphRelationService {
+  constructor(
+    private readonly fieldMetadataRelationService: FieldMetadataRelationService,
+  ) {}
 
   private async createMorphRelationFieldMetadataItems({
     fieldMetadataForCreate,
@@ -56,7 +59,7 @@ export class FieldMetadataRelationService {
 
     for (const relation of morphRelationsCreationPayload) {
       const relationFieldMetadataForCreate =
-        await this.addCustomRelationFieldMetadataForCreation(
+        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           fieldMetadataForCreate,
           relation,
         );

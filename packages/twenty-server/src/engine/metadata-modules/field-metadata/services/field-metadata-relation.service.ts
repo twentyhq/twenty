@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ValidationError } from '@nestjs/common';
 
+import { plainToInstance } from 'class-transformer';
+import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -15,14 +17,31 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
+export class RelationCreationPayloadValidation {
+  @IsUUID()
+  targetObjectMetadataId?: string;
+
+  @IsString()
+  targetFieldLabel: string;
+
+  @IsString()
+  targetFieldIcon: string;
+
+  @IsEnum(RelationType)
+  type: RelationType;
+}
 
 type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
   {
@@ -35,7 +54,9 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
 
 @Injectable()
 export class FieldMetadataRelationService {
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+  ) {}
 
   async createRelationFieldMetadataItems({
     fieldMetadataInput,
@@ -61,15 +82,14 @@ export class FieldMetadataRelationService {
       relationCreationPayload.targetFieldLabel,
     );
 
-    const targetFieldMetadataToCreate =
-      this.prepareCustomFieldMetadataForCreation({
-        objectMetadataId: relationCreationPayload.targetObjectMetadataId,
-        type: fieldMetadataInput.type,
-        name: targetFieldMetadataName,
-        label: relationCreationPayload.targetFieldLabel,
-        icon: relationCreationPayload.targetFieldIcon,
-        workspaceId: fieldMetadataInput.workspaceId,
-      });
+    const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation({
+      objectMetadataId: relationCreationPayload.targetObjectMetadataId,
+      type: fieldMetadataInput.type,
+      name: targetFieldMetadataName,
+      label: relationCreationPayload.targetFieldLabel,
+      icon: relationCreationPayload.targetFieldIcon,
+      workspaceId: fieldMetadataInput.workspaceId,
+    });
 
     const targetFieldMetadataToCreateWithRelation =
       await this.addCustomRelationFieldMetadataForCreation(
@@ -131,7 +151,7 @@ export class FieldMetadataRelationService {
       ).relationCreationPayload;
 
       if (isDefined(relationCreationPayload)) {
-        await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
+        await this.validateRelationCreationPayloadOrThrow(
           relationCreationPayload,
         );
         const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
@@ -155,7 +175,106 @@ export class FieldMetadataRelationService {
     return fieldMetadataInput;
   }
 
-  private addCustomRelationFieldMetadataForCreation(
+  private async validateRelationCreationPayloadOrThrow(
+    relationCreationPayload: RelationCreationPayloadValidation,
+  ) {
+    try {
+      const relationCreationPayloadInstance = plainToInstance(
+        RelationCreationPayloadValidation,
+        relationCreationPayload,
+      );
+
+      await validateOrReject(relationCreationPayloadInstance);
+    } catch (error) {
+      const errorMessages = Array.isArray(error)
+        ? error
+            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
+            .flat()
+            .join(', ')
+        : error.message;
+
+      throw new FieldMetadataException(
+        `Relation creation payload is invalid: ${errorMessages}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
+
+  async findCachedFieldMetadataRelation(
+    fieldMetadataItems: Array<
+      Pick<
+        FieldMetadataInterface,
+        | 'id'
+        | 'type'
+        | 'objectMetadataId'
+        | 'relationTargetFieldMetadataId'
+        | 'relationTargetObjectMetadataId'
+      >
+    >,
+    workspaceId: string,
+  ): Promise<
+    Array<{
+      sourceObjectMetadata: ObjectMetadataEntity;
+      sourceFieldMetadata: FieldMetadataEntity;
+      targetObjectMetadata: ObjectMetadataEntity;
+      targetFieldMetadata: FieldMetadataEntity;
+    }>
+  > {
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+        workspaceId,
+      );
+
+    return fieldMetadataItems.map((fieldMetadataItem) => {
+      const {
+        id,
+        objectMetadataId,
+        relationTargetFieldMetadataId,
+        relationTargetObjectMetadataId,
+      } = fieldMetadataItem;
+
+      if (!relationTargetObjectMetadataId || !relationTargetFieldMetadataId) {
+        throw new FieldMetadataException(
+          `Relation target object metadata id or relation target field metadata id not found for field metadata ${id}`,
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+
+      const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[relationTargetObjectMetadataId];
+      const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
+      const targetFieldMetadata =
+        targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
+
+      if (
+        !sourceObjectMetadata ||
+        !targetObjectMetadata ||
+        !sourceFieldMetadata ||
+        !targetFieldMetadata
+      ) {
+        throw new FieldMetadataException(
+          `Field relation metadata not found for field metadata ${id}`,
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+
+      return {
+        sourceObjectMetadata:
+          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+            sourceObjectMetadata,
+          ) as ObjectMetadataEntity,
+        sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
+        targetObjectMetadata:
+          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+            targetObjectMetadata,
+          ) as ObjectMetadataEntity,
+        targetFieldMetadata: targetFieldMetadata as FieldMetadataEntity,
+      };
+    });
+  }
+
+  addCustomRelationFieldMetadataForCreation(
     fieldMetadataInput: CreateFieldInput,
     relationCreationPayload: CreateFieldInput['relationCreationPayload'],
   ) {
