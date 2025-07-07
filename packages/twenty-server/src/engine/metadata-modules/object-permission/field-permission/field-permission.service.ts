@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
@@ -7,15 +8,16 @@ import { In, Repository } from 'typeorm';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
+@Injectable()
 export class FieldPermissionService {
   constructor(
     @InjectRepository(RoleEntity, 'core')
@@ -52,6 +54,17 @@ export class FieldPermissionService {
         workspaceId,
       );
 
+    const existingFieldPermissions = await this.fieldPermissionsRepository.find(
+      {
+        where: {
+          roleId: input.roleId,
+          workspaceId,
+        },
+      },
+    );
+
+    const fieldPermissionsToDeleteIds: string[] = [];
+
     input.fieldPermissions.forEach((fieldPermission) => {
       this.validateFieldPermission({
         fieldPermission,
@@ -59,6 +72,17 @@ export class FieldPermissionService {
         rolesPermissions,
         role,
       });
+
+      if (
+        fieldPermission.canReadFieldValue === null ||
+        fieldPermission.canUpdateFieldValue === null
+      ) {
+        this.checkIfFieldPermissionShouldBeDeleted({
+          fieldPermission,
+          existingFieldPermissions,
+          fieldPermissionsToDeleteIds,
+        });
+      }
     });
 
     const fieldPermissions = input.fieldPermissions.map((fieldPermission) => ({
@@ -69,6 +93,10 @@ export class FieldPermissionService {
 
     await this.fieldPermissionsRepository.upsert(fieldPermissions, {
       conflictPaths: ['fieldMetadataId', 'roleId'],
+    });
+
+    await this.fieldPermissionsRepository.delete({
+      id: In(fieldPermissionsToDeleteIds),
     });
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
@@ -84,6 +112,7 @@ export class FieldPermissionService {
             (fieldPermission) => fieldPermission.objectMetadataId,
           ),
         ),
+        workspaceId,
       },
     });
   }
@@ -143,8 +172,8 @@ export class FieldPermissionService {
 
     if (!isDefined(rolePermissionOnObject)) {
       throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_FOUND,
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
+        PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
       );
     }
 
@@ -162,6 +191,16 @@ export class FieldPermissionService {
       throw new PermissionsException(
         PermissionsExceptionMessage.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
         PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT,
+      );
+    }
+
+    if (
+      fieldPermission.canUpdateFieldValue === null &&
+      fieldPermission.canReadFieldValue === null
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
+        PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
       );
     }
   }
@@ -197,6 +236,38 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
       );
+    }
+  }
+
+  private checkIfFieldPermissionShouldBeDeleted({
+    fieldPermission,
+    existingFieldPermissions,
+    fieldPermissionsToDeleteIds,
+  }: {
+    fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
+    existingFieldPermissions: FieldPermissionEntity[];
+    fieldPermissionsToDeleteIds: string[];
+  }) {
+    const existingFieldPermission = existingFieldPermissions.find(
+      (existingFieldPermission) =>
+        existingFieldPermission.fieldMetadataId ===
+        fieldPermission.fieldMetadataId,
+    );
+
+    if (existingFieldPermission) {
+      const finalCanReadFieldValue =
+        fieldPermission.canReadFieldValue ??
+        existingFieldPermission.canReadFieldValue;
+      const finalCanUpdateFieldValue =
+        fieldPermission.canUpdateFieldValue ??
+        existingFieldPermission.canUpdateFieldValue;
+
+      if (
+        finalCanReadFieldValue === null &&
+        finalCanUpdateFieldValue === null
+      ) {
+        fieldPermissionsToDeleteIds.push(existingFieldPermission.id);
+      }
     }
   }
 }

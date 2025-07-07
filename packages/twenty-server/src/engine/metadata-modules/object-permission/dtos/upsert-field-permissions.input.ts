@@ -1,12 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-    ArrayMinSize,
-    IsArray,
-    IsBoolean,
-    IsNotEmpty,
-    IsOptional,
-    IsUUID,
+  ArrayMinSize,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
 } from 'class-validator';
 
 @InputType()
@@ -38,10 +38,10 @@ export class FieldPermissionInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canReadFieldValue?: boolean;
+  canReadFieldValue?: boolean | null;
 
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canUpdateFieldValue?: boolean;
+  canUpdateFieldValue?: boolean | null;
 }

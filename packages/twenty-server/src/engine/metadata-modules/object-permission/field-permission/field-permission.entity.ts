@@ -14,6 +14,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { IsFalseOrNull } from 'src/engine/metadata-modules/object-permission/field-permission/decorators/is-false-or-null.decorator';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('fieldPermission')
@@ -65,8 +66,9 @@ export class FieldPermissionEntity {
   @Column({ nullable: true, type: 'boolean' })
   canReadFieldValue?: boolean;
 
-  @Column({ nullable: true, type: 'boolean' })
-  canUpdateFieldValue?: boolean;
+  @IsFalseOrNull()
+  @Column({ nullable: true, type: 'boolean', default: false })
+  canUpdateFieldValue?: boolean | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

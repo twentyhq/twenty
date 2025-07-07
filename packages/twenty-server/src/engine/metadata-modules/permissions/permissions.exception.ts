@@ -42,6 +42,8 @@ export enum PermissionsExceptionCode {
   FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT',
   UPSERT_FIELD_PERMISSION_FAILED = 'UPSERT_FIELD_PERMISSION_FAILED',
   PERMISSION_NOT_FOUND = 'PERMISSION_NOT_FOUND',
+  OBJECT_PERMISSION_NOT_FOUND = 'OBJECT_PERMISSION_NOT_FOUND',
+  EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'EMPTY_FIELD_PERMISSION_NOT_ALLOWED',
 }
 
 export enum PermissionsExceptionMessage {
@@ -76,4 +78,6 @@ export enum PermissionsExceptionMessage {
   FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
   UPSERT_FIELD_PERMISSION_FAILED = 'Failed to upsert field permission',
   PERMISSION_NOT_FOUND = 'Permission not found',
+  OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
+  EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
 }

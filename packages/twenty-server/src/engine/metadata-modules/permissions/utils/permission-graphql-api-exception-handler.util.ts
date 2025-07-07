@@ -36,6 +36,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED:
     case PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT:
     case PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT:
+    case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
       throw new UserInputError(error.message);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
@@ -57,6 +58,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
     case PermissionsExceptionCode.METHOD_NOT_ALLOWED:
     case PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED:
+    case PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND:
       throw error;
     default: {
       const _exhaustiveCheck: never = error.code;
