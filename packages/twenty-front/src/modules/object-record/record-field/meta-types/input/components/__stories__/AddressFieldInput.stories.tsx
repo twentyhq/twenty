@@ -1,6 +1,5 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
@@ -13,7 +12,9 @@ import {
   AddressInput,
   AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useEffect } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const AddressValueSetterEffect = ({
@@ -44,17 +45,24 @@ const AddressInputWithContext = ({
   onTab,
   onShiftTab,
 }: AddressInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
-
-  useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const inputId = getRecordFieldInputId({
     recordId: recordId ?? '',
     fieldName: 'Address',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
+
+  useEffect(() => {
+    pushFocusItemToFocusStack({
+      focusId: inputId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: inputId,
+      },
+      hotkeyScope: DEFAULT_CELL_SCOPE,
+    });
+  }, [inputId, pushFocusItemToFocusStack]);
 
   return (
     <div>
@@ -120,7 +128,16 @@ const meta: Meta = {
   title: 'UI/Data/Field/Input/AddressFieldInput',
   component: AddressInputWithContext,
   args: {
-    value: 'text',
+    value: {
+      addressStreet1: 'Address 1',
+      addressStreet2: null,
+      addressCity: null,
+      addressState: null,
+      addressPostcode: null,
+      addressCountry: null,
+      addressLat: null,
+      addressLng: null,
+    },
     onEnter: enterJestFn,
     onEscape: escapeJestfn,
     onClickOutside: clickOutsideJestFn,
@@ -152,7 +169,10 @@ export const Enter: Story = {
 
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    await canvas.findByText('Address 1');
+    const addressInput = await canvas.findByDisplayValue('Address 1');
+
+    await userEvent.click(addressInput);
+
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
