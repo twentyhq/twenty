@@ -310,4 +310,74 @@ export class FieldMetadataRelatedRecordsService {
   private getMaxPosition(viewGroups: ViewGroupWorkspaceEntity[]): number {
     return viewGroups.reduce((max, group) => Math.max(max, group.position), 0);
   }
+
+  private async createViewAndViewFields(
+    createdFieldMetadatas: FieldMetadataEntity[],
+    workspaceId: string,
+  ) {
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
+
+    await workspaceDataSource.transaction(
+      async (workspaceEntityManager: WorkspaceEntityManager) => {
+        const viewsRepository = workspaceEntityManager.getRepository('view', {
+          shouldBypassPermissionChecks: true,
+        });
+
+        const viewFieldsRepository = workspaceEntityManager.getRepository(
+          'viewField',
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        for (const createdFieldMetadata of createdFieldMetadatas) {
+          const views = await viewsRepository.find({
+            where: {
+              objectMetadataId: createdFieldMetadata.objectMetadataId,
+            },
+          });
+
+          if (!isEmpty(views)) {
+            const view = views[0];
+            const existingViewFields = await viewFieldsRepository.find({
+              where: {
+                viewId: view.id,
+              },
+            });
+
+            const isVisible =
+              existingViewFields.length < settings.maxVisibleViewFields;
+
+            const createdFieldIsAlreadyInView = existingViewFields.some(
+              (existingViewField) =>
+                existingViewField.fieldMetadataId === createdFieldMetadata.id,
+            );
+
+            if (!createdFieldIsAlreadyInView) {
+              const lastPosition = existingViewFields
+                .map((viewField) => viewField.position)
+                .reduce((acc, position) => {
+                  if (position > acc) {
+                    return position;
+                  }
+
+                  return acc;
+                }, -1);
+
+              await viewFieldsRepository.insert({
+                fieldMetadataId: createdFieldMetadata.id,
+                position: lastPosition + 1,
+                isVisible,
+                size: 180,
+                viewId: view.id,
+              });
+            }
+          }
+        }
+      },
+    );
+  }
 }
