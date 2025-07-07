@@ -3,9 +3,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { WorkspaceMigrationFieldInput } from '../../types/workspace-migration-field-input';
-import { WorkspaceMigrationObjectInput } from '../../types/workspace-migration-object-input';
-import { WorkspaceMigrationBuilderV2Service } from '../workspace-migration-builder-v2.service';
+
+import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('Workspace migration builder relations tests suite', () => {
   let service: WorkspaceMigrationBuilderV2Service;
@@ -310,6 +311,7 @@ describe('Workspace migration builder relations tests suite', () => {
 
     it('should handle empty objects', () => {
       const result = service.build({ from: [], to: [] });
+
       expect(result).toMatchInlineSnapshot(`
 {
   "actions": [],

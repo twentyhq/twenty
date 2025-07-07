@@ -1,4 +1,7 @@
 import diff from 'microdiff';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 import {
@@ -8,8 +11,6 @@ import {
   fieldMetadataPropertiesToStringify,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
