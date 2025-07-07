@@ -1,5 +1,6 @@
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
+import { AppPath } from '@/types/AppPath';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import axios from 'axios';
 import { isDefined } from 'twenty-shared/utils';
@@ -78,7 +79,7 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken.token}`;
         return apiClient(originalRequest);
       } catch (renewalError) {
-        window.location.href = '/sign-in';
+        window.location.href = AppPath.SignInUp;
       }
     }
     return Promise.reject(error);
@@ -142,7 +143,7 @@ export const agentChatApi = {
           return handleStreamResponse(retryResponse, onChunk);
         }
       } catch (renewalError) {
-        window.location.href = '/sign-in';
+        window.location.href = AppPath.SignInUp;
       }
       throw new Error('Authentication failed');
     }
