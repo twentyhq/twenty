@@ -33,7 +33,6 @@ const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
 };
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
-/// End
 
 export const compareTwoWorkspaceMigrationFieldInput = ({
   from,

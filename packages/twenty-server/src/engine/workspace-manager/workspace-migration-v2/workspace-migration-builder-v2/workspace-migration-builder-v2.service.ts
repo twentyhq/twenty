@@ -8,9 +8,9 @@ import {
   DeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
-import { buildWorkspaceMigrationV2RelationActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-relation-actions-builder';
 
 export type UniqueIdentifierWorkspaceMigrationObjectInputMapDispatcher =
   DeletedCreatedUpdatedMatrix<WorkspaceMigrationObjectInput>;
@@ -35,6 +35,16 @@ export class WorkspaceMigrationBuilderV2Service {
         updatedObjectMetadata,
       });
 
+    const createdObjectWorkspaceMigrationCreateFieldActions =
+      createdObjectMetadata.flatMap((objectMetadataInput) =>
+        objectMetadataInput.fieldInputs.map((fieldMetadataInput) =>
+          getWorkspaceMigrationV2FieldCreateAction({
+            fieldMetadataInput,
+            objectMetadataInput,
+          }),
+        ),
+      );
+
     const updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix =
       computeUpdatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix(
         updatedObjectMetadata,
@@ -45,16 +55,11 @@ export class WorkspaceMigrationBuilderV2Service {
         updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix,
       );
 
-    const relationWorkspaceMigrationActions =
-      buildWorkspaceMigrationV2RelationActions(
-        updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix,
-      );
-
     return {
       actions: [
         ...objectWorkspaceMigrationActions,
+        ...createdObjectWorkspaceMigrationCreateFieldActions,
         ...fieldWorkspaceMigrationActions,
-        ...relationWorkspaceMigrationActions,
       ],
     };
   }
