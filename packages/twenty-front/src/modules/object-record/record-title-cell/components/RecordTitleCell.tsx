@@ -40,7 +40,7 @@ export const RecordTitleCell = ({
   const closeCell = () => {
     closeRecordTitleCell({
       recordId,
-      fieldMetadataId: fieldDefinition.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
       containerType,
     });
   };

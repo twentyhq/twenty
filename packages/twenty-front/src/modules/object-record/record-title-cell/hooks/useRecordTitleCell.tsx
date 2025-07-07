@@ -25,18 +25,18 @@ export const useRecordTitleCell = () => {
     ({ set }) =>
       ({
         recordId,
-        fieldMetadataId,
+        fieldName,
         containerType,
       }: {
         recordId: string;
-        fieldMetadataId: string;
+        fieldName: string;
         containerType: RecordTitleCellContainerType;
       }) => {
         set(
           isInlineCellInEditModeScopedState(
             getRecordFieldInputId({
               recordId,
-              fieldName: fieldMetadataId,
+              fieldName,
               prefix: containerType,
             }),
           ),
@@ -46,7 +46,7 @@ export const useRecordTitleCell = () => {
         removeFocusItemFromFocusStackById({
           focusId: getRecordFieldInputId({
             recordId,
-            fieldName: fieldMetadataId,
+            fieldName,
             prefix: containerType,
           }),
         });
@@ -62,12 +62,12 @@ export const useRecordTitleCell = () => {
     ({ set, snapshot }) =>
       ({
         recordId,
-        fieldMetadataId,
+        fieldName,
         containerType,
         customEditHotkeyScopeForField,
       }: {
         recordId: string;
-        fieldMetadataId: string;
+        fieldName: string;
         containerType: RecordTitleCellContainerType;
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
@@ -75,14 +75,14 @@ export const useRecordTitleCell = () => {
           pushFocusItemToFocusStack({
             focusId: getRecordFieldInputId({
               recordId,
-              fieldName: fieldMetadataId,
+              fieldName,
               prefix: containerType,
             }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
               instanceId: getRecordFieldInputId({
                 recordId,
-                fieldName: fieldMetadataId,
+                fieldName,
                 prefix: containerType,
               }),
             },
@@ -93,14 +93,14 @@ export const useRecordTitleCell = () => {
           pushFocusItemToFocusStack({
             focusId: getRecordFieldInputId({
               recordId,
-              fieldName: fieldMetadataId,
+              fieldName,
               prefix: containerType,
             }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
               instanceId: getRecordFieldInputId({
                 recordId,
-                fieldName: fieldMetadataId,
+                fieldName,
                 prefix: containerType,
               }),
             },
@@ -113,7 +113,7 @@ export const useRecordTitleCell = () => {
 
         const recordTitleCellId = getRecordFieldInputId({
           recordId,
-          fieldName: fieldMetadataId,
+          fieldName,
           prefix: containerType,
         });
         set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
@@ -123,7 +123,7 @@ export const useRecordTitleCell = () => {
           .getValue();
 
         const fieldDefinition = recordIndexFieldDefinitions.find(
-          (field) => field.fieldMetadataId === fieldMetadataId,
+          (field) => field.metadata.fieldName === fieldName,
         );
 
         if (!fieldDefinition) {
