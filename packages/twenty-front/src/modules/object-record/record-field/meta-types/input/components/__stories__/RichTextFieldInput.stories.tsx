@@ -4,8 +4,11 @@ import { useEffect } from 'react';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -35,16 +38,29 @@ const RichTextFieldInputWithContext = ({
   onClickOutside,
   onEscape,
 }: RichTextFieldInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const instanceId = getRecordFieldInputInstanceId({
+    recordId: targetableObjectId,
+    fieldName: 'richText',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: instanceId,
+      },
+      hotkeyScope: DEFAULT_CELL_SCOPE,
+    });
+  }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: 'record-field-component-instance-id',
+        instanceId: instanceId,
       }}
     >
       <FieldContext.Provider

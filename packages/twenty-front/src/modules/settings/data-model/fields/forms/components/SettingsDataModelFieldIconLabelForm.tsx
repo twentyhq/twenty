@@ -14,7 +14,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import {
   AppTooltip,
   IconInfoCircle,
@@ -22,6 +21,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
   existingOtherLabels: string[] = [],
@@ -94,6 +94,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const { t } = useLingui();
 
+  const labelTextInputId = `${fieldMetadataItem?.id}-label`;
+  const nameTextInputId = `${fieldMetadataItem?.id}-name`;
+
   const isLabelSyncedWithName =
     watch('isLabelSyncedWithName') ??
     (isDefined(fieldMetadataItem)
@@ -133,6 +136,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
             <TextInput
+              instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
               onChange={(value) => {
@@ -167,6 +171,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     render={({ field: { onChange, value } }) => (
                       <>
                         <TextInput
+                          instanceId={nameTextInputId}
                           label={t`API Name`}
                           placeholder={t`employees`}
                           value={value}

@@ -221,6 +221,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 description={t`When the key will be disabled`}
               />
               <TextInput
+                instanceId={`api-key-expiration-${apiKeyData?.id}`}
                 placeholder={t`E.g. backoffice integration`}
                 value={formatExpiration(
                   apiKeyData?.expiresAt || '',

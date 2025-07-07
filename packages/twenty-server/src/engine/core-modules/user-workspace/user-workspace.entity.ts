@@ -70,6 +70,10 @@ export class UserWorkspace {
   @Column({ nullable: true })
   defaultAvatarUrl: string;
 
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, default: 'en' })
+  locale: string;
+
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -25,8 +25,7 @@ export const buildUpdatableStandardFieldInput = (
 
   if ('standardOverrides' in fieldMetadataInput) {
     updatableStandardFieldInput.standardOverrides =
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (fieldMetadataInput as any).standardOverrides;
+      fieldMetadataInput.standardOverrides as FieldStandardOverridesDTO;
   }
 
   if (

@@ -116,6 +116,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  instanceId="approved-access-domain"
                   autoFocus
                   autoComplete="off"
                   value={value}
@@ -140,6 +141,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  instanceId="approved-access-domain-email"
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}
