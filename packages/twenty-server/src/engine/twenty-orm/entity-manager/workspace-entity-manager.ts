@@ -37,6 +37,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
@@ -167,7 +168,9 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
+    entity:
+      | QueryDeepPartialEntityWithRelationConnect<Entity>
+      | QueryDeepPartialEntityWithRelationConnect<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
     return this.createQueryBuilder(

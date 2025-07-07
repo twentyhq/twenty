@@ -552,7 +552,9 @@ export class WorkspaceRepository<
    * INSERT METHODS
    */
   override async insert(
-    entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    entity:
+      | QueryDeepPartialEntityWithRelationConnect<T>
+      | QueryDeepPartialEntityWithRelationConnect<T>[],
     entityManager?: WorkspaceEntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
