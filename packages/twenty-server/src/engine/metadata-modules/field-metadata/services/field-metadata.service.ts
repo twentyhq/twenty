@@ -16,11 +16,15 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
+import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { buildUpdatableStandardFieldInput } from 'src/engine/metadata-modules/field-metadata/utils/build-updatable-standard-field-input.util';
 import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
@@ -53,8 +57,6 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 
-import { FieldMetadataEntity } from '../field-metadata.entity';
-
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
@@ -71,6 +73,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly viewService: ViewService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly fieldMetadataValidationService: FieldMetadataValidationService,
+    private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
+    private readonly fieldMetadataRelationService: FieldMetadataRelationService,
   ) {
     super(fieldMetadataRepository);
   }

@@ -31,14 +31,13 @@ import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exce
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
-type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
-  {
-    fieldMetadataType: FieldMetadataType;
-    fieldMetadataInput: T;
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
-    existingFieldMetadata?: FieldMetadataInterface;
-    objectMetadataMaps: ObjectMetadataMaps;
-  };
+type ValidateFieldMetadataArgs = {
+  fieldMetadataType: FieldMetadataType;
+  fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
+  objectMetadata: ObjectMetadataItemWithFieldMaps;
+  existingFieldMetadata?: FieldMetadataInterface;
+  objectMetadataMaps: ObjectMetadataMaps;
+};
 
 enum ValueType {
   PERCENTAGE = 'percentage',
@@ -66,14 +65,12 @@ class TextSettingsValidation {
 }
 
 @Injectable()
-export class FieldMetadataValidationService<
-  T extends FieldMetadataType = FieldMetadataType,
-> {
+export class FieldMetadataValidationService {
   constructor(
     private readonly fieldMetadataEnumValidationService: FieldMetadataEnumValidationService,
   ) {}
 
-  async validateSettingsOrThrow({
+  async validateSettingsOrThrow<T extends FieldMetadataType>({
     fieldType,
     settings,
   }: {
@@ -106,7 +103,7 @@ export class FieldMetadataValidationService<
           ? TextSettingsValidation
           : never
     >,
-    settings: FieldMetadataSettings<T>,
+    settings: FieldMetadataSettings<Type>,
   ) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
@@ -127,14 +124,12 @@ export class FieldMetadataValidationService<
     }
   }
 
-  private async validateFieldMetadata<
-    T extends UpdateFieldInput | CreateFieldInput,
-  >({
+  async validateFieldMetadata({
     fieldMetadataInput,
     fieldMetadataType,
     objectMetadata,
     existingFieldMetadata,
-  }: ValidateFieldMetadataArgs<T>): Promise<T> {
+  }: ValidateFieldMetadataArgs): Promise<void> {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
@@ -194,7 +189,5 @@ export class FieldMetadataValidationService<
         settings: fieldMetadataInput.settings,
       });
     }
-
-    return fieldMetadataInput;
   }
 }

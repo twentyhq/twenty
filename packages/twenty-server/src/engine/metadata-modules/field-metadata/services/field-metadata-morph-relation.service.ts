@@ -14,9 +14,9 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
+import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 @Injectable()
@@ -25,18 +25,16 @@ export class FieldMetadataMorphRelationService {
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
   ) {}
 
-  private async createMorphRelationFieldMetadataItems({
+  async createMorphRelationFieldMetadataItems({
     fieldMetadataForCreate,
     morphRelationsCreationPayload,
     objectMetadata,
     fieldMetadataRepository,
-    objectMetadataMaps,
   }: {
     fieldMetadataForCreate: CreateFieldInput;
     morphRelationsCreationPayload: CreateFieldInput['morphRelationsCreationPayload'];
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
-    objectMetadataMaps: ObjectMetadataMaps;
   }): Promise<FieldMetadataEntity[]> {
     if (
       !isDefined(morphRelationsCreationPayload) ||
@@ -79,8 +77,8 @@ export class FieldMetadataMorphRelationService {
         relation.targetFieldLabel,
       );
 
-      const targetFieldMetadataToCreate =
-        this.prepareCustomFieldMetadataForCreation({
+      const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation(
+        {
           objectMetadataId: relation.targetObjectMetadataId,
           type: FieldMetadataType.RELATION,
           name: targetFieldMetadataName,
@@ -88,10 +86,11 @@ export class FieldMetadataMorphRelationService {
           icon: relation.targetFieldIcon,
           workspaceId: fieldMetadataForCreate.workspaceId,
           settings: fieldMetadataForCreate.settings,
-        });
+        },
+      );
 
       const targetFieldMetadataToCreateWithRelation =
-        await this.addCustomRelationFieldMetadataForCreation(
+        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           targetFieldMetadataToCreate,
           {
             targetObjectMetadataId: objectMetadata.id,
@@ -110,18 +109,15 @@ export class FieldMetadataMorphRelationService {
         ...targetFieldMetadataToCreateWithRelation,
       };
 
-      const targetFieldMetadata = await this.saveTargetFieldMetadata({
-        fieldMetadataRepository,
-        targetFieldMetadataToCreate:
-          targetFieldMetadataToCreateWithRelationWithId,
-        createdFieldMetadataItemId: createdFieldMetadataItem.id,
+      const targetFieldMetadata = await fieldMetadataRepository.save({
+        ...targetFieldMetadataToCreateWithRelationWithId,
+        relationTargetFieldMetadataId: createdFieldMetadataItem.id,
       });
 
       const createdFieldMetadataItemUpdated =
-        await this.updateRelationTargetFieldMetadataId({
-          fieldMetadataRepository,
-          createdFieldMetadataItem,
-          targetFieldMetadataId: targetFieldMetadata.id,
+        await fieldMetadataRepository.save({
+          ...createdFieldMetadataItem,
+          relationTargetFieldMetadataId: targetFieldMetadata.id,
         });
 
       fieldsCreated.push(createdFieldMetadataItemUpdated, targetFieldMetadata);

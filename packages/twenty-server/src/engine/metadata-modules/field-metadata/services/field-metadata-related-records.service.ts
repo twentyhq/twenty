@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isEmpty } from 'rxjs';
+import isEmpty from 'lodash.isempty';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { In } from 'typeorm';
