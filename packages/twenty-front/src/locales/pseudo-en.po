@@ -2523,9 +2523,11 @@ msgid "Expires in"
 msgstr ""
 
 #. js-lingui-id: GS+Mus
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2546,6 +2548,7 @@ msgstr ""
 
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr ""
 
@@ -2560,6 +2563,7 @@ msgid "Export to PDF"
 msgstr ""
 
 #. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr ""
@@ -2577,6 +2581,7 @@ msgid "Export view"
 msgstr ""
 
 #. js-lingui-id: +FMXdE
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr ""
@@ -2878,7 +2883,12 @@ msgstr ""
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
+#~ msgid "Greater than"
+#~ msgstr ""
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
 msgstr ""
 
 #. js-lingui-id: CZXzs4
@@ -3273,6 +3283,16 @@ msgstr ""
 msgid "is not a valid array"
 msgstr ""
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr ""
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr ""
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3291,6 +3311,11 @@ msgstr ""
 #. js-lingui-id: 96g038
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
 msgstr ""
 
 #. js-lingui-id: Ir+3AW
@@ -3345,8 +3370,8 @@ msgstr ""
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr ""
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3460,7 +3485,12 @@ msgstr ""
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
+#~ msgid "Less than"
+#~ msgstr ""
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
 msgstr ""
 
 #. js-lingui-id: 1njn7W
@@ -3720,8 +3750,8 @@ msgstr ""
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr ""
+#~ msgid "must contain only numbers"
+#~ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts

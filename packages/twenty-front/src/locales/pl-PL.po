@@ -2531,9 +2531,11 @@ msgid "Expires in"
 msgstr "Wygasa za"
 
 #. js-lingui-id: GS+Mus
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2554,6 +2556,7 @@ msgstr "Wyeksportuj wpisy"
 
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Eksportuj uruchomienie"
 
@@ -2568,6 +2571,7 @@ msgid "Export to PDF"
 msgstr "Wyeksportuj do PDF"
 
 #. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Eksportuj wersję"
@@ -2585,6 +2589,7 @@ msgid "Export view"
 msgstr "Wyeksportuj widok"
 
 #. js-lingui-id: +FMXdE
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Eksportuj przepływ pracy"
@@ -2886,8 +2891,13 @@ msgstr "Plac zabaw GraphQL API"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Większe niż"
+#~ msgid "Greater than"
+#~ msgstr "Większe niż"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3281,6 +3291,16 @@ msgstr "Nie jest"
 msgid "is not a valid array"
 msgstr ""
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr ""
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr ""
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3299,6 +3319,11 @@ msgstr ""
 #. js-lingui-id: 96g038
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
 msgstr ""
 
 #. js-lingui-id: Ir+3AW
@@ -3353,8 +3378,8 @@ msgstr ""
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr ""
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3468,8 +3493,13 @@ msgstr "Układ"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Mniej niż"
+#~ msgid "Less than"
+#~ msgstr "Mniej niż"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -3728,8 +3758,8 @@ msgstr ""
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr ""
+#~ msgid "must contain only numbers"
+#~ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts

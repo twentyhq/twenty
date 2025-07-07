@@ -133,12 +133,12 @@ describe('buildValueFromFilter', () => {
   describe('NUMBER field type', () => {
     const testCases = [
       {
-        operand: ViewFilterOperand.GreaterThan,
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: '5',
         expected: 6,
       },
       {
-        operand: ViewFilterOperand.LessThan,
+        operand: ViewFilterOperand.LessThanOrEqual,
         value: '5',
         expected: 4,
       },
@@ -359,12 +359,12 @@ describe('buildValueFromFilter', () => {
         expected: undefined,
       },
       {
-        operand: ViewFilterOperand.GreaterThan,
+        operand: ViewFilterOperand.GreaterThanOrEqual,
         value: 'Rating 1',
         expected: 'RATING_2',
       },
       {
-        operand: ViewFilterOperand.LessThan,
+        operand: ViewFilterOperand.LessThanOrEqual,
         value: 'Rating 2',
         expected: 'RATING_1',
       },

@@ -45,7 +45,7 @@ export const createMockActionMenuActions = ({
   {
     type: ActionType.Standard,
     scope: ActionScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT,
+    key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
     position: 4,
@@ -53,10 +53,7 @@ export const createMockActionMenuActions = ({
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: () => true,
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
+    availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <Action onClick={exportMock} />,
   },
   {

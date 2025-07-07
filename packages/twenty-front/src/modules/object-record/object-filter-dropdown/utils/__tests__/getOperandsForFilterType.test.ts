@@ -16,13 +16,13 @@ describe('getOperandsForFilterType', () => {
   ];
 
   const numberOperands = [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
   ];
 
   const currencyAmountMicrosOperands = [
-    RecordFilterOperand.GreaterThan,
-    RecordFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThanOrEqual,
+    RecordFilterOperand.LessThanOrEqual,
     RecordFilterOperand.Is,
     RecordFilterOperand.IsNot,
   ];
