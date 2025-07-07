@@ -12,7 +12,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import {
   RelationConnectQueryConfig,
-  uniqueConstraintCondition,
+  UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -79,7 +79,7 @@ export const computeRelationConnectQueryConfigs = (
         );
         allConnectQueryConfigs[
           connectFieldName
-        ].recordToConnectConditonByEntityIndex[entityIndex] =
+        ].recordToConnectConditionByEntityIndex[entityIndex] =
           recordToConnectCondition;
       } else {
         allConnectQueryConfigs[connectFieldName] = {
@@ -88,7 +88,7 @@ export const computeRelationConnectQueryConfigs = (
           relationFieldName: `${connectFieldName}Id`,
           connectFieldName,
           uniqueConstraintFields,
-          recordToConnectConditonByEntityIndex: {
+          recordToConnectConditionByEntityIndex: {
             [entityIndex]: recordToConnectCondition,
           },
         };
@@ -102,7 +102,7 @@ export const computeRelationConnectQueryConfigs = (
 const extractConnectFields = (
   entity: Record<string, unknown>,
 ): { [connectFieldName: string]: ConnectObject }[] => {
-  const connectFields: { [entityKey: number]: ConnectObject }[] = [];
+  const connectFields: { [entityKey: string]: ConnectObject }[] = [];
 
   for (const [key, value] of Object.entries(entity)) {
     if (hasRelationConnect(value)) {
@@ -206,7 +206,7 @@ const checkNoRelationFieldConflictOrThrow = (
 const computeUniqueConstraintCondition = (
   uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
   connectObject: ConnectObject,
-): uniqueConstraintCondition => {
+): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
     if (isCompositeFieldMetadataType(uniqueConstraintField.type)) {
       return [

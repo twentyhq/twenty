@@ -39,12 +39,13 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     await makeGraphqlAPIRequest(graphqlOperation);
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
     await deleteAllRecords('person');
   });
 
   afterAll(async () => {
     await deleteAllRecords('company');
+    await deleteAllRecords('person');
   });
 
   it('should connect to other records through a MANY-TO-ONE relation - create One', async () => {

@@ -303,7 +303,7 @@ describe('computeRelationConnectQueryConfigs', () => {
           [['domainNamePrimaryLinkUrl', 'company.com']],
           [['domainNamePrimaryLinkUrl', 'other-company.com']],
         ],
-        recordToConnectConditonByEntityIndex: {
+        recordToConnectConditionByEntityIndex: {
           '0': [['domainNamePrimaryLinkUrl', 'company.com']],
           '1': [['domainNamePrimaryLinkUrl', 'other-company.com']],
         },
@@ -321,7 +321,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       'company-related-to-2': {
         connectFieldName: 'company-related-to-2',
         recordToConnectConditions: [[['id', '1']], [['id', '2']]],
-        recordToConnectConditonByEntityIndex: {
+        recordToConnectConditionByEntityIndex: {
           '0': [['id', '1']],
           '1': [['id', '2']],
         },

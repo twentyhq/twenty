@@ -1397,7 +1397,7 @@ export class WorkspaceEntityManager extends EntityManager {
       stringifiedEntityIndex,
       recordToConnectCondition,
     ] of Object.entries(
-      connectQueryConfig.recordToConnectConditonByEntityIndex,
+      connectQueryConfig.recordToConnectConditionByEntityIndex,
     )) {
       const entityIndex = Number(stringifiedEntityIndex);
       const recordToConnect = recordsToConnect.filter((record) =>

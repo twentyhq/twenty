@@ -12,13 +12,13 @@ export type ConnectObject = {
   };
 };
 
-type RelationFields<T> = {
+type EntityRelationFields<T> = {
   [K in keyof T]: T[K] extends BaseWorkspaceEntity | null ? K : never;
 }[keyof T];
 
 export type QueryDeepPartialEntityWithRelationConnect<T> = Omit<
   QueryDeepPartialEntity<T>,
-  RelationFields<T>
+  EntityRelationFields<T>
 > & {
   [K in keyof T]?: T[K] extends BaseWorkspaceEntity | null
     ? T[K] | ConnectObject
