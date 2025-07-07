@@ -141,6 +141,7 @@ const meta: Meta = {
       primaryLinkLabel: null,
       secondaryLinks: null,
     },
+    recordId: '123',
     onCancel: cancelJestFn,
     onClickOutside: clickOutsideJestFn,
   },
