@@ -8,11 +8,11 @@ import { Key } from 'ts-key-enum';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { v4 } from 'uuid';
-import { AgentChatMessage, agentChatApi } from '../api/agent-chat.api';
+import { streamChatResponse } from '../api/streamChatResponse';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
-import { useAgentChatMessages } from './useAgentChatMessages';
+import { AgentChatMessage, useAgentChatMessages } from './useAgentChatMessages';
 import { useAgentChatThreads } from './useAgentChatThreads';
 
 interface OptimisticMessage extends AgentChatMessage {
@@ -49,12 +49,15 @@ export const useAgentChat = (agentId: string) => {
 
   const { loading: messagesLoading, refetch: refetchMessages } =
     useAgentChatMessages(currentThreadId, ({ messages }) => {
+      console.log({ newMessages: messages });
       setAgentChatMessages(messages);
       scrollToBottom();
       setAgentStreamingMessage('');
     });
 
   const isLoading = messagesLoading || threadsLoading || isStreaming;
+
+  console.log({ agentChatMessages });
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -85,7 +88,7 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
-    await agentChatApi.streamResponse(currentThreadId, content, (chunk) => {
+    await streamChatResponse(currentThreadId, content, (chunk) => {
       setAgentStreamingMessage(chunk);
       scrollToBottom();
     });
