@@ -82,7 +82,7 @@ export const FormMultiSelectFieldInput = ({
   placeholder,
   testId,
 }: FormMultiSelectFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
   const theme = useTheme();
 
   const hotkeyScope =
@@ -268,7 +268,7 @@ export const FormMultiSelectFieldInput = ({
 
         {VariablePicker && !readonly && (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         )}

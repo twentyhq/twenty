@@ -5,9 +5,11 @@ import { useEffect } from 'react';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { LinksFieldInput } from '../LinksFieldInput';
@@ -38,7 +40,7 @@ type LinksInputWithContextProps = {
     primaryLinkLabel: string | null;
     secondaryLinks: Array<{ url: string | null; label: string | null }> | null;
   };
-  recordId?: string;
+  recordId: string;
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
@@ -67,21 +69,29 @@ const LinksInputWithContext = ({
   onCancel,
   onClickOutside,
 }: LinksInputWithContextProps) => {
-  const setHotkeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const instanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: 'Links',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   useEffect(() => {
-    setHotkeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotkeyScope]);
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: instanceId,
+      },
+      hotkeyScope: DEFAULT_CELL_SCOPE,
+    });
+  }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getRecordFieldInputId(
-            recordId ?? '',
-            'Links',
-            'record-table-cell',
-          ),
+          instanceId: instanceId,
         }}
       >
         <FieldContext.Provider
@@ -97,7 +107,7 @@ const LinksInputWithContext = ({
                 objectMetadataNameSingular: 'company',
               },
             },
-            recordId: recordId ?? '123',
+            recordId,
             isLabelIdentifier: false,
             isReadOnly: false,
             useUpdateRecord: () => [updateRecord, { loading: false }],
@@ -131,6 +141,7 @@ const meta: Meta = {
       primaryLinkLabel: null,
       secondaryLinks: null,
     },
+    recordId: '123',
     onCancel: cancelJestFn,
     onClickOutside: clickOutsideJestFn,
   },

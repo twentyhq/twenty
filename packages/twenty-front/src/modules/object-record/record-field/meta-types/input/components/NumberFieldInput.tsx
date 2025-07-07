@@ -1,8 +1,10 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useNumberField } from '../../hooks/useNumberField';
 
 export type FieldInputEvent = (persist: () => void) => void;
@@ -24,6 +26,10 @@ export const NumberFieldInput = ({
 }: NumberFieldInputProps) => {
   const { fieldDefinition, draftValue, setDraftValue, persistNumberField } =
     useNumberField();
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistNumberField(newText));
@@ -55,6 +61,7 @@ export const NumberFieldInput = ({
   return (
     <FieldInputContainer>
       <TextInput
+        instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={draftValue?.toString() ?? ''}

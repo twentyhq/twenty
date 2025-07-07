@@ -18,11 +18,15 @@ export const SettingsServerlessFunctionNewForm = ({
   formValues: ServerlessFunctionNewFormValues;
   onChange: (key: string) => (value: string) => void;
 }) => {
+  const descriptionTextAreaId = `${formValues.name}-description`;
+  const nameTextInputId = `${formValues.name}-name`;
+
   return (
     <Section>
       <H2Title title="About" description="Name and set your function" />
       <StyledInputsContainer>
         <TextInput
+          instanceId={nameTextInputId}
           placeholder="Name"
           fullWidth
           autoFocusOnMount
@@ -30,6 +34,7 @@ export const SettingsServerlessFunctionNewForm = ({
           onChange={onChange('name')}
         />
         <TextArea
+          textAreaId={descriptionTextAreaId}
           placeholder="Description"
           minRows={4}
           value={formValues.description}
