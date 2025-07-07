@@ -2,7 +2,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -11,6 +11,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { useNumberField } from '../../../hooks/useNumberField';
@@ -28,7 +29,7 @@ const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
 
 type NumberFieldInputWithContextProps = NumberFieldInputProps & {
   value: number;
-  recordId?: string;
+  recordId: string;
 };
 
 const NumberFieldInputWithContext = ({
@@ -40,22 +41,35 @@ const NumberFieldInputWithContext = ({
   onTab,
   onShiftTab,
 }: NumberFieldInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const [isReady, setIsReady] = useState(false);
 
+  const inputId = getRecordFieldInputId({
+    recordId,
+    fieldName: 'Number',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
+
   useEffect(() => {
     if (!isReady) {
-      setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
+      pushFocusItemToFocusStack({
+        focusId: inputId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: inputId,
+        },
+        hotkeyScope: DEFAULT_CELL_SCOPE,
+      });
       setIsReady(true);
     }
-  }, [isReady, setHotKeyScope]);
+  }, [isReady, pushFocusItemToFocusStack, inputId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
         instanceId: getRecordFieldInputId({
-          recordId: recordId ?? '',
+          recordId,
           fieldName: 'Number',
           prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
         }),
