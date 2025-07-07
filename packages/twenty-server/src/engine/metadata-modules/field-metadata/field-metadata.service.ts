@@ -6,7 +6,6 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
-import { v4 as uuidV4, v4 } from 'uuid';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -17,10 +16,6 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
@@ -34,7 +29,6 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
@@ -65,12 +59,10 @@ import {
 } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
 type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
@@ -610,56 +602,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return fieldMetadataInput;
-  }
-
-  private prepareCustomFieldMetadataOptions(
-    options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
-  ): undefined | Pick<FieldMetadataEntity, 'options'> {
-    return {
-      options: options.map((option) => ({
-        id: uuidV4(),
-        ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-          option,
-          ['label', 'value', 'id'],
-        ),
-      })),
-    };
-  }
-
-  private prepareCustomFieldMetadataForCreation(
-    fieldMetadataInput: CreateFieldInput,
-  ) {
-    const options = fieldMetadataInput.options
-      ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
-      : undefined;
-    const defaultValue =
-      fieldMetadataInput.defaultValue ??
-      generateDefaultValue(fieldMetadataInput.type);
-
-    return {
-      id: v4(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      name: fieldMetadataInput.name,
-      label: fieldMetadataInput.label,
-      icon: fieldMetadataInput.icon,
-      type: fieldMetadataInput.type,
-      isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
-      objectMetadataId: fieldMetadataInput.objectMetadataId,
-      workspaceId: fieldMetadataInput.workspaceId,
-      isNullable: generateNullable(
-        fieldMetadataInput.type,
-        fieldMetadataInput.isNullable,
-        fieldMetadataInput.isRemoteCreation,
-      ),
-      relationTargetObjectMetadataId:
-        fieldMetadataInput?.relationCreationPayload?.targetObjectMetadataId,
-      defaultValue,
-      ...options,
-      isActive: true,
-      isCustom: true,
-      settings: fieldMetadataInput.settings,
-    };
   }
 
   private addCustomRelationFieldMetadataForCreation(
