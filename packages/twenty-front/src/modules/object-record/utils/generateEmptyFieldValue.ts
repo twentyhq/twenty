@@ -56,13 +56,7 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.BOOLEAN: {
       return true;
     }
-    case FieldMetadataType.RELATION: {
-      if (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE) {
-        return null;
-      }
-
-      return [];
-    }
+    case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
       if (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE) {
         return null;
