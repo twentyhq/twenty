@@ -7,25 +7,10 @@ import { FieldMetadataValidationService } from 'src/engine/metadata-modules/fiel
 
 describe('FieldMetadataValidationService', () => {
   let service: FieldMetadataValidationService;
-
-  const fieldMetadataEnumValidationServiceDummy = {
-    validateEnumFieldMetadataOrThrow: jest.fn(),
-    validatorRunner: jest.fn(),
-    validateMetadataOptionId: jest.fn(),
-    validateMetadataOptionLabel: jest.fn(),
-    validateMetadataOptionValue: jest.fn(),
-    validateDuplicates: jest.fn(),
-    validateFieldMetadataInputOptions: jest.fn(),
-    validateSelectDefaultValue: jest.fn(),
-    validateMultiSelectDefaultValue: jest.fn(),
-    validateFieldMetadataDefaultValue: jest.fn(),
-    validateEnumFieldMetadataInput: jest.fn(),
-  };
+  const dummy = {} as any;
 
   beforeAll(() => {
-    service = new FieldMetadataValidationService(
-      fieldMetadataEnumValidationServiceDummy,
-    );
+    service = new FieldMetadataValidationService(dummy);
   });
 
   it('should validate NUMBER settings successfully', async () => {
