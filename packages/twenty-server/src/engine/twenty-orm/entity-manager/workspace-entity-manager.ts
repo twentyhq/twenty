@@ -1410,7 +1410,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
       if (recordToConnect.length !== 1) {
         throw new Error(
-          `Expected 1 record to connect to ${connectQueryConfig.connectFieldName}, but found ${recordToConnect.length}`,
+          `Expected 1 record to connect to ${connectQueryConfig.connectFieldName}, but found ${recordToConnect.length}.`,
         );
       }
 

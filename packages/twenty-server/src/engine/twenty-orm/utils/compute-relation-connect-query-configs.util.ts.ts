@@ -218,9 +218,7 @@ const checkNoRelationFieldConflictOrThrow = (
     isDefined(entity[fieldName]) && isDefined(entity[`${fieldName}Id`]);
 
   if (hasRelationFieldConflict) {
-    throw new Error(
-      `${fieldName} and ${fieldName}Id cannot be simultaneously set`,
-    );
+    throw new Error(`${fieldName} and ${fieldName}Id cannot be both provided.`);
   }
 };
 
@@ -262,7 +260,7 @@ const checkUniqueConstraintIsSameOrThrow = (
     )
   ) {
     throw new Error(
-      `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}`,
+      `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}.`,
     );
   }
 };
