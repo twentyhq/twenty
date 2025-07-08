@@ -34,14 +34,12 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
   }
 
   const childStepFilters = stepFilters?.filter(
-    (stepFilterToFilter) =>
-      stepFilterToFilter.stepFilterGroupId === currentStepFilterGroup.id,
+    (filter) => filter.stepFilterGroupId === currentStepFilterGroup.id,
   );
 
   const childStepFilterGroups = stepFilterGroups?.filter(
-    (currentStepFilterGroupToFilter) =>
-      currentStepFilterGroupToFilter.parentStepFilterGroupId ===
-      currentStepFilterGroup.id,
+    (filterGroup) =>
+      filterGroup.parentStepFilterGroupId === currentStepFilterGroup.id,
   );
 
   const childStepFiltersAndChildStepFilterGroups = [

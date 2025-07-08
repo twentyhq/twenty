@@ -61,7 +61,7 @@ export const useUpsertStepFilterSettings = () => {
 
         if (isDefined(stepFilterToUpsert)) {
           const existingIndex = updatedStepFilters.findIndex(
-            (f) => f.id === stepFilterToUpsert.id,
+            (filter) => filter.id === stepFilterToUpsert.id,
           );
 
           if (existingIndex >= 0) {

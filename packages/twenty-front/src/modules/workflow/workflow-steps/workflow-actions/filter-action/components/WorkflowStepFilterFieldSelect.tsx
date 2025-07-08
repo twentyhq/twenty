@@ -64,7 +64,7 @@ export const WorkflowStepFilterFieldSelect = ({
     <WorkflowVariablesDropdown
       instanceId={`step-filter-field-${stepFilter.id}`}
       onVariableSelect={handleChange}
-      disabled={readonly ?? false}
+      disabled={readonly}
       clickableComponent={
         <SelectControl
           selectedOption={{

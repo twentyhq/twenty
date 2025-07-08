@@ -50,7 +50,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       displayValue: '',
       stepFilterGroupId: stepFilterGroup.id,
       stepOutputKey: '',
-      positionInStepFilterGroup: 0,
+      positionInStepFilterGroup: newPositionInStepFilterGroup,
     };
 
     upsertStepFilterSettings({
@@ -58,7 +58,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     });
   };
 
-  const handleAddFilterGroup = async () => {
+  const handleAddFilterGroup = () => {
     closeDropdown(dropdownId);
 
     const newStepFilterGroupId = v4();
