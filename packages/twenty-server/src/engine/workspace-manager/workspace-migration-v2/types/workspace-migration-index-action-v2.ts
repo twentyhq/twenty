@@ -10,6 +10,11 @@ export type DeleteIndexAction = {
   flattenedIndexMetadata: FlattenedIndexMetadata;
 };
 
+export type UpdateIndexAction = {
+  type: 'udpate_index';
+};
+
 export type WorkspaceMigrationIndexActionV2 =
   | CreateIndexAction
-  | DeleteIndexAction;
+  | DeleteIndexAction
+  | UpdateIndexAction;
