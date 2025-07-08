@@ -43,6 +43,8 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   isDebugMode?: boolean;
 }
 
+const REST_API_BASE_URL = `${REACT_APP_SERVER_BASE_URL}/rest`;
+
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
@@ -71,11 +73,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const streamingRestLink = new StreamingRestLink({
-        uri: `${REACT_APP_SERVER_BASE_URL}/rest`,
+        uri: REST_API_BASE_URL,
       });
 
       const restLink = new RestLink({
-        uri: `${REACT_APP_SERVER_BASE_URL}/rest`,
+        uri: REST_API_BASE_URL,
       });
 
       const authLink = setContext(async (_, { headers }) => {
