@@ -1,22 +1,28 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 
-export type WorkspaceMigrationObjectFieldInput = {
+export const objectMetadataEntityEditableProperties = [
+  'description',
+  'icon',
+  'isActive',
+  'isLabelSyncedWithName',
+  'labelPlural',
+  'labelSingular',
+  'namePlural',
+  'nameSingular',
+  'standardOverrides', // Only if standard
+] as const satisfies (keyof ObjectMetadataEntity)[];
+export type ObjectMetadataEntityEditableProperties =
+  (typeof objectMetadataEntityEditableProperties)[number];
+
+export type WorkspaceMigrationObjectInput = Partial<
+  Omit<ObjectMetadataEntity, 'fields'>
+> & {
   uniqueIdentifier: string;
-  name: string;
-  label: string;
-  defaultValue: unknown;
-  type: FieldMetadataType;
-  description?: string;
-  // TODO this should extend FieldMetadataEntity
+  fieldInputs: WorkspaceMigrationFieldInput[];
 };
 
-export type WorkspaceMigrationObjectInput = {
-  uniqueIdentifier: string;
-  nameSingular: string;
-  namePlural: string;
-  labelSingular: string;
-  labelPlural: string;
-  description?: string;
-  fields: WorkspaceMigrationObjectFieldInput[];
-  // TODO this should extend ObjectMetadataEntity
-};
+export type WorkspaceMigrationObjectWithoutFields = Omit<
+  WorkspaceMigrationObjectInput,
+  'fieldInputs'
+>;
