@@ -575,7 +575,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Cannot create workflow version with status other than draft"
 
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/field-metadata/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Cannot delete, please update the label identifier field first"
 
@@ -1703,7 +1703,7 @@ msgid "Name"
 msgstr "Name"
 
 #. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "Name is not available, it may be duplicating another field's name."
 
