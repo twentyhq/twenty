@@ -18,8 +18,10 @@ const workspaceMigrationObjectInputPropertiesToCompare = [
   'nameSingular',
   'standardOverrides', // Only if standard
 ] as const satisfies (keyof FlattenObjectMetadata)[];
+
 export type WorkspaceMigrationObjectInputPropertiesToCompare =
   (typeof workspaceMigrationObjectInputPropertiesToCompare)[number];
+
 type ObjectWorkspaceMigrationUpdate = FromTo<FlattenObjectMetadata>;
 
 export const compareTwoWorkspaceMigrationObjectInput = ({

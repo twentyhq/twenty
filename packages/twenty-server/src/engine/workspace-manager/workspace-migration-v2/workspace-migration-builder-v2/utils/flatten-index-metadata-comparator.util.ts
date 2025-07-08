@@ -11,6 +11,7 @@ const flattenIndexMetadataPropertiesToCompare = [
   'isUnique',
   'name',
 ] as const satisfies (keyof FlattenIndexMetadata)[];
+
 type FlattenIndexMetadataPropertiesToCompare =
   (typeof flattenIndexMetadataPropertiesToCompare)[number];
 
