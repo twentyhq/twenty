@@ -15,13 +15,13 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import {
   WorkflowBranchExecutorInput,
   WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -128,11 +128,12 @@ export class WorkflowExecutorWorkspaceService {
 
     const actionOutputSuccess = isDefined(actionOutput.result);
 
-    const shouldContinue =
+    const isValidActionOutput =
       actionOutputSuccess ||
-      stepToExecute.settings.errorHandlingOptions.continueOnFailure.value;
+      stepToExecute.settings.errorHandlingOptions.continueOnFailure.value ||
+      actionOutput.shouldEndWorkflowRun === true;
 
-    if (shouldContinue) {
+    if (isValidActionOutput) {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput,
@@ -144,7 +145,8 @@ export class WorkflowExecutorWorkspaceService {
 
       if (
         !isDefined(stepToExecute.nextStepIds) ||
-        stepToExecute.nextStepIds.length === 0
+        stepToExecute.nextStepIds.length === 0 ||
+        actionOutput.shouldEndWorkflowRun === true
       ) {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,

@@ -4,7 +4,7 @@ import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-execut
 
 export type WorkflowFilterActionSettings = BaseWorkflowActionSettings & {
   input: {
-    filterGroups?: StepFilterGroup[];
-    filters?: StepFilter[];
+    stepFilterGroups?: StepFilterGroup[];
+    stepFilters?: StepFilter[];
   };
 };
