@@ -62,7 +62,7 @@ export class CondicionalInputHandler implements NodeHandler {
       const optionsList = logic.logicNodeData
         .map((d) => {
           if (d.recordType === 'text') {
-            return d.message?.trim() || '';
+            return `${d.option} - ${d.message?.trim() || ''}`;
           }
 
           if (d.recordType === 'sectors') {
@@ -98,9 +98,10 @@ export class CondicionalInputHandler implements NodeHandler {
       const condition = d.conditionValue;
 
       const matchOption = this.compare(input, option, comparison);
+      const fallbackMessage = d.message?.toLowerCase().trim() ?? '';
       const matchSector = sectorName
         ? this.compare(input, sectorName, comparison)
-        : false;
+        : this.compare(input, fallbackMessage, comparison);
 
       const matched =
         condition === '||'

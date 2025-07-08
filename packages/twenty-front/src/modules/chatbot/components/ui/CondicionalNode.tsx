@@ -138,14 +138,14 @@ function CondicionalNode({
     message?: string;
     sectorId?: string;
   }) {
-    const getSectorName = (sectorId: string) =>
-      sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
-
     if (condition.recordType === 'text') {
       return condition.message?.trim() || '';
     }
 
     if (condition.recordType === 'sectors') {
+      const getSectorName = (sectorId: string) =>
+        sectors?.find((s) => s.id === sectorId)?.name ?? sectorId;
+
       return getSectorName(condition.sectorId || '');
     }
   }

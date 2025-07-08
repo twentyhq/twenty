@@ -22,6 +22,7 @@ export const useGetChatbotFlowById = (
   });
 
   useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (isDefined(data)) {
       setChatbotFlow(data.getChatbotFlowById);
     }

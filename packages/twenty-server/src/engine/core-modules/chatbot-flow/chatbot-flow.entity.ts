@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';

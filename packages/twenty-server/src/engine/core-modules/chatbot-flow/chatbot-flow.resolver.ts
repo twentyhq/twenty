@@ -1,4 +1,5 @@
-import { ForbiddenException } from '@nestjs/common';
+/* eslint-disable @nx/workspace-graphql-resolvers-should-be-guarded */
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ChatbotFlow } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.entity';
@@ -7,9 +8,11 @@ import { ChatbotFlowInput } from 'src/engine/core-modules/chatbot-flow/dtos/chat
 import { UpdateChatbotFlowInput } from 'src/engine/core-modules/chatbot-flow/dtos/update-chatbot-flow.input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ChatbotWorkspaceEntity } from 'src/modules/chatbot/standard-objects/chatbot.workspace-entity';
 
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => ChatbotFlow)
 export class ChatbotFlowResolver {
   constructor(
@@ -50,6 +53,7 @@ export class ChatbotFlowResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ChatbotWorkspaceEntity>(
         workspace.id,
         'chatbot',
+        { shouldBypassPermissionChecks: true },
       );
 
     const chatbots = await chatbotsRepository.find();
