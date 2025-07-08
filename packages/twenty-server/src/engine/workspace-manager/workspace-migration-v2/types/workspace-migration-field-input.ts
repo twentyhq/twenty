@@ -24,7 +24,7 @@ export type FieldMetadataEntityEditableProperties =
 
 // TODO could describe required minimum keys
 export type WorkspaceMigrationFieldInput = Partial<
-  Omit<FieldMetadataEntity, 'object'>
+  Omit<FieldMetadataEntity, 'object' | 'indexFieldMetadatas'>
 > & {
   uniqueIdentifier: string;
 };
