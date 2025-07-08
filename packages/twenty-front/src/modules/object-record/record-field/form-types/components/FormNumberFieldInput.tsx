@@ -45,7 +45,7 @@ export const FormNumberFieldInput = ({
   readonly,
   error: errorFromProps,
 }: FormNumberFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -117,7 +117,7 @@ export const FormNumberFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
+      {label ? <InputLabel htmlFor={instanceId}>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -126,7 +126,7 @@ export const FormNumberFieldInput = ({
         >
           {draftValue.type === 'static' ? (
             <StyledInput
-              inputId={inputId}
+              instanceId={instanceId}
               placeholder={
                 isDefined(placeholder) && !isEmpty(placeholder)
                   ? placeholder
@@ -148,7 +148,7 @@ export const FormNumberFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}

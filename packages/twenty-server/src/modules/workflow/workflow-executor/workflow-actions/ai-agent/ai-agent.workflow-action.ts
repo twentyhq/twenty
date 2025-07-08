@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
@@ -16,13 +16,13 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
 @Injectable()
-export class AiAgentWorkflowAction implements WorkflowExecutor {
+export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentExecutionService: AgentExecutionService,
     private readonly aiBillingService: AIBillingService,
@@ -34,7 +34,7 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
     currentStepId,
     steps,
     context,
-  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+  }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = steps.find((step) => step.id === currentStepId);
 
     if (!step) {

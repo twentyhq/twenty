@@ -204,7 +204,7 @@ export const FormSingleRecordPicker = ({
         )}
         {isDefined(VariablePicker) && !disabled && (
           <VariablePicker
-            inputId={variablesDropdownId}
+            instanceId={variablesDropdownId}
             disabled={disabled}
             onVariableSelect={handleVariableTagInsert}
             objectNameSingularToSelect={objectNameSingular}

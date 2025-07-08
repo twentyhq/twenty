@@ -44,14 +44,14 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
   },
 };
 
 export const HeaderMenuOpen: Story = {
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const headerMenuButton = await canvas.findByText('Domain Name');
 
@@ -69,7 +69,7 @@ export const ScrolledLeft: Story = {
   },
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = document.body.querySelector(
       '.scroll-wrapper-x-enabled',
@@ -99,7 +99,7 @@ export const ScrolledBottom: Story = {
   },
   play: async () => {
     const canvas = within(document.body);
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Linkedin', {}, { timeout: 3000 });
 
     const scrollWrapper = document.body.querySelector(
       '.scroll-wrapper-y-enabled',

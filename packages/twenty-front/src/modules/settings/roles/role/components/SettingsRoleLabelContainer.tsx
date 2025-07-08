@@ -39,6 +39,7 @@ export const SettingsRoleLabelContainer = ({
   return (
     <StyledHeaderTitle>
       <TitleInput
+        instanceId="role-label-input"
         disabled={!settingsDraftRole.isEditable}
         sizeVariant="md"
         value={settingsDraftRole.label}

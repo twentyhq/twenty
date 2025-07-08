@@ -9,6 +9,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
+import { RestLink } from 'apollo-link-rest';
 import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
@@ -21,6 +22,7 @@ import { i18n } from '@lingui/core';
 import { GraphQLFormattedError } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
@@ -65,6 +67,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({
         uri,
+      });
+
+      const restLink = new RestLink({
+        uri: `${REACT_APP_SERVER_BASE_URL}/rest`,
       });
 
       const authLink = setContext(async (_, { headers }) => {
@@ -222,8 +228,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           ...(extraLinks || []),
           isDebugMode ? logger : null,
           retryLink,
+          restLink,
           httpLink,
-        ].filter(isDefined),
+        ].filter(isDefined) as ApolloLink[],
       );
     };
 

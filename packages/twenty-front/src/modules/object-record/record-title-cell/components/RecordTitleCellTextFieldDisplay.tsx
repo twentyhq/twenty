@@ -30,7 +30,11 @@ const StyledEmptyText = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.tertiary};
 `);
 
-export const RecordTitleCellSingleTextDisplayMode = () => {
+export const RecordTitleCellSingleTextDisplayMode = ({
+  containerType,
+}: {
+  containerType: RecordTitleCellContainerType;
+}) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
@@ -45,8 +49,8 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
       onClick={() => {
         openRecordTitleCell({
           recordId,
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          containerType: RecordTitleCellContainerType.ShowPage,
+          fieldName: fieldDefinition.metadata.fieldName,
+          containerType,
         });
       }}
     >

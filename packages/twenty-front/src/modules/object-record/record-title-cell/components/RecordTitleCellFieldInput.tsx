@@ -9,6 +9,7 @@ import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 
 type RecordTitleCellFieldInputProps = {
+  instanceId: string;
   onClickOutside?: (
     persist: () => void,
     event: MouseEvent | TouchEvent,
@@ -21,6 +22,7 @@ type RecordTitleCellFieldInputProps = {
 };
 
 export const RecordTitleCellFieldInput = ({
+  instanceId,
   sizeVariant,
   onEnter,
   onEscape,
@@ -38,6 +40,7 @@ export const RecordTitleCellFieldInput = ({
     <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellTextFieldInput
+          instanceId={instanceId}
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

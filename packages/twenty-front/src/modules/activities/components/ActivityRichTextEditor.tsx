@@ -34,8 +34,7 @@ import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecor
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -364,11 +363,11 @@ export const ActivityRichTextEditor = ({
     objectRecordId: activityId,
   });
 
-  const recordTitleCellId = getRecordTitleCellId(
-    activityId,
-    labelIdentifierFieldMetadataItem?.id,
-    RecordTitleCellContainerType.ShowPage,
-  );
+  const recordTitleCellId = getRecordFieldInputInstanceId({
+    recordId: activityId,
+    fieldName: labelIdentifierFieldMetadataItem?.id,
+    prefix: 'activity-rich-text-editor',
+  });
 
   const handleBlockEditorFocus = useRecoilCallback(
     ({ snapshot }) =>
