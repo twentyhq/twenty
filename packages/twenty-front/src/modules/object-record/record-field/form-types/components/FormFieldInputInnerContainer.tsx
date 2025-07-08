@@ -81,7 +81,7 @@ export const FormFieldInputInnerContainer = forwardRef(
 
       if (!preventSetHotkeyScope) {
         removeFocusItemFromFocusStackById({
-          focusId: FormFieldInputHotKeyScope.FormFieldInput,
+          focusId: formFieldInputInstanceId,
         });
       }
     };
