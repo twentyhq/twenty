@@ -6,7 +6,7 @@ import { WorkspaceMigrationFieldInputPropertiesToCompare } from 'src/engine/work
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
   fieldMetadataInput: FlattenFieldMetadata;
-  objectMetadataInput: FlattenObjectMetdataWithoutFields;
+  flattenObjectMetadata: FlattenObjectMetdataWithoutFields;
 };
 export type CreateFieldAction = {
   type: 'create_field';

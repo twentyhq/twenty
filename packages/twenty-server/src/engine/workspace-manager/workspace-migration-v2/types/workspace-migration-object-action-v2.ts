@@ -4,7 +4,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { WorkspaceMigrationObjectInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/flatten-object-metadata-comparator.util';
 
 type ObjectActionCommon = {
-  objectMetadataInput: FlattenObjectMetdataWithoutFields;
+  flattenObjectMetadata: FlattenObjectMetdataWithoutFields;
 };
 export type CreateObjectAction = {
   type: 'create_object';
