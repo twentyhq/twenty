@@ -7,8 +7,8 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
@@ -40,7 +40,8 @@ export const FormSelectFieldInput = ({
 
   const hotkeyScope = InlineCellHotkeyScope.InlineCell;
 
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -72,7 +73,7 @@ export const FormSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    goBackToPreviousHotkeyScope();
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
 
     onChange(option);
   };
@@ -87,7 +88,7 @@ export const FormSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    goBackToPreviousHotkeyScope();
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
   const selectedOption = options.find(
@@ -119,14 +120,13 @@ export const FormSelectFieldInput = ({
     onChange(variableName);
   };
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
-      onCancel();
-    },
-    hotkeyScope,
-    [onCancel],
-  );
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: onCancel,
+    focusId: instanceId,
+    scope: hotkeyScope,
+    dependencies: [onCancel],
+  });
 
   return (
     <FormFieldInputContainer>
