@@ -32,7 +32,7 @@ const StyledRadioContainer = styled.div`
 `;
 
 const StyledRadio = styled(Radio)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 type SelectSheetStepProps = {
