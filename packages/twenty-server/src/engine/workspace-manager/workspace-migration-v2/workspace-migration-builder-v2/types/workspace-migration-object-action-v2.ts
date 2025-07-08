@@ -1,7 +1,7 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FlattenObjectMetdataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { WorkspaceMigrationObjectInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/flatten-object-metadata-comparator.util';
+import { WorkspaceMigrationObjectInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-object-metadata-comparator.util';
 
 type ObjectActionCommon = {
   flattenObjectMetadata: FlattenObjectMetdataWithoutFields;

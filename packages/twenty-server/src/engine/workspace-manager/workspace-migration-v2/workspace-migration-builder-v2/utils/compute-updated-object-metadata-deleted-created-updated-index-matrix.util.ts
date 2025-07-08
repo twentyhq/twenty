@@ -7,7 +7,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+} from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = {
   flattenObjectMetadata: FlattenObjectMetdataWithoutFields;

@@ -2,7 +2,7 @@ import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-mi
 import {
   CreateObjectAction,
   DeleteObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 
 export const getWorkspaceMigrationV2ObjectCreateAction = (
   flattenObjectMetadata: FlattenObjectMetadata,
