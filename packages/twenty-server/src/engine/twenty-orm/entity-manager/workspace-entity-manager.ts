@@ -183,13 +183,11 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithRelationConnect<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
-    if (!Array.isArray(entity)) {
-      entity = [entity];
-    }
+    const entityArray = Array.isArray(entity) ? entity : [entity];
 
-    const entityWithoutRelationConnect =
+    const entityArrayWithoutRelationConnect =
       await this.executeConnectQueries<Entity>(
-        entity,
+        entityArray,
         target,
         permissionOptions,
       );
@@ -202,7 +200,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(entityWithoutRelationConnect)
+      .values(entityArrayWithoutRelationConnect)
       .execute();
   }
 
