@@ -7,7 +7,7 @@ import {
   getWorkspaceMigrationV2FieldCreateAction,
   getWorkspaceMigrationV2FieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
-import { compareFieldMetadataInputAndGetUpdateFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-field-metadata-input-comparator.util';
+import { compareFieldMetadataInput } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-field-metadata-input-comparator.util';
 
 export const buildWorkspaceMigrationV2FieldActions = (
   objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[],
@@ -23,7 +23,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
   } of objectMetadataDeletedCreatedUpdatedFields) {
     const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
       ({ from, to }) => {
-        const updates = compareFieldMetadataInputAndGetUpdateFieldActions({
+        const updates = compareFieldMetadataInput({
           from,
           to,
         });
