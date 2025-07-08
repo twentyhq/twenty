@@ -112,24 +112,29 @@ export class ExtendObjectTypeDefinitionV2Factory {
 
     for (const fieldMetadata of objectMetadata.fields) {
       // Ignore non-relation fields as they are already defined
-      if (
-        !isFieldMetadataInterfaceOfType(
+      const isRelation =
+        isFieldMetadataInterfaceOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
-        )
-      ) {
+        ) ||
+        isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        );
+
+      if (!isRelation) {
         continue;
       }
 
       if (!fieldMetadata.settings) {
         throw new Error(
-          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no settings`,
+          `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no settings`,
         );
       }
 
       if (!fieldMetadata.relationTargetObjectMetadataId) {
         throw new Error(
-          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
+          `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
         );
       }
 

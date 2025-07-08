@@ -1,10 +1,13 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -18,6 +21,8 @@ export class StripeCheckoutService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
+    @InjectRepository(BillingCustomer, 'core')
+    private readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
@@ -54,6 +59,11 @@ export class StripeCheckoutService {
         metadata: {
           workspaceId,
         },
+      });
+
+      await this.billingCustomerRepository.save({
+        stripeCustomerId: customer.id,
+        workspaceId,
       });
 
       stripeCustomerId = customer.id;

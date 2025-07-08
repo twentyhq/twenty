@@ -107,10 +107,22 @@ const StyledDataGrid = styled(DataGrid)`
   }
 ` as typeof DataGrid;
 
-type SpreadsheetImportTableProps<Data> = DataGridProps<Data> & {
-  rowHeight?: number;
-  hiddenHeader?: boolean;
-};
+type SpreadsheetImportTableProps<Data> = Pick<
+  DataGridProps<Data>,
+  | 'selectedRows'
+  | 'onSelectedRowsChange'
+  | 'columns'
+  | 'headerRowHeight'
+  | 'rowKeyGetter'
+  | 'rows'
+> &
+  Partial<
+    Pick<DataGridProps<Data>, 'onRowClick' | 'components' | 'onRowsChange'>
+  > & {
+    className?: string;
+    rowHeight?: number;
+    hiddenHeader?: boolean;
+  };
 
 export const SpreadsheetImportTable = <Data,>({
   className,
@@ -119,8 +131,8 @@ export const SpreadsheetImportTable = <Data,>({
   headerRowHeight,
   rowKeyGetter,
   rows,
-  onRowClick,
   onRowsChange,
+  onRowClick,
   onSelectedRowsChange,
   selectedRows,
 }: SpreadsheetImportTableProps<Data>) => {
@@ -137,12 +149,12 @@ export const SpreadsheetImportTable = <Data,>({
       {...{
         className: `${className || ''} ${themeClassName}`,
         columns,
-        components,
         headerRowHeight,
         rowKeyGetter,
-        rows,
-        onRowClick,
         onRowsChange,
+        rows,
+        components,
+        onRowClick,
         onSelectedRowsChange,
         selectedRows,
       }}

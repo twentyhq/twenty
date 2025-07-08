@@ -1,7 +1,9 @@
 /* @license Enterprise */
 
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
@@ -16,7 +18,11 @@ import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-s
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
-  imports: [DomainManagerModule, StripeSDKModule],
+  imports: [
+    DomainManagerModule,
+    StripeSDKModule,
+    TypeOrmModule.forFeature([BillingCustomer], 'core'),
+  ],
   providers: [
     StripeSubscriptionItemService,
     StripeWebhookService,
