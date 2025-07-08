@@ -44,6 +44,7 @@ export const SetttingsAccountsImapConnectionForm = ({
           defaultValue={defaultValues?.handle}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="email-address-imap-connection-form"
               label={t`Email Address`}
               placeholder={t`john.doe@example.com`}
               value={field.value}
@@ -58,6 +59,7 @@ export const SetttingsAccountsImapConnectionForm = ({
           defaultValue={defaultValues?.host}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="host-imap-connection-form"
               label={t`IMAP Server`}
               placeholder={t`imap.example.com`}
               value={field.value}
@@ -72,6 +74,7 @@ export const SetttingsAccountsImapConnectionForm = ({
           defaultValue={defaultValues?.port ?? 993}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="port-imap-connection-form"
               label={t`IMAP Port`}
               type="number"
               placeholder={t`993`}
@@ -104,6 +107,7 @@ export const SetttingsAccountsImapConnectionForm = ({
           defaultValue={defaultValues?.password}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="password-imap-connection-form"
               label={t`Password`}
               placeholder={t`••••••••`}
               type="password"

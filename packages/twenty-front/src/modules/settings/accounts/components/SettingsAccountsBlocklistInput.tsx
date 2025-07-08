@@ -95,6 +95,7 @@ export const SettingsAccountsBlocklistInput = ({
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextInput
+                instanceId="settings-accounts-blocklist-input"
                 placeholder="eddy@gmail.com, @apple.com"
                 value={value}
                 onChange={onChange}

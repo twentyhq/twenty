@@ -10,7 +10,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -24,11 +23,15 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
 @Entity('fieldMetadata')
-@Unique('IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE', [
-  'name',
-  'objectMetadataId',
-  'workspaceId',
-])
+// max length of index is 63 characters
+@Index(
+  'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
+  ['name', 'objectMetadataId', 'workspaceId'],
+  {
+    unique: true,
+    where: `"type" <> ''MORPH_RELATION''`,
+  },
+)
 @Index('IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID', [
   'relationTargetFieldMetadataId',
 ])

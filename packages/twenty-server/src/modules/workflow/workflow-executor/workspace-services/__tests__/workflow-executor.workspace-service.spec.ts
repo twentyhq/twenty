@@ -4,9 +4,8 @@ import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-executor.factory';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -14,10 +13,26 @@ import {
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
+
+jest.mock(
+  'src/modules/workflow/workflow-executor/utils/can-execute-step.utils',
+  () => {
+    const actual = jest.requireActual(
+      'src/modules/workflow/workflow-executor/utils/can-execute-step.utils',
+    );
+
+    return {
+      ...actual,
+      canExecuteStep: jest.fn().mockReturnValue(true), // default behavior
+    };
+  },
+);
 
 describe('WorkflowExecutorWorkspaceService', () => {
   let service: WorkflowExecutorWorkspaceService;
-  let workflowExecutorFactory: WorkflowExecutorFactory;
+  let workflowActionFactory: WorkflowActionFactory;
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let workflowRunWorkspaceService: WorkflowRunWorkspaceService;
 
@@ -29,21 +44,16 @@ describe('WorkflowExecutorWorkspaceService', () => {
     emitCustomBatchEvent: jest.fn(),
   };
 
-  const mockScopedWorkspaceContext = {
-    workspaceId: 'workspace-id',
-  };
-
-  const mockScopedWorkspaceContextFactory = {
-    create: jest.fn().mockReturnValue(mockScopedWorkspaceContext),
-  };
-
   const mockWorkflowRunWorkspaceService = {
+    endWorkflowRun: jest.fn(),
+    updateWorkflowRunStepStatus: jest.fn(),
     saveWorkflowRunState: jest.fn(),
+    getWorkflowRun: jest.fn(),
   };
 
   const mockBillingService = {
-    isBillingEnabled: jest.fn(),
-    canBillMeteredProduct: jest.fn(),
+    isBillingEnabled: jest.fn().mockReturnValue(true),
+    canBillMeteredProduct: jest.fn().mockReturnValue(true),
   };
 
   beforeEach(async () => {
@@ -53,7 +63,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       providers: [
         WorkflowExecutorWorkspaceService,
         {
-          provide: WorkflowExecutorFactory,
+          provide: WorkflowActionFactory,
           useValue: {
             get: jest.fn().mockReturnValue(mockWorkflowExecutor),
           },
@@ -61,10 +71,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: WorkspaceEventEmitter,
           useValue: mockWorkspaceEventEmitter,
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: mockScopedWorkspaceContextFactory,
         },
         {
           provide: WorkflowRunWorkspaceService,
@@ -80,8 +86,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
     service = module.get<WorkflowExecutorWorkspaceService>(
       WorkflowExecutorWorkspaceService,
     );
-    workflowExecutorFactory = module.get<WorkflowExecutorFactory>(
-      WorkflowExecutorFactory,
+    workflowActionFactory = module.get<WorkflowActionFactory>(
+      WorkflowActionFactory,
     );
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
@@ -93,7 +99,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   describe('execute', () => {
     const mockWorkflowRunId = 'workflow-run-id';
-    const mockContext = { data: 'some-data' };
+    const mockWorkspaceId = 'workspace-id';
+    const mockContext = { trigger: 'trigger-result' };
     const mockSteps = [
       {
         id: 'step-1',
@@ -119,20 +126,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
       },
     ] as WorkflowAction[];
 
-    it('should return success when all steps are completed', async () => {
-      // No steps to execute
-      const result = await service.execute({
-        workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-2',
-        steps: mockSteps,
-        context: mockContext,
-      });
-
-      expect(result).toEqual({
-        result: {
-          success: true,
-        },
-      });
+    mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValue({
+      output: { flow: { steps: mockSteps } },
+      context: mockContext,
     });
 
     it('should execute a step and continue to the next step on success', async () => {
@@ -142,24 +138,22 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockStepResult);
 
-      const result = await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
+        WorkflowActionType.CODE,
+      );
+
+      expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
         currentStepId: 'step-1',
         steps: mockSteps,
         context: mockContext,
       });
 
-      // execute first step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
-        WorkflowActionType.CODE,
-      );
-      expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
-        workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: mockSteps,
-        context: mockContext,
-        attemptCount: 1,
-      });
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         BILLING_FEATURE_USED,
         [
@@ -170,46 +164,38 @@ describe('WorkflowExecutorWorkspaceService', () => {
         ],
         'workspace-id',
       );
+
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledTimes(4);
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(2);
+
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
-          output: {},
-        },
-        context: {
-          data: 'some-data',
-        },
+        stepId: 'step-1',
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.RUNNING,
       });
 
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenNthCalledWith(2, {
+      ).toHaveBeenCalledTimes(2);
+
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
           id: 'step-1',
           output: mockStepResult,
         },
-        context: {
-          data: 'some-data',
-          'step-1': {
-            stepOutput: 'success',
-          },
-        },
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.SUCCESS,
       });
 
-      expect(result).toEqual({ result: { success: true } });
-
       // execute second step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -219,35 +205,34 @@ describe('WorkflowExecutorWorkspaceService', () => {
         new Error('Step execution failed'),
       );
 
-      const result = await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: mockSteps,
-        context: mockContext,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
 
-      expect(result).toEqual({
-        error: 'Step execution failed',
-      });
       expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
+
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledTimes(2);
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(1);
+
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
-          output: {},
-        },
-        context: mockContext,
+        stepId: 'step-1',
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.RUNNING,
       });
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenNthCalledWith(2, {
+      ).toHaveBeenCalledTimes(1);
+
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
           id: 'step-1',
@@ -255,7 +240,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
             error: 'Step execution failed',
           },
         },
-        context: mockContext,
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.FAILED,
       });
@@ -268,44 +252,43 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce(mockPendingEvent);
 
-      const result = await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: mockSteps,
-        context: mockContext,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
 
-      expect(result).toEqual(mockPendingEvent);
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(1);
+
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        stepId: 'step-1',
+        workspaceId: 'workspace-id',
+        stepStatus: StepStatus.RUNNING,
+      });
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledTimes(2);
+      ).toHaveBeenCalledTimes(1);
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
           id: 'step-1',
-          output: {},
-        },
-        context: mockContext,
-        workspaceId: 'workspace-id',
-        stepStatus: StepStatus.RUNNING,
-      });
-      expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenNthCalledWith(2, {
-        workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
           output: mockPendingEvent,
         },
-        context: mockContext,
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.PENDING,
       });
 
       // No recursive call to execute should happen
-      expect(workflowExecutorFactory.get).not.toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -335,38 +318,41 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
       ] as WorkflowAction[];
 
+      mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValueOnce({
+        output: { flow: { steps: stepsWithContinueOnFailure } },
+        context: mockContext,
+      });
+
       mockWorkflowExecutor.execute.mockResolvedValueOnce({
         error: 'Step execution failed but continue',
       });
 
-      const result = await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: stepsWithContinueOnFailure,
-        context: mockContext,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
 
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledTimes(4);
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
+      ).toHaveBeenCalledTimes(2);
 
-      // execute first step
       expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
+        workflowRunWorkspaceService.updateWorkflowRunStepStatus,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
-          output: {},
-        },
-        context: mockContext,
+        stepId: 'step-1',
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.RUNNING,
       });
 
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenNthCalledWith(2, {
+      ).toHaveBeenCalledTimes(2);
+
+      expect(
+        workflowRunWorkspaceService.saveWorkflowRunState,
+      ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
         stepOutput: {
           id: 'step-1',
@@ -374,14 +360,12 @@ describe('WorkflowExecutorWorkspaceService', () => {
             error: 'Step execution failed but continue',
           },
         },
-        context: mockContext,
         workspaceId: 'workspace-id',
         stepStatus: StepStatus.FAILED,
       });
-      expect(result).toEqual({ result: { success: true } });
 
       // execute second step
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
+      expect(workflowActionFactory.get).toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
     });
@@ -400,119 +384,85 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
       ] as WorkflowAction[];
 
-      mockWorkflowExecutor.execute.mockResolvedValueOnce({
+      mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValue({
+        output: { flow: { steps: stepsWithRetryOnFailure } },
+        context: mockContext,
+      });
+
+      mockWorkflowExecutor.execute.mockResolvedValue({
         error: 'Step execution failed, will retry',
       });
 
-      await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: stepsWithRetryOnFailure,
-        context: mockContext,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
 
-      // Should call execute again with increased attemptCount
-      expect(workflowExecutorFactory.get).toHaveBeenCalledWith(
-        WorkflowActionType.CODE,
-      );
-      expect(workflowExecutorFactory.get).not.toHaveBeenCalledWith(
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        expect(workflowActionFactory.get).toHaveBeenNthCalledWith(
+          attempt,
+          WorkflowActionType.CODE,
+        );
+      }
+
+      expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(2);
-    });
-
-    it('should stop retrying after MAX_RETRIES_ON_FAILURE', async () => {
-      const stepsWithRetryOnFailure = [
-        {
-          id: 'step-1',
-          type: WorkflowActionType.CODE,
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: true },
-            },
-          },
-        },
-      ] as WorkflowAction[];
-
-      const errorOutput = {
-        error: 'Step execution failed, max retries reached',
-      };
-
-      mockWorkflowExecutor.execute.mockResolvedValueOnce(errorOutput);
-
-      const result = await service.execute({
-        workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: stepsWithRetryOnFailure,
-        context: mockContext,
-        attemptCount: 3, // MAX_RETRIES_ON_FAILURE is 3
-      });
-
-      // Should not retry anymore
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
-      expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledTimes(2);
-      expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenCalledWith({
-        workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
-          output: {},
-        },
-        context: mockContext,
-        workspaceId: 'workspace-id',
-        stepStatus: StepStatus.RUNNING,
-      });
-      expect(
-        workflowRunWorkspaceService.saveWorkflowRunState,
-      ).toHaveBeenNthCalledWith(2, {
-        workflowRunId: mockWorkflowRunId,
-        stepOutput: {
-          id: 'step-1',
-          output: errorOutput,
-        },
-        context: mockContext,
-        workspaceId: 'workspace-id',
-        stepStatus: StepStatus.FAILED,
-      });
-      expect(result).toEqual(errorOutput);
     });
 
     it('should stop when billing validation fails', async () => {
       mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
       mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
 
-      const result = await service.execute({
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        currentStepId: 'step-1',
-        steps: mockSteps,
-        context: mockContext,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
 
-      expect(workflowExecutorFactory.get).toHaveBeenCalledTimes(1);
+      expect(workflowActionFactory.get).toHaveBeenCalledTimes(0);
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledTimes(1);
+
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
+        1,
+      );
+
       expect(
         workflowRunWorkspaceService.saveWorkflowRunState,
       ).toHaveBeenCalledWith({
         workflowRunId: mockWorkflowRunId,
+        workspaceId: 'workspace-id',
         stepOutput: {
           id: 'step-1',
           output: {
             error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
           },
         },
-        context: mockContext,
-        workspaceId: 'workspace-id',
         stepStatus: StepStatus.FAILED,
       });
-      expect(result).toEqual({
+
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith({
+        workflowRunId: mockWorkflowRunId,
+        workspaceId: 'workspace-id',
+        status: WorkflowRunStatus.FAILED,
         error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
       });
+    });
+
+    it('should return if step should not be executed', async () => {
+      (canExecuteStep as jest.Mock).mockReturnValueOnce(false);
+
+      await service.executeFromSteps({
+        workflowRunId: mockWorkflowRunId,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(workflowActionFactory.get).not.toHaveBeenCalled();
     });
   });
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   SEED_APPLE_WORKSPACE_ID,

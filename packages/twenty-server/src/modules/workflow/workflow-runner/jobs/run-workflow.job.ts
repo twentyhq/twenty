@@ -1,5 +1,7 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -9,7 +11,6 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import {
   WorkflowRunException,
@@ -107,17 +108,6 @@ export class RunWorkflowJob {
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
-      output: {
-        flow: {
-          trigger: workflowVersion.trigger,
-          steps: workflowVersion.steps,
-        },
-        stepsOutput: {
-          trigger: {
-            result: triggerPayload,
-          },
-        },
-      },
       payload: triggerPayload,
     });
 
@@ -125,13 +115,9 @@ export class RunWorkflowJob {
 
     const rootSteps = getRootSteps(workflowVersion.steps);
 
-    await this.executeWorkflow({
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: rootSteps.map((step) => step.id),
       workflowRunId,
-      currentStepId: rootSteps[0].id,
-      steps: workflowVersion.steps,
-      context: workflowRun.context ?? {
-        trigger: triggerPayload,
-      },
       workspaceId,
     });
   }
@@ -169,9 +155,10 @@ export class RunWorkflowJob {
       );
     }
 
-    const nextStepId = lastExecutedStep.nextStepIds?.[0];
-
-    if (!nextStepId) {
+    if (
+      !isDefined(lastExecutedStep.nextStepIds) ||
+      lastExecutedStep.nextStepIds.length === 0
+    ) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -181,46 +168,10 @@ export class RunWorkflowJob {
       return;
     }
 
-    await this.executeWorkflow({
-      workflowRunId,
-      currentStepId: nextStepId,
-      steps: workflowRun.output?.flow?.steps ?? [],
-      context: workflowRun.context ?? {},
-      workspaceId,
-    });
-  }
-
-  private async executeWorkflow({
-    workflowRunId,
-    currentStepId,
-    steps,
-    context,
-    workspaceId,
-  }: {
-    workflowRunId: string;
-    currentStepId: string;
-    steps: WorkflowAction[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context: Record<string, any>;
-    workspaceId: string;
-  }) {
-    const { error, pendingEvent } =
-      await this.workflowExecutorWorkspaceService.execute({
-        workflowRunId,
-        currentStepId,
-        steps,
-        context,
-      });
-
-    if (pendingEvent) {
-      return;
-    }
-
-    await this.workflowRunWorkspaceService.endWorkflowRun({
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: lastExecutedStep.nextStepIds,
       workflowRunId,
       workspaceId,
-      status: error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
-      error,
     });
   }
 

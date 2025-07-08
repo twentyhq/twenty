@@ -29,7 +29,7 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -320,14 +320,14 @@ export const RecordDetailRelationRecordsListItem = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId(
-                      relationRecord.id,
-                      fieldMetadataItem.name,
-                      'record-detail',
-                    ),
+                    instanceId: getRecordFieldInputInstanceId({
+                      recordId: relationRecord.id,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: 'record-detail',
+                    }),
                   }}
                 >
-                  <RecordInlineCell />
+                  <RecordInlineCell instanceIdPrefix="record-detail" />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),

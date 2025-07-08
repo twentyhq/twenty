@@ -30,6 +30,11 @@ export enum ErrorCode {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 }
 
+type RestrictedGraphQLErrorExtensions = {
+  userFriendlyMessage?: string;
+  subCode?: string;
+};
+
 export class BaseGraphQLError extends GraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public extensions: Record<string, any>;
@@ -110,7 +115,7 @@ export class ValidationError extends BaseGraphQLError {
 
 export class AuthenticationError extends BaseGraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
     super(message, ErrorCode.UNAUTHENTICATED, extensions);
 
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
@@ -119,7 +124,7 @@ export class AuthenticationError extends BaseGraphQLError {
 
 export class ForbiddenError extends BaseGraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
     super(message, ErrorCode.FORBIDDEN, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
@@ -151,7 +156,7 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 
 export class UserInputError extends BaseGraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
     super(message, ErrorCode.BAD_USER_INPUT, extensions);
 
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
@@ -160,7 +165,7 @@ export class UserInputError extends BaseGraphQLError {
 
 export class NotFoundError extends BaseGraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
     super(message, ErrorCode.NOT_FOUND, extensions);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
@@ -177,7 +182,7 @@ export class MethodNotAllowedError extends BaseGraphQLError {
 
 export class ConflictError extends BaseGraphQLError {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: Record<string, any>) {
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
     super(message, ErrorCode.CONFLICT, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });

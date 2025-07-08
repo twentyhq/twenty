@@ -122,6 +122,11 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       Icon: IllustrationIconOneToMany,
       category: 'Relation',
     } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,
+    [FieldMetadataType.MORPH_RELATION]: {
+      label: 'Morph Relation',
+      Icon: IllustrationIconOneToMany,
+      category: 'Relation',
+    } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,
     [FieldMetadataType.RATING]: {
       label: 'Rating',
       Icon: IllustrationIconStar,

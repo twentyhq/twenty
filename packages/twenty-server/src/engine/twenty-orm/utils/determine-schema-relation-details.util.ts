@@ -18,7 +18,9 @@ interface RelationDetails {
 }
 
 export async function determineSchemaRelationDetails(
-  fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+  fieldMetadata: FieldMetadataInterface<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >,
   objectMetadataMaps: ObjectMetadataMaps,
 ): Promise<RelationDetails> {
   if (!fieldMetadata.settings) {

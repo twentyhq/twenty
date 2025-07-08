@@ -16,7 +16,7 @@ import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMe
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 
 interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
   standardOverrides?: FieldStandardOverridesDTO;

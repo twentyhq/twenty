@@ -12,6 +12,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -77,6 +78,10 @@ export const createAgentToolTestModule =
             getRolesPermissionsFromCache: jest.fn(),
           },
         },
+        {
+          provide: ToolService,
+          useClass: ToolService,
+        },
       ],
     }).compile();
 
@@ -108,6 +113,7 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
+      chatThreads: [],
     };
 
     const testRole: RoleEntity = {
