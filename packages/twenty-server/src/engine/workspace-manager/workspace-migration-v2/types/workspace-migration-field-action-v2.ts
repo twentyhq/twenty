@@ -5,7 +5,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { WorkspaceMigrationFieldInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/flatten-field-metadata-comparator.util';
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
-  fieldMetadataInput: FlattenFieldMetadata;
+  flattenFieldMetadata: FlattenFieldMetadata;
   flattenObjectMetadata: FlattenObjectMetdataWithoutFields;
 };
 export type CreateFieldAction = {

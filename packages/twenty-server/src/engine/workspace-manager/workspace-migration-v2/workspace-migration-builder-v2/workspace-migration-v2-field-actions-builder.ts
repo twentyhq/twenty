@@ -34,23 +34,23 @@ export const buildWorkspaceMigrationV2FieldActions = (
 
         return {
           type: 'update_field',
-          fieldMetadataInput: to,
+          flattenFieldMetadata: to,
           flattenObjectMetadata,
           updates,
         };
       },
     );
 
-    const createFieldAction = createdFieldMetadata.map((fieldMetadataInput) =>
+    const createFieldAction = createdFieldMetadata.map((flattenFieldMetadata) =>
       getWorkspaceMigrationV2FieldCreateAction({
-        fieldMetadataInput,
+        flattenFieldMetadata,
         flattenObjectMetadata,
       }),
     );
 
-    const deleteFieldAction = deletedFieldMetadata.map((fieldMetadataInput) =>
+    const deleteFieldAction = deletedFieldMetadata.map((flattenFieldMetadata) =>
       getWorkspaceMigrationV2FieldDeleteAction({
-        fieldMetadataInput,
+        flattenFieldMetadata,
         flattenObjectMetadata,
       }),
     );
