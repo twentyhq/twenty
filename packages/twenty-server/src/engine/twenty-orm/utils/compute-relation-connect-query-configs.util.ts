@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,6 +15,10 @@ import {
   RelationConnectQueryConfig,
   UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import {
+  ConnectException,
+  ConnectExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/connect.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -42,8 +47,14 @@ export const computeRelationConnectQueryConfigs = (
         !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
         field.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
-        throw new Error(
+        const objectMetadataNameSingular = objectMetadata.nameSingular;
+
+        throw new ConnectException(
           `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
+          ConnectExceptionCode.CONNECT_NOT_ALLOWED,
+          {
+            userFriendlyMessage: t`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
+          },
         );
       }
       checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
@@ -52,8 +63,12 @@ export const computeRelationConnectQueryConfigs = (
         objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
 
       if (!isDefined(targetObjectMetadata)) {
-        throw new Error(
+        throw new ConnectException(
           `Target object metadata not found for ${connectFieldName}`,
+          ConnectExceptionCode.TARGET_OBJECT_METADATA_NOT_FOUND,
+          {
+            userFriendlyMessage: t`Target object metadata not found for ${connectFieldName}`,
+          },
         );
       }
 
@@ -174,8 +189,12 @@ const checkUniqueConstraintFullyPopulated = (
   );
 
   if (!isDefined(uniqueConstraintFieldFullyPopulated)) {
-    throw new Error(
+    throw new ConnectException(
       `Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
+      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      {
+        userFriendlyMessage: t`Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
+      },
     );
   }
 
@@ -183,8 +202,12 @@ const checkUniqueConstraintFullyPopulated = (
     uniqueConstraintFieldFullyPopulated.length !==
     Object.keys(connectObject.connect.where).length
   ) {
-    throw new Error(
+    throw new ConnectException(
       `Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
+      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      {
+        userFriendlyMessage: t`Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
+      },
     );
   }
 
@@ -199,7 +222,13 @@ const checkNoRelationFieldConflictOrThrow = (
     isDefined(entity[fieldName]) && isDefined(entity[`${fieldName}Id`]);
 
   if (hasRelationFieldConflict) {
-    throw new Error(`${fieldName} and ${fieldName}Id cannot be both provided.`);
+    throw new ConnectException(
+      `${fieldName} and ${fieldName}Id cannot be both provided.`,
+      ConnectExceptionCode.CONNECT_NOT_ALLOWED,
+      {
+        userFriendlyMessage: t`${fieldName} and ${fieldName}Id cannot be both provided.`,
+      },
+    );
   }
 };
 
@@ -240,8 +269,14 @@ const checkUniqueConstraintsAreSameOrThrow = (
       uniqueConstraintFields,
     )
   ) {
-    throw new Error(
+    const connectFieldName = relationConnectQueryConfig.connectFieldName;
+
+    throw new ConnectException(
       `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}.`,
+      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      {
+        userFriendlyMessage: t`Expected the same constraint fields to be used consistently across all operations for ${connectFieldName}.`,
+      },
     );
   }
 };

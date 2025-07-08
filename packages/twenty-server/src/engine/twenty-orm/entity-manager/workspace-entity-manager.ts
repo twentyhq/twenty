@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,6 +40,10 @@ import {
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import {
+  ConnectException,
+  ConnectExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/connect.exception';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
@@ -1408,8 +1413,15 @@ export class WorkspaceEntityManager extends EntityManager {
       );
 
       if (recordToConnect.length !== 1) {
-        throw new Error(
-          `Expected 1 record to connect to ${connectQueryConfig.connectFieldName}, but found ${recordToConnect.length}.`,
+        const recordToConnectTotal = recordToConnect.length;
+        const connectFieldName = connectQueryConfig.connectFieldName;
+
+        throw new ConnectException(
+          `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
+          ConnectExceptionCode.RECORD_TO_CONNECT_NOT_FOUND,
+          {
+            userFriendlyMessage: t`Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
+          },
         );
       }
 
