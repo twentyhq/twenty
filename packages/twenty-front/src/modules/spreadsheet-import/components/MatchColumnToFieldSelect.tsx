@@ -42,6 +42,10 @@ export const MatchColumnToFieldSelect = ({
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
 
+  const doNotImportOption = options.find(
+    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
+  );
+
   const handleFieldMetadataItemSelect = (
     selectedFieldMetadataItem: FieldMetadataItem,
   ) => {
@@ -95,17 +99,23 @@ export const MatchColumnToFieldSelect = ({
     }
   };
 
-  const handleClickOutside = () => setSelectedFieldMetadataItem(null);
-  const handleSubFieldBack = () => setSelectedFieldMetadataItem(null);
+  const handleClickOutside = () => {
+    setSelectedFieldMetadataItem(null);
+  };
+
+  const handleSubFieldBack = () => {
+    setSelectedFieldMetadataItem(null);
+  };
 
   const handleCancelSelectClick = () => {
     setSelectedFieldMetadataItem(null);
     closeDropdown(dropdownId);
   };
 
-  const doNotImportOption = options.find(
-    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
-  );
+  const shouldShowSubField =
+    isDefined(selectedFieldMetadataItem) &&
+    isCompositeFieldType(selectedFieldMetadataItem.type);
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -119,8 +129,7 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        isDefined(selectedFieldMetadataItem) &&
-        isCompositeFieldType(selectedFieldMetadataItem.type) ? (
+        shouldShowSubField ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
             fieldMetadataItem={selectedFieldMetadataItem}
             onSubFieldSelect={handleSubFieldSelect}
