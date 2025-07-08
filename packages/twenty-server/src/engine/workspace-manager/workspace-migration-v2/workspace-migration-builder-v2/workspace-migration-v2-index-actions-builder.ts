@@ -17,7 +17,7 @@ export const buildWorkspaceMigrationIndexActions = (
     deletedIndexMetadata,
     updatedIndexMetadata,
   } of objectMetadataDeletedCreatedUpdatedIndex) {
-    const updateFieldActions =
+    const updatedDeleteAndCreateIndexActions =
       updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
         ({ to, from }) => {
           const updates = compareTwoFlattenIndexMetadata({ from, to });
@@ -33,18 +33,18 @@ export const buildWorkspaceMigrationIndexActions = (
         },
       );
 
-    const createFieldAction = createdIndexMetadata.map(
+    const createIndexActions = createdIndexMetadata.map(
       getWorkspaceMigrationV2CreateIndexAction,
     );
-    const deleteFieldAction = deletedIndexMetadata.map(
+    const deleteIndexActions = deletedIndexMetadata.map(
       getWorkspaceMigrationV2DeleteIndexAction,
     );
 
     allUpdatedObjectMetadataIndexActions =
       allUpdatedObjectMetadataIndexActions.concat([
-        ...createFieldAction,
-        ...deleteFieldAction,
-        ...updateFieldActions,
+        ...createIndexActions,
+        ...deleteIndexActions,
+        ...updatedDeleteAndCreateIndexActions,
       ]);
   }
 

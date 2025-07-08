@@ -11,7 +11,7 @@ export type FlattenObjectMetadata = Partial<
 };
 
 // Could be renamed
-export type FlattenObjectMetdataWithoutFields = Omit<
+export type FlattenObjectMetadataWithoutFields = Omit<
   FlattenObjectMetadata,
   'flattenFieldMetadatas' | 'flattenIndexMetadatas'
 >;
