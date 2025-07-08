@@ -48,6 +48,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -1374,7 +1375,7 @@ export class WorkspaceEntityManager extends EntityManager {
         undefined,
         permissionOptions,
       )
-        .select('*')
+        .select(getRecordToConnectFields(connectQueryConfig))
         .where(clause, parameters)
         .getRawMany();
 
