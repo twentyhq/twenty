@@ -64,10 +64,10 @@ export class FieldPermissionEntity {
   fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: true, type: 'boolean' })
-  canReadFieldValue?: boolean;
+  canReadFieldValue?: boolean | null;
 
   @IsFalseOrNull()
-  @Column({ nullable: true, type: 'boolean', default: false })
+  @Column({ nullable: true, type: 'boolean' })
   canUpdateFieldValue?: boolean | null;
 
   @Column({ nullable: false, type: 'uuid' })

@@ -37,11 +37,11 @@ export class FieldPermissionInput {
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   canReadFieldValue?: boolean | null;
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   canUpdateFieldValue?: boolean | null;
 }

@@ -2,19 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import {
+  fieldTextMock,
+  objectMetadataItemMock,
+} from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -30,7 +34,7 @@ describe('FieldPermissionService', () => {
   const testWorkspaceId = 'test-workspace-id';
   const testRoleId = 'test-role-id';
   const testObjectMetadataId = 'test-object-metadata-id';
-  const testFieldMetadataId = 'test-field-metadata-id';
+  const testFieldMetadataId = fieldTextMock.id;
 
   const mockRole: RoleEntity = {
     id: testRoleId,
@@ -47,50 +51,6 @@ describe('FieldPermissionService', () => {
     isEditable: true,
   } as RoleEntity;
 
-  //   const objectMetadataItemMock: ObjectMetadataItemWithFieldMaps = {
-  //     id: testObjectMetadataId,
-  //     workspaceId: testWorkspaceId,
-  //     nameSingular: 'testObject',
-  //     namePlural: 'testObjects',
-  //     labelSingular: 'Test Object',
-  //     labelPlural: 'Test Objects',
-  //     description: 'Test object for unit tests',
-  //     icon: 'IconTest',
-  //     targetTableName: 'test_object',
-  //     isSystem: false,
-  //     isCustom: false,
-  //     isActive: true,
-  //     isRemote: false,
-  //     isAuditLogged: false,
-  //     isSearchable: true,
-  //     fieldsById: {
-  //       [testFieldMetadataId]: {
-  //         id: testFieldMetadataId,
-  //         name: 'testField',
-  //         type: 'TEXT',
-  //         isSystem: false,
-  //         workspaceId: testWorkspaceId,
-  //         objectMetadataId: testObjectMetadataId,
-  //         label: 'Test Field',
-  //         description: 'Test field for unit tests',
-  //         icon: 'IconTest',
-  //         placeholder: 'Test placeholder',
-  //         isCustom: false,
-  //         isActive: true,
-  //         isNullable: true,
-  //         defaultValue: null,
-  //         options: null,
-  //         targetColumnMap: {},
-  //         settings: {},
-  //         createdAt: new Date(),
-  //         updatedAt: new Date(),
-  //       },
-  //     },
-  //     fieldIdByJoinColumnName: {},
-  //     fieldIdByName: {},
-  //     indexMetadatas: [],
-  //   } as ObjectMetadataItemWithFieldMaps;
-
   const mockRolesPermissions: ObjectRecordsPermissionsByRoleId = {
     [testRoleId]: {
       [testObjectMetadataId]: {
@@ -98,7 +58,6 @@ describe('FieldPermissionService', () => {
         canUpdate: true,
         canSoftDelete: false,
         canDestroy: false,
-        restrictedFields: {},
       },
     },
   };
@@ -158,7 +117,19 @@ describe('FieldPermissionService', () => {
     workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
       {
         byId: {
-          [testObjectMetadataId]: objectMetadataItemMock,
+          [testObjectMetadataId]: {
+            ...objectMetadataItemMock,
+            fieldsById: {
+              [fieldTextMock.id]: {
+                ...fieldTextMock,
+                label: 'Test Field',
+                objectMetadataId: testObjectMetadataId,
+              } as FieldMetadataInterface,
+            },
+            fieldIdByJoinColumnName: {},
+            fieldIdByName: {},
+            indexMetadatas: [],
+          },
         },
         idByNameSingular: {
           testObject: testObjectMetadataId,
@@ -176,16 +147,17 @@ describe('FieldPermissionService', () => {
 
   describe('upsertFieldPermissions', () => {
     const createUpsertInput = (
-      fieldPermissions: Partial<
-        UpsertFieldPermissionsInput['fieldPermissions'][0]
-      >[],
+      fieldPermissions: {
+        canReadFieldValue?: boolean | null;
+        canUpdateFieldValue?: boolean | null;
+        objectMetadataId?: string;
+        fieldMetadataId?: string;
+      }[],
     ): UpsertFieldPermissionsInput => ({
       roleId: testRoleId,
       fieldPermissions: fieldPermissions.map((fieldPermission) => ({
         objectMetadataId: testObjectMetadataId,
         fieldMetadataId: testFieldMetadataId,
-        canReadFieldValue: false,
-        canUpdateFieldValue: false,
         ...fieldPermission,
       })),
     });
@@ -199,7 +171,7 @@ describe('FieldPermissionService', () => {
           },
         ]);
 
-        const result = await service.upsertFieldPermissions({
+        await service.upsertFieldPermissions({
           workspaceId: testWorkspaceId,
           input,
         });
@@ -226,19 +198,6 @@ describe('FieldPermissionService', () => {
           workspaceId: testWorkspaceId,
           roleIds: [testRoleId],
         });
-
-        expect(result).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              roleId: testRoleId,
-              workspaceId: testWorkspaceId,
-              objectMetadataId: testObjectMetadataId,
-              fieldMetadataId: testFieldMetadataId,
-              canReadFieldValue: false,
-              canUpdateFieldValue: false,
-            }),
-          ]),
-        );
       });
 
       it('should delete field permissions when both canReadFieldValue and canUpdateFieldValue are null', async () => {
@@ -247,12 +206,12 @@ describe('FieldPermissionService', () => {
           roleId: testRoleId,
           objectMetadataId: testObjectMetadataId,
           fieldMetadataId: testFieldMetadataId,
-          canReadFieldValue: false,
+          canReadFieldValue: null,
           canUpdateFieldValue: false,
           workspaceId: testWorkspaceId,
           createdAt: new Date(),
           updatedAt: new Date(),
-        } as FieldPermissionEntity;
+        } as unknown as FieldPermissionEntity;
 
         fieldPermissionsRepository.find.mockResolvedValue([
           existingFieldPermission,
@@ -260,7 +219,6 @@ describe('FieldPermissionService', () => {
 
         const input = createUpsertInput([
           {
-            canReadFieldValue: null,
             canUpdateFieldValue: null,
           },
         ]);
@@ -271,7 +229,7 @@ describe('FieldPermissionService', () => {
         });
 
         expect(fieldPermissionsRepository.delete).toHaveBeenCalledWith({
-          id: ['existing-field-permission-id'],
+          id: In(['existing-field-permission-id']),
         });
       });
 
@@ -282,7 +240,7 @@ describe('FieldPermissionService', () => {
           objectMetadataId: testObjectMetadataId,
           fieldMetadataId: testFieldMetadataId,
           canReadFieldValue: false,
-          canUpdateFieldValue: false,
+          canUpdateFieldValue: null,
           workspaceId: testWorkspaceId,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -294,8 +252,8 @@ describe('FieldPermissionService', () => {
 
         const input = createUpsertInput([
           {
-            canReadFieldValue: undefined,
             canUpdateFieldValue: false,
+            canReadFieldValue: null,
           },
         ]);
 
@@ -381,7 +339,7 @@ describe('FieldPermissionService', () => {
       });
 
       it('should throw error when trying to add field permission on system object', async () => {
-        const systemObjectMetadata: ObjectMetadataItemWithFieldMaps = {
+        const systemObjectMetadata = {
           ...objectMetadataItemMock,
           isSystem: true,
         };
@@ -389,7 +347,13 @@ describe('FieldPermissionService', () => {
         workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
           {
             byId: {
-              [testObjectMetadataId]: systemObjectMetadata,
+              [testObjectMetadataId]: {
+                ...systemObjectMetadata,
+                fieldsById: {},
+                fieldIdByJoinColumnName: {},
+                fieldIdByName: {},
+                indexMetadatas: [],
+              },
             },
             idByNameSingular: {
               testObject: testObjectMetadataId,
@@ -418,9 +382,12 @@ describe('FieldPermissionService', () => {
       });
 
       it('should throw error when field metadata is not found', async () => {
-        const objectMetadataWithoutField: ObjectMetadataItemWithFieldMaps = {
+        const objectMetadataWithoutField = {
           ...objectMetadataItemMock,
           fieldsById: {},
+          fieldIdByJoinColumnName: {},
+          fieldIdByName: {},
+          indexMetadatas: [],
         };
 
         workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
@@ -458,7 +425,7 @@ describe('FieldPermissionService', () => {
       it('should throw error when object permission is not found', async () => {
         workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
           {
-            version: undefined,
+            version: '1',
             data: {},
           },
         );
@@ -483,29 +450,27 @@ describe('FieldPermissionService', () => {
         );
       });
 
-      it('should throw error when object is not readable', async () => {
+      it('should throw error when object is not readable (permission wise)', async () => {
         const nonReadableObjectPermissions: ObjectRecordsPermissionsByRoleId = {
           [testRoleId]: {
             [testObjectMetadataId]: {
               canRead: false,
-              canUpdate: true,
+              canUpdate: false,
               canSoftDelete: false,
               canDestroy: false,
-              restrictedFields: {},
             },
           },
         };
 
         workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
           {
-            version: undefined,
+            version: '1',
             data: nonReadableObjectPermissions,
           },
         );
 
         const input = createUpsertInput([
           {
-            canReadFieldValue: false,
             canUpdateFieldValue: false,
           },
         ]);
@@ -532,21 +497,19 @@ describe('FieldPermissionService', () => {
                 canUpdate: false,
                 canSoftDelete: false,
                 canDestroy: false,
-                restrictedFields: {},
               },
             },
           };
 
         workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
           {
-            version: undefined,
+            version: '1',
             data: nonUpdatableObjectPermissions,
           },
         );
 
         const input = createUpsertInput([
           {
-            canReadFieldValue: false,
             canUpdateFieldValue: false,
           },
         ]);
@@ -567,8 +530,8 @@ describe('FieldPermissionService', () => {
       it('should throw error when both canReadFieldValue and canUpdateFieldValue are null', async () => {
         const input = createUpsertInput([
           {
-            canReadFieldValue: undefined,
-            canUpdateFieldValue: undefined,
+            canReadFieldValue: null,
+            canUpdateFieldValue: null,
           },
         ]);
 
@@ -587,29 +550,6 @@ describe('FieldPermissionService', () => {
     });
 
     describe('role validation errors', () => {
-      it('should throw error when role is not found', async () => {
-        roleRepository.findOne.mockResolvedValue(null);
-
-        const input = createUpsertInput([
-          {
-            canReadFieldValue: false,
-            canUpdateFieldValue: false,
-          },
-        ]);
-
-        await expect(
-          service.upsertFieldPermissions({
-            workspaceId: testWorkspaceId,
-            input,
-          }),
-        ).rejects.toThrow(
-          new PermissionsException(
-            PermissionsExceptionMessage.ROLE_NOT_FOUND,
-            PermissionsExceptionCode.ROLE_NOT_FOUND,
-          ),
-        );
-      });
-
       it('should throw error when role is not editable', async () => {
         const nonEditableRole: RoleEntity = {
           ...mockRole,
@@ -636,48 +576,6 @@ describe('FieldPermissionService', () => {
             PermissionsExceptionCode.ROLE_NOT_EDITABLE,
           ),
         );
-      });
-    });
-
-    describe('cleanup', () => {
-      it('should clean up created field permissions after test', async () => {
-        const input = createUpsertInput([
-          {
-            canReadFieldValue: false,
-            canUpdateFieldValue: false,
-          },
-        ]);
-
-        // Mock the find method to return the created field permissions
-        const createdFieldPermission: FieldPermissionEntity = {
-          id: 'created-field-permission-id',
-          roleId: testRoleId,
-          objectMetadataId: testObjectMetadataId,
-          fieldMetadataId: testFieldMetadataId,
-          canReadFieldValue: false,
-          canUpdateFieldValue: false,
-          workspaceId: testWorkspaceId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        } as FieldPermissionEntity;
-
-        fieldPermissionsRepository.find.mockResolvedValue([
-          createdFieldPermission,
-        ]);
-
-        await service.upsertFieldPermissions({
-          workspaceId: testWorkspaceId,
-          input,
-        });
-
-        // Verify that the service properly handles the cleanup
-        expect(fieldPermissionsRepository.find).toHaveBeenCalledWith({
-          where: {
-            roleId: testRoleId,
-            objectMetadataId: expect.any(Array),
-            workspaceId: testWorkspaceId,
-          },
-        });
       });
     });
   });

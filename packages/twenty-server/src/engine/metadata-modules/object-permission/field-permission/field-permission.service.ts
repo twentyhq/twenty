@@ -95,9 +95,11 @@ export class FieldPermissionService {
       conflictPaths: ['fieldMetadataId', 'roleId'],
     });
 
-    await this.fieldPermissionsRepository.delete({
-      id: In(fieldPermissionsToDeleteIds),
-    });
+    if (fieldPermissionsToDeleteIds.length > 0) {
+      await this.fieldPermissionsRepository.delete({
+        id: In(fieldPermissionsToDeleteIds),
+      });
+    }
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
@@ -129,8 +131,12 @@ export class FieldPermissionService {
     role: RoleEntity;
   }) {
     if (
-      fieldPermission.canUpdateFieldValue === true ||
-      fieldPermission.canReadFieldValue === true
+      ('canUpdateFieldValue' in fieldPermission &&
+        fieldPermission.canUpdateFieldValue !== null &&
+        fieldPermission.canUpdateFieldValue !== false) ||
+      ('canReadFieldValue' in fieldPermission &&
+        fieldPermission.canReadFieldValue !== null &&
+        fieldPermission.canReadFieldValue !== false)
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ONLY_FIELD_RESTRICTION_ALLOWED,
@@ -256,11 +262,13 @@ export class FieldPermissionService {
 
     if (existingFieldPermission) {
       const finalCanReadFieldValue =
-        fieldPermission.canReadFieldValue ??
-        existingFieldPermission.canReadFieldValue;
+        'canReadFieldValue' in fieldPermission
+          ? fieldPermission.canReadFieldValue
+          : existingFieldPermission.canReadFieldValue;
       const finalCanUpdateFieldValue =
-        fieldPermission.canUpdateFieldValue ??
-        existingFieldPermission.canUpdateFieldValue;
+        'canUpdateFieldValue' in fieldPermission
+          ? fieldPermission.canUpdateFieldValue
+          : existingFieldPermission.canUpdateFieldValue;
 
       if (
         finalCanReadFieldValue === null &&
