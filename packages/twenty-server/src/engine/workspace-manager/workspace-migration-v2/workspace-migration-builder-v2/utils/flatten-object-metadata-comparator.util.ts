@@ -2,9 +2,9 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const workspaceMigrationObjectInputPropertiesToCompare = [
@@ -17,10 +17,10 @@ const workspaceMigrationObjectInputPropertiesToCompare = [
   'namePlural',
   'nameSingular',
   'standardOverrides', // Only if standard
-] as const satisfies (keyof WorkspaceMigrationObjectInput)[];
+] as const satisfies (keyof FlattenObjectMetadata)[];
 export type WorkspaceMigrationObjectInputPropertiesToCompare =
   (typeof workspaceMigrationObjectInputPropertiesToCompare)[number];
-type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
+type ObjectWorkspaceMigrationUpdate = FromTo<FlattenObjectMetadata>;
 
 export const compareTwoWorkspaceMigrationObjectInput = ({
   from,

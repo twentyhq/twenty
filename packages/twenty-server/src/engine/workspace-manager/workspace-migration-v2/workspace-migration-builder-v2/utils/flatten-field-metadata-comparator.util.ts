@@ -2,9 +2,9 @@ import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
-import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const workspaceMigrationFieldInputPropertiesToCompare = [
@@ -18,7 +18,7 @@ const workspaceMigrationFieldInputPropertiesToCompare = [
   'name',
   'options',
   'standardOverrides',
-] as const satisfies (keyof WorkspaceMigrationFieldInput)[];
+] as const satisfies (keyof FlattenFieldMetadata)[];
 export type WorkspaceMigrationFieldInputPropertiesToCompare =
   (typeof workspaceMigrationFieldInputPropertiesToCompare)[number];
 
@@ -38,14 +38,15 @@ const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   ].includes(type);
 };
 
-const compareTwoWorkspaceMigrationFieldInput = ({
+type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<FlattenFieldMetadata>;
+export const compareTwoFlattenFieldMetadata = ({
   from,
   to,
-}: FromTo<WorkspaceMigrationFieldInput>) => {
+}: GetWorkspaceMigrationUpdateFieldActionArgs) => {
   const compareFieldMetadataOptions = {
     shouldIgnoreProperty: (
       property: string,
-      fieldMetadata: WorkspaceMigrationFieldInput,
+      fieldMetadata: FlattenFieldMetadata,
     ) => {
       if (
         !workspaceMigrationFieldInputPropertiesToCompare.includes(
@@ -76,42 +77,27 @@ const compareTwoWorkspaceMigrationFieldInput = ({
     compareFieldMetadataOptions,
   );
 
-  const fieldMetadataDifference = diff(fromCompare, toCompare);
+  const flattenFieldMetadataDifferences = diff(fromCompare, toCompare);
 
-  return fieldMetadataDifference;
-};
+  return flattenFieldMetadataDifferences.flatMap<
+    UpdateFieldAction['updates'][number]
+  >((difference) => {
+    switch (difference.type) {
+      case 'CHANGE': {
+        const { oldValue, path, value } = difference;
 
-type GetWorkspaceMigrationUpdateFieldActionArgs =
-  FromTo<WorkspaceMigrationFieldInput>;
-export const compareFieldMetadataInput = ({
-  from,
-  to,
-}: GetWorkspaceMigrationUpdateFieldActionArgs) => {
-  const fieldMetadataDifferences = compareTwoWorkspaceMigrationFieldInput({
-    from,
-    to,
-  });
-
-  return fieldMetadataDifferences.flatMap<UpdateFieldAction['updates'][number]>(
-    (difference) => {
-      switch (difference.type) {
-        case 'CHANGE': {
-          const { oldValue, path, value } = difference;
-
-          return {
-            from: oldValue,
-            to: value,
-            property:
-              path[0] as WorkspaceMigrationFieldInputPropertiesToCompare,
-          };
-        }
-        case 'CREATE':
-        case 'REMOVE':
-        default: {
-          // Should never occurs, we should only provide null never undefined and so on
-          return [];
-        }
+        return {
+          from: oldValue,
+          to: value,
+          property: path[0] as WorkspaceMigrationFieldInputPropertiesToCompare,
+        };
       }
-    },
-  );
+      case 'CREATE':
+      case 'REMOVE':
+      default: {
+        // Should never occurs, we should only provide null never undefined and so on
+        return [];
+      }
+    }
+  });
 };
