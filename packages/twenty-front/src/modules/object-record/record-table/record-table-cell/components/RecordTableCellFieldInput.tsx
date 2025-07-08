@@ -41,8 +41,8 @@ export const RecordTableCellFieldInput = () => {
         if (hotkeyScope.scope !== TableHotkeyScope.CellEditMode) {
           return;
         }
+        event.preventDefault();
         event.stopImmediatePropagation();
-
         persistField();
         onCloseTableCell();
       },

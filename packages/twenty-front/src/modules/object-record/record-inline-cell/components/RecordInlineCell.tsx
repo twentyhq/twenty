@@ -136,7 +136,7 @@ export const RecordInlineCell = ({
         if (hotkeyScope.scope !== DEFAULT_CELL_SCOPE.scope) {
           return;
         }
-
+        event.preventDefault();
         event.stopImmediatePropagation();
 
         persistField();

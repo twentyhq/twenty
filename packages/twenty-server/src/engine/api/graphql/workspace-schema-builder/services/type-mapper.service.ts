@@ -15,7 +15,10 @@ import {
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
@@ -62,7 +65,11 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
-    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
+    if (
+      isIdField ||
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+    ) {
       return GraphQLID;
     }
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
@@ -75,7 +82,7 @@ export class TypeMapperService {
         FieldMetadataType.NUMBER,
         getNumberScalarType(
           (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.dataType,
+            ?.dataType ?? NumberDataType.FLOAT,
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
@@ -97,7 +104,11 @@ export class TypeMapperService {
     settings?: FieldMetadataSettings<FieldMetadataType>,
     isIdField?: boolean,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
-    if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
+    if (
+      isIdField ||
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+    ) {
       return UUIDFilterType;
     }
 
@@ -137,6 +148,7 @@ export class TypeMapperService {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.RELATION, OrderByDirectionType],
+      [FieldMetadataType.MORPH_RELATION, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
       [FieldMetadataType.DATE, OrderByDirectionType],

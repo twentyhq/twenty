@@ -1076,6 +1076,12 @@ msgstr ""
 msgid "Change to Yearly?"
 msgstr ""
 
+#. js-lingui-id: AHZflp
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Chat"
+msgstr ""
+
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -2296,6 +2302,11 @@ msgstr "Англійська"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Насолоджуйтеся {withCreditCardTrialPeriodDuration}-денним безкоштовним пробним періодом"
+
+#. js-lingui-id: 20wg2g
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Enter a question..."
+msgstr ""
 
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -5155,6 +5166,11 @@ msgstr ""
 msgid "Select your preferred language"
 msgstr "Оберіть бажану мову"
 
+#. js-lingui-id: JlFcis
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Send"
+msgstr ""
+
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
@@ -5396,6 +5412,11 @@ msgstr "Стадії"
 #. js-lingui-id: TJBHlP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "Standard"
+msgstr ""
+
+#. js-lingui-id: GbQzZA
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
 #. js-lingui-id: uAQUqI
