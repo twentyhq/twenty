@@ -165,7 +165,10 @@ export const SettingsDataModelFieldIconLabelForm = ({
               onChange={(value) => {
                 onChange(value);
                 trigger('label');
-                if (isLabelSyncedWithName === true) {
+                if (
+                  isLabelSyncedWithName === true &&
+                  fieldMetadataItem?.isCustom === true
+                ) {
                   fillNameFromLabel(value);
                 }
               }}
