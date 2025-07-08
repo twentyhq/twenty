@@ -7,6 +7,7 @@ import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'sr
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
+import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-index-actions-builder';
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
@@ -48,11 +49,18 @@ export class WorkspaceMigrationBuilderV2Service {
         updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix,
       );
 
+    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
+      createdObjectMetadata,
+      deletedObjectMetadata,
+      updatedObjectMetadata,
+    });
+
     return {
       actions: [
         ...objectWorkspaceMigrationActions,
         ...createdObjectWorkspaceMigrationCreateFieldActions,
         ...fieldWorkspaceMigrationActions,
+        ...indexWorkspaceMigrationActions,
       ],
     };
   }
