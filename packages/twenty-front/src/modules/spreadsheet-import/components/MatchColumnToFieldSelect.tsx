@@ -88,10 +88,6 @@ export const MatchColumnToFieldSelect = ({
     closeDropdown(dropdownId);
   };
 
-  const doNotImportOption = options.find(
-    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
-  );
-
   const handleDoNotImportSelect = () => {
     if (isDefined(doNotImportOption)) {
       onChange(doNotImportOption);
@@ -99,14 +95,17 @@ export const MatchColumnToFieldSelect = ({
     }
   };
 
+  const handleClickOutside = () => setSelectedFieldMetadataItem(null);
+  const handleSubFieldBack = () => setSelectedFieldMetadataItem(null);
+
   const handleCancelSelectClick = () => {
     setSelectedFieldMetadataItem(null);
     closeDropdown(dropdownId);
   };
 
-  const handleClickOutside = () => setSelectedFieldMetadataItem(null);
-  const handleSubFieldBack = () => setSelectedFieldMetadataItem(null);
-
+  const doNotImportOption = options.find(
+    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
+  );
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -120,7 +119,7 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        selectedFieldMetadataItem &&
+        isDefined(selectedFieldMetadataItem) &&
         isCompositeFieldType(selectedFieldMetadataItem.type) ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
             fieldMetadataItem={selectedFieldMetadataItem}
