@@ -38,7 +38,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
 
       return {
         type: 'update_object',
-        objectMetadataInput: to,
+        flattenObjectMetadata: to,
         updates: objectUpdatedProperties,
       };
     });

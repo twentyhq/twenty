@@ -10,7 +10,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = {
-  objectMetadataInput: FlattenObjectMetdataWithoutFields;
+  flattenObjectMetadata: FlattenObjectMetdataWithoutFields;
 } & CustomDeletedCreatedUpdatedMatrix<'indexMetadata', FlattenIndexMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = (
@@ -26,7 +26,7 @@ export const computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = (
     });
 
     matrixAccumulator.push({
-      objectMetadataInput: to,
+      flattenObjectMetadata: to,
       createdIndexMetadata: indexMetadataMatrix.created,
       deletedIndexMetadata: indexMetadataMatrix.deleted,
       updatedIndexMetadata: indexMetadataMatrix.updated,

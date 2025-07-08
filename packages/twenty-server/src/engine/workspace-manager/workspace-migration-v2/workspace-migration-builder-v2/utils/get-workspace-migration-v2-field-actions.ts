@@ -6,18 +6,18 @@ import {
 
 export const getWorkspaceMigrationV2FieldCreateAction = ({
   fieldMetadataInput,
-  objectMetadataInput,
+  flattenObjectMetadata,
 }: FieldAndObjectMetadataWorkspaceMigrationInput): CreateFieldAction => ({
   type: 'create_field',
   fieldMetadataInput,
-  objectMetadataInput,
+  flattenObjectMetadata,
 });
 
 export const getWorkspaceMigrationV2FieldDeleteAction = ({
   fieldMetadataInput,
-  objectMetadataInput,
+  flattenObjectMetadata,
 }: FieldAndObjectMetadataWorkspaceMigrationInput): DeleteFieldAction => ({
   type: 'delete_field',
   fieldMetadataInput,
-  objectMetadataInput,
+  flattenObjectMetadata,
 });

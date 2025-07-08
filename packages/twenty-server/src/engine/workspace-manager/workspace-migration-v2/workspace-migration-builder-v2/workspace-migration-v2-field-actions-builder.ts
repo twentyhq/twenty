@@ -19,7 +19,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
     createdFieldMetadata,
     deletedFieldMetadata,
     updatedFieldMetadata,
-    objectMetadataInput,
+    flattenObjectMetadata,
   } of objectMetadataDeletedCreatedUpdatedFields) {
     const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
       ({ from, to }) => {
@@ -35,7 +35,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
         return {
           type: 'update_field',
           fieldMetadataInput: to,
-          objectMetadataInput,
+          flattenObjectMetadata,
           updates,
         };
       },
@@ -44,14 +44,14 @@ export const buildWorkspaceMigrationV2FieldActions = (
     const createFieldAction = createdFieldMetadata.map((fieldMetadataInput) =>
       getWorkspaceMigrationV2FieldCreateAction({
         fieldMetadataInput,
-        objectMetadataInput,
+        flattenObjectMetadata,
       }),
     );
 
     const deleteFieldAction = deletedFieldMetadata.map((fieldMetadataInput) =>
       getWorkspaceMigrationV2FieldDeleteAction({
         fieldMetadataInput,
-        objectMetadataInput,
+        flattenObjectMetadata,
       }),
     );
 
