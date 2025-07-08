@@ -4,15 +4,15 @@ import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-mig
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flattenedIndexMetadataPropertiesToCompare = [
+const flattenIndexMetadataPropertiesToCompare = [
   'flattenIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
   'indexType',
   'indexWhereClause',
   'isUnique',
   'name',
 ] as const satisfies (keyof FlattenIndexMetadata)[];
-type FlattenedIndexMetadataPropertiesToCompare =
-  (typeof flattenedIndexMetadataPropertiesToCompare)[number];
+type FlattenIndexMetadataPropertiesToCompare =
+  (typeof flattenIndexMetadataPropertiesToCompare)[number];
 
 // Should also handle indexFieldMetadata comparison ?
 export const compareTwoFlattenedIndexMetadata = ({
@@ -21,8 +21,8 @@ export const compareTwoFlattenedIndexMetadata = ({
 }: FromTo<FlattenIndexMetadata>) => {
   const transformOptions = {
     shouldIgnoreProperty: (property: string) =>
-      !flattenedIndexMetadataPropertiesToCompare.includes(
-        property as FlattenedIndexMetadataPropertiesToCompare,
+      !flattenIndexMetadataPropertiesToCompare.includes(
+        property as FlattenIndexMetadataPropertiesToCompare,
       ),
   };
 

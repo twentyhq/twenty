@@ -1,7 +1,7 @@
 import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
 import {
   FlattenObjectMetadata,
-  FlattenedObjectMetdataWithoutFields,
+  FlattenObjectMetdataWithoutFields,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = {
-  objectMetadataInput: FlattenedObjectMetdataWithoutFields;
+  objectMetadataInput: FlattenObjectMetdataWithoutFields;
 } & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlattenFieldMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (

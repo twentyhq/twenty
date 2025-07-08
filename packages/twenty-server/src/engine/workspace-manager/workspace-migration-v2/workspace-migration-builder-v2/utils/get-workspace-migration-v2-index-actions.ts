@@ -5,15 +5,15 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
 
 export const getWorkspaceMigrationV2CreateIndexAction = (
-  flattenedIndexMetadata: FlattenIndexMetadata,
+  flattenIndexMetadata: FlattenIndexMetadata,
 ): CreateIndexAction => ({
   type: 'create_index',
-  flattenedIndexMetadata,
+  flattenIndexMetadata,
 });
 
 export const getWorkspaceMigrationV2DeleteIndexAction = (
-  flattenedIndexMetadata: FlattenIndexMetadata,
+  flattenIndexMetadata: FlattenIndexMetadata,
 ): DeleteIndexAction => ({
   type: 'delete_index',
-  flattenedIndexMetadata,
+  flattenIndexMetadata,
 });

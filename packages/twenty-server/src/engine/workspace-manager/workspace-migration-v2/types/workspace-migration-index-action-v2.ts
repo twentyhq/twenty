@@ -2,12 +2,12 @@ import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-mig
 
 export type CreateIndexAction = {
   type: 'create_index';
-  flattenedIndexMetadata: FlattenIndexMetadata;
+  flattenIndexMetadata: FlattenIndexMetadata;
 };
 
 export type DeleteIndexAction = {
   type: 'delete_index';
-  flattenedIndexMetadata: FlattenIndexMetadata;
+  flattenIndexMetadata: FlattenIndexMetadata;
 };
 
 export type WorkspaceMigrationIndexActionV2 =
