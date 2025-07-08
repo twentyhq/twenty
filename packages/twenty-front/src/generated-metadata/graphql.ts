@@ -463,6 +463,7 @@ export type CreateFieldInput = {
   isSystem?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
   name: Scalars['String'];
   objectMetadataId: Scalars['String'];
   options?: InputMaybe<Scalars['JSON']>;
@@ -679,6 +680,7 @@ export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
+  IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
@@ -747,6 +749,7 @@ export enum FieldMetadataType {
   EMAILS = 'EMAILS',
   FULL_NAME = 'FULL_NAME',
   LINKS = 'LINKS',
+  MORPH_RELATION = 'MORPH_RELATION',
   MULTI_SELECT = 'MULTI_SELECT',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
