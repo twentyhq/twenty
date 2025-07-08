@@ -3,7 +3,7 @@ import { Injectable, ValidationError } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -92,9 +92,9 @@ export class FieldMetadataRelationService {
     });
 
     const targetFieldMetadataToCreateWithRelation =
-      await this.addCustomRelationFieldMetadataForCreation(
-        targetFieldMetadataToCreate,
-        {
+      await this.addCustomRelationFieldMetadataForCreation({
+        fieldMetadataInput: targetFieldMetadataToCreate,
+        relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,
           targetFieldLabel: fieldMetadataInput.label,
           targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
@@ -103,7 +103,8 @@ export class FieldMetadataRelationService {
               ? RelationType.MANY_TO_ONE
               : RelationType.ONE_TO_MANY,
         },
-      );
+        objectMetadata,
+      });
 
     // todo better type
     const targetFieldMetadataToCreateWithRelationWithId = {
@@ -274,10 +275,15 @@ export class FieldMetadataRelationService {
     });
   }
 
-  addCustomRelationFieldMetadataForCreation(
-    fieldMetadataInput: CreateFieldInput,
-    relationCreationPayload: CreateFieldInput['relationCreationPayload'],
-  ) {
+  addCustomRelationFieldMetadataForCreation({
+    fieldMetadataInput,
+    relationCreationPayload,
+    objectMetadata,
+  }: {
+    fieldMetadataInput: CreateFieldInput;
+    relationCreationPayload: CreateFieldInput['relationCreationPayload'];
+    objectMetadata: ObjectMetadataItemWithFieldMaps;
+  }) {
     const isRelation =
       isFieldMetadataInterfaceOfType(
         fieldMetadataInput,
@@ -296,6 +302,8 @@ export class FieldMetadataRelationService {
 
     const defaultIcon = 'IconRelationOneToMany';
 
+    const joinColumnName = `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`;
+
     return {
       ...fieldMetadataInput,
       icon: fieldMetadataInput.icon ?? defaultIcon,
@@ -313,7 +321,7 @@ export class FieldMetadataRelationService {
           ? {
               relationType: RelationType.MANY_TO_ONE,
               onDelete: RelationOnDeleteAction.SET_NULL,
-              joinColumnName: `${fieldMetadataInput.name}Id`,
+              joinColumnName,
             }
           : {}),
       },

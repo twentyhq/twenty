@@ -663,8 +663,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
       const relationFieldMetadataForCreate =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
-          fieldMetadataForCreate,
-          fieldMetadataInput.relationCreationPayload,
+          {
+            fieldMetadataInput: fieldMetadataForCreate,
+            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+            objectMetadata,
+          },
         );
 
       await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(

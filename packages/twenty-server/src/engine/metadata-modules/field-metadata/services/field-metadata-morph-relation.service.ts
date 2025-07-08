@@ -58,8 +58,11 @@ export class FieldMetadataMorphRelationService {
     for (const relation of morphRelationsCreationPayload) {
       const relationFieldMetadataForCreate =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
-          fieldMetadataForCreate,
-          relation,
+          {
+            fieldMetadataInput: fieldMetadataForCreate,
+            relationCreationPayload: relation,
+            objectMetadata,
+          },
         );
 
       // todo : enable this once we know why the ObjectMEtadataMaps is not filled
@@ -91,15 +94,18 @@ export class FieldMetadataMorphRelationService {
 
       const targetFieldMetadataToCreateWithRelation =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
-          targetFieldMetadataToCreate,
           {
-            targetObjectMetadataId: objectMetadata.id,
-            targetFieldLabel: fieldMetadataForCreate.label,
-            targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
-            type:
-              relation.type === RelationType.ONE_TO_MANY
-                ? RelationType.MANY_TO_ONE
-                : RelationType.ONE_TO_MANY,
+            fieldMetadataInput: targetFieldMetadataToCreate,
+            relationCreationPayload: {
+              targetObjectMetadataId: objectMetadata.id,
+              targetFieldLabel: fieldMetadataForCreate.label,
+              targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
+              type:
+                relation.type === RelationType.ONE_TO_MANY
+                  ? RelationType.MANY_TO_ONE
+                  : RelationType.ONE_TO_MANY,
+            },
+            objectMetadata,
           },
         );
 
