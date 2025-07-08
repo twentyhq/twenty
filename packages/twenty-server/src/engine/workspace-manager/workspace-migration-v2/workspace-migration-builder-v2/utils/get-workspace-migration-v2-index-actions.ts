@@ -2,7 +2,7 @@ import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-mig
 import {
   CreateIndexAction,
   DeleteIndexAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 
 export const getWorkspaceMigrationV2CreateIndexAction = (
   flattenIndexMetadata: FlattenIndexMetadata,

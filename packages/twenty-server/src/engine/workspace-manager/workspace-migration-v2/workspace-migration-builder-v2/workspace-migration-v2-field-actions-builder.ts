@@ -1,9 +1,9 @@
+import { compareTwoFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-field-metadata-comparator.util';
 import {
   UpdateFieldAction,
   WorkspaceMigrationFieldActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
-import { compareTwoFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/flatten-field-metadata-comparator.util';
 import {
   getWorkspaceMigrationV2FieldCreateAction,
   getWorkspaceMigrationV2FieldDeleteAction,
