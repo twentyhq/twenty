@@ -10,7 +10,7 @@ it('returns the expected name for a DATABASE_EVENT trigger', () => {
         outputSchema: {},
       },
     }),
-  ).toBe('Record is Created');
+  ).toBe('Record is created');
 });
 
 it('returns the expected name for a MANUAL trigger without a defined objectType', () => {
@@ -36,7 +36,7 @@ it('returns the expected name for a MANUAL trigger with a defined objectType', (
         outputSchema: {},
       },
     }),
-  ).toBe('Manual trigger for Company');
+  ).toBe('Manual trigger for company');
 });
 
 it('throws when an unknown trigger type is provided', () => {

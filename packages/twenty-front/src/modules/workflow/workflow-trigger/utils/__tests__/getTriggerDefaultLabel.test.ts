@@ -7,7 +7,7 @@ describe('getTriggerDefaultLabel', () => {
     it('returns "Record is Created" for created event', () => {
       const trigger: WorkflowTrigger = {
         type: 'DATABASE_EVENT',
-        name: 'Company Created',
+        name: 'Company created',
         settings: {
           eventName: 'company.created',
           outputSchema: {},
@@ -37,7 +37,7 @@ describe('getTriggerDefaultLabel', () => {
     it('returns "Record is Deleted" for deleted event', () => {
       const trigger: WorkflowTrigger = {
         type: 'DATABASE_EVENT',
-        name: 'Company Deleted',
+        name: 'Company deleted',
         settings: {
           eventName: 'company.deleted',
           outputSchema: {},
@@ -116,7 +116,7 @@ describe('getTriggerDefaultLabel', () => {
 
       const result = getTriggerDefaultLabel(trigger);
 
-      expect(result).toBe('On a Schedule');
+      expect(result).toBe('On a schedule');
     });
   });
 

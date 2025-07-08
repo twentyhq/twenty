@@ -24,7 +24,7 @@ export const getWorkflowDiagramTriggerNode = ({
       break;
     }
     case 'CRON': {
-      triggerDefaultLabel = 'On a Schedule';
+      triggerDefaultLabel = 'On a schedule';
       triggerIcon = getTriggerIcon(trigger);
 
       break;

@@ -11,7 +11,7 @@ export const OTHER_TRIGGER_TYPES: Array<{
     icon: 'IconHandMove',
   },
   {
-    defaultLabel: 'On a Schedule',
+    defaultLabel: 'On a schedule',
     type: 'CRON',
     icon: 'IconClock',
   },
