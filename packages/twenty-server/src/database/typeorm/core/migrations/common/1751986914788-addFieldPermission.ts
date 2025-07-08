@@ -14,9 +14,6 @@ export class AddFieldPermission1751986914788 implements MigrationInterface {
       `CREATE INDEX "IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."fieldPermission" ("workspaceId", "roleId") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspace" DROP COLUMN "locale"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."fieldMetadata" ADD CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE" UNIQUE ("name", "objectMetadataId", "workspaceId")`,
     );
     await queryRunner.query(
@@ -48,9 +45,6 @@ export class AddFieldPermission1751986914788 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "core"."fieldMetadata" DROP CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."userWorkspace" ADD "locale" character varying NOT NULL DEFAULT 'en'`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
