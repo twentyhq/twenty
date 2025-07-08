@@ -55,6 +55,9 @@ export class FilterWorkflowAction implements WorkflowAction {
     });
 
     return {
+      result: {
+        matchesFilter,
+      },
       shouldEndWorkflowRun: !matchesFilter,
     };
   }

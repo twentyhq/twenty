@@ -130,8 +130,7 @@ export class WorkflowExecutorWorkspaceService {
 
     const isValidActionOutput =
       actionOutputSuccess ||
-      stepToExecute.settings.errorHandlingOptions.continueOnFailure.value ||
-      actionOutput.shouldEndWorkflowRun === true;
+      stepToExecute.settings.errorHandlingOptions.continueOnFailure.value;
 
     if (isValidActionOutput) {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
