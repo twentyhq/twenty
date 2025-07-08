@@ -73,7 +73,7 @@ describe('Workspace migration builder indexes tests suite', () => {
   "actions": [
     {
       "flattenObjectMetadata": {
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -114,7 +114,7 @@ describe('Workspace migration builder indexes tests suite', () => {
         "uniqueIdentifier": "name",
       },
       "flattenObjectMetadata": {
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -266,7 +266,7 @@ describe('Workspace migration builder indexes tests suite', () => {
   "actions": [
     {
       "flattenObjectMetadata": {
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -307,7 +307,7 @@ describe('Workspace migration builder indexes tests suite', () => {
         "uniqueIdentifier": "email",
       },
       "flattenObjectMetadata": {
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
