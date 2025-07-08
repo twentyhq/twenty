@@ -5,19 +5,19 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
 
 export const getWorkspaceMigrationV2FieldCreateAction = ({
-  fieldMetadataInput,
+  flattenFieldMetadata,
   flattenObjectMetadata,
 }: FieldAndObjectMetadataWorkspaceMigrationInput): CreateFieldAction => ({
   type: 'create_field',
-  fieldMetadataInput,
+  flattenFieldMetadata,
   flattenObjectMetadata,
 });
 
 export const getWorkspaceMigrationV2FieldDeleteAction = ({
-  fieldMetadataInput,
+  flattenFieldMetadata,
   flattenObjectMetadata,
 }: FieldAndObjectMetadataWorkspaceMigrationInput): DeleteFieldAction => ({
   type: 'delete_field',
-  fieldMetadataInput,
+  flattenFieldMetadata,
   flattenObjectMetadata,
 });

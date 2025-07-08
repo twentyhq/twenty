@@ -72,7 +72,7 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -104,7 +104,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -113,7 +113,7 @@ describe('Workspace migration builder indexes tests suite', () => {
         "type": "TEXT",
         "uniqueIdentifier": "name",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -265,7 +265,7 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -297,7 +297,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -306,7 +306,7 @@ describe('Workspace migration builder indexes tests suite', () => {
         "type": "TEXT",
         "uniqueIdentifier": "email",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,

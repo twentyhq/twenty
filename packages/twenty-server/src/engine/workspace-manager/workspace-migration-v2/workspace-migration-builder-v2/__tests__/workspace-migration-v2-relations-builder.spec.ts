@@ -55,7 +55,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -75,7 +75,7 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -86,7 +86,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -131,7 +131,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -142,7 +142,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [],
         "flattenIndexMetadatas": [],
         "uniqueIdentifier": "company",
@@ -196,7 +196,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -216,7 +216,7 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -227,7 +227,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "manager",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -247,7 +247,7 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_field",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -258,7 +258,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "new-relation",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -278,7 +278,7 @@ describe('Workspace migration builder relations tests suite', () => {
       "type": "create_field",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -289,7 +289,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "old-relation",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "isActive": true,
@@ -388,7 +388,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "description": "Company employees",
         "isActive": true,
         "isCustom": true,
@@ -398,7 +398,7 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "fieldInputs": [
           {
             "description": "Company employees",

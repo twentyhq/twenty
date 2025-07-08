@@ -42,7 +42,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A contact",
         "fieldInputs": [
           {
@@ -102,7 +102,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A company",
         "fieldInputs": [
           {
@@ -124,7 +124,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "defaultValue": "",
         "description": "",
         "label": "Name",
@@ -132,7 +132,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A company",
         "fieldInputs": [
           {
@@ -165,7 +165,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A contact",
         "fieldInputs": [
           {
@@ -240,7 +240,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A company",
         "fieldInputs": [
           {
@@ -262,7 +262,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "create_object",
     },
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A contact",
         "fieldInputs": [
           {
@@ -284,7 +284,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "delete_object",
     },
     {
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A contact",
         "fieldInputs": [
           {
@@ -321,7 +321,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ],
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "defaultValue": "",
         "description": "",
         "label": "Name",
@@ -329,7 +329,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A company",
         "fieldInputs": [
           {
@@ -351,7 +351,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "create_field",
     },
     {
-      "fieldMetadataInput": {
+      "flattenFieldMetadata": {
         "defaultValue": "",
         "description": "new field description",
         "label": "New field",
@@ -359,7 +359,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "NUMBER",
         "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
       },
-      "objectMetadataInput": {
+      "flattenObjectMetadata": {
         "description": "A contact",
         "fieldInputs": [
           {
@@ -438,7 +438,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     expect(result.actions).toMatchInlineSnapshot(`
 [
   {
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "First object",
       "fieldInputs": [
         {
@@ -460,7 +460,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     "type": "create_object",
   },
   {
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "Second object",
       "fieldInputs": [
         {
@@ -482,7 +482,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     "type": "create_object",
   },
   {
-    "fieldMetadataInput": {
+    "flattenFieldMetadata": {
       "defaultValue": "",
       "description": "",
       "label": "Field A",
@@ -490,7 +490,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "FULL_NAME",
       "uniqueIdentifier": "field-1",
     },
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "First object",
       "fieldInputs": [
         {
@@ -512,7 +512,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     "type": "create_field",
   },
   {
-    "fieldMetadataInput": {
+    "flattenFieldMetadata": {
       "defaultValue": "",
       "description": "",
       "label": "Field B",
@@ -520,7 +520,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       "type": "ADDRESS",
       "uniqueIdentifier": "field-2",
     },
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "Second object",
       "fieldInputs": [
         {
@@ -549,7 +549,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     expect(deleteResult.actions).toMatchInlineSnapshot(`
 [
   {
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "First object",
       "fieldInputs": [
         {
@@ -571,7 +571,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     "type": "delete_object",
   },
   {
-    "objectMetadataInput": {
+    "flattenObjectMetadata": {
       "description": "Second object",
       "fieldInputs": [
         {
