@@ -4,11 +4,24 @@ exports[`Field metadata relation update should fail relation when name is change
 [
   {
     "extensions": {
-      "code": "GRAPHQL_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Field does not exist",
-    "name": "ValidationError",
+    "message": "Name cannot be changed for relation fields",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation update should fail relation when name is not in camel case 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "New Name should be in camelCase",
+    "name": "UserInputError",
   },
 ]
 `;

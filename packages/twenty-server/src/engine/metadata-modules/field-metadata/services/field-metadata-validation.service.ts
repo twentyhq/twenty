@@ -9,10 +9,10 @@ import {
   Max,
   Min,
   ValidationError,
-  isDefined,
   validateOrReject,
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -24,7 +24,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
@@ -168,38 +167,13 @@ export class FieldMetadataValidationService {
 
     if (
       isRelationField &&
-      fieldMetadataInput.name !== existingFieldMetadata?.name
+      isDefined(existingFieldMetadata) &&
+      fieldMetadataInput.name !== existingFieldMetadata.name
     ) {
       throw new FieldMetadataException(
         'Name cannot be changed for relation fields',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
-    }
-
-    if (fieldMetadataInput.isNullable === false) {
-      if (!isDefined(fieldMetadataInput.defaultValue)) {
-        throw new FieldMetadataException(
-          'Default value is required for non nullable fields',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-    }
-
-    if (isEnumFieldMetadataType(fieldMetadataType)) {
-      await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
-        {
-          fieldMetadataInput,
-          fieldMetadataType,
-          existingFieldMetadata,
-        },
-      );
-    }
-
-    if (fieldMetadataInput.settings) {
-      await this.validateSettingsOrThrow({
-        fieldType: fieldMetadataType,
-        settings: fieldMetadataInput.settings,
-      });
     }
   }
 }

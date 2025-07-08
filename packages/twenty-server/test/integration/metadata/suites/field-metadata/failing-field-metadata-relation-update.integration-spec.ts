@@ -15,14 +15,19 @@ type UpdateOneFieldMetadataTestingContext = EachTestingContext<{
 const globalTestContext = {
   employeeObjectId: '',
   enterpriseObjectId: '',
+  employerFieldMetadataId: '',
 };
 
 describe('Field metadata relation update should fail', () => {
   const failingRelationUpdateTestsUseCase: UpdateOneFieldMetadataTestingContext[] =
     [
       {
-        title: 'when name is changed',
+        title: 'when name is not in camel case',
         context: { name: 'New Name' },
+      },
+      {
+        title: 'when name is changed',
+        context: { name: 'newName' },
       },
     ];
 
@@ -67,6 +72,7 @@ describe('Field metadata relation update should fail', () => {
 
     globalTestContext.employeeObjectId = employeeObjectId;
     globalTestContext.enterpriseObjectId = enterpriseObjectId;
+    globalTestContext.employerFieldMetadataId = data.createOneField.id;
 
     expect(data).toBeDefined();
   });
@@ -90,7 +96,7 @@ describe('Field metadata relation update should fail', () => {
       const { errors } = await updateOneFieldMetadata({
         expectToFail: true,
         input: {
-          idToUpdate: globalTestContext.employeeObjectId,
+          idToUpdate: globalTestContext.employerFieldMetadataId,
           updatePayload: {
             name: context.name,
           },

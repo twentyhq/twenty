@@ -7,7 +7,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name cannot be changed for relation fields",
+    "message": "Name "collisionfieldlabel" is not available",
     "name": "UserInputError",
   },
 ]
@@ -20,7 +20,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name cannot be changed for relation fields",
+    "message": "Invalid label: "   "",
     "name": "UserInputError",
   },
 ]
@@ -33,7 +33,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name cannot be changed for relation fields",
+    "message": "Name is too long: it exceeds the 63 characters limit.",
     "name": "UserInputError",
   },
 ]
@@ -46,7 +46,7 @@ exports[`Field metadata relation creation should fail relation when targetFieldL
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name cannot be changed for relation fields",
+    "message": "Input is too short: """,
     "name": "UserInputError",
   },
 ]
@@ -56,11 +56,11 @@ exports[`Field metadata relation creation should fail relation when targetObject
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name cannot be changed for relation fields",
-    "name": "UserInputError",
+    "message": "Cannot read properties of undefined (reading 'fieldsById')",
   },
 ]
 `;
