@@ -6,10 +6,11 @@ import { Key } from 'ts-key-enum';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { streamChatResponse } from '../api/streamChatResponse';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
@@ -21,6 +22,8 @@ interface OptimisticMessage extends AgentChatMessage {
 }
 
 export const useAgentChat = (agentId: string) => {
+  const apolloClient = useApolloClient();
+
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
     agentId,
@@ -92,9 +95,20 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
-    await streamChatResponse(currentThreadId, content, (chunk) => {
-      setAgentStreamingMessage(chunk);
-      scrollToBottom();
+    await apolloClient.query({
+      query: STREAM_CHAT_QUERY,
+      variables: {
+        requestBody: {
+          threadId: currentThreadId,
+          userMessage: content,
+        },
+      },
+      context: {
+        onChunk: (chunk: string) => {
+          setAgentStreamingMessage(chunk);
+          scrollToBottom();
+        },
+      },
     });
 
     setIsStreaming(false);
