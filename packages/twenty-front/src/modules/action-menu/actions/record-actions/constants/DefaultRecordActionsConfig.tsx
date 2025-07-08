@@ -389,13 +389,38 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ],
     component: <RestoreSingleRecordAction />,
   },
+  [MultipleRecordsActionKeys.RESTORE]: {
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    key: MultipleRecordsActionKeys.RESTORE,
+    label: msg`Restore records`,
+    shortLabel: msg`Restore`,
+    position: 17,
+    Icon: IconRefresh,
+    accent: 'default',
+    isPinned: true,
+    shouldBeRegistered: ({
+      objectPermissions,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      objectPermissions.canSoftDeleteObjectRecords &&
+      !isRemote &&
+      isDefined(isSoftDeleteFilterActive) &&
+      isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    component: <RestoreMultipleRecordsAction />,
+  },
   [SingleRecordActionKeys.CREATE_RELATED_PEOPLE]: {
     type: ActionType.Standard,
     scope: ActionScope.Create,
     key: SingleRecordActionKeys.CREATE_RELATED_PEOPLE,
     label: msg`Create related people`,
     shortLabel: msg`Create people`,
-    position: 17,
+    position: 18,
     Icon: IconUser,
     accent: 'default',
     isPinned: false,
@@ -431,7 +456,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.CREATE_RELATED_OPPORTUNITIES,
     label: msg`Create related opportunities`,
     shortLabel: msg`Create opportunities`,
-    position: 18,
+    position: 19,
     Icon: IconTargetArrow,
     accent: 'default',
     isPinned: false,
@@ -464,38 +489,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
   },
-  [MultipleRecordsActionKeys.RESTORE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.RecordSelection,
-    key: MultipleRecordsActionKeys.RESTORE,
-    label: msg`Restore records`,
-    shortLabel: msg`Restore`,
-    position: 21,
-    Icon: IconRefresh,
-    accent: 'default',
-    isPinned: true,
-    shouldBeRegistered: ({
-      objectPermissions,
-      isRemote,
-      isSoftDeleteFilterActive,
-      numberOfSelectedRecords,
-    }) =>
-      objectPermissions.canSoftDeleteObjectRecords &&
-      !isRemote &&
-      isDefined(isSoftDeleteFilterActive) &&
-      isSoftDeleteFilterActive &&
-      isDefined(numberOfSelectedRecords) &&
-      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    component: <RestoreMultipleRecordsAction />,
-  },
   [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
     type: ActionType.Navigation,
     scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
-    position: 22,
+    position: 20,
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
@@ -527,7 +527,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
-    position: 23,
+    position: 21,
     Icon: IconUser,
     isPinned: false,
     availableOn: [
@@ -558,7 +558,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
-    position: 24,
+    position: 22,
     Icon: IconBuildingSkyscraper,
     isPinned: false,
     availableOn: [
@@ -589,7 +589,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 25,
+    position: 23,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
@@ -622,7 +622,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 26,
+    position: 24,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -648,7 +648,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 27,
+    position: 25,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -679,7 +679,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 28,
+    position: 26,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
