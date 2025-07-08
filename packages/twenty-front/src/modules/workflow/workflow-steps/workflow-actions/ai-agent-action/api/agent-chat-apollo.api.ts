@@ -30,3 +30,15 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
     }
   }
 `;
+
+export const STREAM_CHAT_QUERY = gql`
+  query StreamChatResponse($requestBody: StreamChatRequestBody!) {
+    streamChatResponse(requestBody: $requestBody)
+      @stream(
+        type: "StreamChatResponse"
+        path: "/agent-chat/stream"
+        method: "POST"
+        bodyKey: "requestBody"
+      )
+  }
+`;
