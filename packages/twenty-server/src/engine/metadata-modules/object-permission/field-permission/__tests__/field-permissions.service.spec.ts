@@ -58,6 +58,7 @@ describe('FieldPermissionService', () => {
         canUpdate: true,
         canSoftDelete: false,
         canDestroy: false,
+        restrictedFields: {},
       },
     },
   };
@@ -458,6 +459,7 @@ describe('FieldPermissionService', () => {
               canUpdate: false,
               canSoftDelete: false,
               canDestroy: false,
+              restrictedFields: {},
             },
           },
         };
@@ -497,6 +499,7 @@ describe('FieldPermissionService', () => {
                 canUpdate: false,
                 canSoftDelete: false,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           };
