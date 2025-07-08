@@ -226,3 +226,28 @@ describe.each(fieldMetadataEnumTypes)(
     );
   },
 );
+
+describe('FieldMetadataService Enum Default Value Validation', () => {
+  let createdObjectMetadataId: string;
+
+  beforeEach(async () => {
+    const { data: listingObjectMetadata } = await createOneObjectMetadata({
+      input: {
+        labelSingular: LISTING_NAME_SINGULAR,
+        labelPlural: LISTING_NAME_PLURAL,
+        nameSingular: LISTING_NAME_SINGULAR,
+        namePlural: LISTING_NAME_PLURAL,
+        icon: 'IconBuildingSkyscraper',
+        isLabelSyncedWithName: true,
+      },
+    });
+
+    createdObjectMetadataId = listingObjectMetadata.createOneObject.id;
+  });
+
+  afterEach(async () => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: createdObjectMetadataId },
+    });
+  });
+});
