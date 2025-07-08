@@ -1,12 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddFieldPermission1751986914788 implements MigrationInterface {
-  name = 'AddFieldPermission1751986914788';
+export class AddFieldPermission1751993324990 implements MigrationInterface {
+  name = 'AddFieldPermission1751993324990';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE"`,
-    );
     await queryRunner.query(
       `CREATE TABLE "core"."fieldPermission" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "roleId" uuid NOT NULL, "objectMetadataId" uuid NOT NULL, "fieldMetadataId" uuid NOT NULL, "canReadFieldValue" boolean, "canUpdateFieldValue" boolean, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "IDX_FIELD_PERMISSION_FIELD_METADATA_ID_ROLE_ID_UNIQUE" UNIQUE ("fieldMetadataId", "roleId"), CONSTRAINT "PK_d7bb911e4f9b1b5e3bfcfdd1c4b" PRIMARY KEY ("id"))`,
     );
@@ -14,7 +11,7 @@ export class AddFieldPermission1751986914788 implements MigrationInterface {
       `CREATE INDEX "IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."fieldPermission" ("workspaceId", "roleId") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."fieldMetadata" ADD CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE" UNIQUE ("name", "objectMetadataId", "workspaceId")`,
+      `CREATE INDEX "IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."objectPermission" ("workspaceId", "roleId") `,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."fieldPermission" ADD CONSTRAINT "FK_bbf16a91f5a10199e5b18c019ba" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -44,14 +41,11 @@ export class AddFieldPermission1751986914788 implements MigrationInterface {
       `ALTER TABLE "core"."fieldPermission" DROP CONSTRAINT "FK_bbf16a91f5a10199e5b18c019ba"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."fieldMetadata" DROP CONSTRAINT "IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE"`,
+      `DROP INDEX "core"."IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
     );
     await queryRunner.query(`DROP TABLE "core"."fieldPermission"`);
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE" ON "core"."fieldMetadata" ("objectMetadataId", "name", "workspaceId") WHERE ((type)::text <> 'MORPH_RELATION'::text)`,
-    );
   }
 }
