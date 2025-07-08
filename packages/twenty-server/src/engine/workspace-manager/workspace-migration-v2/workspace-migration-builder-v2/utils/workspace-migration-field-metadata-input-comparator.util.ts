@@ -68,7 +68,7 @@ const compareTwoWorkspaceMigrationFieldInput = ({
 
 type GetWorkspaceMigrationUpdateFieldActionArgs =
   FromTo<WorkspaceMigrationFieldInput>;
-export const compareFieldMetadataInputAndGetUpdateFieldActions = ({
+export const compareFieldMetadataInput = ({
   from,
   to,
 }: GetWorkspaceMigrationUpdateFieldActionArgs) => {

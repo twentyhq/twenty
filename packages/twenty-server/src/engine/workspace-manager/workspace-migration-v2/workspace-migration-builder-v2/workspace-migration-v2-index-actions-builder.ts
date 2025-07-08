@@ -1,7 +1,4 @@
-import {
-  UpdateIndexAction,
-  WorkspaceMigrationIndexActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
+import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
 import {
   getWorkspaceMigrationV2CreateIndexAction,
@@ -17,16 +14,15 @@ export const buildWorkspaceMigrationIndexActions = (
   for (const {
     createdIndexMetadata,
     deletedIndexMetadata,
-    objectMetadataInput,
     updatedIndexMetadata,
   } of objectMetadataDeletedCreatedUpdatedIndex) {
-    const updateFieldActions = updatedIndexMetadata.map<UpdateIndexAction>(
-      () => {
-        return {
-          type: 'udpate_index',
-        };
-      },
-    );
+    const updateFieldActions =
+      updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
+        ({ to, from }) => [
+          getWorkspaceMigrationV2DeleteIndexAction(from),
+          getWorkspaceMigrationV2CreateIndexAction(to),
+        ],
+      );
 
     const createFieldAction = createdIndexMetadata.map(
       getWorkspaceMigrationV2CreateIndexAction,
