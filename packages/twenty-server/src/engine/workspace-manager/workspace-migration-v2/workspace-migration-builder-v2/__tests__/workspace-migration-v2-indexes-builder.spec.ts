@@ -20,7 +20,7 @@ describe('Workspace migration builder indexes tests suite', () => {
   ): FlattenObjectMetadata => ({
     uniqueIdentifier: identifier,
     flattenIndexMetadatas: indexes,
-    fieldInputs: fields.map((field) => ({
+    flattenFieldMetadatas: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
       label: 'Default Label',

@@ -21,8 +21,8 @@ export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (
 
   for (const { from, to } of updatedObjectMetadata) {
     const fieldMetadataMatrix = deletedCreatedUpdatedMatrixDispatcher({
-      from: from.fieldInputs,
-      to: to.fieldInputs,
+      from: from.flattenFieldMetadatas,
+      to: to.flattenFieldMetadatas,
     });
 
     matrixAccumulator.push({

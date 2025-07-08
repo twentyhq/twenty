@@ -14,7 +14,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     flattenIndexMetadatas: [],
     labelPlural: 'Contacts',
     description: 'A contact',
-    fieldInputs: [
+    flattenFieldMetadatas: [
       {
         uniqueIdentifier: '20202020-e89b-12d3-a456-426614174000',
         name: 'firstName',
@@ -84,7 +84,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fieldInputs: [
+      flattenFieldMetadatas: [
         {
           uniqueIdentifier: '20202020-e89b-12d3-a456-426614174001',
           name: 'name',
@@ -195,8 +195,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     const objectToUpdate: FlattenObjectMetadata = {
       ...baseObject,
       nameSingular: 'Person',
-      fieldInputs: [
-        ...baseObject.fieldInputs,
+      flattenFieldMetadatas: [
+        ...baseObject.flattenFieldMetadatas,
         {
           defaultValue: '',
           label: 'New field',
@@ -219,7 +219,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fieldInputs: [
+      flattenFieldMetadatas: [
         {
           uniqueIdentifier: '20202020-1016-4f09-bad6-e75681f385f4',
           name: 'name',
@@ -402,7 +402,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
       description: 'First object',
-      fieldInputs: [
+      flattenFieldMetadatas: [
         {
           uniqueIdentifier: 'field-1',
           name: 'fieldA',
@@ -421,7 +421,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       labelPlural: 'Duplicates',
       flattenIndexMetadatas: [],
       description: 'Second object',
-      fieldInputs: [
+      flattenFieldMetadatas: [
         {
           uniqueIdentifier: 'field-2',
           name: 'fieldB',

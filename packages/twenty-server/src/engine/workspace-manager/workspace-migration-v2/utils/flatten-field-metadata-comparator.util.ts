@@ -7,7 +7,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const workspaceMigrationFieldInputPropertiesToCompare = [
+const flattenFieldMetadataPropertiesToCompare = [
   'defaultValue',
   'description',
   'icon',
@@ -20,13 +20,13 @@ const workspaceMigrationFieldInputPropertiesToCompare = [
   'standardOverrides',
 ] as const satisfies (keyof FlattenFieldMetadata)[];
 
-export type WorkspaceMigrationFieldInputPropertiesToCompare =
-  (typeof workspaceMigrationFieldInputPropertiesToCompare)[number];
+export type FlattenFieldMetadataPropertiesToCompare =
+  (typeof flattenFieldMetadataPropertiesToCompare)[number];
 
 const fieldMetadataPropertiesToStringify = [
   'defaultValue',
   'standardOverrides',
-] as const satisfies WorkspaceMigrationFieldInputPropertiesToCompare[];
+] as const satisfies FlattenFieldMetadataPropertiesToCompare[];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -50,8 +50,8 @@ export const compareTwoFlattenFieldMetadata = ({
       fieldMetadata: FlattenFieldMetadata,
     ) => {
       if (
-        !workspaceMigrationFieldInputPropertiesToCompare.includes(
-          property as WorkspaceMigrationFieldInputPropertiesToCompare,
+        !flattenFieldMetadataPropertiesToCompare.includes(
+          property as FlattenFieldMetadataPropertiesToCompare,
         )
       ) {
         return true;
@@ -90,7 +90,7 @@ export const compareTwoFlattenFieldMetadata = ({
         return {
           from: oldValue,
           to: value,
-          property: path[0] as WorkspaceMigrationFieldInputPropertiesToCompare,
+          property: path[0] as FlattenFieldMetadataPropertiesToCompare,
         };
       }
       case 'CREATE':

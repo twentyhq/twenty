@@ -1,4 +1,4 @@
-import { compareTwoFlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-index-metadata-comparator.util';
+import { compareTwoFlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-index-metadata-comparator.util';
 import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
 import {
@@ -20,7 +20,7 @@ export const buildWorkspaceMigrationIndexActions = (
     const updateFieldActions =
       updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
         ({ to, from }) => {
-          const updates = compareTwoFlattenedIndexMetadata({ from, to });
+          const updates = compareTwoFlattenIndexMetadata({ from, to });
 
           if (updates.length === 0) {
             return [];

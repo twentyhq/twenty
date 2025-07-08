@@ -1,6 +1,6 @@
 import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
-import { compareTwoWorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-object-metadata-comparator.util';
+import { compareTwoFlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-object-metadata-comparator.util';
 import {
   UpdateObjectAction,
   WorkspaceMigrationV2ObjectAction,
@@ -27,7 +27,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
 
   const updatedObjectActions =
     updatedObjectMetadata.flatMap<UpdateObjectAction>(({ from, to }) => {
-      const objectUpdatedProperties = compareTwoWorkspaceMigrationObjectInput({
+      const objectUpdatedProperties = compareTwoFlattenObjectMetadata({
         from,
         to,
       });
