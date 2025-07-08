@@ -694,6 +694,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           fieldMetadataInput.morphRelationsCreationPayload,
         objectMetadata,
         fieldMetadataRepository,
+        objectMetadataMaps,
       },
     );
   }

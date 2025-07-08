@@ -17,6 +17,7 @@ import {
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 @Injectable()
@@ -30,11 +31,13 @@ export class FieldMetadataMorphRelationService {
     morphRelationsCreationPayload,
     objectMetadata,
     fieldMetadataRepository,
+    objectMetadataMaps,
   }: {
     fieldMetadataForCreate: CreateFieldInput;
     morphRelationsCreationPayload: CreateFieldInput['morphRelationsCreationPayload'];
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
+    objectMetadataMaps: ObjectMetadataMaps;
   }): Promise<FieldMetadataEntity[]> {
     if (
       !isDefined(morphRelationsCreationPayload) ||
@@ -66,11 +69,13 @@ export class FieldMetadataMorphRelationService {
         );
 
       // todo : enable this once we know why the ObjectMEtadataMaps is not filled
-      // await this.validateFieldMetadataRelationSpecifics({
-      //   fieldMetadataInput: relationFieldMetadataForCreate,
-      //   fieldMetadataType: relationFieldMetadataForCreate.type,
-      //   objectMetadataMaps,
-      // });
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
+        {
+          fieldMetadataInput: relationFieldMetadataForCreate,
+          fieldMetadataType: relationFieldMetadataForCreate.type,
+          objectMetadataMaps,
+        },
+      );
 
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
         omit(relationFieldMetadataForCreate, 'id'),
