@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/ui/feedback/dialog-manager/constants/DialogManagerHotkeyScopeMemoizeKey';
+import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { DialogManagerScopeInternalContext } from '../scopes/scope-internal-context/DialogManagerScopeInternalContext';
 import { dialogInternalScopedState } from '../states/dialogInternalScopedState';
 import { DialogOptions } from '../types/DialogOptions';
@@ -19,7 +19,8 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
     props?.dialogManagerScopeId,
   );
 
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const closeDialog = useRecoilCallback(
     ({ set }) =>
@@ -29,9 +30,9 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
           queue: prevState.queue.filter((dialog) => dialog.id !== id),
         }));
 
-        goBackToPreviousHotkeyScope(DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY);
+        removeFocusItemFromFocusStackById({ focusId: DIALOG_FOCUS_ID });
       },
-    [goBackToPreviousHotkeyScope, scopeId],
+    [removeFocusItemFromFocusStackById, scopeId],
   );
 
   const setDialogQueue = useRecoilCallback(

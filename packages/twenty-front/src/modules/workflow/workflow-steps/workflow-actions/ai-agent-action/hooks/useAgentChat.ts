@@ -1,10 +1,10 @@
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
@@ -142,17 +142,21 @@ export const useAgentChat = (agentId: string) => {
     await sendChatMessage(content);
   };
 
-  useScopedHotkeys(
-    [Key.Enter],
-    (event) => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: (event: KeyboardEvent) => {
       if (!event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         handleSendMessage();
       }
     },
-    InputHotkeyScope.TextInput,
-    [agentChatInput, isLoading],
-  );
+    focusId: `${agentId}-chat-input`,
+    scope: InputHotkeyScope.TextInput,
+    dependencies: [agentChatInput, isLoading],
+    options: {
+      enableOnFormTags: true,
+    },
+  });
 
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),

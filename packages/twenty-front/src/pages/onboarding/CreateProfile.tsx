@@ -14,11 +14,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { PageFocusId } from '@/types/PageFocusId';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -148,15 +149,23 @@ export const CreateProfile = () => {
 
   const [isEditingMode, setIsEditingMode] = useState(false);
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  const handleEnter = () => {
+    if (isEditingMode) {
+      onSubmit(getValues());
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: () => {
       if (isEditingMode) {
         onSubmit(getValues());
       }
     },
-    PageHotkeyScope.CreateProfile,
-  );
+    focusId: PageFocusId.CreateProfile,
+    scope: PageHotkeyScope.CreateProfile,
+    dependencies: [handleEnter],
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
