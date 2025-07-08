@@ -294,18 +294,11 @@ export class FieldMetadataRelationService {
         FieldMetadataType.MORPH_RELATION,
       );
 
-    if (!isRelation) {
-      throw new FieldMetadataException(
-        'Field metadata should be a relation',
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-
     const isManyToOne =
-      relationCreationPayload?.type === RelationType.MANY_TO_ONE;
+      isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
 
     const isOneToMany =
-      relationCreationPayload?.type === RelationType.ONE_TO_MANY;
+      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
 
     const defaultIcon = 'IconRelationOneToMany';
 
