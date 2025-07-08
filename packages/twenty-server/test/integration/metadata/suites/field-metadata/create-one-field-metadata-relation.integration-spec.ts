@@ -7,6 +7,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('createOne FieldMetadataService relation fields', () => {
@@ -75,13 +76,17 @@ describe('createOne FieldMetadataService relation fields', () => {
     });
   });
 
-  it('should create a RELATION field type', async () => {
+  it('should create a RELATION field type MANY_TO_ONE', async () => {
     const createdFieldPerson = await createFieldOnObject({
       objectMetadataId: createdObjectMetadataOpportunityId,
       targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.MANY_TO_ONE,
     });
 
     expect(createdFieldPerson.name).toBe('person');
+    expect(createdFieldPerson.relation.type).toBe(RelationType.MANY_TO_ONE);
+    expect(createdFieldPerson.relation.targetFieldMetadata.id).toBeDefined();
 
     const opportunityFieldOnPerson = await findFieldMetadata({
       fieldMetadataId: createdFieldPerson.relation.targetFieldMetadata.id,
@@ -93,6 +98,82 @@ describe('createOne FieldMetadataService relation fields', () => {
     expect(opportunityFieldOnPerson.relation.type).toBe(
       RelationType.ONE_TO_MANY,
     );
+    expect(
+      opportunityFieldOnPerson.relation.targetFieldMetadata.id,
+    ).toBeDefined();
+    expect(
+      opportunityFieldOnPerson.relation.targetObjectMetadata.id,
+    ).toBeDefined();
+
+    await deleteOneFieldMetadata({
+      input: { idToDelete: createdFieldPerson.id },
+    });
+  });
+
+  it('should create a RELATION field type ONE_TO_MANY ', async () => {
+    const createdFieldPerson = await createFieldOnObject({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.ONE_TO_MANY,
+    });
+
+    expect(createdFieldPerson.name).toBe('person');
+    expect(createdFieldPerson.relation.type).toBe(RelationType.ONE_TO_MANY);
+    expect(createdFieldPerson.relation.targetFieldMetadata.id).toBeDefined();
+
+    const opportunityFieldOnPerson = await findFieldMetadata({
+      fieldMetadataId: createdFieldPerson.relation.targetFieldMetadata.id,
+    });
+
+    expect(opportunityFieldOnPerson.object.nameSingular).toBe(
+      'personForRelation',
+    );
+    expect(opportunityFieldOnPerson.relation.type).toBe(
+      RelationType.MANY_TO_ONE,
+    );
+    expect(
+      opportunityFieldOnPerson.relation.targetFieldMetadata.id,
+    ).toBeDefined();
+    expect(
+      opportunityFieldOnPerson.relation.targetObjectMetadata.id,
+    ).toBeDefined();
+
+    await deleteOneFieldMetadata({
+      input: { idToDelete: createdFieldPerson.id },
+    });
+  });
+
+  it('should name the join column name correctly for a RELATION field type MANY_TO_ONE', async () => {
+    const createdFieldPerson = await createFieldOnObject({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.MANY_TO_ONE,
+    });
+
+    const settings =
+      createdFieldPerson.settings as FieldMetadataSettings<FieldMetadataType.RELATION>;
+
+    expect(settings.joinColumnName).toBe('personId');
+
+    await deleteOneFieldMetadata({
+      input: { idToDelete: createdFieldPerson.id },
+    });
+  });
+
+  it('should not be a join column name for a RELATION field type ONE_TO_MANY', async () => {
+    const createdFieldPerson = await createFieldOnObject({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.ONE_TO_MANY,
+    });
+
+    const settings =
+      createdFieldPerson.settings as FieldMetadataSettings<FieldMetadataType.RELATION>;
+
+    expect(settings.joinColumnName).toBeUndefined();
 
     await deleteOneFieldMetadata({
       input: { idToDelete: createdFieldPerson.id },
@@ -103,6 +184,8 @@ describe('createOne FieldMetadataService relation fields', () => {
     const createdFieldPerson = await createFieldOnObject({
       objectMetadataId: createdObjectMetadataOpportunityId,
       targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.MANY_TO_ONE,
     });
 
     await deleteOneObjectMetadata({
@@ -124,6 +207,8 @@ describe('createOne FieldMetadataService relation fields', () => {
     const createdFieldPerson = await createFieldOnObject({
       objectMetadataId: createdObjectMetadataOpportunityId,
       targetObjectMetadataId: createdObjectMetadataPersonId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.MANY_TO_ONE,
     });
 
     const opportunityFieldOnPersonBefore = await findFieldMetadata({
@@ -150,44 +235,64 @@ describe('createOne FieldMetadataService relation fields', () => {
   });
 
   // TODO: replace xit by it once the Morph works
-  xit('should create a MORPH_RELATION field type', async () => {
-    const createFieldInput: CreateOneFieldFactoryInput = {
-      name: 'owner',
-      label: 'owner field',
-      type: FieldMetadataType.MORPH_RELATION,
-      objectMetadataId: createdObjectMetadataOpportunityId,
-      isLabelSyncedWithName: false,
-      morphRelationsCreationPayload: [
-        {
-          targetObjectMetadataId: createdObjectMetadataPersonId,
-          targetFieldLabel: 'opportunity',
-          targetFieldIcon: 'IconListOpportunity',
-          type: RelationType.MANY_TO_ONE,
-        },
-        {
-          targetObjectMetadataId: createdObjectMetadataCompanyId,
-          targetFieldLabel: 'opportunity',
-          targetFieldIcon: 'IconListOpportunity',
-          type: RelationType.MANY_TO_ONE,
-        },
-      ],
-    };
+  xdescribe('MORPH_RELATION specifics tests', () => {
+    xit('should create a MORPH_RELATION field type', async () => {
+      const createFieldInput: CreateOneFieldFactoryInput = {
+        name: 'owner',
+        label: 'owner field',
+        type: FieldMetadataType.MORPH_RELATION,
+        objectMetadataId: createdObjectMetadataOpportunityId,
+        isLabelSyncedWithName: false,
+        morphRelationsCreationPayload: [
+          {
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            targetFieldLabel: 'opportunity',
+            targetFieldIcon: 'IconListOpportunity',
+            type: RelationType.MANY_TO_ONE,
+          },
+          {
+            targetObjectMetadataId: createdObjectMetadataCompanyId,
+            targetFieldLabel: 'opportunity',
+            targetFieldIcon: 'IconListOpportunity',
+            type: RelationType.MANY_TO_ONE,
+          },
+        ],
+      };
 
-    const { data: createdFieldOwner } = await createOneFieldMetadata({
-      input: createFieldInput,
-      gqlFields: `
+      const { data: createdFieldOwner } = await createOneFieldMetadata({
+        input: createFieldInput,
+        gqlFields: `
               id
               name
               label
               isLabelSyncedWithName
             `,
-      expectToFail: false,
+        expectToFail: false,
+      });
+
+      // expect(createdFieldOwner.createOneField.name).toBe('owner');
+
+      await deleteOneFieldMetadata({
+        input: { idToDelete: createdFieldOwner.createOneField.id },
+      });
     });
 
-    // expect(createdFieldOwner.createOneField.name).toBe('owner');
+    xit('should name the join column name correctly for a MORPH_RELATION field type', async () => {
+      const createdFieldPerson = await createFieldOnObject({
+        objectMetadataId: createdObjectMetadataOpportunityId,
+        targetObjectMetadataId: createdObjectMetadataPersonId,
+        type: FieldMetadataType.MORPH_RELATION,
+        relationType: RelationType.MANY_TO_ONE,
+      });
 
-    await deleteOneFieldMetadata({
-      input: { idToDelete: createdFieldOwner.createOneField.id },
+      const settings =
+        createdFieldPerson.settings as FieldMetadataSettings<FieldMetadataType.RELATION>;
+
+      expect(settings.joinColumnName).toBe('personForRelationId');
+
+      await deleteOneFieldMetadata({
+        input: { idToDelete: createdFieldPerson.id },
+      });
     });
   });
 });
@@ -195,21 +300,25 @@ describe('createOne FieldMetadataService relation fields', () => {
 const createFieldOnObject = async ({
   objectMetadataId,
   targetObjectMetadataId,
+  type,
+  relationType,
 }: {
   objectMetadataId: string;
   targetObjectMetadataId: string;
+  type: FieldMetadataType;
+  relationType: RelationType;
 }) => {
   const createFieldInput: CreateOneFieldFactoryInput = {
     name: 'person',
     label: 'person field',
-    type: FieldMetadataType.RELATION,
+    type: type,
     objectMetadataId: objectMetadataId,
     isLabelSyncedWithName: false,
     relationCreationPayload: {
       targetObjectMetadataId: targetObjectMetadataId,
       targetFieldLabel: 'opportunity',
       targetFieldIcon: 'IconListOpportunity',
-      type: RelationType.MANY_TO_ONE,
+      type: relationType,
     },
   };
 
@@ -255,6 +364,12 @@ const findFieldMetadata = async ({
         }
         relation {
           type
+          targetFieldMetadata {
+            id
+          }
+          targetObjectMetadata {
+            id
+          }
         }
         settings
     `,
