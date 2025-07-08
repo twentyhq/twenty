@@ -3,11 +3,12 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { PageFocusId } from '@/types/PageFocusId';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -161,14 +162,15 @@ export const InviteTeam = () => {
     await onSubmit({ emails: [] });
   };
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: () => {
       handleSubmit(onSubmit)();
     },
-    PageHotkeyScope.InviteTeam,
-    [handleSubmit],
-  );
+    focusId: PageFocusId.InviteTeam,
+    scope: PageHotkeyScope.InviteTeam,
+    dependencies: [handleSubmit, onSubmit],
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>

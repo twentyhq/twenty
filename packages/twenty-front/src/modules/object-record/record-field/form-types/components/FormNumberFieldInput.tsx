@@ -121,6 +121,7 @@ export const FormNumberFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           onBlur={onBlur}
         >
