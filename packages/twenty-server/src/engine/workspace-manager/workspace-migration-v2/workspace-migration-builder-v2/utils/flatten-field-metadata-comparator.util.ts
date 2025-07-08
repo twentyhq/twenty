@@ -19,6 +19,7 @@ const workspaceMigrationFieldInputPropertiesToCompare = [
   'options',
   'standardOverrides',
 ] as const satisfies (keyof FlattenFieldMetadata)[];
+
 export type WorkspaceMigrationFieldInputPropertiesToCompare =
   (typeof workspaceMigrationFieldInputPropertiesToCompare)[number];
 
