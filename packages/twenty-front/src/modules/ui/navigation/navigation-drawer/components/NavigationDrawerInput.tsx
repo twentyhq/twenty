@@ -40,6 +40,9 @@ export const NavigationDrawerInput = ({
     keys: Key.Escape,
     callback: () => {
       onCancel(value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
     focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
     scope: hotkeyScope,
@@ -49,6 +52,9 @@ export const NavigationDrawerInput = ({
     keys: Key.Enter,
     callback: () => {
       onSubmit(value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
     focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
     scope: hotkeyScope,
@@ -59,6 +65,9 @@ export const NavigationDrawerInput = ({
     callback: (event) => {
       event.stopImmediatePropagation();
       onClickOutside(event, value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
     listenerId: 'navigation-drawer-input',
   });
