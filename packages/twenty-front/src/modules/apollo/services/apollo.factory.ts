@@ -230,7 +230,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           retryLink,
           restLink,
           httpLink,
-        ].filter(isDefined) as ApolloLink[],
+        ].filter(isDefined),
       );
     };
 

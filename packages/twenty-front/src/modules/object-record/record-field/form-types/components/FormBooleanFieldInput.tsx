@@ -85,6 +85,7 @@ export const FormBooleanFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (

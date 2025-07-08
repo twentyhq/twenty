@@ -1,7 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
 import { WorkflowVariablesDropdownObjectItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownObjectItems';
@@ -48,7 +48,7 @@ export const WorkflowVariablesDropdown = ({
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     dropdownId,
   );
   const { closeDropdown } = useCloseDropdown();
