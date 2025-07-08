@@ -11,7 +11,6 @@ import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_FUNCTION_MODAL_ID = 'delete-function-modal';
@@ -35,10 +34,6 @@ export const SettingsServerlessFunctionSettingsTab = ({
     await deleteOneServerlessFunction({ id: serverlessFunctionId });
     navigate(SettingsPath.ServerlessFunctions);
   };
-
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
-  );
 
   useScopedHotkeys(
     [Key.Delete],

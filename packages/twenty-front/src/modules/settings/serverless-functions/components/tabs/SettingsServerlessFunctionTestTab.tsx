@@ -6,11 +6,10 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverl
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -41,9 +40,6 @@ export const SettingsServerlessFunctionTestTab = ({
   };
 
   const navigate = useNavigateSettings();
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
-  );
 
   useScopedHotkeys(
     [Key.Escape],

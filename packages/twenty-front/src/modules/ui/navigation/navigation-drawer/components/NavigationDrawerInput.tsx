@@ -5,7 +5,6 @@ import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
   className?: string;
@@ -31,8 +30,6 @@ export const NavigationDrawerInput = ({
   hotkeyScope,
 }: NavigationDrawerInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useHotkeyScopeOnMount(hotkeyScope);
 
   useScopedHotkeys(
     [Key.Escape],

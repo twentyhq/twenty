@@ -19,7 +19,6 @@ import {
 } from 'twenty-ui/display';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTabList = styled(TabList)`
@@ -92,9 +91,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   );
 
   const navigate = useNavigateSettings();
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
-  );
 
   useScopedHotkeys(
     [Key.Escape],
