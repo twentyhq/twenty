@@ -35,7 +35,6 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated/graphql';
@@ -50,8 +49,6 @@ export const PageChangeEffect = () => {
   const navigate = useNavigate();
 
   const [previousLocation, setPreviousLocation] = useState('');
-
-  const setHotkeyScope = useSetHotkeyScope();
 
   const location = useLocation();
 
@@ -339,7 +336,6 @@ export const PageChangeEffect = () => {
     }
   }, [
     location,
-    setHotkeyScope,
     previousLocation,
     contextStoreCurrentViewType,
     resetTableSelections,
