@@ -12,7 +12,7 @@ export const objectMetadataEntityEditableProperties = [
   'namePlural',
   'nameSingular',
   'standardOverrides', // Only if standard
-] as const satisfies (keyof ObjectMetadataEntity)[];
+] as const satisfies (keyof WorkspaceMigrationObjectInput)[];
 export type ObjectMetadataEntityEditableProperties =
   (typeof objectMetadataEntityEditableProperties)[number];
 
