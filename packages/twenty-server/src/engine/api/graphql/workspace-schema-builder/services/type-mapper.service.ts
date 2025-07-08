@@ -148,7 +148,6 @@ export class TypeMapperService {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.RELATION, OrderByDirectionType],
-
       [FieldMetadataType.MORPH_RELATION, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
