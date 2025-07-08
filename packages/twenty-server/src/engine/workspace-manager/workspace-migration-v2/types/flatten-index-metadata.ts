@@ -4,6 +4,6 @@ import { FlattenIndexFieldMetadata } from 'src/engine/workspace-manager/workspac
 export type FlattenIndexMetadata = Partial<
   Omit<IndexMetadataEntity, 'indexFieldMetadatas' | 'objectMetadata'> // Might have an issue as ObjectMetadataId != uniqueIdentifier
 > & {
-  flattenedIndexFieldMetadatas: FlattenIndexFieldMetadata[];
+  flattenIndexFieldMetadatas: FlattenIndexFieldMetadata[];
   uniqueIdentifier: string;
 };
