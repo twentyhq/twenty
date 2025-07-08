@@ -8,17 +8,23 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../useKeyboardShortcutMenu';
 
-const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
+const mockPushFocusItemToFocusStack = jest.fn();
+const mockRemoveFocusItemFromFocusStackById = jest.fn();
 
-const mockGoBackToPreviousHotkeyScope = jest.fn();
-
-jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
-  usePreviousHotkeyScope: () => ({
-    setHotkeyScopeAndMemorizePreviousScope:
-      mockSetHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope: mockGoBackToPreviousHotkeyScope,
+jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
+  usePushFocusItemToFocusStack: () => ({
+    pushFocusItemToFocusStack: mockPushFocusItemToFocusStack,
   }),
 }));
+
+jest.mock(
+  '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById',
+  () => ({
+    useRemoveFocusItemFromFocusStackById: () => ({
+      removeFocusItemFromFocusStackById: mockRemoveFocusItemFromFocusStackById,
+    }),
+  }),
+);
 
 const renderHookConfig = () => {
   const { result } = renderHook(
@@ -39,6 +45,10 @@ const renderHookConfig = () => {
 };
 
 describe('useKeyboardShortcutMenu', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should toggle keyboard shortcut menu correctly', async () => {
     const { result } = renderHookConfig();
     expect(result.current.toggleKeyboardShortcutMenu).toBeDefined();
@@ -48,8 +58,19 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
-      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    expect(mockPushFocusItemToFocusStack).toHaveBeenCalledWith({
+      focusId: 'keyboard-shortcut-menu',
+      component: {
+        type: 'keyboard-shortcut-menu',
+        instanceId: 'keyboard-shortcut-menu',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+        enableGlobalHotkeysWithModifiers: false,
+      },
+      hotkeyScope: {
+        scope: AppHotkeyScope.KeyboardShortcutMenuOpen,
+      },
     });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
@@ -57,8 +78,8 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
-      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    expect(mockRemoveFocusItemFromFocusStackById).toHaveBeenCalledWith({
+      focusId: 'keyboard-shortcut-menu',
     });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(false);
   });
@@ -69,8 +90,19 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.openKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
-      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    expect(mockPushFocusItemToFocusStack).toHaveBeenCalledWith({
+      focusId: 'keyboard-shortcut-menu',
+      component: {
+        type: 'keyboard-shortcut-menu',
+        instanceId: 'keyboard-shortcut-menu',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+        enableGlobalHotkeysWithModifiers: false,
+      },
+      hotkeyScope: {
+        scope: AppHotkeyScope.KeyboardShortcutMenuOpen,
+      },
     });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
@@ -78,7 +110,9 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.closeKeyboardShortcutMenu();
     });
 
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
+    expect(mockRemoveFocusItemFromFocusStackById).toHaveBeenCalledWith({
+      focusId: 'keyboard-shortcut-menu',
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(false);
   });
 });
