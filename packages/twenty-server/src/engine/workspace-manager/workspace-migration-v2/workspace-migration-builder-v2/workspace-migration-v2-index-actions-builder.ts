@@ -1,37 +1,46 @@
-import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
-import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import {
+  UpdateIndexAction,
+  WorkspaceMigrationIndexActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-action-v2';
+import { UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
 import {
   getWorkspaceMigrationV2CreateIndexAction,
   getWorkspaceMigrationV2DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 
-export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
-  CustomDeletedCreatedUpdatedMatrix<
-    'objectMetadata',
-    WorkspaceMigrationObjectInput
-  >;
-export const buildWorkspaceMigrationIndexActions = ({
-  createdObjectMetadata,
-  deletedObjectMetadata,
-  updatedObjectMetadata,
-}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationIndexActionV2[] => {
-  const createdObjectMetadataCreateIndexActions = createdObjectMetadata.flatMap(
-    (objectMetadata) =>
-      objectMetadata.flattenedIndexMetadatas.map(
-        getWorkspaceMigrationV2CreateIndexAction,
-      ),
-  );
+export const buildWorkspaceMigrationIndexActions = (
+  objectMetadataDeletedCreatedUpdatedIndex: UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[],
+): WorkspaceMigrationIndexActionV2[] => {
+  let allUpdatedObjectMetadataIndexActions: WorkspaceMigrationIndexActionV2[] =
+    [];
 
-  const deletedObjectMetadataDeleteIndexActions = deletedObjectMetadata.flatMap(
-    (objectMetadata) =>
-      objectMetadata.flattenedIndexMetadatas.map(
-        getWorkspaceMigrationV2DeleteIndexAction,
-      ),
-  );
+  for (const {
+    createdIndexMetadata,
+    deletedIndexMetadata,
+    objectMetadataInput,
+    updatedIndexMetadata,
+  } of objectMetadataDeletedCreatedUpdatedIndex) {
+    const updateFieldActions = updatedIndexMetadata.map<UpdateIndexAction>(
+      () => {
+        return {
+          type: 'udpate_index',
+        };
+      },
+    );
 
-  return [
-    ...createdObjectMetadataCreateIndexActions,
-    ...deletedObjectMetadataDeleteIndexActions,
-  ];
+    const createFieldAction = createdIndexMetadata.map(
+      getWorkspaceMigrationV2CreateIndexAction,
+    );
+    const deleteFieldAction = deletedIndexMetadata.map(
+      getWorkspaceMigrationV2DeleteIndexAction,
+    );
+
+    allUpdatedObjectMetadataIndexActions =
+      allUpdatedObjectMetadataIndexActions.concat([
+        ...createFieldAction,
+        ...deleteFieldAction,
+        ...updateFieldActions,
+      ]);
+  }
+  return allUpdatedObjectMetadataIndexActions;
 };

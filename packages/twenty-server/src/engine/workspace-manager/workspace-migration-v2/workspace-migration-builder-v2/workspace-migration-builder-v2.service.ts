@@ -4,8 +4,10 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-v2';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
+import { computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
+import { getWorkspaceMigrationV2CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
 import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-index-actions-builder';
 import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
@@ -39,26 +41,36 @@ export class WorkspaceMigrationBuilderV2Service {
         ),
       );
 
-    const updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix =
+    const createdObjectMetadataCreateIndexActions =
+      createdObjectMetadata.flatMap((objectMetadata) =>
+        objectMetadata.flattenedIndexMetadatas.map(
+          getWorkspaceMigrationV2CreateIndexAction,
+        ),
+      );
+
+    const updatedObjectMetadataDeletedCreatedUpdatedFieldMatrix =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
         updatedObjectMetadata,
       );
 
     const fieldWorkspaceMigrationActions =
       buildWorkspaceMigrationV2FieldActions(
-        updatedObjectMetadataFieldAndRelationDeletedCreatedUpdatedMatrix,
+        updatedObjectMetadataDeletedCreatedUpdatedFieldMatrix,
       );
 
-    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
-      createdObjectMetadata,
-      deletedObjectMetadata,
-      updatedObjectMetadata,
-    });
+    const updatedObjectMetadataIndexDeletedCreatedUpdatedMatrix =
+      computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
+        updatedObjectMetadata,
+      );
+    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions(
+      updatedObjectMetadataIndexDeletedCreatedUpdatedMatrix,
+    );
 
     return {
       actions: [
         ...objectWorkspaceMigrationActions,
         ...createdObjectWorkspaceMigrationCreateFieldActions,
+        ...createdObjectMetadataCreateIndexActions,
         ...fieldWorkspaceMigrationActions,
         ...indexWorkspaceMigrationActions,
       ],
