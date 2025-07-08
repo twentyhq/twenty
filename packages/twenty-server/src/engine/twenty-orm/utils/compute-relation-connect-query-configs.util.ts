@@ -20,6 +20,7 @@ import {
   ConnectExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/connect.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
+import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const computeRelationConnectQueryConfigs = (
@@ -38,80 +39,141 @@ export const computeRelationConnectQueryConfigs = (
 
     for (const connectField of connectFields) {
       const [connectFieldName, connectObject] = Object.entries(connectField)[0];
-      const field =
-        objectMetadata.fieldsById[
-          objectMetadata.fieldIdByName[connectFieldName]
-        ];
 
-      if (
-        !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
-        field.settings?.relationType !== RelationType.MANY_TO_ONE
-      ) {
-        const objectMetadataNameSingular = objectMetadata.nameSingular;
-
-        throw new ConnectException(
-          `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
-          ConnectExceptionCode.CONNECT_NOT_ALLOWED,
-          {
-            userFriendlyMessage: t`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
-          },
-        );
-      }
-      checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
-
-      const targetObjectMetadata =
-        objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
-
-      if (!isDefined(targetObjectMetadata)) {
-        throw new ConnectException(
-          `Target object metadata not found for ${connectFieldName}`,
-          ConnectExceptionCode.TARGET_OBJECT_METADATA_NOT_FOUND,
-          {
-            userFriendlyMessage: t`Target object metadata not found for ${connectFieldName}`,
-          },
-        );
-      }
-
-      const uniqueConstraintFields = checkUniqueConstraintFullyPopulated(
-        targetObjectMetadata,
-        connectObject,
-        connectFieldName,
-      );
-
-      const recordToConnectCondition = computeUniqueConstraintCondition(
+      const {
+        recordToConnectCondition,
         uniqueConstraintFields,
+        targetObjectNameSingular,
+      } = computeRecordToConnectCondition(
+        connectFieldName,
         connectObject,
+        objectMetadata,
+        objectMetadataMap,
+        entity,
       );
 
-      if (isDefined(allConnectQueryConfigs[connectFieldName])) {
+      const connectQueryConfig = allConnectQueryConfigs[connectFieldName];
+
+      if (isDefined(connectQueryConfig)) {
         checkUniqueConstraintsAreSameOrThrow(
-          allConnectQueryConfigs[connectFieldName],
+          connectQueryConfig,
           uniqueConstraintFields,
         );
 
-        allConnectQueryConfigs[connectFieldName].recordToConnectConditions.push(
+        allConnectQueryConfigs[connectFieldName] = updateConnectQueryConfigs(
+          connectQueryConfig,
           recordToConnectCondition,
+          entityIndex,
         );
-        allConnectQueryConfigs[
-          connectFieldName
-        ].recordToConnectConditionByEntityIndex[entityIndex] =
-          recordToConnectCondition;
       } else {
-        allConnectQueryConfigs[connectFieldName] = {
-          targetObjectName: targetObjectMetadata.nameSingular,
-          recordToConnectConditions: [recordToConnectCondition],
-          relationFieldName: `${connectFieldName}Id`,
+        allConnectQueryConfigs[connectFieldName] = createConnectQueryConfig(
           connectFieldName,
+          recordToConnectCondition,
           uniqueConstraintFields,
-          recordToConnectConditionByEntityIndex: {
-            [entityIndex]: recordToConnectCondition,
-          },
-        };
+          targetObjectNameSingular,
+          entityIndex,
+        );
       }
     }
   }
 
   return allConnectQueryConfigs;
+};
+
+const updateConnectQueryConfigs = (
+  connectQueryConfig: RelationConnectQueryConfig,
+  recordToConnectCondition: UniqueConstraintCondition,
+  entityIndex: number,
+) => {
+  return {
+    ...connectQueryConfig,
+    recordToConnectConditions: [
+      ...connectQueryConfig.recordToConnectConditions,
+      recordToConnectCondition,
+    ],
+    recordToConnectConditionByEntityIndex: {
+      ...connectQueryConfig.recordToConnectConditionByEntityIndex,
+      [entityIndex]: recordToConnectCondition,
+    },
+  };
+};
+
+const createConnectQueryConfig = (
+  connectFieldName: string,
+  recordToConnectCondition: UniqueConstraintCondition,
+  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+  targetObjectNameSingular: string,
+  entityIndex: number,
+) => {
+  return {
+    targetObjectName: targetObjectNameSingular,
+    recordToConnectConditions: [recordToConnectCondition],
+    relationFieldName: getAssociatedRelationFieldName(connectFieldName),
+    connectFieldName,
+    uniqueConstraintFields,
+    recordToConnectConditionByEntityIndex: {
+      [entityIndex]: recordToConnectCondition,
+    },
+  };
+};
+
+const computeRecordToConnectCondition = (
+  connectFieldName: string,
+  connectObject: ConnectObject,
+  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  objectMetadataMap: ObjectMetadataMaps,
+  entity: Record<string, unknown>,
+): {
+  recordToConnectCondition: UniqueConstraintCondition;
+  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[];
+  targetObjectNameSingular: string;
+} => {
+  const field =
+    objectMetadata.fieldsById[objectMetadata.fieldIdByName[connectFieldName]];
+
+  if (
+    !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+    field.settings?.relationType !== RelationType.MANY_TO_ONE
+  ) {
+    const objectMetadataNameSingular = objectMetadata.nameSingular;
+
+    throw new ConnectException(
+      `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
+      ConnectExceptionCode.CONNECT_NOT_ALLOWED,
+      {
+        userFriendlyMessage: t`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
+      },
+    );
+  }
+  checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
+
+  const targetObjectMetadata =
+    objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
+
+  if (!isDefined(targetObjectMetadata)) {
+    throw new ConnectException(
+      `Target object metadata not found for ${connectFieldName}`,
+      ConnectExceptionCode.TARGET_OBJECT_METADATA_NOT_FOUND,
+      {
+        userFriendlyMessage: t`Target object metadata not found for ${connectFieldName}`,
+      },
+    );
+  }
+
+  const uniqueConstraintFields = checkUniqueConstraintFullyPopulated(
+    targetObjectMetadata,
+    connectObject,
+    connectFieldName,
+  );
+
+  return {
+    recordToConnectCondition: computeUniqueConstraintCondition(
+      uniqueConstraintFields,
+      connectObject,
+    ),
+    uniqueConstraintFields,
+    targetObjectNameSingular: targetObjectMetadata.nameSingular,
+  };
 };
 
 const extractConnectFields = (
