@@ -9,6 +9,7 @@ export enum FocusComponentType {
   RECORD_TABLE_CELL = 'record-table-cell',
   TEXT_AREA = 'text-area',
   TEXT_INPUT = 'text-input',
+  FORM_FIELD_INPUT = 'form-field-input',
   RECORD_BOARD_CARD = 'record-board-card',
   ACTIVITY_RICH_TEXT_EDITOR = 'activity-rich-text-editor',
   KEYBOARD_SHORTCUT_MENU = 'keyboard-shortcut-menu',

@@ -296,6 +296,7 @@ export const FormDateTimeFieldInput = ({
 
       <FormFieldInputRowContainer>
         <StyledInputContainer
+          formFieldInputInstanceId={instanceId}
           ref={datePickerWrapperRef}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >

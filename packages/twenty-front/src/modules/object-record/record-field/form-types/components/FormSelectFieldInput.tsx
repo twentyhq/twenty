@@ -149,6 +149,7 @@ export const FormSelectFieldInput = ({
           />
         ) : (
           <FormFieldInputInnerContainer
+            formFieldInputInstanceId={instanceId}
             hasRightElement={isDefined(VariablePicker) && !readonly}
           >
             <VariableChipStandalone
