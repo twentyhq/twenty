@@ -41,9 +41,9 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
-  ConnectException,
-  ConnectExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/connect.exception';
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
   OperationType,
   validateOperationIsPermittedOrThrow,
@@ -1414,9 +1414,9 @@ export class WorkspaceEntityManager extends EntityManager {
         const recordToConnectTotal = recordToConnect.length;
         const connectFieldName = connectQueryConfig.connectFieldName;
 
-        throw new ConnectException(
+        throw new TwentyORMException(
           `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
-          ConnectExceptionCode.RECORD_TO_CONNECT_NOT_FOUND,
+          TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
           {
             userFriendlyMessage: t`Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
           },

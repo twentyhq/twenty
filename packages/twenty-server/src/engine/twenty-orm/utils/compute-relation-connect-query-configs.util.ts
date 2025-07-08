@@ -16,9 +16,9 @@ import {
   UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
-  ConnectException,
-  ConnectExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/connect.exception';
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -137,9 +137,9 @@ const computeRecordToConnectCondition = (
   ) {
     const objectMetadataNameSingular = objectMetadata.nameSingular;
 
-    throw new ConnectException(
+    throw new TwentyORMException(
       `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
-      ConnectExceptionCode.CONNECT_NOT_ALLOWED,
+      TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
       {
         userFriendlyMessage: t`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
       },
@@ -151,9 +151,9 @@ const computeRecordToConnectCondition = (
     objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
 
   if (!isDefined(targetObjectMetadata)) {
-    throw new ConnectException(
+    throw new TwentyORMException(
       `Target object metadata not found for ${connectFieldName}`,
-      ConnectExceptionCode.TARGET_OBJECT_METADATA_NOT_FOUND,
+      TwentyORMExceptionCode.MALFORMED_METADATA,
       {
         userFriendlyMessage: t`Target object metadata not found for ${connectFieldName}`,
       },
@@ -251,9 +251,9 @@ const checkUniqueConstraintFullyPopulated = (
   );
 
   if (!isDefined(uniqueConstraintFieldFullyPopulated)) {
-    throw new ConnectException(
+    throw new TwentyORMException(
       `Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
-      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
         userFriendlyMessage: t`Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
       },
@@ -264,9 +264,9 @@ const checkUniqueConstraintFullyPopulated = (
     uniqueConstraintFieldFullyPopulated.length !==
     Object.keys(connectObject.connect.where).length
   ) {
-    throw new ConnectException(
+    throw new TwentyORMException(
       `Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
-      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
         userFriendlyMessage: t`Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
       },
@@ -284,9 +284,9 @@ const checkNoRelationFieldConflictOrThrow = (
     isDefined(entity[fieldName]) && isDefined(entity[`${fieldName}Id`]);
 
   if (hasRelationFieldConflict) {
-    throw new ConnectException(
+    throw new TwentyORMException(
       `${fieldName} and ${fieldName}Id cannot be both provided.`,
-      ConnectExceptionCode.CONNECT_NOT_ALLOWED,
+      TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
       {
         userFriendlyMessage: t`${fieldName} and ${fieldName}Id cannot be both provided.`,
       },
@@ -333,9 +333,9 @@ const checkUniqueConstraintsAreSameOrThrow = (
   ) {
     const connectFieldName = relationConnectQueryConfig.connectFieldName;
 
-    throw new ConnectException(
+    throw new TwentyORMException(
       `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}.`,
-      ConnectExceptionCode.UNIQUE_CONSTRAINT_ERROR,
+      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
         userFriendlyMessage: t`Expected the same constraint fields to be used consistently across all operations for ${connectFieldName}.`,
       },
