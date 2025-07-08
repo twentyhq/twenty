@@ -29,10 +29,9 @@ export const SelectHeaderTable = ({
       columns={columns}
       selectedRows={selectedRowIndexes}
       onSelectedRowsChange={(newRowIndexes: number[]) => {
-        // allow selecting only one row
-        newRowIndexes.forEach((value: any) => {
-          if (!selectedRowIndexes.has(value as number)) {
-            setSelectedRowIndexes(new Set([value as number]));
+        newRowIndexes.forEach((value) => {
+          if (!selectedRowIndexes.has(value)) {
+            setSelectedRowIndexes(new Set([value]));
             return;
           }
         });
