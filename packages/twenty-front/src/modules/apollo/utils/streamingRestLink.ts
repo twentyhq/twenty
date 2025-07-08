@@ -56,6 +56,10 @@ export class StreamingRestLink extends ApolloLink {
 
       fetch(url, requestConfig)
         .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
           if (!response.body) {
             throw new Error('Response body is null');
           }
