@@ -162,6 +162,20 @@ export class FieldMetadataValidationService {
       }
     }
 
+    const isRelationField =
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION;
+
+    if (
+      isRelationField &&
+      fieldMetadataInput.name !== existingFieldMetadata?.name
+    ) {
+      throw new FieldMetadataException(
+        'Name cannot be changed for relation fields',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
     if (fieldMetadataInput.isNullable === false) {
       if (!isDefined(fieldMetadataInput.defaultValue)) {
         throw new FieldMetadataException(

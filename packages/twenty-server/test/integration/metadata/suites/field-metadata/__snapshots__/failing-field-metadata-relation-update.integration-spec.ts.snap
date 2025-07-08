@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata relation update should fail relation when name is changed 1`] = `
+[
+  {
+    "extensions": {
+      "code": "GRAPHQL_VALIDATION_FAILED",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Field does not exist",
+    "name": "ValidationError",
+  },
+]
+`;
