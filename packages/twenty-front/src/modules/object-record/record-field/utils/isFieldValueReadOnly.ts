@@ -3,7 +3,6 @@ import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowS
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -66,10 +65,13 @@ export const isFieldValueReadOnly = ({
     return true;
   }
 
-  if (
-    isFieldDateTime({ type: fieldType }) === true &&
-    (fieldName === 'createdAt' || fieldName === 'updatedAt')
-  ) {
+  const isFieldDateOrDateTime =
+    fieldType === FieldMetadataType.DATE ||
+    fieldType === FieldMetadataType.DATE_TIME;
+  const isFieldCreatedAtOrUpdatedAt =
+    fieldName === 'createdAt' || fieldName === 'updatedAt';
+
+  if (isFieldDateOrDateTime && isFieldCreatedAtOrUpdatedAt) {
     return true;
   }
 
