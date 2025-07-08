@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 
 import { Placement } from '@floating-ui/react';
 
-export const dropdownPlacementComponentStateV2 =
+export const dropdownPlacementComponentState =
   createComponentStateV2<Placement | null>({
     key: 'dropdownPlacementComponentState',
     componentInstanceContext: DropdownComponentInstanceContext,
