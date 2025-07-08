@@ -22,6 +22,8 @@ export const useRemoveStepFilter = () => {
   const removeStepFilterRecoilCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (stepFilterId: string) => {
+        if (readonly === true) return;
+
         const stepFilters = getSnapshotValue(
           snapshot,
           currentStepFiltersCallbackState,
@@ -33,29 +35,28 @@ export const useRemoveStepFilter = () => {
         );
 
         const rootStepFilterGroup = stepFilterGroups?.find(
-          (g) => g.parentStepFilterGroupId === null,
+          (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
         );
 
         if (!isDefined(rootStepFilterGroup)) return;
 
-        if (readonly === true) return;
-
-        const deletedStepFilter = stepFilters?.find(
-          (f) => f.id === stepFilterId,
+        const stepFilterToRemove = stepFilters?.find(
+          (filter) => filter.id === stepFilterId,
         );
 
-        if (!isDefined(deletedStepFilter)) return;
+        if (!isDefined(stepFilterToRemove)) return;
 
         const updatedStepFilters = (stepFilters ?? []).filter(
-          (f) => f.id !== stepFilterId,
+          (filter) => filter.id !== stepFilterId,
         );
 
         const parentStepFilterGroup = stepFilterGroups?.find(
-          (g) => g.id === deletedStepFilter.stepFilterGroupId,
+          (filterGroup) =>
+            filterGroup.id === stepFilterToRemove.stepFilterGroupId,
         );
 
         const stepFiltersInParentStepFilterGroup = updatedStepFilters?.filter(
-          (f) => f.stepFilterGroupId === parentStepFilterGroup?.id,
+          (filter) => filter.stepFilterGroupId === parentStepFilterGroup?.id,
         );
 
         const stepFilterGroupsInParentStepFilterGroup =
@@ -69,7 +70,7 @@ export const useRemoveStepFilter = () => {
 
         const updatedStepFilterGroups = shouldDeleteParentStepFilterGroup
           ? (stepFilterGroups ?? []).filter(
-              (g) => g.id !== parentStepFilterGroup?.id,
+              (filterGroup) => filterGroup.id !== parentStepFilterGroup?.id,
             )
           : stepFilterGroups;
 

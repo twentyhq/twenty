@@ -29,6 +29,10 @@ export const useUpsertStepFilterSettings = () => {
         stepFilterGroupToUpsert?: StepFilterGroup;
         stepFilterToUpsert?: StepFilter;
       }) => {
+        if (readonly === true) {
+          return;
+        }
+
         const stepFilterGroups = getSnapshotValue(
           snapshot,
           currentStepFilterGroupsCallbackState,
@@ -39,14 +43,12 @@ export const useUpsertStepFilterSettings = () => {
           currentStepFiltersCallbackState,
         );
 
-        if (readonly === true) return;
-
         const updatedStepFilterGroups = [...(stepFilterGroups ?? [])];
         const updatedStepFilters = [...(stepFilters ?? [])];
 
         if (isDefined(stepFilterGroupToUpsert)) {
           const existingIndex = updatedStepFilterGroups.findIndex(
-            (g) => g.id === stepFilterGroupToUpsert.id,
+            (filterGroup) => filterGroup.id === stepFilterGroupToUpsert.id,
           );
 
           if (existingIndex >= 0) {

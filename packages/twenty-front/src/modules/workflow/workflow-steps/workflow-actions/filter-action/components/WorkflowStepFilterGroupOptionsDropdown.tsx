@@ -28,6 +28,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
           aria-label="Step filter group options"
           variant="tertiary"
           Icon={IconDotsVertical}
+          disabled={readonly}
         />
       }
       dropdownComponents={
@@ -36,13 +37,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
             <MenuItem
               LeftIcon={IconTrash}
               text="Delete group"
-              onClick={() => {
-                if (readonly === true) {
-                  return;
-                }
-
-                removeStepFilterGroup(stepFilterGroupId);
-              }}
+              onClick={() => removeStepFilterGroup(stepFilterGroupId)}
               accent="danger"
             />
           </DropdownMenuItemsContainer>

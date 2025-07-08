@@ -5,6 +5,7 @@ import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveStepFilterGroup = () => {
   const { readonly, onFilterSettingsUpdate } = useContext(
@@ -34,15 +35,15 @@ export const useRemoveStepFilterGroup = () => {
         );
 
         const rootStepFilterGroup = stepFilterGroups?.find(
-          (g) => g.parentStepFilterGroupId === null,
+          (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
         );
 
         const updatedStepFilterGroups = (stepFilterGroups ?? []).filter(
-          (g) => g.id !== stepFilterGroupId,
+          (filterGroup) => filterGroup.id !== stepFilterGroupId,
         );
 
         const updatedStepFilters = (stepFilters ?? []).filter(
-          (f) => f.stepFilterGroupId !== stepFilterGroupId,
+          (filter) => filter.stepFilterGroupId !== stepFilterGroupId,
         );
 
         const shouldResetStepFilterSettings =

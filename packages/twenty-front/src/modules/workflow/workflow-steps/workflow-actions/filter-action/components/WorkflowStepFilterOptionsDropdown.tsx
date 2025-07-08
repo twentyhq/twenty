@@ -37,13 +37,7 @@ export const WorkflowStepFilterOptionsDropdown = ({
             <MenuItem
               LeftIcon={IconTrash}
               text="Delete"
-              onClick={() => {
-                if (readonly === true) {
-                  return;
-                }
-
-                removeStepFilter(stepFilterId);
-              }}
+              onClick={() => removeStepFilter(stepFilterId)}
               accent="danger"
             />
           </DropdownMenuItemsContainer>
