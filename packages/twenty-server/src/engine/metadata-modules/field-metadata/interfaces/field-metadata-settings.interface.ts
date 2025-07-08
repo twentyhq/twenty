@@ -51,6 +51,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
 };
 
 export type FieldMetadataSettings<

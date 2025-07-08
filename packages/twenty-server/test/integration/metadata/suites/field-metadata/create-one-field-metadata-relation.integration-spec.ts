@@ -286,7 +286,7 @@ describe('createOne FieldMetadataService relation fields', () => {
       });
 
       const settings =
-        createdFieldPerson.settings as FieldMetadataSettings<FieldMetadataType.RELATION>;
+        createdFieldPerson.settings as FieldMetadataSettings<FieldMetadataType.MORPH_RELATION>;
 
       expect(settings.joinColumnName).toBe('personForRelationId');
 
