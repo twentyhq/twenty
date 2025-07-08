@@ -25,5 +25,6 @@ export const spreadsheetBuildFieldOptions = <T extends string>(
         disabled: isSelected,
         fieldMetadataTypeLabel: getFieldMetadataTypeLabel(fieldMetadataType),
       } as const;
+      //tododo: add a hasSubField property to the field options
     });
 };
