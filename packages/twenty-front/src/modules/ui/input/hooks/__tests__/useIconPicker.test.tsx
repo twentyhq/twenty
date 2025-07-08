@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';

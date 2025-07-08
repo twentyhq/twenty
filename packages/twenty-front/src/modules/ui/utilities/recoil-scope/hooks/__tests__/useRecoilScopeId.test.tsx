@@ -1,5 +1,5 @@
-import { createContext } from 'react';
 import { renderHook } from '@testing-library/react';
+import { createContext } from 'react';
 
 import { useRecoilScopeId } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopeId';
 
@@ -25,8 +25,15 @@ describe('useRecoilScopeId', () => {
   });
 
   it('Should throw an error when used outside of the specified context', () => {
+    // Suppress console errors for this test since we're expecting an error
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
+
     expect(() => {
       renderHook(() => useRecoilScopeId(nullContext));
     }).toThrow(ERROR_MESSAGE);
+
+    // Restore console.error
+    console.error = originalConsoleError;
   });
 });
