@@ -19,7 +19,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
   'objectMetadataId',
   'roleId',
 ])
-@Index('IDX_OBJECT_PERMISSION_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
 export class ObjectPermissionEntity {
   @PrimaryGeneratedColumn('uuid')

@@ -9,15 +9,9 @@ export class AddIndexOnObjectPermission1751890088507
     await queryRunner.query(
       `CREATE INDEX "IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."objectPermission" ("workspaceId", "roleId") `,
     );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_OBJECT_PERMISSION_WORKSPACE_ID" ON "core"."objectPermission" ("workspaceId") `,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_OBJECT_PERMISSION_WORKSPACE_ID"`,
-    );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
     );

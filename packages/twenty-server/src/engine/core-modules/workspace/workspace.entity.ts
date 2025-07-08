@@ -23,7 +23,6 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -173,10 +172,4 @@ export class Workspace {
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
   version: string | null;
-
-  @OneToMany(
-    () => FieldPermissionEntity,
-    (fieldPermission) => fieldPermission.workspace,
-  )
-  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }
