@@ -2,12 +2,12 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 export const indexMetadataEntityPropertiesToCompare = [
-  'indexFieldMetadatas',
+  'flattenedIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
   'indexType',
   'indexWhereClause',
   'isUnique',
   'name',
-] as const satisfies (keyof IndexMetadataEntity)[];
+] as const satisfies (keyof FlattenedIndexMetadata)[];
 export type IndexMetadataEntityEditableProperties =
   (typeof indexMetadataEntityPropertiesToCompare)[number];
 

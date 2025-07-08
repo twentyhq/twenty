@@ -6,19 +6,12 @@ export const fieldMetadataEntityEditableProperties = [
   'icon',
   'isActive',
   'isLabelSyncedWithName',
-  'isUnique', // unsure
+  'isUnique',
   'label',
   'name',
   'options',
-  // TODO update once we reactivate the relation edition
-  // 'relationTargetFieldMetadata',
-  // 'relationTargetFieldMetadataId',
-  // 'relationTargetObjectMetadata',
-  // 'relationTargetObjectMetadataId',
-  // 'settings',
-  ///
   'standardOverrides',
-] as const satisfies (keyof FieldMetadataEntity)[];
+] as const satisfies (keyof WorkspaceMigrationFieldInput)[];
 export type FieldMetadataEntityEditableProperties =
   (typeof fieldMetadataEntityEditableProperties)[number];
 

@@ -4,6 +4,7 @@ import {
   getWorkspaceMigrationV2CreateIndexAction,
   getWorkspaceMigrationV2DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
+import { compareTwoFlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-index-metadata-input-comparator.util';
 
 export const buildWorkspaceMigrationIndexActions = (
   objectMetadataDeletedCreatedUpdatedIndex: UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[],
@@ -18,10 +19,17 @@ export const buildWorkspaceMigrationIndexActions = (
   } of objectMetadataDeletedCreatedUpdatedIndex) {
     const updateFieldActions =
       updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
-        ({ to, from }) => [
-          getWorkspaceMigrationV2DeleteIndexAction(from),
-          getWorkspaceMigrationV2CreateIndexAction(to),
-        ],
+        ({ to, from }) => {
+          const updates = compareTwoFlattenedIndexMetadata({ from, to });
+          if (updates.length === 0) {
+            return [];
+          }
+
+          return [
+            getWorkspaceMigrationV2DeleteIndexAction(from),
+            getWorkspaceMigrationV2CreateIndexAction(to),
+          ];
+        },
       );
 
     const createFieldAction = createdIndexMetadata.map(
