@@ -72,7 +72,7 @@ describe('useToggleDropdown', () => {
     expect(result.current.isOutsideDropdownOpen).toBe(false);
   });
 
-  it('should toggle dropdown from inside component instance context', async () => {
+  it('should toggle dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
         const isOutsideDropdownOpen = useRecoilComponentValueV2(
