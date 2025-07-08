@@ -215,10 +215,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsDataModelFieldIconLabelForm
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-                canToggleSyncLabelWithName={
-                  fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-                  fieldMetadataItem.isCustom === true
-                }
+                isCreationMode={false}
               />
             </Section>
             {
