@@ -4,8 +4,8 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
+import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('Workspace migration builder relations tests suite', () => {
@@ -17,8 +17,8 @@ describe('Workspace migration builder relations tests suite', () => {
 
   const createMockObject = (
     identifier: string,
-    fields: Partial<WorkspaceMigrationFieldInput>[] = [],
-  ): WorkspaceMigrationObjectInput => ({
+    fields: Partial<FlattenFieldMetadata>[] = [],
+  ): FlattenObjectMetadata => ({
     uniqueIdentifier: identifier,
     flattenedIndexMetadatas: [],
     fieldInputs: fields.map((field) => ({
@@ -35,8 +35,8 @@ describe('Workspace migration builder relations tests suite', () => {
 
   describe('buildWorkspaceMigrationV2RelationActions', () => {
     it('should create relation actions for created fields', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlattenObjectMetadata[] = [];
+      const toObjects: FlattenObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -111,7 +111,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should create delete actions for deleted fields', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlattenObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -123,9 +123,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
-        createMockObject('company'),
-      ];
+      const toObjects: FlattenObjectMetadata[] = [createMockObject('company')];
 
       const result = service.build({ from: fromObjects, to: toObjects });
 
@@ -157,7 +155,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should handle multiple relation changes across different objects', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlattenObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -169,7 +167,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const toObjects: FlattenObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -358,7 +356,7 @@ describe('Workspace migration builder relations tests suite', () => {
         description: 'Company employees',
       };
 
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlattenObjectMetadata[] = [
         createMockObject('company', [
           {
             ...baseField,
@@ -372,7 +370,7 @@ describe('Workspace migration builder relations tests suite', () => {
         ]),
       ];
 
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const toObjects: FlattenObjectMetadata[] = [
         {
           ...fromObjects[0],
           fieldInputs: [

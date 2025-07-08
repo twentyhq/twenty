@@ -1,23 +1,20 @@
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
 import {
-  WorkspaceMigrationObjectInput,
-  WorkspaceMigrationObjectWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+  FlattenObjectMetadata,
+  FlattenedObjectMetdataWithoutFields,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = {
-  objectMetadataInput: WorkspaceMigrationObjectWithoutFields;
-} & CustomDeletedCreatedUpdatedMatrix<
-  'fieldMetadata',
-  WorkspaceMigrationFieldInput
->;
+  objectMetadataInput: FlattenedObjectMetdataWithoutFields;
+} & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlattenFieldMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (
-  updatedObjectMetadata: FromTo<WorkspaceMigrationObjectInput>[],
+  updatedObjectMetadata: FromTo<FlattenObjectMetadata>[],
 ): UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[] => {
   const matrixAccumulator: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[] =
     [];

@@ -1,20 +1,20 @@
-import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flattened-index-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
+import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-index-metadata';
 import {
-  WorkspaceMigrationObjectInput,
-  WorkspaceMigrationObjectWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+  FlattenObjectMetadata,
+  FlattenedObjectMetdataWithoutFields,
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
+import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = {
-  objectMetadataInput: WorkspaceMigrationObjectWithoutFields;
-} & CustomDeletedCreatedUpdatedMatrix<'indexMetadata', FlattenedIndexMetadata>;
+  objectMetadataInput: FlattenedObjectMetdataWithoutFields;
+} & CustomDeletedCreatedUpdatedMatrix<'indexMetadata', FlattenIndexMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = (
-  updatedObjectMetadata: FromTo<WorkspaceMigrationObjectInput>[],
+  updatedObjectMetadata: FromTo<FlattenObjectMetadata>[],
 ): UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[] => {
   const matrixAccumulator: UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix[] =
     [];

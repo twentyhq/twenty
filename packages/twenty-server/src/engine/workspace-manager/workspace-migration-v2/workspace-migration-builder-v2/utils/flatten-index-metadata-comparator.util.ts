@@ -1,6 +1,6 @@
 import diff from 'microdiff';
 
-import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flattened-index-metadata';
+import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-index-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
@@ -10,7 +10,7 @@ const flattenedIndexMetadataPropertiesToCompare = [
   'indexWhereClause',
   'isUnique',
   'name',
-] as const satisfies (keyof FlattenedIndexMetadata)[];
+] as const satisfies (keyof FlattenIndexMetadata)[];
 type FlattenedIndexMetadataPropertiesToCompare =
   (typeof flattenedIndexMetadataPropertiesToCompare)[number];
 
@@ -18,7 +18,7 @@ type FlattenedIndexMetadataPropertiesToCompare =
 export const compareTwoFlattenedIndexMetadata = ({
   from,
   to,
-}: FromTo<FlattenedIndexMetadata>) => {
+}: FromTo<FlattenIndexMetadata>) => {
   const transformOptions = {
     shouldIgnoreProperty: (property: string) =>
       !flattenedIndexMetadataPropertiesToCompare.includes(
