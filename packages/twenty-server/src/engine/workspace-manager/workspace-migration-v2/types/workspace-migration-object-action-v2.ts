@@ -1,10 +1,10 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FlattenedObjectMetdataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
+import { FlattenObjectMetdataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { WorkspaceMigrationObjectInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/flatten-object-metadata-comparator.util';
 
 type ObjectActionCommon = {
-  objectMetadataInput: FlattenedObjectMetdataWithoutFields;
+  objectMetadataInput: FlattenObjectMetdataWithoutFields;
 };
 export type CreateObjectAction = {
   type: 'create_object';

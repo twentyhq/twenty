@@ -10,7 +10,7 @@ export type FlattenObjectMetadata = Partial<
   fieldInputs: FlattenFieldMetadata[];
 };
 
-export type FlattenedObjectMetdataWithoutFields = Omit<
+export type FlattenObjectMetdataWithoutFields = Omit<
   FlattenObjectMetadata,
   'fieldInputs'
 >;

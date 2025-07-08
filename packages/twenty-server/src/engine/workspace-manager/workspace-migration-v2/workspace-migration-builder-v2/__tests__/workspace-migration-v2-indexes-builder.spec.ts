@@ -145,7 +145,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_field",
     },
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -197,7 +197,7 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -338,7 +338,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_field",
     },
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -354,7 +354,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_index",
     },
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -370,7 +370,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_index",
     },
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -458,7 +458,7 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
@@ -474,7 +474,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "delete_index",
     },
     {
-      "flattenedIndexMetadata": {
+      "flattenIndexMetadata": {
         "flattenIndexFieldMetadatas": [
           {
             "order": 0,
