@@ -3,7 +3,7 @@ import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/
 import { compareTwoFlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-object-metadata-comparator.util';
 import {
   UpdateObjectAction,
-  WorkspaceMigrationV2ObjectAction,
+  WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import {
   getWorkspaceMigrationV2ObjectCreateAction,
@@ -16,7 +16,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   createdObjectMetadata,
   deletedObjectMetadata,
   updatedObjectMetadata,
-}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationV2ObjectAction[] => {
+}: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationObjectActionV2[] => {
   const createdObjectActions = createdObjectMetadata.map(
     getWorkspaceMigrationV2ObjectCreateAction,
   );
