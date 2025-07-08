@@ -15,6 +15,7 @@ const indexFieldMetadataRelationProperties = [
   'indexMetadata',
   'fieldMetadata',
 ] as const satisfies (keyof IndexFieldMetadataEntity)[];
+
 type IndexFieldMetadataRelationProperties =
   (typeof indexFieldMetadataRelationProperties)[number];
 

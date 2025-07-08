@@ -21,6 +21,7 @@ export const buildWorkspaceMigrationIndexActions = (
       updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
         ({ to, from }) => {
           const updates = compareTwoFlattenedIndexMetadata({ from, to });
+
           if (updates.length === 0) {
             return [];
           }
@@ -46,5 +47,6 @@ export const buildWorkspaceMigrationIndexActions = (
         ...updateFieldActions,
       ]);
   }
+
   return allUpdatedObjectMetadataIndexActions;
 };
