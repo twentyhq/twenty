@@ -10,6 +10,7 @@ import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/reco
 import { SeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordAction';
+import { CreateRelatedRecordAction } from '@/action-menu/actions/record-actions/single-record/components/CreateRelatedRecordAction';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
 import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
 import { ExportNoteActionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordAction';
@@ -388,13 +389,88 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ],
     component: <RestoreSingleRecordAction />,
   },
+  [SingleRecordActionKeys.CREATE_RELATED_PEOPLE]: {
+    type: ActionType.Standard,
+    scope: ActionScope.Create,
+    key: SingleRecordActionKeys.CREATE_RELATED_PEOPLE,
+    label: msg`Create related people`,
+    shortLabel: msg`Create people`,
+    position: 17,
+    Icon: IconUser,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      getTargetObjectReadPermission,
+      objectMetadataItem,
+    }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord.isRemote &&
+      objectPermissions.canUpdateObjectRecords &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Person) === true &&
+      isDefined(objectMetadataItem) &&
+      objectMetadataItem.fields.some(
+        (field) =>
+          field.type === 'RELATION' &&
+          field.relation?.type === 'ONE_TO_MANY' &&
+          field.relation?.targetObjectMetadata.nameSingular ===
+            CoreObjectNameSingular.Person,
+      ),
+    availableOn: [
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
+    component: (
+      <CreateRelatedRecordAction recordType={CoreObjectNameSingular.Person} />
+    ),
+  },
+  [SingleRecordActionKeys.CREATE_RELATED_OPPORTUNITIES]: {
+    type: ActionType.Standard,
+    scope: ActionScope.Create,
+    key: SingleRecordActionKeys.CREATE_RELATED_OPPORTUNITIES,
+    label: msg`Create related opportunities`,
+    shortLabel: msg`Create opportunities`,
+    position: 18,
+    Icon: IconTargetArrow,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      getTargetObjectReadPermission,
+      objectMetadataItem,
+    }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord.isRemote &&
+      objectPermissions.canUpdateObjectRecords &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) ===
+        true &&
+      isDefined(objectMetadataItem) &&
+      objectMetadataItem.fields.some(
+        (field) =>
+          field.type === 'RELATION' &&
+          field.relation?.type === 'ONE_TO_MANY' &&
+          field.relation?.targetObjectMetadata.nameSingular ===
+            CoreObjectNameSingular.Opportunity,
+      ),
+    availableOn: [
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
+    component: (
+      <CreateRelatedRecordAction
+        recordType={CoreObjectNameSingular.Opportunity}
+      />
+    ),
+  },
   [MultipleRecordsActionKeys.RESTORE]: {
     type: ActionType.Standard,
     scope: ActionScope.RecordSelection,
     key: MultipleRecordsActionKeys.RESTORE,
     label: msg`Restore records`,
     shortLabel: msg`Restore`,
-    position: 17,
+    position: 21,
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
@@ -419,7 +495,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
-    position: 18,
+    position: 22,
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
@@ -451,7 +527,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
-    position: 19,
+    position: 23,
     Icon: IconUser,
     isPinned: false,
     availableOn: [
@@ -482,7 +558,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
-    position: 20,
+    position: 24,
     Icon: IconBuildingSkyscraper,
     isPinned: false,
     availableOn: [
@@ -513,7 +589,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 21,
+    position: 25,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
@@ -546,7 +622,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 22,
+    position: 26,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -572,7 +648,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 23,
+    position: 27,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -603,7 +679,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 24,
+    position: 28,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
