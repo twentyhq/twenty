@@ -2,7 +2,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
 import { FlattenObjectMetdataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { WorkspaceMigrationFieldInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-field-metadata-comparator.util';
+import { FlattenFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-field-metadata-comparator.util';
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
   flattenFieldMetadata: FlattenFieldMetadata;
@@ -16,10 +16,10 @@ export type UpdateFieldAction = {
   type: 'update_field';
   updates: Partial<
     {
-      [P in WorkspaceMigrationFieldInputPropertiesToCompare]: {
+      [P in FlattenFieldMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<FieldMetadataEntity[P]>;
-    }[WorkspaceMigrationFieldInputPropertiesToCompare]
+    }[FlattenFieldMetadataPropertiesToCompare]
   >[];
 } & FieldAndObjectMetadataWorkspaceMigrationInput;
 

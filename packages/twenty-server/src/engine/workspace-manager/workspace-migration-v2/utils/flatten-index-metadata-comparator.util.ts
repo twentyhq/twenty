@@ -16,7 +16,7 @@ type FlattenIndexMetadataPropertiesToCompare =
   (typeof flattenIndexMetadataPropertiesToCompare)[number];
 
 // Should also handle indexFieldMetadata comparison ?
-export const compareTwoFlattenedIndexMetadata = ({
+export const compareTwoFlattenIndexMetadata = ({
   from,
   to,
 }: FromTo<FlattenIndexMetadata>) => {

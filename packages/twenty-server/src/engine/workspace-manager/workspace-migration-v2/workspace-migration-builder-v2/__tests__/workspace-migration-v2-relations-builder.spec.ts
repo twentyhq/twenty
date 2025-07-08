@@ -21,7 +21,7 @@ describe('Workspace migration builder relations tests suite', () => {
   ): FlattenObjectMetadata => ({
     uniqueIdentifier: identifier,
     flattenIndexMetadatas: [],
-    fieldInputs: fields.map((field) => ({
+    flattenFieldMetadatas: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
       label: 'Default Label',
@@ -373,7 +373,7 @@ describe('Workspace migration builder relations tests suite', () => {
       const toObjects: FlattenObjectMetadata[] = [
         {
           ...fromObjects[0],
-          fieldInputs: [
+          flattenFieldMetadatas: [
             {
               ...baseField,
               name: 'updatedName',

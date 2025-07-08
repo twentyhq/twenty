@@ -7,10 +7,11 @@ export type FlattenObjectMetadata = Partial<
 > & {
   uniqueIdentifier: string;
   flattenIndexMetadatas: FlattenIndexMetadata[];
-  fieldInputs: FlattenFieldMetadata[];
+  flattenFieldMetadatas: FlattenFieldMetadata[];
 };
 
+// Could be renamed
 export type FlattenObjectMetdataWithoutFields = Omit<
   FlattenObjectMetadata,
-  'fieldInputs'
+  'flattenFieldMetadatas' | 'flattenIndexMetadatas'
 >;

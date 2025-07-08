@@ -7,7 +7,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const workspaceMigrationObjectInputPropertiesToCompare = [
+const flattenObjectMetadataPropertiesToCompare = [
   'description',
   'icon',
   'isActive',
@@ -19,15 +19,13 @@ const workspaceMigrationObjectInputPropertiesToCompare = [
   'standardOverrides', // Only if standard
 ] as const satisfies (keyof FlattenObjectMetadata)[];
 
-export type WorkspaceMigrationObjectInputPropertiesToCompare =
-  (typeof workspaceMigrationObjectInputPropertiesToCompare)[number];
+export type FlattenObjectMetadataPropertiesToCompare =
+  (typeof flattenObjectMetadataPropertiesToCompare)[number];
 
-type ObjectWorkspaceMigrationUpdate = FromTo<FlattenObjectMetadata>;
-
-export const compareTwoWorkspaceMigrationObjectInput = ({
+export const compareTwoFlattenObjectMetadata = ({
   from,
   to,
-}: ObjectWorkspaceMigrationUpdate) => {
+}: FromTo<FlattenObjectMetadata>) => {
   const fromCompare = transformMetadataForComparison(from, {});
   const toCompare = transformMetadataForComparison(to, {});
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
@@ -52,16 +50,15 @@ export const compareTwoWorkspaceMigrationObjectInput = ({
 
         // Could be handled directly from the diff we do above
         if (
-          !workspaceMigrationObjectInputPropertiesToCompare.includes(
-            property as WorkspaceMigrationObjectInputPropertiesToCompare,
+          !flattenObjectMetadataPropertiesToCompare.includes(
+            property as FlattenObjectMetadataPropertiesToCompare,
           )
         ) {
           return [];
         }
 
         return {
-          property:
-            property as WorkspaceMigrationObjectInputPropertiesToCompare,
+          property: property as FlattenObjectMetadataPropertiesToCompare,
           from: difference.oldValue,
           to: difference.value,
         };
