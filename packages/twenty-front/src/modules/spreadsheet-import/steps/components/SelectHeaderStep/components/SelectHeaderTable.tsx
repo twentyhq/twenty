@@ -27,8 +27,8 @@ export const SelectHeaderTable = ({
       rowKeyGetter={(row: any) => importedRows.indexOf(row)}
       rows={importedRows}
       columns={columns}
-      selectedRowIndexes={selectedRowIndexes}
-      onSelectedRowIndexesChange={(newRowIndexes: number[]) => {
+      selectedRows={selectedRowIndexes}
+      onSelectedRowsChange={(newRowIndexes: number[]) => {
         // allow selecting only one row
         newRowIndexes.forEach((value: any) => {
           if (!selectedRowIndexes.has(value as number)) {
