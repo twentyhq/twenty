@@ -1,4 +1,4 @@
-import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-input';
+import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flattened-index-metadata';
 
 export type CreateIndexAction = {
   type: 'create_index';

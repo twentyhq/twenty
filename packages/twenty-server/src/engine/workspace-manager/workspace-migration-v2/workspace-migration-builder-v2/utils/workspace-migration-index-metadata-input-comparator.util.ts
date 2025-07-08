@@ -1,12 +1,18 @@
 import diff from 'microdiff';
 
+import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flattened-index-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import {
-  FlattenedIndexMetadata,
-  IndexMetadataEntityEditableProperties,
-  indexMetadataEntityPropertiesToCompare,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
+
+const flattenedIndexMetadataPropertiesToCompare = [
+  'flattenedIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
+  'indexType',
+  'indexWhereClause',
+  'isUnique',
+  'name',
+] as const satisfies (keyof FlattenedIndexMetadata)[];
+type FlattenedIndexMetadataPropertiesToCompare =
+  (typeof flattenedIndexMetadataPropertiesToCompare)[number];
 
 // Should also handle indexFieldMetadata comparison ?
 export const compareTwoFlattenedIndexMetadata = ({
@@ -15,8 +21,8 @@ export const compareTwoFlattenedIndexMetadata = ({
 }: FromTo<FlattenedIndexMetadata>) => {
   const transformOptions = {
     shouldIgnoreProperty: (property: string) =>
-      !indexMetadataEntityPropertiesToCompare.includes(
-        property as IndexMetadataEntityEditableProperties,
+      !flattenedIndexMetadataPropertiesToCompare.includes(
+        property as FlattenedIndexMetadataPropertiesToCompare,
       ),
   };
 
