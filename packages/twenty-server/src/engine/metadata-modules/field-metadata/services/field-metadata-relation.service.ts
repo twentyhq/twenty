@@ -307,7 +307,7 @@ export class FieldMetadataRelationService {
       FieldMetadataType.MORPH_RELATION,
     )
       ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
-      : `${objectMetadata.nameSingular}Id`;
+      : `${fieldMetadataInput.name}Id`;
 
     return {
       ...fieldMetadataInput,
