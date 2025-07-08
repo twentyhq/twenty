@@ -87,14 +87,13 @@ export const SettingsDataModelFieldIconLabelForm = ({
     control,
     setValue,
     watch,
-    formState: { errors, isValid },
+    formState: { errors },
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
   const theme = useTheme();
 
   const label = watch('label');
-  const icon = watch('icon');
 
   const { t } = useLingui();
 
