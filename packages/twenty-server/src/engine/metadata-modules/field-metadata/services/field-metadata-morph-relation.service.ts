@@ -68,7 +68,6 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
-      // todo : enable this once we know why the ObjectMEtadataMaps is not filled
       await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
         {
           fieldMetadataInput: relationFieldMetadataForCreate,

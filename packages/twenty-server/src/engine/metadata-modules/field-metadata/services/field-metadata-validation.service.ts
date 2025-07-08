@@ -26,7 +26,6 @@ import {
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -36,7 +35,6 @@ type ValidateFieldMetadataArgs = {
   fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
   objectMetadata: ObjectMetadataItemWithFieldMaps;
   existingFieldMetadata?: FieldMetadataInterface;
-  objectMetadataMaps: ObjectMetadataMaps;
 };
 
 enum ValueType {

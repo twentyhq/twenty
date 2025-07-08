@@ -189,7 +189,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata,
         fieldMetadataInput: fieldMetadataForUpdate,
         objectMetadata: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
       });
 
       const isLabelSyncedWithName =
@@ -645,7 +644,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       fieldMetadataType: fieldMetadataForCreate.type,
       fieldMetadataInput: fieldMetadataForCreate,
       objectMetadata,
-      objectMetadataMaps,
     });
 
     const isRelation =
