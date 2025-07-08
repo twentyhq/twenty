@@ -44,7 +44,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A contact",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -104,7 +104,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A company",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -134,7 +134,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       },
       "flattenObjectMetadata": {
         "description": "A company",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -167,7 +167,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A contact",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -242,7 +242,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A company",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -264,7 +264,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A contact",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -286,7 +286,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     {
       "flattenObjectMetadata": {
         "description": "A contact",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -331,7 +331,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       },
       "flattenObjectMetadata": {
         "description": "A company",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -361,7 +361,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       },
       "flattenObjectMetadata": {
         "description": "A contact",
-        "fieldInputs": [
+        "flattenFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -440,7 +440,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   {
     "flattenObjectMetadata": {
       "description": "First object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
@@ -462,7 +462,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   {
     "flattenObjectMetadata": {
       "description": "Second object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
@@ -492,7 +492,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     },
     "flattenObjectMetadata": {
       "description": "First object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
@@ -522,7 +522,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     },
     "flattenObjectMetadata": {
       "description": "Second object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
@@ -551,7 +551,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   {
     "flattenObjectMetadata": {
       "description": "First object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
@@ -573,7 +573,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   {
     "flattenObjectMetadata": {
       "description": "Second object",
-      "fieldInputs": [
+      "flattenFieldMetadatas": [
         {
           "defaultValue": "",
           "description": "",
