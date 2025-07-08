@@ -104,50 +104,62 @@ export class StreamingRestLink extends ApolloLink {
   }
 
   private extractStreamDirective(operation: Operation): StreamDirective | null {
-    const definition = operation.query.definitions[0];
+    try {
+      const definition = operation.query.definitions[0];
 
-    if (definition.kind !== 'OperationDefinition') {
-      return null;
-    }
-
-    const selection = definition.selectionSet.selections[0];
-
-    if (!isDefined(selection.directives)) {
-      return null;
-    }
-
-    const streamDirective = selection.directives.find(
-      (d: DirectiveNode) => d.name.value === 'stream',
-    );
-
-    if (!isDefined(streamDirective)) {
-      return null;
-    }
-
-    const args = streamDirective.arguments || [];
-    const directive: StreamDirective = {};
-
-    args.forEach((arg: ArgumentNode) => {
-      if (arg.value.kind === 'StringValue') {
-        const value = arg.value.value;
-        switch (arg.name.value) {
-          case 'path':
-            directive.path = value;
-            break;
-          case 'type':
-            directive.type = value;
-            break;
-          case 'method':
-            directive.method = value;
-            break;
-          case 'bodyKey':
-            directive.bodyKey = value;
-            break;
-        }
+      if (!definition || definition.kind !== 'OperationDefinition') {
+        return null;
       }
-    });
 
-    return directive;
+      if (
+        !definition.selectionSet ||
+        !definition.selectionSet.selections ||
+        definition.selectionSet.selections.length === 0
+      ) {
+        return null;
+      }
+
+      const selection = definition.selectionSet.selections[0];
+
+      if (!selection || !isDefined(selection.directives)) {
+        return null;
+      }
+
+      const streamDirective = selection.directives.find(
+        (d: DirectiveNode) => d.name.value === 'stream',
+      );
+
+      if (!isDefined(streamDirective)) {
+        return null;
+      }
+
+      const args = streamDirective.arguments || [];
+      const directive: StreamDirective = {};
+
+      args.forEach((arg: ArgumentNode) => {
+        if (arg.value.kind === 'StringValue') {
+          const value = arg.value.value;
+          switch (arg.name.value) {
+            case 'path':
+              directive.path = value;
+              break;
+            case 'type':
+              directive.type = value;
+              break;
+            case 'method':
+              directive.method = value;
+              break;
+            case 'bodyKey':
+              directive.bodyKey = value;
+              break;
+          }
+        }
+      });
+
+      return directive;
+    } catch (error) {
+      return null;
+    }
   }
 
   private buildUrl({
