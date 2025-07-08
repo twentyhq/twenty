@@ -18,6 +18,10 @@ export const resolveOverridableString = (
     return fieldMetadata[labelKey] ?? '';
   }
 
+  if (labelKey === 'icon' && isDefined(fieldMetadata.standardOverrides?.icon)) {
+    return fieldMetadata.standardOverrides.icon;
+  }
+
   if (
     isDefined(fieldMetadata.standardOverrides?.translations) &&
     isDefined(locale) &&

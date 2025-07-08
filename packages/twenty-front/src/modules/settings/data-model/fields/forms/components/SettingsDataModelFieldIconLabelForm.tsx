@@ -87,11 +87,14 @@ export const SettingsDataModelFieldIconLabelForm = ({
     control,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
   const theme = useTheme();
+
+  const label = watch('label');
+  const icon = watch('icon');
 
   const { t } = useLingui();
 
@@ -103,7 +106,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
     (isDefined(fieldMetadataItem)
       ? fieldMetadataItem.isLabelSyncedWithName
       : true);
-  const label = watch('label');
 
   const apiNameTooltipText = isLabelSyncedWithName
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
@@ -146,7 +148,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.icon ?? 'IconUsers'}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              selectedIconKey={value ?? ''}
+              selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
             />
@@ -166,8 +168,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 onChange(value);
                 trigger('label');
                 if (
-                  isLabelSyncedWithName === true &&
-                  fieldMetadataItem?.isCustom === true
+                  isCreationMode ||
+                  (isLabelSyncedWithName === true &&
+                    fieldMetadataItem?.isCustom === true)
                 ) {
                   fillNameFromLabel(value);
                 }
