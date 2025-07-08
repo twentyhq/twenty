@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
-import { isDefined } from 'class-validator';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { isNonEmptyString } from '@sniptt/guards';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -17,12 +18,24 @@ export const resolveOverridableString = (
     return fieldMetadata[labelKey] ?? '';
   }
 
-  const translationValue =
-    // @ts-expect-error legacy noImplicitAny
-    fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+  if (
+    isDefined(fieldMetadata.standardOverrides?.translations) &&
+    isDefined(locale) &&
+    labelKey !== 'icon'
+  ) {
+    const translationValue =
+      fieldMetadata.standardOverrides.translations[locale]?.[labelKey];
 
-  if (isDefined(translationValue)) {
-    return translationValue;
+    if (isDefined(translationValue)) {
+      return translationValue;
+    }
+  }
+
+  if (
+    locale === SOURCE_LOCALE &&
+    isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])
+  ) {
+    return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 
   const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

@@ -13,6 +13,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -74,11 +75,11 @@ const StyledAdvancedSettingsContainer = styled.div`
 type SettingsDataModelFieldIconLabelFormProps = {
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
-  canToggleSyncLabelWithName?: boolean;
+  isCreationMode?: boolean;
 };
 
 export const SettingsDataModelFieldIconLabelForm = ({
-  canToggleSyncLabelWithName = true,
+  isCreationMode = false,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldIconLabelFormProps) => {
@@ -115,6 +116,20 @@ export const SettingsDataModelFieldIconLabelForm = ({
       });
   };
 
+  const isRelation =
+    fieldMetadataItem?.type === FieldMetadataType.RELATION ||
+    fieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
+
+  const isLabelEditEnabled = isLabelSyncedWithName === false && !isRelation;
+
+  const isNameEditEnabled =
+    isLabelSyncedWithName === false &&
+    fieldMetadataItem?.isCustom === true &&
+    !isRelation;
+
+  const canToggleSyncLabelWithName =
+    (isCreationMode && !isRelation) || (!isCreationMode && !isRelation);
+
   return (
     <>
       <StyledInputsContainer>
@@ -147,11 +162,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={
-                isLabelSyncedWithName === true &&
-                fieldMetadataItem &&
-                !fieldMetadataItem?.isCustom
-              }
+              disabled={!isLabelEditEnabled}
               maxLength={maxLength}
               fullWidth
             />
@@ -176,10 +187,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           placeholder={t`employees`}
                           value={value}
                           onChange={onChange}
-                          disabled={
-                            (isLabelSyncedWithName ?? false) ||
-                            !fieldMetadataItem?.isCustom
-                          }
+                          disabled={!isNameEditEnabled}
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
                           RightIcon={() =>
