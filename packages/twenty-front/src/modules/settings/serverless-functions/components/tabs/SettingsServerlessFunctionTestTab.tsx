@@ -1,15 +1,9 @@
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
@@ -39,19 +33,6 @@ export const SettingsServerlessFunctionTestTab = ({
       input: JSON.parse(newInput),
     }));
   };
-
-  const navigate = useNavigateSettings();
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(SettingsPath.ServerlessFunctions);
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
-  );
 
   return (
     <Section>

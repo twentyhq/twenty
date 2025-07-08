@@ -71,6 +71,7 @@ export const FormRawJsonFieldInput = ({
 
       <FormFieldInputRowContainer multiline>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline
           onBlur={onBlur}

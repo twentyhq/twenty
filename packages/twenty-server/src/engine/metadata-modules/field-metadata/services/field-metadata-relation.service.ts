@@ -302,7 +302,12 @@ export class FieldMetadataRelationService {
 
     const defaultIcon = 'IconRelationOneToMany';
 
-    const joinColumnName = `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`;
+    const joinColumnName = isFieldMetadataInterfaceOfType(
+      fieldMetadataInput,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
+      : `${fieldMetadataInput.name}Id`;
 
     return {
       ...fieldMetadataInput,
