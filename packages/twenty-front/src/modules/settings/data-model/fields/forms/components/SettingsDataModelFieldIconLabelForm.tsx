@@ -120,15 +120,22 @@ export const SettingsDataModelFieldIconLabelForm = ({
     fieldMetadataItem?.type === FieldMetadataType.RELATION ||
     fieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
 
-  const isLabelEditEnabled = isLabelSyncedWithName === false && !isRelation;
+  const isCustomButNotRelationField =
+    fieldMetadataItem?.isCustom === true && !isRelation;
 
-  const isNameEditEnabled =
-    isLabelSyncedWithName === false &&
-    fieldMetadataItem?.isCustom === true &&
-    !isRelation;
-
+  // TODO: remove the custom RELATION edge case, this will result in canToggleSyncLabelWithName = isCustom
   const canToggleSyncLabelWithName =
-    (isCreationMode && !isRelation) || (!isCreationMode && !isRelation);
+    !isCreationMode && isCustomButNotRelationField;
+
+  // TODO: remove custom RELATION edge case, this will result in isNameEditEnabled = isCustom
+  const isNameEditEnabled =
+    isLabelSyncedWithName === false && isCustomButNotRelationField;
+
+  // TODO: remove custom RELATION edge case, this will result in isLabelEditEnabled = true
+  const isLabelEditEnabled =
+    isCreationMode ||
+    (!isCreationMode &&
+      (fieldMetadataItem?.isCustom === false || isCustomButNotRelationField));
 
   return (
     <>
@@ -154,6 +161,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
               instanceId={labelTextInputId}
               placeholder={t`Employees`}
               value={value}
+              disabled={!isLabelEditEnabled}
               onChange={(value) => {
                 onChange(value);
                 trigger('label');
@@ -162,7 +170,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={!isLabelEditEnabled}
               maxLength={maxLength}
               fullWidth
             />
@@ -236,8 +243,20 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           advancedMode
                           onChange={(value) => {
                             onChange(value);
-                            if (value === true) {
+                            if (!isDefined(fieldMetadataItem)) {
+                              return;
+                            }
+
+                            if (value === false) {
+                              return;
+                            }
+
+                            if (
+                              fieldMetadataItem.isCustom === true &&
+                              !isRelation
+                            ) {
                               fillNameFromLabel(label);
+                              return;
                             }
                           }}
                         />
