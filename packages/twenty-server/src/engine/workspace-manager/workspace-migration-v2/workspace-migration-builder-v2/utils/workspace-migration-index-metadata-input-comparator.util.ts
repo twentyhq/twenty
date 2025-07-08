@@ -1,4 +1,5 @@
 import diff from 'microdiff';
+
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   FlattenedIndexMetadata,
@@ -31,9 +32,11 @@ export const compareTwoFlattenedIndexMetadata = ({
           const { oldValue, path, value } = difference;
 
           const property = path[0];
+
           if (typeof property === 'number') {
             return [];
           }
+
           return {
             from: oldValue,
             property,
