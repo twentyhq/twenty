@@ -4,7 +4,6 @@ import { isDefined } from 'class-validator';
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -113,14 +112,8 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
-      // todo better type
-      const targetFieldMetadataToCreateWithRelationWithId = {
-        id: v4(),
-        ...targetFieldMetadataToCreateWithRelation,
-      };
-
       const targetFieldMetadata = await fieldMetadataRepository.save({
-        ...targetFieldMetadataToCreateWithRelationWithId,
+        ...targetFieldMetadataToCreateWithRelation,
         relationTargetFieldMetadataId: createdFieldMetadataItem.id,
       });
 

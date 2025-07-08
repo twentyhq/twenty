@@ -5,7 +5,6 @@ import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -106,14 +105,8 @@ export class FieldMetadataRelationService {
         objectMetadata,
       });
 
-    // todo better type
-    const targetFieldMetadataToCreateWithRelationWithId = {
-      id: v4(),
-      ...targetFieldMetadataToCreateWithRelation,
-    };
-
     const targetFieldMetadata = await fieldMetadataRepository.save({
-      ...targetFieldMetadataToCreateWithRelationWithId,
+      ...targetFieldMetadataToCreateWithRelation,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
