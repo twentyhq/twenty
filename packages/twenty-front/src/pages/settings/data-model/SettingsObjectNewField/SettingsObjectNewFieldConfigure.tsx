@@ -221,9 +221,7 @@ export const SettingsObjectNewFieldConfigure = () => {
             />
             <SettingsDataModelFieldIconLabelForm
               maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-              canToggleSyncLabelWithName={
-                fieldType !== FieldMetadataType.RELATION
-              }
+              isCreationMode={true}
             />
           </Section>
           <Section>
