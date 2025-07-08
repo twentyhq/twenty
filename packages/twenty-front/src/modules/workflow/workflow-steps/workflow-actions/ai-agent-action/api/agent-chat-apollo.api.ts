@@ -32,7 +32,7 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
 `;
 
 export const STREAM_CHAT_QUERY = gql`
-  query StreamChatResponse($requestBody: StreamChatRequestBody!) {
+  query StreamChatResponse($requestBody: { threadId: String!, userMessage: String! }) {
     streamChatResponse(requestBody: $requestBody)
       @stream(
         type: "StreamChatResponse"
