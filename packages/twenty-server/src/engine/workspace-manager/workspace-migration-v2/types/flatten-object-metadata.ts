@@ -6,7 +6,7 @@ export type FlattenObjectMetadata = Partial<
   Omit<ObjectMetadataEntity, 'fields' | 'indexMetadatas'>
 > & {
   uniqueIdentifier: string;
-  flattenedIndexMetadatas: FlattenIndexMetadata[];
+  flattenIndexMetadatas: FlattenIndexMetadata[];
   fieldInputs: FlattenFieldMetadata[];
 };
 

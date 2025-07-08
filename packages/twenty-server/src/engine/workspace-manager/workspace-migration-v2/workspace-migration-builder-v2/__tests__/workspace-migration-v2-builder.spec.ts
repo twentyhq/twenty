@@ -11,7 +11,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     nameSingular: 'Contact',
     namePlural: 'Contacts',
     labelSingular: 'Contact',
-    flattenedIndexMetadatas: [],
+    flattenIndexMetadatas: [],
     labelPlural: 'Contacts',
     description: 'A contact',
     fieldInputs: [
@@ -80,7 +80,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       uniqueIdentifier: '20202020-e89b-12d3-a456-426614175001',
       nameSingular: 'Company',
       namePlural: 'Companies',
-      flattenedIndexMetadatas: [],
+      flattenIndexMetadatas: [],
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
@@ -215,7 +215,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       uniqueIdentifier: '20202020-1218-4fc0-b32d-fc4f005c4bab',
       nameSingular: 'Company',
       namePlural: 'Companies',
-      flattenedIndexMetadatas: [],
+      flattenIndexMetadatas: [],
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
@@ -396,7 +396,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   it('should treat objects with the same name but different IDs as distinct', () => {
     const objectA: FlattenObjectMetadata = {
       uniqueIdentifier: 'id-1',
-      flattenedIndexMetadatas: [],
+      flattenIndexMetadatas: [],
       nameSingular: 'Duplicate',
       namePlural: 'Duplicates',
       labelSingular: 'Duplicate',
@@ -419,7 +419,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       namePlural: 'Duplicates',
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
-      flattenedIndexMetadatas: [],
+      flattenIndexMetadatas: [],
       description: 'Second object',
       fieldInputs: [
         {

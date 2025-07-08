@@ -21,8 +21,8 @@ export const computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix = (
 
   for (const { from, to } of updatedObjectMetadata) {
     const indexMetadataMatrix = deletedCreatedUpdatedMatrixDispatcher({
-      from: from.flattenedIndexMetadatas,
-      to: to.flattenedIndexMetadatas,
+      from: from.flattenIndexMetadatas,
+      to: to.flattenIndexMetadatas,
     });
 
     matrixAccumulator.push({

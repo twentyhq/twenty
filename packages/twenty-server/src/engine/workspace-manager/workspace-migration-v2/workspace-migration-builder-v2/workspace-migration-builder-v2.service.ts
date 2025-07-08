@@ -43,7 +43,7 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const createdObjectMetadataCreateIndexActions =
       createdObjectMetadata.flatMap((objectMetadata) =>
-        objectMetadata.flattenedIndexMetadatas.map(
+        objectMetadata.flattenIndexMetadatas.map(
           getWorkspaceMigrationV2CreateIndexAction,
         ),
       );

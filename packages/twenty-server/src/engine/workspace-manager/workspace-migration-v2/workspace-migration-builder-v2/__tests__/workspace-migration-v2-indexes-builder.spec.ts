@@ -19,7 +19,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     indexes: FlattenIndexMetadata[] = [],
   ): FlattenObjectMetadata => ({
     uniqueIdentifier: identifier,
-    flattenedIndexMetadatas: indexes,
+    flattenIndexMetadatas: indexes,
     fieldInputs: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
@@ -42,7 +42,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     indexType: IndexType.BTREE,
     indexWhereClause: null,
     uniqueIdentifier: name,
-    flattenedIndexFieldMetadatas: fields.map((field, index) => ({
+    flattenIndexFieldMetadatas: fields.map((field, index) => ({
       uniqueIdentifier: `${name}-field-${index}`,
       order: index,
     })),
@@ -84,9 +84,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "name",
           },
         ],
-        "flattenedIndexMetadatas": [
+        "flattenIndexMetadatas": [
           {
-            "flattenedIndexFieldMetadatas": [
+            "flattenIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_company_name-field-0",
@@ -125,9 +125,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "name",
           },
         ],
-        "flattenedIndexMetadatas": [
+        "flattenIndexMetadatas": [
           {
-            "flattenedIndexFieldMetadatas": [
+            "flattenIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_company_name-field-0",
@@ -146,7 +146,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     },
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -198,7 +198,7 @@ describe('Workspace migration builder indexes tests suite', () => {
   "actions": [
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -277,9 +277,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "email",
           },
         ],
-        "flattenedIndexMetadatas": [
+        "flattenIndexMetadatas": [
           {
-            "flattenedIndexFieldMetadatas": [
+            "flattenIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_person_email-field-0",
@@ -318,9 +318,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "email",
           },
         ],
-        "flattenedIndexMetadatas": [
+        "flattenIndexMetadatas": [
           {
-            "flattenedIndexFieldMetadatas": [
+            "flattenIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_person_email-field-0",
@@ -339,7 +339,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     },
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_person_email-field-0",
@@ -355,7 +355,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     },
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name_new-field-0",
@@ -371,7 +371,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     },
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name_old-field-0",
@@ -459,7 +459,7 @@ describe('Workspace migration builder indexes tests suite', () => {
   "actions": [
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -475,7 +475,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     },
     {
       "flattenedIndexMetadata": {
-        "flattenedIndexFieldMetadatas": [
+        "flattenIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",

@@ -20,7 +20,7 @@ describe('Workspace migration builder relations tests suite', () => {
     fields: Partial<FlattenFieldMetadata>[] = [],
   ): FlattenObjectMetadata => ({
     uniqueIdentifier: identifier,
-    flattenedIndexMetadatas: [],
+    flattenIndexMetadatas: [],
     fieldInputs: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
