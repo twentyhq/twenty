@@ -294,15 +294,27 @@ export class FieldMetadataRelationService {
         FieldMetadataType.MORPH_RELATION,
       );
 
+    if (!isRelation) {
+      throw new FieldMetadataException(
+        'Field metadata should be a relation',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
     const isManyToOne =
-      isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
+      relationCreationPayload?.type === RelationType.MANY_TO_ONE;
 
     const isOneToMany =
-      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
+      relationCreationPayload?.type === RelationType.ONE_TO_MANY;
 
     const defaultIcon = 'IconRelationOneToMany';
 
-    const joinColumnName = `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`;
+    const joinColumnName = isFieldMetadataInterfaceOfType(
+      fieldMetadataInput,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
+      : `${objectMetadata.nameSingular}Id`;
 
     return {
       ...fieldMetadataInput,
