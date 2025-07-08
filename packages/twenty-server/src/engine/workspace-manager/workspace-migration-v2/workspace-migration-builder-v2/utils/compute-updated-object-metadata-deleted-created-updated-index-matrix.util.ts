@@ -1,5 +1,5 @@
+import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flattened-index-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { FlattenedIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-index-input';
 import {
   WorkspaceMigrationObjectInput,
   WorkspaceMigrationObjectWithoutFields,

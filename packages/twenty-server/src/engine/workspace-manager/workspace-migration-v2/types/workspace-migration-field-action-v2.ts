@@ -1,10 +1,8 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import {
-  FieldMetadataEntityEditableProperties,
-  WorkspaceMigrationFieldInput,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 import { WorkspaceMigrationObjectWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { WorkspaceMigrationFieldInputPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/workspace-migration-field-metadata-input-comparator.util';
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
   fieldMetadataInput: WorkspaceMigrationFieldInput;
@@ -18,10 +16,10 @@ export type UpdateFieldAction = {
   type: 'update_field';
   updates: Partial<
     {
-      [P in FieldMetadataEntityEditableProperties]: {
+      [P in WorkspaceMigrationFieldInputPropertiesToCompare]: {
         property: P;
       } & FromTo<FieldMetadataEntity[P]>;
-    }[FieldMetadataEntityEditableProperties]
+    }[WorkspaceMigrationFieldInputPropertiesToCompare]
   >[];
 } & FieldAndObjectMetadataWorkspaceMigrationInput;
 

@@ -4,13 +4,28 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-action-v2';
-import {
-  FieldMetadataEntityEditableProperties,
-  WorkspaceMigrationFieldInput,
-  fieldMetadataEntityEditableProperties,
-  fieldMetadataPropertiesToStringify,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
+import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
+
+const workspaceMigrationFieldInputPropertiesToCompare = [
+  'defaultValue',
+  'description',
+  'icon',
+  'isActive',
+  'isLabelSyncedWithName',
+  'isUnique',
+  'label',
+  'name',
+  'options',
+  'standardOverrides',
+] as const satisfies (keyof WorkspaceMigrationFieldInput)[];
+export type WorkspaceMigrationFieldInputPropertiesToCompare =
+  (typeof workspaceMigrationFieldInputPropertiesToCompare)[number];
+
+const fieldMetadataPropertiesToStringify = [
+  'defaultValue',
+  'standardOverrides',
+] as const satisfies WorkspaceMigrationFieldInputPropertiesToCompare[];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -33,8 +48,8 @@ const compareTwoWorkspaceMigrationFieldInput = ({
       fieldMetadata: WorkspaceMigrationFieldInput,
     ) => {
       if (
-        !fieldMetadataEntityEditableProperties.includes(
-          property as FieldMetadataEntityEditableProperties,
+        !workspaceMigrationFieldInputPropertiesToCompare.includes(
+          property as WorkspaceMigrationFieldInputPropertiesToCompare,
         )
       ) {
         return true;
@@ -86,7 +101,8 @@ export const compareFieldMetadataInput = ({
           return {
             from: oldValue,
             to: value,
-            property: path[0] as FieldMetadataEntityEditableProperties,
+            property:
+              path[0] as WorkspaceMigrationFieldInputPropertiesToCompare,
           };
         }
         case 'CREATE':

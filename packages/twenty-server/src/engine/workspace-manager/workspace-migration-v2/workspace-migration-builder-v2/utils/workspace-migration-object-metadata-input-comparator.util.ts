@@ -4,13 +4,22 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
-import {
-  ObjectMetadataEntityEditableProperties,
-  WorkspaceMigrationObjectInput,
-  objectMetadataEntityEditableProperties,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
+const workspaceMigrationObjectInputPropertiesToCompare = [
+  'description',
+  'icon',
+  'isActive',
+  'isLabelSyncedWithName',
+  'labelPlural',
+  'labelSingular',
+  'namePlural',
+  'nameSingular',
+  'standardOverrides', // Only if standard
+] as const satisfies (keyof WorkspaceMigrationObjectInput)[];
+export type WorkspaceMigrationObjectInputPropertiesToCompare =
+  (typeof workspaceMigrationObjectInputPropertiesToCompare)[number];
 type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
 
 export const compareTwoWorkspaceMigrationObjectInput = ({
@@ -41,15 +50,16 @@ export const compareTwoWorkspaceMigrationObjectInput = ({
 
         // Could be handled directly from the diff we do above
         if (
-          !objectMetadataEntityEditableProperties.includes(
-            property as ObjectMetadataEntityEditableProperties,
+          !workspaceMigrationObjectInputPropertiesToCompare.includes(
+            property as WorkspaceMigrationObjectInputPropertiesToCompare,
           )
         ) {
           return [];
         }
 
         return {
-          property: property as ObjectMetadataEntityEditableProperties,
+          property:
+            property as WorkspaceMigrationObjectInputPropertiesToCompare,
           from: difference.oldValue,
           to: difference.value,
         };
