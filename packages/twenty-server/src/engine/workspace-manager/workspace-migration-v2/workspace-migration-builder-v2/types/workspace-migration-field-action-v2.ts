@@ -1,14 +1,12 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
+import { FlattenObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import {
-  FieldMetadataEntityEditableProperties,
-  WorkspaceMigrationFieldInput,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
-import { WorkspaceMigrationObjectWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { FlattenFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-field-metadata-comparator.util';
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
-  fieldMetadataInput: WorkspaceMigrationFieldInput;
-  objectMetadataInput: WorkspaceMigrationObjectWithoutFields;
+  flattenFieldMetadata: FlattenFieldMetadata;
+  flattenObjectMetadata: FlattenObjectMetadataWithoutFields;
 };
 export type CreateFieldAction = {
   type: 'create_field';
@@ -18,10 +16,10 @@ export type UpdateFieldAction = {
   type: 'update_field';
   updates: Partial<
     {
-      [P in FieldMetadataEntityEditableProperties]: {
+      [P in FlattenFieldMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<FieldMetadataEntity[P]>;
-    }[FieldMetadataEntityEditableProperties]
+    }[FlattenFieldMetadataPropertiesToCompare]
   >[];
 } & FieldAndObjectMetadataWorkspaceMigrationInput;
 
