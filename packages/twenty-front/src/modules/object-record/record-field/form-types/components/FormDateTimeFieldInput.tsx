@@ -14,11 +14,13 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { useDateParser } from '@/ui/input/components/internal/hooks/useDateParser';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { Nullable } from 'twenty-ui/utilities';
@@ -289,6 +291,13 @@ export const FormDateTimeFieldInput = ({
 
     onChange(null);
   };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handlePickerEscape,
+    focusId: instanceId,
+    dependencies: [handlePickerEscape],
+  });
 
   return (
     <FormFieldInputContainer>
