@@ -678,6 +678,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
@@ -765,6 +766,23 @@ export enum FieldMetadataType {
   TS_VECTOR = 'TS_VECTOR',
   UUID = 'UUID'
 }
+
+export type FieldPermission = {
+  __typename?: 'FieldPermission';
+  canReadFieldValue?: Maybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: Maybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  id: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+export type FieldPermissionInput = {
+  canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+};
 
 export enum FileFolder {
   Attachment = 'Attachment',
@@ -1076,6 +1094,7 @@ export type Mutation = {
   uploadImage: SignedFileDto;
   uploadProfilePicture: SignedFileDto;
   uploadWorkspaceLogo: SignedFileDto;
+  upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -1491,6 +1510,11 @@ export type MutationUploadProfilePictureArgs = {
 
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationUpsertFieldPermissionsArgs = {
+  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
 };
 
 
@@ -2482,6 +2506,11 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
+};
+
+export type UpsertFieldPermissionsInput = {
+  fieldPermissions: Array<FieldPermissionInput>;
+  roleId: Scalars['String'];
 };
 
 export type UpsertObjectPermissionsInput = {

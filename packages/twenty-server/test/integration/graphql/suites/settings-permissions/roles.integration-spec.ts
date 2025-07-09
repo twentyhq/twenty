@@ -3,6 +3,7 @@ import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/de
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
+import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -536,6 +537,27 @@ describe('roles permissions', () => {
               ]),
             );
           });
+      });
+
+      describe('upsertFieldPermissions', () => {
+        it('should throw a permission error when user does not have permission to upsert field permission (member role)', async () => {
+          const query = {
+            query: `
+              mutation UpsertFieldPermissions {
+                upsertFieldPermissions(upsertFieldPermissionsInput: {roleId: "${guestRoleId}", fieldPermissions: [{objectMetadataId: "${listingObjectId}", fieldMetadataId: "${fieldTextMock.id}", canReadFieldValue: false, canUpdateFieldValue: false}]}) {
+                  id
+                  roleId
+                  objectMetadataId
+                  fieldMetadataId
+                  canReadFieldValue
+                  canUpdateFieldValue
+                }
+              }
+            `,
+          };
+
+          await assertPermissionDeniedForMemberWithMemberRole({ query });
+        });
       });
     });
 

@@ -158,6 +158,7 @@ export const createAgentToolTestModule =
       targetRelationFields: [],
       dataSource: {} as any,
       objectPermissions: [],
+      fieldPermissions: [],
     };
 
     return {
@@ -207,6 +208,7 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
             canUpdate: true,
             canSoftDelete: true,
             canDestroy: false,
+            restrictedFields: {},
           },
         },
       },
