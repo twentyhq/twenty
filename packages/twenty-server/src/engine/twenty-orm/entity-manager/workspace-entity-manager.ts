@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -185,12 +184,11 @@ export class WorkspaceEntityManager extends EntityManager {
   ): Promise<InsertResult> {
     const entityArray = Array.isArray(entity) ? entity : [entity];
 
-    const entityArrayWithoutRelationConnect =
-      await this.executeConnectQueries<Entity>(
-        entityArray,
-        target,
-        permissionOptions,
-      );
+    const connectedEntities = await this.processRelationConnect<Entity>(
+      entityArray,
+      target,
+      permissionOptions,
+    );
 
     return this.createQueryBuilder(
       undefined,
@@ -200,7 +198,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(entityArrayWithoutRelationConnect)
+      .values(connectedEntities)
       .execute();
   }
 
@@ -1344,7 +1342,7 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
-  private async executeConnectQueries<Entity extends ObjectLiteral>(
+  private async processRelationConnect<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
     target: EntityTarget<Entity>,
     permissionOptions?: PermissionOptions,
@@ -1364,6 +1362,28 @@ export class WorkspaceEntityManager extends EntityManager {
 
     if (!isDefined(relationConnectQueryConfigs)) return entities;
 
+    const recordsToConnectWithConfig = await this.executeConnectQueries(
+      relationConnectQueryConfigs,
+      permissionOptions,
+    );
+
+    const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
+      entities,
+      recordsToConnectWithConfig,
+    );
+
+    return updatedEntities;
+  }
+
+  private async executeConnectQueries(
+    relationConnectQueryConfigs: Record<string, RelationConnectQueryConfig>,
+    permissionOptions?: PermissionOptions,
+  ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
+    const AllRecordsToConnectWithConfig: [
+      RelationConnectQueryConfig,
+      Record<string, unknown>[],
+    ][] = [];
+
     for (const connectQueryConfig of Object.values(
       relationConnectQueryConfigs,
     )) {
@@ -1382,52 +1402,57 @@ export class WorkspaceEntityManager extends EntityManager {
         .where(clause, parameters)
         .getRawMany();
 
-      this.updateEntitiesWithRecordToConnectId(
-        entities,
+      AllRecordsToConnectWithConfig.push([
         connectQueryConfig,
         recordsToConnect,
-      );
+      ]);
     }
 
-    return entities;
+    return AllRecordsToConnectWithConfig;
   }
 
-  private updateEntitiesWithRecordToConnectId(
-    entities: QueryDeepPartialEntityWithRelationConnect<ObjectLiteral>[],
-    connectQueryConfig: RelationConnectQueryConfig,
-    recordsToConnect: Record<string, unknown>[],
-  ) {
-    for (const [
-      stringifiedEntityIndex,
-      recordToConnectCondition,
-    ] of Object.entries(
-      connectQueryConfig.recordToConnectConditionByEntityIndex,
-    )) {
-      const entityIndex = Number(stringifiedEntityIndex);
-      const recordToConnect = recordsToConnect.filter((record) =>
-        recordToConnectCondition.every(
-          (condition) => record[condition[0]] === condition[1],
-        ),
-      );
+  private updateEntitiesWithRecordToConnectId<Entity extends ObjectLiteral>(
+    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
+    recordsToConnectWithConfig: [
+      RelationConnectQueryConfig,
+      Record<string, unknown>[],
+    ][],
+  ): QueryDeepPartialEntity<Entity>[] {
+    return entities.map((entity, index) => {
+      for (const [
+        connectQueryConfig,
+        recordsToConnect,
+      ] of recordsToConnectWithConfig) {
+        if (
+          isDefined(
+            connectQueryConfig.recordToConnectConditionByEntityIndex[index],
+          )
+        ) {
+          const recordToConnect = recordsToConnect.filter((record) =>
+            connectQueryConfig.recordToConnectConditionByEntityIndex[
+              index
+            ].every(([field, value]) => record[field] === value),
+          );
 
-      if (recordToConnect.length !== 1) {
-        const recordToConnectTotal = recordToConnect.length;
-        const connectFieldName = connectQueryConfig.connectFieldName;
+          if (recordToConnect.length !== 1) {
+            const recordToConnectTotal = recordToConnect.length;
+            const connectFieldName = connectQueryConfig.connectFieldName;
 
-        throw new TwentyORMException(
-          `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
-          TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
-          {
-            userFriendlyMessage: t`Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
-          },
-        );
+            throw new TwentyORMException(
+              `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
+              TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+            );
+          }
+
+          entity = {
+            ...entity,
+            [connectQueryConfig.relationFieldName]: recordToConnect[0]['id'],
+            [connectQueryConfig.connectFieldName]: null,
+          };
+        }
       }
 
-      Object.assign(entities[entityIndex], {
-        ...entities[entityIndex],
-        [connectQueryConfig.relationFieldName]: recordToConnect[0]['id'],
-        [connectQueryConfig.connectFieldName]: null,
-      });
-    }
+      return entity;
+    });
   }
 }
