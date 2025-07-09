@@ -129,6 +129,10 @@ export class ValidationError extends BaseGraphQLError {
 }
 
 export class NotFoundError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -139,6 +143,10 @@ export class NotFoundError extends BaseGraphQLError {
 }
 
 export class AuthenticationError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -149,6 +157,10 @@ export class AuthenticationError extends BaseGraphQLError {
 }
 
 export class ForbiddenError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -195,6 +207,10 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -205,6 +221,10 @@ export class UserInputError extends BaseGraphQLError {
 }
 
 export class MethodNotAllowedError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -215,6 +235,10 @@ export class MethodNotAllowedError extends BaseGraphQLError {
 }
 
 export class ConflictError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -225,6 +249,10 @@ export class ConflictError extends BaseGraphQLError {
 }
 
 export class TimeoutError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
@@ -235,6 +263,10 @@ export class TimeoutError extends BaseGraphQLError {
 }
 
 export class InternalServerError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
   constructor(
     messageOrException: string | CustomException,
     extensions?: RestrictedGraphQLErrorExtensions,
