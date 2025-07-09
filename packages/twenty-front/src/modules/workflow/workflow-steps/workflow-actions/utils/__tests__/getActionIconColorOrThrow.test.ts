@@ -194,11 +194,6 @@ describe('getActionIconColorOrThrow', () => {
     });
 
     it('should have unique colors for different action categories', () => {
-      const orangeResult = getActionIconColorOrThrow({
-        theme: mockTheme,
-        actionType: 'CODE',
-      });
-
       const tertiaryResult = getActionIconColorOrThrow({
         theme: mockTheme,
         actionType: 'CREATE_RECORD',

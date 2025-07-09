@@ -16,10 +16,9 @@ import {
 import { v4 } from 'uuid';
 
 export const useAddRootStepFilter = () => {
-  const { readonly, onFilterSettingsUpdate } = useContext(
+  const { stepId, onFilterSettingsUpdate } = useContext(
     WorkflowStepFilterContext,
   );
-
   const currentStepFilterGroupsCallbackState =
     useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
 
@@ -30,20 +29,18 @@ export const useAddRootStepFilter = () => {
   const setHasInitializedCurrentStepFilters =
     useSetRecoilComponentFamilyStateV2(
       hasInitializedCurrentStepFiltersComponentFamilyState,
-      {},
+      { stepId },
     );
 
   const setHasInitializedCurrentStepFilterGroups =
     useSetRecoilComponentFamilyStateV2(
       hasInitializedCurrentStepFilterGroupsComponentFamilyState,
-      {},
+      { stepId },
     );
 
   const addRootStepFilterRecoilCallback = useRecoilCallback(
     ({ set }) =>
       () => {
-        if (readonly === true) return;
-
         const newStepFilterGroup: StepFilterGroup = {
           id: v4(),
           logicalOperator: StepLogicalOperator.AND,
@@ -73,7 +70,6 @@ export const useAddRootStepFilter = () => {
         });
       },
     [
-      readonly,
       onFilterSettingsUpdate,
       currentStepFilterGroupsCallbackState,
       currentStepFiltersCallbackState,

@@ -119,7 +119,7 @@ export const WorkflowDiagramEdgeV2Content = ({
     workflowSelectedNodeComponentState,
   );
 
-  const onFilterButtonClick = () => {
+  const handleFilterButtonClick = () => {
     setWorkflowSelectedNode(stepId);
     if (isDefined(filter) && isDefined(workflowVisualizerWorkflowId)) {
       openWorkflowEditStepInCommandMenu(
@@ -160,7 +160,7 @@ export const WorkflowDiagramEdgeV2Content = ({
             iconButtons={[
               {
                 Icon: IconFilterPlus,
-                onClick: onFilterButtonClick,
+                onClick: handleFilterButtonClick,
               },
               {
                 Icon: IconDotsVertical,

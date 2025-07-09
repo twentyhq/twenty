@@ -9,8 +9,10 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowEditActionFilterBodyEffect = ({
+  stepId,
   defaultValue,
 }: {
+  stepId: string;
   defaultValue?: FilterSettings;
 }) => {
   const [
@@ -18,7 +20,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
     setHasInitializedCurrentStepFilters,
   ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentStepFiltersComponentFamilyState,
-    {},
+    { stepId },
   );
 
   const [
@@ -26,7 +28,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
     setHasInitializedCurrentStepFilterGroups,
   ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentStepFilterGroupsComponentFamilyState,
-    {},
+    { stepId },
   );
 
   const setCurrentStepFilters = useSetRecoilComponentStateV2(

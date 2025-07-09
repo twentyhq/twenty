@@ -72,6 +72,7 @@ export const WorkflowEditActionFilterBody = ({
   return (
     <WorkflowStepFilterContext.Provider
       value={{
+        stepId: action.id,
         readonly: actionOptions.readonly,
         onFilterSettingsUpdate,
       }}

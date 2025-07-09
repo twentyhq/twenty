@@ -15,10 +15,7 @@ export const useUpsertStepFilterSettings = () => {
   const currentStepFiltersCallbackState = useRecoilComponentCallbackStateV2(
     currentStepFiltersComponentState,
   );
-
-  const { readonly, onFilterSettingsUpdate } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
 
   const upsertStepFilterSettingsRecoilCallback = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -29,10 +26,6 @@ export const useUpsertStepFilterSettings = () => {
         stepFilterGroupToUpsert?: StepFilterGroup;
         stepFilterToUpsert?: StepFilter;
       }) => {
-        if (readonly === true) {
-          return;
-        }
-
         const stepFilterGroups = getSnapshotValue(
           snapshot,
           currentStepFilterGroupsCallbackState,
@@ -78,7 +71,6 @@ export const useUpsertStepFilterSettings = () => {
         });
       },
     [
-      readonly,
       onFilterSettingsUpdate,
       currentStepFilterGroupsCallbackState,
       currentStepFiltersCallbackState,

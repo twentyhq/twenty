@@ -8,9 +8,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveStepFilterGroup = () => {
-  const { readonly, onFilterSettingsUpdate } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
 
   const currentStepFilterGroupsCallbackState =
     useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
@@ -22,8 +20,6 @@ export const useRemoveStepFilterGroup = () => {
   const removeStepFilterGroupRecoilCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (stepFilterGroupId: string) => {
-        if (readonly === true) return;
-
         const stepFilterGroups = getSnapshotValue(
           snapshot,
           currentStepFilterGroupsCallbackState,
@@ -70,7 +66,6 @@ export const useRemoveStepFilterGroup = () => {
         }
       },
     [
-      readonly,
       onFilterSettingsUpdate,
       currentStepFilterGroupsCallbackState,
       currentStepFiltersCallbackState,
