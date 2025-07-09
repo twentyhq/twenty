@@ -9,7 +9,8 @@ import {
   Matches,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { TwoFactorAuthenticationPolicy } from '../../two-factor-authentication/entities/two-factor-authentication-policy.entity';
+
+import { TwoFactorAuthenticationPolicy } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-policy.entity';
 
 @InputType()
 export class UpdateWorkspaceInput {

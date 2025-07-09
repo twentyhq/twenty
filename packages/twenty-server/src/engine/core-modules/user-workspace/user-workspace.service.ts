@@ -316,8 +316,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         workspaceId,
       },
       relations: {
-        workspace: true
-      }
+        workspace: true,
+      },
     });
 
     if (!isDefined(userWorkspace)) {
@@ -477,9 +477,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
           },
         ),
       ),
-      
     };
-
-    
   }
 }

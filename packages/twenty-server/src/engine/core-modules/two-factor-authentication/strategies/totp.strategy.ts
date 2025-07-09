@@ -1,22 +1,32 @@
-import { authenticator, totp } from 'otplib';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { authenticator } from 'otplib';
 import { HashAlgorithms, TOTP, TOTPOptions } from '@otplib/core';
 import { SafeParseReturnType, z } from 'zod';
-import { Injectable, Logger } from '@nestjs/common';
-import { ITwoFactorAuthStrategy } from '../interfaces/two-factor-authentication.interface';
-import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from '../two-factor-authentication.exception';
-import { TotpContext } from '../two-factor-authentication.interface';
 import { isDefined } from 'twenty-shared/utils';
 import { createDigest } from '@otplib/plugin-crypto';
-import { HOTPStrategyConfigSchema } from './hotp.strategy';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+
+import { ITwoFactorAuthStrategy } from 'src/engine/core-modules/two-factor-authentication/interfaces/two-factor-authentication.interface';
+
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
+import { TotpContext } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+
+import { HOTPStrategyConfigSchema } from './hotp.strategy';
 
 export type TOTPStrategyConfig = z.infer<typeof TOTPStrategyConfigSchema>;
 
-
 const TOTPStrategyConfigSchema = HOTPStrategyConfigSchema.extend({
-  step: z.number({
-    invalid_type_error: 'Step must be a number.'
-  }).int().min(1).optional(),
+  step: z
+    .number({
+      invalid_type_error: 'Step must be a number.',
+    })
+    .int()
+    .min(1)
+    .optional(),
   epoch: z.number().int().min(0).optional(),
 });
 
@@ -27,15 +37,17 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
   private readonly logger = new Logger(TotpStrategy.name);
   private readonly totp: TOTP<TOTPOptions<string>>;
 
-  constructor(options?: TOTPStrategyConfig ) {
+  constructor(options?: TOTPStrategyConfig) {
     let result: SafeParseReturnType<unknown, TOTPStrategyConfig> | undefined;
+
     if (isDefined(options)) {
       result = TOTPStrategyConfigSchema.safeParse(options);
 
       if (!result.success) {
         const errorMessages = Object.entries(result.error.flatten().fieldErrors)
-          .map(([key, messages]: [key: string, messages: string[]]) => 
-            `${key}: ${messages.join(', ')}`
+          .map(
+            ([key, messages]: [key: string, messages: string[]]) =>
+              `${key}: ${messages.join(', ')}`,
           )
           .join('; ');
 
@@ -61,7 +73,7 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
     const config: Partial<TOTPOptions<string>> = {
       ...result?.data,
       algorithm: result?.data?.algorithm as HashAlgorithms | undefined,
-      createDigest
+      createDigest,
     };
 
     this.totp = new TOTP(config);
@@ -71,15 +83,11 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
     accountName: string,
     issuer: string,
   ): {
-    uri: string,
-    context: TotpContext
+    uri: string;
+    context: TotpContext;
   } {
     const secret = authenticator.generateSecret();
-    const uri = this.totp.keyuri(
-      accountName,
-      issuer,
-      secret,
-    )
+    const uri = this.totp.keyuri(accountName, issuer, secret);
 
     return {
       uri,
@@ -87,25 +95,22 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
         strategy: this.name,
         status: 'PENDING',
         secret,
-      }
-    }
+      },
+    };
   }
 
   public validate(
-    token: string, 
-    context: TotpContext
+    token: string,
+    context: TotpContext,
   ): {
-    isValid: boolean,
-    context: TotpContext
+    isValid: boolean;
+    context: TotpContext;
   } {
-    const isValid = this.totp.check(
-      token, 
-      context.secret
-    );
+    const isValid = this.totp.check(token, context.secret);
 
     return {
       isValid,
-      context
-    }
+      context,
+    };
   }
 }

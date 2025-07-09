@@ -11,10 +11,10 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { OTPContext } from '../two-factor-authentication.interface';
+import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })

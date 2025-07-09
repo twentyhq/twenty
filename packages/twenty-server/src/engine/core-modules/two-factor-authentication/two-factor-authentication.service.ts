@@ -1,15 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from './two-factor-authentication.exception';
+
 import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
-import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from './two-factor-authentication.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -19,8 +26,8 @@ export class TwoFactorAuthenticationService {
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    @Inject(TWO_FACTOR_AUTHENTICATION_STRATEGY) 
-    private twoFactorAuthenticationStrategy: ITwoFactorAuthStrategy
+    @Inject(TWO_FACTOR_AUTHENTICATION_STRATEGY)
+    private twoFactorAuthenticationStrategy: ITwoFactorAuthStrategy,
   ) {}
 
   async is2FARequired(
@@ -33,7 +40,7 @@ export class TwoFactorAuthenticationService {
 
     const shouldEnforce2FA =
       isTwoFactorAuthenticationEnabled &&
-        Boolean(targetWorkspace?.twoFactorAuthenticationPolicy);
+      Boolean(targetWorkspace?.twoFactorAuthenticationPolicy);
 
     if (!shouldEnforce2FA) return;
 
@@ -51,9 +58,9 @@ export class TwoFactorAuthenticationService {
   }
 
   async initiateStrategyConfiguration(
-    userId: string, 
+    userId: string,
     userEmail: string,
-    workspaceId: string
+    workspaceId: string,
   ) {
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
@@ -61,14 +68,13 @@ export class TwoFactorAuthenticationService {
         workspaceId,
       });
 
-    const existing2FAMethod = await this.twoFactorAuthenticationMethodRepository.findOne(
-      {
+    const existing2FAMethod =
+      await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {
           userWorkspace: { id: userWorkspace.id },
-          strategy: this.twoFactorAuthenticationStrategy.name
+          strategy: this.twoFactorAuthenticationStrategy.name,
         },
-      },
-    );
+      });
 
     if (existing2FAMethod && existing2FAMethod.context?.status !== 'PENDING') {
       throw new TwoFactorAuthenticationException(
@@ -77,13 +83,10 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    const {
-      uri,
-      context
-    } = this.twoFactorAuthenticationStrategy.initiate(
+    const { uri, context } = this.twoFactorAuthenticationStrategy.initiate(
       userEmail,
       userWorkspace.workspace.displayName || '',
-      0
+      0,
     );
 
     await this.twoFactorAuthenticationMethodRepository.save({
@@ -93,7 +96,7 @@ export class TwoFactorAuthenticationService {
       strategy: this.twoFactorAuthenticationStrategy.name,
     });
 
-    return uri
+    return uri;
   }
 
   async validateStrategy(

@@ -18,8 +18,9 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
-import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+
+import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
 
 @Resolver()
@@ -40,9 +41,10 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
-    const { userId, sub: userEmail } = await this.loginTokenService.verifyLoginToken(
-      initiateTwoFactorAuthenticationProvisioningInput.loginToken,
-    );
+    const { userId, sub: userEmail } =
+      await this.loginTokenService.verifyLoginToken(
+        initiateTwoFactorAuthenticationProvisioningInput.loginToken,
+      );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(

@@ -1,9 +1,19 @@
 import { Logger } from '@nestjs/common';
-import { HotpStrategy, HOTPStrategyConfig } from './hotp.strategy';
-import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from '../two-factor-authentication.exception';
-import { HotpContext, OTPHashAlgorithms, OTPKeyEncodings } from '../two-factor-authentication.interface';
+
 import { hotp } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from 'src/engine/core-modules/two-factor-authentication//two-factor-authentication.exception';
+import {
+  HotpContext,
+  OTPHashAlgorithms,
+  OTPKeyEncodings,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+
+import { HotpStrategy, HOTPStrategyConfig } from './hotp.strategy';
 
 describe('HOTPStrategy Configuration', () => {
   let warnSpy: jest.SpyInstance;
@@ -30,50 +40,54 @@ describe('HOTPStrategy Configuration', () => {
     });
 
     it('should warn when all custom options are valid but not recommended', () => {
-        const authenticatorIncompatibleOptions = {
-            ...validOptions,
-            algorithm: OTPHashAlgorithms.SHA256,
-            encodings: OTPKeyEncodings.BASE64,
-        };
+      const authenticatorIncompatibleOptions = {
+        ...validOptions,
+        algorithm: OTPHashAlgorithms.SHA256,
+        encodings: OTPKeyEncodings.BASE64,
+      };
 
-        expect(
-            () => new HotpStrategy(authenticatorIncompatibleOptions)
-        ).not.toThrow();
+      expect(
+        () => new HotpStrategy(authenticatorIncompatibleOptions),
+      ).not.toThrow();
 
-        expect(warnSpy).toHaveBeenCalledTimes(2);
+      expect(warnSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should correctly set the window property', () => {
       const strategy = new HotpStrategy({ window: 10 });
+
       expect((strategy as any).window).toBe(10);
     });
 
     it('should default window to 0 if not provided', () => {
-        const strategy = new HotpStrategy();
-        expect((strategy as any).window).toBe(0);
+      const strategy = new HotpStrategy();
+
+      expect((strategy as any).window).toBe(0);
     });
   });
 
   describe('Invalid Configurations (Error Handling)', () => {
     it('should throw TwoFactorAuthenticationException for an invalid algorithm', () => {
-        const invalidOptions = { 
-            digits: 5,
-            algorithm: 'MD5' as OTPHashAlgorithms,
-            encodings: 'utf-8' as OTPKeyEncodings,
-            window: -1
-        };
+      const invalidOptions = {
+        digits: 5,
+        algorithm: 'MD5' as OTPHashAlgorithms,
+        encodings: 'utf-8' as OTPKeyEncodings,
+        window: -1,
+      };
 
       expect.assertions(6);
 
       try {
-        new HotpStrategy(invalidOptions)
+        new HotpStrategy(invalidOptions);
       } catch (e) {
-          expect(e).toBeInstanceOf(TwoFactorAuthenticationException);
-          expect(e.code).toEqual(TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION)
-          expect(e.message).toContain('digits')
-          expect(e.message).toContain('algorithm')
-          expect(e.message).toContain('encodings')
-          expect(e.message).toContain('window')
+        expect(e).toBeInstanceOf(TwoFactorAuthenticationException);
+        expect(e.code).toEqual(
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+        );
+        expect(e.message).toContain('digits');
+        expect(e.message).toContain('algorithm');
+        expect(e.message).toContain('encodings');
+        expect(e.message).toContain('window');
       }
     });
   });
@@ -86,7 +100,9 @@ describe('HOTPStrategy Configuration', () => {
 
       const result = strategy.initiate(accountName, issuer, 0);
 
-      expect(result.uri).toContain(`otpauth://hotp/${issuer}:${encodeURIComponent(accountName)}`);
+      expect(result.uri).toContain(
+        `otpauth://hotp/${issuer}:${encodeURIComponent(accountName)}`,
+      );
       expect(result.uri).toContain(`?secret=${result.context.secret}`);
       expect(result.uri).toContain(`&issuer=${issuer}`);
       expect(result.uri).toContain(`&counter=0`);
@@ -95,7 +111,7 @@ describe('HOTPStrategy Configuration', () => {
         strategy: 'HOTP',
         status: 'PENDING',
         counter: 0,
-        secret: expect.any(String)
+        secret: expect.any(String),
       });
     });
   });
@@ -107,7 +123,7 @@ describe('HOTPStrategy Configuration', () => {
     let context: HotpContext;
 
     beforeEach(() => {
-      strategy = new HotpStrategy({ window: RESYNCH_WINDOW }); 
+      strategy = new HotpStrategy({ window: RESYNCH_WINDOW });
       context = {
         strategy: TwoFactorAuthenticationStrategy.HOTP,
         status: 'VERIFIED' as const,
@@ -121,7 +137,7 @@ describe('HOTPStrategy Configuration', () => {
       const result = strategy.validate(token, context);
 
       expect(result.isValid).toBe(true);
-      expect(result.context.counter).toBe(2); 
+      expect(result.context.counter).toBe(2);
     });
 
     it('should return false for an invalid token', () => {
@@ -129,19 +145,19 @@ describe('HOTPStrategy Configuration', () => {
       const result = strategy.validate(token, context);
 
       expect(result.isValid).toBe(false);
-      expect(result.context.counter).toBe(1); 
+      expect(result.context.counter).toBe(1);
     });
 
     it('should succeed and resynchronize if the token is valid within the window', () => {
-      const futureToken = hotp.generate(secret, RESYNCH_WINDOW); 
+      const futureToken = hotp.generate(secret, RESYNCH_WINDOW);
       const result = strategy.validate(futureToken, context);
 
       expect(result.isValid).toBe(true);
-      expect(result.context.counter).toBe(4); 
+      expect(result.context.counter).toBe(4);
     });
 
     it('should fail if the token is valid but outside the window', () => {
-      const futureToken = hotp.generate(secret, 5); 
+      const futureToken = hotp.generate(secret, 5);
       const result = strategy.validate(futureToken, context);
 
       expect(result.isValid).toBe(false);

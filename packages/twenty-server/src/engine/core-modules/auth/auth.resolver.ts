@@ -63,6 +63,9 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
+
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
@@ -73,8 +76,6 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TwoFactorAuthenticationService } from '../two-factor-authentication/two-factor-authentication.service';
-import { TwoFactorAuthenticationVerificationInput } from '../two-factor-authentication/dto/two-factor-authentication-verification.input';
 
 @UsePipes(ResolverValidationPipe)
 @Resolver()
@@ -267,10 +268,13 @@ export class AuthResolver {
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const { sub: email, userId, authProvider } =
-      await this.loginTokenService.verifyLoginToken(
-        twoFactorAuthenticationVerificationInput.loginToken,
-      );
+    const {
+      sub: email,
+      userId,
+      authProvider,
+    } = await this.loginTokenService.verifyLoginToken(
+      twoFactorAuthenticationVerificationInput.loginToken,
+    );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -502,10 +506,11 @@ export class AuthResolver {
       );
     }
 
-    const currentUserWorkspace = await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-      userId,
-      workspaceId
-    });
+    const currentUserWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId,
+        workspaceId,
+      });
 
     await this.twoFactorAuthenticationService.is2FARequired(
       workspace,

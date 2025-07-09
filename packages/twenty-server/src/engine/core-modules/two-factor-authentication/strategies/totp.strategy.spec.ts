@@ -1,9 +1,19 @@
 import { Logger } from '@nestjs/common';
-import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from '../two-factor-authentication.exception';
-import { TotpStrategy, TOTPStrategyConfig } from './totp.strategy';
-import { OTPHashAlgorithms, OTPKeyEncodings, TotpContext } from '../two-factor-authentication.interface';
+
 import { totp } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
+import {
+  OTPHashAlgorithms,
+  OTPKeyEncodings,
+  TotpContext,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+
+import { TotpStrategy, TOTPStrategyConfig } from './totp.strategy';
 
 describe('TOTPStrategy Configuration', () => {
   let warnSpy: jest.SpyInstance;
@@ -13,7 +23,7 @@ describe('TOTPStrategy Configuration', () => {
     digits: 8,
     encodings: OTPKeyEncodings.HEX,
     window: 5,
-    step: 30
+    step: 30,
   };
 
   beforeEach(() => {
@@ -38,7 +48,7 @@ describe('TOTPStrategy Configuration', () => {
       };
 
       expect(
-          () => new TotpStrategy(authenticatorIncompatibleOptions)
+        () => new TotpStrategy(authenticatorIncompatibleOptions),
       ).not.toThrow();
 
       expect(warnSpy).toHaveBeenCalledTimes(2);
@@ -46,37 +56,41 @@ describe('TOTPStrategy Configuration', () => {
 
     it('should correctly set the window property', () => {
       const strategy = new TotpStrategy({ window: 10 });
+
       expect((strategy as any).totp.allOptions().window).toBe(10);
     });
 
     it('should default window to 0 if not provided', () => {
       const strategy = new TotpStrategy();
+
       expect((strategy as any).totp.allOptions().window).toBe(0);
     });
   });
 
   describe('Invalid Configurations (Error Handling)', () => {
     it('should throw TwoFactorAuthenticationException for an invalid algorithm', () => {
-      const invalidOptions: TOTPStrategyConfig = { 
-          digits: 5,
-          algorithm: 'MD5' as OTPHashAlgorithms,
-          encodings: 'utf-8' as OTPKeyEncodings,
-          window: -1,
-          step: '' as unknown as number
+      const invalidOptions: TOTPStrategyConfig = {
+        digits: 5,
+        algorithm: 'MD5' as OTPHashAlgorithms,
+        encodings: 'utf-8' as OTPKeyEncodings,
+        window: -1,
+        step: '' as unknown as number,
       };
 
       expect.assertions(7);
 
       try {
-        new TotpStrategy(invalidOptions)
+        new TotpStrategy(invalidOptions);
       } catch (e) {
         expect(e).toBeInstanceOf(TwoFactorAuthenticationException);
-        expect(e.code).toEqual(TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION)
-        expect(e.message).toContain('digits')
-        expect(e.message).toContain('algorithm')
-        expect(e.message).toContain('encodings')
-        expect(e.message).toContain('window')
-        expect(e.message).toContain('step')
+        expect(e.code).toEqual(
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+        );
+        expect(e.message).toContain('digits');
+        expect(e.message).toContain('algorithm');
+        expect(e.message).toContain('encodings');
+        expect(e.message).toContain('window');
+        expect(e.message).toContain('step');
       }
     });
   });
@@ -89,7 +103,9 @@ describe('TOTPStrategy Configuration', () => {
 
       const result = strategy.initiate(accountName, issuer);
 
-      expect(result.uri).toContain(`otpauth://totp/${issuer}:${encodeURIComponent(accountName)}`);
+      expect(result.uri).toContain(
+        `otpauth://totp/${issuer}:${encodeURIComponent(accountName)}`,
+      );
       expect(result.uri).toContain(`?secret=${result.context.secret}`);
       expect(result.uri).toContain(`&issuer=${issuer}`);
       expect(result.uri).toContain(`&period=30`);
@@ -109,8 +125,8 @@ describe('TOTPStrategy Configuration', () => {
     let context: TotpContext;
 
     beforeEach(() => {
-      strategy = new TotpStrategy({ 
-        window: RESYNCH_WINDOW 
+      strategy = new TotpStrategy({
+        window: RESYNCH_WINDOW,
       });
 
       context = {
@@ -122,48 +138,36 @@ describe('TOTPStrategy Configuration', () => {
 
     it('should return true for a valid token at the current counter', () => {
       const token = totp.generate(secret);
-      const result = strategy.validate(
-        token,
-        context
-      );
+      const result = strategy.validate(token, context);
 
       expect(result.isValid).toBe(true);
     });
 
     it('should return false for an invalid token', () => {
       const token = '000000';
-      const result = strategy.validate(
-        token,
-        context
-      );
+      const result = strategy.validate(token, context);
 
       expect(result.isValid).toBe(false);
     });
 
     it('should succeed if the token is valid within the window', () => {
-      const futureTokenStrategy = new TotpStrategy({ 
-        epoch: Date.now() + (validOptions.step! * RESYNCH_WINDOW * 1000),
-      }); 
-      const futureToken = (futureTokenStrategy as any).totp.generate(secret); 
+      const futureTokenStrategy = new TotpStrategy({
+        epoch: Date.now() + validOptions.step! * RESYNCH_WINDOW * 1000,
+      });
+      const futureToken = (futureTokenStrategy as any).totp.generate(secret);
 
-      const result = strategy.validate(
-        futureToken,
-        context
-      );
+      const result = strategy.validate(futureToken, context);
 
       expect(result.isValid).toBe(true);
     });
 
     it('should fail if the token is valid but outside the window', () => {
-      const futureTokenStrategy = new TotpStrategy({ 
-        epoch: Date.now() + (validOptions.step! * (RESYNCH_WINDOW + 10) * 1000),
-      }); 
-      const futureToken = (futureTokenStrategy as any).totp.generate(secret); 
+      const futureTokenStrategy = new TotpStrategy({
+        epoch: Date.now() + validOptions.step! * (RESYNCH_WINDOW + 10) * 1000,
+      });
+      const futureToken = (futureTokenStrategy as any).totp.generate(secret);
 
-      const result = strategy.validate(
-        futureToken,
-        context
-      );
+      const result = strategy.validate(futureToken, context);
 
       expect(result.isValid).toBe(false);
     });

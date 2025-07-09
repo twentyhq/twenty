@@ -1,9 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import {
-  TwoFactorAuthenticationStrategy
-} from 'twenty-shared/types';
-
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 registerEnumType(TwoFactorAuthenticationStrategy, {
   name: 'TwoFactorAuthenticationProviders',

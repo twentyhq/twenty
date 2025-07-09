@@ -10,6 +10,7 @@ import {
   validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
@@ -39,8 +40,10 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { OTPHashAlgorithms, OTPKeyEncodings } from '../two-factor-authentication/two-factor-authentication.interface';
+import {
+  OTPHashAlgorithms,
+  OTPKeyEncodings,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -77,10 +80,10 @@ export class ConfigVariables {
   @IsOptional()
   IS_TWO_FACTOR_AUTHENTICATION_ENABLED = true;
 
-
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Select the two-factor authentication strategy (e.g., TOTP or HOTP) to be used for workspace logins.',
+    description:
+      'Select the two-factor authentication strategy (e.g., TOTP or HOTP) to be used for workspace logins.',
     type: ConfigVariableType.ENUM,
     options: Object.values(TwoFactorAuthenticationStrategy),
   })
@@ -89,7 +92,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Choose the hash algorithm used for generating OTP codes (e.g., SHA1, SHA256, SHA512).',
+    description:
+      'Choose the hash algorithm used for generating OTP codes (e.g., SHA1, SHA256, SHA512).',
     type: ConfigVariableType.ENUM,
     options: Object.values(OTPHashAlgorithms),
   })
@@ -98,7 +102,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Specify the number of digits in the generated OTP code (commonly 6 or 8).',
+    description:
+      'Specify the number of digits in the generated OTP code (commonly 6 or 8).',
     type: ConfigVariableType.NUMBER,
   })
   @IsOptional()
@@ -114,7 +119,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Set the allowed time window (in steps) for OTP verification to account for clock/counter drift.',
+    description:
+      'Set the allowed time window (in steps) for OTP verification to account for clock/counter drift.',
     type: ConfigVariableType.NUMBER,
   })
   @IsOptional()
@@ -122,7 +128,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Specify the encoding format used to store or transmit the OTP secret (e.g. hex).',
+    description:
+      'Specify the encoding format used to store or transmit the OTP secret (e.g. hex).',
     type: ConfigVariableType.ENUM,
     options: Object.values(OTPKeyEncodings),
   })

@@ -26,7 +26,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { TwoFactorAuthenticationPolicy } from '../two-factor-authentication/entities/two-factor-authentication-policy.entity';
+import { TwoFactorAuthenticationPolicy } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-policy.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
