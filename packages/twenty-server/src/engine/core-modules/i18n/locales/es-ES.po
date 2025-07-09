@@ -423,7 +423,7 @@ msgid "Auth failed at"
 msgstr "Autenticación fallida en"
 
 #. js-lingui-id: LB4qX/
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr ""
 
@@ -852,7 +852,7 @@ msgid "Email already verified."
 msgstr ""
 
 #. js-lingui-id: xw6iqb
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Email is not verified."
 msgstr ""
 
@@ -2702,6 +2702,11 @@ msgstr ""
 msgid "Update DateTime"
 msgstr "Actualizar fecha y hora"
 
+#. js-lingui-id: l9dlVi
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+msgid "User does not have access to this workspace"
+msgstr ""
+
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
@@ -3226,7 +3231,7 @@ msgid "X"
 msgstr "X"
 
 #. js-lingui-id: z+7x/s
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr ""
 
