@@ -117,12 +117,19 @@ describe('computeRelationConnectQueryConfigs', () => {
         type: FieldMetadataType.LINKS,
         label: 'domainName',
       },
+      'company-address-field-id': {
+        id: 'company-address-field-id',
+        name: 'address',
+        type: FieldMetadataType.TEXT,
+        label: 'address',
+      },
     },
     fieldIdByName: {
       id: 'company-id-field-id',
       name: 'company-name-field-id',
       description: 'company-description-field-id',
       domainName: 'company-domain-name-field-id',
+      address: 'company-address-field-id',
     },
   } as unknown as ObjectMetadataItemWithFieldMaps;
 
@@ -195,11 +202,11 @@ describe('computeRelationConnectQueryConfigs', () => {
         objectMetadataMaps,
       );
     }).toThrow(
-      "Missing required fields: unique constraint fields are not all populated for 'company-related-to-1'.",
+      "Missing required fields: at least one unique constraint have to be fully populated for 'company-related-to-1'.",
     );
   });
 
-  it('should throw an error if connect field has more than one unique constraint populated', () => {
+  it('should throw an error if connect field are not in constraint fields', () => {
     const peopleEntityInputs = [
       {
         id: '1',
@@ -208,6 +215,7 @@ describe('computeRelationConnectQueryConfigs', () => {
             where: {
               domainName: { primaryLinkUrl: 'company1.com' },
               id: '1',
+              address: 'company1 address',
             },
           },
         },
@@ -221,7 +229,7 @@ describe('computeRelationConnectQueryConfigs', () => {
         objectMetadataMaps,
       );
     }).toThrow(
-      "Too many fields provided for connect field 'company-related-to-1'. Only fields from one unique constraint are allowed.",
+      "Field address is not a unique constraint field for 'company-related-to-1'.",
     );
   });
 

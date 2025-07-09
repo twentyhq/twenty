@@ -243,37 +243,37 @@ const checkUniqueConstraintFullyPopulated = (
     fields: Object.values(objectMetadata.fieldsById),
   });
 
-  const uniqueConstraintFieldFullyPopulated = uniqueConstraintsFields.find(
+  const hasUniqueConstraintFieldFullyPopulated = uniqueConstraintsFields.some(
     (uniqueConstraintFields) =>
       uniqueConstraintFields.every((uniqueConstraintField) =>
         isDefined(connectObject.connect.where[uniqueConstraintField.name]),
       ),
   );
 
-  if (!isDefined(uniqueConstraintFieldFullyPopulated)) {
+  if (!hasUniqueConstraintFieldFullyPopulated) {
     throw new TwentyORMException(
-      `Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
+      `Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
-        userFriendlyMessage: t`Missing required fields: unique constraint fields are not all populated for '${connectFieldName}'.`,
+        userFriendlyMessage: t`Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       },
     );
   }
 
-  if (
-    uniqueConstraintFieldFullyPopulated.length !==
-    Object.keys(connectObject.connect.where).length
-  ) {
-    throw new TwentyORMException(
-      `Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
-      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
-      {
-        userFriendlyMessage: t`Too many fields provided for connect field '${connectFieldName}'. Only fields from one unique constraint are allowed.`,
-      },
-    );
-  }
+  return Object.keys(connectObject.connect.where).map((key) => {
+    const field = uniqueConstraintsFields
+      .flat()
+      .find((uniqueConstraintField) => uniqueConstraintField.name === key);
 
-  return uniqueConstraintFieldFullyPopulated;
+    if (!isDefined(field)) {
+      throw new TwentyORMException(
+        `Field ${key} is not a unique constraint field for '${connectFieldName}'.`,
+        TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+      );
+    }
+
+    return field;
+  });
 };
 
 const checkNoRelationFieldConflictOrThrow = (
