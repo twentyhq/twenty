@@ -1,9 +1,5 @@
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useSelectAllCards } from '@/object-record/record-board/hooks/useSelectAllCards';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilCallback } from 'recoil';
 
 export const useRecordBoardSelectAllHotkeys = ({
   recordBoardId,
@@ -12,32 +8,13 @@ export const useRecordBoardSelectAllHotkeys = ({
   recordBoardId: string;
   focusId: string;
 }) => {
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
-  const { setRecordAsSelected } = useRecordBoardSelection(recordBoardId);
-
-  const selectAll = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsState,
-        );
-
-        for (const recordId of allRecordIds) {
-          setRecordAsSelected(recordId, true);
-        }
-      },
-    [recordIndexAllRecordIdsState, setRecordAsSelected],
-  );
+  const { selectAllCards } = useSelectAllCards(recordBoardId);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+a', 'meta+a'],
-    callback: selectAll,
+    callback: selectAllCards,
     focusId,
-    dependencies: [selectAll],
+    dependencies: [selectAllCards],
     options: {
       enableOnFormTags: false,
     },

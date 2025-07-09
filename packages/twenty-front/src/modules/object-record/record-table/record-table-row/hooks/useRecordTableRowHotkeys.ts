@@ -132,4 +132,23 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     focusId,
     dependencies: [handleEscape],
   });
+
+  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
+    recordTableId,
+  });
+
+  const handleSelectAllRows = () => {
+    setHasUserSelectedAllRows(true);
+    selectAllRows();
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+a,meta+a'],
+    callback: handleSelectAllRows,
+    focusId,
+    dependencies: [handleSelectAllRows],
+    options: {
+      enableOnFormTags: false,
+    },
+  });
 };

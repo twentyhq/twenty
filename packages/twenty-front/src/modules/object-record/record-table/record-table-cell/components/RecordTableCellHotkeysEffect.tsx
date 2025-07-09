@@ -9,6 +9,7 @@ import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useTo
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useListenToSidePanelOpening } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelOpening';
@@ -106,6 +107,25 @@ export const RecordTableCellHotkeysEffect = () => {
     dependencies: [handleAnyKey],
     options: {
       preventDefault: false,
+    },
+  });
+
+  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
+    recordTableId,
+  });
+
+  const handleSelectAllRows = () => {
+    setHasUserSelectedAllRows(true);
+    selectAllRows();
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+a,meta+a'],
+    callback: handleSelectAllRows,
+    focusId: cellFocusId,
+    dependencies: [handleSelectAllRows],
+    options: {
+      enableOnFormTags: false,
     },
   });
 

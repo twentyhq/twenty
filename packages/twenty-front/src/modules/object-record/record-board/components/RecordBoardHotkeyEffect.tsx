@@ -23,7 +23,7 @@ export const RecordBoardHotkeyEffect = () => {
 
   useRecordBoardSelectAllHotkeys({
     recordBoardId,
-    focusId: recordBoardId,
+    focusId: PageFocusId.RecordIndex,
   });
 
   return null;

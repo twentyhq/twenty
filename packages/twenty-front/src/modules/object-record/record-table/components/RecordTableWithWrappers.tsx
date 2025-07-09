@@ -5,6 +5,7 @@ import { RecordTableComponentInstance } from '@/object-record/record-table/compo
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
@@ -47,7 +48,7 @@ export const RecordTableWithWrappers = ({
   useHotkeysOnFocusedElement({
     keys: ['ctrl+a,meta+a'],
     callback: handleSelectAllRows,
-    focusId: recordTableId,
+    focusId: PageFocusId.RecordIndex,
     dependencies: [handleSelectAllRows],
     options: {
       enableOnFormTags: false,
