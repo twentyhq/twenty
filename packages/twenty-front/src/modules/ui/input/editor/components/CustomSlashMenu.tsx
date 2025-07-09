@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
@@ -17,7 +15,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type { SuggestionItem };
 
@@ -38,17 +35,6 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
-
-  const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
-
-  useEffect(() => {
-    if (!isDefined(props.selectedIndex)) return;
-
-    const selectedItem = props.items[props.selectedIndex];
-    if (isDefined(selectedItem)) {
-      setSelectedItemId(selectedItem.title);
-    }
-  }, [props.items, props.selectedIndex, setSelectedItemId]);
 
   return (
     <StyledContainer ref={refs.setReference}>
