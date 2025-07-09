@@ -126,7 +126,7 @@ export class FieldPermissionService {
     role,
   }: {
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
-    objectMetadataMapsById: Record<string, ObjectMetadataItemWithFieldMaps>;
+    objectMetadataMapsById: Map<string, ObjectMetadataItemWithFieldMaps>;
     rolesPermissions: ObjectRecordsPermissionsByRoleId;
     role: RoleEntity;
   }) {
@@ -144,8 +144,9 @@ export class FieldPermissionService {
       );
     }
 
-    const objectMetadataForFieldPermission =
-      objectMetadataMapsById[fieldPermission.objectMetadataId];
+    const objectMetadataForFieldPermission = objectMetadataMapsById.get(
+      fieldPermission.objectMetadataId,
+    );
 
     if (!isDefined(objectMetadataForFieldPermission)) {
       throw new PermissionsException(

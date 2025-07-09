@@ -17,13 +17,15 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 )!;
 
 const mockObjectMetadataMaps = {
-  byId: {
-    [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
-  },
-  idByNameSingular: {
-    [companyMockObjectMetadataItem.nameSingular]:
+  byId: new Map([
+    [companyMockObjectMetadataItem.id, companyMockObjectMetadataItem],
+  ]),
+  idByNameSingular: new Map([
+    [
+      companyMockObjectMetadataItem.nameSingular,
       companyMockObjectMetadataItem.id,
-  },
+    ],
+  ]),
 };
 
 const objectMetadataInfo = {

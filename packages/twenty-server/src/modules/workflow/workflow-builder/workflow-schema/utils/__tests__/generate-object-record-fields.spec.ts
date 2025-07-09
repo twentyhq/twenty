@@ -1,9 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 
 jest.mock(
   'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field',
@@ -23,13 +23,15 @@ describe('generateObjectRecordFields', () => {
     )!;
 
   const mockObjectMetadataMaps = {
-    byId: {
-      [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
-    },
-    idByNameSingular: {
-      [companyMockObjectMetadataItem.nameSingular]:
+    byId: new Map([
+      [companyMockObjectMetadataItem.id, companyMockObjectMetadataItem],
+    ]),
+    idByNameSingular: new Map([
+      [
+        companyMockObjectMetadataItem.nameSingular,
         companyMockObjectMetadataItem.id,
-    },
+      ],
+    ]),
   };
 
   const objectMetadataInfo = {

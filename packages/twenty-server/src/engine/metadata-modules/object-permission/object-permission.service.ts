@@ -58,8 +58,9 @@ export class ObjectPermissionService {
         );
 
       input.objectPermissions.forEach((objectPermission) => {
-        const objectMetadataForObjectPermission =
-          objectMetadataMapsById[objectPermission.objectMetadataId];
+        const objectMetadataForObjectPermission = objectMetadataMapsById.get(
+          objectPermission.objectMetadataId,
+        );
 
         if (!isDefined(objectMetadataForObjectPermission)) {
           throw new PermissionsException(

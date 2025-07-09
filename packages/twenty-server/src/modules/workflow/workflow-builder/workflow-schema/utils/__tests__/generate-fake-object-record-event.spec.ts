@@ -1,7 +1,7 @@
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 
 jest.mock(
   'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields',
@@ -23,13 +23,15 @@ describe('generateFakeObjectRecordEvent', () => {
     )!;
 
   const mockObjectMetadataMaps = {
-    byId: {
-      [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
-    },
-    idByNameSingular: {
-      [companyMockObjectMetadataItem.nameSingular]:
+    byId: new Map([
+      [companyMockObjectMetadataItem.id, companyMockObjectMetadataItem],
+    ]),
+    idByNameSingular: new Map([
+      [
+        companyMockObjectMetadataItem.nameSingular,
         companyMockObjectMetadataItem.id,
-    },
+      ],
+    ]),
   };
 
   const objectMetadataInfo = {
