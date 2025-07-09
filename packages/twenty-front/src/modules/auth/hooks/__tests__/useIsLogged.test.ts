@@ -1,5 +1,4 @@
-import { act } from 'react-dom/test-utils';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';

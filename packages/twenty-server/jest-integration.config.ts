@@ -21,7 +21,7 @@ const jestConfig: JestConfigWithTsJest = {
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
   silent: false,
-  verbose: true,
+  errorOnDeprecated: true,
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
