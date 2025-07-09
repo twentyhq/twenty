@@ -12,7 +12,6 @@ import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -37,10 +36,6 @@ export const MultipleRecordPickerMenuItems = ({
   const pickableRecordIds = useRecoilComponentValueV2(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
-  );
-
-  const { resetSelectedItem } = useSelectableList(
-    selectableListComponentInstanceId,
   );
 
   const multipleRecordPickerPickableMorphItemsState =
@@ -107,7 +102,6 @@ export const MultipleRecordPickerMenuItems = ({
                 onChange={(morphItem) => {
                   handleChange(morphItem);
                   onChange?.(morphItem);
-                  resetSelectedItem();
                 }}
               />
             );

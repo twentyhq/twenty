@@ -17,7 +17,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
@@ -129,17 +129,17 @@ export const RecordInlineCell = ({
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField, event) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
+        const currentDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        const expectedFocusId = getDropdownFocusIdForRecordField(
+        const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
           recordId,
           fieldDefinition.fieldMetadataId,
           'inline-cell',
         );
 
-        if (currentFocusId !== expectedFocusId) {
+        if (currentDropdownFocusId !== expectedDropdownFocusId) {
           return;
         }
         event.preventDefault();
