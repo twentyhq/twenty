@@ -47,13 +47,11 @@ export const generateFields = <
   kind,
   options,
   typeFactory,
-  isRelationConnectEnabled = false,
 }: {
   objectMetadata: ObjectMetadataInterface;
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
-  isRelationConnectEnabled?: boolean;
 }): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +78,6 @@ export const generateFields = <
         kind,
         options,
         typeFactory,
-        isRelationConnectEnabled,
       });
     } else {
       generatedField = generateField({
@@ -168,7 +165,6 @@ const generateRelationField = <
   kind,
   options,
   typeFactory,
-  isRelationConnectEnabled,
 }: {
   fieldMetadata: FieldMetadataInterface<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
@@ -176,7 +172,6 @@ const generateRelationField = <
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
-  isRelationConnectEnabled: boolean;
 }) => {
   const relationField = {};
 
@@ -208,11 +203,10 @@ const generateRelationField = <
   };
 
   if (
-    [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
+    [InputTypeDefinitionKind.Create].includes(
       kind as InputTypeDefinitionKind,
     ) &&
-    isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
-    isRelationConnectEnabled
+    isDefined(fieldMetadata.relationTargetObjectMetadataId)
   ) {
     type = typeFactory.create(
       formatRelationConnectInputTarget(
