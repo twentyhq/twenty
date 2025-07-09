@@ -2,12 +2,12 @@ import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migra
 import { CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { compareTwoFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-object-metadata-comparator.util';
 import {
-  UpdateObjectAction,
-  WorkspaceMigrationObjectActionV2,
+    UpdateObjectAction,
+    WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import {
-  getWorkspaceMigrationV2ObjectCreateAction,
-  getWorkspaceMigrationV2ObjectDeleteAction,
+    getWorkspaceMigrationV2ObjectCreateAction,
+    getWorkspaceMigrationV2ObjectDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 
 export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
@@ -38,7 +38,7 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
 
       return {
         type: 'update_object',
-        flattenObjectMetadata: to,
+        flatObjectMetadata: to,
         updates: objectUpdatedProperties,
       };
     });

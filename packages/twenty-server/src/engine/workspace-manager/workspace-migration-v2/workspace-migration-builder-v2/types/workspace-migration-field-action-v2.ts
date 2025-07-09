@@ -5,8 +5,8 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
 
 export type FieldAndObjectMetadataWorkspaceMigrationInput = {
-  flattenFieldMetadata: FlatFieldMetadata;
-  flattenObjectMetadata: FlatObjectMetadataWithoutFields;
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadataWithoutFields;
 };
 export type CreateFieldAction = {
   type: 'create_field';

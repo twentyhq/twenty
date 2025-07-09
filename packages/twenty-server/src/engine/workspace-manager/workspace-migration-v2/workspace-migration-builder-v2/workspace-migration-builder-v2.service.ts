@@ -32,19 +32,19 @@ export class WorkspaceMigrationBuilderV2Service {
       });
 
     const createdObjectWorkspaceMigrationCreateFieldActions =
-      createdObjectMetadata.flatMap((flattenObjectMetadata) =>
-        flattenObjectMetadata.flattenFieldMetadatas.map(
-          (flattenFieldMetadata) =>
+      createdObjectMetadata.flatMap((flatObjectMetadata) =>
+        flatObjectMetadata.flatFieldMetadatas.map(
+          (flatFieldMetadata) =>
             getWorkspaceMigrationV2FieldCreateAction({
-              flattenFieldMetadata,
-              flattenObjectMetadata,
+              flatFieldMetadata,
+              flatObjectMetadata,
             }),
         ),
       );
 
     const createdObjectMetadataCreateIndexActions =
       createdObjectMetadata.flatMap((objectMetadata) =>
-        objectMetadata.flattenIndexMetadatas.map(
+        objectMetadata.flatIndexMetadatas.map(
           getWorkspaceMigrationV2CreateIndexAction,
         ),
       );

@@ -1,12 +1,12 @@
 import { compareTwoFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
 import {
-  UpdateFieldAction,
-  WorkspaceMigrationFieldActionV2,
+    UpdateFieldAction,
+    WorkspaceMigrationFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
 import {
-  getWorkspaceMigrationV2FieldCreateAction,
-  getWorkspaceMigrationV2FieldDeleteAction,
+    getWorkspaceMigrationV2FieldCreateAction,
+    getWorkspaceMigrationV2FieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 
 export const buildWorkspaceMigrationV2FieldActions = (
@@ -19,7 +19,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
     createdFieldMetadata,
     deletedFieldMetadata,
     updatedFieldMetadata,
-    flattenObjectMetadata,
+    flatObjectMetadata,
   } of objectMetadataDeletedCreatedUpdatedFields) {
     const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
       ({ from, to }) => {
@@ -34,24 +34,24 @@ export const buildWorkspaceMigrationV2FieldActions = (
 
         return {
           type: 'update_field',
-          flattenFieldMetadata: to,
-          flattenObjectMetadata,
+          flatFieldMetadata: to,
+          flatObjectMetadata,
           updates,
         };
       },
     );
 
-    const createFieldAction = createdFieldMetadata.map((flattenFieldMetadata) =>
+    const createFieldAction = createdFieldMetadata.map((flatFieldMetadata) =>
       getWorkspaceMigrationV2FieldCreateAction({
-        flattenFieldMetadata,
-        flattenObjectMetadata,
+        flatFieldMetadata,
+        flatObjectMetadata,
       }),
     );
 
-    const deleteFieldAction = deletedFieldMetadata.map((flattenFieldMetadata) =>
+    const deleteFieldAction = deletedFieldMetadata.map((flatFieldMetadata) =>
       getWorkspaceMigrationV2FieldDeleteAction({
-        flattenFieldMetadata,
-        flattenObjectMetadata,
+        flatFieldMetadata,
+        flatObjectMetadata,
       }),
     );
 

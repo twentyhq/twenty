@@ -19,8 +19,8 @@ describe('Workspace migration builder indexes tests suite', () => {
     indexes: FlatIndexMetadata[] = [],
   ): FlatObjectMetadata => ({
     uniqueIdentifier: identifier,
-    flattenIndexMetadatas: indexes,
-    flattenFieldMetadatas: fields.map((field) => ({
+    flatIndexMetadatas: indexes,
+    flatFieldMetadatas: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
       label: 'Default Label',
@@ -42,7 +42,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     indexType: IndexType.BTREE,
     indexWhereClause: null,
     uniqueIdentifier: name,
-    flattenIndexFieldMetadatas: fields.map((field, index) => ({
+    flatIndexFieldMetadatas: fields.map((field, index) => ({
       uniqueIdentifier: `${name}-field-${index}`,
       order: index,
     })),
@@ -72,8 +72,8 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenObjectMetadata": {
-        "flattenFieldMetadatas": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -84,9 +84,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "name",
           },
         ],
-        "flattenIndexMetadatas": [
+        "flatIndexMetadatas": [
           {
-            "flattenIndexFieldMetadatas": [
+            "flatIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_company_name-field-0",
@@ -104,7 +104,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_object",
     },
     {
-      "flattenFieldMetadata": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -113,8 +113,8 @@ describe('Workspace migration builder indexes tests suite', () => {
         "type": "TEXT",
         "uniqueIdentifier": "name",
       },
-      "flattenObjectMetadata": {
-        "flattenFieldMetadatas": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -125,9 +125,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "name",
           },
         ],
-        "flattenIndexMetadatas": [
+        "flatIndexMetadatas": [
           {
-            "flattenIndexFieldMetadatas": [
+            "flatIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_company_name-field-0",
@@ -145,8 +145,8 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_field",
     },
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -197,8 +197,8 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -265,8 +265,8 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenObjectMetadata": {
-        "flattenFieldMetadatas": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -277,9 +277,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "email",
           },
         ],
-        "flattenIndexMetadatas": [
+        "flatIndexMetadatas": [
           {
-            "flattenIndexFieldMetadatas": [
+            "flatIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_person_email-field-0",
@@ -297,7 +297,7 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_object",
     },
     {
-      "flattenFieldMetadata": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -306,8 +306,8 @@ describe('Workspace migration builder indexes tests suite', () => {
         "type": "TEXT",
         "uniqueIdentifier": "email",
       },
-      "flattenObjectMetadata": {
-        "flattenFieldMetadatas": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -318,9 +318,9 @@ describe('Workspace migration builder indexes tests suite', () => {
             "uniqueIdentifier": "email",
           },
         ],
-        "flattenIndexMetadatas": [
+        "flatIndexMetadatas": [
           {
-            "flattenIndexFieldMetadatas": [
+            "flatIndexFieldMetadatas": [
               {
                 "order": 0,
                 "uniqueIdentifier": "idx_person_email-field-0",
@@ -338,8 +338,8 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_field",
     },
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_person_email-field-0",
@@ -354,8 +354,8 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_index",
     },
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name_new-field-0",
@@ -370,8 +370,8 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "create_index",
     },
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name_old-field-0",
@@ -458,8 +458,8 @@ describe('Workspace migration builder indexes tests suite', () => {
 {
   "actions": [
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",
@@ -474,8 +474,8 @@ describe('Workspace migration builder indexes tests suite', () => {
       "type": "delete_index",
     },
     {
-      "flattenIndexMetadata": {
-        "flattenIndexFieldMetadatas": [
+      "flatIndexMetadata": {
+        "flatIndexFieldMetadatas": [
           {
             "order": 0,
             "uniqueIdentifier": "idx_company_name-field-0",

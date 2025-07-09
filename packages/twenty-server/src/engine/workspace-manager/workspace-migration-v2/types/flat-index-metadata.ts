@@ -4,6 +4,6 @@ import { FlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-m
 export type FlatIndexMetadata = Partial<
   Omit<IndexMetadataEntity, 'indexFieldMetadatas' | 'objectMetadata'> // Might have an issue as ObjectMetadataId != uniqueIdentifier
 > & {
-  flattenIndexFieldMetadatas: FlatIndexFieldMetadata[];
+  flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
   uniqueIdentifier: string;
 };

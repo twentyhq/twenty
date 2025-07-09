@@ -6,12 +6,12 @@ export type FlatObjectMetadata = Partial<
   Omit<ObjectMetadataEntity, 'fields' | 'indexMetadatas'>
 > & {
   uniqueIdentifier: string;
-  flattenIndexMetadatas: FlatIndexMetadata[];
-  flattenFieldMetadatas: FlatFieldMetadata[];
+  flatIndexMetadatas: FlatIndexMetadata[];
+  flatFieldMetadatas: FlatFieldMetadata[];
 };
 
 // Could be renamed
 export type FlatObjectMetadataWithoutFields = Omit<
   FlatObjectMetadata,
-  'flattenFieldMetadatas' | 'flattenIndexMetadatas'
+  'flatFieldMetadatas' | 'flatIndexMetadatas'
 >;

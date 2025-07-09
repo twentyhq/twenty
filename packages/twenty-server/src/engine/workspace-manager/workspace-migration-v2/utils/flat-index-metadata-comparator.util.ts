@@ -5,7 +5,7 @@ import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/type
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const flatIndexMetadataPropertiesToCompare = [
-  'flattenIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
+  'flatIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
   'indexType',
   'indexWhereClause',
   'isUnique',
