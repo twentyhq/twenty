@@ -4,7 +4,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
+import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
 import { getAIModelsWithAuto } from 'src/engine/core-modules/ai/utils/get-ai-models-with-auto.util';
 import {
   ClientAIModelConfig,

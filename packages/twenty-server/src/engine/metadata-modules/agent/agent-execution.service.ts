@@ -10,7 +10,6 @@ import {
   ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
 import { getEffectiveModelConfig } from 'src/engine/core-modules/ai/utils/get-effective-model-config.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -24,6 +23,7 @@ import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/util
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id.util';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
