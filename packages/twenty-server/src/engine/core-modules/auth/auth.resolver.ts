@@ -74,6 +74,9 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { TwoFactorAuthenticationService } from '../two-factor-authentication/two-factor-authentication.service';
+import { TwoFactorAuthenticationVerificationInput } from '../two-factor-authentication/dto/two-factor-authentication-verification.input';
+import { TwoFactorAuthenticationVerificationOutput } from '../two-factor-authentication/dto/two-factor-authentication-verification.output';
 
 @UsePipes(ResolverValidationPipe)
 @Resolver()
@@ -89,6 +92,7 @@ export class AuthResolver {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
+    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -256,6 +260,40 @@ export class AuthResolver {
     const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
 
     return { loginToken, workspaceUrls };
+  }
+
+  @Mutation(() => AuthTokens)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  async getAuthTokensFromOTP(
+    @Args()
+    twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
+    @Args('origin') origin: string,
+  ): Promise<AuthTokens> {
+    const { sub: email, userId, authProvider } =
+      await this.loginTokenService.verifyLoginToken(
+        twoFactorAuthenticationVerificationInput.loginToken,
+      );
+
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    await this.twoFactorAuthenticationService.validateStrategy(
+      userId,
+      twoFactorAuthenticationVerificationInput.otp,
+      workspace.id,
+    );
+
+    return await this.authService.verify(email, workspace.id, authProvider);
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
@@ -446,7 +484,6 @@ export class AuthResolver {
     const {
       sub: email,
       workspaceId,
-      userId,
       authProvider,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
