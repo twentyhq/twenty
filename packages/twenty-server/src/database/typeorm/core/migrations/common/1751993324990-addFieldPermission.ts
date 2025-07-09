@@ -11,9 +11,6 @@ export class AddFieldPermission1751993324990 implements MigrationInterface {
       `CREATE INDEX "IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."fieldPermission" ("workspaceId", "roleId") `,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID" ON "core"."objectPermission" ("workspaceId", "roleId") `,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."fieldPermission" ADD CONSTRAINT "FK_bbf16a91f5a10199e5b18c019ba" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -39,9 +36,6 @@ export class AddFieldPermission1751993324990 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "core"."fieldPermission" DROP CONSTRAINT "FK_bbf16a91f5a10199e5b18c019ba"`,
-    );
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID"`,
