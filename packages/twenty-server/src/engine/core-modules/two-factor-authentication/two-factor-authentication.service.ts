@@ -9,6 +9,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
 import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
 import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from './two-factor-authentication.exception';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -24,7 +25,7 @@ export class TwoFactorAuthenticationService {
 
   async is2FARequired(
     targetWorkspace: Workspace,
-    userTwoFactorAuthenticationProviders: TwoFactorAuthenticationMethod[],
+    userTwoFactorAuthenticationProviders: TwoFactorAuthenticationMethod,
   ) {
     const isTwoFactorAuthenticationEnabled = this.twentyConfigService.get(
       'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
@@ -36,7 +37,7 @@ export class TwoFactorAuthenticationService {
 
     if (!shouldEnforce2FA) return;
 
-    if (userTwoFactorAuthenticationProviders.length > 0) {
+    if (isDefined(userTwoFactorAuthenticationProviders)) {
       throw new TwoFactorAuthenticationException(
         'Two factor authentication verification required',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,

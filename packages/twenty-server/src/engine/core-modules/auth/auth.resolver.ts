@@ -63,7 +63,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
@@ -483,6 +482,7 @@ export class AuthResolver {
     const {
       sub: email,
       workspaceId,
+      userId,
       authProvider,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
@@ -501,6 +501,16 @@ export class AuthResolver {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+
+    const currentUserWorkspace = await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+      userId,
+      workspaceId
+    });
+
+    await this.twoFactorAuthenticationService.is2FARequired(
+      workspace,
+      currentUserWorkspace.twoFactorAuthenticationMethod,
+    );
 
     return await this.authService.verify(email, workspace.id, authProvider);
   }
