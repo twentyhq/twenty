@@ -6,6 +6,8 @@ import {
   SourceLocation,
 } from 'graphql';
 
+import { CustomException } from 'src/utils/custom-exception';
+
 declare module 'graphql' {
   export interface GraphQLErrorExtensions {
     exception?: {
@@ -113,28 +115,106 @@ export class ValidationError extends BaseGraphQLError {
   }
 }
 
-export class AuthenticationError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.UNAUTHENTICATED, extensions);
+export class NotFoundError extends BaseGraphQLError {
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.NOT_FOUND, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.NOT_FOUND, extensions);
+    }
+    Object.defineProperty(this, 'name', { value: 'NotFoundError' });
+  }
+}
+
+export class AuthenticationError extends BaseGraphQLError {
+  constructor(customException: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.UNAUTHENTICATED, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.UNAUTHENTICATED, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.FORBIDDEN, extensions);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.FORBIDDEN, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.FORBIDDEN, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
 }
 
 export class PersistedQueryNotFoundError extends BaseGraphQLError {
-  constructor() {
-    super('PersistedQueryNotFound', ErrorCode.PERSISTED_QUERY_NOT_FOUND);
+  constructor(customException: CustomException);
 
+  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException?: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.PERSISTED_QUERY_NOT_FOUND, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException || 'PersistedQueryNotFound';
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.PERSISTED_QUERY_NOT_FOUND, extensions);
+    }
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotFoundError',
     });
@@ -142,12 +222,27 @@ export class PersistedQueryNotFoundError extends BaseGraphQLError {
 }
 
 export class PersistedQueryNotSupportedError extends BaseGraphQLError {
-  constructor() {
-    super(
-      'PersistedQueryNotSupported',
-      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
-    );
+  constructor(customException: CustomException);
 
+  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException?: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException || 'PersistedQueryNotSupported';
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED, extensions);
+    }
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotSupportedError',
     });
@@ -155,52 +250,131 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.BAD_USER_INPUT, extensions);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.BAD_USER_INPUT, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.BAD_USER_INPUT, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
 }
 
-export class NotFoundError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.NOT_FOUND, extensions);
-
-    Object.defineProperty(this, 'name', { value: 'NotFoundError' });
-  }
-}
-
 export class MethodNotAllowedError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.METHOD_NOT_ALLOWED);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.METHOD_NOT_ALLOWED, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.METHOD_NOT_ALLOWED, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
 }
 
 export class ConflictError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.CONFLICT, extensions);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.CONFLICT, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.CONFLICT, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
 }
 
 export class TimeoutError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.TIMEOUT);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.TIMEOUT, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.TIMEOUT, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
 }
 
 export class InternalServerError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.INTERNAL_SERVER_ERROR);
+  constructor(customException: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+  ) {
+    if (messageOrException instanceof CustomException) {
+      const exception = messageOrException;
+
+      super(exception.message, ErrorCode.INTERNAL_SERVER_ERROR, {
+        userFriendlyMessage: exception.userFriendlyMessage,
+        subCode: exception.code,
+      });
+    } else {
+      const message = messageOrException as string;
+      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
+
+      super(message, ErrorCode.INTERNAL_SERVER_ERROR, extensions);
+    }
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }
