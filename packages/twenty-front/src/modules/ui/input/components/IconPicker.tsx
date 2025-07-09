@@ -10,7 +10,6 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -223,7 +222,6 @@ export const IconPicker = ({
               selectableListInstanceId={selectableListInstanceId}
               selectableItemIdMatrix={iconKeys2d}
               focusId={dropdownId}
-              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               <DropdownMenuSearchInput
                 placeholder={t`Search icon`}

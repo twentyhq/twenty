@@ -11,7 +11,6 @@ import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } 
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -99,7 +98,6 @@ export const MultipleRecordPickerMenuItems = ({
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
           focusId={focusId}
-          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {pickableRecordIds.map((recordId) => {
             return (

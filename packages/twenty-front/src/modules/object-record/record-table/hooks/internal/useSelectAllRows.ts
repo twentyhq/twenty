@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -20,6 +21,8 @@ export const useSelectAllRows = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
+
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -33,6 +36,10 @@ export const useSelectAllRows = (recordTableId?: string) => {
           recordIndexAllRecordIdsSelector,
         );
 
+        if (allRowsSelectedStatus === 'all') {
+          resetTableRowSelection();
+        }
+
         for (const recordId of allRecordIds) {
           const isSelected =
             allRowsSelectedStatus === 'none' ||
@@ -44,6 +51,7 @@ export const useSelectAllRows = (recordTableId?: string) => {
     [
       allRowsSelectedStatusSelector,
       recordIndexAllRecordIdsSelector,
+      resetTableRowSelection,
       isRowSelectedFamilyState,
     ],
   );

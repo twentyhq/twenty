@@ -4,8 +4,8 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { WorkspaceMigrationFieldInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-field-input';
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('Workspace migration builder relations tests suite', () => {
@@ -17,10 +17,11 @@ describe('Workspace migration builder relations tests suite', () => {
 
   const createMockObject = (
     identifier: string,
-    fields: Partial<WorkspaceMigrationFieldInput>[] = [],
-  ): WorkspaceMigrationObjectInput => ({
+    fields: Partial<FlatFieldMetadata>[] = [],
+  ): FlatObjectMetadata => ({
     uniqueIdentifier: identifier,
-    fieldInputs: fields.map((field) => ({
+    flatIndexMetadatas: [],
+    flatFieldMetadatas: fields.map((field) => ({
       type: FieldMetadataType.TEXT,
       name: 'defaultName',
       label: 'Default Label',
@@ -34,8 +35,8 @@ describe('Workspace migration builder relations tests suite', () => {
 
   describe('buildWorkspaceMigrationV2RelationActions', () => {
     it('should create relation actions for created fields', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlatObjectMetadata[] = [];
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -54,8 +55,8 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -68,12 +69,13 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "employees",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -84,8 +86,8 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -98,6 +100,7 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "employees",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "create_field",
@@ -108,7 +111,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should create delete actions for deleted fields', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -120,9 +123,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
-        createMockObject('company'),
-      ];
+      const toObjects: FlatObjectMetadata[] = [createMockObject('company')];
 
       const result = service.build({ from: fromObjects, to: toObjects });
 
@@ -130,7 +131,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -141,8 +142,9 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [],
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "delete_field",
@@ -153,7 +155,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should handle multiple relation changes across different objects', () => {
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -165,7 +167,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -194,8 +196,8 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -208,12 +210,13 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "manager",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "person",
       },
       "type": "create_object",
     },
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -224,8 +227,8 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "manager",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -238,12 +241,13 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "manager",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "person",
       },
       "type": "create_field",
     },
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -254,8 +258,8 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "new-relation",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -268,12 +272,13 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "new-relation",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "create_field",
     },
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "isActive": true,
         "isCustom": true,
         "isNullable": true,
@@ -284,8 +289,8 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "old-relation",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "isActive": true,
             "isCustom": true,
@@ -298,6 +303,7 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "new-relation",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "delete_field",
@@ -350,7 +356,7 @@ describe('Workspace migration builder relations tests suite', () => {
         description: 'Company employees',
       };
 
-      const fromObjects: WorkspaceMigrationObjectInput[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             ...baseField,
@@ -364,10 +370,10 @@ describe('Workspace migration builder relations tests suite', () => {
         ]),
       ];
 
-      const toObjects: WorkspaceMigrationObjectInput[] = [
+      const toObjects: FlatObjectMetadata[] = [
         {
           ...fromObjects[0],
-          fieldInputs: [
+          flatFieldMetadatas: [
             {
               ...baseField,
               name: 'updatedName',
@@ -382,7 +388,7 @@ describe('Workspace migration builder relations tests suite', () => {
 {
   "actions": [
     {
-      "fieldMetadataInput": {
+      "flatFieldMetadata": {
         "description": "Company employees",
         "isActive": true,
         "isCustom": true,
@@ -392,8 +398,8 @@ describe('Workspace migration builder relations tests suite', () => {
         "type": "RELATION",
         "uniqueIdentifier": "employees",
       },
-      "objectMetadataInput": {
-        "fieldInputs": [
+      "flatObjectMetadata": {
+        "flatFieldMetadatas": [
           {
             "description": "Company employees",
             "isActive": true,
@@ -405,6 +411,7 @@ describe('Workspace migration builder relations tests suite', () => {
             "uniqueIdentifier": "employees",
           },
         ],
+        "flatIndexMetadatas": [],
         "uniqueIdentifier": "company",
       },
       "type": "update_field",

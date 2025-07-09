@@ -4,7 +4,6 @@ import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropd
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -86,7 +85,6 @@ export const ObjectOptionsDropdownMenuViewName = ({
       await updateViewFromCurrentState();
     },
     focusId: VIEW_PICKER_DROPDOWN_ID,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
   });
 

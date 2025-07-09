@@ -3,7 +3,6 @@ import { useSelectField } from '@/object-record/record-field/meta-types/hooks/us
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -56,7 +55,6 @@ export const SelectFieldInput = ({
       onCancel?.();
       resetSelectedItem();
     },
-    scope: DEFAULT_CELL_SCOPE.scope,
     focusId: instanceId,
     dependencies: [onCancel, resetSelectedItem],
   });

@@ -5,7 +5,6 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
-import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -87,9 +86,6 @@ export const FormMultiSelectFieldInput = ({
   const instanceId = useId();
   const theme = useTheme();
 
-  const hotkeyScope =
-    FormMultiSelectFieldInputHotKeyScope.FormMultiSelectFieldInput;
-
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -135,7 +131,9 @@ export const FormMultiSelectFieldInput = ({
         type: FocusComponentType.FORM_FIELD_INPUT,
         instanceId,
       },
-      hotkeyScope: { scope: hotkeyScope },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   };
 
@@ -262,7 +260,7 @@ export const FormMultiSelectFieldInput = ({
                   selectableListComponentInstanceId={
                     SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
                   }
-                  focusId={hotkeyScope}
+                  focusId={instanceId}
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}

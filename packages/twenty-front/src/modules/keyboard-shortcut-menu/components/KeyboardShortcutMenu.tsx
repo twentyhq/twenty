@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
@@ -23,7 +22,6 @@ export const KeyboardShortcutMenu = () => {
       toggleKeyboardShortcutMenu();
     },
     true,
-    AppHotkeyScope.KeyboardShortcutMenu,
     [toggleKeyboardShortcutMenu],
   );
 

@@ -6,7 +6,6 @@ import { useAddressField } from '@/object-record/record-field/meta-types/hooks/u
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
@@ -60,7 +59,6 @@ const AddressInputWithContext = ({
         type: FocusComponentType.OPENED_FIELD_INPUT,
         instanceId: instanceId,
       },
-      hotkeyScope: DEFAULT_CELL_SCOPE,
     });
   }, [instanceId, pushFocusItemToFocusStack]);
 
@@ -96,7 +94,6 @@ const AddressInputWithContext = ({
             onEscape={onEscape}
             onClickOutside={onClickOutside}
             value={value}
-            hotkeyScope={DEFAULT_CELL_SCOPE.scope}
             onTab={onTab}
             onShiftTab={onShiftTab}
           />

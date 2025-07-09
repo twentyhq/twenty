@@ -9,11 +9,9 @@ const meta: Meta<typeof TitleInput> = {
   decorators: [ComponentDecorator],
   args: {
     placeholder: 'Enter title',
-    hotkeyScope: 'titleInput',
     sizeVariant: 'md',
   },
   argTypes: {
-    hotkeyScope: { control: false },
     sizeVariant: { control: false },
   },
 };

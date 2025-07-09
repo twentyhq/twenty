@@ -18,13 +18,9 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: AuthException) {
     switch (exception.code) {
       case AuthExceptionCode.CLIENT_NOT_FOUND:
-        throw new NotFoundError(exception.message, {
-          userFriendlyMessage: exception.userFriendlyMessage,
-        });
+        throw new NotFoundError(exception);
       case AuthExceptionCode.INVALID_INPUT:
-        throw new UserInputError(exception.message, {
-          userFriendlyMessage: exception.userFriendlyMessage,
-        });
+        throw new UserInputError(exception);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
       case AuthExceptionCode.INSUFFICIENT_SCOPES:
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
@@ -33,13 +29,12 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.SIGNUP_DISABLED:
       case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
       case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
-        throw new ForbiddenError(exception.message, {
-          userFriendlyMessage: exception.userFriendlyMessage,
-        });
+        throw new ForbiddenError(exception);
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
         throw new ForbiddenError(exception.message, {
           userFriendlyMessage: t`Authentication is not enabled with this provider.`,
+          subCode: exception.code,
         });
       case AuthExceptionCode.EMAIL_NOT_VERIFIED:
       case AuthExceptionCode.INVALID_DATA:
@@ -50,10 +45,11 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.UNAUTHENTICATED:
         throw new AuthenticationError(exception.message, {
           userFriendlyMessage: t`You must be authenticated to perform this action.`,
+          subCode: exception.code,
         });
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:
-        throw new AuthenticationError(exception.message);
+        throw new AuthenticationError(exception);
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
         throw exception;
