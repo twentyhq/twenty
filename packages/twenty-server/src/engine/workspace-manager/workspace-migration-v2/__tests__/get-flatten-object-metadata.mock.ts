@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker/.';
-import { plural } from 'pluralize';
 import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
 
 type FlattenMetadataOverrides = Required<
@@ -10,17 +9,13 @@ export const getFlattenObjectMetadata = (
   overrides: FlattenMetadataOverrides,
 ): FlattenObjectMetadata => {
   const createdAt = faker.date.anytime();
-  const nameSingular = faker.animal.dog();
-  const namePlural = plural(nameSingular);
-  const labelPlural = nameSingular + 'Label';
-  const labelSingular = namePlural + 'Label';
 
   return {
     flattenFieldMetadatas: [],
     flattenIndexMetadatas: [],
     createdAt,
     dataSourceId: faker.string.uuid(),
-    description: faker.lorem.lines(1),
+    description: 'default flatten object metadata description',
     duplicateCriteria: [],
     icon: 'icon',
     id: faker.string.uuid(),
@@ -33,10 +28,10 @@ export const getFlattenObjectMetadata = (
     isSearchable: true,
     isSystem: false,
     labelIdentifierFieldMetadataId: faker.string.uuid(),
-    labelPlural,
-    labelSingular,
-    namePlural,
-    nameSingular,
+    labelPlural: 'default flatten object metadata label plural',
+    labelSingular: 'default flatten object metadata label singular',
+    namePlural: 'defaultFlattenObjectMetdataNamePlural',
+    nameSingular: 'defaultFlattenObjectMetdataNameSingular',
     shortcut: 'shortcut',
     standardId: undefined,
     standardOverrides: undefined,

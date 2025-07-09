@@ -10,18 +10,16 @@ export const getFlattenFieldMetadata = (
   overrides: FlattenMetadataOverrides,
 ): FlattenFieldMetadata => {
   const createdAt = faker.date.anytime();
-  const name = faker.animal.dog();
-  const label = name + 'Label';
 
   return {
     createdAt,
-    description: faker.lorem.lines(1),
+    description: 'default flatten field metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
     isCustom: true,
-    name,
-    label,
+    name: 'flattenFieldMetadataName',
+    label: 'flatten field metadata label',
     defaultValue: undefined,
     isNullable: true,
     isUnique: false,

@@ -10,7 +10,6 @@ export const getFlattenIndexMetadata = (
   overrides: FlattenMetadataOverrides,
 ): FlattenIndexMetadata => {
   const createdAt = faker.date.anytime();
-  const name = faker.animal.cat();
 
   return {
     flattenIndexFieldMetadatas: [], // TODO and to test correctly we should be diffing by flattenning these
@@ -20,7 +19,7 @@ export const getFlattenIndexMetadata = (
     indexWhereClause: undefined,
     isCustom: false,
     isUnique: false,
-    name: name,
+    name: 'defaultFlattenIndexMetadataName',
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
     ...overrides,
