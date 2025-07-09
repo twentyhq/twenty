@@ -60,7 +60,7 @@ exports[`Field metadata relation creation should fail relation when targetObject
       "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Cannot read properties of undefined (reading 'fieldsById')",
+    "message": "Object metadata relation target not found for relation creation payload",
   },
 ]
 `;

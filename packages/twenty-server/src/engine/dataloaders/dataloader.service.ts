@@ -114,8 +114,14 @@ export class DataloaderService {
             { workspaceId },
           );
 
-        const indexMetadataCollection = objectMetadataIds.map((id) =>
-          Object.values(objectMetadataMaps.byId[id].indexMetadatas).map(
+        const indexMetadataCollection = objectMetadataIds.map((id) => {
+          const objectMetadata = objectMetadataMaps.byId[id];
+
+          if (!isDefined(objectMetadata)) {
+            return [];
+          }
+
+          return Object.values(objectMetadata.indexMetadatas).map(
             (indexMetadata) => {
               return {
                 ...indexMetadata,
@@ -127,8 +133,8 @@ export class DataloaderService {
                 workspaceId: workspaceId,
               };
             },
-          ),
-        );
+          );
+        });
 
         return indexMetadataCollection;
       },
@@ -148,8 +154,14 @@ export class DataloaderService {
             { workspaceId },
           );
 
-        const fieldMetadataCollection = objectMetadataIds.map((id) =>
-          Object.values(objectMetadataMaps.byId[id].fieldsById).map(
+        const fieldMetadataCollection = objectMetadataIds.map((id) => {
+          const objectMetadata = objectMetadataMaps.byId[id];
+
+          if (!isDefined(objectMetadata)) {
+            return [];
+          }
+
+          return Object.values(objectMetadata.fieldsById).map(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
               const overridesFieldToCompute = [
@@ -182,8 +194,8 @@ export class DataloaderService {
                 ...overrides,
               };
             },
-          ),
-        );
+          );
+        });
 
         return fieldMetadataCollection;
       },
@@ -207,9 +219,13 @@ export class DataloaderService {
           objectMetadata: { id: objectMetadataId },
           indexMetadata: { id: indexMetadataId },
         }) => {
-          const indexMetadataEntity = objectMetadataMaps.byId[
-            objectMetadataId
-          ].indexMetadatas.find(
+          const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
+
+          if (!isDefined(objectMetadata)) {
+            return [];
+          }
+
+          const indexMetadataEntity = objectMetadata.indexMetadatas.find(
             (indexMetadata) => indexMetadata.id === indexMetadataId,
           );
 
