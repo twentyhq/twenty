@@ -241,10 +241,9 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
-    const targetRelationName =
-      objectMetadataMaps.byId[
-        targetFieldMetadata.relationTargetObjectMetadataId
-      ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId]?.name;
+    const targetRelationName = objectMetadataMaps.byId.get(
+      targetFieldMetadata.relationTargetObjectMetadataId,
+    )?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId]?.name;
 
     return { targetRelationName, targetObjectMetadata };
   }

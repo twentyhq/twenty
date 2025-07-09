@@ -5,7 +5,7 @@ export const getObjectMetadataMapItemByNameSingular = (
   objectMetadataMaps: ObjectMetadataMaps,
   nameSingular: string,
 ): ObjectMetadataItemWithFieldMaps | undefined => {
-  return objectMetadataMaps.byId[
-    objectMetadataMaps.idByNameSingular[nameSingular]
-  ];
+  return objectMetadataMaps.byId.get(
+    objectMetadataMaps.idByNameSingular[nameSingular],
+  );
 };

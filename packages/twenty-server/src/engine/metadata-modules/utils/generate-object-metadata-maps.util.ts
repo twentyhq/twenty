@@ -48,7 +48,7 @@ export const generateObjectMetadataMaps = (
       fieldIdByJoinColumnName: fieldIdByJoinColumnNameMap,
     };
 
-    objectMetadataMaps.byId[objectMetadata.id] = processedObjectMetadata;
+    objectMetadataMaps.byId.set(objectMetadata.id, processedObjectMetadata);
     objectMetadataMaps.idByNameSingular[objectMetadata.nameSingular] =
       objectMetadata.id;
   }

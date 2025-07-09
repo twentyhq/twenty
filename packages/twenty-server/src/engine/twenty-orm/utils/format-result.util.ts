@@ -87,10 +87,11 @@ export function formatResult<T>(
         );
       }
 
-      const targetObjectMetadata =
-        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+      const targetObjectMetadata = objectMetadataMaps.byId.get(
+        fieldMetadata.relationTargetObjectMetadataId,
+      );
 
-      if (!targetObjectMetadata) {
+      if (!isDefined(targetObjectMetadata)) {
         throw new Error(
           `Object metadata for object metadataId "${fieldMetadata.relationTargetObjectMetadataId}" is missing`,
         );

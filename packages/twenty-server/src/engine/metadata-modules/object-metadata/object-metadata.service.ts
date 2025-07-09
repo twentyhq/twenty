@@ -288,9 +288,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       };
 
       validateObjectMetadataInputNamesOrThrow(inputPayload);
-      const existingObjectMetadata = objectMetadataMaps.byId[inputId];
+      const existingObjectMetadata = objectMetadataMaps.byId.get(inputId);
 
-      if (!existingObjectMetadata) {
+      if (!isDefined(existingObjectMetadata)) {
         throw new ObjectMetadataException(
           'Object does not exist',
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,

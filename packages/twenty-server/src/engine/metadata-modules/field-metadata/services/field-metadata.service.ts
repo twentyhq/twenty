@@ -123,8 +123,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
-    const objectMetadataItemWithFieldMaps =
-      objectMetadataMaps.byId[existingFieldMetadata.objectMetadataId];
+    const objectMetadataItemWithFieldMaps = objectMetadataMaps.byId.get(
+      existingFieldMetadata.objectMetadataId,
+    );
+
+    if (!isDefined(objectMetadataItemWithFieldMaps)) {
+      throw new FieldMetadataException(
+        'Object metadata does not exist',
+        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -547,7 +555,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const migrationActions: WorkspaceMigrationTableAction[] = [];
 
       for (const objectMetadataId of objectMetadataIds) {
-        const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
+        const objectMetadata = objectMetadataMaps.byId.get(objectMetadataId);
 
         if (!isDefined(objectMetadata)) {
           throw new FieldMetadataException(
@@ -571,7 +579,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
           const fieldMigrationActions = await this.createMigrationActions({
             createdFieldMetadataItems,
-            objectMetadataMap: objectMetadataMaps.byId,
+            objectMetadataMap: Object.fromEntries(
+              objectMetadataMaps.byId.entries(),
+            ),
             isRemoteCreation: fieldMetadataInput.isRemoteCreation ?? false,
           });
 

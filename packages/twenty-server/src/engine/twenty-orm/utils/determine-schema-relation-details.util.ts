@@ -38,10 +38,12 @@ export async function determineSchemaRelationDetails(
     );
   }
 
-  const sourceObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.objectMetadataId];
-  const targetObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+  const sourceObjectMetadata = objectMetadataMaps.byId.get(
+    fieldMetadata.objectMetadataId,
+  );
+  const targetObjectMetadata = objectMetadataMaps.byId.get(
+    fieldMetadata.relationTargetObjectMetadataId,
+  );
 
   if (!sourceObjectMetadata || !targetObjectMetadata) {
     throw new RelationException(

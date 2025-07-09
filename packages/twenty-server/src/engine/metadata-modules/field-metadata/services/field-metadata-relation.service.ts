@@ -161,10 +161,16 @@ export class FieldMetadataRelationService {
 
         validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
-        const objectMetadataTarget =
-          objectMetadataMaps.byId[
-            relationCreationPayload.targetObjectMetadataId
-          ];
+        const objectMetadataTarget = objectMetadataMaps.byId.get(
+          relationCreationPayload.targetObjectMetadataId,
+        );
+
+        if (!objectMetadataTarget) {
+          throw new FieldMetadataException(
+            `Target object metadata not found for id: ${relationCreationPayload.targetObjectMetadataId}`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
 
         validateFieldNameAvailabilityOrThrow(
           computedMetadataNameFromLabel,
@@ -241,9 +247,22 @@ export class FieldMetadataRelationService {
         );
       }
 
-      const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
-      const targetObjectMetadata =
-        objectMetadataMaps.byId[relationTargetObjectMetadataId];
+      const sourceObjectMetadata =
+        objectMetadataMaps.byId.get(objectMetadataId);
+      const targetObjectMetadata = objectMetadataMaps.byId.get(
+        relationTargetObjectMetadataId,
+      );
+
+      if (
+        !isDefined(sourceObjectMetadata) ||
+        !isDefined(targetObjectMetadata)
+      ) {
+        throw new FieldMetadataException(
+          `Object metadata not found for id: ${objectMetadataId} or ${relationTargetObjectMetadataId}`,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
       const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
       const targetFieldMetadata =
         targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];

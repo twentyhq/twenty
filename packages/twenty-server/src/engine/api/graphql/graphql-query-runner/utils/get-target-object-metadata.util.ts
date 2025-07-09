@@ -17,8 +17,9 @@ export const getTargetObjectMetadataOrThrow = (
     );
   }
 
-  const targetObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+  const targetObjectMetadata = objectMetadataMaps.byId.get(
+    fieldMetadata.relationTargetObjectMetadataId,
+  );
 
   if (!targetObjectMetadata) {
     throw new GraphqlQueryRunnerException(

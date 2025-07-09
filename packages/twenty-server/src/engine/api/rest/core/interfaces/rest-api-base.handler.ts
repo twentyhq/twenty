@@ -168,9 +168,15 @@ export abstract class RestApiBaseHandler {
             isDefined(field.relationTargetObjectMetadataId)
           ) {
             const relationTargetObjectMetadata =
-              objectMetadata.objectMetadataMaps.byId[
-                field.relationTargetObjectMetadataId
-              ];
+              objectMetadata.objectMetadataMaps.byId.get(
+                field.relationTargetObjectMetadataId,
+              );
+
+            if (!isDefined(relationTargetObjectMetadata)) {
+              throw new BadRequestException(
+                `Relation target object metadata not found for id: ${field.relationTargetObjectMetadataId}`,
+              );
+            }
             const depth2Relations = this.getRelations({
               objectMetadata: {
                 objectMetadataMaps: objectMetadata.objectMetadataMaps,

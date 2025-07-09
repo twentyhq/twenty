@@ -195,8 +195,13 @@ export class DatabaseEventTriggerListener {
         continue;
       }
 
-      const relatedObjectMetadataNameSingular =
-        objectMetadataMaps.byId[relatedObjectMetadataId].nameSingular;
+      const relatedObjectMetadataNameSingular = objectMetadataMaps.byId.get(
+        relatedObjectMetadataId,
+      )?.nameSingular;
+
+      if (!isDefined(relatedObjectMetadataNameSingular)) {
+        continue;
+      }
 
       const relatedObjectRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(

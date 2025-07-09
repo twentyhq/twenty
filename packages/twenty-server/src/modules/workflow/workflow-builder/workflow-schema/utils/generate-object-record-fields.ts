@@ -39,9 +39,15 @@ export const generateObjectRecordFields = ({
         isDefined(field.relationTargetObjectMetadataId)
       ) {
         const relationTargetObjectMetadata =
-          objectMetadataInfo.objectMetadataMaps.byId[
-            field.relationTargetObjectMetadataId
-          ];
+          objectMetadataInfo.objectMetadataMaps.byId.get(
+            field.relationTargetObjectMetadataId,
+          );
+
+        if (!isDefined(relationTargetObjectMetadata)) {
+          throw new Error(
+            `Relation target object metadata not found for id: ${field.relationTargetObjectMetadataId}`,
+          );
+        }
 
         acc[field.name] = {
           isLeaf: false,

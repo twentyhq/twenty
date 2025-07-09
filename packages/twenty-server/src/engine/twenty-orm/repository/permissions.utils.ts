@@ -41,7 +41,7 @@ export const validateOperationIsPermittedOrThrow = ({
     objectMetadataMaps.idByNameSingular[entityName];
 
   const objectMetadataIsSystem =
-    objectMetadataMaps.byId[objectMetadataIdForEntity]?.isSystem === true;
+    objectMetadataMaps.byId.get(objectMetadataIdForEntity)?.isSystem === true;
 
   if (objectMetadataIsSystem) {
     return;
