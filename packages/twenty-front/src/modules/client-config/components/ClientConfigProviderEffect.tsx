@@ -176,9 +176,6 @@ export const ClientConfigProviderEffect = () => {
     setIsTwoFactorAuthenticationEnabled(
       data?.clientConfig?.isTwoFactorAuthenticationEnabled,
     );
-    setIsTwoFactorAuthenticationGloballyEnforced(
-      data?.clientConfig?.isTwoFactorAuthenticationGloballyEnforced,
-    );
     setIsAttachmentPreviewEnabled(
       data?.clientConfig?.isAttachmentPreviewEnabled,
     );

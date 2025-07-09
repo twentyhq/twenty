@@ -13,3 +13,4 @@ export { FieldMetadataType } from './FieldMetadataType';
 export type { IsExactly } from './IsExactly';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
+export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';

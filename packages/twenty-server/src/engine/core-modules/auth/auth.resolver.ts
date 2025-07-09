@@ -61,7 +61,7 @@ import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-module
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication.service';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
@@ -282,7 +282,7 @@ export class AuthResolver {
       ),
     );
 
-    await this.twoFactorAuthenticationService.verifyToken(
+    await this.twoFactorAuthenticationService.validateStrategy(
       userId,
       twoFactorAuthenticationVerificationInput.otp,
       workspace.id,
@@ -506,7 +506,7 @@ export class AuthResolver {
       );
 
     if (pending2FA) {
-      await this.twoFactorAuthenticationService.checkIf2FARequired(
+      await this.twoFactorAuthenticationService.is2FARequired(
         workspace,
         currentUserWorkspace[0].twoFactorMethods,
       );

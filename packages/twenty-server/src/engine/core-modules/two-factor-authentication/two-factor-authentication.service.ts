@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as speakeasy from 'speakeasy';
 import { Repository } from 'typeorm';
-import { TwoFactorAuthenticationProviders } from 'twenty-shared/workspace';
-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -12,38 +10,37 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { HotpStrategy } from './strategies/hotp.strategy';
+import { twoFactorAuthenticationMethodValidator } from './two-factor-authentication.validation';
+import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
+import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
+import { TwoFactorAuthenticationException, TwoFactorAuthenticationExceptionCode } from './two-factor-authentication.exception';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TwoFactorAuthenticationService {
   constructor(
-    @InjectRepository(TwoFactorMethod, 'core')
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorMethod>,
+    @InjectRepository(TwoFactorAuthenticationMethod, 'core')
+    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
+    @Inject(TWO_FACTOR_AUTHENTICATION_STRATEGY) 
+    private twoFactorAuthenticationStrategy: ITwoFactorAuthStrategy
   ) {}
 
-  async checkIf2FARequired(
+  async is2FARequired(
     targetWorkspace: Workspace,
-    userTwoFactorAuthenticationProviders: TwoFactorMethod[],
+    userTwoFactorAuthenticationProviders: TwoFactorAuthenticationMethod[],
   ) {
     const isTwoFactorAuthenticationEnabled = this.twentyConfigService.get(
       'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
     );
 
-    const isTwoFactorAuthenticationGloballyEnforced =
-      this.twentyConfigService.get(
-        'IS_TWO_FACTOR_AUTHENTICATION_GLOBALLY_ENFORCED',
-      );
-
     const shouldEnforce2FA =
       isTwoFactorAuthenticationEnabled &&
-      (isTwoFactorAuthenticationGloballyEnforced ||
-        Boolean(targetWorkspace?.twoFactorAuthenticationPolicy));
+        Boolean(targetWorkspace?.twoFactorAuthenticationPolicy);
 
     if (!shouldEnforce2FA) return;
 
@@ -60,15 +57,9 @@ export class TwoFactorAuthenticationService {
     }
   }
 
-  private generateSecret(email: string) {
-    return speakeasy.generateSecret({
-      name: `MyApp (${email})`,
-      otpauth_url: true,
-    });
-  }
-
-  async initiateTwoFactorProvisioning(
+  async initiateStrategyConfiguration(
     userId: string, 
+    userEmail: string,
     workspaceId: string
   ) {
     const userWorkspace =
@@ -77,39 +68,44 @@ export class TwoFactorAuthenticationService {
         workspaceId,
       });
 
-    const existing = await this.twoFactorAuthenticationMethodRepository.findOne(
+    const existing2FAMethod = await this.twoFactorAuthenticationMethodRepository.findOne(
       {
         where: {
           userWorkspace: { id: userWorkspace.id },
-          strategy: TwoFactorAuthenticationProviders.TOTP,
+          strategy: this.twoFactorAuthenticationStrategy.name
         },
       },
     );
 
-    if (existing && existing.context?.status !== 'PENDING') {
-      throw new AuthException(
-        'Two factor authentication has already been provisioned.',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+    if (existing2FAMethod && existing2FAMethod.context?.status !== 'PENDING') {
+      throw new TwoFactorAuthenticationException(
+        'Two factor authentication has already been provisioned. Please delete and try again.',
+        TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
       );
     }
 
-    const secret = this.generateSecret(userId);
+    console.log({user:userWorkspace.workspace})
+
+    const {
+      uri,
+      context
+    } = this.twoFactorAuthenticationStrategy.initiate(
+      userEmail,
+      userWorkspace.workspace.displayName || '',
+      0
+    );
 
     await this.twoFactorAuthenticationMethodRepository.save({
-      ...(existing ? { id: existing.id } : {}),
+      id: existing2FAMethod?.id,
       userWorkspace: userWorkspace,
-      context: {
-        secret: secret.hex,
-        status: 'PENDING',
-        timestep: '30',
-      },
-      strategy: TwoFactorAuthenticationProviders.TOTP,
+      context,
+      strategy: this.twoFactorAuthenticationStrategy.name,
     });
 
-    return secret;
+    return uri
   }
 
-  async verifyToken(
+  async validateStrategy(
     userId: string,
     token: string,
     workspaceId: string,
@@ -117,6 +113,7 @@ export class TwoFactorAuthenticationService {
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {
+          strategy: this.twoFactorAuthenticationStrategy.name,
           userWorkspace: {
             userId,
             workspaceId,
@@ -133,23 +130,21 @@ export class TwoFactorAuthenticationService {
       !userTwoFactorAuthenticationMethod?.userWorkspace.user ||
       !userTwoFactorAuthenticationMethod.context
     ) {
-      throw new AuthException(
-        'Malformed Request',
-        AuthExceptionCode.INVALID_DATA,
+      throw new TwoFactorAuthenticationException(
+        'Malformed Database Object',
+        TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT,
       );
     }
 
-    const isValid = speakeasy.totp.verify({
-      secret: userTwoFactorAuthenticationMethod?.context?.secret as string,
-      encoding: 'hex',
+    const isValid = this.twoFactorAuthenticationStrategy.validate(
       token,
-      window: 1,
-    });
+      userTwoFactorAuthenticationMethod?.context,
+    );
 
     if (!isValid) {
-      throw new AuthException(
-        'Wrong OTP',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      throw new TwoFactorAuthenticationException(
+        'Invalid OTP',
+        TwoFactorAuthenticationExceptionCode.INVALID_OTP,
       );
     }
 

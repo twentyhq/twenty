@@ -63,7 +63,6 @@ export const GET_CLIENT_CONFIG = gql`
       isGoogleCalendarEnabled
       isConfigVariablesInDbEnabled
       isTwoFactorAuthenticationEnabled
-      isTwoFactorAuthenticationGloballyEnforced
     }
   }
 `;

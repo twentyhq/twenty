@@ -3,7 +3,7 @@ const jestConfig = {
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
   // to enable logs, comment out the following line
-  silent: true,
+  silent: false,
   clearMocks: true,
   displayName: 'twenty-server',
   rootDir: './',

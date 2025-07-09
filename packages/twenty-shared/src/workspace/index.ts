@@ -7,9 +7,5 @@
  *                              |___/
  */
 
-export {
-  TwoFactorAuthenticationPolicyEnforcement,
-  TwoFactorAuthenticationProviders,
-} from './types/TwoFactorAuthenticationPolicyEnforcement';
 export { WorkspaceActivationStatus } from './types/WorkspaceActivationStatus';
 export { isWorkspaceActiveOrSuspended } from './utils/isWorkspaceActiveOrSuspended';

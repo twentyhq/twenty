@@ -44,10 +44,10 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           },
         });
 
-        if (!ts.data?.initiateTwoFactorAuthenticationProvisioning.uri) return;
+        if (!ts.data?.initiateOTPProvisioning.uri) return;
 
         setQrCodeState(
-          ts.data?.initiateTwoFactorAuthenticationProvisioning.uri,
+          ts.data?.initiateOTPProvisioning.uri,
         );
 
         enqueueSnackBar(t`Two factor authentication provisioning initiated.`, {

@@ -16,10 +16,10 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -47,7 +47,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
         ApprovedAccessDomain,
-        TwoFactorMethod,
+        TwoFactorAuthenticationMethod,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')

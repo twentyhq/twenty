@@ -20,7 +20,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 import { TwoFactorAuthenticationProvision } from './dto/two-factor-authentication-provisioning.output';
 import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
-import { TwoFactorAuthenticationService } from './services/two-factor-authentication.service';
+import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -35,12 +35,12 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => TwoFactorAuthenticationProvision)
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
-  async initiateTwoFactorAuthenticationProvisioning(
+  async initiateOTPProvisioning(
     @Args()
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<TwoFactorAuthenticationProvision> {
-    const { userId } = await this.loginTokenService.verifyLoginToken(
+    const { userId, sub: userEmail } = await this.loginTokenService.verifyLoginToken(
       initiateTwoFactorAuthenticationProvisioningInput.loginToken,
     );
 
@@ -57,19 +57,20 @@ export class TwoFactorAuthenticationResolver {
       ),
     );
 
-    const secret =
-      await this.twoFactorAuthenticationService.initiateTwoFactorProvisioning(
+    const uri =
+      await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
         userId,
+        userEmail,
         workspace.id,
       );
 
-    if (!isDefined(secret.otpauth_url)) {
+    if (!isDefined(uri)) {
       throw new AuthException(
         'OTP Auth URL missing ',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 
-    return { uri: secret.otpauth_url };
+    return { uri };
   }
 }

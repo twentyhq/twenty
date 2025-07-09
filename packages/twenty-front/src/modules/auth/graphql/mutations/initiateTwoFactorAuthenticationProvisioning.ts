@@ -6,7 +6,7 @@ export const INITIATE_TWO_FACTOR_AUTHENTICATION_PROVISIONING = gql`
     $captchaToken: String
     $origin: String!
   ) {
-    initiateTwoFactorAuthenticationProvisioning(
+    initiateOTPProvisioning(
       loginToken: $loginToken
       captchaToken: $captchaToken
       origin: $origin

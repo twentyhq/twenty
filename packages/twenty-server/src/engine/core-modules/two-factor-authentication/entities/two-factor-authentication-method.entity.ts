@@ -13,12 +13,13 @@ import {
 } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { TwoFactorAuthenticationProviders } from 'twenty-shared/workspace';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { OTPContext } from '../two-factor-authentication.interface';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorMethod', schema: 'core' })
 @ObjectType()
-export class TwoFactorMethod {
+export class TwoFactorAuthenticationMethod {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -39,14 +40,14 @@ export class TwoFactorMethod {
   userWorkspace: Relation<UserWorkspace>;
 
   @Column({ nullable: true, type: 'jsonb' })
-  context: { status: string; secret: string; timestep: string } | null;
+  context: OTPContext | null;
 
-  @Field(() => TwoFactorAuthenticationProviders)
+  @Field(() => TwoFactorAuthenticationStrategy)
   @Column({
     type: 'enum',
-    enum: TwoFactorAuthenticationProviders,
+    enum: TwoFactorAuthenticationStrategy,
   })
-  strategy: TwoFactorAuthenticationProviders;
+  strategy: TwoFactorAuthenticationStrategy;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

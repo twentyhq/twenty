@@ -105,9 +105,6 @@ export class ClientConfigService {
       isTwoFactorAuthenticationEnabled: this.twentyConfigService.get(
         'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
       ),
-      isTwoFactorAuthenticationGloballyEnforced: this.twentyConfigService.get(
-        'IS_TWO_FACTOR_AUTHENTICATION_GLOBALLY_ENFORCED',
-      ),
     };
 
     return clientConfig;
