@@ -5,12 +5,10 @@ import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useO
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
@@ -43,7 +41,6 @@ export const useCommandMenuHotKeys = () => {
       toggleCommandMenu();
     },
     true,
-    AppHotkeyScope.CommandMenu,
     [closeKeyboardShortcutMenu, toggleCommandMenu],
   );
 
@@ -53,7 +50,6 @@ export const useCommandMenuHotKeys = () => {
       openRecordsSearchPage();
     },
     false,
-    AppHotkeyScope.SearchRecords,
     [openRecordsSearchPage],
     {
       ignoreModifiers: true,
@@ -66,7 +62,6 @@ export const useCommandMenuHotKeys = () => {
       goBackFromCommandMenu();
     },
     true,
-    CommandMenuHotkeyScope.CommandMenuFocused,
     [goBackFromCommandMenu],
   );
 
@@ -92,7 +87,6 @@ export const useCommandMenuHotKeys = () => {
       }
     },
     true,
-    CommandMenuHotkeyScope.CommandMenuFocused,
     [
       commandMenuPage,
       commandMenuSearch,
