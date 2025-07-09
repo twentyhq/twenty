@@ -1,12 +1,12 @@
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 export type AuthContext = {
   user?: User | null | undefined;
-  apiKey?: ApiKeyWorkspaceEntity | null | undefined;
+  apiKey?: ApiKey | null | undefined;
   workspaceMemberId?: string;
   workspace?: Workspace;
   userWorkspaceId?: string;
