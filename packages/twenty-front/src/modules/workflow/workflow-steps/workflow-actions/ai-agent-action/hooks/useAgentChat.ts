@@ -13,6 +13,7 @@ import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
+import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
 import { AgentChatMessage, useAgentChatMessages } from './useAgentChatMessages';
 import { useAgentChatThreads } from './useAgentChatThreads';
 
@@ -97,32 +98,22 @@ export const useAgentChat = (agentId: string) => {
       },
       context: {
         onChunk: (chunk: string) => {
-          const lines = chunk.split('\n');
-          for (const line of lines) {
-            if (line.trim() !== '') {
-              try {
-                const event = JSON.parse(line);
-                switch (event.type) {
-                  case 'text-delta':
-                    setAgentStreamingMessage((prev) => ({
-                      ...prev,
-                      streamingText: prev.streamingText + event.message,
-                    }));
-                    break;
-                  case 'tool-call':
-                    setAgentStreamingMessage((prev) => ({
-                      ...prev,
-                      toolCall: event.message,
-                    }));
-                    break;
-                }
-                scrollToBottom();
-              } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error('Failed to parse stream event:', error);
-              }
-            }
-          }
+          parseAgentStreamingChunk(chunk, {
+            onTextDelta: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                streamingText: prev.streamingText + message,
+              }));
+              scrollToBottom();
+            },
+            onToolCall: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                toolCall: message,
+              }));
+              scrollToBottom();
+            },
+          });
         },
       },
     });

@@ -16,9 +16,9 @@ export const parseAgentStreamingChunk = (
   const lines = chunk.split('\n');
 
   for (const line of lines) {
-    if (line.startsWith('data: ')) {
+    if (line.trim() !== '') {
       try {
-        const event = JSON.parse(line.slice(6)) as AgentStreamingEvent;
+        const event = JSON.parse(line) as AgentStreamingEvent;
 
         switch (event.type) {
           case 'text-delta':
@@ -29,8 +29,13 @@ export const parseAgentStreamingChunk = (
             break;
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to parse stream event:', error);
+
         const errorMessage =
-          error instanceof Error ? error : new Error('Unknown parsing error');
+          error instanceof Error
+            ? error
+            : new Error(`Unknown parsing error: ${String(error)}`);
         callbacks.onError?.(errorMessage, line);
       }
     }
