@@ -87,7 +87,7 @@ describe('workspace members permissions', () => {
       const deleteOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       });
 
       const deleteResponse =
@@ -95,7 +95,7 @@ describe('workspace members permissions', () => {
 
       expect(deleteResponse.body.data).toStrictEqual({
         deleteWorkspaceMember: {
-          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           name: {
             firstName: 'Jony',
           },
