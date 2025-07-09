@@ -6,7 +6,6 @@ import { z } from 'zod';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useSaveImapSmtpCaldavMutation } from '~/generated-metadata/graphql';
@@ -64,7 +63,7 @@ export const useImapSmtpCaldavConnectionForm = ({
 }: UseConnectionFormProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -113,16 +112,12 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const handleSave = async (formValues: ConnectionFormData) => {
     if (!currentWorkspace?.id) {
-      enqueueSnackBar('Workspace ID is missing', {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: 'Workspace ID is missing' });
       return;
     }
 
     if (!currentWorkspaceMember?.id) {
-      enqueueSnackBar('Workspace member ID is missing', {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: 'Workspace member ID is missing' });
       return;
     }
 
@@ -150,15 +145,11 @@ export const useImapSmtpCaldavConnectionForm = ({
         ? t`${connectionType} connection successfully updated`
         : t`${connectionType} connection successfully created`;
 
-      enqueueSnackBar(successMessage, {
-        variant: SnackBarVariant.Success,
-      });
+      enqueueSuccessSnackBar({ message: successMessage });
 
       navigate(SettingsPath.Accounts);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: (error as Error).message });
     }
   };
 
