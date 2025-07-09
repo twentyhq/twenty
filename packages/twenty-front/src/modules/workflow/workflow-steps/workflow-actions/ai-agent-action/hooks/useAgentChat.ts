@@ -8,6 +8,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { parseAgentStreamingChunk } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/parseAgentStreamingChunk';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -105,8 +106,22 @@ export const useAgentChat = (agentId: string) => {
       },
       context: {
         onChunk: (chunk: string) => {
-          setAgentStreamingMessage(chunk);
-          scrollToBottom();
+          parseAgentStreamingChunk(chunk, {
+            onTextDelta: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                textDelta: prev.textDelta + message,
+              }));
+              scrollToBottom();
+            },
+            onToolCall: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                toolCall: message,
+              }));
+              scrollToBottom();
+            },
+          });
         },
       },
     });
@@ -129,7 +144,10 @@ export const useAgentChat = (agentId: string) => {
     const { data } = await refetchMessages();
 
     setAgentChatMessages(data?.messages);
-    setAgentStreamingMessage('');
+    setAgentStreamingMessage({
+      toolCall: '',
+      textDelta: '',
+    });
     scrollToBottom();
   };
 
