@@ -13,6 +13,8 @@ export type ModelId =
   | 'claude-sonnet-4-20250514'
   | 'claude-3-5-haiku-20241022';
 
+export const DEFAULT_MODEL_ID: ModelId = 'gpt-4o';
+
 export interface AIModelConfig {
   modelId: ModelId;
   label: string;
@@ -22,13 +24,6 @@ export interface AIModelConfig {
 }
 
 export const AI_MODELS: AIModelConfig[] = [
-  {
-    modelId: 'auto',
-    label: 'Auto',
-    provider: ModelProvider.NONE,
-    inputCostPer1kTokensInCents: 0.25,
-    outputCostPer1kTokensInCents: 1.0,
-  },
   {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
@@ -71,4 +66,38 @@ export const AI_MODELS: AIModelConfig[] = [
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,
   },
+];
+
+export const getDefaultModelConfig = (): AIModelConfig => {
+  const defaultModel = AI_MODELS.find((model) => model.modelId === DEFAULT_MODEL_ID);
+  
+  if (!defaultModel) {
+    throw new Error(`Default model '${DEFAULT_MODEL_ID}' not found in AI_MODELS`);
+  }
+  
+  return defaultModel;
+};
+
+export const getEffectiveModelConfig = (modelId: ModelId): AIModelConfig => {
+  if (modelId === 'auto') {
+    return getDefaultModelConfig();
+  }
+  
+  const model = AI_MODELS.find((model) => model.modelId === modelId);
+  if (!model) {
+    throw new Error(`Model '${modelId}' not found in AI_MODELS`);
+  }
+  
+  return model;
+};
+
+export const AI_MODELS_WITH_AUTO: AIModelConfig[] = [
+  {
+    modelId: 'auto',
+    label: 'Auto',
+    provider: ModelProvider.NONE,
+    inputCostPer1kTokensInCents: getDefaultModelConfig().inputCostPer1kTokensInCents,
+    outputCostPer1kTokensInCents: getDefaultModelConfig().outputCostPer1kTokensInCents,
+  },
+  ...AI_MODELS,
 ];

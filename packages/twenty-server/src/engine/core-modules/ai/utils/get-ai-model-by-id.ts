@@ -1,13 +1,13 @@
 import {
-  AI_MODELS,
-  AIModelConfig,
-  ModelId,
+    AIModelConfig,
+    ModelId,
+    getEffectiveModelConfig,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 
 export const getAIModelById = (modelId: ModelId): AIModelConfig | undefined => {
-  if (modelId === 'auto') {
-    return AI_MODELS[1];
+  try {
+    return getEffectiveModelConfig(modelId);
+  } catch {
+    return undefined;
   }
-
-  return AI_MODELS.find((model) => model.modelId === modelId);
 };
