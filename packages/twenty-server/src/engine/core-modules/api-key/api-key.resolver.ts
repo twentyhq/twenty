@@ -20,7 +20,7 @@ export class ApiKeyResolver {
 
   @Query(() => [ApiKey])
   async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
-    return this.apiKeyService.findByWorkspaceId(workspace.id);
+    return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
   }
 
   @Query(() => ApiKey, { nullable: true })

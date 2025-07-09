@@ -90,7 +90,6 @@ export type ApiConfig = {
 export type ApiKey = {
   __typename?: 'ApiKey';
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   expiresAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -575,10 +574,6 @@ export type DateFilter = {
   neq?: InputMaybe<Scalars['Date']>;
 };
 
-export type DeleteApiKeyDto = {
-  id: Scalars['String'];
-};
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String'];
 };
@@ -681,6 +676,7 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
@@ -1030,7 +1026,6 @@ export type Mutation = {
   createWebhook: Webhook;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
-  deleteApiKey: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
@@ -1204,11 +1199,6 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
-};
-
-
-export type MutationDeleteApiKeyArgs = {
-  input: DeleteApiKeyDto;
 };
 
 
