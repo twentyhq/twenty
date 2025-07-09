@@ -72,19 +72,22 @@ export class AgentChatController {
     } catch (error) {
       // Handle errors at controller level for streaming responses
       // since the RestApiExceptionFilter interferes with our streaming error handling
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+
       if (!res.headersSent) {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Transfer-Encoding', 'chunked');
         res.setHeader('Cache-Control', 'no-cache');
       }
-      
-      res.write(JSON.stringify({
-        type: 'error',
-        message: errorMessage,
-      }) + '\n');
-      
+
+      res.write(
+        JSON.stringify({
+          type: 'error',
+          message: errorMessage,
+        }) + '\n',
+      );
+
       res.end();
     }
   }

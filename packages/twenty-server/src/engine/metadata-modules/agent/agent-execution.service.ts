@@ -7,15 +7,15 @@ import { CoreMessage, generateObject, generateText, streamText } from 'ai';
 import { Repository } from 'typeorm';
 
 import {
-    ModelId,
-    ModelProvider,
-    getEffectiveModelConfig,
+  ModelId,
+  ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
+import { getEffectiveModelConfig } from 'src/engine/core-modules/ai/utils/get-effective-model-config.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
-    AgentChatMessageEntity,
-    AgentChatMessageRole,
+  AgentChatMessageEntity,
+  AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';

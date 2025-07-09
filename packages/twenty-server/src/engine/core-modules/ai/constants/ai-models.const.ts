@@ -67,37 +67,3 @@ export const AI_MODELS: AIModelConfig[] = [
     outputCostPer1kTokensInCents: 0.4,
   },
 ];
-
-export const getDefaultModelConfig = (): AIModelConfig => {
-  const defaultModel = AI_MODELS.find((model) => model.modelId === DEFAULT_MODEL_ID);
-  
-  if (!defaultModel) {
-    throw new Error(`Default model '${DEFAULT_MODEL_ID}' not found in AI_MODELS`);
-  }
-  
-  return defaultModel;
-};
-
-export const getEffectiveModelConfig = (modelId: ModelId): AIModelConfig => {
-  if (modelId === 'auto') {
-    return getDefaultModelConfig();
-  }
-  
-  const model = AI_MODELS.find((model) => model.modelId === modelId);
-  if (!model) {
-    throw new Error(`Model '${modelId}' not found in AI_MODELS`);
-  }
-  
-  return model;
-};
-
-export const AI_MODELS_WITH_AUTO: AIModelConfig[] = [
-  {
-    modelId: 'auto',
-    label: 'Auto',
-    provider: ModelProvider.NONE,
-    inputCostPer1kTokensInCents: getDefaultModelConfig().inputCostPer1kTokensInCents,
-    outputCostPer1kTokensInCents: getDefaultModelConfig().outputCostPer1kTokensInCents,
-  },
-  ...AI_MODELS,
-];

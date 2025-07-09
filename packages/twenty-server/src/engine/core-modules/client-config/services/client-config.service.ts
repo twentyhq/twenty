@@ -3,14 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
+import { getAIModelsWithAuto } from 'src/engine/core-modules/ai/utils/get-ai-models-with-auto.util';
 import {
-    AI_MODELS_WITH_AUTO,
-    ModelProvider
-} from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { convertCentsToCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
-import {
-    ClientAIModelConfig,
-    ClientConfig,
+  ClientAIModelConfig,
+  ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -29,29 +27,32 @@ export class ClientConfigService {
     const openaiApiKey = this.twentyConfigService.get('OPENAI_API_KEY');
     const anthropicApiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
 
-    const aiModels = AI_MODELS_WITH_AUTO.reduce<ClientAIModelConfig[]>((acc, model) => {
-      const isAvailable =
-        (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
-        (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
+    const aiModels = getAIModelsWithAuto().reduce<ClientAIModelConfig[]>(
+      (acc, model) => {
+        const isAvailable =
+          (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
+          (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
 
-      if (!isAvailable) {
+        if (!isAvailable) {
+          return acc;
+        }
+
+        acc.push({
+          modelId: model.modelId,
+          label: model.label,
+          provider: model.provider,
+          inputCostPer1kTokensInCredits: convertCentsToBillingCredits(
+            model.inputCostPer1kTokensInCents,
+          ),
+          outputCostPer1kTokensInCredits: convertCentsToBillingCredits(
+            model.outputCostPer1kTokensInCents,
+          ),
+        });
+
         return acc;
-      }
-
-      acc.push({
-        modelId: model.modelId,
-        label: model.label,
-        provider: model.provider,
-        inputCostPer1kTokensInCredits: convertCentsToCredits(
-          model.inputCostPer1kTokensInCents,
-        ),
-        outputCostPer1kTokensInCredits: convertCentsToCredits(
-          model.outputCostPer1kTokensInCents,
-        ),
-      });
-
-      return acc;
-    }, []);
+      },
+      [],
+    );
 
     const clientConfig: ClientConfig = {
       billing: {
