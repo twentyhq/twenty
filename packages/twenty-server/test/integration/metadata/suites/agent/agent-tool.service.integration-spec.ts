@@ -213,7 +213,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await createTool.execute(
-        { name: 'Test Record', description: 'Test description' },
+        { input: { name: 'Test Record', description: 'Test description' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -257,7 +257,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await createTool.execute(
-        { name: 'Test Record' },
+        { input: { name: 'Test Record' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -301,7 +301,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findTool.execute(
-        { limit: 10, offset: 0 },
+        { input: { limit: 10, offset: 0 } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -349,7 +349,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        { id: 'test-record-id' },
+        { input: { id: 'test-record-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -390,7 +390,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        { id: 'non-existent-id' },
+        { input: { id: 'non-existent-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -427,7 +427,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findOneTool.execute(
-        {},
+        { input: {} },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -485,9 +485,11 @@ describe('AgentToolService Integration', () => {
 
       const result = await updateTool.execute(
         {
-          id: 'test-record-id',
-          name: 'New Name',
-          description: 'New description',
+          input: {
+            id: 'test-record-id',
+            name: 'New Name',
+            description: 'New description',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -531,8 +533,10 @@ describe('AgentToolService Integration', () => {
 
       const result = await updateTool.execute(
         {
-          id: 'non-existent-id',
-          name: 'New Name',
+          input: {
+            id: 'non-existent-id',
+            name: 'New Name',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -580,7 +584,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await softDeleteTool.execute(
-        { id: 'test-record-id' },
+        { input: { id: 'test-record-id' } },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -621,7 +625,9 @@ describe('AgentToolService Integration', () => {
 
       const result = await softDeleteManyTool.execute(
         {
-          filter: { id: { in: ['record-1', 'record-2', 'record-3'] } },
+          input: {
+            filter: { id: { in: ['record-1', 'record-2', 'record-3'] } },
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
@@ -668,7 +674,7 @@ describe('AgentToolService Integration', () => {
       }
 
       const result = await findTool.execute(
-        {},
+        { input: {} },
         {
           toolCallId: 'test-tool-call-id',
           messages: [
@@ -713,10 +719,12 @@ describe('AgentToolService Integration', () => {
 
       const result = await findTool.execute(
         {
-          name: null,
-          description: undefined,
-          status: '',
-          validField: 'valid value',
+          input: {
+            name: null,
+            description: undefined,
+            status: '',
+            validField: 'valid value',
+          },
         },
         {
           toolCallId: 'test-tool-call-id',
