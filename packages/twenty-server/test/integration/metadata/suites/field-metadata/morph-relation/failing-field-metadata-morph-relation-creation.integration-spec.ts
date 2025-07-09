@@ -12,16 +12,24 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 
 type GlobalTestContext = {
   objectMetadataIds: {
-    targetObjectId: string;
+    firstTargetObjectId: string;
+    secondTargetObjectId: string;
     sourceObjectId: string;
   };
+  targetFieldLabel: string;
+  type: FieldMetadataType;
+  targetFieldIcon: string;
   collisionFieldLabel: string;
 };
 const globalTestContext: GlobalTestContext = {
   objectMetadataIds: {
-    targetObjectId: '',
+    firstTargetObjectId: '',
+    secondTargetObjectId: '',
     sourceObjectId: '',
   },
+  targetFieldLabel: 'defaultTargetFieldLabel',
+  type: FieldMetadataType.MORPH_RELATION,
+  targetFieldIcon: 'IconBuildingSkyscraper',
   collisionFieldLabel: 'collisionfieldlabel',
 };
 
@@ -33,22 +41,25 @@ type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
   | TestedRelationCreationPayload
   | ((context: GlobalTestContext) => TestedRelationCreationPayload)
 >[];
-describe('Field metadata relation creation should fail', () => {
+describe('Field metadata morph relation creation should fail', () => {
   const failingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
     [
-      // TODO @prastoin add coverage other fields such as the Type, icon etc etc ( using edge cases fuzzing etc )
       {
         title: 'when targetFieldLabel is empty',
         context: { targetFieldLabel: '' },
       },
       {
         title: 'when targetFieldLabel exceeds maximum length',
-        context: { targetFieldLabel: 'A'.repeat(64) },
+        context: {
+          targetFieldLabel: 'A'.repeat(64),
+        },
       },
       {
         // Not handled gracefully should be refactored
         title: 'when targetObjectMetadataId is unknown',
-        context: { targetObjectMetadataId: faker.string.uuid() },
+        context: {
+          targetObjectMetadataId: faker.string.uuid(),
+        },
       },
       {
         title: 'when targetFieldLabel contains only whitespace',
@@ -57,8 +68,7 @@ describe('Field metadata relation creation should fail', () => {
       {
         title:
           'when targetFieldLabel conflicts with an existing field on target object metadata id',
-        context: ({ collisionFieldLabel, objectMetadataIds }) => ({
-          targetObjectMetadataId: objectMetadataIds.targetObjectId,
+        context: ({ collisionFieldLabel }) => ({
           targetFieldLabel: collisionFieldLabel,
         }),
       },
@@ -79,30 +89,42 @@ describe('Field metadata relation creation should fail', () => {
       },
     } = await createOneObjectMetadata({
       input: getMockCreateObjectInput({
-        namePlural: 'collisionRelations',
-        nameSingular: 'collisionRelation',
+        namePlural: 'sourceRelations',
+        nameSingular: 'sourceRelation',
       }),
     });
 
     const {
       data: {
-        createOneObject: { id: targetObjectId },
+        createOneObject: { id: firstTargetObjectId },
       },
     } = await createOneObjectMetadata({
       input: getMockCreateObjectInput({
-        namePlural: 'collisionRelationTargets',
-        nameSingular: 'collisionRelationTarget',
+        namePlural: 'firstTargetRelations',
+        nameSingular: 'firstTargetRelation',
+      }),
+    });
+
+    const {
+      data: {
+        createOneObject: { id: secondTargetObjectId },
+      },
+    } = await createOneObjectMetadata({
+      input: getMockCreateObjectInput({
+        namePlural: 'secondTargetRelations',
+        nameSingular: 'secondTargetRelation',
       }),
     });
 
     globalTestContext.objectMetadataIds = {
       sourceObjectId,
-      targetObjectId,
+      firstTargetObjectId,
+      secondTargetObjectId,
     };
 
     const { data } = await createOneFieldMetadata({
       input: {
-        objectMetadataId: targetObjectId,
+        objectMetadataId: firstTargetObjectId,
         name: globalTestContext.collisionFieldLabel,
         label: 'LabelThatCouldBeAnything',
         isLabelSyncedWithName: false,
@@ -135,18 +157,28 @@ describe('Field metadata relation creation should fail', () => {
         expectToFail: true,
         input: {
           objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
-          name: 'fieldname',
-          label: 'Relation field',
+          name: 'owner',
+          label: 'owner field',
           isLabelSyncedWithName: false,
-          type: FieldMetadataType.RELATION,
-          relationCreationPayload: {
-            targetFieldLabel: 'defaultTargetFieldLabel',
-            type: RelationType.ONE_TO_MANY,
-            targetObjectMetadataId:
-              globalTestContext.objectMetadataIds.targetObjectId,
-            targetFieldIcon: 'IconBuildingSkyscraper',
-            ...computedContext,
-          },
+          type: FieldMetadataType.MORPH_RELATION,
+          morphRelationsCreationPayload: [
+            {
+              targetFieldLabel: 'defaultFirstTargetFieldLabel',
+              type: RelationType.ONE_TO_MANY,
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.firstTargetObjectId,
+              targetFieldIcon: 'IconBuildingSkyscraper',
+              ...computedContext,
+            },
+            {
+              targetFieldLabel: 'defaultSecondTargetFieldLabel',
+              type: RelationType.ONE_TO_MANY,
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.secondTargetObjectId,
+              targetFieldIcon: 'IconBuildingSkyscraper',
+              ...computedContext,
+            },
+          ],
         },
       });
 
@@ -165,18 +197,28 @@ describe('Field metadata relation creation should fail', () => {
         expectToFail: true,
         input: {
           objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
-          name: 'fieldname',
-          label: 'Relation field',
+          name: 'owner',
+          label: 'owner field',
           isLabelSyncedWithName: false,
-          type: FieldMetadataType.RELATION,
-          relationCreationPayload: {
-            targetFieldLabel: 'defaultTargetFieldLabel',
-            type: RelationType.MANY_TO_ONE,
-            targetObjectMetadataId:
-              globalTestContext.objectMetadataIds.targetObjectId,
-            targetFieldIcon: 'IconBuildingSkyscraper',
-            ...computedContext,
-          },
+          type: FieldMetadataType.MORPH_RELATION,
+          morphRelationsCreationPayload: [
+            {
+              targetFieldLabel: 'defaultFirstTargetFieldLabel',
+              type: RelationType.MANY_TO_ONE,
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.firstTargetObjectId,
+              targetFieldIcon: 'IconBuildingSkyscraper',
+              ...computedContext,
+            },
+            {
+              targetFieldLabel: 'defaultSecondTargetFieldLabel',
+              type: RelationType.MANY_TO_ONE,
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.secondTargetObjectId,
+              targetFieldIcon: 'IconBuildingSkyscraper',
+              ...computedContext,
+            },
+          ],
         },
       });
 
@@ -184,6 +226,4 @@ describe('Field metadata relation creation should fail', () => {
       expect(errors).toMatchSnapshot();
     },
   );
-
-  // todo add tests for MORPH_RELATION
 });
