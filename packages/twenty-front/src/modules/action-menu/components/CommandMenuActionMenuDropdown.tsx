@@ -7,7 +7,6 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -86,7 +85,6 @@ export const CommandMenuActionMenuDropdown = () => {
               selectableListInstanceId={actionMenuId}
               focusId={dropdownId}
               selectableItemIdArray={selectableItemIdArray}
-              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               {recordSelectionActions.map((action) => (
                 <ActionComponent action={action} key={action.key} />

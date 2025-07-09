@@ -1,5 +1,4 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
@@ -127,7 +126,6 @@ export const DropdownInternalContainer = ({
       }
     },
     focusId: dropdownId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [
       closeDropdown,
       isDropdownOpen,

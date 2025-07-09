@@ -44,7 +44,6 @@ const initializeState = ({ set }: { set: SetRecoilState }) => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     },
   ]);
 };

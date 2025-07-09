@@ -89,7 +89,6 @@ export const MultiItemFieldInput = <T,>({
     focusId: instanceId,
     keys: [Key.Escape],
     callback: handleDropdownClose,
-    scope: hotkeyScope,
     dependencies: [handleDropdownClose],
   });
 

@@ -11,7 +11,6 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -116,7 +115,6 @@ export const Dialog = ({
     keys: [Key.Enter],
     callback: handleEnter,
     focusId: DIALOG_FOCUS_ID,
-    scope: DialogHotkeyScope.Dialog,
     dependencies: [buttons],
   });
 
@@ -124,7 +122,6 @@ export const Dialog = ({
     keys: [Key.Escape],
     callback: handleEscape,
     focusId: DIALOG_FOCUS_ID,
-    scope: DialogHotkeyScope.Dialog,
     dependencies: [handleEscape],
   });
 

@@ -1,10 +1,8 @@
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -86,8 +84,6 @@ export const useRecordTitleCell = () => {
                 prefix: containerType,
               }),
             },
-            hotkeyScope: customEditHotkeyScopeForField,
-            memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
           });
         } else {
           pushFocusItemToFocusStack({
@@ -104,10 +100,6 @@ export const useRecordTitleCell = () => {
                 prefix: containerType,
               }),
             },
-            hotkeyScope: {
-              scope: TitleInputHotkeyScope.TitleInput,
-            },
-            memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
           });
         }
 

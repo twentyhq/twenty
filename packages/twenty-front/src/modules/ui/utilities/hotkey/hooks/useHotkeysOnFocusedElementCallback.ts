@@ -1,4 +1,3 @@
-import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import {
   Hotkey,
   OptionsOrDependencyArray,
@@ -20,36 +19,24 @@ export const useHotkeysOnFocusedElementCallback = (
         hotkeysEvent,
         keyboardEvent,
         focusId,
-        scope,
         preventDefault,
       }: {
         keyboardEvent: KeyboardEvent;
         hotkeysEvent: Hotkey;
         callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
         focusId: string;
-        scope: string;
         preventDefault?: boolean;
       }) => {
         const currentFocusId = snapshot
           .getLoadable(currentFocusIdSelector)
           .getValue();
 
-        // TODO: Remove this once we've migrated hotkey scopes to the new api
-        const currentHotkeyScopes = snapshot
-          .getLoadable(internalHotkeysEnabledScopesState)
-          .getValue();
-
-        if (
-          currentFocusId !== focusId ||
-          !currentHotkeyScopes.includes(scope)
-        ) {
+        if (currentFocusId !== focusId) {
           if (DEBUG_HOTKEY_SCOPE) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
-              }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
-                ', ',
-              )}] and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
+              }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
               'color: gray; ',
             );
           }
@@ -61,9 +48,7 @@ export const useHotkeysOnFocusedElementCallback = (
           logDebug(
             `DEBUG: %cI can call hotkey (${
               hotkeysEvent.keys
-            }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
-              ', ',
-            )}], and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
+            }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
             'color: green;',
           );
         }

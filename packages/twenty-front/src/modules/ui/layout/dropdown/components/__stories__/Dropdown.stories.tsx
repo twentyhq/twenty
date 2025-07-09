@@ -399,7 +399,6 @@ const initializeModalState = ({ set }: { set: SetRecoilState }) => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     },
   ]);
 };

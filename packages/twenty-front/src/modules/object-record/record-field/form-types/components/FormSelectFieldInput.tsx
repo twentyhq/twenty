@@ -124,7 +124,6 @@ export const FormSelectFieldInput = ({
     keys: Key.Escape,
     callback: onCancel,
     focusId: instanceId,
-    scope: hotkeyScope,
     dependencies: [onCancel],
   });
 

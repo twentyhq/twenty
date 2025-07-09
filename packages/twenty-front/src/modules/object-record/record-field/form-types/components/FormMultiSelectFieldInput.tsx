@@ -135,7 +135,6 @@ export const FormMultiSelectFieldInput = ({
         type: FocusComponentType.FORM_FIELD_INPUT,
         instanceId,
       },
-      hotkeyScope: { scope: hotkeyScope },
     });
   };
 

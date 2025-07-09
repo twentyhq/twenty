@@ -125,7 +125,6 @@ export const MultiItemBaseInput = forwardRef<
       onClickOutside,
       onTab,
       onShiftTab,
-      hotkeyScope,
     });
 
     return (

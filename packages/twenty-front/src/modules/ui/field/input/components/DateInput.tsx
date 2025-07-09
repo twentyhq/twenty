@@ -27,7 +27,6 @@ export type DateInputProps = {
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
-  hotkeyScope: string;
 };
 
 export const DateInput = ({
@@ -42,7 +41,6 @@ export const DateInput = ({
   onClear,
   onSubmit,
   hideHeaderInput,
-  hotkeyScope,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -108,7 +106,6 @@ export const DateInput = ({
     onEnter: handleEnter,
     onEscape: handleEscape,
     onClickOutside: handleClickOutside,
-    hotkeyScope: hotkeyScope,
   });
 
   return (

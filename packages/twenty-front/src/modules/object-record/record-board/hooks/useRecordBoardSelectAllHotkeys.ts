@@ -1,6 +1,5 @@
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -38,7 +37,6 @@ export const useRecordBoardSelectAllHotkeys = ({
     keys: ['ctrl+a', 'meta+a'],
     callback: selectAll,
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [selectAll],
     options: {
       enableOnFormTags: false,

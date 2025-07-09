@@ -1,4 +1,3 @@
-import { FormFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormFieldInputHotKeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -71,7 +70,6 @@ export const FormFieldInputInnerContainer = forwardRef(
             type: FocusComponentType.FORM_FIELD_INPUT,
             instanceId: formFieldInputInstanceId,
           },
-          hotkeyScope: { scope: FormFieldInputHotKeyScope.FormFieldInput },
         });
       }
     };

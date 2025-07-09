@@ -32,7 +32,6 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageFocusId } from '@/types/PageFocusId';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -153,15 +152,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: true,
               enableGlobalHotkeysConflictingWithKeyboard: true,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.RecordShowPage,
-            customScopes: {
-              goto: true,
-              keyboardShortcutMenu: true,
-              searchRecords: true,
-            },
           },
         });
         break;
@@ -178,10 +168,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.SignInUp,
           },
         });
         break;
@@ -198,10 +184,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.InviteTeam,
           },
         });
         break;
@@ -218,10 +200,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.CreateProfile,
           },
         });
         break;
@@ -238,10 +216,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.CreateWorkspace,
           },
         });
         break;
@@ -258,10 +232,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.SyncEmail,
           },
         });
         break;
@@ -278,10 +248,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.InviteTeam,
           },
         });
         break;
@@ -298,10 +264,6 @@ export const PageChangeEffect = () => {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
             },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.PlanRequired,
           },
         });
         break;
@@ -317,17 +279,6 @@ export const PageChangeEffect = () => {
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,
               enableGlobalHotkeysConflictingWithKeyboard: false,
-            },
-            memoizeKey: 'global',
-          },
-          hotkeyScope: {
-            scope: PageHotkeyScope.Settings,
-            customScopes: {
-              goto: false,
-              keyboardShortcutMenu: false,
-              commandMenu: false,
-              commandMenuOpen: false,
-              searchRecords: false,
             },
           },
         });

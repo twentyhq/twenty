@@ -6,7 +6,6 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -83,7 +82,6 @@ export const RecordTableCellHotkeysEffect = () => {
     keys: [Key.Backspace, Key.Delete],
     callback: handleBackspaceOrDelete,
     focusId: cellFocusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleBackspaceOrDelete],
   });
 
@@ -91,7 +89,6 @@ export const RecordTableCellHotkeysEffect = () => {
     keys: [Key.Enter],
     callback: handleEnter,
     focusId: cellFocusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEnter],
   });
 
@@ -99,7 +96,6 @@ export const RecordTableCellHotkeysEffect = () => {
     keys: [Key.Escape],
     callback: handleEscape,
     focusId: cellFocusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEscape],
   });
 
@@ -107,7 +103,6 @@ export const RecordTableCellHotkeysEffect = () => {
     keys: ['*'],
     callback: handleAnyKey,
     focusId: cellFocusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleAnyKey],
     options: {
       preventDefault: false,

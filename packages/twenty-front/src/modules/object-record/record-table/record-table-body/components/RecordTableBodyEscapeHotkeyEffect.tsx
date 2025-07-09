@@ -1,6 +1,5 @@
 import { Key } from 'ts-key-enum';
 
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
@@ -29,7 +28,6 @@ export const RecordTableBodyEscapeHotkeyEffect = () => {
     keys: [Key.Escape],
     callback: handleEscape,
     focusId: PageFocusId.RecordIndex,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEscape],
     options: {
       preventDefault: true,
