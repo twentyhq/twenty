@@ -144,9 +144,9 @@ export const SettingsObjectNewFieldConfigure = () => {
         });
       }
 
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural,
-      });
+      // navigate(SettingsPath.ObjectDetail, {
+      //   objectNamePlural,
+      // });
 
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
