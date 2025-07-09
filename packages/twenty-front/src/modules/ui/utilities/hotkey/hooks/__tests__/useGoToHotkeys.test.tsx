@@ -1,5 +1,4 @@
-import { fireEvent, renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, fireEvent, renderHook } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 

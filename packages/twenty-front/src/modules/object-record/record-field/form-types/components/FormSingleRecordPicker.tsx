@@ -150,7 +150,11 @@ export const FormSingleRecordPicker = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         {disabled ? (
-          <StyledFormSelectContainer hasRightElement={false} readonly>
+          <StyledFormSelectContainer
+            formFieldInputInstanceId={componentId}
+            hasRightElement={false}
+            readonly
+          >
             <FormSingleRecordFieldChip
               draftValue={draftValue}
               selectedRecord={selectedRecord}
@@ -169,6 +173,7 @@ export const FormSingleRecordPicker = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             clickableComponent={
               <StyledFormSelectContainer
+                formFieldInputInstanceId={componentId}
                 hasRightElement={isDefined(VariablePicker) && !disabled}
                 preventSetHotkeyScope={true}
               >
@@ -204,7 +209,7 @@ export const FormSingleRecordPicker = ({
         )}
         {isDefined(VariablePicker) && !disabled && (
           <VariablePicker
-            inputId={variablesDropdownId}
+            instanceId={variablesDropdownId}
             disabled={disabled}
             onVariableSelect={handleVariableTagInsert}
             objectNameSingularToSelect={objectNameSingular}

@@ -14,7 +14,6 @@ import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/Recor
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
@@ -47,16 +46,6 @@ export const RecordTableWithWrappers = ({
     setHasUserSelectedAllRows(true);
     selectAllRows();
   };
-
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    handleSelectAllRows,
-    RecordIndexHotkeyScope.RecordIndex,
-    [],
-    {
-      enableOnFormTags: false,
-    },
-  );
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+a,meta+a'],

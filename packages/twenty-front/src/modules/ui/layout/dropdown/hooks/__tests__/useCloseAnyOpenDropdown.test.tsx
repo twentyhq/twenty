@@ -6,7 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const dropdownId = 'test-dropdown-id';
@@ -28,7 +28,7 @@ describe('useCloseAnyOpenDropdown', () => {
     const { result } = renderHook(
       () => {
         const isDropdownOpen = useRecoilComponentValueV2(
-          isDropdownOpenComponentStateV2,
+          isDropdownOpenComponentState,
           dropdownId,
         );
 

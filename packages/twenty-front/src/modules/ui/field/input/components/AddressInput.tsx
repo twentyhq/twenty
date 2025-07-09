@@ -4,11 +4,11 @@ import { Key } from 'ts-key-enum';
 
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,6 +47,7 @@ const StyledHalfRowContainer = styled.div`
 `;
 
 export type AddressInputProps = {
+  instanceId: string;
   value: FieldAddressValue;
   onTab: (newAddress: FieldAddressDraftValue) => void;
   onShiftTab: (newAddress: FieldAddressDraftValue) => void;
@@ -62,6 +63,7 @@ export type AddressInputProps = {
 };
 
 export const AddressInput = ({
+  instanceId,
   value,
   hotkeyScope,
   onTab,
@@ -106,76 +108,84 @@ export const AddressInput = ({
     inputRefs[fieldName]?.current?.focus();
   };
 
-  useScopedHotkeys(
-    'tab',
-    () => {
-      const currentFocusPosition = Object.keys(inputRefs).findIndex(
-        (key) => key === focusPosition,
-      );
-      const maxFocusPosition = Object.keys(inputRefs).length - 1;
+  const handleTab = () => {
+    const currentFocusPosition = Object.keys(inputRefs).findIndex(
+      (key) => key === focusPosition,
+    );
+    const maxFocusPosition = Object.keys(inputRefs).length - 1;
 
-      const nextFocusPosition = currentFocusPosition + 1;
+    const nextFocusPosition = currentFocusPosition + 1;
 
-      const isFocusPositionAfterLast = nextFocusPosition > maxFocusPosition;
+    const isFocusPositionAfterLast = nextFocusPosition > maxFocusPosition;
 
-      if (isFocusPositionAfterLast) {
-        onTab?.(internalValue);
-      } else {
-        const nextFocusFieldName = Object.keys(inputRefs)[
-          nextFocusPosition
-        ] as keyof FieldAddressDraftValue;
+    if (isFocusPositionAfterLast) {
+      onTab?.(internalValue);
+    } else {
+      const nextFocusFieldName = Object.keys(inputRefs)[
+        nextFocusPosition
+      ] as keyof FieldAddressDraftValue;
 
-        setFocusPosition(nextFocusFieldName);
-        inputRefs[nextFocusFieldName]?.current?.focus();
-      }
-    },
-    hotkeyScope,
-    [onTab, internalValue, focusPosition],
-  );
+      setFocusPosition(nextFocusFieldName);
+      inputRefs[nextFocusFieldName]?.current?.focus();
+    }
+  };
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
-      const currentFocusPosition = Object.keys(inputRefs).findIndex(
-        (key) => key === focusPosition,
-      );
+  const handleShiftTab = () => {
+    const currentFocusPosition = Object.keys(inputRefs).findIndex(
+      (key) => key === focusPosition,
+    );
 
-      const nextFocusPosition = currentFocusPosition - 1;
+    const nextFocusPosition = currentFocusPosition - 1;
 
-      const isFocusPositionBeforeFirst = nextFocusPosition < 0;
+    const isFocusPositionBeforeFirst = nextFocusPosition < 0;
 
-      if (isFocusPositionBeforeFirst) {
-        onShiftTab?.(internalValue);
-      } else {
-        const nextFocusFieldName = Object.keys(inputRefs)[
-          nextFocusPosition
-        ] as keyof FieldAddressDraftValue;
+    if (isFocusPositionBeforeFirst) {
+      onShiftTab?.(internalValue);
+    } else {
+      const nextFocusFieldName = Object.keys(inputRefs)[
+        nextFocusPosition
+      ] as keyof FieldAddressDraftValue;
 
-        setFocusPosition(nextFocusFieldName);
-        inputRefs[nextFocusFieldName]?.current?.focus();
-      }
-    },
-    hotkeyScope,
-    [onTab, internalValue, focusPosition],
-  );
+      setFocusPosition(nextFocusFieldName);
+      inputRefs[nextFocusFieldName]?.current?.focus();
+    }
+  };
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['tab'],
+    callback: handleTab,
+    scope: hotkeyScope,
+    focusId: instanceId,
+    dependencies: [handleTab],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: ['shift+tab'],
+    callback: handleShiftTab,
+    scope: hotkeyScope,
+    focusId: instanceId,
+    dependencies: [handleShiftTab],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter(internalValue);
     },
-    hotkeyScope,
-    [onEnter, internalValue],
-  );
+    scope: hotkeyScope,
+    focusId: instanceId,
+    dependencies: [onEnter, internalValue],
+  });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onEscape(internalValue);
     },
-    hotkeyScope,
-    [onEscape, internalValue],
-  );
+    scope: hotkeyScope,
+    focusId: instanceId,
+    dependencies: [onEscape, internalValue],
+  });
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 

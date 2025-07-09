@@ -17,9 +17,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { IconSearch } from 'twenty-ui/display';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
-import { IconSearch } from 'twenty-ui/display';
 
 const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectDetailTableItem> =
   {
@@ -178,6 +178,7 @@ export const SettingsObjectFieldTable = ({
   return (
     <>
       <StyledSearchInput
+        instanceId="object-field-table-search"
         LeftIcon={IconSearch}
         placeholder={t`Search a field...`}
         value={searchTerm}

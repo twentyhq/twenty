@@ -89,7 +89,7 @@ export const FormDateTimeFieldInput = ({
     isDateTimeInput: !dateOnly,
   });
 
-  const inputId = useId();
+  const instanceId = useId();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -296,6 +296,7 @@ export const FormDateTimeFieldInput = ({
 
       <FormFieldInputRowContainer>
         <StyledInputContainer
+          formFieldInputInstanceId={instanceId}
           ref={datePickerWrapperRef}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
@@ -340,7 +341,7 @@ export const FormDateTimeFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}

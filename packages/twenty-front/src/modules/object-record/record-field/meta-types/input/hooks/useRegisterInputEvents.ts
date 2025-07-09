@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +13,7 @@ export const useRegisterInputEvents = <T>({
   onTab,
   onShiftTab,
   onClickOutside,
+  focusId,
   hotkeyScope,
 }: {
   inputRef: React.RefObject<any>;
@@ -23,6 +24,7 @@ export const useRegisterInputEvents = <T>({
   onTab?: (inputValue: T) => void;
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
+  focusId: string;
   hotkeyScope: string;
 }) => {
   useListenClickOutside({
@@ -34,39 +36,43 @@ export const useRegisterInputEvents = <T>({
     listenerId: hotkeyScope,
   });
 
-  useScopedHotkeys(
-    'enter',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter?.(inputValue);
     },
-    hotkeyScope,
-    [onEnter, inputValue],
-  );
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [onEnter, inputValue],
+  });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onEscape?.(inputValue);
     },
-    hotkeyScope,
-    [onEscape, inputValue],
-  );
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [onEscape, inputValue],
+  });
 
-  useScopedHotkeys(
-    'tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Tab],
+    callback: () => {
       onTab?.(inputValue);
     },
-    hotkeyScope,
-    [onTab, inputValue],
-  );
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [onTab, inputValue],
+  });
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Shift}+${Key.Tab}`],
+    callback: () => {
       onShiftTab?.(inputValue);
     },
-    hotkeyScope,
-    [onShiftTab, inputValue],
-  );
+    focusId,
+    scope: hotkeyScope,
+    dependencies: [onShiftTab, inputValue],
+  });
 };
