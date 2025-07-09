@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { getFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
-import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flatten-object-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 
 export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
@@ -10,17 +10,17 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         'It should build an update_object action with all object updated fields',
       context: {
         input: () => {
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             nameSingular: 'toto',
             namePlural: 'totos',
             isLabelSyncedWithName: true,
           });
           return {
-            from: [flattenObjectMetadata],
+            from: [flatObjectMetadata],
             to: [
               {
-                ...flattenObjectMetadata,
+                ...flatObjectMetadata,
                 nameSingular: 'prastouin',
                 namePlural: 'prastoins',
                 isLabelSyncedWithName: false,
@@ -38,7 +38,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
       title: 'It should build a create_object action',
       context: {
         input: () => {
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             nameSingular: 'toto',
             namePlural: 'totos',
@@ -46,7 +46,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           });
           return {
             from: [],
-            to: [flattenObjectMetadata],
+            to: [flatObjectMetadata],
           };
         },
         expectedActionsTypeCounter: {
@@ -69,7 +69,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
                 uniqueIdentifier: `field_${index}`,
               }),
           );
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             nameSingular: 'toto',
             namePlural: 'totos',
@@ -80,7 +80,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
 
           return {
             from: [],
-            to: [flattenObjectMetadata],
+            to: [flatObjectMetadata],
           };
         },
 
@@ -95,14 +95,14 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
       title: 'It should build a delete_object action',
       context: {
         input: () => {
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             nameSingular: 'toto',
             namePlural: 'totos',
             isLabelSyncedWithName: true,
           });
           return {
-            from: [flattenObjectMetadata],
+            from: [flatObjectMetadata],
             to: [],
           };
         },

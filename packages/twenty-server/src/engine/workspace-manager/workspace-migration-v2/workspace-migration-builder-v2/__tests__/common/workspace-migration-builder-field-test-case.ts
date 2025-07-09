@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/.';
-import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flatten-object-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 
 export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
@@ -9,23 +9,23 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const objectMetadataId = faker.string.uuid();
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             isLabelSyncedWithName: true,
             flatFieldMetadatas: [],
             id: objectMetadataId,
           });
-          const flattenFieldMetadata = getFlatFieldMetadata({
+          const flatFieldMetadata = getFlatFieldMetadata({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
 
           return {
-            from: [flattenObjectMetadata],
+            from: [flatObjectMetadata],
             to: [
               getFlatObjectMetadataMock({
-                ...flattenObjectMetadata,
-                flatFieldMetadatas: [flattenFieldMetadata],
+                ...flatObjectMetadata,
+                flatFieldMetadatas: [flatFieldMetadata],
               }),
             ],
           };
@@ -42,22 +42,22 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
         input: () => {
           const objectMetadataId = faker.string.uuid();
 
-          const flattenFieldMetadata = getFlatFieldMetadata({
+          const flatFieldMetadata = getFlatFieldMetadata({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
-          const flattenObjectMetadata = getFlatObjectMetadataMock({
+          const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             isLabelSyncedWithName: true,
             flatFieldMetadatas: [],
           });
 
           return {
-            from: [flattenObjectMetadata],
+            from: [flatObjectMetadata],
             to: [
               getFlatObjectMetadataMock({
-                ...flattenObjectMetadata,
-                flatFieldMetadatas: [flattenFieldMetadata],
+                ...flatObjectMetadata,
+                flatFieldMetadatas: [flatFieldMetadata],
               }),
             ],
           };

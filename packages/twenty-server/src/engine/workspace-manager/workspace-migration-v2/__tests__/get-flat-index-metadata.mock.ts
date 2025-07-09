@@ -6,13 +6,13 @@ type FlatIndexMetadataOverrides = Required<
   Pick<FlatIndexMetadata, 'uniqueIdentifier' | 'objectMetadataId'>
 > &
   Partial<FlatIndexMetadata>;
-export const getFlatIndexMetadata = (
+export const getFlatIndexMetadataMock = (
   overrides: FlatIndexMetadataOverrides,
 ): FlatIndexMetadata => {
   const createdAt = faker.date.anytime();
 
   return {
-    flatIndexFieldMetadatas: [], // TODO and to test correctly we should be diffing by flattenning these
+    flatIndexFieldMetadatas: [], // TODO and to test correctly we should be diffing by flatning these
     createdAt,
     id: faker.string.uuid(),
     indexType: IndexType.BTREE,
@@ -26,10 +26,10 @@ export const getFlatIndexMetadata = (
   };
 };
 
-export const getStandardFlatIndexMetadata = (
+export const getStandardFlatIndexMetadataMock = (
   overrides: Omit<FlatIndexMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
-  return getFlatIndexMetadata({
+  return getFlatIndexMetadataMock({
     isCustom: false,
     ...overrides,
   });
