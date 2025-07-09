@@ -110,7 +110,7 @@ export const useAgentChat = (agentId: string) => {
             onTextDelta: (message: string) => {
               setAgentStreamingMessage((prev) => ({
                 ...prev,
-                textDelta: prev.textDelta + message,
+                streamingText: prev.streamingText + message,
               }));
               scrollToBottom();
             },
@@ -146,7 +146,7 @@ export const useAgentChat = (agentId: string) => {
     setAgentChatMessages(data?.messages);
     setAgentStreamingMessage({
       toolCall: '',
-      textDelta: '',
+      streamingText: '',
     });
     scrollToBottom();
   };

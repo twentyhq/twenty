@@ -193,8 +193,8 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
       return message.content;
     }
 
-    if (agentStreamingMessage.textDelta !== '') {
-      return agentStreamingMessage.textDelta;
+    if (agentStreamingMessage.streamingText !== '') {
+      return agentStreamingMessage.streamingText;
     }
 
     if (agentStreamingMessage.toolCall !== '') {
@@ -225,7 +225,7 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                 isShowingToolCall={
                   msg.role === AgentChatMessageRole.ASSISTANT &&
                   msg.content === '' &&
-                  agentStreamingMessage.textDelta === '' &&
+                  agentStreamingMessage.streamingText === '' &&
                   agentStreamingMessage.toolCall !== ''
                 }
               >

@@ -2,11 +2,11 @@ import { atom } from 'recoil';
 
 export const agentStreamingMessageState = atom<{
   toolCall: string;
-  textDelta: string;
+  streamingText: string;
 }>({
   key: 'agentStreamingMessageState',
   default: {
     toolCall: '',
-    textDelta: '',
+    streamingText: '',
   },
 });
