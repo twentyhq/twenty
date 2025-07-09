@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
@@ -38,8 +39,14 @@ export const validateOperationIsPermittedOrThrow = ({
   objectMetadataMaps: ObjectMetadataMaps;
 }) => {
   const objectMetadataIdForEntity =
-    objectMetadataMaps.idByNameSingular[entityName];
+    objectMetadataMaps.idByNameSingular.get(entityName);
 
+  if (!isNonEmptyString(objectMetadataIdForEntity)) {
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+  }
   const objectMetadataIsSystem =
     objectMetadataMaps.byId.get(objectMetadataIdForEntity)?.isSystem === true;
 

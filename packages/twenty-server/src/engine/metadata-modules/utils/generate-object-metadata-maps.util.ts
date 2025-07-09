@@ -12,8 +12,8 @@ export const generateObjectMetadataMaps = (
   objectMetadataCollection: ObjectMetadataInterface[],
 ): ObjectMetadataMaps => {
   const objectMetadataMaps: ObjectMetadataMaps = {
-    byId: {},
-    idByNameSingular: {},
+    byId: new Map(),
+    idByNameSingular: new Map(),
   };
 
   for (const objectMetadata of objectMetadataCollection) {
@@ -49,8 +49,10 @@ export const generateObjectMetadataMaps = (
     };
 
     objectMetadataMaps.byId.set(objectMetadata.id, processedObjectMetadata);
-    objectMetadataMaps.idByNameSingular[objectMetadata.nameSingular] =
-      objectMetadata.id;
+    objectMetadataMaps.idByNameSingular.set(
+      objectMetadata.nameSingular,
+      objectMetadata.id,
+    );
   }
 
   return objectMetadataMaps;
