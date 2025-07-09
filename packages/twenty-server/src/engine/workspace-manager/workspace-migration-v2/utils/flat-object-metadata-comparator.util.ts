@@ -2,21 +2,30 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-action-v2';
-import {
-  ObjectMetadataEntityEditableProperties,
-  WorkspaceMigrationObjectInput,
-  objectMetadataEntityEditableProperties,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-type ObjectWorkspaceMigrationUpdate = FromTo<WorkspaceMigrationObjectInput>;
+const flatObjectMetadataPropertiesToCompare = [
+  'description',
+  'icon',
+  'isActive',
+  'isLabelSyncedWithName',
+  'labelPlural',
+  'labelSingular',
+  'namePlural',
+  'nameSingular',
+  'standardOverrides', // Only if standard
+] as const satisfies (keyof FlatObjectMetadata)[];
 
-export const compareTwoWorkspaceMigrationObjectInput = ({
+export type FlatObjectMetadataPropertiesToCompare =
+  (typeof flatObjectMetadataPropertiesToCompare)[number];
+
+export const compareTwoFlatObjectMetadata = ({
   from,
   to,
-}: ObjectWorkspaceMigrationUpdate) => {
+}: FromTo<FlatObjectMetadata>) => {
   const fromCompare = transformMetadataForComparison(from, {});
   const toCompare = transformMetadataForComparison(to, {});
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
@@ -41,15 +50,15 @@ export const compareTwoWorkspaceMigrationObjectInput = ({
 
         // Could be handled directly from the diff we do above
         if (
-          !objectMetadataEntityEditableProperties.includes(
-            property as ObjectMetadataEntityEditableProperties,
+          !flatObjectMetadataPropertiesToCompare.includes(
+            property as FlatObjectMetadataPropertiesToCompare,
           )
         ) {
           return [];
         }
 
         return {
-          property: property as ObjectMetadataEntityEditableProperties,
+          property: property as FlatObjectMetadataPropertiesToCompare,
           from: difference.oldValue,
           to: difference.value,
         };
