@@ -2631,6 +2631,11 @@ msgstr "Esporta i workflow"
 msgid "Extra Credits Used"
 msgstr ""
 
+#. js-lingui-id: nKkohy
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Failed to load webhook"
+msgstr ""
+
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 #~ msgid "Failed to remove  override"
