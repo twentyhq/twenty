@@ -50,7 +50,7 @@ describe('WorkflowStatusesUpdate', () => {
   };
 
   const mockServerlessFunctionService = {
-    publishOneServerlessFunction: jest.fn(),
+    publishOneServerlessFunctionOrFail: jest.fn(),
     findOneOrFail: jest.fn(),
   };
 
@@ -256,6 +256,9 @@ describe('WorkflowStatusesUpdate', () => {
         mockServerlessFunctionService.findOneOrFail.mockResolvedValue(
           mockServerlessFunction,
         );
+        mockServerlessFunctionService.publishOneServerlessFunctionOrFail.mockResolvedValue(
+          mockServerlessFunction,
+        );
 
         await job.handle(event);
 
@@ -264,7 +267,7 @@ describe('WorkflowStatusesUpdate', () => {
           mockWorkflowVersionRepository.findOneOrFail,
         ).toHaveBeenCalledTimes(1);
         expect(
-          mockServerlessFunctionService.publishOneServerlessFunction,
+          mockServerlessFunctionService.publishOneServerlessFunctionOrFail,
         ).toHaveBeenCalledWith('serverless-1', '1');
         expect(mockWorkflowVersionRepository.update).toHaveBeenCalledWith('1', {
           steps: [

@@ -30,6 +30,10 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -137,7 +141,7 @@ export class ServerlessFunctionService {
     return resultServerlessFunction;
   }
 
-  async publishOneServerlessFunction(id: string, workspaceId: string) {
+  async publishOneServerlessFunctionOrFail(id: string, workspaceId: string) {
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOneOrFail({
         where: {
@@ -159,10 +163,7 @@ export class ServerlessFunctionService {
       );
 
       if (deepEqual(latestCode, draftCode)) {
-        throw new ServerlessFunctionException(
-          'Cannot publish a new version when code has not changed',
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED,
-        );
+        return existingServerlessFunction;
       }
     }
 
@@ -174,6 +175,7 @@ export class ServerlessFunctionService {
       serverlessFunction: existingServerlessFunction,
       version: 'draft',
     });
+
     const newFolderPath = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
       version: newVersion,
@@ -197,9 +199,26 @@ export class ServerlessFunctionService {
       },
     );
 
-    return this.serverlessFunctionRepository.findOneBy({
-      id: existingServerlessFunction.id,
-    });
+    const publishedServerlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
+
+    // This check should never be thrown, but we encounter some issue with
+    // publishing serverless function in self hosted instances
+    // See https://github.com/twentyhq/twenty/issues/13058
+    // TODO: remove this check when issue solved
+    if (!isDefined(publishedServerlessFunction.latestVersion)) {
+      throw new WorkflowVersionStepException(
+        `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
+        WorkflowVersionStepExceptionCode.FAILURE,
+      );
+    }
+
+    return publishedServerlessFunction;
   }
 
   async deleteOneServerlessFunction({
