@@ -9,24 +9,22 @@ const StyledContainer = styled.div`
 `;
 
 const StyledEmptyState = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
-  height: 100%;
   color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
+  height: 100%;
+  justify-content: center;
 `;
 
 export const CommandMenuAskAIPage = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const agentId = currentWorkspace?.defaultAgent?.id;
-  
+
   if (!agentId) {
     return (
       <StyledContainer>
-        <StyledEmptyState>
-          No AI Agent found.
-        </StyledEmptyState>
+        <StyledEmptyState>No AI Agent found.</StyledEmptyState>
       </StyledContainer>
     );
   }
@@ -36,4 +34,4 @@ export const CommandMenuAskAIPage = () => {
       <AIChatTab agentId={agentId} />
     </StyledContainer>
   );
-}; 
+};

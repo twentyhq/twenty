@@ -106,6 +106,7 @@ export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
               goto: true,
               keyboardShortcutMenu: true,
               searchRecords: true,
+              askAI: true,
             },
           },
           memoizeKey: focusId,

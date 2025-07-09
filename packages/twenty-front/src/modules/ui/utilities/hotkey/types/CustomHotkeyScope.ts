@@ -4,4 +4,5 @@ export type CustomHotkeyScopes = {
   commandMenuOpen?: boolean;
   keyboardShortcutMenu?: boolean;
   searchRecords?: boolean;
+  askAI?: boolean;
 };

@@ -1,4 +1,5 @@
 export enum ModelProvider {
+  NONE = 'none',
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
 }
@@ -21,6 +22,13 @@ export interface AIModelConfig {
 }
 
 export const AI_MODELS: AIModelConfig[] = [
+  {
+    modelId: 'auto',
+    label: 'Auto',
+    provider: ModelProvider.NONE,
+    inputCostPer1kTokensInCents: 0.25,
+    outputCostPer1kTokensInCents: 1.0,
+  },
   {
     modelId: 'gpt-4o',
     label: 'GPT-4o',

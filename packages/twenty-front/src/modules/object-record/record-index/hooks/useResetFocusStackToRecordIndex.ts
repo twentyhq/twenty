@@ -26,6 +26,7 @@ export const useResetFocusStackToRecordIndex = () => {
           goto: true,
           keyboardShortcutMenu: true,
           searchRecords: true,
+          askAI: true,
         },
       },
     });

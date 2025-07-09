@@ -161,6 +161,7 @@ export const PageChangeEffect = () => {
               goto: true,
               keyboardShortcutMenu: true,
               searchRecords: true,
+              askAI: true,
             },
           },
         });
@@ -328,6 +329,7 @@ export const PageChangeEffect = () => {
               commandMenu: false,
               commandMenuOpen: false,
               searchRecords: false,
+              askAI: false,
             },
           },
         });

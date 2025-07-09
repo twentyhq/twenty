@@ -70,11 +70,13 @@ export const useCommandMenuHotKeys = () => {
   useGlobalHotkeys(
     ['@'],
     () => {
-      openAskAIPage();
+      if (isAiEnabled) {
+        openAskAIPage();
+      }
     },
-    isAiEnabled,
+    false,
     AppHotkeyScope.AskAI,
-    [openAskAIPage],
+    [openAskAIPage, isAiEnabled],
     {
       ignoreModifiers: true,
     },

@@ -179,7 +179,6 @@ type AIChatTabProps = {
 export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
   const theme = useTheme();
 
-
   const {
     messages,
     isLoading,

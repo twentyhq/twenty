@@ -100,8 +100,10 @@ export class WorkspaceManagerService {
 
     if (featureFlags[FeatureFlagKey.IS_AI_ENABLED]) {
       const defaultAgentEnabledStart = performance.now();
+
       await this.initDefaultAgent(workspaceId);
       const defaultAgentEnabledEnd = performance.now();
+
       this.logger.log(
         `Default agent enabled took ${defaultAgentEnabledEnd - defaultAgentEnabledStart}ms`,
       );
@@ -208,12 +210,16 @@ export class WorkspaceManagerService {
   }
 
   private async initDefaultAgent(workspaceId: string) {
-    const agent = await this.agentService.createOneAgent({
-      name: 'Routing Agent',
-      description: 'Default Routing Agent',
-      prompt: '',
-      modelId: 'auto',
-    }, workspaceId);
+    const agent = await this.agentService.createOneAgent(
+      {
+        label: 'Routing Agent',
+        name: 'routing-agent',
+        description: 'Default Routing Agent',
+        prompt: '',
+        modelId: 'auto',
+      },
+      workspaceId,
+    );
 
     await this.workspaceRepository.update(workspaceId, {
       defaultAgentId: agent.id,

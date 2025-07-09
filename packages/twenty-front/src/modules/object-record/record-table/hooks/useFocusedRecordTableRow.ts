@@ -125,6 +125,7 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
               goto: true,
               keyboardShortcutMenu: true,
               searchRecords: true,
+              askAI: true,
             },
           },
           memoizeKey: focusId,

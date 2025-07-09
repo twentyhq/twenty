@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 
 @Injectable()
 export class AgentToolService {
   constructor(
+    @Inject(forwardRef(() => AgentService))
     private readonly agentService: AgentService,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,

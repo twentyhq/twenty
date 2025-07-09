@@ -63,6 +63,7 @@ export const useSetHotkeyScope = () =>
             goto: customScopes?.goto ?? false,
             keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? false,
             searchRecords: customScopes?.searchRecords ?? false,
+            askAI: customScopes?.askAI ?? false,
           },
         };
 
@@ -86,6 +87,10 @@ export const useSetHotkeyScope = () =>
 
         if (newHotkeyScope?.customScopes?.searchRecords === true) {
           scopesToSet.push(AppHotkeyScope.SearchRecords);
+        }
+
+        if (newHotkeyScope?.customScopes?.askAI === true) {
+          scopesToSet.push(AppHotkeyScope.AskAI);
         }
 
         scopesToSet.push(newHotkeyScope.scope);
