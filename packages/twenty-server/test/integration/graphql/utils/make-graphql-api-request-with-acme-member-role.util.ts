@@ -6,12 +6,14 @@ type GraphqlOperation = {
   variables?: Record<string, unknown>;
 };
 
-export const makeMetadataAPIRequest = (graphqlOperation: GraphqlOperation) => {
+export const makeGraphqlAPIRequestWithAcmeMemberRole = (
+  graphqlOperation: GraphqlOperation,
+) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client
-    .post('/metadata')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .post('/graphql')
+    .set('Authorization', `Bearer ${ACME_JONY_MEMBER_ACCESS_TOKEN}`)
     .send({
       query: print(graphqlOperation.query),
       variables: graphqlOperation.variables || {},

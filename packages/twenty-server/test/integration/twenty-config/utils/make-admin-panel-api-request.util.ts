@@ -1,7 +1,7 @@
 import { ASTNode, print } from 'graphql';
 import request from 'supertest';
 
-/* global APP_PORT, ADMIN_ACCESS_TOKEN */
+/* global APP_PORT, APPLE_JANE_ADMIN_ACCESS_TOKEN */
 
 type GraphqlOperation = {
   query: ASTNode;
@@ -15,7 +15,7 @@ export const makeAdminPanelAPIRequest = (
 
   return client
     .post('/graphql')
-    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({
       query: print(graphqlOperation.query),
       variables: graphqlOperation.variables || {},
