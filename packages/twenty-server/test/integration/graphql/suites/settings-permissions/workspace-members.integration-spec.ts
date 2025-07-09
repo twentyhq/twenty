@@ -19,10 +19,10 @@ describe('workspace members permissions', () => {
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         data: {
           name: {
-            firstName: 'Tim',
+            firstName: 'Jony',
           },
         },
       });
@@ -32,9 +32,9 @@ describe('workspace members permissions', () => {
 
       expect(response.body.data).toStrictEqual({
         updateWorkspaceMember: {
-          id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           name: {
-            firstName: 'Tim',
+            firstName: 'Jony',
           },
         },
       });
@@ -97,7 +97,7 @@ describe('workspace members permissions', () => {
         deleteWorkspaceMember: {
           id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           name: {
-            firstName: 'Jony',
+            firstName: 'Phil',
           },
         },
       });
