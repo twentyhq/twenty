@@ -65,21 +65,21 @@ export const useRecordTitleCell = () => {
         fieldName: string;
         containerType: RecordTitleCellContainerType;
       }) => {
-          pushFocusItemToFocusStack({
-            focusId: getRecordFieldInputInstanceId({
+        pushFocusItemToFocusStack({
+          focusId: getRecordFieldInputInstanceId({
+            recordId,
+            fieldName,
+            prefix: containerType,
+          }),
+          component: {
+            type: FocusComponentType.OPENED_FIELD_INPUT,
+            instanceId: getRecordFieldInputInstanceId({
               recordId,
               fieldName,
               prefix: containerType,
             }),
-            component: {
-              type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordFieldInputInstanceId({
-                recordId,
-                fieldName,
-                prefix: containerType,
-              }),
-            },
-          });
+          },
+        });
 
         const recordTitleCellId = getRecordFieldInputInstanceId({
           recordId,
