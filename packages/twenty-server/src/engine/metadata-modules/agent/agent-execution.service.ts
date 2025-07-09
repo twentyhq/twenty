@@ -51,6 +51,13 @@ export class AgentExecutionService {
 
   getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
+      case ModelProvider.NONE: {
+        const OpenAIProvider = createOpenAI({
+          apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
+        });
+
+        return OpenAIProvider('gpt-4o');
+      }
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
           apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),

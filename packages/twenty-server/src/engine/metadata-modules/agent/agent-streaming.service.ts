@@ -105,7 +105,16 @@ export class AgentStreamingService {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
 
-      return { success: false, error: errorMessage };
+      if (!res.headersSent) {
+        this.setupStreamingHeaders(res);
+      }
+
+      this.sendStreamEvent(res, {
+        type: 'error',
+        message: errorMessage,
+      });
+
+      res.end();
     }
   }
 
