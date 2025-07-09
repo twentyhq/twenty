@@ -23,13 +23,6 @@ const StyledContainer = styled.div`
   width: 1px;
 `;
 
-const StyledInnerContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  height: 250px;
-  width: 100%;
-  overflow-y: auto;
-`;
-
 export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
@@ -50,21 +43,17 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
             data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
             <DropdownContent>
-              <StyledInnerContainer>
-                <DropdownMenuItemsContainer>
-                  <SelectableList
-                    focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-                    selectableListInstanceId={SLASH_MENU_LIST_ID}
-                    selectableItemIdArray={props.items.map(
-                      (item) => item.title,
-                    )}
-                  >
-                    {props.items.map((item) => (
-                      <CustomSlashMenuListItem key={item.title} item={item} />
-                    ))}
-                  </SelectableList>
-                </DropdownMenuItemsContainer>
-              </StyledInnerContainer>
+              <DropdownMenuItemsContainer hasMaxHeight>
+                <SelectableList
+                  focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+                  selectableListInstanceId={SLASH_MENU_LIST_ID}
+                  selectableItemIdArray={props.items.map((item) => item.title)}
+                >
+                  {props.items.map((item) => (
+                    <CustomSlashMenuListItem key={item.title} item={item} />
+                  ))}
+                </SelectableList>
+              </DropdownMenuItemsContainer>
             </DropdownContent>
           </OverlayContainer>
         </motion.div>,
