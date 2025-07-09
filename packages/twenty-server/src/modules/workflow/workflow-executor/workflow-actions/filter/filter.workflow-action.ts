@@ -33,23 +33,24 @@ export class FilterWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { filterGroups, filters } = step.settings.input;
+    const { stepFilterGroups, stepFilters } = step.settings.input;
 
-    if (!filterGroups || !filters) {
-      throw new WorkflowStepExecutorException(
-        'Filter is not defined',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_SETTINGS,
-      );
+    if (!stepFilterGroups || !stepFilters) {
+      return {
+        result: {
+          shouldEndWorkflowRun: false,
+        },
+      };
     }
 
-    const resolvedFilters = filters.map((filter) => ({
+    const resolvedFilters = stepFilters.map((filter) => ({
       ...filter,
       rightOperand: resolveInput(filter.value, context),
       leftOperand: resolveInput(filter.stepOutputKey, context),
     }));
 
     const matchesFilter = evaluateFilterConditions({
-      filterGroups,
+      filterGroups: stepFilterGroups,
       filters: resolvedFilters,
     });
 
@@ -57,6 +58,7 @@ export class FilterWorkflowAction implements WorkflowAction {
       result: {
         matchesFilter,
       },
+      shouldEndWorkflowRun: !matchesFilter,
     };
   }
 }

@@ -592,8 +592,8 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              filterGroups: [],
-              filters: [],
+              stepFilterGroups: [],
+              stepFilters: [],
             },
           },
         };
