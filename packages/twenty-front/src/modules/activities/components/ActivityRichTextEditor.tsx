@@ -22,6 +22,7 @@ import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -344,7 +345,7 @@ export const ActivityRichTextEditor = ({
   useHotkeysOnFocusedElement({
     keys: '*',
     callback: handleAllKeys,
-    focusId: activityId,
+    focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [handleAllKeys],
   });
 
