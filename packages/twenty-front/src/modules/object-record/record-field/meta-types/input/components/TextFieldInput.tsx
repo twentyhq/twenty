@@ -8,7 +8,6 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
@@ -74,7 +73,6 @@ export const TextFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         onChange={handleChange}
       />
     </FieldInputContainer>

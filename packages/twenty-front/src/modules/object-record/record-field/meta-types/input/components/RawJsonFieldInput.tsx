@@ -6,7 +6,6 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -69,8 +68,6 @@ export const RawJsonFieldInput = ({
     fieldDefinition,
   } = useJsonField();
 
-  const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
-
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -106,7 +103,7 @@ export const RawJsonFieldInput = ({
     callback: (event) => {
       handleClickOutside(event, draftValue ?? '');
     },
-    listenerId: hotkeyScope,
+    listenerId: instanceId,
   });
 
   useHotkeysOnFocusedElement({
@@ -114,7 +111,6 @@ export const RawJsonFieldInput = ({
     callback: () => {
       handleEscape(draftValue ?? '');
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [handleEscape, draftValue],
   });
@@ -124,7 +120,6 @@ export const RawJsonFieldInput = ({
     callback: () => {
       handleTab(draftValue ?? '');
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [handleTab, draftValue],
   });
@@ -134,7 +129,6 @@ export const RawJsonFieldInput = ({
     callback: () => {
       handleShiftTab(draftValue ?? '');
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [handleShiftTab, draftValue],
   });

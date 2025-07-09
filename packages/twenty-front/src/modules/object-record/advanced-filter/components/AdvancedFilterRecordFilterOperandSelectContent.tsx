@@ -8,7 +8,6 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -69,7 +68,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                 (operand) => operand,
               )}
               selectableListInstanceId={dropdownId}
-              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               {operandsForFilterType.map((filterOperand, index) => (
                 <SelectableListItem

@@ -8,7 +8,6 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -102,7 +101,6 @@ export const SyncEmails = () => {
       await continueWithoutSync();
     },
     focusId: PageFocusId.SyncEmail,
-    scope: PageHotkeyScope.SyncEmail,
     dependencies: [continueWithoutSync],
   });
 

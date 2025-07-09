@@ -1,9 +1,6 @@
-import {
-  Filter,
-  FilterGroup,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
+import { StepFilter, StepFilterGroup } from 'twenty-shared/types';
 
-type ResolvedFilter = Omit<Filter, 'value' | 'stepOutputKey'> & {
+type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
   rightOperand: unknown;
   leftOperand: unknown;
 };
@@ -72,7 +69,7 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
  */
 function evaluateFilterGroup(
   groupId: string,
-  filterGroups: FilterGroup[],
+  filterGroups: StepFilterGroup[],
   filters: ResolvedFilter[],
 ): boolean {
   const group = filterGroups.find((g) => g.id === groupId);
@@ -83,14 +80,13 @@ function evaluateFilterGroup(
 
   // Get all direct child groups
   const childGroups = filterGroups
-    .filter((g) => g.parentRecordFilterGroupId === groupId)
+    .filter((g) => g.parentStepFilterGroupId === groupId)
     .sort(
       (a, b) =>
-        (a.positionInRecordFilterGroup || 0) -
-        (b.positionInRecordFilterGroup || 0),
+        (a.positionInStepFilterGroup || 0) - (b.positionInStepFilterGroup || 0),
     );
 
-  const groupFilters = filters.filter((f) => f.recordFilterGroupId === groupId);
+  const groupFilters = filters.filter((f) => f.stepFilterGroupId === groupId);
 
   const filterResults = groupFilters.map((filter) => evaluateFilter(filter));
 
@@ -120,7 +116,7 @@ export function evaluateFilterConditions({
   filterGroups = [],
   filters = [],
 }: {
-  filterGroups?: FilterGroup[];
+  filterGroups?: StepFilterGroup[];
   filters?: ResolvedFilter[];
 }): boolean {
   if (filterGroups.length === 0 && filters.length === 0) {
@@ -131,15 +127,15 @@ export function evaluateFilterConditions({
     const groupIds = new Set(filterGroups.map((g) => g.id));
 
     for (const filter of filters) {
-      if (!groupIds.has(filter.recordFilterGroupId)) {
+      if (!groupIds.has(filter.stepFilterGroupId)) {
         throw new Error(
-          `Filter group with id ${filter.recordFilterGroupId} not found`,
+          `Filter group with id ${filter.stepFilterGroupId} not found`,
         );
       }
     }
   }
 
-  const rootGroups = filterGroups.filter((g) => !g.parentRecordFilterGroupId);
+  const rootGroups = filterGroups.filter((g) => !g.parentStepFilterGroupId);
 
   if (rootGroups.length === 0 && filters.length > 0) {
     const filterResults = filters.map((filter) => evaluateFilter(filter));

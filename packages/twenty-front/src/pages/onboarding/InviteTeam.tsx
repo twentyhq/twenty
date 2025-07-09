@@ -4,7 +4,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageFocusId } from '@/types/PageFocusId';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -168,7 +167,6 @@ export const InviteTeam = () => {
       handleSubmit(onSubmit)();
     },
     focusId: PageFocusId.InviteTeam,
-    scope: PageHotkeyScope.InviteTeam,
     dependencies: [handleSubmit, onSubmit],
   });
 

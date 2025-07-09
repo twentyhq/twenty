@@ -3,7 +3,6 @@ import { Key } from 'ts-key-enum';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -69,7 +68,6 @@ export const MultipleSelectDropdown = ({
       resetSelectedItem();
     },
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [closeDropdown, resetSelectedItem],
   });
 
@@ -86,7 +84,6 @@ export const MultipleSelectDropdown = ({
       selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
-      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {itemsInDropdown?.map((item) => {

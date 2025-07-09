@@ -1,5 +1,4 @@
 import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
-import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -26,8 +25,6 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       onEnter?.();
     },
     focusId: modalId,
-    // TODO: Remove this once we've migrated hotkey scopes to the new api
-    scope: ModalHotkeyScope.ModalFocus,
     dependencies: [onEnter],
   });
 
@@ -39,8 +36,6 @@ export const ModalHotkeysAndClickOutsideEffect = ({
       }
     },
     focusId: modalId,
-    // TODO: Remove this once we've migrated hotkey scopes to the new api
-    scope: ModalHotkeyScope.ModalFocus,
     dependencies: [isClosable, onClose],
   });
 

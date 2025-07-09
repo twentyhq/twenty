@@ -135,7 +135,6 @@ export const FormNumberFieldInput = ({
               }
               value={draftValue.value}
               copyButton={false}
-              hotkeyScope="record-create"
               onChange={handleChange}
               disabled={readonly}
             />

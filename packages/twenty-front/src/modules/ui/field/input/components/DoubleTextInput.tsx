@@ -34,7 +34,6 @@ type DoubleTextInputProps = {
   secondValue: string;
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
-  hotkeyScope: string;
   onEnter: (newDoubleTextValue: FieldDoubleText) => void;
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
@@ -53,7 +52,6 @@ export const DoubleTextInput = ({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  hotkeyScope,
   onClickOutside,
   onEnter,
   onEscape,
@@ -97,7 +95,6 @@ export const DoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEnter, firstInternalValue, secondInternalValue],
   });
@@ -110,7 +107,6 @@ export const DoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEscape, firstInternalValue, secondInternalValue],
   });
@@ -128,7 +124,6 @@ export const DoubleTextInput = ({
         });
       }
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [
       onTab,
@@ -151,7 +146,6 @@ export const DoubleTextInput = ({
         });
       }
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [
       onShiftTab,

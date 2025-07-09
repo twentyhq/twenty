@@ -87,6 +87,18 @@ export type ApiConfig = {
   mutationMaximumAffectedRecords: Scalars['Float'];
 };
 
+export type ApiKey = {
+  __typename?: 'ApiKey';
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  revokedAt?: Maybe<Scalars['DateTime']>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+  workspaceId: Scalars['String'];
+};
+
 export type ApiKeyToken = {
   __typename?: 'ApiKeyToken';
   token: Scalars['String'];
@@ -435,6 +447,12 @@ export type ConnectionParametersOutput = {
   username: Scalars['String'];
 };
 
+export type CreateApiKeyDto = {
+  expiresAt: Scalars['String'];
+  name: Scalars['String'];
+  revokedAt?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -489,6 +507,13 @@ export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type CreateWebhookDto = {
+  description?: InputMaybe<Scalars['String']>;
+  operations: Array<Scalars['String']>;
+  secret?: InputMaybe<Scalars['String']>;
+  targetUrl: Scalars['String'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -572,6 +597,10 @@ export type DeleteSsoOutput = {
   identityProviderId: Scalars['String'];
 };
 
+export type DeleteWebhookDto = {
+  id: Scalars['String'];
+};
+
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
   stepId: Scalars['String'];
@@ -642,6 +671,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
@@ -649,7 +679,8 @@ export enum FeatureFlagKey {
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED'
+  IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
+  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
 }
 
 export type Field = {
@@ -730,6 +761,23 @@ export enum FieldMetadataType {
   UUID = 'UUID'
 }
 
+export type FieldPermission = {
+  __typename?: 'FieldPermission';
+  canReadFieldValue?: Maybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: Maybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  id: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+export type FieldPermissionInput = {
+  canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
@@ -759,6 +807,10 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
+export type GetApiKeyDto = {
+  id: Scalars['String'];
+};
+
 export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
@@ -782,6 +834,10 @@ export type GetServerlessFunctionSourceCodeInput = {
   id: Scalars['ID'];
   /** The version of the function */
   version?: Scalars['String'];
+};
+
+export type GetWebhookDto = {
+  id: Scalars['String'];
 };
 
 export enum HealthIndicatorId {
@@ -955,6 +1011,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -966,6 +1023,7 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createWebhook: Webhook;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
@@ -977,6 +1035,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
+  deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
@@ -997,6 +1056,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
+  revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
@@ -1010,6 +1070,7 @@ export type Mutation = {
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
   trackAnalytics: Analytics;
+  updateApiKey?: Maybe<ApiKey>;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -1018,6 +1079,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
@@ -1027,6 +1089,7 @@ export type Mutation = {
   uploadImage: SignedFileDto;
   uploadProfilePicture: SignedFileDto;
   uploadWorkspaceLogo: SignedFileDto;
+  upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -1067,6 +1130,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateApiKeyArgs = {
+  input: CreateApiKeyDto;
 };
 
 
@@ -1119,6 +1187,11 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
+export type MutationCreateWebhookArgs = {
+  input: CreateWebhookDto;
+};
+
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
@@ -1161,6 +1234,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteWebhookArgs = {
+  input: DeleteWebhookDto;
 };
 
 
@@ -1255,6 +1333,11 @@ export type MutationResendWorkspaceInvitationArgs = {
 };
 
 
+export type MutationRevokeApiKeyArgs = {
+  input: RevokeApiKeyDto;
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
@@ -1313,6 +1396,11 @@ export type MutationTrackAnalyticsArgs = {
 };
 
 
+export type MutationUpdateApiKeyArgs = {
+  input: UpdateApiKeyDto;
+};
+
+
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
@@ -1352,6 +1440,11 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
+};
+
+
+export type MutationUpdateWebhookArgs = {
+  input: UpdateWebhookDto;
 };
 
 
@@ -1402,6 +1495,11 @@ export type MutationUploadProfilePictureArgs = {
 
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationUpsertFieldPermissionsArgs = {
+  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
 };
 
 
@@ -1632,6 +1730,8 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  apiKey?: Maybe<ApiKey>;
+  apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
@@ -1670,6 +1770,13 @@ export type Query = {
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
+  webhook?: Maybe<Webhook>;
+  webhooks: Array<Webhook>;
+};
+
+
+export type QueryApiKeyArgs = {
+  input: GetApiKeyDto;
 };
 
 
@@ -1782,6 +1889,11 @@ export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
 
+
+export type QueryWebhookArgs = {
+  input: GetWebhookDto;
+};
+
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
@@ -1857,6 +1969,10 @@ export enum RemoteTableStatus {
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
+};
+
+export type RevokeApiKeyDto = {
+  id: Scalars['String'];
 };
 
 export type Role = {
@@ -2221,6 +2337,13 @@ export type UpdateAgentInput = {
   responseFormat?: InputMaybe<Scalars['JSON']>;
 };
 
+export type UpdateApiKeyDto = {
+  expiresAt?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  revokedAt?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -2294,6 +2417,14 @@ export type UpdateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type UpdateWebhookDto = {
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  operations?: InputMaybe<Array<Scalars['String']>>;
+  secret?: InputMaybe<Scalars['String']>;
+  targetUrl?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -2320,6 +2451,11 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
+};
+
+export type UpsertFieldPermissionsInput = {
+  fieldPermissions: Array<FieldPermissionInput>;
+  roleId: Scalars['String'];
 };
 
 export type UpsertObjectPermissionsInput = {
@@ -2419,6 +2555,20 @@ export type VersionInfo = {
   __typename?: 'VersionInfo';
   currentVersion?: Maybe<Scalars['String']>;
   latestVersion: Scalars['String'];
+};
+
+export type Webhook = {
+  __typename?: 'Webhook';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  operations: Array<Scalars['String']>;
+  secret: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+  workspaceId: Scalars['String'];
 };
 
 export type WorkerQueueMetrics = {

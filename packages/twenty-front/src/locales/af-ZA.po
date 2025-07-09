@@ -160,7 +160,7 @@ msgstr ""
 #~ msgstr "1 000 workflow node executions"
 
 #. js-lingui-id: vb5TwV
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
 msgstr "1. Kies 'n veldtipe"
 
@@ -197,7 +197,7 @@ msgid "2. Configure"
 msgstr "2. Stel op"
 
 #. js-lingui-id: 0HAF12
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Stel veld op"
 
@@ -389,6 +389,12 @@ msgstr "Voeg veld by"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Voeg filter by"
+
+#. js-lingui-id: kydAxA
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+msgid "Add first filter"
+msgstr ""
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -1947,7 +1953,7 @@ msgstr ""
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2333,6 +2339,11 @@ msgstr "Voer die inligting in om die verbinding te stel"
 msgid "Enter user ID or email address"
 msgstr "Voer gebruiker-ID of e-posadres in"
 
+#. js-lingui-id: pubQie
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
+msgid "Enter value"
+msgstr ""
+
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
@@ -2620,6 +2631,11 @@ msgstr "Voer werkvloeie uit"
 msgid "Extra Credits Used"
 msgstr ""
 
+#. js-lingui-id: nKkohy
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Failed to load webhook"
+msgstr ""
+
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 #~ msgid "Failed to remove  override"
@@ -2692,6 +2708,7 @@ msgid "Fields Count"
 msgstr "Velde Aantal"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Filter"
@@ -3031,7 +3048,7 @@ msgstr "Ikoon"
 
 #. js-lingui-id: XTWO+W
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Icon and Name"
 msgstr "Ikon en Naam"
 
@@ -3981,6 +3998,11 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: 1PwrEH
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
+msgid "No Field Selected"
+msgstr ""
+
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -4228,8 +4250,8 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Objects"
 msgstr "Objekte"
 
@@ -4512,7 +4534,7 @@ msgstr ""
 #~ msgstr "Tik asseblief {confirmationText} om te bevestig jy wil hierdie webhook verwyder."
 
 #. js-lingui-id: aRWD63
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
 msgstr "Gebruik asseblief verskillende name vir u bron- en bestemmingsvelde"
 
@@ -5673,7 +5695,7 @@ msgstr "Die verstek land vir nuwe adresse"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "Die beskrywing van hierdie veld"
 
@@ -5689,7 +5711,7 @@ msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "Die naam en ikoon van hierdie veld"
 
@@ -5715,7 +5737,7 @@ msgstr "Die bladsy waarna jy soek is of weg of het nooit bestaan nie. Kom ons kr
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The values of this field"
 msgstr "Die waardes van hierdie veld"
 
@@ -6141,7 +6163,7 @@ msgstr ""
 #. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Waardes"
 
@@ -6371,8 +6393,8 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx

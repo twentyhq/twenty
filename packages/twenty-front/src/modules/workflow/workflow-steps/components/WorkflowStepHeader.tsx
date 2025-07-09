@@ -107,7 +107,6 @@ export const WorkflowStepHeader = ({
             value={title}
             onChange={handleChange}
             placeholder={headerType}
-            hotkeyScope="workflow-step-title"
             onEnter={saveTitle}
             onEscape={() => {
               setTitle(initialTitle);

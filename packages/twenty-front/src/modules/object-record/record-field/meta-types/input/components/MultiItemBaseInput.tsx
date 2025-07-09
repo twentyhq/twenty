@@ -67,7 +67,6 @@ const StyledErrorDiv = styled.div`
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
-  hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
   onEscape?: () => void;
@@ -97,7 +96,6 @@ export const MultiItemBaseInput = forwardRef<
       className,
       value,
       placeholder,
-      hotkeyScope = 'dropdown-menu-input',
       onChange,
       onClickOutside,
       onEnter = () => {},
@@ -125,7 +123,6 @@ export const MultiItemBaseInput = forwardRef<
       onClickOutside,
       onTab,
       onShiftTab,
-      hotkeyScope,
     });
 
     return (

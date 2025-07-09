@@ -22,8 +22,11 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
+import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
@@ -60,6 +63,7 @@ export class RoleResolver {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
     private readonly agentRoleService: AgentRoleService,
+    private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -176,6 +180,18 @@ export class RoleResolver {
     return this.settingPermissionService.upsertSettingPermissions({
       workspaceId: workspace.id,
       input: upsertSettingPermissionsInput,
+    });
+  }
+
+  @Mutation(() => [FieldPermissionDTO])
+  async upsertFieldPermissions(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('upsertFieldPermissionsInput')
+    upsertFieldPermissionsInput: UpsertFieldPermissionsInput,
+  ): Promise<FieldPermissionDTO[]> {
+    return this.fieldPermissionService.upsertFieldPermissions({
+      workspaceId: workspace.id,
+      input: upsertFieldPermissionsInput,
     });
   }
 

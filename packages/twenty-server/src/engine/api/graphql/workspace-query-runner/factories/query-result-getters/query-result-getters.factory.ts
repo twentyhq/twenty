@@ -19,9 +19,9 @@ import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -120,6 +120,10 @@ export class QueryResultGettersFactory {
     workspaceId: string,
   ): Promise<ObjectRecord> {
     const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
+
+    if (!isDefined(objectMetadataMapItem)) {
+      throw new Error('Object metadata map item is not defined');
+    }
 
     const handler = this.getHandler(objectMetadataMapItem.nameSingular);
 
