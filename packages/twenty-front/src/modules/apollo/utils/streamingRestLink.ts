@@ -66,7 +66,6 @@ export class StreamingRestLink extends ApolloLink {
 
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
-          let accumulatedData = '';
 
           let isStreaming = true;
           while (isStreaming) {
@@ -79,19 +78,9 @@ export class StreamingRestLink extends ApolloLink {
             }
 
             const decodedChunk = decoder.decode(value, { stream: true });
-            accumulatedData += decodedChunk;
 
             if (isDefined(onChunk) && typeof onChunk === 'function') {
-              onChunk(accumulatedData);
-            }
-
-            try {
-              const parsedData = JSON.parse(decodedChunk);
-              observer.next({ data: parsedData });
-            } catch {
-              observer.next({
-                data: { streamingData: decodedChunk },
-              });
+              onChunk(decodedChunk);
             }
           }
         })
