@@ -943,6 +943,7 @@ export enum MessageChannelVisibility {
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
+  NONE = 'NONE',
   OPENAI = 'OPENAI'
 }
 

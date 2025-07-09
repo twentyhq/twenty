@@ -635,10 +635,14 @@ export class WorkflowVersionStepWorkspaceService {
           );
         }
 
-        const userWorkspaceId = this.scopedWorkspaceContextFactory.create().userWorkspaceId;
-        
+        const userWorkspaceId =
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
+
         if (userWorkspaceId) {
-          await this.agentChatService.createThread(newAgent.id, userWorkspaceId);
+          await this.agentChatService.createThread(
+            newAgent.id,
+            userWorkspaceId,
+          );
         }
 
         return {

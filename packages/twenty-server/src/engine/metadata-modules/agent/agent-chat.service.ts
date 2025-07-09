@@ -13,7 +13,6 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 
-
 @Injectable()
 export class AgentChatService {
   constructor(
