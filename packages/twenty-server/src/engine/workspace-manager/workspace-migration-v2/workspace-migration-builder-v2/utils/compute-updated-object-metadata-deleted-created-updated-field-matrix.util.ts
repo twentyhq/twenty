@@ -1,8 +1,8 @@
-import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-field-metadata';
+import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import {
   FlattenObjectMetadata,
   FlattenObjectMetadataWithoutFields,
-} from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-object-metadata';
+} from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
   CustomDeletedCreatedUpdatedMatrix,

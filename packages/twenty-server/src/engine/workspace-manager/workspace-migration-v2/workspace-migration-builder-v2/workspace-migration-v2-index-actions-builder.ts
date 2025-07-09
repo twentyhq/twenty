@@ -1,4 +1,4 @@
-import { compareTwoFlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-index-metadata-comparator.util';
+import { compareTwoFlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-index-metadata-comparator.util';
 import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 import { UpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
 import {

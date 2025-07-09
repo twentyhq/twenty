@@ -1,4 +1,4 @@
-import { compareTwoFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flatten-field-metadata-comparator.util';
+import { compareTwoFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
 import {
   UpdateFieldAction,
   WorkspaceMigrationFieldActionV2,

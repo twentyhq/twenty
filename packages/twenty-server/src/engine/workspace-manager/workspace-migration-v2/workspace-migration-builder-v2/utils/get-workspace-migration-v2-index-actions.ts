@@ -1,4 +1,4 @@
-import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flatten-index-metadata';
+import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import {
   CreateIndexAction,
   DeleteIndexAction,
