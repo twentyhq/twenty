@@ -11,6 +11,7 @@ exports[`useDeleteOneRecord A. Starting from empty cache 1. Should successfully 
 exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle successfull record deletion 1`] = `
 {
   "__typename": "Person",
+  "avatarUrl": null,
   "city": "ASd",
   "company": {
     "__typename": "Company",
@@ -54,12 +55,18 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
   "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
+    "context": null,
     "name": "Tim Apple",
     "source": "MANUAL",
     "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
   },
   "deletedAt": "2024-02-14T09:45:00Z",
+  "emails": {
+    "additionalEmails": [],
+    "primaryEmail": "asd.com",
+  },
   "id": "da3c2c4b-da01-4b81-9734-226069eb4cd0",
+  "intro": "",
   "jobTitle": "",
   "linkedinLink": {
     "__typename": "Links",
@@ -73,13 +80,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     "lastName": "Test",
   },
   "noteTargets": [],
+  "performanceRating": null,
   "phones": {
+    "additionalPhones": [],
     "primaryPhoneCallingCode": "+33",
     "primaryPhoneCountryCode": "FR",
     "primaryPhoneNumber": "781234562",
   },
   "position": 0,
   "taskTargets": [],
+  "updatedAt": "2025-01-02T09:52:46.814Z",
+  "whatsapp": {
+    "additionalPhones": [],
+    "primaryPhoneCallingCode": "",
+    "primaryPhoneCountryCode": "",
+    "primaryPhoneNumber": "",
+  },
+  "workPreference": null,
   "xLink": {
     "__typename": "Links",
     "primaryLinkLabel": "",
@@ -135,16 +152,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
   "people": [
     {
       "__typename": "Person",
+      "avatarUrl": null,
       "city": "Seattle",
       "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
+        "context": null,
         "name": "Tim Apple",
         "source": "MANUAL",
         "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
       },
       "deletedAt": null,
+      "emails": {
+        "additionalEmails": [],
+        "primaryEmail": "christoph.calisto@linkedin.com",
+      },
       "id": "20202020-1c0e-494c-a1b6-85b1c6fefaa5",
+      "intro": "",
       "jobTitle": "",
       "linkedinLink": {
         "__typename": "Links",
@@ -157,12 +181,22 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
         "firstName": "Christoph",
         "lastName": "Callisto",
       },
+      "performanceRating": null,
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234562",
       },
       "position": 1,
+      "updatedAt": "2025-01-01T09:50:00.000Z",
+      "whatsapp": {
+        "additionalPhones": [],
+        "primaryPhoneCallingCode": "",
+        "primaryPhoneCountryCode": "",
+        "primaryPhoneNumber": "",
+      },
+      "workPreference": null,
       "xLink": {
         "__typename": "Links",
         "primaryLinkLabel": "",
@@ -195,6 +229,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
         "lastName": "Palmer",
       },
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234576",
@@ -216,6 +251,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
 exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optimistic cache on record deletion 1`] = `
 {
   "__typename": "Person",
+  "avatarUrl": null,
   "city": "ASd",
   "company": {
     "__typename": "Company",
@@ -259,12 +295,18 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
   "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
+    "context": null,
     "name": "Tim Apple",
     "source": "MANUAL",
     "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
   },
   "deletedAt": Any<String>,
+  "emails": {
+    "additionalEmails": [],
+    "primaryEmail": "asd.com",
+  },
   "id": "da3c2c4b-da01-4b81-9734-226069eb4cd0",
+  "intro": "",
   "jobTitle": "",
   "linkedinLink": {
     "__typename": "Links",
@@ -278,13 +320,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "lastName": "Test",
   },
   "noteTargets": [],
+  "performanceRating": null,
   "phones": {
+    "additionalPhones": [],
     "primaryPhoneCallingCode": "+33",
     "primaryPhoneCountryCode": "FR",
     "primaryPhoneNumber": "781234562",
   },
   "position": 0,
   "taskTargets": [],
+  "updatedAt": "2025-01-02T09:52:46.814Z",
+  "whatsapp": {
+    "additionalPhones": [],
+    "primaryPhoneCallingCode": "",
+    "primaryPhoneCountryCode": "",
+    "primaryPhoneNumber": "",
+  },
+  "workPreference": null,
   "xLink": {
     "__typename": "Links",
     "primaryLinkLabel": "",
@@ -340,16 +392,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
   "people": [
     {
       "__typename": "Person",
+      "avatarUrl": null,
       "city": "Seattle",
       "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
+        "context": null,
         "name": "Tim Apple",
         "source": "MANUAL",
         "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
       },
       "deletedAt": null,
+      "emails": {
+        "additionalEmails": [],
+        "primaryEmail": "christoph.calisto@linkedin.com",
+      },
       "id": "20202020-1c0e-494c-a1b6-85b1c6fefaa5",
+      "intro": "",
       "jobTitle": "",
       "linkedinLink": {
         "__typename": "Links",
@@ -362,12 +421,22 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
         "firstName": "Christoph",
         "lastName": "Callisto",
       },
+      "performanceRating": null,
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234562",
       },
       "position": 1,
+      "updatedAt": "2025-01-01T09:50:00.000Z",
+      "whatsapp": {
+        "additionalPhones": [],
+        "primaryPhoneCallingCode": "",
+        "primaryPhoneCountryCode": "",
+        "primaryPhoneNumber": "",
+      },
+      "workPreference": null,
       "xLink": {
         "__typename": "Links",
         "primaryLinkLabel": "",
@@ -400,6 +469,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
         "lastName": "Palmer",
       },
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234576",
@@ -421,6 +491,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
 exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optimistic cache rollback on record deletion failure 1`] = `
 {
   "__typename": "Person",
+  "avatarUrl": null,
   "city": "ASd",
   "company": {
     "__typename": "Company",
@@ -464,12 +535,18 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
   "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
+    "context": null,
     "name": "Tim Apple",
     "source": "MANUAL",
     "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
   },
   "deletedAt": null,
+  "emails": {
+    "additionalEmails": [],
+    "primaryEmail": "asd.com",
+  },
   "id": "da3c2c4b-da01-4b81-9734-226069eb4cd0",
+  "intro": "",
   "jobTitle": "",
   "linkedinLink": {
     "__typename": "Links",
@@ -483,13 +560,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     "lastName": "Test",
   },
   "noteTargets": [],
+  "performanceRating": null,
   "phones": {
+    "additionalPhones": [],
     "primaryPhoneCallingCode": "+33",
     "primaryPhoneCountryCode": "FR",
     "primaryPhoneNumber": "781234562",
   },
   "position": 0,
   "taskTargets": [],
+  "updatedAt": "2025-01-02T09:52:46.814Z",
+  "whatsapp": {
+    "additionalPhones": [],
+    "primaryPhoneCallingCode": "",
+    "primaryPhoneCountryCode": "",
+    "primaryPhoneNumber": "",
+  },
+  "workPreference": null,
   "xLink": {
     "__typename": "Links",
     "primaryLinkLabel": "",
@@ -545,16 +632,23 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
   "people": [
     {
       "__typename": "Person",
+      "avatarUrl": null,
       "city": "Seattle",
       "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
+        "context": null,
         "name": "Tim Apple",
         "source": "MANUAL",
         "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
       },
       "deletedAt": null,
+      "emails": {
+        "additionalEmails": [],
+        "primaryEmail": "christoph.calisto@linkedin.com",
+      },
       "id": "20202020-1c0e-494c-a1b6-85b1c6fefaa5",
+      "intro": "",
       "jobTitle": "",
       "linkedinLink": {
         "__typename": "Links",
@@ -567,12 +661,22 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
         "firstName": "Christoph",
         "lastName": "Callisto",
       },
+      "performanceRating": null,
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234562",
       },
       "position": 1,
+      "updatedAt": "2025-01-01T09:50:00.000Z",
+      "whatsapp": {
+        "additionalPhones": [],
+        "primaryPhoneCallingCode": "",
+        "primaryPhoneCountryCode": "",
+        "primaryPhoneNumber": "",
+      },
+      "workPreference": null,
       "xLink": {
         "__typename": "Links",
         "primaryLinkLabel": "",
@@ -605,6 +709,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
         "lastName": "Palmer",
       },
       "phones": {
+        "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "781234576",

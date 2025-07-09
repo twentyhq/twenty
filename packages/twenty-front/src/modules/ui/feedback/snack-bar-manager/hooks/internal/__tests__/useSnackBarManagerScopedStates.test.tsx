@@ -1,5 +1,4 @@
-import { act } from 'react-dom/test-utils';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
