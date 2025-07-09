@@ -1,8 +1,9 @@
 import { getFlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flatten-object-metadata.mock';
 import { WorkspaceMigrationActionTypeV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 import { EachTestingContext } from 'twenty-shared/testing';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 
 type WorkspaceBuilderArgs = Parameters<
   typeof WorkspaceMigrationBuilderV2Service.prototype.build
@@ -13,22 +14,31 @@ type ConvertActionTypeToCamelCase<T extends string> =
     ? `${Before}${Capitalize<After>}`
     : T;
 
+type CamelCasedWorkspaceMigrationActionsType =
+  ConvertActionTypeToCamelCase<WorkspaceMigrationActionTypeV2>;
+
+type ExpectedActionCounters = {
+  total: number;
+} & Partial<Record<CamelCasedWorkspaceMigrationActionsType, number>>;
+
 type TestCase = EachTestingContext<{
   input: WorkspaceBuilderArgs | (() => WorkspaceBuilderArgs);
-  expected?: {
-    total: number;
-  } & Partial<
-    Record<ConvertActionTypeToCamelCase<WorkspaceMigrationActionTypeV2>, number>
-  >;
+  expectedActionsTypeCounter: ExpectedActionCounters;
 }>;
 
 const successfulTestCases: TestCase[] = [
   // {
-  //   title: 'Fist test',
+  //   title: 'It should not infer any actions as from and to are identical',
   //   context: {
-  //     input: {
-  //       from: [getFlattenObjectMetadata({ uniqueIdentifier: 'pomme' })],
-  //       to: [getFlattenObjectMetadata({ uniqueIdentifier: 'pomme' })],
+  //     input: () => {
+  //       const from = [getFlattenObjectMetadata({ uniqueIdentifier: 'pomme' })];
+  //       return {
+  //         from,
+  //         to: from,
+  //       };
+  //     },
+  //     expectedActionsTypeCounter: {
+  //       total: 0,
   //     },
   //   },
   // },
@@ -42,7 +52,7 @@ const successfulTestCases: TestCase[] = [
           to: from,
         };
       },
-      expected: {
+      expectedActionsTypeCounter: {
         total: 0,
       },
     },
@@ -55,16 +65,48 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     service = new WorkspaceMigrationBuilderV2Service();
   });
 
-  it.each(successfulTestCases)('$title', ({ context: { input, expected } }) => {
-    const { from, to } = typeof input === 'function' ? input() : input;
-    const workspaceMigration = service.build({
-      from,
-      to,
-    });
+  const expectedActionsLengthChecker = ({
+    expectedActionsTypeCounter,
+    workspaceMigration,
+  }: {
+    workspaceMigration: WorkspaceMigrationV2;
+    expectedActionsTypeCounter: ExpectedActionCounters;
+  }) => {
+    const initialAcc: ExpectedActionCounters = { total: 0 };
+    const actualActionsTypeCounter =
+      workspaceMigration.actions.reduce<ExpectedActionCounters>(
+        (acc, action) => {
+          const { type } = action;
+          const [operation, target] = type.split('_');
+          const formattedActionKey =
+            `${operation}${capitalize(target)}` as CamelCasedWorkspaceMigrationActionsType;
 
-    if (isDefined(expected?.total)) {
-      expect(workspaceMigration.actions.length).toBe(expected?.total);
-    }
-    expect(workspaceMigration).toMatchSnapshot();
-  });
+          return {
+            ...acc,
+            total: acc.total + 1,
+            [formattedActionKey]: acc[formattedActionKey] ?? 0 + 1,
+          };
+        },
+        initialAcc,
+      );
+
+    expect(actualActionsTypeCounter).toEqual(expectedActionsTypeCounter);
+  };
+
+  it.each(successfulTestCases)(
+    '$title',
+    ({ context: { input, expectedActionsTypeCounter } }) => {
+      const { from, to } = typeof input === 'function' ? input() : input;
+      const workspaceMigration = service.build({
+        from,
+        to,
+      });
+
+      expectedActionsLengthChecker({
+        expectedActionsTypeCounter,
+        workspaceMigration,
+      });
+      expect(workspaceMigration).toMatchSnapshot();
+    },
+  );
 });
