@@ -133,7 +133,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`IMAP Port`}
                     type="number"
                     placeholder="993"
-                    value={field?.value?.toString()}
+                    value={field?.value ? field.value : 993}
                     onChange={(value) =>
                       field.onChange(handlePortChange(value))
                     }
@@ -214,7 +214,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`SMTP Port`}
                     type="number"
                     placeholder="587"
-                    value={field?.value?.toString()}
+                    value={field?.value ? field.value : 587}
                     onChange={(value) =>
                       field.onChange(handlePortChange(value))
                     }
@@ -295,7 +295,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`CalDAV Port`}
                     type="number"
                     placeholder="443"
-                    value={field?.value?.toString()}
+                    value={field?.value ? field.value : 443}
                     onChange={(value) =>
                       field.onChange(handlePortChange(value))
                     }

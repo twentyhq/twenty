@@ -10,7 +10,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -59,7 +59,8 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              {isDefined(account.connectionParameters?.SMTP) ? (
+              {account.provider ===
+                ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
                 <MenuItem
                   text={t`Connection settings`}
                   LeftIcon={IconSettings}
@@ -70,16 +71,15 @@ export const SettingsAccountsRowDropdownMenu = ({
                     closeDropdown(dropdownId);
                   }}
                 />
-              ) : (
-                <MenuItem
-                  LeftIcon={IconMail}
-                  text={t`Emails settings`}
-                  onClick={() => {
-                    navigate(SettingsPath.AccountsEmails);
-                    closeDropdown(dropdownId);
-                  }}
-                />
               )}
+              <MenuItem
+                LeftIcon={IconMail}
+                text={t`Emails settings`}
+                onClick={() => {
+                  navigate(SettingsPath.AccountsEmails);
+                  closeDropdown(dropdownId);
+                }}
+              />
               <MenuItem
                 LeftIcon={IconCalendarEvent}
                 text={t`Calendar settings`}

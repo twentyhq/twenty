@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 
@@ -40,13 +40,9 @@ export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const [saveConnection, { loading: saveLoading }] =
-    useSaveImapSmtpCaldavMutation();
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
@@ -54,7 +50,8 @@ export const useImapSmtpCaldavConnectionForm = ({
   });
 
   const { handleSubmit, formState, watch, reset } = formMethods;
-  const { isValid, isSubmitting } = formState;
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
     useConnectedImapSmtpCaldavAccount(
@@ -74,18 +71,32 @@ export const useImapSmtpCaldavConnectionForm = ({
       ),
     );
 
+  const [saveConnection, { loading: saveLoading }] =
+    useSaveImapSmtpCaldavMutation();
+
   const watchedValues = watch();
 
   const getConfiguredProtocols = useCallback(
     (
       values: ConnectionFormData = watchedValues,
     ): (keyof ImapSmtpCaldavAccount)[] => {
-      return ACCOUNT_PROTOCOLS.filter((protocol) =>
-        isProtocolConfigured(values[protocol] as ConnectionParameters),
-      );
+      return ACCOUNT_PROTOCOLS.filter((protocol) => {
+        const protocolConfig = values[protocol];
+        return (
+          protocolConfig &&
+          isProtocolConfigured(protocolConfig as ConnectionParameters)
+        );
+      });
     },
     [watchedValues],
   );
+
+  const isValid = useMemo(() => {
+    return (
+      Boolean(watchedValues.handle?.trim()) &&
+      getConfiguredProtocols().length > 0
+    );
+  }, [getConfiguredProtocols, watchedValues.handle]);
 
   const validateWorkspaceRequirements = useCallback((): boolean => {
     if (!currentWorkspace?.id) {
@@ -110,6 +121,11 @@ export const useImapSmtpCaldavConnectionForm = ({
         throw new Error('Workspace member ID is missing');
       }
 
+      const protocolConfig = formValues[protocol];
+      if (!protocolConfig) {
+        throw new Error(`${protocol} configuration is missing`);
+      }
+
       await saveConnection({
         variables: {
           ...(isEditing && connectedAccountId
@@ -120,7 +136,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           accountType: {
             type: protocol,
           },
-          connectionParameters: formValues[protocol] as ConnectionParameters,
+          connectionParameters: protocolConfig,
         },
       });
     },
@@ -178,7 +194,6 @@ export const useImapSmtpCaldavConnectionForm = ({
     canSave,
     isSubmitting,
     loading,
-    connectedAccount: connectedAccount ?? null,
-    getConfiguredProtocols,
+    connectedAccount,
   };
 };
