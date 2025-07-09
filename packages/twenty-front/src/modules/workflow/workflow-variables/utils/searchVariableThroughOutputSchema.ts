@@ -4,6 +4,7 @@ import {
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
+import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,6 +29,18 @@ const getDisplayedSubStepFieldLabel = (
   }
 
   return;
+};
+
+const getVariableType = (key: string, outputSchema: OutputSchema): string => {
+  if (isRecordOutputSchema(outputSchema)) {
+    return outputSchema.fields[key]?.type ?? 'unknown';
+  }
+
+  if (isLinkOutputSchema(outputSchema)) {
+    return 'unknown';
+  }
+
+  return outputSchema[key]?.type ?? 'unknown';
 };
 
 const searchCurrentStepOutputSchema = ({
@@ -90,6 +103,7 @@ const searchCurrentStepOutputSchema = ({
     return {
       variableLabel: undefined,
       variablePathLabel: undefined,
+      variableType: undefined,
     };
   }
 
@@ -102,6 +116,10 @@ const searchCurrentStepOutputSchema = ({
             currentSubStep,
           ),
     variablePathLabel,
+    variableType: getVariableType(
+      isSelectedFieldInNextKey ? nextKey : selectedField,
+      currentSubStep,
+    ),
   };
 };
 
@@ -142,15 +160,17 @@ export const searchVariableThroughOutputSchema = ({
     };
   }
 
-  const { variableLabel, variablePathLabel } = searchCurrentStepOutputSchema({
-    stepOutputSchema,
-    path,
-    isFullRecord,
-    selectedField,
-  });
+  const { variableLabel, variablePathLabel, variableType } =
+    searchCurrentStepOutputSchema({
+      stepOutputSchema,
+      path,
+      isFullRecord,
+      selectedField,
+    });
 
   return {
     variableLabel,
     variablePathLabel: `${variablePathLabel} > ${variableLabel}`,
+    variableType,
   };
 };

@@ -10,7 +10,7 @@ import {
   StepFilter,
   StepFilterGroup,
   StepLogicalOperator,
-  StepOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
@@ -43,10 +43,10 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
     const newStepFilter = {
       id: v4(),
-      type: 'text',
+      type: 'unknown',
       label: 'New Filter',
       value: '',
-      operand: StepOperand.EQ,
+      operand: ViewFilterOperand.Is,
       displayValue: '',
       stepFilterGroupId: stepFilterGroup.id,
       stepOutputKey: '',
@@ -72,8 +72,8 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
     const newStepFilter: StepFilter = {
       id: v4(),
-      type: 'text',
-      operand: StepOperand.EQ,
+      type: 'unknown',
+      operand: ViewFilterOperand.Is,
       value: '',
       displayValue: '',
       stepFilterGroupId: newStepFilterGroupId,

@@ -4,7 +4,7 @@ import {
   StepFilter,
   StepFilterGroup,
   StepLogicalOperator,
-  StepOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -28,7 +28,7 @@ const TEXT_STEP_FILTER: StepFilter = {
   type: 'text',
   label: 'Company Name',
   value: 'Acme',
-  operand: StepOperand.LIKE,
+  operand: ViewFilterOperand.Contains,
 };
 
 const meta: Meta<typeof WorkflowStepFilterColumn> = {

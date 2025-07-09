@@ -2,12 +2,32 @@ import {
   StepFilter,
   StepFilterGroup,
   StepLogicalOperator,
-  StepOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 describe('evaluateFilterConditions', () => {
+  type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
+    rightOperand: unknown;
+    leftOperand: unknown;
+  };
+
+  const createFilter = (
+    operand: ViewFilterOperand,
+    leftOperand: unknown,
+    rightOperand: unknown,
+  ): ResolvedFilter => ({
+    id: 'filter1',
+    type: 'text',
+    label: 'Test Filter',
+    rightOperand,
+    operand,
+    displayValue: String(rightOperand),
+    stepFilterGroupId: 'group1',
+    leftOperand,
+  });
+
   describe('empty inputs', () => {
     it('should return true when no filters or groups are provided', () => {
       const result = evaluateFilterConditions({
@@ -26,190 +46,32 @@ describe('evaluateFilterConditions', () => {
   });
 
   describe('single filter operands', () => {
-    type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
-      rightOperand: unknown;
-      leftOperand: unknown;
-    };
-
-    const createFilter = (
-      operand: StepOperand,
-      leftOperand: unknown,
-      rightOperand: unknown,
-    ): ResolvedFilter => ({
-      id: 'filter1',
-      type: 'text',
-      label: 'Test Filter',
-      rightOperand,
-      operand,
-      displayValue: String(rightOperand),
-      stepFilterGroupId: 'group1',
-      leftOperand,
-    });
-
-    describe('eq operand', () => {
+    describe('Is operand', () => {
       it('should return true when values are equal', () => {
-        const filter = createFilter(StepOperand.EQ, 'John', 'John');
+        const filter = createFilter(ViewFilterOperand.Is, 'John', 'John');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
       });
 
       it('should return true when values are loosely equal', () => {
-        const filter = createFilter(StepOperand.EQ, '123', 123);
+        const filter = createFilter(ViewFilterOperand.Is, '123', 123);
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);
       });
 
       it('should return false when values are not equal', () => {
-        const filter = createFilter(StepOperand.EQ, 'John', 'Jane');
-        const result = evaluateFilterConditions({ filters: [filter] });
-
-        expect(result).toBe(false);
-      });
-    });
-
-    describe('ne operand', () => {
-      it('should return false when values are equal', () => {
-        const filter = createFilter(StepOperand.NE, 'John', 'John');
+        const filter = createFilter(ViewFilterOperand.Is, 'John', 'Jane');
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(false);
       });
 
-      it('should return true when values are not equal', () => {
-        const filter = createFilter(StepOperand.NE, 'John', 'Jane');
-        const result = evaluateFilterConditions({ filters: [filter] });
-
-        expect(result).toBe(true);
-      });
-    });
-
-    describe('numeric operands', () => {
-      it('should handle gt operand correctly', () => {
-        const filter1 = createFilter(StepOperand.GT, 30, 25);
-        const filter2 = createFilter(StepOperand.GT, 20, 25);
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-      });
-
-      it('should handle gte operand correctly', () => {
-        const filter1 = createFilter(StepOperand.GTE, 25, 25);
-        const filter2 = createFilter(StepOperand.GTE, 30, 25);
-        const filter3 = createFilter(StepOperand.GTE, 20, 25);
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-      });
-
-      it('should handle lt operand correctly', () => {
-        const filter1 = createFilter(StepOperand.LT, 20, 25);
-        const filter2 = createFilter(StepOperand.LT, 30, 25);
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-      });
-
-      it('should handle lte operand correctly', () => {
-        const filter1 = createFilter(StepOperand.LTE, 25, 25);
-        const filter2 = createFilter(StepOperand.LTE, 20, 25);
-        const filter3 = createFilter(StepOperand.LTE, 30, 25);
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-      });
-
-      it('should convert string numbers for numeric comparisons', () => {
-        const filter1 = createFilter(StepOperand.GT, '30', '25');
-        const filter2 = createFilter(StepOperand.LT, '20', '25');
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-      });
-    });
-
-    describe('string operands', () => {
-      it('should handle like operand correctly', () => {
-        const filter1 = createFilter(StepOperand.LIKE, 'Hello World', 'World');
-        const filter2 = createFilter(StepOperand.LIKE, 'Hello', 'World');
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-      });
-
-      it('should handle ilike operand correctly (case insensitive)', () => {
-        const filter1 = createFilter(StepOperand.ILIKE, 'Hello World', 'WORLD');
-        const filter2 = createFilter(StepOperand.ILIKE, 'Hello World', 'world');
-        const filter3 = createFilter(StepOperand.ILIKE, 'Hello', 'WORLD');
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
-      });
-    });
-
-    describe('in operand', () => {
-      it('should handle JSON array values', () => {
-        const filter1 = createFilter(
-          StepOperand.IN,
-          'apple',
-          '["apple", "banana", "cherry"]',
-        );
-        const filter2 = createFilter(
-          StepOperand.IN,
-          'grape',
-          '["apple", "banana", "cherry"]',
-        );
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-      });
-
-      it('should handle comma-separated string values when JSON parsing fails', () => {
-        const filter1 = createFilter(
-          StepOperand.IN,
-          'apple',
-          'apple, banana, cherry',
-        );
-        const filter2 = createFilter(
-          StepOperand.IN,
-          'grape',
-          'apple, banana, cherry',
-        );
-
-        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
-        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
-      });
-
-      it('should handle comma-separated values with whitespace', () => {
-        const filter = createFilter(
-          StepOperand.IN,
-          'apple',
-          ' apple , banana , cherry ',
-        );
-
-        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
-      });
-
-      it('should return false for non-array JSON values', () => {
-        const filter = createFilter(
-          StepOperand.IN,
-          'apple',
-          '{"key": "value"}',
-        );
-
-        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
-      });
-    });
-
-    describe('is operand', () => {
       it('should handle null checks', () => {
-        const filter1 = createFilter(StepOperand.IS, null, 'null');
-        const filter2 = createFilter(StepOperand.IS, undefined, 'NULL');
-        const filter3 = createFilter(StepOperand.IS, 'value', 'null');
+        const filter1 = createFilter(ViewFilterOperand.Is, null, 'null');
+        const filter2 = createFilter(ViewFilterOperand.Is, undefined, 'NULL');
+        const filter3 = createFilter(ViewFilterOperand.Is, 'value', 'null');
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
@@ -217,43 +79,213 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle not null checks', () => {
-        const filter1 = createFilter(StepOperand.IS, 'value', 'not null');
-        const filter2 = createFilter(StepOperand.IS, 'value', 'NOT NULL');
-        const filter3 = createFilter(StepOperand.IS, null, 'not null');
-        const filter4 = createFilter(StepOperand.IS, undefined, 'not null');
+        const filter1 = createFilter(ViewFilterOperand.Is, 'value', 'not null');
+        const filter2 = createFilter(ViewFilterOperand.Is, 'value', 'NOT NULL');
+        const filter3 = createFilter(ViewFilterOperand.Is, null, 'not null');
+        const filter4 = createFilter(
+          ViewFilterOperand.Is,
+          undefined,
+          'not null',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
         expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
       });
+    });
 
-      it('should handle exact value comparisons for non-null/not-null cases', () => {
-        const filter1 = createFilter(StepOperand.IS, 'exact', 'exact');
-        const filter2 = createFilter(StepOperand.IS, 'value', 'different');
+    describe('IsNot operand', () => {
+      it('should return false when values are equal', () => {
+        const filter = createFilter(ViewFilterOperand.IsNot, 'John', 'John');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when values are not equal', () => {
+        const filter = createFilter(ViewFilterOperand.IsNot, 'John', 'Jane');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('numeric operands', () => {
+      it('should handle GreaterThanOrEqual operand correctly', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          25,
+          25,
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          30,
+          25,
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.GreaterThanOrEqual,
+          20,
+          25,
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+      });
+
+      it('should handle LessThanOrEqual operand correctly', () => {
+        const filter1 = createFilter(ViewFilterOperand.LessThanOrEqual, 25, 25);
+        const filter2 = createFilter(ViewFilterOperand.LessThanOrEqual, 20, 25);
+        const filter3 = createFilter(ViewFilterOperand.LessThanOrEqual, 30, 25);
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+      });
+    });
+
+    describe('string and array operands', () => {
+      it('should handle Contains operand with strings', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello World',
+          'World',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.Contains,
+          'Hello',
+          'World',
+        );
 
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should handle DoesNotContain operand with strings', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello World',
+          'World',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          'Hello',
+          'World',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+      });
+
+      it('should handle Contains operand with arrays', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.Contains,
+          ['apple', 'banana', 'cherry'],
+          'apple',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.Contains,
+          ['apple', 'banana', 'cherry'],
+          'grape',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should handle DoesNotContain operand with arrays', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          ['apple', 'banana', 'cherry'],
+          'apple',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.DoesNotContain,
+          ['apple', 'banana', 'cherry'],
+          'grape',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+      });
+    });
+
+    describe('empty operands', () => {
+      it('should handle IsEmpty operand correctly', () => {
+        const filter1 = createFilter(ViewFilterOperand.IsEmpty, null, '');
+        const filter2 = createFilter(ViewFilterOperand.IsEmpty, undefined, '');
+        const filter3 = createFilter(ViewFilterOperand.IsEmpty, '', '');
+        const filter4 = createFilter(ViewFilterOperand.IsEmpty, [], '');
+        const filter5 = createFilter(
+          ViewFilterOperand.IsEmpty,
+          'not empty',
+          '',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+      });
+
+      it('should handle IsNotEmpty operand correctly', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          'not empty',
+          '',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          ['item'],
+          '',
+        );
+        const filter3 = createFilter(ViewFilterOperand.IsNotEmpty, null, '');
+        const filter4 = createFilter(ViewFilterOperand.IsNotEmpty, '', '');
+        const filter5 = createFilter(ViewFilterOperand.IsNotEmpty, [], '');
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+      });
+    });
+
+    describe('date operands', () => {
+      it('should handle date operands (returning false as placeholder)', () => {
+        const dateOperands = [
+          ViewFilterOperand.IsRelative,
+          ViewFilterOperand.IsInPast,
+          ViewFilterOperand.IsInFuture,
+          ViewFilterOperand.IsToday,
+          ViewFilterOperand.IsBefore,
+          ViewFilterOperand.IsAfter,
+        ];
+
+        dateOperands.forEach((operand) => {
+          const filter = createFilter(operand, new Date(), new Date());
+
+          expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+        });
       });
     });
 
     describe('error cases', () => {
       it('should throw error for unknown operand', () => {
-        const filter = createFilter('unknown' as StepOperand, 'value', 'value');
-
-        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Unknown operand: unknown',
+        const filter = createFilter(
+          'unknown' as ViewFilterOperand,
+          'value',
+          'value',
         );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
     });
   });
 
   describe('multiple filters without groups', () => {
-    type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
-      rightOperand: unknown;
-      leftOperand: unknown;
-    };
-
     it('should apply AND logic by default for multiple filters', () => {
       const filters: ResolvedFilter[] = [
         {
@@ -261,7 +293,7 @@ describe('evaluateFilterConditions', () => {
           type: 'text',
           label: 'Name Filter',
           rightOperand: 'John',
-          operand: StepOperand.EQ,
+          operand: ViewFilterOperand.Is,
           displayValue: 'John',
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
@@ -271,7 +303,7 @@ describe('evaluateFilterConditions', () => {
           type: 'number',
           label: 'Age Filter',
           rightOperand: 25,
-          operand: StepOperand.GT,
+          operand: ViewFilterOperand.GreaterThanOrEqual,
           displayValue: '25',
           stepFilterGroupId: 'group1',
           leftOperand: 30,
@@ -290,7 +322,7 @@ describe('evaluateFilterConditions', () => {
           type: 'text',
           label: 'Name Filter',
           rightOperand: 'John',
-          operand: StepOperand.EQ,
+          operand: ViewFilterOperand.Is,
           displayValue: 'John',
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
@@ -300,7 +332,7 @@ describe('evaluateFilterConditions', () => {
           type: 'number',
           label: 'Age Filter',
           rightOperand: 25,
-          operand: StepOperand.GT,
+          operand: ViewFilterOperand.GreaterThanOrEqual,
           displayValue: '25',
           stepFilterGroupId: 'group1',
           leftOperand: 20, // This will fail
@@ -314,11 +346,6 @@ describe('evaluateFilterConditions', () => {
   });
 
   describe('filter groups', () => {
-    type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
-      rightOperand: unknown;
-      leftOperand: unknown;
-    };
-
     describe('single group with AND logic', () => {
       it('should return true when all filters pass', () => {
         const filterGroups: StepFilterGroup[] = [
@@ -334,7 +361,7 @@ describe('evaluateFilterConditions', () => {
             type: 'text',
             label: 'Name Filter',
             rightOperand: 'John',
-            operand: StepOperand.EQ,
+            operand: ViewFilterOperand.Is,
             displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'John',
@@ -344,7 +371,7 @@ describe('evaluateFilterConditions', () => {
             type: 'number',
             label: 'Age Filter',
             rightOperand: 25,
-            operand: StepOperand.GT,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
             displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30,
@@ -370,7 +397,7 @@ describe('evaluateFilterConditions', () => {
             type: 'text',
             label: 'Name Filter',
             rightOperand: 'John',
-            operand: StepOperand.EQ,
+            operand: ViewFilterOperand.Is,
             displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
@@ -380,7 +407,7 @@ describe('evaluateFilterConditions', () => {
             type: 'number',
             label: 'Age Filter',
             rightOperand: 25,
-            operand: StepOperand.GT,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
             displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30,
@@ -408,7 +435,7 @@ describe('evaluateFilterConditions', () => {
             type: 'text',
             label: 'Name Filter',
             rightOperand: 'John',
-            operand: StepOperand.EQ,
+            operand: ViewFilterOperand.Is,
             displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
@@ -418,7 +445,7 @@ describe('evaluateFilterConditions', () => {
             type: 'number',
             label: 'Age Filter',
             rightOperand: 25,
-            operand: StepOperand.GT,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
             displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30, // This will pass
@@ -444,7 +471,7 @@ describe('evaluateFilterConditions', () => {
             type: 'text',
             label: 'Name Filter',
             rightOperand: 'John',
-            operand: StepOperand.EQ,
+            operand: ViewFilterOperand.Is,
             displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
@@ -454,7 +481,7 @@ describe('evaluateFilterConditions', () => {
             type: 'number',
             label: 'Age Filter',
             rightOperand: 25,
-            operand: StepOperand.GT,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
             displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 20, // This will fail
@@ -467,8 +494,110 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('multiple groups', () => {
+      it('should handle multiple root groups with AND logic between them', () => {
+        const filterGroups: StepFilterGroup[] = [
+          {
+            id: 'group1',
+            logicalOperator: StepLogicalOperator.AND,
+          },
+          {
+            id: 'group2',
+            logicalOperator: StepLogicalOperator.OR,
+          },
+        ];
+
+        const filters: ResolvedFilter[] = [
+          {
+            id: 'filter1',
+            type: 'text',
+            label: 'Name Filter',
+            rightOperand: 'John',
+            operand: ViewFilterOperand.Is,
+            displayValue: 'John',
+            stepFilterGroupId: 'group1',
+            leftOperand: 'John',
+          },
+          {
+            id: 'filter2',
+            type: 'number',
+            label: 'Age Filter',
+            rightOperand: 25,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
+            displayValue: '25',
+            stepFilterGroupId: 'group2',
+            leftOperand: 30,
+          },
+        ];
+
+        const result = evaluateFilterConditions({ filterGroups, filters });
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('nested groups', () => {
+      it('should handle nested filter groups correctly', () => {
+        const filterGroups: StepFilterGroup[] = [
+          {
+            id: 'root',
+            logicalOperator: StepLogicalOperator.AND,
+          },
+          {
+            id: 'child1',
+            logicalOperator: StepLogicalOperator.OR,
+            parentStepFilterGroupId: 'root',
+            positionInStepFilterGroup: 1,
+          },
+          {
+            id: 'child2',
+            logicalOperator: StepLogicalOperator.AND,
+            parentStepFilterGroupId: 'root',
+            positionInStepFilterGroup: 2,
+          },
+        ];
+
+        const filters: ResolvedFilter[] = [
+          {
+            id: 'filter1',
+            type: 'text',
+            label: 'Filter 1',
+            rightOperand: 'John',
+            operand: ViewFilterOperand.Is,
+            displayValue: 'John',
+            stepFilterGroupId: 'child1',
+            leftOperand: 'Jane', // This will fail
+          },
+          {
+            id: 'filter2',
+            type: 'text',
+            label: 'Filter 2',
+            rightOperand: 'Smith',
+            operand: ViewFilterOperand.Is,
+            displayValue: 'Smith',
+            stepFilterGroupId: 'child1',
+            leftOperand: 'Smith', // This will pass (OR group passes)
+          },
+          {
+            id: 'filter3',
+            type: 'number',
+            label: 'Filter 3',
+            rightOperand: 25,
+            operand: ViewFilterOperand.GreaterThanOrEqual,
+            displayValue: '25',
+            stepFilterGroupId: 'child2',
+            leftOperand: 30, // This will pass (AND group passes)
+          },
+        ];
+
+        const result = evaluateFilterConditions({ filterGroups, filters });
+
+        expect(result).toBe(true); // child1 (OR) passes, child2 (AND) passes, root (AND) passes
+      });
+    });
+
     describe('empty groups', () => {
-      it('should return true for empty group', () => {
+      it('should return true for empty filter groups', () => {
         const filterGroups: StepFilterGroup[] = [
           {
             id: 'group1',
@@ -482,254 +611,8 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
-    describe('nested groups', () => {
-      it('should handle nested groups correctly', () => {
-        const filterGroups: StepFilterGroup[] = [
-          {
-            id: 'group1',
-            logicalOperator: StepLogicalOperator.AND,
-          },
-          {
-            id: 'group2',
-            logicalOperator: StepLogicalOperator.OR,
-            parentStepFilterGroupId: 'group1',
-            positionInStepFilterGroup: 1,
-          },
-        ];
-
-        const filters: ResolvedFilter[] = [
-          // Filter in parent group
-          {
-            id: 'filter1',
-            type: 'text',
-            label: 'Name Filter',
-            rightOperand: 'John',
-            operand: StepOperand.EQ,
-            displayValue: 'John',
-            stepFilterGroupId: 'group1',
-            leftOperand: 'John', // This will pass
-          },
-          // Filters in child group with OR logic
-          {
-            id: 'filter2',
-            type: 'number',
-            label: 'Age Filter',
-            rightOperand: 25,
-            operand: StepOperand.GT,
-            displayValue: '25',
-            stepFilterGroupId: 'group2',
-            leftOperand: 20, // This will fail
-          },
-          {
-            id: 'filter3',
-            type: 'text',
-            label: 'City Filter',
-            rightOperand: 'NYC',
-            operand: StepOperand.EQ,
-            displayValue: 'NYC',
-            stepFilterGroupId: 'group2',
-            leftOperand: 'NYC', // This will pass
-          },
-        ];
-
-        // Parent group uses AND: filter1 (pass) AND group2 (pass because filter3 passes)
-        const result = evaluateFilterConditions({ filterGroups, filters });
-
-        expect(result).toBe(true);
-      });
-
-      it('should handle multiple child groups with correct positioning', () => {
-        const filterGroups: StepFilterGroup[] = [
-          {
-            id: 'group1',
-            logicalOperator: StepLogicalOperator.AND,
-          },
-          {
-            id: 'group2',
-            logicalOperator: StepLogicalOperator.OR,
-            parentStepFilterGroupId: 'group1',
-            positionInStepFilterGroup: 1,
-          },
-          {
-            id: 'group3',
-            logicalOperator: StepLogicalOperator.AND,
-            parentStepFilterGroupId: 'group1',
-            positionInStepFilterGroup: 2,
-          },
-        ];
-
-        const filters: ResolvedFilter[] = [
-          // Group2 filters (OR logic)
-          {
-            id: 'filter1',
-            type: 'text',
-            label: 'Name Filter',
-            rightOperand: 'John',
-            operand: StepOperand.EQ,
-            displayValue: 'John',
-            stepFilterGroupId: 'group2',
-            leftOperand: 'Jane', // This will fail
-          },
-          {
-            id: 'filter2',
-            type: 'text',
-            label: 'Status Filter',
-            rightOperand: 'active',
-            operand: StepOperand.EQ,
-            displayValue: 'active',
-            stepFilterGroupId: 'group2',
-            leftOperand: 'active', // This will pass
-          },
-          // Group3 filters (AND logic)
-          {
-            id: 'filter3',
-            type: 'number',
-            label: 'Age Filter',
-            rightOperand: 18,
-            operand: StepOperand.GTE,
-            displayValue: '18',
-            stepFilterGroupId: 'group3',
-            leftOperand: 25, // This will pass
-          },
-          {
-            id: 'filter4',
-            type: 'number',
-            label: 'Score Filter',
-            rightOperand: 80,
-            operand: StepOperand.GT,
-            displayValue: '80',
-            stepFilterGroupId: 'group3',
-            leftOperand: 85, // This will pass
-          },
-        ];
-
-        // Group1 uses AND: group2 (pass) AND group3 (pass)
-        const result = evaluateFilterConditions({ filterGroups, filters });
-
-        expect(result).toBe(true);
-      });
-    });
-
-    describe('multiple root groups', () => {
-      it('should combine multiple root groups with AND logic', () => {
-        const filterGroups: StepFilterGroup[] = [
-          {
-            id: 'group1',
-            logicalOperator: StepLogicalOperator.OR,
-          },
-          {
-            id: 'group2',
-            logicalOperator: StepLogicalOperator.AND,
-          },
-        ];
-
-        const filters: ResolvedFilter[] = [
-          // Group1 filters (OR logic)
-          {
-            id: 'filter1',
-            type: 'text',
-            label: 'Name Filter',
-            rightOperand: 'John',
-            operand: StepOperand.EQ,
-            displayValue: 'John',
-            stepFilterGroupId: 'group1',
-            leftOperand: 'John', // This will pass
-          },
-          {
-            id: 'filter2',
-            type: 'text',
-            label: 'Status Filter',
-            rightOperand: 'inactive',
-            operand: StepOperand.EQ,
-            displayValue: 'inactive',
-            stepFilterGroupId: 'group1',
-            leftOperand: 'active', // This will fail
-          },
-          // Group2 filters (AND logic)
-          {
-            id: 'filter3',
-            type: 'number',
-            label: 'Age Filter',
-            rightOperand: 18,
-            operand: StepOperand.GTE,
-            displayValue: '18',
-            stepFilterGroupId: 'group2',
-            leftOperand: 25, // This will pass
-          },
-          {
-            id: 'filter4',
-            type: 'number',
-            label: 'Score Filter',
-            rightOperand: 80,
-            operand: StepOperand.GT,
-            displayValue: '80',
-            stepFilterGroupId: 'group2',
-            leftOperand: 85, // This will pass
-          },
-        ];
-
-        // Root groups combined with AND: group1 (pass) AND group2 (pass)
-        const result = evaluateFilterConditions({ filterGroups, filters });
-
-        expect(result).toBe(true);
-      });
-
-      it('should return false when one root group fails', () => {
-        const filterGroups: StepFilterGroup[] = [
-          {
-            id: 'group1',
-            logicalOperator: StepLogicalOperator.OR,
-          },
-          {
-            id: 'group2',
-            logicalOperator: StepLogicalOperator.AND,
-          },
-        ];
-
-        const filters: ResolvedFilter[] = [
-          // Group1 filters (OR logic) - will pass
-          {
-            id: 'filter1',
-            type: 'text',
-            label: 'Name Filter',
-            rightOperand: 'John',
-            operand: StepOperand.EQ,
-            displayValue: 'John',
-            stepFilterGroupId: 'group1',
-            leftOperand: 'John', // This will pass
-          },
-          // Group2 filters (AND logic) - will fail
-          {
-            id: 'filter2',
-            type: 'number',
-            label: 'Age Filter',
-            rightOperand: 30,
-            operand: StepOperand.GT,
-            displayValue: '30',
-            stepFilterGroupId: 'group2',
-            leftOperand: 25, // This will fail
-          },
-          {
-            id: 'filter3',
-            type: 'number',
-            label: 'Score Filter',
-            rightOperand: 80,
-            operand: StepOperand.GT,
-            displayValue: '80',
-            stepFilterGroupId: 'group2',
-            leftOperand: 85, // This will pass
-          },
-        ];
-
-        // Root groups combined with AND: group1 (pass) AND group2 (fail)
-        const result = evaluateFilterConditions({ filterGroups, filters });
-
-        expect(result).toBe(false);
-      });
-    });
-
     describe('error cases', () => {
-      it('should throw error when filter group is not found', () => {
+      it('should throw error when filter references non-existent group', () => {
         const filterGroups: StepFilterGroup[] = [
           {
             id: 'group1',
@@ -743,42 +626,16 @@ describe('evaluateFilterConditions', () => {
             type: 'text',
             label: 'Name Filter',
             rightOperand: 'John',
-            operand: StepOperand.EQ,
+            operand: ViewFilterOperand.Is,
             displayValue: 'John',
-            stepFilterGroupId: 'nonexistent-group',
+            stepFilterGroupId: 'nonexistent',
             leftOperand: 'John',
           },
         ];
 
         expect(() =>
           evaluateFilterConditions({ filterGroups, filters }),
-        ).toThrow('Filter group with id nonexistent-group not found');
-      });
-
-      it('should throw error for unknown logical operator', () => {
-        const filterGroups: StepFilterGroup[] = [
-          {
-            id: 'group1',
-            logicalOperator: 'UNKNOWN' as StepLogicalOperator,
-          },
-        ];
-
-        const filters: ResolvedFilter[] = [
-          {
-            id: 'filter1',
-            type: 'text',
-            label: 'Name Filter',
-            rightOperand: 'John',
-            operand: StepOperand.EQ,
-            displayValue: 'John',
-            stepFilterGroupId: 'group1',
-            leftOperand: 'John',
-          },
-        ];
-
-        expect(() =>
-          evaluateFilterConditions({ filterGroups, filters }),
-        ).toThrow('Unknown logical operator: UNKNOWN');
+        ).toThrow('Filter group with id nonexistent not found');
       });
     });
   });

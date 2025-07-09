@@ -1,19 +1,8 @@
+import { ViewFilterOperand } from './ViewFilterOperand';
+
 export enum StepLogicalOperator {
   AND = 'AND',
   OR = 'OR',
-}
-
-export enum StepOperand {
-  EQ = 'eq',
-  NE = 'ne',
-  GT = 'gt',
-  GTE = 'gte',
-  LT = 'lt',
-  LTE = 'lte',
-  LIKE = 'like',
-  ILIKE = 'ilike',
-  IN = 'in',
-  IS = 'is',
 }
 
 export type StepFilterGroup = {
@@ -28,7 +17,7 @@ export type StepFilter = {
   type: string;
   label: string;
   value: string;
-  operand: StepOperand;
+  operand: ViewFilterOperand;
   displayValue: string;
   stepFilterGroupId: string;
   stepOutputKey: string;

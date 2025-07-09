@@ -11,7 +11,7 @@ import {
   StepFilter,
   StepFilterGroup,
   StepLogicalOperator,
-  StepOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -48,10 +48,10 @@ export const useAddRootStepFilter = () => {
 
         const newStepFilter: StepFilter = {
           id: v4(),
-          type: 'text',
+          type: 'unknown',
           label: 'New Filter',
           value: '',
-          operand: StepOperand.EQ,
+          operand: ViewFilterOperand.Is,
           displayValue: '',
           stepFilterGroupId: newStepFilterGroup.id,
           stepOutputKey: '',

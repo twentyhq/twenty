@@ -1,14 +1,14 @@
 import { WorkflowStepFilterDecorator } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/decorators/WorkflowStepFilterDecorator';
+import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOperandSelect';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { StepFilter, StepOperand } from 'twenty-shared/types';
+import { StepFilter, ViewFilterOperand } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowStepFilterOperandSelect } from '../WorkflowStepFilterOperandSelect';
 
 const DEFAULT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
@@ -17,7 +17,7 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   displayValue: 'Company Name',
   type: 'text',
   label: 'Company Name',
-  operand: StepOperand.EQ,
+  operand: ViewFilterOperand.Contains,
   value: '',
   positionInStepFilterGroup: 0,
 };
@@ -29,7 +29,7 @@ const LIKE_OPERAND_FILTER: StepFilter = {
   displayValue: 'Company Name',
   type: 'text',
   label: 'Company Name',
-  operand: StepOperand.LIKE,
+  operand: ViewFilterOperand.Contains,
   value: 'Acme',
   positionInStepFilterGroup: 0,
 };
@@ -41,7 +41,7 @@ const GREATER_THAN_FILTER: StepFilter = {
   displayValue: 'Employee Count',
   type: 'number',
   label: 'Employee Count',
-  operand: StepOperand.GT,
+  operand: ViewFilterOperand.GreaterThanOrEqual,
   value: '100',
   positionInStepFilterGroup: 0,
 };

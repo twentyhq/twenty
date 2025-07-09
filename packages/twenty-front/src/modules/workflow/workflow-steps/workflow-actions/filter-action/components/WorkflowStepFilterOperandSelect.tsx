@@ -1,27 +1,16 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
+import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useContext } from 'react';
-import { StepFilter, StepOperand } from 'twenty-shared/src/types';
+import { StepFilter, ViewFilterOperand } from 'twenty-shared/src/types';
 
 type WorkflowStepFilterOperandSelectProps = {
   stepFilter: StepFilter;
 };
-
-const STEP_OPERAND_OPTIONS = [
-  { value: StepOperand.EQ, label: 'Equals' },
-  { value: StepOperand.NE, label: 'Not equals' },
-  { value: StepOperand.GT, label: 'Greater than' },
-  { value: StepOperand.GTE, label: 'Greater than or equal' },
-  { value: StepOperand.LT, label: 'Less than' },
-  { value: StepOperand.LTE, label: 'Less than or equal' },
-  { value: StepOperand.LIKE, label: 'Contains' },
-  { value: StepOperand.ILIKE, label: 'Contains (case insensitive)' },
-  { value: StepOperand.IN, label: 'In' },
-  { value: StepOperand.IS, label: 'Is' },
-];
 
 export const WorkflowStepFilterOperandSelect = ({
   stepFilter,
@@ -29,8 +18,14 @@ export const WorkflowStepFilterOperandSelect = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
+  const operands = getViewFilterOperands({ filterType: stepFilter.type });
 
-  const handleChange = (operand: StepOperand) => {
+  const options = operands.map((operand) => ({
+    value: operand,
+    label: getOperandLabel(operand),
+  }));
+
+  const handleChange = (operand: ViewFilterOperand) => {
     upsertStepFilterSettings({
       stepFilterToUpsert: {
         ...stepFilter,
@@ -45,7 +40,7 @@ export const WorkflowStepFilterOperandSelect = ({
       dropdownWidth={GenericDropdownContentWidth.Medium}
       dropdownId={`step-filter-operand-${stepFilter.id}`}
       value={stepFilter.operand}
-      options={STEP_OPERAND_OPTIONS}
+      options={options}
       onChange={handleChange}
       disabled={readonly}
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
