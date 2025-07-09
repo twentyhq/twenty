@@ -45,7 +45,7 @@ export const generateObjectRecordFields = ({
 
         if (!isDefined(relationTargetObjectMetadata)) {
           throw new Error(
-            `Relation target object metadata not found for id: ${field.relationTargetObjectMetadataId}`,
+            `Unable to find metadata for relation '${field.name}' (ID: ${field.relationTargetObjectMetadataId})`,
           );
         }
 
