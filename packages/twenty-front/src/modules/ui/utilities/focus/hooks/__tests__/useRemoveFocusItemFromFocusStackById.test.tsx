@@ -53,7 +53,6 @@ const secondFocusItem = {
     enableGlobalHotkeysWithModifiers: true,
     enableGlobalHotkeysConflictingWithKeyboard: true,
   },
-  memoizeKey: 'global',
 };
 
 describe('useRemoveFocusItemFromFocusStackById', () => {

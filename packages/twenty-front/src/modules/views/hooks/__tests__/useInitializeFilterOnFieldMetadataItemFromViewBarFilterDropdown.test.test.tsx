@@ -170,7 +170,9 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         type: FocusComponentType.DROPDOWN,
         instanceId: personCompanyFieldMetadataItemMock.id,
       },
-      memoizeKey: personCompanyFieldMetadataItemMock.id,
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   });
 
