@@ -1,15 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-import { IndexFieldMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-field-metadata.interface';
-import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
-
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { FieldMetadataType } from '@/types';
+import { getUniqueConstraintsFields } from '../getUniqueConstraintsFields';
 
 describe('getUniqueConstraintsFields', () => {
-  const mockIdField: FieldMetadataInterface = {
+  const mockIdField = {
     id: 'field-id-1',
     name: 'id',
     label: 'ID',
@@ -25,7 +18,7 @@ describe('getUniqueConstraintsFields', () => {
     updatedAt: new Date('2024-01-01'),
   };
 
-  const mockEmailField: FieldMetadataInterface = {
+  const mockEmailField = {
     id: 'field-id-2',
     name: 'email',
     label: 'Email',
@@ -41,7 +34,7 @@ describe('getUniqueConstraintsFields', () => {
     updatedAt: new Date('2024-01-01'),
   };
 
-  const mockNameField: FieldMetadataInterface = {
+  const mockNameField = {
     id: 'field-id-3',
     name: 'name',
     label: 'Name',
@@ -61,22 +54,21 @@ describe('getUniqueConstraintsFields', () => {
     fieldMetadataId: string,
     indexMetadataId: string,
     order = 0,
-  ): IndexFieldMetadataInterface =>
-    ({
-      id: `index-field-${fieldMetadataId}-${indexMetadataId}`,
-      indexMetadataId,
-      fieldMetadataId,
-      order,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01'),
-    }) as IndexFieldMetadataInterface;
+  ) => ({
+    id: `index-field-${fieldMetadataId}-${indexMetadataId}`,
+    indexMetadataId,
+    fieldMetadataId,
+    order,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01'),
+  });
 
   const createMockIndexMetadata = (
     id: string,
     name: string,
     isUnique: boolean,
-    indexFieldMetadatas: IndexFieldMetadataInterface[],
-  ): IndexMetadataInterface => ({
+    indexFieldMetadatas: any,
+  ) => ({
     id,
     name,
     isUnique,
@@ -84,13 +76,9 @@ describe('getUniqueConstraintsFields', () => {
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
     indexWhereClause: null,
-    indexType: IndexType.BTREE,
   });
 
-  const createMockObjectMetadata = (
-    fields: FieldMetadataInterface[],
-    indexMetadatas: IndexMetadataInterface[] = [],
-  ): ObjectMetadataInterface => ({
+  const createMockObjectMetadata = (fields: any, indexMetadatas: any) => ({
     id: 'object-id-1',
     workspaceId: 'workspace-id-1',
     nameSingular: 'person',
@@ -111,10 +99,10 @@ describe('getUniqueConstraintsFields', () => {
   });
 
   it('should return the primary key constraint field if no unique indexes are present', () => {
-    const objectMetadata = createMockObjectMetadata([
-      mockIdField,
-      mockNameField,
-    ]);
+    const objectMetadata = createMockObjectMetadata(
+      [mockIdField, mockNameField],
+      [],
+    );
 
     const result = getUniqueConstraintsFields(objectMetadata);
 
