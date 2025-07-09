@@ -13,6 +13,8 @@ import { RecordTransformerException } from 'src/engine/core-modules/record-trans
 import { recordTransformerGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-transformer/utils/record-transformer-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
+import { TwentyORMException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
@@ -44,6 +46,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return workspaceExceptionHandler(error);
     case error instanceof GraphqlQueryRunnerException:
       return graphqlQueryRunnerExceptionHandler(error);
+    case error instanceof TwentyORMException:
+      return twentyORMGraphqlApiExceptionHandler(error);
     default:
       throw error;
   }

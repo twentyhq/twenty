@@ -81,9 +81,6 @@ export class WorkspaceSchemaFactory {
         await this.workspaceGraphQLSchemaFactory.create(
           objectMetadataCollection,
           workspaceResolverBuilderMethodNames,
-          {
-            workspaceId: authContext.workspace.id,
-          },
         );
 
       usedScalarNames =
