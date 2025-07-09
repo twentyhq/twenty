@@ -23,6 +23,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { TwoFactorAuthenticationMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 
 registerEnumType(SettingPermissionType, {
   name: 'SettingPermissionType',

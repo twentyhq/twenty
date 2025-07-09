@@ -76,7 +76,6 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 import { TwoFactorAuthenticationService } from '../two-factor-authentication/two-factor-authentication.service';
 import { TwoFactorAuthenticationVerificationInput } from '../two-factor-authentication/dto/two-factor-authentication-verification.input';
-import { TwoFactorAuthenticationVerificationOutput } from '../two-factor-authentication/dto/two-factor-authentication-verification.output';
 
 @UsePipes(ResolverValidationPipe)
 @Resolver()

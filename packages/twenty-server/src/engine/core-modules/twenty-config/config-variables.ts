@@ -39,6 +39,8 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { OTPHashAlgorithms, OTPKeyEncodings } from '../two-factor-authentication/two-factor-authentication.interface';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
