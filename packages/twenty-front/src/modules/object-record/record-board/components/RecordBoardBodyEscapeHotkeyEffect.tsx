@@ -6,6 +6,7 @@ import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/us
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -34,7 +35,7 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: handleEscape,
-    focusId: recordBoardId,
+    focusId: PageFocusId.RecordIndex,
     dependencies: [handleEscape],
   });
 
