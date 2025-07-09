@@ -2,6 +2,7 @@ import { getFlattenObjectMetadata } from 'src/engine/workspace-manager/workspace
 import { WorkspaceMigrationActionTypeV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -18,7 +19,7 @@ type CamelCasedWorkspaceMigrationActionsType =
   ConvertActionTypeToCamelCase<WorkspaceMigrationActionTypeV2>;
 
 type ExpectedActionCounters = {
-  total: number;
+  total: number; // Could be removed and computed dynamically but still a good thing for readability ?
 } & Partial<Record<CamelCasedWorkspaceMigrationActionsType, number>>;
 
 type TestCase = EachTestingContext<{
@@ -27,21 +28,35 @@ type TestCase = EachTestingContext<{
 }>;
 
 const successfulTestCases: TestCase[] = [
-  // {
-  //   title: 'It should not infer any actions as from and to are identical',
-  //   context: {
-  //     input: () => {
-  //       const from = [getFlattenObjectMetadata({ uniqueIdentifier: 'pomme' })];
-  //       return {
-  //         from,
-  //         to: from,
-  //       };
-  //     },
-  //     expectedActionsTypeCounter: {
-  //       total: 0,
-  //     },
-  //   },
-  // },
+  {
+    title:
+      'It should infer an update_object action with all object updated fields',
+    context: {
+      input: () => {
+        const flattenObjectMetadata = getFlattenObjectMetadata({
+          uniqueIdentifier: 'pomme',
+          nameSingular: 'toto',
+          namePlural: 'totos',
+          isLabelSyncedWithName: true,
+        });
+        return {
+          from: [flattenObjectMetadata],
+          to: [
+            {
+              ...flattenObjectMetadata,
+              nameSingular: 'prastouin',
+              namePlural: 'prastoins',
+              isLabelSyncedWithName: false,
+            },
+          ],
+        };
+      },
+      expectedActionsTypeCounter: {
+        total: 1,
+        updateObject: 1,
+      },
+    },
+  },
   {
     title: 'It should not infer any actions as from and to are identical',
     context: {
@@ -58,6 +73,7 @@ const successfulTestCases: TestCase[] = [
     },
   },
 ];
+
 describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;
 
@@ -106,7 +122,11 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         expectedActionsTypeCounter,
         workspaceMigration,
       });
-      expect(workspaceMigration).toMatchSnapshot();
+      const { actions, ...rest } = workspaceMigration;
+      expect(actions).toMatchSnapshot(
+        actions.map(extractRecordIdsAndDatesAsExpectAny),
+      );
+      expect(rest).toMatchSnapshot();
     },
   );
 });
