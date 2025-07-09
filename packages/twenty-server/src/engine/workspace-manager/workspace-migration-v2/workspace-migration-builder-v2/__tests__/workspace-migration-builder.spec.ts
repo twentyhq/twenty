@@ -1,3 +1,6 @@
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { capitalize } from 'twenty-shared/utils';
+
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
@@ -7,8 +10,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { capitalize } from 'twenty-shared/utils';
 const allWorkspaceBuilderTestCases: {
   label: string;
   testCases: WorkspaceMigrationBuilderTestCase[];
@@ -84,6 +85,7 @@ describe.each(allWorkspaceBuilderTestCases)(
           workspaceMigration,
         });
         const { actions, ...rest } = workspaceMigration;
+
         expect(actions).toMatchSnapshot(
           actions.map(extractRecordIdsAndDatesAsExpectAny),
         );

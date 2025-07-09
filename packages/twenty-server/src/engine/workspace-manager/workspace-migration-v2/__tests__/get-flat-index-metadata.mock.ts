@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker/.';
+
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 

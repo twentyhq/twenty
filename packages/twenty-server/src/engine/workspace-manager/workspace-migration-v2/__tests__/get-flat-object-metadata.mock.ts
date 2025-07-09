@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+
 import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 
 type FlatObjectMetadataOverrides = Required<

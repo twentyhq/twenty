@@ -1,6 +1,7 @@
+import { EachTestingContext } from 'twenty-shared/testing';
+
 import { WorkspaceMigrationActionTypeV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { EachTestingContext } from 'twenty-shared/testing';
 
 type WorkspaceBuilderArgs = Parameters<
   typeof WorkspaceMigrationBuilderV2Service.prototype.build

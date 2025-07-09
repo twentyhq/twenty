@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker/.';
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 
 type FlatMetadataOverrides = Required<
   Pick<FlatFieldMetadata, 'uniqueIdentifier' | 'objectMetadataId'>
@@ -40,7 +41,7 @@ export const getFlatFieldMetadataMock = (
   };
 };
 
-export const getStandardFlatFieldMetadata = (
+export const getStandardFlatFieldMetadataMock = (
   overrides: Omit<FlatMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatFieldMetadataMock({

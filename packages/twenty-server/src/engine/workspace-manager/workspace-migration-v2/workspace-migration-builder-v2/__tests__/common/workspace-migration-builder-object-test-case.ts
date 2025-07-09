@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { getFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
+
+import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 
@@ -16,6 +17,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             namePlural: 'totos',
             isLabelSyncedWithName: true,
           });
+
           return {
             from: [flatObjectMetadata],
             to: [
@@ -44,6 +46,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             namePlural: 'totos',
             isLabelSyncedWithName: true,
           });
+
           return {
             from: [],
             to: [flatObjectMetadata],
@@ -64,7 +67,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           const flatFieldMetadatas = Array.from(
             { length: 5 },
             (_value, index) =>
-              getFlatFieldMetadata({
+              getFlatFieldMetadataMock({
                 objectMetadataId,
                 uniqueIdentifier: `field_${index}`,
               }),
@@ -101,6 +104,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             namePlural: 'totos',
             isLabelSyncedWithName: true,
           });
+
           return {
             from: [flatObjectMetadata],
             to: [],
@@ -119,6 +123,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           const from = [
             getFlatObjectMetadataMock({ uniqueIdentifier: 'pomme' }),
           ];
+
           return {
             from,
             to: from,

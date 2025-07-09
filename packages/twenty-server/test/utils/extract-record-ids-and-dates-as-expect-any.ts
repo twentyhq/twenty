@@ -40,6 +40,7 @@ export const extractRecordIdsAndDatesAsExpectAny = (
         ),
       };
     }
+
     return acc;
   }, {});
 };

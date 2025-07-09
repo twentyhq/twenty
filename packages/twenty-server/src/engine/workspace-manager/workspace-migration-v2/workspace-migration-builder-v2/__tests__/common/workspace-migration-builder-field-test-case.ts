@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker/.';
+
+import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 
@@ -15,7 +17,7 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
             flatFieldMetadatas: [],
             id: objectMetadataId,
           });
-          const flatFieldMetadata = getFlatFieldMetadata({
+          const flatFieldMetadata = getFlatFieldMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
@@ -42,7 +44,7 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
         input: () => {
           const objectMetadataId = faker.string.uuid();
 
-          const flatFieldMetadata = getFlatFieldMetadata({
+          const flatFieldMetadata = getFlatFieldMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
