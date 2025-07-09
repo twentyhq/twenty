@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker/.';
+import { getFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flatten-field-metadata.mock';
 import { getFlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flatten-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
 
@@ -50,6 +52,42 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         expectedActionsTypeCounter: {
           total: 1,
           createObject: 1,
+        },
+      },
+    },
+    {
+      title:
+        'It should build a create_object and create_field actions for each of this fieldMetadata',
+      context: {
+        input: () => {
+          const objectMetadataId = faker.string.uuid();
+          const flattenFieldMetadatas = Array.from(
+            { length: 5 },
+            (_value, index) =>
+              getFlattenFieldMetadata({
+                objectMetadataId,
+                uniqueIdentifier: `field_${index}`,
+              }),
+          );
+          const flattenObjectMetadata = getFlattenObjectMetadata({
+            uniqueIdentifier: 'pomme',
+            nameSingular: 'toto',
+            namePlural: 'totos',
+            isLabelSyncedWithName: true,
+            id: objectMetadataId,
+            flattenFieldMetadatas,
+          });
+
+          return {
+            from: [],
+            to: [flattenObjectMetadata],
+          };
+        },
+
+        expectedActionsTypeCounter: {
+          total: 1,
+          createObject: 1,
+          createField: 5,
         },
       },
     },
