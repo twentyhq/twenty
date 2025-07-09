@@ -78,13 +78,13 @@ export class AgentStreamingService {
         switch (chunk.type) {
           case 'text-delta':
             aiResponse += chunk.textDelta;
-            this.sendSSEEvent(res, {
+            this.sendStreamEvent(res, {
               type: chunk.type,
               message: chunk.textDelta,
             });
             break;
           case 'tool-call':
-            this.sendSSEEvent(res, {
+            this.sendStreamEvent(res, {
               type: chunk.type,
               message: chunk.args?.toolDescription,
             });
@@ -109,18 +109,16 @@ export class AgentStreamingService {
     }
   }
 
-  private sendSSEEvent(
+  private sendStreamEvent(
     res: Response,
     event: { type: string; message: string },
   ): void {
-    const eventData = `data: ${JSON.stringify(event)}\n\n`;
-
-    res.write(eventData);
+    res.write(JSON.stringify(event) + '\n');
   }
 
   private setupStreamingHeaders(res: Response): void {
-    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
   }
 }
