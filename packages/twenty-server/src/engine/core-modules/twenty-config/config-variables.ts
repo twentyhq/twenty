@@ -68,6 +68,66 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Enable or disable two factor authentication for workspaces',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = true;
+
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Select the two-factor authentication strategy (e.g., TOTP or HOTP) to be used for workspace logins.',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(TwoFactorAuthenticationStrategy),
+  })
+  @IsOptional()
+  TWO_FACTOR_AUTHENTICATION_STRATEGY = TwoFactorAuthenticationStrategy.TOTP;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Choose the hash algorithm used for generating OTP codes (e.g., SHA1, SHA256, SHA512).',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(OTPHashAlgorithms),
+  })
+  @IsOptional()
+  OTP_HASH_ALGORITHM = OTPHashAlgorithms.SHA1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Specify the number of digits in the generated OTP code (commonly 6 or 8).',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  OTP_DIGITS = 6;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'TOTP step size in seconds.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  TOTP_STEP_SIZE = 30;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Set the allowed time window (in steps) for OTP verification to account for clock/counter drift.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  OTP_WINDOW = 3;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Specify the encoding format used to store or transmit the OTP secret (e.g. hex).',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(OTPKeyEncodings),
+  })
+  @IsOptional()
+  OTP_SECRET_ENCODING = OTPKeyEncodings.HEX;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,

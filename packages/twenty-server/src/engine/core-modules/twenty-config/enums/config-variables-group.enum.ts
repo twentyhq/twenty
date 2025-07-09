@@ -18,4 +18,5 @@ export enum ConfigVariablesGroup {
   SupportChatConfig = 'support-chat-config',
   AnalyticsConfig = 'audit-config',
   TokensDuration = 'tokens-duration',
+  TwoFactorAuthentication = 'two-factor-authentication',
 }
