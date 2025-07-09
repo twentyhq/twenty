@@ -20,7 +20,7 @@ export const useCreateOneFieldMetadataItem = () => {
     CreateOneFieldMetadataItemMutationVariables
   >(CREATE_ONE_FIELD_METADATA_ITEM);
 
-  const { refreshCachedViews } = useRefreshCachedViews()
+  const { refreshCachedViews } = useRefreshCachedViews();
 
   const createOneFieldMetadataItem = async (input: CreateFieldInput) => {
     const result = await mutate({
@@ -33,7 +33,7 @@ export const useCreateOneFieldMetadataItem = () => {
 
     await refreshObjectMetadataItems();
 
-    await refreshCachedViews()
+    await refreshCachedViews();
 
     return result;
   };
