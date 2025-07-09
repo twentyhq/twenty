@@ -2,8 +2,12 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class PermissionsException extends CustomException {
   declare code: PermissionsExceptionCode;
-  constructor(message: string, code: PermissionsExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: PermissionsExceptionCode,
+    userFriendlyMessage?: string,
+  ) {
+    super(message, code, userFriendlyMessage);
   }
 }
 
