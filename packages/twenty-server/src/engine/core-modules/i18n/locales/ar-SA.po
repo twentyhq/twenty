@@ -104,7 +104,7 @@ msgid "A person"
 msgstr "شخص"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "A role with this label already exists."
 msgstr ""
 
