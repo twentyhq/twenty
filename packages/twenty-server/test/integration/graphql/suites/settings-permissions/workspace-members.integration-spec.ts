@@ -1,4 +1,5 @@
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { makeGraphqlAPIRequestWithAcmeMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-acme-member-role.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
@@ -87,17 +88,17 @@ describe('workspace members permissions', () => {
       const deleteOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
       const deleteResponse =
-        await makeGraphqlAPIRequestWithMemberRole(deleteOperation);
+        await makeGraphqlAPIRequestWithAcmeMemberRole(deleteOperation);
 
       expect(deleteResponse.body.data).toStrictEqual({
         deleteWorkspaceMember: {
-          id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           name: {
-            firstName: 'Phil',
+            firstName: 'Jony',
           },
         },
       });
