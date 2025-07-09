@@ -1,12 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;
 
-  const baseObject: FlattenObjectMetadata = {
+  const baseObject: FlatObjectMetadata = {
     uniqueIdentifier: '20202020-e89b-12d3-a456-426614175000',
     nameSingular: 'Contact',
     namePlural: 'Contacts',
@@ -31,8 +31,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should return a migration when nameSingular changes', () => {
-    const from: FlattenObjectMetadata = baseObject;
-    const to: FlattenObjectMetadata = {
+    const from: FlatObjectMetadata = baseObject;
+    const to: FlatObjectMetadata = {
       ...from,
       nameSingular: 'Person',
     };
@@ -76,7 +76,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should return a migration when creating a new object', () => {
-    const newObject: FlattenObjectMetadata = {
+    const newObject: FlatObjectMetadata = {
       uniqueIdentifier: '20202020-e89b-12d3-a456-426614175001',
       nameSingular: 'Company',
       namePlural: 'Companies',
@@ -192,7 +192,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should handle multiple operations in a single migration', () => {
-    const objectToUpdate: FlattenObjectMetadata = {
+    const objectToUpdate: FlatObjectMetadata = {
       ...baseObject,
       nameSingular: 'Person',
       flattenFieldMetadatas: [
@@ -211,7 +211,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ...baseObject,
       uniqueIdentifier: '20202020-59ef-4a14-a509-0a02acb248d5',
     };
-    const objectToCreate: FlattenObjectMetadata = {
+    const objectToCreate: FlatObjectMetadata = {
       uniqueIdentifier: '20202020-1218-4fc0-b32d-fc4f005c4bab',
       nameSingular: 'Company',
       namePlural: 'Companies',
@@ -394,7 +394,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should treat objects with the same name but different IDs as distinct', () => {
-    const objectA: FlattenObjectMetadata = {
+    const objectA: FlatObjectMetadata = {
       uniqueIdentifier: 'id-1',
       flattenIndexMetadatas: [],
       nameSingular: 'Duplicate',
@@ -413,7 +413,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         },
       ],
     };
-    const objectB: FlattenObjectMetadata = {
+    const objectB: FlatObjectMetadata = {
       uniqueIdentifier: 'id-2',
       nameSingular: 'Duplicate',
       namePlural: 'Duplicates',
@@ -597,7 +597,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should emit no actions when from and to are deeply equal', () => {
-    const obj: FlattenObjectMetadata = { ...baseObject };
+    const obj: FlatObjectMetadata = { ...baseObject };
     const result = service.build({ from: [obj], to: [obj] });
 
     expect(result.actions).toEqual([]);

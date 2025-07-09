@@ -1,7 +1,7 @@
-import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import {
-  FlattenObjectMetadata,
-  FlattenObjectMetadataWithoutFields,
+  FlatObjectMetadata,
+  FlatObjectMetadataWithoutFields,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import {
@@ -10,11 +10,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = {
-  flattenObjectMetadata: FlattenObjectMetadataWithoutFields;
-} & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlattenFieldMetadata>;
+  flattenObjectMetadata: FlatObjectMetadataWithoutFields;
+} & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlatFieldMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (
-  updatedObjectMetadata: FromTo<FlattenObjectMetadata>[],
+  updatedObjectMetadata: FromTo<FlatObjectMetadata>[],
 ): UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[] => {
   const matrixAccumulator: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[] =
     [];

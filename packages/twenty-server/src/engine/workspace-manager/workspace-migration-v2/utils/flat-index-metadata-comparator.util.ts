@@ -1,38 +1,38 @@
 import diff from 'microdiff';
 
-import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
+import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flattenIndexMetadataPropertiesToCompare = [
+const flatIndexMetadataPropertiesToCompare = [
   'flattenIndexFieldMetadatas', // Comparing this as whole ? should iterate on each keys ? => TBD should only map over cols as before ?
   'indexType',
   'indexWhereClause',
   'isUnique',
   'name',
-] as const satisfies (keyof FlattenIndexMetadata)[];
+] as const satisfies (keyof FlatIndexMetadata)[];
 
-type FlattenIndexMetadataPropertiesToCompare =
-  (typeof flattenIndexMetadataPropertiesToCompare)[number];
+type FlatIndexMetadataPropertiesToCompare =
+  (typeof flatIndexMetadataPropertiesToCompare)[number];
 
 // Should also handle indexFieldMetadata comparison ?
-export const compareTwoFlattenIndexMetadata = ({
+export const compareTwoFlatIndexMetadata = ({
   from,
   to,
-}: FromTo<FlattenIndexMetadata>) => {
+}: FromTo<FlatIndexMetadata>) => {
   const transformOptions = {
     shouldIgnoreProperty: (property: string) =>
-      !flattenIndexMetadataPropertiesToCompare.includes(
-        property as FlattenIndexMetadataPropertiesToCompare,
+      !flatIndexMetadataPropertiesToCompare.includes(
+        property as FlatIndexMetadataPropertiesToCompare,
       ),
   };
 
   const fromCompare = transformMetadataForComparison(from, transformOptions);
   const toCompare = transformMetadataForComparison(to, transformOptions);
 
-  const indexesDifferences = diff(fromCompare, toCompare);
+  const flatIndexeDifferences = diff(fromCompare, toCompare);
 
-  return indexesDifferences.flatMap<{ property: string } & FromTo<unknown>>(
+  return flatIndexeDifferences.flatMap<{ property: string } & FromTo<unknown>>(
     (difference) => {
       switch (difference.type) {
         case 'CHANGE': {

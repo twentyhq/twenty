@@ -4,8 +4,8 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('Workspace migration builder relations tests suite', () => {
@@ -17,8 +17,8 @@ describe('Workspace migration builder relations tests suite', () => {
 
   const createMockObject = (
     identifier: string,
-    fields: Partial<FlattenFieldMetadata>[] = [],
-  ): FlattenObjectMetadata => ({
+    fields: Partial<FlatFieldMetadata>[] = [],
+  ): FlatObjectMetadata => ({
     uniqueIdentifier: identifier,
     flattenIndexMetadatas: [],
     flattenFieldMetadatas: fields.map((field) => ({
@@ -35,8 +35,8 @@ describe('Workspace migration builder relations tests suite', () => {
 
   describe('buildWorkspaceMigrationV2RelationActions', () => {
     it('should create relation actions for created fields', () => {
-      const fromObjects: FlattenObjectMetadata[] = [];
-      const toObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [];
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -111,7 +111,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should create delete actions for deleted fields', () => {
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -123,7 +123,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: FlattenObjectMetadata[] = [createMockObject('company')];
+      const toObjects: FlatObjectMetadata[] = [createMockObject('company')];
 
       const result = service.build({ from: fromObjects, to: toObjects });
 
@@ -155,7 +155,7 @@ describe('Workspace migration builder relations tests suite', () => {
     });
 
     it('should handle multiple relation changes across different objects', () => {
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -167,7 +167,7 @@ describe('Workspace migration builder relations tests suite', () => {
           },
         ]),
       ];
-      const toObjects: FlattenObjectMetadata[] = [
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.RELATION,
@@ -356,7 +356,7 @@ describe('Workspace migration builder relations tests suite', () => {
         description: 'Company employees',
       };
 
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             ...baseField,
@@ -370,7 +370,7 @@ describe('Workspace migration builder relations tests suite', () => {
         ]),
       ];
 
-      const toObjects: FlattenObjectMetadata[] = [
+      const toObjects: FlatObjectMetadata[] = [
         {
           ...fromObjects[0],
           flattenFieldMetadatas: [

@@ -1,9 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { FlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FlattenIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
-import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
+import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('Workspace migration builder indexes tests suite', () => {
@@ -15,9 +15,9 @@ describe('Workspace migration builder indexes tests suite', () => {
 
   const createMockObject = (
     identifier: string,
-    fields: Partial<FlattenFieldMetadata>[] = [],
-    indexes: FlattenIndexMetadata[] = [],
-  ): FlattenObjectMetadata => ({
+    fields: Partial<FlatFieldMetadata>[] = [],
+    indexes: FlatIndexMetadata[] = [],
+  ): FlatObjectMetadata => ({
     uniqueIdentifier: identifier,
     flattenIndexMetadatas: indexes,
     flattenFieldMetadatas: fields.map((field) => ({
@@ -36,7 +36,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     name: string,
     fields: string[],
     isUnique = false,
-  ): FlattenIndexMetadata => ({
+  ): FlatIndexMetadata => ({
     name,
     isUnique,
     indexType: IndexType.BTREE,
@@ -50,8 +50,8 @@ describe('Workspace migration builder indexes tests suite', () => {
 
   describe('buildWorkspaceMigrationV2IndexActions', () => {
     it('should create index actions for created indexes', () => {
-      const fromObjects: FlattenObjectMetadata[] = [];
-      const toObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [];
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [
@@ -166,7 +166,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     });
 
     it('should create delete actions for deleted indexes', () => {
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [
@@ -180,7 +180,7 @@ describe('Workspace migration builder indexes tests suite', () => {
           [createMockIndex('idx_company_name', ['name'], true)],
         ),
       ];
-      const toObjects: FlattenObjectMetadata[] = [
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject('company', [
           {
             type: FieldMetadataType.TEXT,
@@ -218,7 +218,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     });
 
     it('should handle multiple index changes across different objects', () => {
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [
@@ -232,7 +232,7 @@ describe('Workspace migration builder indexes tests suite', () => {
           [createMockIndex('idx_company_name_old', ['name'], true)],
         ),
       ];
-      const toObjects: FlattenObjectMetadata[] = [
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [
@@ -422,7 +422,7 @@ describe('Workspace migration builder indexes tests suite', () => {
     });
 
     it('should handle index updates', () => {
-      const fromObjects: FlattenObjectMetadata[] = [
+      const fromObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [
@@ -437,7 +437,7 @@ describe('Workspace migration builder indexes tests suite', () => {
         ),
       ];
 
-      const toObjects: FlattenObjectMetadata[] = [
+      const toObjects: FlatObjectMetadata[] = [
         createMockObject(
           'company',
           [

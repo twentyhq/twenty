@@ -2,12 +2,12 @@ import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flattenObjectMetadataPropertiesToCompare = [
+const flatObjectMetadataPropertiesToCompare = [
   'description',
   'icon',
   'isActive',
@@ -17,15 +17,15 @@ const flattenObjectMetadataPropertiesToCompare = [
   'namePlural',
   'nameSingular',
   'standardOverrides', // Only if standard
-] as const satisfies (keyof FlattenObjectMetadata)[];
+] as const satisfies (keyof FlatObjectMetadata)[];
 
-export type FlattenObjectMetadataPropertiesToCompare =
-  (typeof flattenObjectMetadataPropertiesToCompare)[number];
+export type FlatObjectMetadataPropertiesToCompare =
+  (typeof flatObjectMetadataPropertiesToCompare)[number];
 
-export const compareTwoFlattenObjectMetadata = ({
+export const compareTwoFlatObjectMetadata = ({
   from,
   to,
-}: FromTo<FlattenObjectMetadata>) => {
+}: FromTo<FlatObjectMetadata>) => {
   const fromCompare = transformMetadataForComparison(from, {});
   const toCompare = transformMetadataForComparison(to, {});
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
@@ -50,15 +50,15 @@ export const compareTwoFlattenObjectMetadata = ({
 
         // Could be handled directly from the diff we do above
         if (
-          !flattenObjectMetadataPropertiesToCompare.includes(
-            property as FlattenObjectMetadataPropertiesToCompare,
+          !flatObjectMetadataPropertiesToCompare.includes(
+            property as FlatObjectMetadataPropertiesToCompare,
           )
         ) {
           return [];
         }
 
         return {
-          property: property as FlattenObjectMetadataPropertiesToCompare,
+          property: property as FlatObjectMetadataPropertiesToCompare,
           from: difference.oldValue,
           to: difference.value,
         };

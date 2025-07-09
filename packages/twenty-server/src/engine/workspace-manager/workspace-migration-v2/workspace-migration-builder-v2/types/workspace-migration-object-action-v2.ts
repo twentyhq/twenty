@@ -1,10 +1,10 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FlattenObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { FlattenObjectMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-object-metadata-comparator.util';
+import { FlatObjectMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-object-metadata-comparator.util';
 
 type ObjectActionCommon = {
-  flattenObjectMetadata: FlattenObjectMetadataWithoutFields;
+  flattenObjectMetadata: FlatObjectMetadataWithoutFields;
 };
 export type CreateObjectAction = {
   type: 'create_object';
@@ -14,10 +14,10 @@ export type UpdateObjectAction = {
   type: 'update_object';
   updates: Partial<
     {
-      [P in FlattenObjectMetadataPropertiesToCompare]: {
+      [P in FlatObjectMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<ObjectMetadataEntity[P]>;
-    }[FlattenObjectMetadataPropertiesToCompare]
+    }[FlatObjectMetadataPropertiesToCompare]
   >[];
 } & ObjectActionCommon;
 

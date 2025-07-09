@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlattenObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
@@ -16,7 +16,7 @@ export class WorkspaceMigrationBuilderV2Service {
   constructor() {}
 
   build(
-    objectMetadataFromToInputs: FromTo<FlattenObjectMetadata[]>,
+    objectMetadataFromToInputs: FromTo<FlatObjectMetadata[]>,
   ): WorkspaceMigrationV2 {
     const {
       created: createdObjectMetadata,

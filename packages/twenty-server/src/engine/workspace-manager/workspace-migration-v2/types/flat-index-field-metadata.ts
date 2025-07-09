@@ -8,7 +8,7 @@ const indexFieldMetadataEntityRelationProperties = [
 type IndexFieldMetadataRelationProperties =
   (typeof indexFieldMetadataEntityRelationProperties)[number];
 
-export type FlattenIndexFieldMetadata = Partial<
+export type FlatIndexFieldMetadata = Partial<
   Omit<IndexFieldMetadataEntity, IndexFieldMetadataRelationProperties>
 > & {
   uniqueIdentifier: string;

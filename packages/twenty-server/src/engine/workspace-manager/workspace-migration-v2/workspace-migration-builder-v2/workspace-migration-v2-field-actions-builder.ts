@@ -1,4 +1,4 @@
-import { compareTwoFlattenFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
+import { compareTwoFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
 import {
   UpdateFieldAction,
   WorkspaceMigrationFieldActionV2,
@@ -23,7 +23,7 @@ export const buildWorkspaceMigrationV2FieldActions = (
   } of objectMetadataDeletedCreatedUpdatedFields) {
     const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
       ({ from, to }) => {
-        const updates = compareTwoFlattenFieldMetadata({
+        const updates = compareTwoFlatFieldMetadata({
           from,
           to,
         });
