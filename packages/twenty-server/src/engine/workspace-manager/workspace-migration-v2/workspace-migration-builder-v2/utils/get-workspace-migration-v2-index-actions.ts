@@ -1,7 +1,7 @@
 import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
 import {
-    CreateIndexAction,
-    DeleteIndexAction,
+  CreateIndexAction,
+  DeleteIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 
 export const getWorkspaceMigrationV2CreateIndexAction = (

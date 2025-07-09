@@ -33,12 +33,11 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const createdObjectWorkspaceMigrationCreateFieldActions =
       createdObjectMetadata.flatMap((flatObjectMetadata) =>
-        flatObjectMetadata.flatFieldMetadatas.map(
-          (flatFieldMetadata) =>
-            getWorkspaceMigrationV2FieldCreateAction({
-              flatFieldMetadata,
-              flatObjectMetadata,
-            }),
+        flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
+          getWorkspaceMigrationV2FieldCreateAction({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
         ),
       );
 
