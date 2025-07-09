@@ -65,7 +65,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
     service = new WorkspaceMigrationBuilderV2Service();
   });
 
-  const expectedActionsLengthChecker = ({
+  const expectedActionsTypeCounterChecker = ({
     expectedActionsTypeCounter,
     workspaceMigration,
   }: {
@@ -102,7 +102,7 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         to,
       });
 
-      expectedActionsLengthChecker({
+      expectedActionsTypeCounterChecker({
         expectedActionsTypeCounter,
         workspaceMigration,
       });
