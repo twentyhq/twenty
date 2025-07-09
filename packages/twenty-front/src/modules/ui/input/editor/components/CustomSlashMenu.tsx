@@ -1,8 +1,8 @@
-import { createPortal } from 'react-dom';
-
 import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
@@ -15,6 +15,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isDefined } from 'twenty-shared/utils';
 
 export type { SuggestionItem };
 
@@ -23,11 +25,25 @@ const StyledContainer = styled.div`
   width: 1px;
 `;
 
-export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
+export const CustomSlashMenu = ({
+  items,
+  selectedIndex,
+}: CustomSlashMenuProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
+
+  const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
+
+  useEffect(() => {
+    if (!isDefined(selectedIndex)) return;
+
+    const selectedItem = items[selectedIndex];
+    if (isDefined(selectedItem)) {
+      setSelectedItemId(selectedItem.title);
+    }
+  }, [items, selectedIndex, setSelectedItemId]);
 
   return (
     <StyledContainer ref={refs.setReference}>
@@ -47,9 +63,9 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
                 <SelectableList
                   focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
                   selectableListInstanceId={SLASH_MENU_LIST_ID}
-                  selectableItemIdArray={props.items.map((item) => item.title)}
+                  selectableItemIdArray={items.map((item) => item.title)}
                 >
-                  {props.items.map((item) => (
+                  {items.map((item) => (
                     <CustomSlashMenuListItem key={item.title} item={item} />
                   ))}
                 </SelectableList>
