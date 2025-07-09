@@ -13,6 +13,8 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import React from 'react';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledMessageContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(6)};
@@ -34,7 +36,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     },
   });
 
-  const { records: messageChannels } = useFindManyRecords<
+  const { records: allMessageChannels } = useFindManyRecords<
     MessageChannel & {
       connectedAccount: ConnectedAccount;
     }
@@ -44,11 +46,30 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       connectedAccountId: {
         in: accounts.map((account) => account.id),
       },
-      isSyncEnabled: {
-        eq: true,
+    },
+    recordGqlFields: {
+      id: true,
+      handle: true,
+      isSyncEnabled: true,
+      connectedAccount: {
+        id: true,
+        provider: true,
+        connectionParameters: true,
       },
     },
     skip: !accounts.length,
+  });
+
+  const messageChannels = allMessageChannels.filter((messageChannel) => {
+    if (
+      messageChannel.connectedAccount.provider ===
+      ConnectedAccountProvider.IMAP_SMTP_CALDAV
+    ) {
+      return isDefined(
+        messageChannel.connectedAccount.connectionParameters?.IMAP,
+      );
+    }
+    return true;
   });
 
   const tabs = [

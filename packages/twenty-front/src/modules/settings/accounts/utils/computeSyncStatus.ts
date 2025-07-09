@@ -1,13 +1,25 @@
 import { CalendarChannelSyncStatus } from '@/accounts/types/CalendarChannel';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannelSyncStatus } from '@/accounts/types/MessageChannel';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const computeSyncStatus = (
+  connectedAccount: ConnectedAccount,
   messageChannelSyncStatus: MessageChannelSyncStatus,
   calendarChannelSyncStatus: CalendarChannelSyncStatus,
   isMessageChannelSyncEnabled?: boolean,
 ) => {
   if (isMessageChannelSyncEnabled === false) {
+    return null;
+  }
+  if (
+    connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    isDefined(connectedAccount.connectionParameters?.SMTP) &&
+    !isDefined(connectedAccount.connectionParameters?.IMAP) &&
+    !isDefined(connectedAccount.connectionParameters?.CALDAV)
+  ) {
     return null;
   }
 
