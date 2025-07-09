@@ -179,6 +179,7 @@ type AIChatTabProps = {
 export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
   const theme = useTheme();
 
+
   const {
     messages,
     isLoading,
@@ -215,7 +216,9 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
   return (
     <StyledContainer>
       {messages.length !== 0 && (
-        <StyledScrollWrapper componentInstanceId={agentId}>
+        <StyledScrollWrapper
+          componentInstanceId={`scroll-wrapper-ai-chat-${agentId}`}
+        >
           {messages.map((msg) => (
             <StyledMessageBubble
               key={msg.id}

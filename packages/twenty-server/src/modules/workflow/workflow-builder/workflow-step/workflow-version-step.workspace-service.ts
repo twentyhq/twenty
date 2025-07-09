@@ -621,7 +621,7 @@ export class WorkflowVersionStepWorkspaceService {
             name: 'AI Agent Workflow Step',
             description: 'Created automatically for workflow step',
             prompt: '',
-            modelId: 'gpt-4o',
+            modelId: 'auto',
           },
           workspaceId,
         );

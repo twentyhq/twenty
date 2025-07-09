@@ -4,6 +4,7 @@ export enum ModelProvider {
 }
 
 export type ModelId =
+  | 'auto'
   | 'gpt-4o'
   | 'gpt-4o-mini'
   | 'gpt-4-turbo'

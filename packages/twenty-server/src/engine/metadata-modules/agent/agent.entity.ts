@@ -33,7 +33,7 @@ export class AgentEntity {
   @Column({ nullable: false, type: 'text' })
   prompt: string;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', default: 'auto' })
   modelId: ModelId;
 
   @Column({ nullable: true, type: 'jsonb' })

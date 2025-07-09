@@ -23,6 +23,7 @@ export type CurrentWorkspace = Pick<
   | 'customDomain'
   | 'workspaceUrls'
   | 'metadataVersion'
+  | 'defaultAgent'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
 };
