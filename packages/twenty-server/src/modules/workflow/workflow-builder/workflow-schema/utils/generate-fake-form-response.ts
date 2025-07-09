@@ -30,10 +30,11 @@ export const generateFakeFormResponse = async ({
             formFieldMetadata?.settings?.objectName,
           );
 
-        if (!objectMetadataItemWithFieldsMaps)
+        if (!isDefined(objectMetadataItemWithFieldsMaps)) {
           throw new Error(
             `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
           );
+        }
 
         return {
           [formFieldMetadata.name]: {
