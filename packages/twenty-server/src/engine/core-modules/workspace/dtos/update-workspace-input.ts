@@ -8,6 +8,7 @@ import {
   IsUUID,
   Matches,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -190,4 +191,8 @@ export class UpdateWorkspaceInput {
   @IsUUID()
   @IsOptional()
   defaultRoleId?: string;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  twoFactorAuthenticationPolicy?: TwoFactorAuthenticationPolicy;
 }
