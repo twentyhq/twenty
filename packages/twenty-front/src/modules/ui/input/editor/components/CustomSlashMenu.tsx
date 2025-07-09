@@ -15,7 +15,6 @@ import {
 } from '@/ui/input/editor/components/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -68,7 +67,6 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
               <StyledInnerContainer>
                 <DropdownMenuItemsContainer>
                   <SelectableList
-                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                     focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
                     selectableListInstanceId={SLASH_MENU_LIST_ID}
                     selectableItemIdArray={props.items.map(
