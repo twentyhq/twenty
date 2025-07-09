@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
@@ -149,6 +150,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       new AuthException(
         'UserWorkspace not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: t`User does not have access to this workspace`,
+        },
       ),
     );
 
