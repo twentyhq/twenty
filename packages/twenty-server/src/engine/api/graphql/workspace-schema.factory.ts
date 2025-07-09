@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
@@ -56,13 +57,13 @@ export class WorkspaceSchemaFactory {
       );
     }
 
-    const objectMetadataCollection = Object.values(objectMetadataMaps.byId).map(
-      (objectMetadataItem) => ({
+    const objectMetadataCollection = Object.values(objectMetadataMaps.byId)
+      .filter(isDefined)
+      .map((objectMetadataItem) => ({
         ...objectMetadataItem,
         fields: Object.values(objectMetadataItem.fieldsById),
         indexes: objectMetadataItem.indexMetadatas,
-      }),
-    );
+      }));
 
     // Get typeDefs from cache
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(

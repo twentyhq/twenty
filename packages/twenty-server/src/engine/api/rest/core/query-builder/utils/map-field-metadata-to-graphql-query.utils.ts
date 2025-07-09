@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -57,6 +58,10 @@ export const mapFieldMetadataToGraphqlQuery = (
 
     const relationMetadataItem =
       objectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!isDefined(relationMetadataItem)) {
+      return '';
+    }
 
     return `${field.name}
     {
