@@ -11,6 +11,8 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
 const PERSON_GQL_FIELDS_WITH_COMPANY = `
   id
   company {
@@ -127,6 +129,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.errors[0].message).toBe(
       'company and companyId cannot be both provided.',
     );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
   });
 
   it('should throw an error if record to connect to does not exist', async () => {
@@ -148,6 +153,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
       'Expected 1 record to connect to company, but found 0.',
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
     );
   });
 
@@ -182,6 +190,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.errors[0].message).toBe(
       'Expected the same constraint fields to be used consistently across all operations for company.',
     );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
   });
 
   it('should throw an error if connect field is not set with field from unique constraint', async () => {
@@ -203,6 +214,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
       'Field "name" is not defined by type "CompanyWhereUniqueInput".',
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
     );
   });
 
@@ -228,6 +242,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
       "Too many fields provided for connect field 'company'. Only fields from one unique constraint are allowed.",
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
     );
   });
 });
