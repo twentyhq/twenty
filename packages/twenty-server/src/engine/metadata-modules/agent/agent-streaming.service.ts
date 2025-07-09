@@ -65,7 +65,7 @@ export class AgentStreamingService {
 
       this.setupStreamingHeaders(res);
 
-      const { textStream } =
+      const { fullStream } =
         await this.agentExecutionService.streamChatResponse({
           agentId: thread.agent.id,
           userMessage,
@@ -74,9 +74,24 @@ export class AgentStreamingService {
 
       let aiResponse = '';
 
-      for await (const chunk of textStream) {
-        aiResponse += chunk;
-        res.write(chunk);
+      for await (const chunk of fullStream) {
+        switch (chunk.type) {
+          case 'text-delta':
+            aiResponse += chunk.textDelta;
+            this.sendSSEEvent(res, {
+              type: chunk.type,
+              message: chunk.textDelta,
+            });
+            break;
+          case 'tool-call':
+            this.sendSSEEvent(res, {
+              type: chunk.type,
+              message: chunk.args?.toolDescription,
+            });
+            break;
+          default:
+            break;
+        }
       }
 
       await this.agentChatService.addMessage({
@@ -94,9 +109,20 @@ export class AgentStreamingService {
     }
   }
 
+  private sendSSEEvent(
+    res: Response,
+    event: { type: string; message: string },
+  ): void {
+    const eventData = `data: ${JSON.stringify(event)}\n\n`;
+
+    res.write(eventData);
+  }
+
   private setupStreamingHeaders(res: Response): void {
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Cache-Control');
   }
 }
