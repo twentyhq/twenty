@@ -9,10 +9,10 @@ import {
   Max,
   Min,
   ValidationError,
-  isDefined,
   validateOrReject,
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -186,6 +186,21 @@ export class FieldMetadataValidationService {
         fieldType: fieldMetadataType,
         settings: fieldMetadataInput.settings,
       });
+    }
+
+    const isRelationField =
+      fieldMetadataType === FieldMetadataType.RELATION ||
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION;
+
+    if (
+      isRelationField &&
+      isDefined(existingFieldMetadata) &&
+      fieldMetadataInput.name !== existingFieldMetadata.name
+    ) {
+      throw new FieldMetadataException(
+        'Name cannot be changed for relation fields',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
     }
   }
 }
