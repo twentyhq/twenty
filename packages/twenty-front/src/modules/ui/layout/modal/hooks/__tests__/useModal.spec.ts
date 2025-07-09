@@ -5,8 +5,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { act } from 'react';
 
-const mockGoBackToPreviousHotkeyScope = jest.fn();
-
 const modalId = 'test-modal-id';
 
 describe('useModal', () => {
@@ -59,7 +57,6 @@ describe('useModal', () => {
     });
 
     expect(result.current.isModalOpened).toBe(false);
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
   });
 
   it('should toggle a modal (open when closed)', () => {
@@ -109,6 +106,5 @@ describe('useModal', () => {
     });
 
     expect(result.current.isModalOpened).toBe(false);
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
   });
 });

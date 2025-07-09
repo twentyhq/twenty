@@ -9,7 +9,7 @@ type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
-  preventSetHotkeyScope?: boolean;
+  preventFocusStackUpdate?: boolean;
   formFieldInputInstanceId: string;
 };
 
@@ -50,7 +50,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       hasRightElement,
       multiline,
       readonly,
-      preventSetHotkeyScope = false,
+      preventFocusStackUpdate = false,
       onClick,
       formFieldInputInstanceId,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
@@ -63,7 +63,7 @@ export const FormFieldInputInnerContainer = forwardRef(
     const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(e);
 
-      if (!preventSetHotkeyScope) {
+      if (!preventFocusStackUpdate) {
         pushFocusItemToFocusStack({
           focusId: formFieldInputInstanceId,
           component: {
@@ -77,7 +77,7 @@ export const FormFieldInputInnerContainer = forwardRef(
     const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
       onBlur?.(e);
 
-      if (!preventSetHotkeyScope) {
+      if (!preventFocusStackUpdate) {
         removeFocusItemFromFocusStackById({
           focusId: formFieldInputInstanceId,
         });

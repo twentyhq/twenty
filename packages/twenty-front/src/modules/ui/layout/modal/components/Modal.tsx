@@ -1,6 +1,5 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeysAndClickOutsideEffect } from '@/ui/layout/modal/components/ModalHotkeysAndClickOutsideEffect';
-import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
@@ -191,7 +190,6 @@ export type ModalProps = React.PropsWithChildren & {
   size?: ModalSize;
   padding?: ModalPadding;
   className?: string;
-  hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
   modalVariant?: ModalVariants;
   dataGloballyPreventClickOutside?: boolean;
