@@ -54,7 +54,7 @@ export function formatData<T>(
   return newData as T;
 }
 
-function formatCompositeField(
+export function formatCompositeField(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   fieldMetadata: FieldMetadataInterface,

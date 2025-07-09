@@ -47,7 +47,10 @@ export const WorkflowFormEmptyMessage = () => {
     <StyledMessageContainer>
       <FormFieldInputContainer>
         <FormFieldInputRowContainer multiline maxHeight={124}>
-          <FormFieldInputInnerContainer hasRightElement={false}>
+          <FormFieldInputInnerContainer
+            formFieldInputInstanceId="empty-form-message"
+            hasRightElement={false}
+          >
             <StyledFieldContainer>
               <StyledMessageContentContainer>
                 <StyledMessageTitle data-testid="empty-form-message-title">

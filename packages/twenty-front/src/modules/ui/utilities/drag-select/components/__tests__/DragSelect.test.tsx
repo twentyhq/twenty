@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
@@ -70,10 +71,12 @@ describe('DragSelect', () => {
       preventDefault: jest.fn(),
     };
 
-    callbacks.onMouseDown({
-      x: 150,
-      y: 150,
-      event: mockEvent,
+    act(() => {
+      callbacks.onMouseDown({
+        x: 150,
+        y: 150,
+        event: mockEvent,
+      });
     });
 
     expect(mockEvent.preventDefault).not.toHaveBeenCalled();
@@ -92,10 +95,12 @@ describe('DragSelect', () => {
       preventDefault: jest.fn(),
     };
 
-    callbacks.onMouseDown({
-      x: 150,
-      y: 150,
-      event: mockEvent,
+    act(() => {
+      callbacks.onMouseDown({
+        x: 150,
+        y: 150,
+        event: mockEvent,
+      });
     });
 
     expect(mockEvent.preventDefault).toHaveBeenCalled();
@@ -131,10 +136,12 @@ describe('DragSelect', () => {
       .mockReturnValue(mockBoundaryElement);
     mockBoundaryElement.contains = jest.fn().mockReturnValue(true);
 
-    callbacks.onMouseDown({
-      x: 150,
-      y: 150,
-      event: { target: mockTarget, preventDefault: jest.fn() },
+    act(() => {
+      callbacks.onMouseDown({
+        x: 150,
+        y: 150,
+        event: { target: mockTarget, preventDefault: jest.fn() },
+      });
     });
 
     expect(mockSelectableContainer.closest).toHaveBeenCalledWith(
@@ -160,10 +167,12 @@ describe('DragSelect', () => {
     mockSelectableContainer.contains = jest.fn().mockReturnValue(true);
 
     expect(() => {
-      callbacks.onMouseDown({
-        x: 150,
-        y: 150,
-        event: { target: mockTarget, preventDefault: jest.fn() },
+      act(() => {
+        callbacks.onMouseDown({
+          x: 150,
+          y: 150,
+          event: { target: mockTarget, preventDefault: jest.fn() },
+        });
       });
     }).not.toThrow();
   });

@@ -1,7 +1,7 @@
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { expect } from '@storybook/jest';
@@ -97,17 +97,19 @@ const Render = ({
       focusId: TableHotkeyScope.CellEditMode,
       component: {
         type: FocusComponentType.DROPDOWN,
-        instanceId: getFieldInputInstanceId({
+        instanceId: getRecordFieldInputInstanceId({
           recordId: '123',
           fieldName: 'Relation',
+          prefix: 'multi-select-story',
         }),
       },
       hotkeyScope: {
         scope: TableHotkeyScope.CellEditMode,
       },
-      memoizeKey: getFieldInputInstanceId({
+      memoizeKey: getRecordFieldInputInstanceId({
         recordId: '123',
         fieldName: 'Relation',
+        prefix: 'multi-select-story',
       }),
     });
   }, [pushFocusItemToFocusStack]);

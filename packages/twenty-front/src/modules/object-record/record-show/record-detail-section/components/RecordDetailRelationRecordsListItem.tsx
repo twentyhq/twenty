@@ -29,14 +29,14 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -163,7 +163,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     dropdownScopeId,
   );
 
@@ -320,14 +320,14 @@ export const RecordDetailRelationRecordsListItem = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: getRecordFieldInputId(
-                      relationRecord.id,
-                      fieldMetadataItem.name,
-                      'record-detail',
-                    ),
+                    instanceId: getRecordFieldInputInstanceId({
+                      recordId: relationRecord.id,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: 'record-detail',
+                    }),
                   }}
                 >
-                  <RecordInlineCell />
+                  <RecordInlineCell instanceIdPrefix="record-detail" />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),

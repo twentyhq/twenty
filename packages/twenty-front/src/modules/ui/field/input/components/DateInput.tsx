@@ -13,6 +13,7 @@ import { useRecoilCallback } from 'recoil';
 import { Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
+  instanceId: string;
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
@@ -30,6 +31,7 @@ export type DateInputProps = {
 };
 
 export const DateInput = ({
+  instanceId,
   value,
   onEnter,
   onEscape,
@@ -88,20 +90,19 @@ export const DateInput = ({
         if (hotkeyScope?.scope === TableHotkeyScope.CellEditMode) {
           closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
           closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-          onEscape(internalValue);
           onClickOutside(event, internalValue);
         }
       },
     [
       closeDropdownYearSelect,
       closeDropdownMonthSelect,
-      onEscape,
       onClickOutside,
       internalValue,
     ],
   );
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalValue,
     onEnter: handleEnter,

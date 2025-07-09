@@ -1,11 +1,13 @@
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
   className?: string;
@@ -18,6 +20,8 @@ type NavigationDrawerInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
 };
+
+const NAVIGATION_DRAWER_INPUT_FOCUS_ID = 'navigation-drawer-input';
 
 export const NavigationDrawerInput = ({
   className,
@@ -32,37 +36,64 @@ export const NavigationDrawerInput = ({
 }: NavigationDrawerInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useHotkeyScopeOnMount(hotkeyScope);
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: () => {
       onCancel(value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
-    hotkeyScope,
-  );
+    focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+    scope: hotkeyScope,
+  });
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: () => {
       onSubmit(value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
-    hotkeyScope,
-  );
+    focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+    scope: hotkeyScope,
+  });
 
   useListenClickOutside({
     refs: [inputRef],
     callback: (event) => {
       event.stopImmediatePropagation();
       onClickOutside(event, value);
+      removeFocusItemFromFocusStackById({
+        focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      });
     },
     listenerId: 'navigation-drawer-input',
   });
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     if (isDefined(value)) {
       event.target.select();
     }
+    pushFocusItemToFocusStack({
+      focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+      },
+      hotkeyScope: { scope: hotkeyScope },
+    });
+  };
+
+  const handleBlur = () => {
+    removeFocusItemFromFocusStackById({
+      focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
+    });
   };
 
   return (
@@ -74,6 +105,7 @@ export const NavigationDrawerInput = ({
       onChange={onChange}
       placeholder={placeholder}
       onFocus={handleFocus}
+      onBlur={handleBlur}
       sizeVariant="md"
       fullWidth
       autoFocus

@@ -14,7 +14,9 @@ import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { isArray } from '@sniptt/guards';
@@ -82,16 +84,15 @@ export const FormMultiSelectFieldInput = ({
   placeholder,
   testId,
 }: FormMultiSelectFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
   const theme = useTheme();
 
   const hotkeyScope =
     FormMultiSelectFieldInputHotKeyScope.FormMultiSelectFieldInput;
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -128,8 +129,13 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    setHotkeyScopeAndMemorizePreviousScope({
-      scope: hotkeyScope,
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.FORM_FIELD_INPUT,
+        instanceId,
+      },
+      hotkeyScope: { scope: hotkeyScope },
     });
   };
 
@@ -157,7 +163,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    goBackToPreviousHotkeyScope();
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -201,6 +207,7 @@ export const FormMultiSelectFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
@@ -268,7 +275,7 @@ export const FormMultiSelectFieldInput = ({
 
         {VariablePicker && !readonly && (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         )}

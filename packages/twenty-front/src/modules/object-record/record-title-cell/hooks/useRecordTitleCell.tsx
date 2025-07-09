@@ -3,7 +3,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -25,26 +25,30 @@ export const useRecordTitleCell = () => {
     ({ set }) =>
       ({
         recordId,
-        fieldMetadataId,
+        fieldName,
         containerType,
       }: {
         recordId: string;
-        fieldMetadataId: string;
+        fieldName: string;
         containerType: RecordTitleCellContainerType;
       }) => {
         set(
           isInlineCellInEditModeScopedState(
-            getRecordTitleCellId(recordId, fieldMetadataId, containerType),
+            getRecordFieldInputInstanceId({
+              recordId,
+              fieldName,
+              prefix: containerType,
+            }),
           ),
           false,
         );
 
         removeFocusItemFromFocusStackById({
-          focusId: getRecordTitleCellId(
+          focusId: getRecordFieldInputInstanceId({
             recordId,
-            fieldMetadataId,
-            containerType,
-          ),
+            fieldName,
+            prefix: containerType,
+          }),
         });
 
         goBackToPreviousDropdownFocusId();
@@ -58,47 +62,47 @@ export const useRecordTitleCell = () => {
     ({ set, snapshot }) =>
       ({
         recordId,
-        fieldMetadataId,
+        fieldName,
         containerType,
         customEditHotkeyScopeForField,
       }: {
         recordId: string;
-        fieldMetadataId: string;
+        fieldName: string;
         containerType: RecordTitleCellContainerType;
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         if (isDefined(customEditHotkeyScopeForField)) {
           pushFocusItemToFocusStack({
-            focusId: getRecordTitleCellId(
+            focusId: getRecordFieldInputInstanceId({
               recordId,
-              fieldMetadataId,
-              containerType,
-            ),
+              fieldName,
+              prefix: containerType,
+            }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordTitleCellId(
+              instanceId: getRecordFieldInputInstanceId({
                 recordId,
-                fieldMetadataId,
-                containerType,
-              ),
+                fieldName,
+                prefix: containerType,
+              }),
             },
             hotkeyScope: customEditHotkeyScopeForField,
             memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
           });
         } else {
           pushFocusItemToFocusStack({
-            focusId: getRecordTitleCellId(
+            focusId: getRecordFieldInputInstanceId({
               recordId,
-              fieldMetadataId,
-              containerType,
-            ),
+              fieldName,
+              prefix: containerType,
+            }),
             component: {
               type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordTitleCellId(
+              instanceId: getRecordFieldInputInstanceId({
                 recordId,
-                fieldMetadataId,
-                containerType,
-              ),
+                fieldName,
+                prefix: containerType,
+              }),
             },
             hotkeyScope: {
               scope: TitleInputHotkeyScope.TitleInput,
@@ -107,11 +111,11 @@ export const useRecordTitleCell = () => {
           });
         }
 
-        const recordTitleCellId = getRecordTitleCellId(
+        const recordTitleCellId = getRecordFieldInputInstanceId({
           recordId,
-          fieldMetadataId,
-          containerType,
-        );
+          fieldName,
+          prefix: containerType,
+        });
         set(isInlineCellInEditModeScopedState(recordTitleCellId), true);
 
         const recordIndexFieldDefinitions = snapshot
@@ -119,7 +123,7 @@ export const useRecordTitleCell = () => {
           .getValue();
 
         const fieldDefinition = recordIndexFieldDefinitions.find(
-          (field) => field.fieldMetadataId === fieldMetadataId,
+          (field) => field.metadata.fieldName === fieldName,
         );
 
         if (!fieldDefinition) {

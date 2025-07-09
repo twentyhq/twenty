@@ -1,5 +1,5 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -129,6 +129,7 @@ export const SettingsIntegrationDatabaseConnectionForm = ({
           render={({ field: { onChange, value } }) => {
             return (
               <TextInput
+                instanceId={`${databaseKey}-${name}`}
                 autoComplete="new-password" // Disable autocomplete
                 label={label}
                 value={value}

@@ -122,6 +122,29 @@ export class CacheStorageService {
     } while (cursor !== 0);
   }
 
+  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+    if (!this.isRedisCache()) {
+      throw new Error('acquireLock is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    const result = await redisClient.set(this.getKey(key), 'lock', {
+      NX: true,
+      PX: ttl,
+    });
+
+    return result === 'OK';
+  }
+
+  async releaseLock(key: string): Promise<void> {
+    if (!this.isRedisCache()) {
+      throw new Error('releaseLock is only supported with Redis cache');
+    }
+
+    await this.del(key);
+  }
+
   private isRedisCache() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';

@@ -3,7 +3,30 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
+
+const TestWrapper = ({
+  children,
+  initialEntry = '/',
+  isDeveloperDefaultSignInPrefilled = false,
+}: {
+  children: ReactNode;
+  initialEntry?: string;
+  isDeveloperDefaultSignInPrefilled?: boolean;
+}) => (
+  <MemoryRouter initialEntries={[initialEntry]}>
+    <RecoilRoot
+      initializeState={(snapshot) => {
+        snapshot.set(
+          isDeveloperDefaultSignInPrefilledState,
+          isDeveloperDefaultSignInPrefilled,
+        );
+      }}
+    >
+      {children}
+    </RecoilRoot>
+  </MemoryRouter>
+);
 
 describe('useSignInUpForm', () => {
   beforeEach(() => {
@@ -12,21 +35,17 @@ describe('useSignInUpForm', () => {
 
   it('should initialize the form with default values', async () => {
     const { result } = renderHook(() => useSignInUpForm(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <MemoryRouter>
-          <RecoilRoot>{children}</RecoilRoot>
-        </MemoryRouter>
-      ),
+      wrapper: ({ children }) => <TestWrapper>{children}</TestWrapper>,
     });
     expect(result.current.form).toBeDefined();
   });
 
   it('should not prefill sign-in developer defaults when state is false', () => {
     const { result } = renderHook(() => useSignInUpForm(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <MemoryRouter initialEntries={['?email=test@test.com']}>
-          <RecoilRoot>{children}</RecoilRoot>
-        </MemoryRouter>
+      wrapper: ({ children }) => (
+        <TestWrapper initialEntry="?email=test@test.com">
+          {children}
+        </TestWrapper>
       ),
     });
 
@@ -39,24 +58,16 @@ describe('useSignInUpForm', () => {
   });
 
   it('should prefill developer defaults when the state is true', () => {
-    const { result } = renderHook(
-      () => {
-        const setIsDeveloperDefaultSignInPrefilledState = useSetRecoilState(
-          isDeveloperDefaultSignInPrefilledState,
-        );
-
-        setIsDeveloperDefaultSignInPrefilledState(true);
-
-        return useSignInUpForm();
-      },
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <MemoryRouter initialEntries={['?email=test@test.com']}>
-            <RecoilRoot>{children}</RecoilRoot>
-          </MemoryRouter>
-        ),
-      },
-    );
+    const { result } = renderHook(() => useSignInUpForm(), {
+      wrapper: ({ children }) => (
+        <TestWrapper
+          initialEntry="?email=test@test.com"
+          isDeveloperDefaultSignInPrefilled={true}
+        >
+          {children}
+        </TestWrapper>
+      ),
+    });
 
     expect(result.current.form.getValues()).toEqual({
       exist: false,

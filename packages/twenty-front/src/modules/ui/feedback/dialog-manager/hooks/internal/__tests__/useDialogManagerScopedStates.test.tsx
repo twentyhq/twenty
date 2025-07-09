@@ -1,5 +1,4 @@
-import { act } from 'react-dom/test-utils';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useDialogManagerScopedStates } from '@/ui/feedback/dialog-manager/hooks/internal/useDialogManagerScopedStates';

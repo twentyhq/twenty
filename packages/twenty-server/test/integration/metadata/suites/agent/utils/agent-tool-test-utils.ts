@@ -113,6 +113,7 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
+      chatThreads: [],
     };
 
     const testRole: RoleEntity = {
@@ -157,6 +158,7 @@ export const createAgentToolTestModule =
       targetRelationFields: [],
       dataSource: {} as any,
       objectPermissions: [],
+      fieldPermissions: [],
     };
 
     return {
@@ -206,6 +208,7 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
             canUpdate: true,
             canSoftDelete: true,
             canDestroy: false,
+            restrictedFields: {},
           },
         },
       },

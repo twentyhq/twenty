@@ -1,5 +1,5 @@
 import { MockedProvider } from '@apollo/client/testing';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -174,7 +174,9 @@ describe('useWebhookForm', () => {
         secret: 'test-secret',
       };
 
-      await result.current.handleSave(formData);
+      await act(async () => {
+        await result.current.handleSave(formData);
+      });
 
       expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
         message: 'Webhook https://test.com/webhook created successfully',
@@ -215,7 +217,9 @@ describe('useWebhookForm', () => {
         secret: 'test-secret',
       };
 
-      await result.current.handleSave(formData);
+      await act(async () => {
+        await result.current.handleSave(formData);
+      });
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
         apolloError: expect.any(Error),
@@ -250,7 +254,9 @@ describe('useWebhookForm', () => {
         secret: 'test-secret',
       };
 
-      await result.current.handleSave(formData);
+      await act(async () => {
+        await result.current.handleSave(formData);
+      });
 
       expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
         message: 'Webhook https://test.com/webhook created successfully',
@@ -306,7 +312,9 @@ describe('useWebhookForm', () => {
         secret: 'updated-secret',
       };
 
-      await result.current.handleSave(formData);
+      await act(async () => {
+        await result.current.handleSave(formData);
+      });
 
       expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
         message: 'Webhook https://updated.com/webhook updated successfully',
@@ -353,7 +361,9 @@ describe('useWebhookForm', () => {
         secret: 'test-secret',
       };
 
-      await result.current.handleSave(formData);
+      await act(async () => {
+        await result.current.handleSave(formData);
+      });
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
         apolloError: expect.any(Error),
@@ -368,7 +378,9 @@ describe('useWebhookForm', () => {
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
-      result.current.updateOperation(0, 'object', 'person');
+      act(() => {
+        result.current.updateOperation(0, 'object', 'person');
+      });
 
       const operations = result.current.formConfig.getValues('operations');
       expect(operations[0].object).toBe('person');
@@ -380,16 +392,20 @@ describe('useWebhookForm', () => {
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
-      result.current.formConfig.setValue('operations', [
-        { object: 'person', action: 'created' },
-        { object: 'company', action: 'updated' },
-      ]);
+      act(() => {
+        result.current.formConfig.setValue('operations', [
+          { object: 'person', action: 'created' },
+          { object: 'company', action: 'updated' },
+        ]);
+      });
 
       const initialOperations =
         result.current.formConfig.getValues('operations');
       const initialCount = initialOperations.length;
 
-      result.current.removeOperation(0);
+      act(() => {
+        result.current.removeOperation(0);
+      });
 
       const updatedOperations =
         result.current.formConfig.getValues('operations');
@@ -419,7 +435,9 @@ describe('useWebhookForm', () => {
         },
       );
 
-      await result.current.handleDelete();
+      await act(async () => {
+        await result.current.handleDelete();
+      });
 
       expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
         message: 'Webhook deleted successfully',
@@ -432,7 +450,9 @@ describe('useWebhookForm', () => {
         { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
       );
 
-      await result.current.handleDelete();
+      await act(async () => {
+        await result.current.handleDelete();
+      });
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
         message: 'Webhook ID is required for deletion',
@@ -467,7 +487,9 @@ describe('useWebhookForm', () => {
         },
       );
 
-      await result.current.handleDelete();
+      await act(async () => {
+        await result.current.handleDelete();
+      });
 
       expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
         apolloError: expect.any(Error),

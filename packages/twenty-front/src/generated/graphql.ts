@@ -478,6 +478,7 @@ export type CreateFieldInput = {
   isSystem?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
   name: Scalars['String'];
   objectMetadataId: Scalars['String'];
   options?: InputMaybe<Scalars['JSON']>;
@@ -675,10 +676,11 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
+  IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
@@ -746,6 +748,7 @@ export enum FieldMetadataType {
   EMAILS = 'EMAILS',
   FULL_NAME = 'FULL_NAME',
   LINKS = 'LINKS',
+  MORPH_RELATION = 'MORPH_RELATION',
   MULTI_SELECT = 'MULTI_SELECT',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
@@ -761,6 +764,23 @@ export enum FieldMetadataType {
   TS_VECTOR = 'TS_VECTOR',
   UUID = 'UUID'
 }
+
+export type FieldPermission = {
+  __typename?: 'FieldPermission';
+  canReadFieldValue?: Maybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: Maybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  id: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  roleId: Scalars['String'];
+};
+
+export type FieldPermissionInput = {
+  canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+};
 
 export enum FileFolder {
   Attachment = 'Attachment',
@@ -1074,6 +1094,7 @@ export type Mutation = {
   uploadImage: SignedFileDto;
   uploadProfilePicture: SignedFileDto;
   uploadWorkspaceLogo: SignedFileDto;
+  upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -1484,6 +1505,11 @@ export type MutationUploadProfilePictureArgs = {
 
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationUpsertFieldPermissionsArgs = {
+  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
 };
 
 
@@ -2437,6 +2463,11 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
 };
 
+export type UpsertFieldPermissionsInput = {
+  fieldPermissions: Array<FieldPermissionInput>;
+  roleId: Scalars['String'];
+};
+
 export type UpsertObjectPermissionsInput = {
   objectPermissions: Array<ObjectPermissionInput>;
   roleId: Scalars['String'];
@@ -2507,6 +2538,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
+  locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;

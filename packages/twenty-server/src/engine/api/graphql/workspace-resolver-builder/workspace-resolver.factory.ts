@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { IResolvers } from '@graphql-tools/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
@@ -9,6 +10,10 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -80,14 +85,21 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
-    // Get workspace feature flags for GraphQL filtering
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        authContext.workspace?.id || '',
-      );
+    const workspaceId = authContext.workspace?.id;
 
-    for (const objectMetadata of Object.values(objectMetadataMaps.byId)) {
-      // Check if this object should be excluded from GraphQL
+    if (!workspaceId) {
+      throw new AuthException(
+        'Unauthenticated',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    for (const objectMetadata of Object.values(objectMetadataMaps.byId).filter(
+      isDefined,
+    )) {
       const workspaceEntity = standardObjectMetadataDefinitions.find(
         (entity) => {
           const entityMetadata = metadataArgsStorage.filterEntities(entity);
@@ -100,7 +112,6 @@ export class WorkspaceResolverFactory {
         const entityMetadata =
           metadataArgsStorage.filterEntities(workspaceEntity);
 
-        // Skip entities that are GraphQL-gated and not enabled
         if (
           isGatedAndNotEnabled(
             entityMetadata?.gate,
