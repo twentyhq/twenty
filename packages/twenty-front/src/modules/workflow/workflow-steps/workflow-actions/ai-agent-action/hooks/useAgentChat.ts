@@ -1,14 +1,16 @@
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { useApolloClient } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { streamChatResponse } from '../api/streamChatResponse';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
@@ -20,6 +22,8 @@ interface OptimisticMessage extends AgentChatMessage {
 }
 
 export const useAgentChat = (agentId: string) => {
+  const apolloClient = useApolloClient();
+
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
     agentId,
@@ -36,21 +40,31 @@ export const useAgentChat = (agentId: string) => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
 
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({
       top: scrollWrapperHTMLElement.scrollHeight,
       behavior: 'smooth',
     });
-  }, [scrollWrapperHTMLElement]);
+  };
 
   const { data: { threads = [] } = {}, loading: threadsLoading } =
     useAgentChatThreads(agentId);
   const currentThreadId = threads[0]?.id;
 
-  const { loading: messagesLoading, refetch: refetchMessages } =
-    useAgentChatMessages(currentThreadId);
+  const {
+    data: messagesData,
+    loading: messagesLoading,
+    refetch: refetchMessages,
+  } = useAgentChatMessages(currentThreadId);
 
   const isLoading = messagesLoading || threadsLoading || isStreaming;
+
+  if (
+    agentChatMessages.length === 0 &&
+    isDefined(messagesData?.messages?.length)
+  ) {
+    setAgentChatMessages(messagesData.messages);
+  }
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -81,9 +95,20 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
-    await streamChatResponse(currentThreadId, content, (chunk) => {
-      setAgentStreamingMessage(chunk);
-      scrollToBottom();
+    await apolloClient.query({
+      query: STREAM_CHAT_QUERY,
+      variables: {
+        requestBody: {
+          threadId: currentThreadId,
+          userMessage: content,
+        },
+      },
+      context: {
+        onChunk: (chunk: string) => {
+          setAgentStreamingMessage(chunk);
+          scrollToBottom();
+        },
+      },
     });
 
     setIsStreaming(false);
@@ -117,17 +142,21 @@ export const useAgentChat = (agentId: string) => {
     await sendChatMessage(content);
   };
 
-  useScopedHotkeys(
-    [Key.Enter],
-    (event) => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: (event: KeyboardEvent) => {
       if (!event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         handleSendMessage();
       }
     },
-    InputHotkeyScope.TextInput,
-    [agentChatInput, isLoading],
-  );
+    focusId: `${agentId}-chat-input`,
+    scope: InputHotkeyScope.TextInput,
+    dependencies: [agentChatInput, isLoading],
+    options: {
+      enableOnFormTags: true,
+    },
+  });
 
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),

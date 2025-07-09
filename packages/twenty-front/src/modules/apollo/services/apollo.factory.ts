@@ -28,6 +28,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
+import { StreamingRestLink } from '../utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -41,6 +42,8 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
 }
+
+const REST_API_BASE_URL = `${REACT_APP_SERVER_BASE_URL}/rest`;
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
@@ -69,8 +72,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         uri,
       });
 
+      const streamingRestLink = new StreamingRestLink({
+        uri: REST_API_BASE_URL,
+      });
+
       const restLink = new RestLink({
-        uri: `${REACT_APP_SERVER_BASE_URL}/rest`,
+        uri: REST_API_BASE_URL,
       });
 
       const authLink = setContext(async (_, { headers }) => {
@@ -228,9 +235,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           ...(extraLinks || []),
           isDebugMode ? logger : null,
           retryLink,
+          streamingRestLink,
           restLink,
           httpLink,
-        ].filter(isDefined) as ApolloLink[],
+        ].filter(isDefined),
       );
     };
 
