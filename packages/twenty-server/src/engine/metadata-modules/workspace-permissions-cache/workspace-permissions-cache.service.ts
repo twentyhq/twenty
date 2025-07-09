@@ -8,10 +8,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -38,6 +40,7 @@ export class WorkspacePermissionsCacheService {
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   async recomputeRolesPermissionsCache({
@@ -156,7 +159,7 @@ export class WorkspacePermissionsCacheService {
     return userWorkspaceRoleMap[userWorkspaceId];
   }
 
-  private async getObjectRecordPermissionsForRoles({
+  async getObjectRecordPermissionsForRoles({
     workspaceId,
     roleIds,
   }: {
@@ -165,12 +168,24 @@ export class WorkspacePermissionsCacheService {
   }): Promise<ObjectRecordsPermissionsByRoleId> {
     let roles: RoleEntity[] = [];
 
+    const workspaceFeatureFlagsMap =
+      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
+        { workspaceId },
+      );
+
+    const isFieldPermissionsEnabled =
+      workspaceFeatureFlagsMap[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
+
     roles = await this.roleRepository.find({
       where: {
         workspaceId,
         ...(roleIds ? { id: In(roleIds) } : {}),
       },
-      relations: ['objectPermissions', 'settingPermissions'],
+      relations: [
+        'objectPermissions',
+        'settingPermissions',
+        ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
+      ],
     });
 
     const workspaceObjectMetadataCollection =
@@ -188,6 +203,10 @@ export class WorkspacePermissionsCacheService {
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
+        const restrictedFields: Record<
+          string,
+          { canRead?: boolean | null; canUpdate?: boolean | null }
+        > = {};
 
         if (
           standardId &&
@@ -230,6 +249,20 @@ export class WorkspacePermissionsCacheService {
             objectRecordPermissionsOverride?.canDestroyObjectRecords,
             canDestroy,
           );
+
+          if (isFieldPermissionsEnabled) {
+            const fieldPermissions = role.fieldPermissions.filter(
+              (fieldPermission) =>
+                fieldPermission.objectMetadataId === objectMetadataId,
+            );
+
+            for (const fieldPermission of fieldPermissions) {
+              restrictedFields[fieldPermission.fieldMetadataId] = {
+                canRead: fieldPermission.canReadFieldValue,
+                canUpdate: fieldPermission.canUpdateFieldValue,
+              };
+            }
+          }
         }
 
         objectRecordsPermissions[objectMetadataId] = {
@@ -237,6 +270,7 @@ export class WorkspacePermissionsCacheService {
           canUpdate,
           canSoftDelete,
           canDestroy,
+          restrictedFields,
         };
 
         permissionsByRoleId[role.id] = objectRecordsPermissions;

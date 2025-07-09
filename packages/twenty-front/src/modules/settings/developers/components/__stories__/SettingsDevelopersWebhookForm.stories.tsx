@@ -35,7 +35,7 @@ export const CreateMode: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('New Webhook', undefined, { timeout: 10000 });
+    await canvas.findByText('New Webhook', undefined, { timeout: 3000 });
     await canvas.findByPlaceholderText('https://example.com/webhook');
     await canvas.findByPlaceholderText('Write a description');
 
@@ -48,15 +48,21 @@ export const EditMode: Story = {
     mode: WebhookFormMode.Edit,
     webhookId: '1234',
   },
-  parameters: {
-    msw: graphqlMocks,
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByDisplayValue('https://example.com/webhook', undefined, {
-      timeout: 10000,
-    });
-    await canvas.findByDisplayValue('A Sample Description');
+    await canvas.findByDisplayValue(
+      'https://api.slackbot.io/webhooks/twenty',
+      undefined,
+      {
+        timeout: 3000,
+      },
+    );
+    await canvas.findByDisplayValue('Slack notifications for lead updates');
+
+    const allObjectsLabels = await canvas.findAllByText('All Objects');
+    expect(allObjectsLabels).toHaveLength(2);
+    await canvas.findByText('Created');
+    await canvas.findByText('Updated');
 
     await canvas.findByText('Danger zone');
     await canvas.findByText('Delete this webhook');

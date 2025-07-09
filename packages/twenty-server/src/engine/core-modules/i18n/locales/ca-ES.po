@@ -48,6 +48,11 @@ msgstr "(Sistema) Ordenacions de Visualització"
 msgid "(System) Views"
 msgstr "(Sistema) Visualitzacions"
 
+#. js-lingui-id: Q0ISF1
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "{fieldName} and {fieldName}Id cannot be both provided."
+msgstr ""
+
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
 msgid "{name} should be in camelCase"
@@ -99,7 +104,7 @@ msgid "A person"
 msgstr "Una persona"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "A role with this label already exists."
 msgstr ""
 
@@ -418,7 +423,7 @@ msgid "Auth failed at"
 msgstr "Autentificació fracassada a"
 
 #. js-lingui-id: LB4qX/
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr ""
 
@@ -658,6 +663,11 @@ msgstr "Posició del registre de l'empresa"
 msgid "Conference Solution"
 msgstr "Solució de conferència"
 
+#. js-lingui-id: 1fFL4B
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
+msgstr ""
+
 #. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -842,7 +852,7 @@ msgid "Email already verified."
 msgstr ""
 
 #. js-lingui-id: xw6iqb
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Email is not verified."
 msgstr ""
 
@@ -999,6 +1009,11 @@ msgstr "Excloure els correus electrònics no professionals"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "Executat per"
+
+#. js-lingui-id: AiFXmG
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
+msgstr ""
 
 #. js-lingui-id: sZg7s1
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
@@ -1184,13 +1199,13 @@ msgstr "Valor del Camp"
 
 #. js-lingui-id: 3oQ73E
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-msgid "Filter action must have a previous step"
-msgstr ""
+#~ msgid "Filter action must have a previous step"
+#~ msgstr ""
 
 #. js-lingui-id: Zllikb
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-msgid "Filter action must have only one previous step"
-msgstr ""
+#~ msgid "Filter action must have only one previous step"
+#~ msgstr ""
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1688,6 +1703,11 @@ msgstr "Token d'accés del proveïdor de missatgeria"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Token de refresc del proveïdor de missatgeria"
+
+#. js-lingui-id: SzCMUQ
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2328,6 +2348,11 @@ msgstr "Etap de sincronització iniciada a"
 msgid "Sync status"
 msgstr "Estat de sincronització"
 
+#. js-lingui-id: 5y3Wbw
+#: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
+msgid "Target object metadata not found for {connectFieldName}"
+msgstr ""
+
 #. js-lingui-id: 4SHJe4
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Target Url"
@@ -2676,6 +2701,11 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "Data i hora d'actualització"
+
+#. js-lingui-id: l9dlVi
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+msgid "User does not have access to this workspace"
+msgstr ""
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3201,7 +3231,7 @@ msgid "X"
 msgstr ""
 
 #. js-lingui-id: z+7x/s
-#: src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter.ts
+#: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr ""
 

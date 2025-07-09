@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
-import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
@@ -23,6 +22,7 @@ import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -307,7 +307,6 @@ export const ActivityRichTextEditor = ({
       editor.domElement?.blur();
     },
     focusId: activityId,
-    scope: ActivityEditorHotkeyScope.ActivityBody,
     dependencies: [editor],
   });
 
@@ -346,8 +345,7 @@ export const ActivityRichTextEditor = ({
   useHotkeysOnFocusedElement({
     keys: '*',
     callback: handleAllKeys,
-    focusId: activityId,
-    scope: ActivityEditorHotkeyScope.ActivityBody,
+    focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [handleAllKeys],
   });
 
@@ -380,8 +378,8 @@ export const ActivityRichTextEditor = ({
             type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
           },
           focusId: activityId,
-          hotkeyScope: {
-            scope: ActivityEditorHotkeyScope.ActivityBody,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
         });
       },

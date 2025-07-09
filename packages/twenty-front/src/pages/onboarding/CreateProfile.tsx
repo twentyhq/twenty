@@ -15,7 +15,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -157,13 +156,8 @@ export const CreateProfile = () => {
 
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
-    callback: () => {
-      if (isEditingMode) {
-        onSubmit(getValues());
-      }
-    },
+    callback: handleEnter,
     focusId: PageFocusId.CreateProfile,
-    scope: PageHotkeyScope.CreateProfile,
     dependencies: [handleEnter],
   });
 

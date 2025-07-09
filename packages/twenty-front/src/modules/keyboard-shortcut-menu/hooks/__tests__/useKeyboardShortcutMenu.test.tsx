@@ -4,7 +4,6 @@ import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../useKeyboardShortcutMenu';
 
@@ -68,9 +67,6 @@ describe('useKeyboardShortcutMenu', () => {
         enableGlobalHotkeysConflictingWithKeyboard: false,
         enableGlobalHotkeysWithModifiers: false,
       },
-      hotkeyScope: {
-        scope: AppHotkeyScope.KeyboardShortcutMenuOpen,
-      },
     });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
@@ -99,9 +95,6 @@ describe('useKeyboardShortcutMenu', () => {
       globalHotkeysConfig: {
         enableGlobalHotkeysConflictingWithKeyboard: false,
         enableGlobalHotkeysWithModifiers: false,
-      },
-      hotkeyScope: {
-        scope: AppHotkeyScope.KeyboardShortcutMenuOpen,
       },
     });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);

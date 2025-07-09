@@ -37,7 +37,6 @@ type MultiItemFieldInputProps<T> = {
     handleSetPrimary: () => void;
     handleDelete: () => void;
   }) => React.ReactNode;
-  hotkeyScope: string;
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
@@ -55,7 +54,6 @@ export const MultiItemFieldInput = <T,>({
   validateInput,
   formatInput,
   renderItem,
-  hotkeyScope,
   newItemLabel,
   fieldMetadataType,
   renderInput,
@@ -66,6 +64,10 @@ export const MultiItemFieldInput = <T,>({
   const handleDropdownClose = () => {
     onCancel?.();
   };
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   useListenClickOutside({
     refs: [containerRef],
@@ -78,18 +80,13 @@ export const MultiItemFieldInput = <T,>({
       }
       onClickOutside?.(() => {}, event);
     },
-    listenerId: hotkeyScope,
+    listenerId: instanceId,
   });
-
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
 
   useHotkeysOnFocusedElement({
     focusId: instanceId,
     keys: [Key.Escape],
     callback: handleDropdownClose,
-    scope: hotkeyScope,
     dependencies: [handleDropdownClose],
   });
 
@@ -220,7 +217,6 @@ export const MultiItemFieldInput = <T,>({
           autoFocus
           placeholder={placeholder}
           value={inputValue}
-          hotkeyScope={hotkeyScope}
           hasError={!errorData.isValid}
           renderInput={renderInput}
           onEscape={handleDropdownClose}

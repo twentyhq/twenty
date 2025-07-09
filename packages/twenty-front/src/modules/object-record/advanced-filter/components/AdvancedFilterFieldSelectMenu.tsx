@@ -23,7 +23,6 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -148,7 +147,6 @@ export const AdvancedFilterFieldSelectMenu = ({
         focusId={advancedFilterFieldSelectDropdownId}
         selectableItemIdArray={selectableItemIdArray}
         selectableListInstanceId={advancedFilterFieldSelectDropdownId}
-        hotkeyScope={DropdownHotkeyScope.Dropdown}
       >
         {shouldShowVisibleFields && (
           <>

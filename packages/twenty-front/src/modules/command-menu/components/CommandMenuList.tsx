@@ -7,7 +7,6 @@ import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/Comman
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
@@ -78,7 +77,6 @@ export const CommandMenuList = ({
             selectableListInstanceId="command-menu-list"
             focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
-            hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             onSelect={() => {
               setHasUserSelectedCommand(true);
             }}

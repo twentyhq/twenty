@@ -11,7 +11,6 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
@@ -33,11 +32,6 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
-export const DEFAULT_CELL_SCOPE: HotkeyScope = {
-  scope: TableHotkeyScope.CellEditMode,
-};
 
 export type OpenTableCellArgs = {
   initialValue?: string;

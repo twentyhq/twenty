@@ -9,7 +9,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -186,7 +185,6 @@ export const Select = <Value extends SelectValue>({
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
-                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem

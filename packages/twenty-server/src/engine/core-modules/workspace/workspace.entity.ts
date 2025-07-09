@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -22,6 +23,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -127,6 +129,12 @@ export class Workspace {
     onDelete: 'CASCADE',
   })
   agents: Relation<AgentEntity[]>;
+
+  @OneToMany(() => Webhook, (webhook) => webhook.workspace)
+  webhooks: Relation<Webhook[]>;
+
+  @OneToMany(() => ApiKey, (apiKey) => apiKey.workspace)
+  apiKeys: Relation<ApiKey[]>;
 
   @Field()
   @Column({ default: 1 })

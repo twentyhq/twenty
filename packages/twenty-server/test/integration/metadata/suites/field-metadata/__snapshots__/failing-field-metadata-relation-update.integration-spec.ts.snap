@@ -5,6 +5,7 @@ exports[`Field metadata relation update should fail relation when name is change
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Name cannot be changed for relation fields",
@@ -18,6 +19,7 @@ exports[`Field metadata relation update should fail relation when name is not in
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "New Name should be in camelCase",

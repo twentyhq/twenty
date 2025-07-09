@@ -175,7 +175,7 @@ export const FormSingleRecordPicker = ({
               <StyledFormSelectContainer
                 formFieldInputInstanceId={componentId}
                 hasRightElement={isDefined(VariablePicker) && !disabled}
-                preventSetHotkeyScope={true}
+                preventFocusStackUpdate={true}
               >
                 <FormSingleRecordFieldChip
                   draftValue={draftValue}

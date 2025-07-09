@@ -1,4 +1,5 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
@@ -6,12 +7,11 @@ import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useO
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -50,7 +50,6 @@ export const useCommandMenuHotKeys = () => {
       toggleCommandMenu();
     },
     true,
-    AppHotkeyScope.CommandMenu,
     [closeKeyboardShortcutMenu, toggleCommandMenu],
   );
 
@@ -60,7 +59,6 @@ export const useCommandMenuHotKeys = () => {
       openRecordsSearchPage();
     },
     false,
-    AppHotkeyScope.SearchRecords,
     [openRecordsSearchPage],
     {
       ignoreModifiers: true,
@@ -75,26 +73,24 @@ export const useCommandMenuHotKeys = () => {
       }
     },
     false,
-    AppHotkeyScope.AskAI,
     [openAskAIPage, isAiEnabled],
     {
       ignoreModifiers: true,
     },
   );
 
-  useGlobalHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       goBackFromCommandMenu();
     },
-    true,
-    CommandMenuHotkeyScope.CommandMenuFocused,
-    [goBackFromCommandMenu],
-  );
+    focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [goBackFromCommandMenu],
+  });
 
-  useGlobalHotkeys(
-    [Key.Backspace, Key.Delete],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Backspace, Key.Delete],
+    callback: () => {
       if (isNonEmptyString(commandMenuSearch)) {
         return;
       }
@@ -113,17 +109,13 @@ export const useCommandMenuHotKeys = () => {
         goBackFromCommandMenu();
       }
     },
-    true,
-    CommandMenuHotkeyScope.CommandMenuFocused,
-    [
+    focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [
       commandMenuPage,
       commandMenuSearch,
       contextStoreTargetedRecordsRuleComponent,
       goBackFromCommandMenu,
       setGlobalCommandMenuContext,
     ],
-    {
-      preventDefault: false,
-    },
-  );
+  });
 };

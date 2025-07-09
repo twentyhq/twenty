@@ -11,16 +11,12 @@ export const useHotkeysOnFocusedElement = ({
   keys,
   callback,
   focusId,
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope,
   dependencies,
   options,
 }: {
   keys: Keys;
   callback: HotkeyCallback;
   focusId: string;
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string;
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
@@ -59,7 +55,6 @@ export const useHotkeysOnFocusedElement = ({
           setPendingHotkey(null);
         },
         focusId,
-        scope,
         preventDefault,
       });
     },

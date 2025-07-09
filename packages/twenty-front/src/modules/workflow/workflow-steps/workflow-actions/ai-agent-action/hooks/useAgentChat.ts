@@ -1,4 +1,3 @@
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -161,7 +160,6 @@ export const useAgentChat = (agentId: string) => {
       }
     },
     focusId: `${agentId}-chat-input`,
-    scope: InputHotkeyScope.TextInput,
     dependencies: [agentChatInput, isLoading],
     options: {
       enableOnFormTags: true,
