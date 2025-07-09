@@ -8,7 +8,6 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
-import { parseAgentStreamingChunk } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/parseAgentStreamingChunk';
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
@@ -98,22 +97,32 @@ export const useAgentChat = (agentId: string) => {
       },
       context: {
         onChunk: (chunk: string) => {
-          parseAgentStreamingChunk(chunk, {
-            onTextDelta: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                streamingText: prev.streamingText + message,
-              }));
-              scrollToBottom();
-            },
-            onToolCall: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                toolCall: message,
-              }));
-              scrollToBottom();
-            },
-          });
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.trim() !== '') {
+              try {
+                const event = JSON.parse(line);
+                switch (event.type) {
+                  case 'text-delta':
+                    setAgentStreamingMessage((prev) => ({
+                      ...prev,
+                      streamingText: prev.streamingText + event.message,
+                    }));
+                    break;
+                  case 'tool-call':
+                    setAgentStreamingMessage((prev) => ({
+                      ...prev,
+                      toolCall: event.message,
+                    }));
+                    break;
+                }
+                scrollToBottom();
+              } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error('Failed to parse stream event:', error);
+              }
+            }
+          }
         },
       },
     });
