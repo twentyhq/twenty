@@ -1,3 +1,4 @@
+import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import {
   Hotkey,
   OptionsOrDependencyArray,
@@ -5,7 +6,6 @@ import {
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 import { currentFocusIdSelector } from '../../focus/states/currentFocusIdSelector';
-import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 export const useHotkeysOnFocusedElementCallback = (
   dependencies?: OptionsOrDependencyArray,
@@ -32,7 +32,7 @@ export const useHotkeysOnFocusedElementCallback = (
           .getValue();
 
         if (currentFocusId !== focusId) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
@@ -44,7 +44,7 @@ export const useHotkeysOnFocusedElementCallback = (
           return;
         }
 
-        if (DEBUG_HOTKEY_SCOPE) {
+        if (DEBUG_FOCUS_STACK) {
           logDebug(
             `DEBUG: %cI can call hotkey (${
               hotkeysEvent.keys
@@ -54,7 +54,7 @@ export const useHotkeysOnFocusedElementCallback = (
         }
 
         if (preventDefault === true) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
               'color: gray;',

@@ -1,3 +1,4 @@
+import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
 import {
   Hotkey,
@@ -5,7 +6,6 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
-import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 export const useGlobalHotkeysCallback = (
   dependencies?: OptionsOrDependencyArray,
@@ -35,7 +35,7 @@ export const useGlobalHotkeysCallback = (
           containsModifier &&
           !currentGlobalHotkeysConfig.enableGlobalHotkeysWithModifiers
         ) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
@@ -51,7 +51,7 @@ export const useGlobalHotkeysCallback = (
           !containsModifier &&
           !currentGlobalHotkeysConfig.enableGlobalHotkeysConflictingWithKeyboard
         ) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
@@ -63,7 +63,7 @@ export const useGlobalHotkeysCallback = (
         }
 
         if (preventDefault === true) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
               'color: gray;',

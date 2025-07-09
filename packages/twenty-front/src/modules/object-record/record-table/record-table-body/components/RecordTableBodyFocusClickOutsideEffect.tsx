@@ -1,12 +1,12 @@
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
+import { PageFocusId } from '@/types/PageFocusId';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
 type RecordTableBodyFocusClickOutsideEffectProps = {
@@ -20,7 +20,7 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
-  const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
+  const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -32,7 +32,7 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
     listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     refs: [tableBodyRef],
     callback: () => {
-      if (currentHotkeyScope.scope !== RecordIndexHotkeyScope.RecordIndex) {
+      if (currentFocusId !== PageFocusId.RecordIndex) {
         return;
       }
 

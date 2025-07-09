@@ -1,7 +1,6 @@
 import { useArrayField } from '@/object-record/record-field/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiItemFieldInput';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -23,7 +22,6 @@ export const ArrayFieldInput = ({
 
   return (
     <MultiItemFieldInput
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       newItemLabel="Add Item"
       items={arrayItems}
       onPersist={persistArrayField}

@@ -11,7 +11,6 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
 import { useContext } from 'react';
@@ -38,7 +37,6 @@ export const CommandMenuActionMenuDropdown = () => {
         dropdownComponentInstanceIdFromProps: dropdownId,
       });
     },
-    scope: AppHotkeyScope.CommandMenuOpen,
     dependencies: [toggleDropdown],
   };
 

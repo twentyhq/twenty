@@ -7,9 +7,7 @@ import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/u
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
@@ -62,14 +60,11 @@ export const useRecordTitleCell = () => {
         recordId,
         fieldName,
         containerType,
-        customEditHotkeyScopeForField,
       }: {
         recordId: string;
         fieldName: string;
         containerType: RecordTitleCellContainerType;
-        customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
-        if (isDefined(customEditHotkeyScopeForField)) {
           pushFocusItemToFocusStack({
             focusId: getRecordFieldInputInstanceId({
               recordId,
@@ -85,23 +80,6 @@ export const useRecordTitleCell = () => {
               }),
             },
           });
-        } else {
-          pushFocusItemToFocusStack({
-            focusId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName,
-              prefix: containerType,
-            }),
-            component: {
-              type: FocusComponentType.OPENED_FIELD_INPUT,
-              instanceId: getRecordFieldInputInstanceId({
-                recordId,
-                fieldName,
-                prefix: containerType,
-              }),
-            },
-          });
-        }
 
         const recordTitleCellId = getRecordFieldInputInstanceId({
           recordId,
