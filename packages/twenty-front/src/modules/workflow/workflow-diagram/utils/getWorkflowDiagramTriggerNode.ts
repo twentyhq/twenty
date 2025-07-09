@@ -18,13 +18,13 @@ export const getWorkflowDiagramTriggerNode = ({
 
   switch (trigger.type) {
     case 'MANUAL': {
-      triggerDefaultLabel = 'Manual Trigger';
+      triggerDefaultLabel = 'Manual trigger';
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'CRON': {
-      triggerDefaultLabel = 'On a Schedule';
+      triggerDefaultLabel = 'On a schedule';
       triggerIcon = getTriggerIcon(trigger);
 
       break;

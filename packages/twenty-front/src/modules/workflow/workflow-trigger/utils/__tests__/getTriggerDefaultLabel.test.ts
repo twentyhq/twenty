@@ -4,7 +4,7 @@ import { getTriggerDefaultLabel } from '../getTriggerLabel';
 
 describe('getTriggerDefaultLabel', () => {
   describe('DATABASE_EVENT triggers', () => {
-    it('returns "Record is Created" for created event', () => {
+    it('returns "Record is created" for created event', () => {
       const trigger: WorkflowTrigger = {
         type: 'DATABASE_EVENT',
         name: 'Company Created',
@@ -19,7 +19,7 @@ describe('getTriggerDefaultLabel', () => {
       expect(result).toBe(DatabaseTriggerDefaultLabel.RECORD_IS_CREATED);
     });
 
-    it('returns "Record is Updated" for updated event', () => {
+    it('returns "Record is updated" for updated event', () => {
       const trigger: WorkflowTrigger = {
         type: 'DATABASE_EVENT',
         name: 'Company Updated',
@@ -34,7 +34,7 @@ describe('getTriggerDefaultLabel', () => {
       expect(result).toBe(DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED);
     });
 
-    it('returns "Record is Deleted" for deleted event', () => {
+    it('returns "Record is deleted" for deleted event', () => {
       const trigger: WorkflowTrigger = {
         type: 'DATABASE_EVENT',
         name: 'Company Deleted',
@@ -99,7 +99,7 @@ describe('getTriggerDefaultLabel', () => {
   });
 
   describe('CRON triggers', () => {
-    it('returns "On a Schedule" for cron trigger', () => {
+    it('returns "On a schedule" for cron trigger', () => {
       const trigger: WorkflowTrigger = {
         type: 'CRON',
         name: 'Scheduled Trigger',
@@ -116,7 +116,7 @@ describe('getTriggerDefaultLabel', () => {
 
       const result = getTriggerDefaultLabel(trigger);
 
-      expect(result).toBe('On a Schedule');
+      expect(result).toBe('On a schedule');
     });
   });
 

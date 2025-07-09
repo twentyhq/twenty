@@ -46,16 +46,16 @@ export class WorkflowVisualizerPage {
   };
 
   #triggerNames: Record<WorkflowTriggerType, string> = {
-    'record-created': 'Record is Created',
-    'record-updated': 'Record is Updated',
-    'record-deleted': 'Record is Deleted',
+    'record-created': 'Record is created',
+    'record-updated': 'Record is updated',
+    'record-deleted': 'Record is deleted',
     manual: 'Launch manually',
   };
 
   #createdTriggerNames: Record<WorkflowTriggerType, string> = {
-    'record-created': 'Record is Created',
-    'record-updated': 'Record is Updated',
-    'record-deleted': 'Record is Deleted',
+    'record-created': 'Record is created',
+    'record-updated': 'Record is updated',
+    'record-deleted': 'Record is deleted',
     manual: 'Launch manually',
   };
 
