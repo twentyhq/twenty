@@ -390,6 +390,12 @@ msgstr "Adicionar Campo"
 msgid "Add filter"
 msgstr "Adicionar filtro"
 
+#. js-lingui-id: kydAxA
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+msgid "Add first filter"
+msgstr ""
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -2333,6 +2339,11 @@ msgstr "Insira as informações para configurar a conexão"
 msgid "Enter user ID or email address"
 msgstr "Insira o ID do usuário ou endereço de email"
 
+#. js-lingui-id: pubQie
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
+msgid "Enter value"
+msgstr ""
+
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
@@ -2692,6 +2703,7 @@ msgid "Fields Count"
 msgstr "Contagem de Campos"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Filter"
@@ -3979,6 +3991,11 @@ msgstr ""
 #. js-lingui-id: dihZwh
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
+msgstr ""
+
+#. js-lingui-id: 1PwrEH
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
+msgid "No Field Selected"
 msgstr ""
 
 #. js-lingui-id: xlUOps

@@ -1184,13 +1184,13 @@ msgstr "Значение поля"
 
 #. js-lingui-id: 3oQ73E
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-msgid "Filter action must have a previous step"
-msgstr ""
+#~ msgid "Filter action must have a previous step"
+#~ msgstr ""
 
 #. js-lingui-id: Zllikb
 #: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-msgid "Filter action must have only one previous step"
-msgstr ""
+#~ msgid "Filter action must have only one previous step"
+#~ msgstr ""
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
