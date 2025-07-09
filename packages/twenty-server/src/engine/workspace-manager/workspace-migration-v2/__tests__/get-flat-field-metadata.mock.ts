@@ -19,7 +19,7 @@ export const getFlatFieldMetadataMock = (
     id: faker.string.uuid(),
     isActive: true,
     isCustom: true,
-    name: 'FlatFieldMetadataName',
+    name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     defaultValue: undefined,
     isNullable: true,
