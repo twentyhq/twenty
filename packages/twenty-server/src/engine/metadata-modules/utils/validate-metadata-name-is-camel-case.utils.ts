@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
 
 import {
@@ -8,7 +9,7 @@ import {
 export const validateMetadataNameIsCamelCaseOrThrow = (name: string) => {
   if (name !== camelCase(name)) {
     throw new InvalidMetadataException(
-      `${name} should be in camelCase`,
+      t`${name} should be in camelCase`,
       InvalidMetadataExceptionCode.NOT_CAMEL_CASE,
     );
   }

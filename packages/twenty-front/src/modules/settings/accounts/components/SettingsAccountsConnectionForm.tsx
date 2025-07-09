@@ -99,6 +99,7 @@ export const SettingsAccountsConnectionForm = ({
           control={control}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="email-address-imap-connection-form"
               label={t`Email Address`}
               placeholder={t`john.doe@example.com`}
               value={field.value}
@@ -112,8 +113,9 @@ export const SettingsAccountsConnectionForm = ({
           control={control}
           render={({ field, fieldState }) => (
             <TextInput
-              label={getServerLabel()}
-              placeholder={getServerPlaceholder()}
+              instanceId="host-imap-connection-form"
+              label={t`IMAP Server`}
+              placeholder={t`imap.example.com`}
               value={field.value}
               onChange={field.onChange}
               error={fieldState.error?.message}
@@ -125,7 +127,8 @@ export const SettingsAccountsConnectionForm = ({
           control={control}
           render={({ field, fieldState }) => (
             <TextInput
-              label={getPortLabel()}
+              instanceId="port-imap-connection-form"
+              label={t`IMAP Port`}
               type="number"
               placeholder={getPortPlaceholder()}
               value={field.value.toString()}
@@ -152,6 +155,7 @@ export const SettingsAccountsConnectionForm = ({
           control={control}
           render={({ field, fieldState }) => (
             <TextInput
+              instanceId="password-imap-connection-form"
               label={t`Password`}
               placeholder={t`••••••••`}
               type="password"

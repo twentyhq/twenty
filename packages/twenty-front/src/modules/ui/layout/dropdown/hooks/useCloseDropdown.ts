@@ -1,7 +1,7 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useRecoilCallback } from 'recoil';
@@ -30,7 +30,7 @@ export const useCloseDropdown = () => {
 
         const isDropdownOpen = snapshot
           .getLoadable(
-            isDropdownOpenComponentStateV2.atomFamily({
+            isDropdownOpenComponentState.atomFamily({
               instanceId: dropdownComponentInstanceId,
             }),
           )
@@ -44,7 +44,7 @@ export const useCloseDropdown = () => {
           goBackToPreviousDropdownFocusId();
 
           set(
-            isDropdownOpenComponentStateV2.atomFamily({
+            isDropdownOpenComponentState.atomFamily({
               instanceId: dropdownComponentInstanceId,
             }),
             false,

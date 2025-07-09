@@ -14,13 +14,13 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
     switch (error.code) {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND:
-        throw new NotFoundError(error.message);
+        throw new NotFoundError(error);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST:
-        throw new ConflictError(error.message);
+        throw new ConflictError(error);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_READY:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING:
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED:
-        throw new ForbiddenError(error.message);
+        throw new ForbiddenError(error);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED:
         throw error;
       default: {

@@ -5,11 +5,12 @@ import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
 import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
 import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 type FullNameFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -78,8 +79,13 @@ export const FullNameFieldInput = ({
     setDraftValue(getRequiredDraftValueFromDoubleText(newDoubleText));
   };
 
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
   return (
     <DoubleTextInput
+      instanceId={instanceId}
       firstValue={draftValue?.firstName ?? ''}
       secondValue={draftValue?.lastName ?? ''}
       firstValuePlaceholder={
@@ -94,7 +100,6 @@ export const FullNameFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onPaste={handlePaste}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
     />
   );

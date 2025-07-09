@@ -1,13 +1,14 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
@@ -18,13 +19,13 @@ import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTri
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -50,7 +51,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const theme = useTheme();
   const { t } = useLingui();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
@@ -75,9 +76,11 @@ export const WorkflowEditTriggerWebhookForm = ({
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(webhookUrl);
-    enqueueSnackBar(t`Copied to clipboard!`, {
-      variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
+    enqueueSuccessSnackBar({
+      message: t`Copied to clipboard!`,
+      options: {
+        icon: <IconCopy size={theme.icon.size.md} />,
+      },
     });
   };
 
@@ -151,28 +154,27 @@ export const WorkflowEditTriggerWebhookForm = ({
             }
             onBlur={onBlur}
             readonly={triggerOptions.readonly}
-            defaultValue={JSON.stringify(trigger.settings.expectedBody)}
+            defaultValue={JSON.stringify(
+              trigger.settings.expectedBody,
+              null,
+              2,
+            )}
             onChange={(newExpectedBody) => {
               if (triggerOptions.readonly === true) {
                 return;
               }
 
-              let formattedExpectedBody = {};
-              try {
-                formattedExpectedBody = JSON.parse(
-                  newExpectedBody || '{}',
-                  (key, value) => {
-                    if (isDefined(key) && key.includes(' ')) {
-                      throw new Error(t`JSON keys cannot contain spaces`);
-                    }
-                    return value;
-                  },
+              const parsingResult =
+                parseAndValidateVariableFriendlyStringifiedJson(
+                  isNonEmptyString(newExpectedBody) ? newExpectedBody : '{}',
                 );
-              } catch (e) {
+
+              if (!parsingResult.isValid) {
                 setErrorMessages((prev) => ({
                   ...prev,
-                  expectedBody: String(e),
+                  expectedBody: parsingResult.error,
                 }));
+
                 return;
               }
 
@@ -181,18 +183,17 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = getFunctionOutputSchema(
-                formattedExpectedBody,
-              );
+              const outputSchema = getFunctionOutputSchema(parsingResult.data);
 
               triggerOptions.onTriggerUpdate(
                 {
                   ...trigger,
                   settings: {
                     ...trigger.settings,
-                    expectedBody: formattedExpectedBody,
+                    httpMethod: 'POST',
+                    expectedBody: parsingResult.data,
                     outputSchema,
-                  } as WorkflowWebhookTrigger['settings'],
+                  } satisfies WorkflowWebhookTrigger['settings'],
                 },
                 { computeOutputSchema: false },
               );

@@ -1,4 +1,3 @@
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { getRecordTableRowFocusId } from '@/object-record/record-table/record-table-row/utils/getRecordTableRowFocusId';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
@@ -119,15 +118,6 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
             type: FocusComponentType.RECORD_TABLE_ROW,
             instanceId: focusId,
           },
-          hotkeyScope: {
-            scope: RecordIndexHotkeyScope.RecordIndex,
-            customScopes: {
-              goto: true,
-              keyboardShortcutMenu: true,
-              searchRecords: true,
-            },
-          },
-          memoizeKey: focusId,
         });
 
         set(focusedRowIndexState, rowIndex);

@@ -18,7 +18,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
+import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { IconPlus } from 'twenty-ui/display';
@@ -55,7 +55,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const dropdownPlacement = useRecoilComponentValueV2(
-    dropdownPlacementComponentStateV2,
+    dropdownPlacementComponentState,
     dropdownId,
   );
 

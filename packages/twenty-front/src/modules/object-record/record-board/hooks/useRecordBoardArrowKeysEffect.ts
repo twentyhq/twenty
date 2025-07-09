@@ -1,5 +1,4 @@
 import { useRecordBoardCardNavigation } from '@/object-record/record-board/hooks/useRecordBoardCardNavigation';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
 
@@ -16,7 +15,6 @@ export const useRecordBoardArrowKeysEffect = ({
     keys: [Key.ArrowLeft],
     callback: () => move('left'),
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [move],
   });
 
@@ -24,7 +22,6 @@ export const useRecordBoardArrowKeysEffect = ({
     keys: [Key.ArrowRight],
     callback: () => move('right'),
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [move],
   });
 
@@ -32,7 +29,6 @@ export const useRecordBoardArrowKeysEffect = ({
     keys: [Key.ArrowUp],
     callback: () => move('up'),
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [move],
   });
 
@@ -40,7 +36,6 @@ export const useRecordBoardArrowKeysEffect = ({
     keys: [Key.ArrowDown],
     callback: () => move('down'),
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [move],
   });
 };

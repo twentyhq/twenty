@@ -5,12 +5,14 @@ import {
   TextInputV2,
   TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isDefined } from 'twenty-shared/utils';
 
 export type TextInputProps = TextInputV2ComponentProps & {
+  instanceId: string;
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
@@ -19,6 +21,7 @@ export type TextInputProps = TextInputV2ComponentProps & {
 };
 
 export const TextInput = ({
+  instanceId,
   onFocus,
   onBlur,
   onInputEnter,
@@ -45,18 +48,24 @@ export const TextInput = ({
     }
   }, [autoSelectOnMount]);
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
     setIsFocused(true);
 
     if (!disableHotkeys) {
-      setHotkeyScopeAndMemorizePreviousScope({
-        scope: InputHotkeyScope.TextInput,
+      pushFocusItemToFocusStack({
+        focusId: instanceId,
+        component: {
+          type: FocusComponentType.TEXT_INPUT,
+          instanceId: instanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
       });
     }
   };
@@ -66,48 +75,49 @@ export const TextInput = ({
     setIsFocused(false);
 
     if (!disableHotkeys) {
-      goBackToPreviousHotkeyScope();
+      removeFocusItemFromFocusStackById({ focusId: instanceId });
     }
   };
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      if (!isFocused) {
-        return;
-      }
+  const handleEscape = () => {
+    if (!isFocused) {
+      return;
+    }
+    if (isDefined(inputRef) && 'current' in inputRef) {
+      inputRef.current?.blur();
+      setIsFocused(false);
+    }
+  };
 
-      if (isDefined(inputRef) && 'current' in inputRef) {
-        inputRef.current?.blur();
-        setIsFocused(false);
-      }
-    },
-    InputHotkeyScope.TextInput,
-    [inputRef, isFocused],
-    {
+  const handleEnter = () => {
+    if (!isFocused) {
+      return;
+    }
+    onInputEnter?.();
+    if (isDefined(inputRef) && 'current' in inputRef) {
+      setIsFocused(false);
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: instanceId,
+    dependencies: [handleEscape],
+    options: {
       preventDefault: false,
     },
-  );
+  });
 
-  useScopedHotkeys(
-    [Key.Enter],
-    () => {
-      if (!isFocused) {
-        return;
-      }
-
-      onInputEnter?.();
-
-      if (isDefined(inputRef) && 'current' in inputRef) {
-        setIsFocused(false);
-      }
-    },
-    InputHotkeyScope.TextInput,
-    [inputRef, isFocused, onInputEnter],
-    {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: handleEnter,
+    focusId: instanceId,
+    dependencies: [handleEnter],
+    options: {
       preventDefault: false,
     },
-  );
+  });
 
   return (
     <TextInputV2

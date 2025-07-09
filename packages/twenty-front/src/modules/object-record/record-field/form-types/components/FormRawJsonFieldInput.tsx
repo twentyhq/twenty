@@ -31,7 +31,7 @@ export const FormRawJsonFieldInput = ({
   readonly,
   VariablePicker,
 }: FormRawJsonFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   const editor = useTextVariableEditor({
     placeholder: placeholder ?? 'Enter a JSON object',
@@ -71,6 +71,7 @@ export const FormRawJsonFieldInput = ({
 
       <FormFieldInputRowContainer multiline>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline
           onBlur={onBlur}
@@ -80,7 +81,7 @@ export const FormRawJsonFieldInput = ({
 
         {VariablePicker && !readonly && (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             multiline
             onVariableSelect={handleVariableTagInsert}
           />

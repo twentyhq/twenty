@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -8,9 +10,11 @@ import { v4 } from 'uuid';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
@@ -19,9 +23,11 @@ import {
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
+import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -30,7 +36,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -57,6 +62,9 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly agentChatService: AgentChatService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async createWorkflowVersionStep({
@@ -309,6 +317,9 @@ export class WorkflowVersionStepWorkspaceService {
       throw new WorkflowVersionStepException(
         'Step is not a form',
         WorkflowVersionStepExceptionCode.INVALID,
+        {
+          userFriendlyMessage: t`Step is not a form`,
+        },
       );
     }
 
@@ -325,16 +336,10 @@ export class WorkflowVersionStepWorkspaceService {
       },
     };
 
-    const updatedContext = {
-      ...workflowRun.context,
-      [stepId]: enrichedResponse,
-    };
-
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workspaceId,
       workflowRunId,
       stepOutput: newStepOutput,
-      context: updatedContext,
       stepStatus: StepStatus.SUCCESS,
     });
 
@@ -587,8 +592,8 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              filterGroups: [],
-              filters: [],
+              stepFilterGroups: [],
+              stepFilters: [],
             },
           },
         };
@@ -627,6 +632,18 @@ export class WorkflowVersionStepWorkspaceService {
             WorkflowVersionStepExceptionCode.FAILURE,
           );
         }
+
+        const userWorkspaceId =
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
+
+        if (!userWorkspaceId) {
+          throw new WorkflowVersionStepException(
+            'User workspace ID not found',
+            WorkflowVersionStepExceptionCode.FAILURE,
+          );
+        }
+
+        await this.agentChatService.createThread(newAgent.id, userWorkspaceId);
 
         return {
           id: newStepId,
@@ -678,6 +695,18 @@ export class WorkflowVersionStepWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
+          const objectMetadataInfo =
+            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+              field.settings.objectName,
+              workspaceId,
+            );
+
+          const relationFieldsNames = Object.values(
+            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
+          )
+            .filter((field) => field.type === FieldMetadataType.RELATION)
+            .map((field) => field.name);
+
           const repository =
             await this.twentyORMGlobalManager.getRepositoryForWorkspace(
               workspaceId,
@@ -688,6 +717,7 @@ export class WorkflowVersionStepWorkspaceService {
           const record = await repository.findOne({
             // @ts-expect-error legacy noImplicitAny
             where: { id: response[key].id },
+            relations: relationFieldsNames,
           });
 
           return { key, value: record };

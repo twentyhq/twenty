@@ -47,6 +47,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: true,
                 canDestroy: true,
+                restrictedFields: {},
               },
             },
           },
@@ -62,15 +63,13 @@ describe('AgentToolService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(8);
+      expect(Object.keys(tools)).toHaveLength(6);
       expect(Object.keys(tools)).toContain('create_testObject');
       expect(Object.keys(tools)).toContain('update_testObject');
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_many_testObject');
-      expect(Object.keys(tools)).toContain('destroy_testObject');
-      expect(Object.keys(tools)).toContain('destroy_many_testObject');
     });
 
     it('should generate read-only tools for agent with read permissions only', async () => {
@@ -93,6 +92,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: false,
                 canSoftDelete: false,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },
@@ -170,6 +170,7 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: true,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },
@@ -646,156 +647,6 @@ describe('AgentToolService Integration', () => {
     });
   });
 
-  describe('Destroy Operations', () => {
-    it('should destroy a single record', async () => {
-      const roleWithDestroyPermission = {
-        ...context.testRole,
-        canDestroyAllObjectRecords: true,
-      };
-      const mockRepository = createMockRepository();
-      const existingRecord = createTestRecord('test-record-id', {
-        name: 'Test Record',
-      });
-
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(roleWithDestroyPermission);
-      jest
-        .spyOn(
-          context.workspacePermissionsCacheService,
-          'getRolesPermissionsFromCache',
-        )
-        .mockResolvedValue({
-          data: {
-            [context.testRoleId]: {
-              [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: true,
-              },
-            },
-          },
-          version: '1.0',
-        });
-      jest
-        .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
-
-      setupRepositoryMock(context, mockRepository);
-      mockRepository.findOne.mockResolvedValue(existingRecord);
-      mockRepository.remove.mockResolvedValue(existingRecord);
-
-      const tools = await context.agentToolService.generateToolsForAgent(
-        context.testAgentId,
-        context.testWorkspaceId,
-      );
-      const destroyTool = tools['destroy_testObject'];
-
-      expect(destroyTool).toBeDefined();
-
-      if (!destroyTool.execute) {
-        throw new Error(
-          'Destroy tool is missing or does not have an execute method',
-        );
-      }
-
-      const result = await destroyTool.execute(
-        { id: 'test-record-id' },
-        {
-          toolCallId: 'test-tool-call-id',
-          messages: [
-            {
-              role: 'user',
-              content: 'Destroy record',
-            },
-          ],
-        },
-      );
-
-      expectSuccessResult(result, 'Successfully destroyed testObject');
-      expect(mockRepository.remove).toHaveBeenCalledWith(existingRecord);
-    });
-
-    it('should destroy multiple records', async () => {
-      const roleWithDestroyPermission = {
-        ...context.testRole,
-        canDestroyAllObjectRecords: true,
-      };
-      const mockRepository = createMockRepository();
-      const existingRecords = createTestRecords(3);
-
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest
-        .spyOn(context.roleRepository, 'findOne')
-        .mockResolvedValue(roleWithDestroyPermission);
-      jest
-        .spyOn(
-          context.workspacePermissionsCacheService,
-          'getRolesPermissionsFromCache',
-        )
-        .mockResolvedValue({
-          data: {
-            [context.testRoleId]: {
-              [context.testObjectMetadata.id]: {
-                canRead: true,
-                canUpdate: true,
-                canSoftDelete: true,
-                canDestroy: true,
-              },
-            },
-          },
-          version: '1.0',
-        });
-      jest
-        .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
-
-      setupRepositoryMock(context, mockRepository);
-      mockRepository.find.mockResolvedValue(existingRecords);
-      mockRepository.remove.mockResolvedValue(existingRecords);
-
-      const tools = await context.agentToolService.generateToolsForAgent(
-        context.testAgentId,
-        context.testWorkspaceId,
-      );
-      const destroyManyTool = tools['destroy_many_testObject'];
-
-      expect(destroyManyTool).toBeDefined();
-
-      if (!destroyManyTool.execute) {
-        throw new Error(
-          'Destroy many tool is missing or does not have an execute method',
-        );
-      }
-
-      const result = await destroyManyTool.execute(
-        {
-          filter: { id: { in: ['record-1', 'record-2', 'record-3'] } },
-        },
-        {
-          toolCallId: 'test-tool-call-id',
-          messages: [
-            {
-              role: 'user',
-              content: 'Destroy many records',
-            },
-          ],
-        },
-      );
-
-      expectSuccessResult(
-        result,
-        'Successfully destroyed 3 testObject records',
-      );
-    });
-  });
-
   describe('Edge Cases', () => {
     it('should handle empty search criteria in find records', async () => {
       const mockRepository = createMockRepository();
@@ -919,12 +770,14 @@ describe('AgentToolService Integration', () => {
                 canUpdate: true,
                 canSoftDelete: false,
                 canDestroy: false,
+                restrictedFields: {},
               },
               [secondObjectMetadata.id]: {
                 canRead: true,
                 canUpdate: false,
                 canSoftDelete: true,
                 canDestroy: false,
+                restrictedFields: {},
               },
             },
           },

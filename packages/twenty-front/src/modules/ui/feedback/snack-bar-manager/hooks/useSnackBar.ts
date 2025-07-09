@@ -2,13 +2,17 @@ import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import {
   snackBarInternalScopedState,
   SnackBarOptions,
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalScopedState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useSnackBar = () => {
   const scopeId = useAvailableScopeIdOrThrow(
@@ -54,16 +58,95 @@ export const useSnackBar = () => {
     [scopeId],
   );
 
-  const enqueueSnackBar = useCallback(
-    (message: string, options?: Omit<SnackBarOptions, 'message' | 'id'>) => {
+  const enqueueSuccessSnackBar = useCallback(
+    ({
+      message,
+      options,
+    }: {
+      message: string;
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
       setSnackBarQueue({
         id: uuidv4(),
         message,
         ...options,
+        variant: SnackBarVariant.Success,
       });
     },
     [setSnackBarQueue],
   );
 
-  return { handleSnackBarClose, enqueueSnackBar };
+  const enqueueInfoSnackBar = useCallback(
+    ({
+      message,
+      options,
+    }: {
+      message: string;
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
+      setSnackBarQueue({
+        id: uuidv4(),
+        message,
+        ...options,
+        variant: SnackBarVariant.Info,
+      });
+    },
+    [setSnackBarQueue],
+  );
+
+  const enqueueWarningSnackBar = useCallback(
+    ({
+      message,
+      options,
+    }: {
+      message: string;
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
+      setSnackBarQueue({
+        id: uuidv4(),
+        message,
+        ...options,
+        variant: SnackBarVariant.Warning,
+      });
+    },
+    [setSnackBarQueue],
+  );
+
+  const enqueueErrorSnackBar = useCallback(
+    ({
+      apolloError,
+      message,
+      options,
+    }: (
+      | { apolloError: ApolloError; message?: never }
+      | { apolloError?: never; message?: string }
+    ) & {
+      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+    }) => {
+      if (apolloError?.networkError?.name === 'AbortError') {
+        return;
+      }
+
+      const errorMessage = message
+        ? message
+        : apolloError
+          ? getErrorMessageFromApolloError(apolloError)
+          : t`An error occurred.`;
+      setSnackBarQueue({
+        id: uuidv4(),
+        message: errorMessage,
+        ...options,
+        variant: SnackBarVariant.Error,
+      });
+    },
+    [setSnackBarQueue],
+  );
+
+  return {
+    handleSnackBarClose,
+    enqueueSuccessSnackBar,
+    enqueueErrorSnackBar,
+    enqueueInfoSnackBar,
+    enqueueWarningSnackBar,
+  };
 };

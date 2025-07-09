@@ -6,13 +6,15 @@ import {
   MultiItemBaseInput,
   MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -35,7 +37,6 @@ type MultiItemFieldInputProps<T> = {
     handleSetPrimary: () => void;
     handleDelete: () => void;
   }) => React.ReactNode;
-  hotkeyScope: string;
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
@@ -53,7 +54,6 @@ export const MultiItemFieldInput = <T,>({
   validateInput,
   formatInput,
   renderItem,
-  hotkeyScope,
   newItemLabel,
   fieldMetadataType,
   renderInput,
@@ -64,6 +64,10 @@ export const MultiItemFieldInput = <T,>({
   const handleDropdownClose = () => {
     onCancel?.();
   };
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   useListenClickOutside({
     refs: [containerRef],
@@ -76,10 +80,15 @@ export const MultiItemFieldInput = <T,>({
       }
       onClickOutside?.(() => {}, event);
     },
-    listenerId: hotkeyScope,
+    listenerId: instanceId,
   });
 
-  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
+  useHotkeysOnFocusedElement({
+    focusId: instanceId,
+    keys: [Key.Escape],
+    callback: handleDropdownClose,
+    dependencies: [handleDropdownClose],
+  });
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -204,10 +213,10 @@ export const MultiItemFieldInput = <T,>({
       )}
       {isInputDisplayed || !items.length ? (
         <MultiItemBaseInput
+          instanceId={instanceId}
           autoFocus
           placeholder={placeholder}
           value={inputValue}
-          hotkeyScope={hotkeyScope}
           hasError={!errorData.isValid}
           renderInput={renderInput}
           onEscape={handleDropdownClose}

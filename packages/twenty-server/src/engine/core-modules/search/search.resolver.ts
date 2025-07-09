@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
@@ -10,12 +12,16 @@ import { SearchService } from 'src/engine/core-modules/search/services/search.se
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Resolver()
 @UseFilters(SearchApiExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 @UsePipes(ResolverValidationPipe)
 export class SearchResolver {
-  constructor(private readonly searchService: SearchService) {}
+  constructor(
+    private readonly searchService: SearchService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+  ) {}
 
   @Query(() => SearchResultConnectionDTO)
   @UseGuards(WorkspaceAuthGuard)
@@ -31,12 +37,16 @@ export class SearchResolver {
       after,
     }: SearchArgs,
   ) {
-    const objectMetadataItemWithFieldMaps =
-      await this.searchService.getObjectMetadataItemWithFieldMaps(workspace);
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+        workspace.id,
+      );
 
     const filteredObjectMetadataItems =
       this.searchService.filterObjectMetadataItems({
-        objectMetadataItemWithFieldMaps,
+        objectMetadataItemWithFieldMaps: Object.values(
+          objectMetadataMaps.byId,
+        ).filter(isDefined),
         includedObjectNameSingulars: includedObjectNameSingulars ?? [],
         excludedObjectNameSingulars: excludedObjectNameSingulars ?? [],
       });

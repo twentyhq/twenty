@@ -1,33 +1,32 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGenerateApiKeyTokenMutation } from '~/generated-metadata/graphql';
+import {
+  useCreateApiKeyMutation,
+  useGenerateApiKeyTokenMutation,
+  useGetApiKeyQuery,
+  useRevokeApiKeyMutation,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -50,7 +49,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,38 +67,40 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-  });
-  const { updateOneRecord: updateApiKey } = useUpdateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-  });
-
-  const [apiKeyName, setApiKeyName] = useState('');
-
-  const { record: apiKeyData, loading } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-    objectRecordId: apiKeyId,
-    onCompleted: (record) => {
-      setApiKeyName(record.name);
+  const [createApiKey] = useCreateApiKeyMutation();
+  const [revokeApiKey] = useRevokeApiKeyMutation();
+  const { data: apiKeyData } = useGetApiKeyQuery({
+    variables: {
+      input: {
+        id: apiKeyId,
+      },
+    },
+    onCompleted: (data) => {
+      if (isDefined(data?.apiKey)) {
+        setApiKeyName(data.apiKey.name);
+      }
     },
   });
+
+  const apiKey = apiKeyData?.apiKey;
+  const [apiKeyName, setApiKeyName] = useState('');
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
 
     try {
-      await updateApiKey?.({
-        idToUpdate: apiKeyId,
-        updateOneRecordInput: { revokedAt: DateTime.now().toString() },
+      await revokeApiKey({
+        variables: {
+          input: {
+            id: apiKeyId,
+          },
+        },
       });
       if (redirect) {
         navigate(SettingsPath.APIs);
       }
     } catch (err) {
-      enqueueSnackBar(t`Error deleting api key: ${err}`, {
-        variant: SnackBarVariant.Error,
-      });
+      enqueueErrorSnackBar({ message: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -109,10 +110,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
-    const newApiKey = await createOneApiKey?.({
-      name: name,
-      expiresAt: newExpiresAt ?? '',
+    const { data: newApiKeyData } = await createApiKey({
+      variables: {
+        input: {
+          name: name,
+          expiresAt: newExpiresAt ?? '',
+        },
+      },
     });
+
+    const newApiKey = newApiKeyData?.createApiKey;
 
     if (!newApiKey) {
       return;
@@ -133,24 +140,24 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
-      if (isNonEmptyString(apiKeyData?.name)) {
+      if (isNonEmptyString(apiKey?.name)) {
         const newExpiresAt = computeNewExpirationDate(
-          apiKeyData?.expiresAt,
-          apiKeyData?.createdAt,
+          apiKey?.expiresAt,
+          apiKey?.createdAt,
         );
-        const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
+        const newApiKey = await createIntegration(apiKey?.name, newExpiresAt);
         await deleteIntegration(false);
 
-        if (isNonEmptyString(apiKey?.token)) {
-          setApiKeyTokenCallback(apiKey.id, apiKey.token);
+        if (isNonEmptyString(newApiKey?.token)) {
+          setApiKeyTokenCallback(newApiKey.id, newApiKey.token);
           navigate(SettingsPath.ApiKeyDetail, {
-            apiKeyId: apiKey.id,
+            apiKeyId: newApiKey.id,
           });
         }
       }
     } catch (err) {
-      enqueueSnackBar(t`Error regenerating api key: ${err}`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error regenerating api key.`,
       });
     } finally {
       setIsLoading(false);
@@ -161,9 +168,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   return (
     <>
-      {apiKeyData?.name && (
+      {apiKey?.name && (
         <SubMenuTopBarContainer
-          title={apiKeyData?.name}
+          title={apiKey?.name}
           links={[
             {
               children: t`Workspace`,
@@ -199,11 +206,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                       onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
                     />
                     <StyledInfo>
-                      {formatExpiration(
-                        apiKeyData?.expiresAt || '',
-                        true,
-                        false,
-                      )}
+                      {formatExpiration(apiKey?.expiresAt || '', true, false)}
                     </StyledInfo>
                   </StyledInputContainer>
                 </>
@@ -213,8 +216,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <H2Title title={t`Name`} description={t`Name of your API key`} />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
-                apiKeyId={apiKeyData?.id}
-                disabled={loading}
+                apiKeyId={apiKey?.id}
+                disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
             </Section>
@@ -224,12 +227,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 description={t`When the key will be disabled`}
               />
               <TextInput
+                instanceId={`api-key-expiration-${apiKey?.id}`}
                 placeholder={t`E.g. backoffice integration`}
-                value={formatExpiration(
-                  apiKeyData?.expiresAt || '',
-                  true,
-                  false,
-                )}
+                value={formatExpiration(apiKey?.expiresAt || '', true, false)}
                 disabled
                 fullWidth
               />

@@ -1,10 +1,10 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,7 +20,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { t } = useLingui();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
 
@@ -62,20 +62,20 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           },
         },
         onCompleted: () => {
-          enqueueSnackBar(t`Please check your email for a verification link.`, {
-            variant: SnackBarVariant.Success,
+          enqueueSuccessSnackBar({
+            message: t`Please check your email for a verification link.`,
           });
           navigate(SettingsPath.Security);
         },
         onError: (error) => {
-          enqueueSnackBar((error as Error).message, {
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            apolloError: error instanceof ApolloError ? error : undefined,
           });
         },
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
   };
@@ -116,6 +116,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  instanceId="approved-access-domain"
                   autoFocus
                   autoComplete="off"
                   value={value}
@@ -140,6 +141,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  instanceId="approved-access-domain-email"
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}

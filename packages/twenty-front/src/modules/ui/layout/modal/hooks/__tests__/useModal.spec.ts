@@ -3,24 +3,13 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { act } from 'react';
-
-jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope');
-
-const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
-const mockGoBackToPreviousHotkeyScope = jest.fn();
 
 const modalId = 'test-modal-id';
 
 describe('useModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (usePreviousHotkeyScope as jest.Mock).mockReturnValue({
-      setHotkeyScopeAndMemorizePreviousScope:
-        mockSetHotkeyScopeAndMemorizePreviousScope,
-      goBackToPreviousHotkeyScope: mockGoBackToPreviousHotkeyScope,
-    });
   });
 
   it('should open a modal', () => {
@@ -68,7 +57,6 @@ describe('useModal', () => {
     });
 
     expect(result.current.isModalOpened).toBe(false);
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
   });
 
   it('should toggle a modal (open when closed)', () => {
@@ -118,6 +106,5 @@ describe('useModal', () => {
     });
 
     expect(result.current.isModalOpened).toBe(false);
-    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
   });
 });

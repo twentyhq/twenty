@@ -2,13 +2,15 @@ import styled from '@emotion/styled';
 import { ClipboardEvent, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { isDefined } from 'twenty-shared/utils';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -26,7 +28,6 @@ type RecordTitleDoubleTextInputProps = {
   secondValue: string;
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
-  hotkeyScope: string;
   onEnter: (newDoubleTextValue: FieldDoubleText) => void;
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
@@ -45,7 +46,6 @@ export const RecordTitleDoubleTextInput = ({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  hotkeyScope,
   onClickOutside,
   onEnter,
   onEscape,
@@ -82,33 +82,37 @@ export const RecordTitleDoubleTextInput = ({
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter({
         firstValue: firstInternalValue,
         secondValue: secondInternalValue,
       });
     },
-    hotkeyScope,
-    [onEnter, firstInternalValue, secondInternalValue],
-  );
+    focusId: instanceId,
+    dependencies: [onEnter, firstInternalValue, secondInternalValue],
+  });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onEscape({
         firstValue: firstInternalValue,
         secondValue: secondInternalValue,
       });
     },
-    hotkeyScope,
-    [onEscape, firstInternalValue, secondInternalValue],
-  );
+    focusId: instanceId,
+    dependencies: [onEscape, firstInternalValue, secondInternalValue],
+  });
 
-  useScopedHotkeys(
-    'tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['tab'],
+    callback: () => {
       if (focusPosition === 'left') {
         setFocusPosition('right');
         secondValueInputRef.current?.focus();
@@ -119,13 +123,18 @@ export const RecordTitleDoubleTextInput = ({
         });
       }
     },
-    hotkeyScope,
-    [onTab, firstInternalValue, secondInternalValue, focusPosition],
-  );
+    focusId: instanceId,
+    dependencies: [
+      onTab,
+      firstInternalValue,
+      secondInternalValue,
+      focusPosition,
+    ],
+  });
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['shift+tab'],
+    callback: () => {
       if (focusPosition === 'right') {
         setFocusPosition('left');
         firstValueInputRef.current?.focus();
@@ -136,9 +145,14 @@ export const RecordTitleDoubleTextInput = ({
         });
       }
     },
-    hotkeyScope,
-    [onShiftTab, firstInternalValue, secondInternalValue, focusPosition],
-  );
+    focusId: instanceId,
+    dependencies: [
+      onShiftTab,
+      firstInternalValue,
+      secondInternalValue,
+      focusPosition,
+    ],
+  });
 
   useListenClickOutside({
     refs: [containerRef],

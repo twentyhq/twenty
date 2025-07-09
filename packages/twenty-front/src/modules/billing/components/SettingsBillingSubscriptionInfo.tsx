@@ -3,7 +3,6 @@ import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionI
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -49,7 +48,7 @@ export const SettingsBillingSubscriptionInfo = () => {
 
   const { openModal } = useModal();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -134,12 +133,12 @@ export const SettingsBillingSubscriptionInfo = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched to Yearly.`, {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Subscription has been switched to Yearly.`,
       });
     } catch (error: any) {
-      enqueueSnackBar(t`Error while switching subscription to Yearly.`, {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: t`Error while switching subscription to Yearly.`,
       });
     }
   };
@@ -160,16 +159,13 @@ export const SettingsBillingSubscriptionInfo = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched to Organization Plan.`, {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: t`Subscription has been switched to Organization Plan.`,
       });
     } catch (error: any) {
-      enqueueSnackBar(
-        t`Error while switching subscription to Organization Plan.`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueErrorSnackBar({
+        message: t`Error while switching subscription to Organization Plan.`,
+      });
     }
   };
 

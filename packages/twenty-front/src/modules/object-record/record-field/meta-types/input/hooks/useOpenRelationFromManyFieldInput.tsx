@@ -3,7 +3,6 @@ import {
   FieldRelationFromManyValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -11,7 +10,7 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
@@ -28,14 +27,17 @@ export const useOpenRelationFromManyFieldInput = () => {
         fieldName,
         objectNameSingular,
         recordId,
+        prefix,
       }: {
         fieldName: string;
         objectNameSingular: string;
         recordId: string;
+        prefix?: string;
       }) => {
-        const recordPickerInstanceId = getFieldInputInstanceId({
+        const recordPickerInstanceId = getRecordFieldInputInstanceId({
           recordId,
           fieldName,
+          prefix,
         });
 
         const fieldValue = snapshot
@@ -103,10 +105,9 @@ export const useOpenRelationFromManyFieldInput = () => {
             type: FocusComponentType.DROPDOWN,
             instanceId: recordPickerInstanceId,
           },
-          hotkeyScope: {
-            scope: DropdownHotkeyScope.Dropdown,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
-          memoizeKey: recordPickerInstanceId,
         });
       },
     [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],

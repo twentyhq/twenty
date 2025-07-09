@@ -16,7 +16,7 @@ export const StyledTextInput = styled.input`
 `;
 
 type TextInputProps = {
-  inputId?: string;
+  instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -25,7 +25,6 @@ type TextInputProps = {
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: string) => void;
-  hotkeyScope: string;
   onChange?: (newText: string) => void;
   copyButton?: boolean;
   shouldTrim?: boolean;
@@ -41,11 +40,10 @@ const getValue = (value: string, shouldTrim: boolean) => {
 };
 
 export const TextInput = ({
-  inputId,
+  instanceId,
   placeholder,
   autoFocus,
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
   onTab,
@@ -70,6 +68,7 @@ export const TextInput = ({
   }, [value, shouldTrim]);
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     copyRef: copyRef,
     inputValue: internalText,
@@ -78,13 +77,12 @@ export const TextInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   return (
     <>
       <StyledTextInput
-        id={inputId}
+        id={instanceId}
         autoComplete="off"
         ref={wrapperRef}
         placeholder={placeholder}

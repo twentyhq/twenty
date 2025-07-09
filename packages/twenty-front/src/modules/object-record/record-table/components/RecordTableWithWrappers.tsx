@@ -1,20 +1,17 @@
-import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
-
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { PageFocusId } from '@/types/PageFocusId';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
-
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
-import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
-import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import styled from '@emotion/styled';
+import { useRecoilCallback } from 'recoil';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
@@ -48,21 +45,10 @@ export const RecordTableWithWrappers = ({
     selectAllRows();
   };
 
-  useScopedHotkeys(
-    'ctrl+a,meta+a',
-    handleSelectAllRows,
-    RecordIndexHotkeyScope.RecordIndex,
-    [],
-    {
-      enableOnFormTags: false,
-    },
-  );
-
   useHotkeysOnFocusedElement({
     keys: ['ctrl+a,meta+a'],
     callback: handleSelectAllRows,
-    focusId: recordTableId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
+    focusId: PageFocusId.RecordIndex,
     dependencies: [handleSelectAllRows],
     options: {
       enableOnFormTags: false,

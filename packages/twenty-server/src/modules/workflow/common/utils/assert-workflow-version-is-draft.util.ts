@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -14,6 +16,9 @@ export const assertWorkflowVersionIsDraft = (
     throw new WorkflowQueryValidationException(
       'Workflow version is not in draft status',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,
+      {
+        userFriendlyMessage: t`Workflow version is not in draft status`,
+      },
     );
   }
 };

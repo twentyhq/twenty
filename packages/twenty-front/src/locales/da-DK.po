@@ -115,8 +115,8 @@ msgstr ""
 
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -160,7 +160,7 @@ msgstr ""
 #~ msgstr "1 000 workflow node executions"
 
 #. js-lingui-id: vb5TwV
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
 msgstr "1. Vælg en felttype"
 
@@ -197,7 +197,7 @@ msgid "2. Configure"
 msgstr "2. Konfigurer"
 
 #. js-lingui-id: 0HAF12
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Konfigurer felt"
 
@@ -302,6 +302,11 @@ msgstr "Konto Sletning"
 msgid "Accounts"
 msgstr "Konti"
 
+#. js-lingui-id: GGcxJO
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Action"
@@ -384,6 +389,12 @@ msgstr "Tilføj Felt"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Tilføj filter"
+
+#. js-lingui-id: kydAxA
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
+msgid "Add first filter"
+msgstr ""
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -620,8 +631,15 @@ msgstr "Tillad brugere at logge ind med en e-mail og password."
 
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
-msgid "An error occurred while updating password"
-msgstr "En fejl opstod under opdatering af password"
+#~ msgid "An error occurred while updating password"
+#~ msgstr "En fejl opstod under opdatering af password"
+
+#. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+msgid "An error occurred."
+msgstr ""
 
 #. js-lingui-id: mJ6m4C
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -711,6 +729,11 @@ msgstr "API'er"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Udseende"
+
+#. js-lingui-id: UDlRcx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Approved access domain validated"
+msgstr ""
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1059,9 +1082,20 @@ msgstr ""
 msgid "Change to Yearly?"
 msgstr ""
 
+#. js-lingui-id: AHZflp
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Chat"
+msgstr ""
+
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
+msgstr ""
+
+#. js-lingui-id: SxwQE8
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr ""
 
 #. js-lingui-id: SviKkE
@@ -1400,6 +1434,11 @@ msgstr ""
 #. js-lingui-id: iX2opZ
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
+msgstr ""
+
+#. js-lingui-id: VVRHmR
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
+msgid "Could not delete approved access domain"
 msgstr ""
 
 #. js-lingui-id: s8lFtq
@@ -1914,7 +1953,7 @@ msgstr ""
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2174,6 +2213,11 @@ msgstr "E-mail eller domæne er allerede på blokeringslisten"
 msgid "Email verification"
 msgstr "E-mail-verifikation"
 
+#. js-lingui-id: FiEQ3l
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed"
+msgstr ""
+
 #. js-lingui-id: hn6Eox
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Email Verification Failed"
@@ -2265,6 +2309,11 @@ msgstr "Engelsk"
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Nyd en {withCreditCardTrialPeriodDuration}-dages gratis prøveperiode"
 
+#. js-lingui-id: 20wg2g
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Enter a question..."
+msgstr ""
+
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
@@ -2289,6 +2338,11 @@ msgstr "Indtast oplysningerne for at indstille forbindelsen"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
 msgstr "Indtast bruger-id eller e-mail-adresse"
+
+#. js-lingui-id: pubQie
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
+msgid "Enter value"
+msgstr ""
 
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2317,8 +2371,13 @@ msgstr "Fejl ved kopiering til udklipsholder"
 
 #. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error deleting api key: {err}"
-msgstr "Fejl ved sletning af API-nøgle: {err}"
+#~ msgid "Error deleting api key: {err}"
+#~ msgstr "Fejl ved sletning af API-nøgle: {err}"
+
+#. js-lingui-id: GHKxvg
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error deleting api key."
+msgstr ""
 
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2342,13 +2401,23 @@ msgstr ""
 
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "Error regenerating api key: {err}"
-msgstr "Fejl ved regenerering af API-nøgle: {err}"
+#~ msgid "Error regenerating api key: {err}"
+#~ msgstr "Fejl ved regenerering af API-nøgle: {err}"
+
+#. js-lingui-id: PfAip2
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "Error regenerating api key."
+msgstr ""
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Fejl ved gensendelse af invitation"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr ""
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2484,9 +2553,11 @@ msgid "Expires in"
 msgstr "Udløber om"
 
 #. js-lingui-id: GS+Mus
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2507,6 +2578,7 @@ msgstr "Eksportér poster"
 
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 msgid "Export run"
 msgstr "Eksportér gennemløb"
 
@@ -2521,6 +2593,7 @@ msgid "Export to PDF"
 msgstr "Eksportér til PDF"
 
 #. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 msgid "Export version"
 msgstr "Eksportér version"
@@ -2539,6 +2612,7 @@ msgstr "Eksportér visning"
 
 #. js-lingui-id: +FMXdE
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Export workflow"
 msgstr "Eksportér arbejdsproces"
 
@@ -2555,6 +2629,11 @@ msgstr "Eksportér arbejdsprocesser"
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Extra Credits Used"
+msgstr ""
+
+#. js-lingui-id: nKkohy
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Failed to load webhook"
 msgstr ""
 
 #. js-lingui-id: bVax4d
@@ -2629,6 +2708,7 @@ msgid "Fields Count"
 msgstr "Antal felter"
 
 #. js-lingui-id: o7J4JM
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Filter"
@@ -2839,8 +2919,13 @@ msgstr "GraphQL API Legeplads"
 
 #. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr "Større end"
+#~ msgid "Greater than"
+#~ msgstr "Større end"
+
+#. js-lingui-id: FJWI9L
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than or equal"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2963,7 +3048,7 @@ msgstr "Ikon"
 
 #. js-lingui-id: XTWO+W
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Icon and Name"
 msgstr "Ikon og navn"
 
@@ -3234,6 +3319,16 @@ msgstr "Er ikke"
 msgid "is not a valid array"
 msgstr ""
 
+#. js-lingui-id: gNfGMx
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid calling code"
+msgstr ""
+
+#. js-lingui-id: Ka30cp
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid country code"
+msgstr ""
+
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid date (format: '2021-12-01')"
@@ -3252,6 +3347,11 @@ msgstr ""
 #. js-lingui-id: 96g038
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: l5P+Rf
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid phone number"
 msgstr ""
 
 #. js-lingui-id: Ir+3AW
@@ -3306,8 +3406,8 @@ msgstr ""
 
 #. js-lingui-id: VIK/N0
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
-msgid "JSON keys cannot contain spaces"
-msgstr ""
+#~ msgid "JSON keys cannot contain spaces"
+#~ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3421,8 +3521,13 @@ msgstr "Layout"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr "Mindre end"
+#~ msgid "Less than"
+#~ msgstr "Mindre end"
+
+#. js-lingui-id: 8PPI2g
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than or equal"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -3432,6 +3537,8 @@ msgstr "Lys"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Link copied to clipboard"
 msgstr "Link kopieret til udklipsholder"
 
@@ -3679,8 +3786,8 @@ msgstr ""
 
 #. js-lingui-id: amJfUq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
-msgid "must contain only numbers"
-msgstr ""
+#~ msgid "must contain only numbers"
+#~ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -3891,6 +3998,11 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: 1PwrEH
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
+msgid "No Field Selected"
+msgstr ""
+
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -3951,6 +4063,11 @@ msgstr "Ingen metrikdata tilgængelige"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 #~ msgid "No more members to assign"
 #~ msgstr "Ingen flere medlemmer at tildele"
+
+#. js-lingui-id: daCzI1
+#: src/modules/ui/field/input/components/MultiSelectInput.tsx
+msgid "No option found"
+msgstr ""
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4133,8 +4250,8 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Objects"
 msgstr "Objekter"
 
@@ -4417,7 +4534,7 @@ msgstr ""
 #~ msgstr "Indtast venligst {confirmationText} for at bekræfte, at du ønsker at slette denne webhook."
 
 #. js-lingui-id: aRWD63
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
 msgstr "Brug venligst forskellige navne til dine kilder og destinationsfelter"
 
@@ -5071,6 +5188,11 @@ msgstr ""
 msgid "Select your preferred language"
 msgstr "Vælg dit foretrukne sprog"
 
+#. js-lingui-id: JlFcis
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Send"
+msgstr ""
+
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
@@ -5312,6 +5434,11 @@ msgstr "Faser"
 #. js-lingui-id: TJBHlP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "Standard"
+msgstr ""
+
+#. js-lingui-id: GbQzZA
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
 #. js-lingui-id: uAQUqI
@@ -5568,7 +5695,7 @@ msgstr "Standardland for nye adresser"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "Beskrivelsen af dette felt"
 
@@ -5584,7 +5711,7 @@ msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "Navnet og ikonet på dette felt"
 
@@ -5610,7 +5737,7 @@ msgstr "Siden, du leder efter, er enten forsvundet eller har aldrig eksisteret. 
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The values of this field"
 msgstr "Værdierne i dette felt"
 
@@ -5657,8 +5784,8 @@ msgstr "Der opstod en fejl under opdatering af adgangskoden."
 #. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
-msgid "There was an issue"
-msgstr "Der var et problem"
+#~ msgid "There was an issue"
+#~ msgstr "Der var et problem"
 
 #. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
@@ -6036,7 +6163,7 @@ msgstr ""
 #. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Værdier"
 
@@ -6163,6 +6290,31 @@ msgstr "Vi vil sende dig et link for at verificere domæneeje"
 #~ msgid "Webhook"
 #~ msgstr "Webhook"
 
+#. js-lingui-id: Tvdycs
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} created successfully"
+msgstr ""
+
+#. js-lingui-id: otr01y
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook {targetUrl} updated successfully"
+msgstr ""
+
+#. js-lingui-id: 2X4ecw
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook deleted successfully"
+msgstr ""
+
+#. js-lingui-id: 8bfORM
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for deletion"
+msgstr ""
+
+#. js-lingui-id: +Fb+7w
+#: src/modules/settings/developers/hooks/useWebhookForm.ts
+msgid "Webhook ID is required for updates"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -6241,8 +6393,8 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -6316,6 +6468,16 @@ msgstr "ja"
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Yesterday"
+msgstr ""
+
+#. js-lingui-id: lWUeEt
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to the workspace {workspaceDisplayName}"
+msgstr ""
+
+#. js-lingui-id: Q1CQiy
+#: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
+msgid "You already belong to this workspace"
 msgstr ""
 
 #. js-lingui-id: qsAug0

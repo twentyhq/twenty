@@ -264,7 +264,7 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
 
 const SettingsObjectNewFieldSelect = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldSelect,
   })),
@@ -272,7 +272,7 @@ const SettingsObjectNewFieldSelect = lazy(() =>
 
 const SettingsObjectNewFieldConfigure = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure'
+    '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure'
   ).then((module) => ({
     default: module.SettingsObjectNewFieldConfigure,
   })),

@@ -38,12 +38,17 @@ export class EntitySchemaColumnFactory {
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
 
-      if (
+      const isRelation =
         isFieldMetadataInterfaceOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
-        )
-      ) {
+        ) ||
+        isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        );
+
+      if (isRelation) {
         const isManyToOneRelation =
           fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
         const joinColumnName = fieldMetadata.settings?.joinColumnName;

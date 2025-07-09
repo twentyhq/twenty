@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -7,7 +9,7 @@ import { beneathDatabaseIdentifierMinimumLength } from 'src/engine/metadata-modu
 export const validateMetadataNameIsNotTooShortOrThrow = (name: string) => {
   if (beneathDatabaseIdentifierMinimumLength(name)) {
     throw new InvalidMetadataException(
-      `Input is too short: "${name}"`,
+      t`Input is too short: "${name}"`,
       InvalidMetadataExceptionCode.INPUT_TOO_SHORT,
     );
   }

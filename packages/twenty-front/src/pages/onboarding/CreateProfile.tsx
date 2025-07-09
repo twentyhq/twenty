@@ -14,13 +14,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -59,7 +59,7 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -131,15 +131,15 @@ export const CreateProfile = () => {
 
         setNextOnboardingStatus();
       } catch (error: any) {
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
+        enqueueErrorSnackBar({
+          apolloError: error instanceof ApolloError ? error : undefined,
         });
       }
     },
     [
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
-      enqueueSnackBar,
+      enqueueErrorSnackBar,
       setCurrentWorkspaceMember,
       setCurrentUser,
       updateOneRecord,
@@ -148,15 +148,18 @@ export const CreateProfile = () => {
 
   const [isEditingMode, setIsEditingMode] = useState(false);
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (isEditingMode) {
-        onSubmit(getValues());
-      }
-    },
-    PageHotkeyScope.CreateProfile,
-  );
+  const handleEnter = () => {
+    if (isEditingMode) {
+      onSubmit(getValues());
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: handleEnter,
+    focusId: PageFocusId.CreateProfile,
+    dependencies: [handleEnter],
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>

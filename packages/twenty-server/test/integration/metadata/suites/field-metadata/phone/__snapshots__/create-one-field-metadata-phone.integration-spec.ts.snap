@@ -5,8 +5,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE",
+      "userFriendlyMessage": "Provided country code and calling code are conflicting",
     },
     "message": "Provided country code and calling code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -16,8 +19,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE",
+      "userFriendlyMessage": "Provided country code and calling code are conflicting",
     },
     "message": "Provided country code and calling code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -27,8 +33,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_CALLING_CODE",
+      "userFriendlyMessage": "Provided and inferred calling code are conflicting",
     },
     "message": "Provided and inferred calling code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -38,8 +47,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_CALLING_CODE",
+      "userFriendlyMessage": "Provided and inferred calling code are conflicting",
     },
     "message": "Provided and inferred calling code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -49,8 +61,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_COUNTRY_CODE",
+      "userFriendlyMessage": "Provided and inferred country code are conflicting",
     },
     "message": "Provided and inferred country code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -60,8 +75,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "CONFLICTING_PHONE_COUNTRY_CODE",
+      "userFriendlyMessage": "Provided and inferred country code are conflicting",
     },
     "message": "Provided and inferred country code are conflicting",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -71,8 +89,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_CALLING_CODE",
+      "userFriendlyMessage": "Invalid calling code +999",
     },
     "message": "Invalid calling code +999",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -82,8 +103,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_CALLING_CODE",
+      "userFriendlyMessage": "Invalid calling code +999",
     },
     "message": "Invalid calling code +999",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -93,8 +117,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_COUNTRY_CODE",
+      "userFriendlyMessage": "Invalid country code XX",
     },
     "message": "Invalid country code XX",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -104,8 +131,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_COUNTRY_CODE",
+      "userFriendlyMessage": "Invalid country code XX",
     },
     "message": "Invalid country code XX",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -115,8 +145,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_NUMBER",
+      "userFriendlyMessage": "Provided phone number is invalid not-a-number",
     },
     "message": "Provided phone number is invalid not-a-number",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -126,8 +159,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_NUMBER",
+      "userFriendlyMessage": "Provided phone number is invalid not-a-number",
     },
     "message": "Provided phone number is invalid not-a-number",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -137,8 +173,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_NUMBER",
+      "userFriendlyMessage": "Provided phone number is invalid 123456789",
     },
     "message": "Provided phone number is invalid 123456789",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -148,8 +187,11 @@ exports[`Phone field metadata tests suite It should fail to create primary phone
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_PHONE_NUMBER",
+      "userFriendlyMessage": "Provided phone number is invalid 123456789",
     },
     "message": "Provided phone number is invalid 123456789",
+    "name": "UserInputError",
   },
 ]
 `;

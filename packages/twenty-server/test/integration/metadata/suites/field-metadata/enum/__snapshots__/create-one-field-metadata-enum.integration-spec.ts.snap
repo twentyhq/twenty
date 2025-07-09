@@ -5,8 +5,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -16,8 +19,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -27,8 +33,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Label must not contain a comma",
     },
     "message": "Label must not contain a comma",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -38,8 +47,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option id",
     },
     "message": "Duplicated option id",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -49,8 +61,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option position",
     },
     "message": "Duplicated option position",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -60,8 +75,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option value",
     },
     "message": "Duplicated option value",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -71,8 +89,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option value",
     },
     "message": "Duplicated option value",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -82,8 +103,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "If defined default value must contain at least one value",
     },
     "message": "If defined default value must contain at least one value",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -93,8 +117,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -104,8 +131,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -115,8 +145,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -126,8 +159,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -137,8 +173,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -148,8 +187,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
     "message": "Default value should be as quoted string",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -159,8 +201,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -170,8 +215,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -181,8 +229,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -192,8 +243,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -203,8 +257,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -215,6 +272,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
     "extensions": {
       "code": "INTERNAL_SERVER_ERROR",
       "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "label.includes is not a function",
   },
@@ -226,8 +284,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -237,8 +298,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is required",
     },
     "message": "Option id is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -248,8 +312,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label is required",
     },
     "message": "Option label is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -259,8 +326,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -270,8 +340,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value is required",
     },
     "message": "Option value is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -281,8 +354,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -292,8 +368,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -303,8 +382,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -314,8 +396,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -325,8 +410,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be an array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -336,8 +424,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -347,8 +438,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label exceeds 63 characters",
     },
-    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option label exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -358,8 +452,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value exceeds 63 characters",
     },
-    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option value exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -369,8 +466,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label is required",
     },
     "message": "Option label is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -380,8 +480,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value is required",
     },
     "message": "Option value is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -391,8 +494,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -402,8 +508,11 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
     },
     "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -413,8 +522,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with an inv
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
     "message": "Default value should be as quoted string",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -424,8 +536,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with an unk
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
     },
     "message": "Default value "'OPTION_424242'" must be one of the option values",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -435,8 +550,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with comma 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Label must not contain a comma",
     },
     "message": "Label must not contain a comma",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -446,8 +564,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option id",
     },
     "message": "Duplicated option id",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -457,8 +578,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option position",
     },
     "message": "Duplicated option position",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -468,8 +592,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option value",
     },
     "message": "Duplicated option value",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -479,8 +606,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Duplicated option value",
     },
     "message": "Duplicated option value",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -490,8 +620,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -501,8 +634,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
     "message": "Default value should be as quoted string",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -512,8 +648,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -523,8 +662,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -534,8 +676,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -545,8 +690,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with invali
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -556,8 +704,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with invali
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -567,8 +718,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Default value for multi-select must be a stringified array",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -578,8 +732,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -590,6 +747,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
     "extensions": {
       "code": "INTERNAL_SERVER_ERROR",
       "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "label.includes is not a function",
   },
@@ -601,8 +759,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -612,8 +773,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with null i
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is required",
     },
     "message": "Option id is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -623,8 +787,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with null l
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label is required",
     },
     "message": "Option label is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -634,8 +801,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with null o
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -645,8 +815,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with null v
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value is required",
     },
     "message": "Option value is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -656,8 +829,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
     "message": "Default value should be as quoted string",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -667,8 +843,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -678,8 +857,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
     "message": "Option label "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -689,8 +871,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
     "message": "Option value "" is beneath 1 character",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -700,8 +885,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
     "message": "Default value should be as quoted string",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -711,8 +899,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option id is invalid",
     },
     "message": "Option id is invalid",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -722,8 +913,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label exceeds 63 characters",
     },
-    "message": "Option label "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option label exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -733,8 +927,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value exceeds 63 characters",
     },
-    "message": "Option value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters",
+    "message": "Option value exceeds 63 characters",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -744,8 +941,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option label is required",
     },
     "message": "Option label is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -755,8 +955,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Option value is required",
     },
     "message": "Option value is required",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -766,8 +969,11 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "An error occurred.",
     },
     "message": "Options are required for enum fields",
+    "name": "UserInputError",
   },
 ]
 `;

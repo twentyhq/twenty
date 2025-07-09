@@ -2,11 +2,12 @@ import { useAddressField } from '@/object-record/record-field/meta-types/hooks/u
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { usePersistField } from '../../../hooks/usePersistField';
 
 export type AddressFieldInputProps = {
@@ -70,13 +71,17 @@ export const AddressFieldInput = ({
     setDraftValue(convertToAddress(newAddress));
   };
 
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
   return (
     <AddressInput
+      instanceId={instanceId}
       value={convertToAddress(draftValue)}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
       onTab={handleTab}
       onShiftTab={handleShiftTab}

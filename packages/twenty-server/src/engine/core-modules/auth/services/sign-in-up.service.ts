@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -67,6 +68,9 @@ export class SignInUpService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 
@@ -111,6 +115,9 @@ export class SignInUpService {
       throw new AuthException(
         'Password too weak',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Password too weak`,
+        },
       );
     }
 
@@ -130,6 +137,9 @@ export class SignInUpService {
       throw new AuthException(
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Wrong password`,
+        },
       );
     }
   }
@@ -153,6 +163,9 @@ export class SignInUpService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 
@@ -194,6 +207,9 @@ export class SignInUpService {
       throw new AuthException(
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`Workspace is not ready to welcome new members`,
+        },
       );
     }
 
@@ -207,6 +223,9 @@ export class SignInUpService {
       throw new AuthException(
         'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`User is not part of the workspace`,
+        },
       );
     }
   }
@@ -340,6 +359,9 @@ export class SignInUpService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: t`Email is required`,
+        },
       );
     }
 

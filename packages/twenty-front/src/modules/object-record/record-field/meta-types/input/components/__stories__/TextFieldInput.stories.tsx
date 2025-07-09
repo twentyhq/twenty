@@ -1,18 +1,19 @@
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
-
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -25,7 +26,7 @@ const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
 
 type TextFieldInputWithContextProps = TextFieldInputProps & {
   value: string;
-  recordId?: string;
+  recordId: string;
 };
 
 const TextFieldInputWithContext = ({
@@ -37,26 +38,38 @@ const TextFieldInputWithContext = ({
   onTab,
   onShiftTab,
 }: TextFieldInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
-
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const [isReady, setIsReady] = useState(false);
+
+  const instanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: 'Text',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   useEffect(() => {
     if (!isReady) {
-      setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
+      pushFocusItemToFocusStack({
+        focusId: instanceId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: instanceId,
+        },
+      });
+
       setIsReady(true);
     }
-  }, [isReady, setHotKeyScope]);
+  }, [isReady, pushFocusItemToFocusStack, instanceId]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: 'record-field-component-instance-id',
+        instanceId: instanceId,
       }}
     >
       <FieldContext.Provider
         value={{
-          recordId: recordId ?? '123',
+          recordId,
           fieldDefinition: {
             fieldMetadataId: 'text',
             label: 'Text',

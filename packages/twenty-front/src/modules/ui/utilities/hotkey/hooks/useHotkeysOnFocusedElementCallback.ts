@@ -1,4 +1,4 @@
-import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
+import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import {
   Hotkey,
   OptionsOrDependencyArray,
@@ -6,7 +6,6 @@ import {
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 import { currentFocusIdSelector } from '../../focus/states/currentFocusIdSelector';
-import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 export const useHotkeysOnFocusedElementCallback = (
   dependencies?: OptionsOrDependencyArray,
@@ -20,36 +19,24 @@ export const useHotkeysOnFocusedElementCallback = (
         hotkeysEvent,
         keyboardEvent,
         focusId,
-        scope,
         preventDefault,
       }: {
         keyboardEvent: KeyboardEvent;
         hotkeysEvent: Hotkey;
         callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
         focusId: string;
-        scope: string;
         preventDefault?: boolean;
       }) => {
         const currentFocusId = snapshot
           .getLoadable(currentFocusIdSelector)
           .getValue();
 
-        // TODO: Remove this once we've migrated hotkey scopes to the new api
-        const currentHotkeyScopes = snapshot
-          .getLoadable(internalHotkeysEnabledScopesState)
-          .getValue();
-
-        if (
-          currentFocusId !== focusId ||
-          !currentHotkeyScopes.includes(scope)
-        ) {
-          if (DEBUG_HOTKEY_SCOPE) {
+        if (currentFocusId !== focusId) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
                 hotkeysEvent.keys
-              }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
-                ', ',
-              )}] and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
+              }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
               'color: gray; ',
             );
           }
@@ -57,19 +44,17 @@ export const useHotkeysOnFocusedElementCallback = (
           return;
         }
 
-        if (DEBUG_HOTKEY_SCOPE) {
+        if (DEBUG_FOCUS_STACK) {
           logDebug(
             `DEBUG: %cI can call hotkey (${
               hotkeysEvent.keys
-            }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
-              ', ',
-            )}], and the current focus identifier is [${currentFocusId}], and the focusId is [${focusId}]`,
+            }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
             'color: green;',
           );
         }
 
         if (preventDefault === true) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (DEBUG_FOCUS_STACK) {
             logDebug(
               `DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
               'color: gray;',

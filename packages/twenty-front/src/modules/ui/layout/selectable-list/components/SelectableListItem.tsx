@@ -6,22 +6,23 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div`
-  height: 100%;
+const StyledListItemContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 `;
 
 export type SelectableListItemProps = {
   itemId: string;
   children: ReactNode;
-  className?: string;
   onEnter?: () => void;
 };
 
 export const SelectableListItem = ({
   itemId,
   children,
-  className,
   onEnter,
 }: SelectableListItemProps) => {
   const isSelectedItemId = useRecoilComponentFamilyValueV2(
@@ -29,11 +30,14 @@ export const SelectableListItem = ({
     itemId,
   );
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const listItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isSelectedItemId) {
-      scrollRef.current?.scrollIntoView({ block: 'nearest' });
+      listItemRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
     }
   }, [isSelectedItemId]);
 
@@ -42,9 +46,9 @@ export const SelectableListItem = ({
       {isSelectedItemId && isDefined(onEnter) && (
         <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
-      <StyledContainer className={className} ref={scrollRef}>
+      <StyledListItemContainer ref={listItemRef}>
         {children}
-      </StyledContainer>
+      </StyledListItemContainer>
     </>
   );
 };

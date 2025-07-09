@@ -6,15 +6,12 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
-import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuHistory = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const setHotkeyScope = useSetHotkeyScope();
 
   const goBackFromCommandMenu = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -69,78 +66,64 @@ export const useCommandMenuHistory = () => {
         }
 
         set(hasUserSelectedCommandState, false);
-
-        setHotkeyScope(CommandMenuHotkeyScope.CommandMenuFocused, {
-          commandMenuOpen: true,
-        });
       };
     },
-    [closeCommandMenu, setHotkeyScope],
+    [closeCommandMenu],
   );
 
-  const navigateCommandMenuHistory = useRecoilCallback(
-    ({ snapshot, set }) => {
-      return (pageIndex: number) => {
-        const currentNavigationStack = snapshot
-          .getLoadable(commandMenuNavigationStackState)
-          .getValue();
+  const navigateCommandMenuHistory = useRecoilCallback(({ snapshot, set }) => {
+    return (pageIndex: number) => {
+      const currentNavigationStack = snapshot
+        .getLoadable(commandMenuNavigationStackState)
+        .getValue();
 
-        const newNavigationStack = currentNavigationStack.slice(
-          0,
-          pageIndex + 1,
+      const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
+
+      set(commandMenuNavigationStackState, newNavigationStack);
+
+      const newNavigationStackItem = newNavigationStack.at(-1);
+
+      if (!isDefined(newNavigationStackItem)) {
+        throw new Error(
+          `No command menu navigation stack item found for index ${pageIndex}`,
         );
+      }
 
-        set(commandMenuNavigationStackState, newNavigationStack);
+      set(commandMenuPageState, newNavigationStackItem.page);
+      set(commandMenuPageInfoState, {
+        title: newNavigationStackItem.pageTitle,
+        Icon: newNavigationStackItem.pageIcon,
+        instanceId: newNavigationStackItem.pageId,
+      });
+      const currentMorphItems = snapshot
+        .getLoadable(commandMenuNavigationMorphItemByPageState)
+        .getValue();
 
-        const newNavigationStackItem = newNavigationStack.at(-1);
-
-        if (!isDefined(newNavigationStackItem)) {
-          throw new Error(
-            `No command menu navigation stack item found for index ${pageIndex}`,
+      for (const [pageId, morphItem] of currentMorphItems.entries()) {
+        if (!newNavigationStack.some((item) => item.pageId === pageId)) {
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId,
+                targetObjectId: morphItem.recordId,
+              }),
+            }),
+            null,
           );
         }
+      }
 
-        set(commandMenuPageState, newNavigationStackItem.page);
-        set(commandMenuPageInfoState, {
-          title: newNavigationStackItem.pageTitle,
-          Icon: newNavigationStackItem.pageIcon,
-          instanceId: newNavigationStackItem.pageId,
-        });
-        const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
-          .getValue();
+      const newMorphItems = new Map(
+        Array.from(currentMorphItems.entries()).filter(([pageId]) =>
+          newNavigationStack.some((item) => item.pageId === pageId),
+        ),
+      );
 
-        for (const [pageId, morphItem] of currentMorphItems.entries()) {
-          if (!newNavigationStack.some((item) => item.pageId === pageId)) {
-            set(
-              activeTabIdComponentState.atomFamily({
-                instanceId: getShowPageTabListComponentId({
-                  pageId,
-                  targetObjectId: morphItem.recordId,
-                }),
-              }),
-              null,
-            );
-          }
-        }
+      set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 
-        const newMorphItems = new Map(
-          Array.from(currentMorphItems.entries()).filter(([pageId]) =>
-            newNavigationStack.some((item) => item.pageId === pageId),
-          ),
-        );
-
-        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
-
-        set(hasUserSelectedCommandState, false);
-
-        setHotkeyScope(CommandMenuHotkeyScope.CommandMenuFocused, {
-          commandMenuOpen: true,
-        });
-      };
-    },
-    [setHotkeyScope],
-  );
+      set(hasUserSelectedCommandState, false);
+    };
+  }, []);
 
   return {
     goBackFromCommandMenu,

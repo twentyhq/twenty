@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -67,7 +67,6 @@ const StyledErrorDiv = styled.div`
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
-  hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
   onEscape?: () => void;
@@ -84,6 +83,7 @@ export type MultiItemBaseInputProps = Omit<HTMLInputProps, 'onChange'> & {
   hasError?: boolean;
   hasItem: boolean;
   onChange: (value: string) => void;
+  instanceId: string;
 };
 
 export const MultiItemBaseInput = forwardRef<
@@ -96,7 +96,6 @@ export const MultiItemBaseInput = forwardRef<
       className,
       value,
       placeholder,
-      hotkeyScope = 'dropdown-menu-input',
       onChange,
       onClickOutside,
       onEnter = () => {},
@@ -108,6 +107,7 @@ export const MultiItemBaseInput = forwardRef<
       error = '',
       hasError = false,
       hasItem,
+      instanceId,
     },
     ref,
   ) => {
@@ -115,6 +115,7 @@ export const MultiItemBaseInput = forwardRef<
     const combinedRef = useCombinedRefs(ref, inputRef);
 
     useRegisterInputEvents({
+      focusId: instanceId,
       inputRef,
       inputValue: value,
       onEnter,
@@ -122,7 +123,6 @@ export const MultiItemBaseInput = forwardRef<
       onClickOutside,
       onTab,
       onShiftTab,
-      hotkeyScope,
     });
 
     return (

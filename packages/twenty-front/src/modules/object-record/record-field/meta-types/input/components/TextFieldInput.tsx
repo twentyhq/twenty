@@ -3,12 +3,13 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 export type TextFieldInputProps = {
@@ -27,6 +28,10 @@ export const TextFieldInput = ({
   onShiftTab,
 }: TextFieldInputProps) => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const persistField = usePersistField();
   const handleEnter = (newText: string) => {
@@ -59,6 +64,7 @@ export const TextFieldInput = ({
   return (
     <FieldInputContainer>
       <TextAreaInput
+        instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={draftValue ?? ''}
@@ -67,7 +73,6 @@ export const TextFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         onChange={handleChange}
       />
     </FieldInputContainer>

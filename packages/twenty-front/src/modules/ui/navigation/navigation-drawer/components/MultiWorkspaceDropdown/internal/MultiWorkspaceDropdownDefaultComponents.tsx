@@ -8,7 +8,6 @@ import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUr
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -20,6 +19,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -59,7 +59,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
@@ -86,9 +86,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           '_blank',
         );
       },
-      onError: (error: Error) => {
-        enqueueSnackBar(error.message, {
-          variant: SnackBarVariant.Error,
+      onError: (error: ApolloError) => {
+        enqueueErrorSnackBar({
+          apolloError: error,
         });
       },
     });

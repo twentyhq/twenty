@@ -15,11 +15,9 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
-import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -41,9 +39,11 @@ export const useOpenFieldInputEditMode = () => {
       ({
         fieldDefinition,
         recordId,
+        prefix,
       }: {
         fieldDefinition: FieldDefinition<FieldMetadata>;
         recordId: string;
+        prefix?: string;
       }) => {
         if (
           isFieldRelationFromManyObjects(fieldDefinition) &&
@@ -75,9 +75,10 @@ export const useOpenFieldInputEditMode = () => {
           });
 
           openActivityTargetCellEditMode({
-            recordPickerInstanceId: getFieldInputInstanceId({
+            recordPickerInstanceId: getRecordFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
+              prefix,
             }),
             activityTargetObjectRecords,
           });
@@ -87,7 +88,8 @@ export const useOpenFieldInputEditMode = () => {
         if (isFieldRelationToOneObject(fieldDefinition)) {
           openRelationToOneFieldInput({
             fieldName: fieldDefinition.metadata.fieldName,
-            recordId: recordId,
+            recordId,
+            prefix,
           });
 
           return;
@@ -103,29 +105,30 @@ export const useOpenFieldInputEditMode = () => {
               fieldName: fieldDefinition.metadata.fieldName,
               objectNameSingular:
                 fieldDefinition.metadata.relationObjectMetadataNameSingular,
-              recordId: recordId,
+              recordId,
+              prefix,
             });
             return;
           }
         }
 
         pushFocusItemToFocusStack({
-          focusId: getFieldInputInstanceId({
+          focusId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
+            prefix,
           }),
           component: {
             type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId: getFieldInputInstanceId({
+            instanceId: getRecordFieldInputInstanceId({
               recordId,
               fieldName: fieldDefinition.metadata.fieldName,
+              prefix,
             }),
           },
-          hotkeyScope: {
-            scope: DEFAULT_CELL_SCOPE.scope,
-            customScopes: DEFAULT_CELL_SCOPE.customScopes,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
-          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
       },
     [
@@ -142,14 +145,17 @@ export const useOpenFieldInputEditMode = () => {
   const closeFieldInput = ({
     fieldDefinition,
     recordId,
+    prefix,
   }: {
     fieldDefinition: FieldDefinition<FieldMetadata>;
     recordId: string;
+    prefix?: string;
   }) => {
     removeFocusItemFromFocusStackById({
-      focusId: getFieldInputInstanceId({
+      focusId: getRecordFieldInputInstanceId({
         recordId,
         fieldName: fieldDefinition.metadata.fieldName,
+        prefix,
       }),
     });
   };

@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -67,9 +68,10 @@ export const RawJsonFieldInput = ({
     fieldDefinition,
   } = useJsonField();
 
-  const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
-
   const containerRef = useRef<HTMLDivElement>(null);
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -101,35 +103,35 @@ export const RawJsonFieldInput = ({
     callback: (event) => {
       handleClickOutside(event, draftValue ?? '');
     },
-    listenerId: hotkeyScope,
+    listenerId: instanceId,
   });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       handleEscape(draftValue ?? '');
     },
-    hotkeyScope,
-    [handleEscape, draftValue],
-  );
+    focusId: instanceId,
+    dependencies: [handleEscape, draftValue],
+  });
 
-  useScopedHotkeys(
-    'tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['tab'],
+    callback: () => {
       handleTab(draftValue ?? '');
     },
-    hotkeyScope,
-    [handleTab, draftValue],
-  );
+    focusId: instanceId,
+    dependencies: [handleTab, draftValue],
+  });
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: ['shift+tab'],
+    callback: () => {
       handleShiftTab(draftValue ?? '');
     },
-    hotkeyScope,
-    [handleShiftTab, draftValue],
-  );
+    focusId: instanceId,
+    dependencies: [handleShiftTab, draftValue],
+  });
 
   const showEditingButton = !isWorkflowRunJsonField({
     objectMetadataNameSingular:

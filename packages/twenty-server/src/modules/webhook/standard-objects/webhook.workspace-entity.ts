@@ -4,6 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -21,6 +22,11 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
   labelIdentifierStandardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
 })
 @WorkspaceIsSystem()
+@WorkspaceGate({
+  featureFlag: 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED',
+  excludeFromDatabase: false,
+  excludeFromGraphQL: true,
+})
 export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
