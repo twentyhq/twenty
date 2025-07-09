@@ -10,7 +10,6 @@ import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { parseAgentStreamingChunk } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/parseAgentStreamingChunk';
 import { useApolloClient } from '@apollo/client';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
@@ -52,20 +51,13 @@ export const useAgentChat = (agentId: string) => {
     useAgentChatThreads(agentId);
   const currentThreadId = threads[0]?.id;
 
-  const {
-    data: messagesData,
-    loading: messagesLoading,
-    refetch: refetchMessages,
-  } = useAgentChatMessages(currentThreadId);
+  const { loading: messagesLoading, refetch: refetchMessages } =
+    useAgentChatMessages(currentThreadId, ({ messages }) => {
+      setAgentChatMessages(messages);
+      scrollToBottom();
+    });
 
   const isLoading = messagesLoading || threadsLoading || isStreaming;
-
-  if (
-    agentChatMessages.length === 0 &&
-    isDefined(messagesData?.messages?.length)
-  ) {
-    setAgentChatMessages(messagesData.messages);
-  }
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
