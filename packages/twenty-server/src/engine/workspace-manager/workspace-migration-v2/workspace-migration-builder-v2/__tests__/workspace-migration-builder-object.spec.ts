@@ -30,7 +30,7 @@ type TestCase = EachTestingContext<{
 const successfulTestCases: TestCase[] = [
   {
     title:
-      'It should infer an update_object action with all object updated fields',
+      'It should build an update_object action with all object updated fields',
     context: {
       input: () => {
         const flattenObjectMetadata = getFlattenObjectMetadata({
@@ -58,6 +58,48 @@ const successfulTestCases: TestCase[] = [
     },
   },
   {
+    title: 'It should build a create_object action',
+    context: {
+      input: () => {
+        const flattenObjectMetadata = getFlattenObjectMetadata({
+          uniqueIdentifier: 'pomme',
+          nameSingular: 'toto',
+          namePlural: 'totos',
+          isLabelSyncedWithName: true,
+        });
+        return {
+          from: [],
+          to: [flattenObjectMetadata],
+        };
+      },
+      expectedActionsTypeCounter: {
+        total: 1,
+        createObject: 1,
+      },
+    },
+  },
+  {
+    title: 'It should build a delete_object action',
+    context: {
+      input: () => {
+        const flattenObjectMetadata = getFlattenObjectMetadata({
+          uniqueIdentifier: 'pomme',
+          nameSingular: 'toto',
+          namePlural: 'totos',
+          isLabelSyncedWithName: true,
+        });
+        return {
+          from: [flattenObjectMetadata],
+          to: [],
+        };
+      },
+      expectedActionsTypeCounter: {
+        total: 1,
+        deleteObject: 1,
+      },
+    },
+  },
+  {
     title: 'It should not infer any actions as from and to are identical',
     context: {
       input: () => {
@@ -74,7 +116,7 @@ const successfulTestCases: TestCase[] = [
   },
 ];
 
-describe('WorkspaceMigrationBuilderV2Service', () => {
+describe('Workspace migration builder object actions test suite', () => {
   let service: WorkspaceMigrationBuilderV2Service;
 
   beforeEach(() => {
