@@ -163,7 +163,7 @@ export class ServerlessFunctionResolver {
     try {
       const { id } = input;
 
-      return await this.serverlessFunctionService.publishOneServerlessFunction(
+      return await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
         id,
         workspaceId,
       );
