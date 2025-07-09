@@ -50,29 +50,42 @@ export class BaseGraphQLError extends GraphQLError {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-
   constructor(
-    message: string,
+    exceptionOrMessage: string | CustomException,
     code?: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     extensions?: Record<string, any>,
   ) {
-    super(message);
+    if (exceptionOrMessage instanceof CustomException) {
+      const exception = exceptionOrMessage;
+
+      super(exception.message);
+
+      this.extensions = {
+        subCode: exception.code,
+        userFriendlyMessage: exception.userFriendlyMessage,
+        code,
+      };
+    } else {
+      const message = exceptionOrMessage;
+
+      super(message);
+
+      if (extensions?.extensions) {
+        throw new Error(
+          'Pass extensions directly as the third argument of the ApolloError constructor: `new ' +
+            'ApolloError(message, code, {myExt: value})`, not `new ApolloError(message, code, ' +
+            '{extensions: {myExt: value}})`',
+        );
+      }
+
+      this.extensions = { ...extensions, code };
+    }
 
     // if no name provided, use the default. defineProperty ensures that it stays non-enumerable
     if (!this.name) {
       Object.defineProperty(this, 'name', { value: 'GraphQLError' });
     }
-
-    if (extensions?.extensions) {
-      throw new Error(
-        'Pass extensions directly as the third argument of the ApolloError constructor: `new ' +
-          'ApolloError(message, code, {myExt: value})`, not `new ApolloError(message, code, ' +
-          '{extensions: {myExt: value}})`',
-      );
-    }
-
-    this.extensions = { ...extensions, code };
   }
 
   toJSON(): GraphQLFormattedError {
@@ -116,79 +129,31 @@ export class ValidationError extends BaseGraphQLError {
 }
 
 export class NotFoundError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.NOT_FOUND, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.NOT_FOUND, extensions);
-    }
+    super(messageOrException, ErrorCode.NOT_FOUND, extensions);
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
   }
 }
 
 export class AuthenticationError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.UNAUTHENTICATED, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.UNAUTHENTICATED, extensions);
-    }
+    super(messageOrException, ErrorCode.UNAUTHENTICATED, extensions);
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.FORBIDDEN, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.FORBIDDEN, extensions);
-    }
+    super(messageOrException, ErrorCode.FORBIDDEN, extensions);
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
 }
@@ -200,21 +165,13 @@ export class PersistedQueryNotFoundError extends BaseGraphQLError {
 
   constructor(
     messageOrException?: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.PERSISTED_QUERY_NOT_FOUND, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException || 'PersistedQueryNotFound';
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.PERSISTED_QUERY_NOT_FOUND, extensions);
-    }
+    super(
+      messageOrException || 'PersistedQueryNotFound',
+      ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+      extensions,
+    );
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotFoundError',
     });
@@ -222,27 +179,15 @@ export class PersistedQueryNotFoundError extends BaseGraphQLError {
 }
 
 export class PersistedQueryNotSupportedError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException?: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException || 'PersistedQueryNotSupported';
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED, extensions);
-    }
+    super(
+      messageOrException || 'PersistedQueryNotSupported',
+      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+      extensions,
+    );
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotSupportedError',
     });
@@ -250,131 +195,51 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.BAD_USER_INPUT, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.BAD_USER_INPUT, extensions);
-    }
+    super(messageOrException, ErrorCode.BAD_USER_INPUT, extensions);
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
 }
 
 export class MethodNotAllowedError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.METHOD_NOT_ALLOWED, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.METHOD_NOT_ALLOWED, extensions);
-    }
+    super(messageOrException, ErrorCode.METHOD_NOT_ALLOWED, extensions);
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
 }
 
 export class ConflictError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.CONFLICT, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.CONFLICT, extensions);
-    }
+    super(messageOrException, ErrorCode.CONFLICT, extensions);
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
 }
 
 export class TimeoutError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.TIMEOUT, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.TIMEOUT, extensions);
-    }
+    super(messageOrException, ErrorCode.TIMEOUT, extensions);
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
 }
 
 export class InternalServerError extends BaseGraphQLError {
-  constructor(customException: CustomException);
-
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
-
   constructor(
     messageOrException: string | CustomException,
-    codeOrExtensions?: string | RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions,
   ) {
-    if (messageOrException instanceof CustomException) {
-      const exception = messageOrException;
-
-      super(exception.message, ErrorCode.INTERNAL_SERVER_ERROR, {
-        userFriendlyMessage: exception.userFriendlyMessage,
-        subCode: exception.code,
-      });
-    } else {
-      const message = messageOrException as string;
-      const extensions = codeOrExtensions as RestrictedGraphQLErrorExtensions;
-
-      super(message, ErrorCode.INTERNAL_SERVER_ERROR, extensions);
-    }
+    super(messageOrException, ErrorCode.INTERNAL_SERVER_ERROR, extensions);
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }
