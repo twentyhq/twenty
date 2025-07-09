@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-import { SettingsObjectNewFieldSelect } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
+import { SettingsObjectNewFieldSelect } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
 import {
   PageDecorator,
