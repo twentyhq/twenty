@@ -40,6 +40,7 @@ export const CustomSlashMenu = ({
     if (!isDefined(selectedIndex)) return;
 
     const selectedItem = items[selectedIndex];
+
     if (isDefined(selectedItem)) {
       setSelectedItemId(selectedItem.title);
     }
