@@ -159,7 +159,6 @@ export const CurrentWorkspaceMemberFavorites = ({
             onSubmit={handleSubmitRename}
             onCancel={handleCancelRename}
             onClickOutside={handleClickOutside}
-            hotkeyScope="favorites-folder-input"
           />
         ) : (
           <FavoritesDroppable droppableId={`folder-header-${folder.folderId}`}>

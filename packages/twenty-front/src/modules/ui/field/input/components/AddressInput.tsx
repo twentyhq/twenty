@@ -57,7 +57,6 @@ export type AddressInputProps = {
     event: MouseEvent | TouchEvent,
     newAddress: FieldAddressDraftValue,
   ) => void;
-  hotkeyScope: string;
   clearable?: boolean;
   onChange?: (updatedValue: FieldAddressDraftValue) => void;
 };
@@ -65,7 +64,6 @@ export type AddressInputProps = {
 export const AddressInput = ({
   instanceId,
   value,
-  hotkeyScope,
   onTab,
   onShiftTab,
   onEnter,
@@ -154,7 +152,6 @@ export const AddressInput = ({
   useHotkeysOnFocusedElement({
     keys: ['tab'],
     callback: handleTab,
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [handleTab],
   });
@@ -162,7 +159,6 @@ export const AddressInput = ({
   useHotkeysOnFocusedElement({
     keys: ['shift+tab'],
     callback: handleShiftTab,
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [handleShiftTab],
   });
@@ -172,7 +168,6 @@ export const AddressInput = ({
     callback: () => {
       onEnter(internalValue);
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEnter, internalValue],
   });
@@ -182,7 +177,6 @@ export const AddressInput = ({
     callback: () => {
       onEscape(internalValue);
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEscape, internalValue],
   });

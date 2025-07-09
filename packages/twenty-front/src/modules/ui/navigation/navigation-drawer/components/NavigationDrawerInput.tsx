@@ -18,7 +18,6 @@ type NavigationDrawerInputProps = {
   onSubmit: (value: string) => void;
   onCancel: (value: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
-  hotkeyScope: string;
 };
 
 const NAVIGATION_DRAWER_INPUT_FOCUS_ID = 'navigation-drawer-input';
@@ -32,7 +31,6 @@ export const NavigationDrawerInput = ({
   onSubmit,
   onCancel,
   onClickOutside,
-  hotkeyScope,
 }: NavigationDrawerInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +43,6 @@ export const NavigationDrawerInput = ({
       });
     },
     focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
-    scope: hotkeyScope,
   });
 
   useHotkeysOnFocusedElement({
@@ -57,7 +54,6 @@ export const NavigationDrawerInput = ({
       });
     },
     focusId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
-    scope: hotkeyScope,
   });
 
   useListenClickOutside({
@@ -86,7 +82,9 @@ export const NavigationDrawerInput = ({
         type: FocusComponentType.TEXT_INPUT,
         instanceId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
       },
-      hotkeyScope: { scope: hotkeyScope },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   };
 

@@ -17,7 +17,6 @@ type InputProps = {
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  hotkeyScope?: string;
   onEnter?: () => void;
   onEscape?: () => void;
   onClickOutside?: () => void;
@@ -63,7 +62,6 @@ const Input = ({
   value,
   onChange,
   placeholder,
-  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -115,7 +113,6 @@ const Input = ({
       handleLeaveFocus();
       onShiftTab?.();
     },
-    hotkeyScope: hotkeyScope,
   });
 
   return (
@@ -143,7 +140,6 @@ export const TitleInput = ({
   sizeVariant = 'md',
   onChange,
   placeholder,
-  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -163,7 +159,6 @@ export const TitleInput = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          hotkeyScope={hotkeyScope}
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
@@ -187,7 +182,6 @@ export const TitleInput = ({
                 globalHotkeysConfig: {
                   enableGlobalHotkeysConflictingWithKeyboard: false,
                 },
-                hotkeyScope: { scope: hotkeyScope },
               });
             }
           }}

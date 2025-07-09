@@ -3,7 +3,6 @@ import { DateInput } from '@/ui/field/input/components/DateInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 import { Nullable } from 'twenty-ui/utilities';
@@ -88,7 +87,6 @@ export const DateFieldInput = ({
       onChange={handleChange}
       onClear={handleClear}
       onSubmit={handleSubmit}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

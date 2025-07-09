@@ -9,12 +9,9 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -377,17 +374,6 @@ const initializeModalState = ({ set }: { set: SetRecoilState }) => {
     true,
   );
 
-  set(currentHotkeyScopeState, {
-    scope: ModalHotkeyScope.ModalFocus,
-    customScopes: {
-      commandMenu: true,
-      goto: false,
-      keyboardShortcutMenu: false,
-    },
-  });
-
-  set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
-
   set(focusStackState, [
     {
       focusId: modalId,
@@ -399,7 +385,6 @@ const initializeModalState = ({ set }: { set: SetRecoilState }) => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     },
   ]);
 };

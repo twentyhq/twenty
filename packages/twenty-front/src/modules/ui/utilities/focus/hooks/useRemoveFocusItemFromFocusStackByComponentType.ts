@@ -1,13 +1,10 @@
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 
 export const useRemoveLastFocusItemFromFocusStackByComponentType = () => {
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
-
   const removeLastFocusItemFromFocusStackByComponentType = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ componentType }: { componentType: FocusComponentType }) => {
@@ -44,11 +41,8 @@ export const useRemoveLastFocusItemFromFocusStackByComponentType = () => {
             },
           );
         }
-
-        // TODO: Remove this once we've migrated hotkey scopes to the new api
-        goBackToPreviousHotkeyScope(removedFocusItem.memoizeKey);
       },
-    [goBackToPreviousHotkeyScope],
+    [],
   );
 
   return { removeLastFocusItemFromFocusStackByComponentType };

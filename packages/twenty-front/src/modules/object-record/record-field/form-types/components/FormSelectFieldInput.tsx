@@ -3,7 +3,6 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -37,8 +36,6 @@ export const FormSelectFieldInput = ({
   const theme = useTheme();
 
   const instanceId = useId();
-
-  const hotkeyScope = InlineCellHotkeyScope.InlineCell;
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -124,7 +121,6 @@ export const FormSelectFieldInput = ({
     keys: Key.Escape,
     callback: onCancel,
     focusId: instanceId,
-    scope: hotkeyScope,
     dependencies: [onCancel],
   });
 
