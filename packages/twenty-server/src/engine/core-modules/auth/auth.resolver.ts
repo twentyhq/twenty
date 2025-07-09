@@ -176,6 +176,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       // email validation is active only for password flow
       AuthProviderEnum.Password,
     );
@@ -248,6 +249,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       appToken.user.email,
       workspace.id,
+      appToken.user.id,
       authProvider,
     );
 
@@ -363,6 +365,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       authProvider,
     );
 
@@ -388,6 +391,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      user.id,
       authProvider,
     );
 
@@ -442,6 +446,7 @@ export class AuthResolver {
     const {
       sub: email,
       workspaceId,
+      userId,
       authProvider,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,

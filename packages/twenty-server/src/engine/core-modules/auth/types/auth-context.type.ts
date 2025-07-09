@@ -43,6 +43,7 @@ export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
   authProvider?: AuthProviderEnum;
+  userId: User['id'],
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {

@@ -22,12 +22,14 @@ export class LoginTokenService {
   async generateLoginToken(
     email: string,
     workspaceId: string,
+    userId: string,
     authProvider?: AuthProviderEnum,
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
+      userId,
       authProvider,
     };
 
@@ -49,11 +51,7 @@ export class LoginTokenService {
     };
   }
 
-  async verifyLoginToken(loginToken: string): Promise<{
-    sub: string;
-    workspaceId: string;
-    authProvider: AuthProviderEnum;
-  }> {
+  async verifyLoginToken(loginToken: string): Promise<LoginTokenJwtPayload> {
     await this.jwtWrapperService.verifyJwtToken(
       loginToken,
       JwtTokenTypeEnum.LOGIN,
