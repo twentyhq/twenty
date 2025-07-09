@@ -64,7 +64,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   text={t`Connection settings`}
                   LeftIcon={IconSettings}
                   onClick={() => {
-                    navigate(SettingsPath.EditSmtpConnection, {
+                    navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);

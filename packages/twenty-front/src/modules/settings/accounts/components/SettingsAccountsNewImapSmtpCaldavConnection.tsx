@@ -9,10 +9,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
 import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
-import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
 
-export const SettingsAccountsNewSmtpConnection = () => {
+export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
 
@@ -23,9 +23,7 @@ export const SettingsAccountsNewSmtpConnection = () => {
     canSave,
     isSubmitting,
     loading,
-  } = useImapSmtpCaldavConnectionForm({
-    connectionType: 'SMTP',
-  });
+  } = useImapSmtpCaldavConnectionForm({});
 
   const { control } = formMethods;
 
@@ -33,7 +31,7 @@ export const SettingsAccountsNewSmtpConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`New SMTP Connection`}
+        title={t`New Email Account`}
         links={[
           {
             children: t`Workspace`,
@@ -43,7 +41,7 @@ export const SettingsAccountsNewSmtpConnection = () => {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`New SMTP Connection` },
+          { children: t`New Email Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons
@@ -56,11 +54,7 @@ export const SettingsAccountsNewSmtpConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <SettingsAccountsConnectionForm
-            control={control}
-            connectionType="SMTP"
-            isEditing={false}
-          />
+          <SettingsAccountsConnectionForm control={control} isEditing={false} />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

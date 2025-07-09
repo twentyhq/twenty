@@ -5,90 +5,80 @@ import { Control, Controller } from 'react-hook-form';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
-const StyledFormContainer = styled.form`
+const StyledFormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledConnectionSection = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-const DEFAULT_IMAP_PORT = 993;
-const DEFAULT_SMTP_PORT = 587;
+const StyledSectionHeader = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
 
-type ConnectionType = 'IMAP' | 'SMTP';
+const StyledSectionTitle = styled.h3`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  margin: 0;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
 
-type ConnectionFormData = {
-  handle: string;
-  host: string;
-  port: number;
-  password: string;
-  secure: boolean;
-};
+const StyledSectionDescription = styled.p`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin: 0;
+`;
+
+const StyledFieldRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-direction: column;
+  }
+`;
+
+const StyledFieldGroup = styled.div`
+  flex: 1;
+`;
 
 type SettingsAccountsConnectionFormProps = {
   control: Control<ConnectionFormData>;
-  connectionType: ConnectionType;
   isEditing: boolean;
 };
 
 export const SettingsAccountsConnectionForm = ({
   control,
-  connectionType,
   isEditing,
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
   const getTitle = () => {
-    return connectionType === 'IMAP'
-      ? t`IMAP Connection Details`
-      : t`SMTP Connection Details`;
+    return isEditing ? t`Edit Email Account` : t`New Email Account`;
   };
 
   const getDescription = () => {
     if (isEditing) {
-      return connectionType === 'IMAP'
-        ? t`Update your IMAP email account configuration`
-        : t`Update your SMTP email account configuration`;
+      return t`Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
-    return connectionType === 'IMAP'
-      ? t`Configure your IMAP email account`
-      : t`Configure your SMTP email account for sending emails`;
+    return t`Configure your email account protocols as needed. You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };
 
-  const getServerLabel = () => {
-    return connectionType === 'IMAP' ? t`IMAP Server` : t`SMTP Server`;
-  };
-
-  const getServerPlaceholder = () => {
-    return connectionType === 'IMAP'
-      ? t`imap.example.com`
-      : t`smtp.example.com`;
-  };
-
-  const getPortLabel = () => {
-    return connectionType === 'IMAP' ? t`IMAP Port` : t`SMTP Port`;
-  };
-
-  const getPortPlaceholder = () => {
-    return connectionType === 'IMAP'
-      ? t`${DEFAULT_IMAP_PORT}`
-      : t`${DEFAULT_SMTP_PORT}`;
-  };
-
-  const getEncryptionOptions = () => {
-    if (connectionType === 'IMAP') {
-      return [
-        { label: 'SSL/TLS', value: true },
-        { label: 'None', value: false },
-      ];
-    }
-    return [
-      { label: 'SSL/TLS', value: true },
-      { label: 'STARTTLS', value: false },
-    ];
-  };
+  const handlePortChange = (value: string) => Number(value);
 
   return (
     <Section>
@@ -99,7 +89,7 @@ export const SettingsAccountsConnectionForm = ({
           control={control}
           render={({ field, fieldState }) => (
             <TextInput
-              instanceId="email-address-imap-connection-form"
+              instanceId="email-address-connection-form"
               label={t`Email Address`}
               placeholder={t`john.doe@example.com`}
               value={field.value}
@@ -108,63 +98,249 @@ export const SettingsAccountsConnectionForm = ({
             />
           )}
         />
-        <Controller
-          name="host"
-          control={control}
-          render={({ field, fieldState }) => (
-            <TextInput
-              instanceId="host-imap-connection-form"
-              label={t`IMAP Server`}
-              placeholder={t`imap.example.com`}
-              value={field.value}
-              onChange={field.onChange}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="port"
-          control={control}
-          render={({ field, fieldState }) => (
-            <TextInput
-              instanceId="port-imap-connection-form"
-              label={t`IMAP Port`}
-              type="number"
-              placeholder={getPortPlaceholder()}
-              value={field.value.toString()}
-              onChange={(value) => field.onChange(Number(value))}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="secure"
-          control={control}
-          render={({ field }) => (
-            <Select
-              label={t`Encryption`}
-              options={getEncryptionOptions()}
-              value={field.value}
-              onChange={field.onChange}
-              dropdownId="secure-dropdown"
-            />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          render={({ field, fieldState }) => (
-            <TextInput
-              instanceId="password-imap-connection-form"
-              label={t`Password`}
-              placeholder={t`••••••••`}
-              type="password"
-              value={field.value}
-              onChange={field.onChange}
-              error={fieldState.error?.message}
-            />
-          )}
-        />
+
+        <StyledConnectionSection>
+          <StyledSectionHeader>
+            <StyledSectionTitle>{t`IMAP Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionDescription>
+              {t`Configure IMAP settings to receive and sync your emails. Leave blank if you don't need email receiving.`}
+            </StyledSectionDescription>
+          </StyledSectionHeader>
+
+          <Controller
+            name="IMAP.host"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="imap-host-connection-form"
+                label={t`IMAP Server`}
+                placeholder={t`imap.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <StyledFieldRow>
+            <StyledFieldGroup>
+              <Controller
+                name="IMAP.port"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextInput
+                    instanceId="imap-port-connection-form"
+                    label={t`IMAP Port`}
+                    type="number"
+                    placeholder="993"
+                    value={field?.value?.toString()}
+                    onChange={(value) =>
+                      field.onChange(handlePortChange(value))
+                    }
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+
+            <StyledFieldGroup>
+              <Controller
+                name="IMAP.secure"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label={t`IMAP Encryption`}
+                    options={[
+                      { label: 'SSL/TLS', value: true },
+                      { label: 'None', value: false },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    dropdownId="imap-secure-dropdown"
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+          </StyledFieldRow>
+
+          <Controller
+            name="IMAP.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="imap-password-connection-form"
+                label={t`IMAP Password`}
+                placeholder={t`••••••••`}
+                type="password"
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </StyledConnectionSection>
+
+        <StyledConnectionSection>
+          <StyledSectionHeader>
+            <StyledSectionTitle>{t`SMTP Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionDescription>
+              {t`Configure SMTP settings to send emails from your account. Leave blank if you don't need email sending.`}
+            </StyledSectionDescription>
+          </StyledSectionHeader>
+
+          <Controller
+            name="SMTP.host"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="smtp-host-connection-form"
+                label={t`SMTP Server`}
+                placeholder={t`smtp.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <StyledFieldRow>
+            <StyledFieldGroup>
+              <Controller
+                name="SMTP.port"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextInput
+                    instanceId="smtp-port-connection-form"
+                    label={t`SMTP Port`}
+                    type="number"
+                    placeholder="587"
+                    value={field?.value?.toString()}
+                    onChange={(value) =>
+                      field.onChange(handlePortChange(value))
+                    }
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+
+            <StyledFieldGroup>
+              <Controller
+                name="SMTP.secure"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label={t`SMTP Encryption`}
+                    options={[
+                      { label: 'SSL/TLS', value: true },
+                      { label: 'STARTTLS', value: false },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    dropdownId="smtp-secure-dropdown"
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+          </StyledFieldRow>
+
+          <Controller
+            name="SMTP.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="smtp-password-connection-form"
+                label={t`SMTP Password`}
+                placeholder={t`••••••••`}
+                type="password"
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </StyledConnectionSection>
+
+        <StyledConnectionSection>
+          <StyledSectionHeader>
+            <StyledSectionTitle>{t`CalDAV Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionDescription>
+              {t`Configure CalDAV settings to sync your calendar events. Leave blank if you don't need calendar sync.`}
+            </StyledSectionDescription>
+          </StyledSectionHeader>
+
+          <Controller
+            name="CALDAV.host"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="caldav-host-connection-form"
+                label={t`CalDAV Server`}
+                placeholder={t`caldav.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <StyledFieldRow>
+            <StyledFieldGroup>
+              <Controller
+                name="CALDAV.port"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextInput
+                    instanceId="caldav-port-connection-form"
+                    label={t`CalDAV Port`}
+                    type="number"
+                    placeholder="443"
+                    value={field?.value?.toString()}
+                    onChange={(value) =>
+                      field.onChange(handlePortChange(value))
+                    }
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+
+            <StyledFieldGroup>
+              <Controller
+                name="CALDAV.secure"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label={t`CalDAV Encryption`}
+                    options={[
+                      { label: 'SSL/TLS', value: true },
+                      { label: 'None', value: false },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    dropdownId="caldav-secure-dropdown"
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+          </StyledFieldRow>
+
+          <Controller
+            name="CALDAV.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="caldav-password-connection-form"
+                label={t`CalDAV Password`}
+                placeholder={t`••••••••`}
+                type="password"
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </StyledConnectionSection>
       </StyledFormContainer>
     </Section>
   );

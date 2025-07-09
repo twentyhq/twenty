@@ -64,35 +64,19 @@ const SettingsNewObject = lazy(() =>
   })),
 );
 
-const SettingsNewImapConnection = lazy(() =>
+const SettingsNewImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+    '@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsNewImapConnection,
+    default: module.SettingsAccountsNewImapSmtpCaldavConnection,
   })),
 );
 
-const SettingsEditImapConnection = lazy(() =>
+const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+    '@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsEditImapConnection,
-  })),
-);
-
-const SettingsNewSmtpConnection = lazy(() =>
-  import(
-    '@/settings/accounts/components/SettingsAccountsNewSmtpConnection'
-  ).then((module) => ({
-    default: module.SettingsAccountsNewSmtpConnection,
-  })),
-);
-
-const SettingsEditSmtpConnection = lazy(() =>
-  import(
-    '@/settings/accounts/components/SettingsAccountsEditSmtpConnection'
-  ).then((module) => ({
-    default: module.SettingsAccountsEditSmtpConnection,
+    default: module.SettingsAccountsEditImapSmtpCaldavConnection,
   })),
 );
 
@@ -391,20 +375,12 @@ export const SettingsRoutes = ({
         element={<SettingsAccountsEmails />}
       />
       <Route
-        path={SettingsPath.NewImapConnection}
-        element={<SettingsNewImapConnection />}
+        path={SettingsPath.NewImapSmtpCaldavConnection}
+        element={<SettingsNewImapSmtpCaldavConnection />}
       />
       <Route
-        path={SettingsPath.EditImapConnection}
-        element={<SettingsEditImapConnection />}
-      />
-      <Route
-        path={SettingsPath.NewSmtpConnection}
-        element={<SettingsNewSmtpConnection />}
-      />
-      <Route
-        path={SettingsPath.EditSmtpConnection}
-        element={<SettingsEditSmtpConnection />}
+        path={SettingsPath.EditImapSmtpCaldavConnection}
+        element={<SettingsEditImapSmtpCaldavConnection />}
       />
       <Route
         element={

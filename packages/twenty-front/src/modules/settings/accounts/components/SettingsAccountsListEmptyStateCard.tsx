@@ -9,12 +9,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import {
-  IconGoogle,
-  IconMail,
-  IconMicrosoft,
-  IconSend,
-} from 'twenty-ui/display';
+import { IconGoogle, IconMail, IconMicrosoft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent, CardHeader } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -83,21 +78,12 @@ export const SettingsAccountsListEmptyStateCard = ({
         )}
 
         {isImapSmtpCaldavEnabled && (
-          <>
-            <Button
-              Icon={IconMail}
-              title={t`Connect with IMAP`}
-              variant="secondary"
-              to={getSettingsPath(SettingsPath.NewImapConnection)}
-            />
-
-            <Button
-              Icon={IconSend}
-              title={t`Connect with SMTP`}
-              variant="secondary"
-              to={getSettingsPath(SettingsPath.NewSmtpConnection)}
-            />
-          </>
+          <Button
+            Icon={IconMail}
+            title={t`Connect Email Account`}
+            variant="secondary"
+            to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
+          />
         )}
       </StyledBody>
     </Card>

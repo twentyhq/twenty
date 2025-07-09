@@ -3,11 +3,12 @@ import {
   useGetConnectedImapSmtpCaldavAccountQuery,
 } from '~/generated-metadata/graphql';
 
+export type ConnectedImapSmtpCaldavAccount =
+  GetConnectedImapSmtpCaldavAccountQuery['getConnectedImapSmtpCaldavAccount'];
+
 export const useConnectedImapSmtpCaldavAccount = (
   connectedAccountId: string | undefined,
-  onCompleted?: (
-    data: GetConnectedImapSmtpCaldavAccountQuery['getConnectedImapSmtpCaldavAccount'],
-  ) => void,
+  onCompleted?: (data: ConnectedImapSmtpCaldavAccount) => void,
 ) => {
   const { data, loading, error } = useGetConnectedImapSmtpCaldavAccountQuery({
     variables: { id: connectedAccountId ?? '' },

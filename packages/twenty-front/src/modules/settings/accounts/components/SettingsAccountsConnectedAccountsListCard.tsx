@@ -5,7 +5,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { useLingui } from '@lingui/react/macro';
 
-import { getAccountProviderIcon } from '@/settings/accounts/utils/getAccountProviderIcon';
+import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsListCard } from '../../components/SettingsListCard';
 
@@ -28,7 +28,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       items={accounts}
       getItemLabel={(account) => account.handle}
       isLoading={loading}
-      RowIconFn={(row) => getAccountProviderIcon(row)}
+      RowIconFn={(row) => SettingsConnectedAccountIcon({ account: row })}
       RowRightComponent={({ item: account }) => (
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}

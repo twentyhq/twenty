@@ -24,7 +24,7 @@ const StyledLoadingContainer = styled.div`
   justify-content: center;
 `;
 
-export const SettingsAccountsEditImapConnection = () => {
+export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
@@ -38,7 +38,6 @@ export const SettingsAccountsEditImapConnection = () => {
     loading,
     connectedAccount,
   } = useImapSmtpCaldavConnectionForm({
-    connectionType: 'IMAP',
     isEditing: true,
     connectedAccountId,
   });
@@ -61,7 +60,7 @@ export const SettingsAccountsEditImapConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`Edit IMAP Connection`}
+        title={t`Edit Email Account`}
         links={[
           {
             children: t`Workspace`,
@@ -71,7 +70,7 @@ export const SettingsAccountsEditImapConnection = () => {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`Edit IMAP Connection` },
+          { children: t`Edit Email Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons
@@ -84,11 +83,7 @@ export const SettingsAccountsEditImapConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <SettingsAccountsConnectionForm
-            control={control}
-            connectionType="IMAP"
-            isEditing
-          />
+          <SettingsAccountsConnectionForm control={control} isEditing />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>
