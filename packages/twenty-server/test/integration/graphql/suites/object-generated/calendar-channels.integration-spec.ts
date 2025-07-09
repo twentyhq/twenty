@@ -35,7 +35,7 @@ describe('calendarChannelsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {

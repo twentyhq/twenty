@@ -23,7 +23,7 @@ describe('workflowResolver', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData);
   });
 
@@ -40,7 +40,7 @@ describe('workflowResolver', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData);
   });
 
@@ -67,7 +67,7 @@ describe('workflowResolver', () => {
 
     const response = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData);
 
     expect(response.status).toBe(200);
@@ -94,7 +94,7 @@ describe('workflowResolver', () => {
 
     const deleteResponse = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(deleteQueryData);
 
     expect(deleteResponse.status).toBe(200);
@@ -115,7 +115,7 @@ describe('workflowResolver', () => {
 
     const response = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData);
 
     expect(response.status).toBe(200);
@@ -146,7 +146,7 @@ describe('workflowResolver', () => {
 
     const workflowVersionsResponse = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryWorkflowVersionsData);
 
     expect(workflowVersionsResponse.status).toBe(200);
@@ -172,7 +172,7 @@ describe('workflowResolver', () => {
 
     const restoreResponse = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(restoreQueryData);
 
     expect(restoreResponse.status).toBe(200);
@@ -199,7 +199,7 @@ describe('workflowResolver', () => {
 
     const response = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(queryData);
 
     expect(response.status).toBe(200);
