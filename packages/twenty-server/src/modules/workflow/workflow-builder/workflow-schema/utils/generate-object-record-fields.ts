@@ -43,6 +43,10 @@ export const generateObjectRecordFields = ({
             field.relationTargetObjectMetadataId
           ];
 
+        if (!isDefined(relationTargetObjectMetadata)) {
+          return acc;
+        }
+
         acc[field.name] = {
           isLeaf: false,
           icon: field.icon,
