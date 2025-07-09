@@ -22,7 +22,6 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   const isMessageChannelSyncEnabled = account.messageChannels[0]?.isSyncEnabled;
 
   const status = computeSyncStatus(
-    account,
     messageChannelSyncStatus,
     calendarChannelSyncStatus,
     isMessageChannelSyncEnabled,
