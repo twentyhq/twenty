@@ -107,7 +107,6 @@ export const MultipleRecordPickerMenuItems = ({
                 onChange={(morphItem) => {
                   handleChange(morphItem);
                   onChange?.(morphItem);
-                  resetSelectedItem();
                 }}
               />
             );
