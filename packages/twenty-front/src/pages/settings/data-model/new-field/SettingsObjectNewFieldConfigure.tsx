@@ -17,7 +17,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
-import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -57,7 +56,6 @@ export const SettingsObjectNewFieldConfigure = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const { createMetadataField } = useFieldMetadataItem();
-  const apolloClient = useApolloClient();
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
