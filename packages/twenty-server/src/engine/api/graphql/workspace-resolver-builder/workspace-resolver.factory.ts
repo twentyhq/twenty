@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { IResolvers } from '@graphql-tools/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
@@ -75,7 +76,9 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
-    for (const objectMetadata of Object.values(objectMetadataMaps.byId)) {
+    for (const objectMetadata of Object.values(objectMetadataMaps.byId).filter(
+      isDefined,
+    )) {
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
         const resolverName = getResolverName(objectMetadata, methodName);

@@ -166,6 +166,13 @@ export class FieldMetadataRelationService {
             relationCreationPayload.targetObjectMetadataId
           ];
 
+        if (!isDefined(objectMetadataTarget)) {
+          throw new FieldMetadataException(
+            `Object metadata relation target not found for relation creation payload`,
+            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          );
+        }
+
         validateFieldNameAvailabilityOrThrow(
           computedMetadataNameFromLabel,
           objectMetadataTarget,
