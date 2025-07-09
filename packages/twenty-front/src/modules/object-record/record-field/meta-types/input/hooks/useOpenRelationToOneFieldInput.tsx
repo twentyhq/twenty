@@ -57,6 +57,9 @@ export const useOpenRelationToOneFieldInput = () => {
             type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordPickerInstanceId,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [openSingleRecordPicker, pushFocusItemToFocusStack],

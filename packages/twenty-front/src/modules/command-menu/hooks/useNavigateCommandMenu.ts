@@ -60,6 +60,9 @@ export const useNavigateCommandMenu = () => {
             type: FocusComponentType.SIDE_PANEL,
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
 
         copyContextStoreStates({

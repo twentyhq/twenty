@@ -131,6 +131,9 @@ export const FormMultiSelectFieldInput = ({
         type: FocusComponentType.FORM_FIELD_INPUT,
         instanceId,
       },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   };
 

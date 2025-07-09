@@ -126,6 +126,9 @@ export const useOpenFieldInputEditMode = () => {
               prefix,
             }),
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [

@@ -105,6 +105,9 @@ export const useOpenRelationFromManyFieldInput = () => {
             type: FocusComponentType.DROPDOWN,
             instanceId: recordPickerInstanceId,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],

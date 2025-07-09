@@ -94,6 +94,9 @@ export const useOpenActivityTargetCellEditMode = () => {
             type: FocusComponentType.DROPDOWN,
             instanceId: recordPickerInstanceId,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [

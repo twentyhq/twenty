@@ -73,6 +73,9 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
                   type: FocusComponentType.DROPDOWN,
                   instanceId: fieldMetadataItem.id,
                 },
+                globalHotkeysConfig: {
+                  enableGlobalHotkeysConflictingWithKeyboard: false,
+                },
               });
             }
 

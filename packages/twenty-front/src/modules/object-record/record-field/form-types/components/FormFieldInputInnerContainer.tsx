@@ -70,6 +70,9 @@ export const FormFieldInputInnerContainer = forwardRef(
             type: FocusComponentType.FORM_FIELD_INPUT,
             instanceId: formFieldInputInstanceId,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       }
     };

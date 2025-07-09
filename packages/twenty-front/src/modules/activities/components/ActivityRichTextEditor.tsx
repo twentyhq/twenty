@@ -377,6 +377,9 @@ export const ActivityRichTextEditor = ({
             type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
           },
           focusId: activityId,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],

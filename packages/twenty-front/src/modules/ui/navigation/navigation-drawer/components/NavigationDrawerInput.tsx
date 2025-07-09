@@ -82,6 +82,9 @@ export const NavigationDrawerInput = ({
         type: FocusComponentType.TEXT_INPUT,
         instanceId: NAVIGATION_DRAWER_INPUT_FOCUS_ID,
       },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
   };
 
