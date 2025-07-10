@@ -1,4 +1,6 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+
+import { Request } from 'express';
 
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -6,38 +8,26 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response';
-import { toolRegistry } from '../decorators/tool.decorator';
-
+import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { MCPMetadataService } from 'src/engine/api/mcp/services/mcp-metadata.service';
 
 @Controller('mcp-metadata')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 export class McpMetadataController {
-  constructor(
-    private readonly mcpService: McpService,
-    private readonly toolService: ToolService,
-  ) {}
+  constructor(private readonly mCPMetadataService: MCPMetadataService) {}
 
-  /**
-   * Returns a list of all methods annotated with @Tool decorator
-   * and dynamically generated tools based on object metadata and permissions
-   */
-  @Get()
+  @Post()
   async getMcpMetadata(
+    @Body() body: JsonRpc,
     @AuthWorkspace() workspace: Workspace,
     @AuthApiKey() apiKey: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @Req() request: Request,
   ) {
-    return wrapJsonRpcResponse(null, {
-      result: {
-        capabilities: {
-          tools: { listChanged: false },
-        },
-        // All tools in the required format
-        tools: toolRegistry,
-      },
+    return await this.mCPMetadataService.executeTool(request, {
+      workspace,
+      apiKey,
+      userWorkspaceId,
     });
   }
 }

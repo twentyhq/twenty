@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class LimitInputFactory {
-  create(request: Request, defaultLimit = 60): number {
-    if (!request.query.limit) {
+  create(request: RequestContext, defaultLimit = 60): number {
+    if (!request.query?.limit) {
       return defaultLimit;
     }
     const limit = +request.query.limit;

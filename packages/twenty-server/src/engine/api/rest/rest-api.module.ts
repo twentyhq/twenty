@@ -19,5 +19,6 @@ import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api
   ],
   controllers: [RestApiMetadataController],
   providers: [RestApiService, RestApiMetadataService],
+  exports: [RestApiMetadataService, RestApiService],
 })
 export class RestApiModule {}
