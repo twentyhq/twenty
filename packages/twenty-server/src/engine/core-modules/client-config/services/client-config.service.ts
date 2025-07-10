@@ -3,11 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import {
-  AI_MODELS,
-  ModelProvider,
-} from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { convertCentsToCredits } from 'src/engine/core-modules/ai/utils/ai-cost.utils';
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
+import { getAIModelsWithAuto } from 'src/engine/core-modules/ai/utils/get-ai-models-with-auto.util';
 import {
   ClientAIModelConfig,
   ClientConfig,
@@ -29,29 +27,32 @@ export class ClientConfigService {
     const openaiApiKey = this.twentyConfigService.get('OPENAI_API_KEY');
     const anthropicApiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
 
-    const aiModels = AI_MODELS.reduce<ClientAIModelConfig[]>((acc, model) => {
-      const isAvailable =
-        (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
-        (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
+    const aiModels = getAIModelsWithAuto().reduce<ClientAIModelConfig[]>(
+      (acc, model) => {
+        const isAvailable =
+          (model.provider === ModelProvider.OPENAI && openaiApiKey) ||
+          (model.provider === ModelProvider.ANTHROPIC && anthropicApiKey);
 
-      if (!isAvailable) {
+        if (!isAvailable) {
+          return acc;
+        }
+
+        acc.push({
+          modelId: model.modelId,
+          label: model.label,
+          provider: model.provider,
+          inputCostPer1kTokensInCredits: convertCentsToBillingCredits(
+            model.inputCostPer1kTokensInCents,
+          ),
+          outputCostPer1kTokensInCredits: convertCentsToBillingCredits(
+            model.outputCostPer1kTokensInCents,
+          ),
+        });
+
         return acc;
-      }
-
-      acc.push({
-        modelId: model.modelId,
-        label: model.label,
-        provider: model.provider,
-        inputCostPer1kTokensInCredits: convertCentsToCredits(
-          model.inputCostPer1kTokensInCents,
-        ),
-        outputCostPer1kTokensInCredits: convertCentsToCredits(
-          model.outputCostPer1kTokensInCents,
-        ),
-      });
-
-      return acc;
-    }, []);
+      },
+      [],
+    );
 
     const clientConfig: ClientConfig = {
       billing: {

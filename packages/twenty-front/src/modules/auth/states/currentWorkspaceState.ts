@@ -26,6 +26,7 @@ export type CurrentWorkspace = Pick<
   | 'twoFactorAuthenticationPolicy'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
+  defaultAgent?: { id: string } | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
