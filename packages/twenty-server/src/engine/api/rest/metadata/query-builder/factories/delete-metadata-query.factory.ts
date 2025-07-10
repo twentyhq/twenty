@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { capitalize } from 'twenty-shared/utils';
+
 import {
   ObjectName,
   Singular,

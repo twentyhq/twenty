@@ -20,13 +20,18 @@ export class CreateToolsService {
         name: 'create-field-metadata',
         description: 'Create a new field metadata',
         inputSchema:
-          validationSchemaManager.getSchemas().CreateOneFieldMetadataInput,
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().CreateOneFieldMetadataInput,
+          ),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
       {
         name: 'create-object-metadata',
         description: 'Create a new object metadata',
-        inputSchema: validationSchemaManager.getSchemas().CreateObjectInput,
+        inputSchema:
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().CreateObjectInput,
+          ),
         execute: (request: Request) => this.execute(request, 'objects'),
       },
     ];

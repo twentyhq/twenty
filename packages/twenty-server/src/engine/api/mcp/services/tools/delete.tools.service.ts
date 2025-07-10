@@ -20,13 +20,19 @@ export class DeleteToolsService {
       {
         name: 'delete-field-metadata',
         description: 'Delete a field metadata',
-        inputSchema: validationSchemaManager.getSchemas().DeleteOneFieldInput,
+        inputSchema:
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().DeleteOneFieldInput,
+          ),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
       {
         name: 'delete-object-metadata',
         description: 'Delete an object metadata',
-        inputSchema: validationSchemaManager.getSchemas().DeleteOneObjectInput,
+        inputSchema:
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().DeleteOneObjectInput,
+          ),
         execute: (request: Request) => this.execute(request, 'objects'),
       },
     ];
@@ -36,9 +42,10 @@ export class DeleteToolsService {
     const requestContext = {
       body: request.body.params.arguments,
       baseUrl: this.mCPMetadataToolsService.generateBaseUrl(request),
-      path: `/rest/metadata/${objectName}`,
+      path: `/rest/metadata/${objectName}/${request.body.params.arguments.id}`,
       headers: request.headers,
     };
+
     const response = await this.mCPMetadataToolsService.send(
       requestContext,
       await this.metadataQueryBuilderFactory.delete(requestContext),

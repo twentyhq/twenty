@@ -20,13 +20,18 @@ export class UpdateToolsService {
         name: 'update-field-metadata',
         description: 'Update a field metadata',
         inputSchema:
-          validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
+          ),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
       {
         name: 'update-object-metadata',
         description: 'Update an object metadata',
-        inputSchema: validationSchemaManager.getSchemas().UpdateOneObjectInput,
+        inputSchema:
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
+            validationSchemaManager.getSchemas().UpdateOneObjectInput,
+          ),
         execute: (request: Request) => this.execute(request, 'objects'),
       },
     ];
