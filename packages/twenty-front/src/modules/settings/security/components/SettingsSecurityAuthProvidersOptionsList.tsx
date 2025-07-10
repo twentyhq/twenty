@@ -21,6 +21,10 @@ import {
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 
+import { Toggle2FA } from './Toggle2FA';
+import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/isTwoFactorAuthenticationEnabledState';
+
+
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
   flex-direction: column;
@@ -33,6 +37,10 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
+
+  const isTwoFactorAuthenticationEnabled = useRecoilValue(
+    isTwoFactorAuthenticationEnabledState,
+  );
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -177,6 +185,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               }
             />
           </Card>
+          {isTwoFactorAuthenticationEnabled === true && (
+            <Card rounded>
+              <Toggle2FA />
+            </Card>
+          )}
         </>
       )}
     </StyledSettingsSecurityOptionsList>
