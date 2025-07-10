@@ -16,3 +16,5 @@ export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermission
 export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator, StepOperand } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export { StepLogicalOperator } from './StepFilters';
+export { ViewFilterOperand } from './ViewFilterOperand';

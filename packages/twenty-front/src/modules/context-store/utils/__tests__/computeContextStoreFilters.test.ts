@@ -2,8 +2,8 @@ import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextS
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { expect } from '@storybook/test';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('computeContextStoreFilters', () => {

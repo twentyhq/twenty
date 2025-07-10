@@ -1,5 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { areViewFiltersEqual } from '../areViewFiltersEqual';
 
 describe('areViewFiltersEqual', () => {
