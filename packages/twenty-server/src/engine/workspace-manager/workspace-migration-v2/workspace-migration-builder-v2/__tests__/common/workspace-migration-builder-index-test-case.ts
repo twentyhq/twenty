@@ -34,7 +34,6 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
           createIndex: 1,
         },
       },
@@ -72,7 +71,6 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           };
         },
         expectedActionsTypeCounter: {
-          total: 2,
           createIndex: 1,
           deleteIndex: 1,
         },
@@ -103,7 +101,6 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
           deleteIndex: 1,
         },
       },
@@ -127,9 +124,6 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
             from: [flatObjectMetadata],
             to: [flatObjectMetadata],
           };
-        },
-        expectedActionsTypeCounter: {
-          total: 0,
         },
       },
     },

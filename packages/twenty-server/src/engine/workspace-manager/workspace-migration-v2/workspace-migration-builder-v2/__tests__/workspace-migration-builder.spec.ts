@@ -1,6 +1,6 @@
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { capitalize } from 'twenty-shared/utils';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
+import { capitalize } from 'twenty-shared/utils';
 
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
 import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
@@ -36,10 +36,9 @@ const expectedActionsTypeCounterChecker = ({
   workspaceMigration,
 }: {
   workspaceMigration: WorkspaceMigrationV2;
-  expectedActionsTypeCounter: ExpectedActionCounters;
+  expectedActionsTypeCounter?: ExpectedActionCounters;
 }) => {
   const initialAcc: ExpectedActionCounters = {
-    total: 0,
     createField: 0,
     createIndex: 0,
     createObject: 0,
@@ -49,8 +48,8 @@ const expectedActionsTypeCounterChecker = ({
     updateField: 0,
     updateObject: 0,
   };
-  const actualActionsTypeCounter =
-    workspaceMigration.actions.reduce<ExpectedActionCounters>((acc, action) => {
+  const actualActionsTypeCounter = workspaceMigration.actions.reduce(
+    (acc, action) => {
       const { type } = action;
       const [operation, target] = type.split('_');
       const formattedActionKey =
@@ -58,10 +57,11 @@ const expectedActionsTypeCounterChecker = ({
 
       return {
         ...acc,
-        total: acc.total + 1,
         [formattedActionKey]: (acc[formattedActionKey] ?? 0) + 1,
       };
-    }, initialAcc);
+    },
+    initialAcc,
+  );
 
   expect(actualActionsTypeCounter).toEqual({
     ...initialAcc,

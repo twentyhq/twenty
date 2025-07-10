@@ -49,7 +49,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         };
       },
       expectedActionsTypeCounter: {
-        total: 1,
         createField: 1,
       },
     },
@@ -95,7 +94,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         };
       },
       expectedActionsTypeCounter: {
-        total: 1,
         updateField: 1,
       },
     },
@@ -148,10 +146,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           ],
         };
       },
-      expectedActionsTypeCounter: {
-        total: 0,
-        updateField: 0,
-      },
     },
   },
 ];
@@ -184,7 +178,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         };
       },
       expectedActionsTypeCounter: {
-        total: 1,
         createField: 1,
       },
     },
@@ -224,7 +217,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         };
       },
       expectedActionsTypeCounter: {
-        total: 1,
         updateField: 1,
       },
     },
@@ -255,7 +247,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         };
       },
       expectedActionsTypeCounter: {
-        total: 1,
         deleteField: 1,
       },
     },
@@ -287,9 +278,6 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
             from,
             to: from,
           };
-        },
-        expectedActionsTypeCounter: {
-          total: 0,
         },
       },
     },

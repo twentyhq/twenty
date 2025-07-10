@@ -15,11 +15,11 @@ type ConvertActionTypeToCamelCase<T extends string> =
 export type CamelCasedWorkspaceMigrationActionsType =
   ConvertActionTypeToCamelCase<WorkspaceMigrationActionTypeV2>;
 
-export type ExpectedActionCounters = {
-  total: number; // Could be removed and computed dynamically but still a good thing for readability ?
-} & Partial<Record<CamelCasedWorkspaceMigrationActionsType, number>>;
+export type ExpectedActionCounters = Partial<
+  Record<CamelCasedWorkspaceMigrationActionsType, number>
+>;
 
 export type WorkspaceMigrationBuilderTestCase = EachTestingContext<{
   input: WorkspaceBuilderArgs | (() => WorkspaceBuilderArgs);
-  expectedActionsTypeCounter: ExpectedActionCounters;
+  expectedActionsTypeCounter?: ExpectedActionCounters;
 }>;

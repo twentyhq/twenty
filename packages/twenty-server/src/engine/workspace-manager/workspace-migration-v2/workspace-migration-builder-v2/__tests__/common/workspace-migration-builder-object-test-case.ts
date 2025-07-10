@@ -31,7 +31,6 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
           updateObject: 1,
         },
       },
@@ -53,7 +52,6 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
           createObject: 1,
         },
       },
@@ -88,7 +86,6 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         },
 
         expectedActionsTypeCounter: {
-          total: 6,
           createObject: 1,
           createField: 5,
         },
@@ -111,7 +108,6 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
           deleteObject: 1,
         },
       },
@@ -128,9 +124,6 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             from,
             to: from,
           };
-        },
-        expectedActionsTypeCounter: {
-          total: 0,
         },
       },
     },
