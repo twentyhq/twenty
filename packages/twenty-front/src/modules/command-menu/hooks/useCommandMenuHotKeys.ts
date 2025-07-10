@@ -117,5 +117,8 @@ export const useCommandMenuHotKeys = () => {
       goBackFromCommandMenu,
       setGlobalCommandMenuContext,
     ],
+    options: {
+      preventDefault: false,
+    },
   });
 };
