@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -26,14 +26,14 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
 
         const createdFlatRelationFieldMetadata = getFlatFieldMetadataMock({
-          uniqueIdentifier: 'poire',
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
           flatFieldMetadatas: [],
         });
@@ -60,14 +60,14 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
 
         const updatedFieldMetadata = getFlatFieldMetadataMock({
-          uniqueIdentifier: 'poire',
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
           flatFieldMetadatas: [
             ...basicFlatFieldMetadatas,
@@ -106,7 +106,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
         const updatedFieldMetadata =
           getFlatFieldMetadataMock<FieldMetadataType.RELATION>({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
             type: FieldMetadataType.RELATION,
             settings: {
@@ -119,7 +119,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
             relationTargetObjectMetadataId: faker.string.uuid(),
           });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
           flatFieldMetadatas: [updatedFieldMetadata],
         });
@@ -158,11 +158,11 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
-          uniqueIdentifier: 'poire',
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
           flatFieldMetadatas: [],
         });
@@ -189,11 +189,11 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
-          uniqueIdentifier: 'poire',
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           flatFieldMetadatas: [...basicFlatFieldMetadatas, flatFieldMetadata],
         });
 
@@ -228,11 +228,11 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const objectMetadataId = faker.string.uuid();
 
         const flatFieldMetadata = getFlatFieldMetadataMock({
-          uniqueIdentifier: 'poire',
+          uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId,
         });
         const flatObjectMetadata = getFlatObjectMetadataMock({
-          uniqueIdentifier: 'pomme',
+          uniqueIdentifier: 'object-metadata-unique-identifier-1',
           flatFieldMetadatas: [...basicFlatFieldMetadatas, flatFieldMetadata],
         });
 
@@ -264,12 +264,12 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
         input: () => {
           const objectMetadataId = faker.string.uuid();
           const flatFieldMetadata = getFlatFieldMetadataMock({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
           });
           const from = [
             getFlatObjectMetadataMock({
-              uniqueIdentifier: 'pomme',
+              uniqueIdentifier: 'object-metadata-unique-identifier-1',
               flatFieldMetadatas: [flatFieldMetadata],
             }),
           ];

@@ -3,7 +3,7 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
-export type MetadataEntitesRelationTarget =
+export type MetadataEntitiesRelationTarget =
   | ObjectMetadataEntity
   | FieldMetadataEntity
   | IndexFieldMetadataEntity

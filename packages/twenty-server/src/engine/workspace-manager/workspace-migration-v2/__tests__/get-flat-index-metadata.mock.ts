@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { FlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-metadata';
@@ -13,7 +13,7 @@ export const getFlatIndexMetadataMock = (
   const createdAt = faker.date.anytime();
 
   return {
-    flatIndexFieldMetadatas: [], // TODO and to test correctly we should be diffing by flatning these
+    flatIndexFieldMetadatas: [],
     createdAt,
     id: faker.string.uuid(),
     indexType: IndexType.BTREE,
@@ -28,7 +28,7 @@ export const getFlatIndexMetadataMock = (
 };
 
 export const getStandardFlatIndexMetadataMock = (
-  overrides: Omit<FlatIndexMetadataOverrides, 'isCustom' | 'isSystem'>,
+  overrides: Omit<FlatIndexMetadataOverrides, 'isCustom'>,
 ) => {
   return getFlatIndexMetadataMock({
     isCustom: false,

@@ -1,11 +1,11 @@
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
 import { FlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-field-metadata';
-import { MetadataEntitesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
+import { MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
 
 type IndexMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   IndexMetadataEntity,
-  MetadataEntitesRelationTarget
+  MetadataEntitiesRelationTarget
 >;
 
 export type FlatIndexMetadata = Partial<

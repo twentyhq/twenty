@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 import { getFlatIndexMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-index-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
@@ -14,11 +14,11 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'pomme',
+            uniqueIdentifier: 'object-metadata-unique-identifier-1',
             isLabelSyncedWithName: true,
             flatIndexMetadatas: [],
           });
@@ -44,11 +44,11 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'pomme',
+            uniqueIdentifier: 'object-metadata-unique-identifier-1',
             isLabelSyncedWithName: true,
             flatIndexMetadatas: [flatIndexMetadata],
           });
@@ -81,11 +81,11 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'pomme',
+            uniqueIdentifier: 'object-metadata-unique-identifier-1',
             isLabelSyncedWithName: true,
             flatIndexMetadatas: [flatIndexMetadata],
           });
@@ -111,11 +111,11 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
       context: {
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
-            uniqueIdentifier: 'poire',
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
-            uniqueIdentifier: 'pomme',
+            uniqueIdentifier: 'object-metadata-unique-identifier-1',
             isLabelSyncedWithName: true,
             flatIndexMetadatas: [flatIndexMetadata],
           });
