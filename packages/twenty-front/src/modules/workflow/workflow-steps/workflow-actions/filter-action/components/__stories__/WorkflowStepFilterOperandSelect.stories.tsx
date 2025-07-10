@@ -22,18 +22,6 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   positionInStepFilterGroup: 0,
 };
 
-const LIKE_OPERAND_FILTER: StepFilter = {
-  id: 'filter-1',
-  stepFilterGroupId: 'filter-group-1',
-  stepOutputKey: 'company.name',
-  displayValue: 'Company Name',
-  type: 'text',
-  label: 'Company Name',
-  operand: ViewFilterOperand.Contains,
-  value: 'Acme',
-  positionInStepFilterGroup: 0,
-};
-
 const GREATER_THAN_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
@@ -72,17 +60,6 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('Equals')).toBeVisible();
-  },
-};
-
-export const WithLikeOperand: Story = {
-  args: {
-    stepFilter: LIKE_OPERAND_FILTER,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
     await expect(await canvas.findByText('Contains')).toBeVisible();
   },
 };
@@ -94,6 +71,8 @@ export const WithGreaterThanOperand: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('Greater than')).toBeVisible();
+    await expect(
+      await canvas.findByText('Greater than or equal'),
+    ).toBeVisible();
   },
 };
