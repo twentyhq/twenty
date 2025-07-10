@@ -47,6 +47,12 @@ export const useImapSmtpCaldavConnectionForm = ({
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
     resolver: zodResolver(connectionImapSmtpCalDav),
+    defaultValues: {
+      handle: '',
+      IMAP: { host: '', port: 993, password: '', secure: true },
+      SMTP: { host: '', port: 587, password: '', secure: true },
+      CALDAV: { host: '', port: 443, password: '', secure: true },
+    },
   });
 
   const { handleSubmit, formState, watch, reset } = formMethods;
