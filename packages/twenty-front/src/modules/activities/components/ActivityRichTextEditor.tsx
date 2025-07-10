@@ -262,6 +262,7 @@ export const ActivityRichTextEditor = ({
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
+      updateOneAttachment,
     ],
   );
 
