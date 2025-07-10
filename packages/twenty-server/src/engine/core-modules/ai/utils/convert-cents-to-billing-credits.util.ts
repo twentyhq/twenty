@@ -4,4 +4,5 @@
  * @param cents - Cost in cents (real cost)
  * @returns Cost in credits (end-user cost)
  */
-export const convertCentsToCredits = (cents: number): number => cents * 10;
+export const convertCentsToBillingCredits = (cents: number): number =>
+  cents * 10;

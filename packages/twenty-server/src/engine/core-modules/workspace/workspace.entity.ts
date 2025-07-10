@@ -25,6 +25,7 @@ import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/worksp
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -171,11 +172,19 @@ export class Workspace {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
+
+  // TODO: set as non nullable
+  @Column({ nullable: true, type: 'uuid' })
+  defaultAgentId: string | null;
+
+  @Field(() => AgentDTO, { nullable: true })
+  defaultAgent: AgentDTO | null;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })

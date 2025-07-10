@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 import { capitalize } from 'twenty-shared/utils';
 import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';

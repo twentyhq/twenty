@@ -13,8 +13,6 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 
-import { AgentExecutionService } from './agent-execution.service';
-
 @Injectable()
 export class AgentChatService {
   constructor(
@@ -22,7 +20,6 @@ export class AgentChatService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     @InjectRepository(AgentChatMessageEntity, 'core')
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
-    private readonly agentExecutionService: AgentExecutionService,
   ) {}
 
   async createThread(agentId: string, userWorkspaceId: string) {

@@ -11,9 +11,13 @@ export type AgentChatMessage = {
   createdAt: string;
 };
 
-export const useAgentChatMessages = (threadId: string) => {
+export const useAgentChatMessages = (
+  threadId: string,
+  onCompleted?: (data: { messages: AgentChatMessage[] }) => void,
+) => {
   return useQuery<{ messages: AgentChatMessage[] }>(GET_AGENT_CHAT_MESSAGES, {
     variables: { threadId },
     skip: !isDefined(threadId),
+    onCompleted,
   });
 };

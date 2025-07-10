@@ -1,5 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { getViewFiltersToDelete } from '../getViewFiltersToDelete';
 
 describe('getViewFiltersToDelete', () => {

@@ -1,5 +1,5 @@
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useTheme } from '@emotion/react';
+import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
@@ -11,6 +11,7 @@ import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAgentChat } from '../hooks/useAgentChat';
+import { AgentChatMessage } from '../hooks/useAgentChatMessages';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
 
 const StyledContainer = styled.div`
@@ -86,9 +87,11 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageRow = styled.div`
+const StyledMessageRow = styled.div<{ isShowingToolCall?: boolean }>`
   display: flex;
   flex-direction: row;
+  align-items: ${({ isShowingToolCall }) =>
+    isShowingToolCall ? 'center' : 'flex-start'};
   gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
@@ -152,6 +155,23 @@ const StyledMessageContainer = styled.div`
   width: 100%;
 `;
 
+const dots = keyframes`
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+`;
+
+const StyledToolCallContainer = styled.div`
+  &::after {
+    display: inline-block;
+    content: '';
+    animation: ${dots} 750ms steps(3, end) infinite;
+    width: 2ch;
+    text-align: left;
+  }
+`;
+
 type AIChatTabProps = {
   agentId: string;
 };
@@ -168,16 +188,49 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
     agentStreamingMessage,
   } = useAgentChat(agentId);
 
+  const getAssistantMessageContent = (message: AgentChatMessage) => {
+    if (message.content !== '') {
+      return message.content;
+    }
+
+    if (agentStreamingMessage.streamingText !== '') {
+      return agentStreamingMessage.streamingText;
+    }
+
+    if (agentStreamingMessage.toolCall !== '') {
+      return (
+        <StyledToolCallContainer>
+          {agentStreamingMessage.toolCall}
+        </StyledToolCallContainer>
+      );
+    }
+
+    return (
+      <StyledDotsIconContainer>
+        <StyledDotsIcon size={theme.icon.size.xl} />
+      </StyledDotsIconContainer>
+    );
+  };
+
   return (
     <StyledContainer>
       {messages.length !== 0 && (
-        <StyledScrollWrapper componentInstanceId={agentId}>
+        <StyledScrollWrapper
+          componentInstanceId={`scroll-wrapper-ai-chat-${agentId}`}
+        >
           {messages.map((msg) => (
             <StyledMessageBubble
               key={msg.id}
               isUser={msg.role === AgentChatMessageRole.USER}
             >
-              <StyledMessageRow>
+              <StyledMessageRow
+                isShowingToolCall={
+                  msg.role === AgentChatMessageRole.ASSISTANT &&
+                  msg.content === '' &&
+                  agentStreamingMessage.streamingText === '' &&
+                  agentStreamingMessage.toolCall !== ''
+                }
+              >
                 {msg.role === AgentChatMessageRole.ASSISTANT && (
                   <StyledAvatarContainer>
                     <Avatar
@@ -197,12 +250,8 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                   <StyledMessageText
                     isUser={msg.role === AgentChatMessageRole.USER}
                   >
-                    {msg.role === AgentChatMessageRole.ASSISTANT && !msg.content
-                      ? agentStreamingMessage || (
-                          <StyledDotsIconContainer>
-                            <StyledDotsIcon size={theme.icon.size.xl} />
-                          </StyledDotsIconContainer>
-                        )
+                    {msg.role === AgentChatMessageRole.ASSISTANT
+                      ? getAssistantMessageContent(msg)
                       : msg.content}
                   </StyledMessageText>
                   {msg.content && (

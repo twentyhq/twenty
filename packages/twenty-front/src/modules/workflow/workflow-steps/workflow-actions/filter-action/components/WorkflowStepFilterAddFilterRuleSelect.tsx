@@ -10,7 +10,7 @@ import {
   StepFilter,
   StepFilterGroup,
   StepLogicalOperator,
-  StepOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/src/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
@@ -19,6 +19,17 @@ import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
+};
+
+const BASE_NEW_STEP_FILTER = {
+  id: v4(),
+  type: 'unknown',
+  label: '',
+  value: '',
+  operand: ViewFilterOperand.Is,
+  displayValue: '',
+  stepFilterGroupId: '',
+  stepOutputKey: '',
 };
 
 export const WorkflowStepFilterAddFilterRuleSelect = ({
@@ -42,16 +53,10 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     closeDropdown(dropdownId);
 
     const newStepFilter = {
-      id: v4(),
-      type: 'text',
-      label: 'New Filter',
-      value: '',
-      operand: StepOperand.EQ,
-      displayValue: '',
+      ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: stepFilterGroup.id,
-      stepOutputKey: '',
       positionInStepFilterGroup: newPositionInStepFilterGroup,
-    };
+    } satisfies StepFilter;
 
     upsertStepFilterSettings({
       stepFilterToUpsert: newStepFilter,
@@ -71,15 +76,9 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     };
 
     const newStepFilter: StepFilter = {
-      id: v4(),
-      type: 'text',
-      operand: StepOperand.EQ,
-      value: '',
-      displayValue: '',
+      ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: newStepFilterGroupId,
       positionInStepFilterGroup: 1,
-      label: 'New Filter',
-      stepOutputKey: '',
     };
 
     upsertStepFilterSettings({

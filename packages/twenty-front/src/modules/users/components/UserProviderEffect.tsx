@@ -93,6 +93,8 @@ export const UserProviderEffect = () => {
       setCurrentWorkspace({
         ...queryData.currentUser.currentWorkspace,
         defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
+        defaultAgent:
+          queryData.currentUser.currentWorkspace.defaultAgent ?? null,
       });
     }
 

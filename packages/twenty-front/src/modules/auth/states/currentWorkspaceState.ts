@@ -25,6 +25,7 @@ export type CurrentWorkspace = Pick<
   | 'metadataVersion'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
+  defaultAgent?: { id: string } | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

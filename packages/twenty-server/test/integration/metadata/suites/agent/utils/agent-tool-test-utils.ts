@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
@@ -12,7 +13,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -103,7 +103,10 @@ export const createAgentToolTestModule =
 
     const testAgent: AgentEntity & { roleId: string | null } = {
       id: testAgentId,
-      name: 'Test Agent',
+      name: 'test-agent',
+      label: 'Test Agent',
+      icon: 'IconTest',
+      isCustom: false,
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',

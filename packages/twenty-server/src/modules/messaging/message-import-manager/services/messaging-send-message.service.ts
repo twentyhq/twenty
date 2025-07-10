@@ -12,6 +12,7 @@ import {
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
@@ -27,6 +28,7 @@ export class MessagingSendMessageService {
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly oAuth2ClientProvider: OAuth2ClientProvider,
     private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly smtpClientProvider: SmtpClientProvider,
   ) {}
 
   public async sendMessage(
@@ -120,7 +122,16 @@ export class MessagingSendMessageService {
         break;
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
-        throw new Error('IMAP provider does not support sending messages');
+        const smtpClient =
+          await this.smtpClientProvider.getSmtpClient(connectedAccount);
+
+        await smtpClient.sendMail({
+          from: connectedAccount.handle,
+          to: sendMessageInput.to,
+          subject: sendMessageInput.subject,
+          text: sendMessageInput.body,
+        });
+        break;
       }
       default:
         assertUnreachable(

@@ -8,7 +8,7 @@ import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,11 +30,47 @@ export const WorkflowStepFilterFieldSelect = ({
     rawVariableName: stepFilter.stepOutputKey,
     part: 'stepId',
   });
+
   const stepsOutputSchema = useRecoilValue(
     stepsOutputSchemaFamilySelector({
       workflowVersionId,
       stepIds: [stepId],
     }),
+  );
+
+  const handleChange = useRecoilCallback(
+    ({ snapshot }) =>
+      (variableName: string) => {
+        const stepId = extractRawVariableNamePart({
+          rawVariableName: variableName,
+          part: 'stepId',
+        });
+        const currentStepOutputSchema = snapshot
+          .getLoadable(
+            stepsOutputSchemaFamilySelector({
+              workflowVersionId,
+              stepIds: [stepId],
+            }),
+          )
+          .getValue();
+
+        const { variableLabel, variableType } =
+          searchVariableThroughOutputSchema({
+            stepOutputSchema: currentStepOutputSchema?.[0],
+            rawVariableName: variableName,
+            isFullRecord: false,
+          });
+
+        upsertStepFilterSettings({
+          stepFilterToUpsert: {
+            ...stepFilter,
+            stepOutputKey: variableName,
+            displayValue: variableLabel ?? '',
+            type: variableType ?? 'unknown',
+          },
+        });
+      },
+    [upsertStepFilterSettings, stepFilter, workflowVersionId],
   );
 
   if (!isDefined(stepId)) {
@@ -49,16 +85,6 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
   const label = isSelectedFieldNotFound ? t`No Field Selected` : variableLabel;
-
-  const handleChange = (variableName: string) => {
-    upsertStepFilterSettings({
-      stepFilterToUpsert: {
-        ...stepFilter,
-        stepOutputKey: variableName,
-        displayValue: label,
-      },
-    });
-  };
 
   return (
     <WorkflowVariablesDropdown

@@ -1,30 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
+import { ToolSet } from 'ai';
 import {
+  ILike,
   In,
   IsNull,
   LessThan,
   LessThanOrEqual,
   Like,
-  ILike,
   MoreThan,
   MoreThanOrEqual,
   Not,
 } from 'typeorm';
-import { ToolSet } from 'ai';
-import { z } from 'zod';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import {
   generateBulkDeleteToolSchema,
+  generateFindOneToolSchema,
   generateFindToolSchema,
+  generateSoftDeleteToolSchema,
   getRecordInputSchema,
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ToolService {
@@ -72,7 +73,7 @@ export class ToolService {
           execute: async (parameters) => {
             return this.createRecord(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
@@ -85,7 +86,7 @@ export class ToolService {
           execute: async (parameters) => {
             return this.updateRecord(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
@@ -100,7 +101,7 @@ export class ToolService {
           execute: async (parameters) => {
             return this.findRecords(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
@@ -109,15 +110,11 @@ export class ToolService {
 
         tools[`find_one_${objectMetadata.nameSingular}`] = {
           description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
-          parameters: z.object({
-            id: z
-              .string()
-              .describe('The unique UUID of the record to retrieve'),
-          }),
+          parameters: generateFindOneToolSchema(),
           execute: async (parameters) => {
             return this.findOneRecord(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
@@ -128,15 +125,11 @@ export class ToolService {
       if (objectPermission.canSoftDelete) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
-          parameters: z.object({
-            id: z
-              .string()
-              .describe('The unique UUID of the record to soft delete'),
-          }),
+          parameters: generateSoftDeleteToolSchema(),
           execute: async (parameters) => {
             return this.softDeleteRecord(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
@@ -149,7 +142,7 @@ export class ToolService {
           execute: async (parameters) => {
             return this.softDeleteManyRecords(
               objectMetadata.nameSingular,
-              parameters,
+              parameters.input,
               workspaceId,
               roleId,
             );
