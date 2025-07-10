@@ -87,13 +87,13 @@ export class ImapSmtpCaldavResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccess> {
-    const isImapSmtpCaldavEnabled =
+    const isImapSmtpCaldavFeatureFlagEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
         workspace.id,
       );
 
-    if (!isImapSmtpCaldavEnabled) {
+    if (!isImapSmtpCaldavFeatureFlagEnabled) {
       throw new HttpException(
         'IMAP, SMTP, CalDAV feature is not enabled for this workspace',
         HttpStatus.FORBIDDEN,

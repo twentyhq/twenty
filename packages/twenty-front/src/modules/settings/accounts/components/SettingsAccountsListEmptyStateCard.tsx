@@ -51,7 +51,7 @@ export const SettingsAccountsListEmptyStateCard = ({
     isMicrosoftCalendarEnabledState,
   );
 
-  const isImapSmtpCaldavEnabled = useIsFeatureEnabled(
+  const isImapSmtpCaldavFeatureFlagEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
   );
 
@@ -77,7 +77,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           />
         )}
 
-        {isImapSmtpCaldavEnabled && (
+        {isImapSmtpCaldavFeatureFlagEnabled && (
           <Button
             Icon={IconAt}
             title={t`Connect Email Account`}
