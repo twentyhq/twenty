@@ -17,6 +17,7 @@ import {
 } from './two-factor-authentication.exception';
 
 import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
+import { AuthException, AuthExceptionCode } from '../auth/auth.exception';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -45,14 +46,14 @@ export class TwoFactorAuthenticationService {
     if (!shouldEnforce2FA) return;
 
     if (isDefined(userTwoFactorAuthenticationProviders)) {
-      throw new TwoFactorAuthenticationException(
+      throw new AuthException(
         'Two factor authentication verification required',
-        TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,
+        AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,
       );
     } else {
-      throw new TwoFactorAuthenticationException(
+      throw new AuthException(
         'Two factor authentication setup required',
-        TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
+        AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
       );
     }
   }
