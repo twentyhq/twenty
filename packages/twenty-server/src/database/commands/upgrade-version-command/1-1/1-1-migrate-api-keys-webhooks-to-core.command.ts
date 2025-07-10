@@ -17,7 +17,7 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-3:migrate-api-keys-webhooks-to-core',
+  name: 'upgrade:1-1:migrate-api-keys-webhooks-to-core',
   description:
     'Migrate API keys and webhooks from workspace schemas to core schema',
 })

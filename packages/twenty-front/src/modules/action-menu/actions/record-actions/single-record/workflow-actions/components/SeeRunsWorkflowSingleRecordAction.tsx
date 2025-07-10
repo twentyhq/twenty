@@ -2,8 +2,8 @@ import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 export const SeeRunsWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
