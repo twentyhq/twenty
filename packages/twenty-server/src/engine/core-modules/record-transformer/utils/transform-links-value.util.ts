@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
-  lowercaseUrlAndRemoveTrailingSlash,
+  lowercaseUrlRemoveTrailingSlashAndAddHttps,
 } from 'twenty-shared/utils';
 
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
@@ -48,14 +48,14 @@ export const transformLinksValue = (
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl)
+      ? lowercaseUrlRemoveTrailingSlashAndAddHttps(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
     secondaryLinks: JSON.stringify(
       secondaryLinks?.map((link) => ({
         ...link,
         url: isDefined(link.url)
-          ? lowercaseUrlAndRemoveTrailingSlash(link.url)
+          ? lowercaseUrlRemoveTrailingSlashAndAddHttps(link.url)
           : link.url,
       })),
     ),
