@@ -20,6 +20,7 @@ import {
   AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
+  useGetAuthTokensFromOtpMutation,
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
@@ -116,6 +117,7 @@ export const useAuth = () => {
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const [initiateOtpProvisioning] = useInitiateOtpProvisioningMutation();
+  const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
@@ -387,15 +389,9 @@ export const useAuth = () => {
         throw new Error('No getAuthTokensFromLoginToken result');
       }
 
-      handleSetAuthTokens(
-        getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
+      handleLoadWorkspaceAfterAuthentication(
+        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens
       );
-
-      // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
-      // then UserProvider updates its children and PrefetchDataProvider is triggered
-      // which requires the correct metadata to be loaded (not the mocks)
-      await refreshObjectMetadataItems();
-      await loadCurrentUser();
     },
     [
       getAuthTokensFromLoginToken,
@@ -404,6 +400,19 @@ export const useAuth = () => {
       handleSetAuthTokens,
       refreshObjectMetadataItems,
     ],
+  );
+
+  const handleLoadWorkspaceAfterAuthentication = useCallback(
+    async (authTokens: AuthTokenPair) => {
+      handleSetAuthTokens(authTokens);
+
+      // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
+      // then UserProvider updates its children and PrefetchDataProvider is triggered
+      // which requires the correct metadata to be loaded (not the mocks)
+      await refreshObjectMetadataItems();
+      await loadCurrentUser();
+    },
+    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
   );
 
   const handleCredentialsSignIn = useCallback(
@@ -656,6 +665,36 @@ export const useAuth = () => {
     [buildRedirectUrl, redirect],
   );
 
+  const handleGetAuthTokensFromOTP = useCallback(
+    async (otp: string, loginToken: string, captchaToken?: string) => {
+      try {
+        const getAuthTokensFromOtpResult = await getAuthTokensFromOtp({
+          variables: {
+            captchaToken,
+            origin,
+            otp,
+            loginToken,
+          },
+        });
+
+        if (isDefined(getAuthTokensFromOtpResult.errors)) {
+          throw getAuthTokensFromOtpResult.errors;
+        }
+
+        if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
+          throw new Error('No getAuthTokensFromLoginToken result');
+        }
+
+        handleLoadWorkspaceAfterAuthentication(
+          getAuthTokensFromOtpResult.data.getAuthTokensFromOTP.tokens,
+        );
+      } catch (error) {
+        return 'aaaah';
+      }
+    },
+    [getAuthTokensFromOtp, origin, handleLoadWorkspaceAfterAuthentication],
+  );
+
   return {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     getLoginTokenFromEmailVerificationToken:
@@ -674,6 +713,7 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
+    getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
     initiateOtpProvisioning
   };
 };
