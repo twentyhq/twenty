@@ -79,6 +79,10 @@ export const useRecordTitleCell = () => {
               prefix: containerType,
             }),
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+            enableGlobalHotkeysWithModifiers: false,
+          },
         });
 
         const recordTitleCellId = getRecordFieldInputInstanceId({
