@@ -2,12 +2,13 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 import { capitalize } from 'twenty-shared/utils';
 
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
+import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
   CamelCasedWorkspaceMigrationActionsType,
   ExpectedActionCounters,
   WorkspaceMigrationBuilderTestCase,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-test-case.type';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 const allWorkspaceBuilderTestCases: {
@@ -21,6 +22,10 @@ const allWorkspaceBuilderTestCases: {
   {
     label: 'field',
     testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
+  },
+  {
+    label: 'index',
+    testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
   },
 ];
 

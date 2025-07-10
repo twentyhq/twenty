@@ -1,35 +1,24 @@
 import { faker } from '@faker-js/faker/.';
 
-import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
+import { getFlatIndexMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-index-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
-const basicObjectMetadataId = faker.string.uuid();
-const basicFlatFieldMetadatas = Array.from({ length: 5 }, (_value, index) =>
-  getFlatFieldMetadataMock({
-    objectMetadataId: basicObjectMetadataId,
-    uniqueIdentifier: `field_${index}`,
-  }),
-);
-
-// Could do tests cases agnostic of the field metadata type and re-genrate them for basic versus RELATION
-// TODO test default value checking
-export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
+const objectMetadataId = faker.string.uuid();
+export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
     {
-      title: 'It should build an create_field action',
+      title: 'It should build an create_index action',
       context: {
         input: () => {
-          const objectMetadataId = faker.string.uuid();
-
-          const flatFieldMetadata = getFlatFieldMetadataMock({
+          const flatIndexMetadata = getFlatIndexMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             isLabelSyncedWithName: true,
-            flatFieldMetadatas: [],
+            flatIndexMetadatas: [],
           });
 
           return {
@@ -37,30 +26,30 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
             to: [
               {
                 ...flatObjectMetadata,
-                flatFieldMetadatas: [flatFieldMetadata],
+                flatIndexMetadatas: [flatIndexMetadata],
               },
             ],
           };
         },
         expectedActionsTypeCounter: {
           total: 1,
-          createField: 1,
+          createIndex: 1,
         },
       },
     },
     {
-      title: 'It should build an update_field action',
+      title:
+        'It should build an delete_index and a create_index action ( the way we handle update )',
       context: {
         input: () => {
-          const objectMetadataId = faker.string.uuid();
-
-          const flatFieldMetadata = getFlatFieldMetadataMock({
+          const flatIndexMetadata = getFlatIndexMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
-            flatFieldMetadatas: [...basicFlatFieldMetadatas, flatFieldMetadata],
+            isLabelSyncedWithName: true,
+            flatIndexMetadatas: [flatIndexMetadata],
           });
 
           return {
@@ -68,14 +57,12 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
             to: [
               {
                 ...flatObjectMetadata,
-                flatFieldMetadatas: [
-                  ...basicFlatFieldMetadatas,
+                flatIndexMetadatas: [
                   {
-                    ...flatFieldMetadata,
-                    description: 'new description',
-                    name: 'new name',
-                    isActive: false,
-                    icon: 'new icon',
+                    ...flatIndexMetadata,
+                    name: 'new index name',
+                    isUnique: false,
+                    indexWhereClause: 'new index where clause',
                   },
                 ],
               },
@@ -83,24 +70,24 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
           };
         },
         expectedActionsTypeCounter: {
-          total: 1,
-          updateField: 1,
+          total: 2,
+          createIndex: 1,
+          deleteIndex: 1,
         },
       },
     },
     {
-      title: 'It should build a delete_field action',
+      title: 'It should build a delete_index action',
       context: {
         input: () => {
-          const objectMetadataId = faker.string.uuid();
-
-          const flatFieldMetadata = getFlatFieldMetadataMock({
+          const flatIndexMetadata = getFlatIndexMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
           const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
-            flatFieldMetadatas: [...basicFlatFieldMetadatas, flatFieldMetadata],
+            isLabelSyncedWithName: true,
+            flatIndexMetadatas: [flatIndexMetadata],
           });
 
           return {
@@ -108,37 +95,35 @@ export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBui
             to: [
               {
                 ...flatObjectMetadata,
-                flatFieldMetadatas: basicFlatFieldMetadatas,
+                flatIndexMetadatas: [],
               },
             ],
           };
         },
         expectedActionsTypeCounter: {
           total: 1,
-          deleteField: 1,
+          deleteIndex: 1,
         },
       },
     },
     {
       title:
-        'It should not infer any actions as from and to fields are identical',
+        'It should not infer any actions as from and to indexes are identical',
       context: {
         input: () => {
-          const objectMetadataId = faker.string.uuid();
-          const flatFieldMetadata = getFlatFieldMetadataMock({
+          const flatIndexMetadata = getFlatIndexMetadataMock({
             uniqueIdentifier: 'poire',
             objectMetadataId,
           });
-          const from = [
-            getFlatObjectMetadataMock({
-              uniqueIdentifier: 'pomme',
-              flatFieldMetadatas: [flatFieldMetadata],
-            }),
-          ];
+          const flatObjectMetadata = getFlatObjectMetadataMock({
+            uniqueIdentifier: 'pomme',
+            isLabelSyncedWithName: true,
+            flatIndexMetadatas: [flatIndexMetadata],
+          });
 
           return {
-            from,
-            to: from,
+            from: [flatObjectMetadata],
+            to: [flatObjectMetadata],
           };
         },
         expectedActionsTypeCounter: {

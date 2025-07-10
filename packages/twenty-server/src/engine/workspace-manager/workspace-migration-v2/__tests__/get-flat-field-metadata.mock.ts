@@ -3,12 +3,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 
-type FlatMetadataOverrides = Required<
+type FlatFieldMetadataOverrides = Required<
   Pick<FlatFieldMetadata, 'uniqueIdentifier' | 'objectMetadataId'>
 > &
   Partial<FlatFieldMetadata>;
 export const getFlatFieldMetadataMock = (
-  overrides: FlatMetadataOverrides,
+  overrides: FlatFieldMetadataOverrides,
 ): FlatFieldMetadata => {
   const createdAt = faker.date.anytime();
 
@@ -42,7 +42,7 @@ export const getFlatFieldMetadataMock = (
 };
 
 export const getStandardFlatFieldMetadataMock = (
-  overrides: Omit<FlatMetadataOverrides, 'isCustom' | 'isSystem'>,
+  overrides: Omit<FlatFieldMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatFieldMetadataMock({
     standardId: faker.string.uuid(),
