@@ -1,6 +1,7 @@
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -10,12 +11,12 @@ import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTrigg
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
 import cron from 'cron-validate';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -82,7 +83,7 @@ export const WorkflowEditTriggerCronForm = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-cron-trigger-interval"
-          label="Trigger interval"
+          label={t`Trigger interval`}
           fullWidth
           disabled={triggerOptions.readonly}
           value={trigger.settings.type}
@@ -107,7 +108,7 @@ export const WorkflowEditTriggerCronForm = ({
         />
         {trigger.settings.type === 'CUSTOM' && (
           <FormTextFieldInput
-            label="Expression"
+            label={t`Expression`}
             placeholder="0 */1 * * *"
             error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
             onBlur={onBlur}
@@ -149,7 +150,7 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'DAYS' && (
           <>
             <FormNumberFieldInput
-              label="Days Between Triggers"
+              label={t`Days between triggers`}
               error={errorMessagesVisible ? errorMessages.DAYS_day : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.day}
@@ -198,7 +199,7 @@ export const WorkflowEditTriggerCronForm = ({
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
-              label="Trigger at Hour"
+              label={t`Trigger at hour`}
               error={errorMessagesVisible ? errorMessages.DAYS_hour : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.hour}
@@ -247,7 +248,7 @@ export const WorkflowEditTriggerCronForm = ({
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
-              label="Trigger at Minute"
+              label={t`Trigger at minute`}
               error={
                 errorMessagesVisible ? errorMessages.DAYS_minute : undefined
               }
@@ -302,7 +303,7 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'HOURS' && (
           <>
             <FormNumberFieldInput
-              label="Hours Between Triggers"
+              label={t`Hours between triggers`}
               error={
                 errorMessagesVisible ? errorMessages.HOURS_hour : undefined
               }
@@ -349,7 +350,7 @@ export const WorkflowEditTriggerCronForm = ({
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
-              label="Trigger at Minute"
+              label={t`Trigger at minute`}
               error={
                 errorMessagesVisible ? errorMessages.HOURS_minute : undefined
               }
@@ -399,7 +400,7 @@ export const WorkflowEditTriggerCronForm = ({
         )}
         {trigger.settings.type === 'MINUTES' && (
           <FormNumberFieldInput
-            label="Minutes Between Triggers"
+            label={t`Minutes between triggers`}
             error={errorMessagesVisible ? errorMessages.MINUTES : undefined}
             onBlur={onBlur}
             defaultValue={trigger.settings.schedule.minute}
