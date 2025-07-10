@@ -136,7 +136,6 @@ export const ActivityRichTextEditor = ({
       targetObjectNameSingular: activityObjectNameSingular,
     });
   };
-  
 
   const prepareBody = (newStringifiedBody: string) => {
     if (!newStringifiedBody) return newStringifiedBody;
@@ -172,17 +171,7 @@ export const ActivityRichTextEditor = ({
     },
     [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
   );
-const saveAttachmentsName = async (
-    attachmentsToUpdate: Partial<Attachment>[],
-  ) => {
-    for (const attachmentToUpdate of attachmentsToUpdate) {
-      if (!attachmentToUpdate.id) continue;
-      await updateOneAttachment({
-        idToUpdate: attachmentToUpdate.id,
-        updateOneRecordInput: { name: attachmentToUpdate.name },
-      });
-    }
-  };
+
   const handleBodyChange = useRecoilCallback(
     ({ set, snapshot }) =>
       async (newStringifiedBody: string) => {
@@ -253,7 +242,13 @@ const saveAttachmentsName = async (
           oldActivity?.attachments,
         );
         if (attachmentsToUpdate.length > 0) {
-          await saveAttachmentsName(attachmentsToUpdate);
+          for (const attachmentToUpdate of attachmentsToUpdate) {
+            if (!attachmentToUpdate.id) continue;
+            await updateOneAttachment({
+              idToUpdate: attachmentToUpdate.id,
+              updateOneRecordInput: { name: attachmentToUpdate.name },
+            });
+          }
         }
       },
     [
@@ -264,10 +259,8 @@ const saveAttachmentsName = async (
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
-      saveAttachmentsName,
     ],
   );
-
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
