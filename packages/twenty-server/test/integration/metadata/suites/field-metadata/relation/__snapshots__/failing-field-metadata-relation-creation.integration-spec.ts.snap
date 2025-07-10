@@ -60,7 +60,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
       "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Cannot read properties of undefined (reading 'fieldsById')",
+    "message": "Object metadata relation target not found for relation creation payload",
   },
 ]
 `;
@@ -70,6 +70,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
@@ -83,6 +84,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
@@ -151,7 +153,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
       "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Cannot read properties of undefined (reading 'fieldsById')",
+    "message": "Object metadata relation target not found for relation creation payload",
   },
 ]
 `;
@@ -161,6 +163,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
@@ -174,6 +177,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
