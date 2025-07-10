@@ -149,11 +149,17 @@ export class UserResolver {
         }),
       );
 
+    const twoFactorAuthenticationMethodSummary = {
+      twoFactorAuthenticationMethodId: user.currentUserWorkspace?.twoFactorAuthenticationMethod.id,
+      isActive: user.currentUserWorkspace?.twoFactorAuthenticationMethod.context?.status === 'VERIFIED'
+    }
+
     return {
       ...user,
       currentUserWorkspace: {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
+        twoFactorAuthenticationMethodSummary
       },
       currentWorkspace: workspace,
     };
