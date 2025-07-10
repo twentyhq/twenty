@@ -4,9 +4,11 @@ import { generateRelatedRecordActions } from './generateRelatedRecordActions';
 
 describe('generateRelatedRecordActions', () => {
   const mockGetTargetObjectReadPermission = jest.fn();
+  const mockGetIcon = jest.fn();
 
   beforeEach(() => {
     mockGetTargetObjectReadPermission.mockClear();
+    mockGetIcon.mockClear();
   });
 
   it('should return empty object when objectMetadataItem has no fields', () => {
@@ -14,10 +16,11 @@ describe('generateRelatedRecordActions', () => {
       fields: [],
     } as unknown as ObjectMetadataItem;
 
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
+    const result = generateRelatedRecordActions({
+      sourceObjectMetadataItem: objectMetadataItem,
+      getIcon: mockGetIcon,
+      position: 18,
+    });
 
     expect(result).toEqual({});
   });
@@ -25,10 +28,11 @@ describe('generateRelatedRecordActions', () => {
   it('should return empty object when objectMetadataItem is undefined', () => {
     const objectMetadataItem = undefined as unknown as ObjectMetadataItem;
 
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
+    const result = generateRelatedRecordActions({
+      sourceObjectMetadataItem: objectMetadataItem,
+      getIcon: mockGetIcon,
+      position: 18,
+    });
 
     expect(result).toEqual({});
   });
@@ -45,6 +49,7 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'People',
             },
           },
+          label: 'person',
         },
         {
           type: 'RELATION',
@@ -55,55 +60,22 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'Companies',
             },
           },
+          label: 'company',
         },
       ],
     } as unknown as ObjectMetadataItem;
 
     mockGetTargetObjectReadPermission.mockReturnValue(true);
 
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
+    const result = generateRelatedRecordActions({
+      sourceObjectMetadataItem: objectMetadataItem,
+      getIcon: mockGetIcon,
+      position: 18,
+    });
 
     expect(Object.keys(result)).toHaveLength(2);
-    expect(result['create-related-person-single-record']).toBeDefined();
-    expect(result['create-related-company-single-record']).toBeDefined();
-    expect(mockGetTargetObjectReadPermission).toHaveBeenCalledWith(
-      CoreObjectNameSingular.Person,
-    );
-    expect(mockGetTargetObjectReadPermission).toHaveBeenCalledWith(
-      CoreObjectNameSingular.Company,
-    );
-  });
-
-  it('should not generate actions when user lacks permissions', () => {
-    const objectMetadataItem = {
-      fields: [
-        {
-          type: 'RELATION',
-          relation: {
-            type: 'ONE_TO_MANY',
-            targetObjectMetadata: {
-              nameSingular: CoreObjectNameSingular.Person,
-              namePlural: 'People',
-            },
-          },
-        },
-      ],
-    } as unknown as ObjectMetadataItem;
-
-    mockGetTargetObjectReadPermission.mockReturnValue(false);
-
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
-
-    expect(result).toEqual({});
-    expect(mockGetTargetObjectReadPermission).toHaveBeenCalledWith(
-      CoreObjectNameSingular.Person,
-    );
+    expect(result['create-related-person']).toBeDefined();
+    expect(result['create-related-company']).toBeDefined();
   });
 
   it('should filter out non-one-to-many relations', () => {
@@ -118,6 +90,7 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'People',
             },
           },
+          label: 'person',
         },
         {
           type: 'TEXT',
@@ -131,20 +104,22 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'Companies',
             },
           },
+          label: 'company',
         },
       ],
     } as unknown as ObjectMetadataItem;
 
     mockGetTargetObjectReadPermission.mockReturnValue(true);
 
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
+    const result = generateRelatedRecordActions({
+      sourceObjectMetadataItem: objectMetadataItem,
+      getIcon: mockGetIcon,
+      position: 18,
+    });
 
     expect(Object.keys(result)).toHaveLength(1);
-    expect(result['create-related-company-single-record']).toBeDefined();
-    expect(result['create-related-person-single-record']).toBeUndefined();
+    expect(result['create-related-company']).toBeDefined();
+    expect(result['create-related-person']).toBeUndefined();
   });
 
   it('should assign correct positions starting from 18', () => {
@@ -159,6 +134,7 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'People',
             },
           },
+          label: 'person',
         },
         {
           type: 'RELATION',
@@ -169,18 +145,20 @@ describe('generateRelatedRecordActions', () => {
               namePlural: 'Companies',
             },
           },
+          label: 'company',
         },
       ],
     } as unknown as ObjectMetadataItem;
 
     mockGetTargetObjectReadPermission.mockReturnValue(true);
 
-    const result = generateRelatedRecordActions(
-      objectMetadataItem,
-      // mockGetTargetObjectReadPermission,
-    );
+    const result = generateRelatedRecordActions({
+      sourceObjectMetadataItem: objectMetadataItem,
+      getIcon: mockGetIcon,
+      position: 18,
+    });
 
-    expect(result['create-related-person-single-record'].position).toBe(18);
-    expect(result['create-related-company-single-record'].position).toBe(19);
+    expect(result['create-related-person'].position).toBe(18);
+    expect(result['create-related-company'].position).toBe(19);
   });
 });
