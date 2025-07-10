@@ -1,9 +1,9 @@
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
 import { useTheme } from '@emotion/react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconAt,
   IconCalendarEvent,
   IconComponent,
   IconComponentProps,
@@ -12,37 +12,43 @@ import {
   IconMicrosoft,
   IconSend,
 } from 'twenty-ui/display';
-import { Entries } from 'type-fest';
-
-const SERVICES: Record<keyof ImapSmtpCaldavAccount, IconComponent> = {
-  IMAP: IconMail,
-  SMTP: IconSend,
-  CALDAV: IconCalendarEvent,
-} as const;
 
 const ImapSmtpCaldavIcon = (
   props: IconComponentProps & { account: ConnectedAccount },
 ) => {
   const theme = useTheme();
-  const connectionKeys = Object.entries(SERVICES) as Entries<typeof SERVICES>;
+  const { account } = props;
+
+  const hasImap = isDefined(account.connectionParameters?.IMAP);
+  const hasSmtp = isDefined(account.connectionParameters?.SMTP);
+  const hasCaldav = isDefined(account.connectionParameters?.CALDAV);
+
+  let IconToShow: IconComponent;
+
+  if (hasImap && hasSmtp && hasCaldav) {
+    IconToShow = IconAt;
+  } else if (hasImap && hasCaldav) {
+    IconToShow = IconAt;
+  } else if (hasImap && hasSmtp) {
+    IconToShow = IconMail;
+  } else if (hasImap) {
+    IconToShow = IconMail;
+  } else if (hasSmtp) {
+    IconToShow = IconSend;
+  } else if (hasCaldav) {
+    IconToShow = IconCalendarEvent;
+  } else {
+    IconToShow = IconMail;
+  }
 
   return (
-    <div style={{ display: 'flex', gap: '2px' }}>
-      {connectionKeys.map(([connectionKey, IconComponent]) => (
-        <IconComponent
-          key={connectionKey}
-          className={props.className}
-          style={props.style}
-          size={props.size}
-          stroke={props.stroke}
-          color={
-            isDefined(props.account.connectionParameters?.[connectionKey])
-              ? theme.font.color.primary
-              : theme.font.color.tertiary
-          }
-        />
-      ))}
-    </div>
+    <IconToShow
+      className={props.className}
+      style={props.style}
+      size={props.size}
+      stroke={props.stroke}
+      color={props.color || theme.font.color.primary}
+    />
   );
 };
 

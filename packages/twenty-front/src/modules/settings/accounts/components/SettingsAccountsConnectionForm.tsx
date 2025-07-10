@@ -17,12 +17,9 @@ const StyledFormContainer = styled.div`
 `;
 
 const StyledConnectionSection = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSectionHeader = styled.div`
@@ -54,6 +51,10 @@ const StyledFieldRow = styled.div`
 
 const StyledFieldGroup = styled.div`
   flex: 1;
+
+  & > * {
+    width: 100%;
+  }
 `;
 
 type SettingsAccountsConnectionFormProps = {
@@ -75,7 +76,7 @@ export const SettingsAccountsConnectionForm = ({
     if (isEditing) {
       return t`Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
-    return t`Configure your email account protocols as needed. You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
+    return t`You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };
 
   const handlePortChange = (value: string) => Number(value);
@@ -101,9 +102,11 @@ export const SettingsAccountsConnectionForm = ({
 
         <StyledConnectionSection>
           <StyledSectionHeader>
-            <StyledSectionTitle>{t`IMAP Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionTitle>{t`IMAP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure IMAP settings to receive and sync your emails. Leave blank if you don't need email receiving.`}
+              {t`Configure IMAP settings to receive and sync your emails.`}
+              <br />
+              {t`Leave blank if you don't need to import emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
 
@@ -115,6 +118,22 @@ export const SettingsAccountsConnectionForm = ({
                 instanceId="imap-host-connection-form"
                 label={t`IMAP Server`}
                 placeholder={t`imap.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="IMAP.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="imap-password-connection-form"
+                label={t`IMAP Password`}
+                placeholder={t`••••••••`}
+                type="password"
                 value={field.value || ''}
                 onChange={field.onChange}
                 error={fieldState.error?.message}
@@ -162,29 +181,15 @@ export const SettingsAccountsConnectionForm = ({
               />
             </StyledFieldGroup>
           </StyledFieldRow>
-
-          <Controller
-            name="IMAP.password"
-            control={control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                instanceId="imap-password-connection-form"
-                label={t`IMAP Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
-            )}
-          />
         </StyledConnectionSection>
 
         <StyledConnectionSection>
           <StyledSectionHeader>
-            <StyledSectionTitle>{t`SMTP Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionTitle>{t`SMTP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure SMTP settings to send emails from your account. Leave blank if you don't need email sending.`}
+              {t`Configure SMTP settings to send emails from your account.`}
+              <br />
+              {t`Leave blank if you don't need to send emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
 
@@ -196,6 +201,22 @@ export const SettingsAccountsConnectionForm = ({
                 instanceId="smtp-host-connection-form"
                 label={t`SMTP Server`}
                 placeholder={t`smtp.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="SMTP.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="smtp-password-connection-form"
+                label={t`SMTP Password`}
+                placeholder={t`••••••••`}
+                type="password"
                 value={field.value || ''}
                 onChange={field.onChange}
                 error={fieldState.error?.message}
@@ -243,29 +264,15 @@ export const SettingsAccountsConnectionForm = ({
               />
             </StyledFieldGroup>
           </StyledFieldRow>
-
-          <Controller
-            name="SMTP.password"
-            control={control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                instanceId="smtp-password-connection-form"
-                label={t`SMTP Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
-            )}
-          />
         </StyledConnectionSection>
 
         <StyledConnectionSection>
           <StyledSectionHeader>
-            <StyledSectionTitle>{t`CalDAV Configuration (Optional)`}</StyledSectionTitle>
+            <StyledSectionTitle>{t`CalDAV Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure CalDAV settings to sync your calendar events. Leave blank if you don't need calendar sync.`}
+              {t`Configure CalDAV settings to sync your calendar events.`}
+              <br />
+              {t`Leave blank if you don't need calendar sync.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
 
@@ -277,6 +284,22 @@ export const SettingsAccountsConnectionForm = ({
                 instanceId="caldav-host-connection-form"
                 label={t`CalDAV Server`}
                 placeholder={t`caldav.example.com`}
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="CALDAV.password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextInput
+                instanceId="caldav-password-connection-form"
+                label={t`CalDAV Password`}
+                placeholder={t`••••••••`}
+                type="password"
                 value={field.value || ''}
                 onChange={field.onChange}
                 error={fieldState.error?.message}
@@ -324,22 +347,6 @@ export const SettingsAccountsConnectionForm = ({
               />
             </StyledFieldGroup>
           </StyledFieldRow>
-
-          <Controller
-            name="CALDAV.password"
-            control={control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                instanceId="caldav-password-connection-form"
-                label={t`CalDAV Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
-            )}
-          />
         </StyledConnectionSection>
       </StyledFormContainer>
     </Section>
