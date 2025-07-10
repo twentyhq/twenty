@@ -33,7 +33,7 @@ export class TwoFactorAuthenticationService {
 
   async is2FARequired(
     targetWorkspace: Workspace,
-    userTwoFactorAuthenticationProviders: TwoFactorAuthenticationMethod,
+    userTwoFactorAuthenticationProvider: TwoFactorAuthenticationMethod,
   ) {
     const isTwoFactorAuthenticationEnabled = this.twentyConfigService.get(
       'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
@@ -45,7 +45,7 @@ export class TwoFactorAuthenticationService {
 
     if (!shouldEnforce2FA) return;
 
-    if (isDefined(userTwoFactorAuthenticationProviders)) {
+    if (isDefined(userTwoFactorAuthenticationProvider)) {
       throw new AuthException(
         'Two factor authentication verification required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,

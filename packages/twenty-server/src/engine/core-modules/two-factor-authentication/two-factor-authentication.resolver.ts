@@ -22,6 +22,10 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 
 import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
+import { ResetTwoFactorAuthenticationMethodInput } from './dto/reset-two-factor-authentication-method.input';
+import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { ResetTwoFactorAuthenticationMethodOutput } from './dto/reset-two-factor-authentication-method.output';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -32,6 +36,8 @@ export class TwoFactorAuthenticationResolver {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(TwoFactorAuthenticationMethod, 'core')
+    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
@@ -74,5 +80,34 @@ export class TwoFactorAuthenticationResolver {
     }
 
     return { uri };
+  }
+
+  @Mutation(() => ResetTwoFactorAuthenticationMethodOutput)
+  @UseGuards(UserAuthGuard)
+  async resetTwoFactorAuthenticationMethod(
+    @Args()
+    resetTwoFactorAuthenticationMethodInput: ResetTwoFactorAuthenticationMethodInput,
+    @Args('origin') origin: string,
+  ): Promise<ResetTwoFactorAuthenticationMethodOutput> {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    await this.twoFactorAuthenticationMethodRepository.delete({
+      id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId
+    })
+
+    return {
+      success: true
+    }
   }
 }
