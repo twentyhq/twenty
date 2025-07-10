@@ -36,7 +36,6 @@ export const getFlatObjectMetadataMock = (
     shortcut: 'shortcut',
     standardId: undefined,
     standardOverrides: undefined,
-    targetRelationFields: [],
     targetTableName: '',
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),

@@ -15,6 +15,9 @@ const basicFlatFieldMetadatas = Array.from({ length: 5 }, (_value, index) =>
   }),
 );
 
+// TODO prastoin test defaultValue and settings updates
+// TODO prastoin test standard abstraction in TDD style
+
 const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
   {
     title: 'It should build an create_field action for a RELATION field',
@@ -258,41 +261,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
     },
   },
 ];
-
-// const defaultValueTestCases: WorkspaceMigrationBuilderTestCase[] = [
-//   {
-//     title:
-//       'It should NOT build a delete_field action on a default value updates of ',
-//     context: {
-//       input: () => {
-//         const objectMetadataId = faker.string.uuid();
-
-//         const flatFieldMetadata = getFlatFieldMetadataMock({
-//           uniqueIdentifier: 'poire',
-//           objectMetadataId,
-//         });
-//         const flatObjectMetadata = getFlatObjectMetadataMock({
-//           uniqueIdentifier: 'pomme',
-//           flatFieldMetadatas: [...basicFlatFieldMetadatas, flatFieldMetadata],
-//         });
-
-//         return {
-//           from: [flatObjectMetadata],
-//           to: [
-//             {
-//               ...flatObjectMetadata,
-//               flatFieldMetadatas: basicFlatFieldMetadatas,
-//             },
-//           ],
-//         };
-//       },
-//       expectedActionsTypeCounter: {
-//         total: 1,
-//         deleteField: 1,
-//       },
-//     },
-//   },
-// ];
 
 export const WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
