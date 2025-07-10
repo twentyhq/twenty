@@ -1785,6 +1785,11 @@ msgstr "Datum och tid"
 msgid "Date format"
 msgstr "Datumformat"
 
+#. js-lingui-id: cpDASC
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Days between triggers"
+msgstr ""
+
 #. js-lingui-id: 5y3O+A
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
@@ -2710,6 +2715,11 @@ msgstr "Exportera arbetsflöden"
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
 
+#. js-lingui-id: 1JBTZV
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Expression"
+msgstr ""
+
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Extra Credits Used"
@@ -3098,6 +3108,11 @@ msgstr "Dölj tomma grupper"
 #. js-lingui-id: wgmt7A
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Hide hidden groups"
+msgstr ""
+
+#. js-lingui-id: N0Yhtw
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Hours between triggers"
 msgstr ""
 
 #. js-lingui-id: B06Bgk
@@ -3833,6 +3848,11 @@ msgstr "Generering av metadatafilen misslyckades"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "Minsta"
+
+#. js-lingui-id: APfhM/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minutes between triggers"
+msgstr ""
 
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
@@ -6079,6 +6099,22 @@ msgstr ""
 #. js-lingui-id: y985qL
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
+msgstr ""
+
+#. js-lingui-id: EfDzVR
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at hour"
+msgstr ""
+
+#. js-lingui-id: gV4kml
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at minute"
+msgstr ""
+
+#. js-lingui-id: jGYsS/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger interval"
 msgstr ""
 
 #. js-lingui-id: PiUt3N
