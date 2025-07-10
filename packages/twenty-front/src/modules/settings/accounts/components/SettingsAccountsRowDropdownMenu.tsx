@@ -10,11 +10,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
   IconRefresh,
+  IconSettings,
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -57,6 +59,19 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
+              {account.provider ===
+                ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
+                <MenuItem
+                  text={t`Connection settings`}
+                  LeftIcon={IconSettings}
+                  onClick={() => {
+                    navigate(SettingsPath.EditImapSmtpCaldavConnection, {
+                      connectedAccountId: account.id,
+                    });
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              )}
               <MenuItem
                 LeftIcon={IconMail}
                 text={t`Emails settings`}

@@ -178,7 +178,7 @@ export class ClientConfig {
   isConfigVariablesInDbEnabled: boolean;
 
   @Field(() => Boolean)
-  isIMAPMessagingEnabled: boolean;
+  isImapSmtpCaldavEnabled: boolean;
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;

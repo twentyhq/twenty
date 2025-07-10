@@ -14,9 +14,6 @@ export class ConnectionParameters {
   @Field(() => Number)
   port: number;
 
-  @Field(() => String)
-  username: string;
-
   /**
    * Note: This field is stored in plain text in the database.
    * While encrypting it could provide an extra layer of defense, we have decided not to,
@@ -36,9 +33,6 @@ export class ConnectionParametersOutput {
 
   @Field(() => Number)
   port: number;
-
-  @Field(() => String)
-  username: string;
 
   @Field(() => String)
   password: string;

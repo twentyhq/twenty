@@ -15,6 +15,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -90,6 +91,10 @@ export const ClientConfigProviderEffect = () => {
 
   const setCalendarBookingPageId = useSetRecoilState(
     calendarBookingPageIdState,
+  );
+
+  const setIsImapSmtpCaldavEnabled = useSetRecoilState(
+    isImapSmtpCaldavEnabledState,
   );
 
   const { data, loading, error, fetchClientConfig } = useClientConfig();
@@ -183,6 +188,7 @@ export const ClientConfigProviderEffect = () => {
     }));
 
     setCalendarBookingPageId(data?.clientConfig?.calendarBookingPageId ?? null);
+    setIsImapSmtpCaldavEnabled(data?.clientConfig?.isImapSmtpCaldavEnabled);
   }, [
     data,
     loading,
@@ -210,6 +216,7 @@ export const ClientConfigProviderEffect = () => {
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
+    setIsImapSmtpCaldavEnabled,
   ]);
 
   return <></>;
