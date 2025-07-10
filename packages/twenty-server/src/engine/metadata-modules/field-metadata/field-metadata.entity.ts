@@ -155,4 +155,6 @@ export class FieldMetadataEntity<
     (fieldPermission: FieldPermissionEntity) => fieldPermission.fieldMetadata,
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  prastoin: FieldPermissionEntity[];
 }

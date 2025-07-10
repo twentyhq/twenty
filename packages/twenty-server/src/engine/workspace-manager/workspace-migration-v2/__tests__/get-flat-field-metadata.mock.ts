@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
@@ -25,9 +25,7 @@ export const getFlatFieldMetadataMock = (
     isNullable: true,
     isUnique: false,
     options: undefined,
-    relationTargetFieldMetadata: undefined,
     relationTargetFieldMetadataId: undefined,
-    relationTargetObjectMetadata: undefined,
     relationTargetObjectMetadataId: undefined,
     settings: undefined,
     type: FieldMetadataType.TEXT,

@@ -4,6 +4,7 @@ import { getFlatIndexMetadataMock } from 'src/engine/workspace-manager/workspace
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
+// Should test more things such as flatFieldIndex diffing
 const objectMetadataId = faker.string.uuid();
 export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [

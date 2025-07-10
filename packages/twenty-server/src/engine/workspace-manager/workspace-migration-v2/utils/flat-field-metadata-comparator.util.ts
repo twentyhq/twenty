@@ -18,6 +18,11 @@ const flatFieldMetadataPropertiesToCompare = [
   'name',
   'options',
   'standardOverrides',
+  'settings',
+  // To reactivate once we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
+  // 'relationTargetFieldMetadataId',
+  // 'relationTargetObjectMetadataId',
+  ///
 ] as const satisfies (keyof FlatFieldMetadata)[];
 
 export type FlatFieldMetadataPropertiesToCompare =
@@ -26,6 +31,7 @@ export type FlatFieldMetadataPropertiesToCompare =
 const fieldMetadataPropertiesToStringify = [
   'defaultValue',
   'standardOverrides',
+  'settings',
 ] as const satisfies FlatFieldMetadataPropertiesToCompare[];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
@@ -59,6 +65,15 @@ export const compareTwoFlatFieldMetadata = ({
 
       if (
         property === 'defaultValue' &&
+        isDefined(fieldMetadata.type) &&
+        shouldNotOverrideDefaultValue(fieldMetadata.type)
+      ) {
+        return true;
+      }
+
+      // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
+      if (
+        property === 'settings' &&
         isDefined(fieldMetadata.type) &&
         shouldNotOverrideDefaultValue(fieldMetadata.type)
       ) {
