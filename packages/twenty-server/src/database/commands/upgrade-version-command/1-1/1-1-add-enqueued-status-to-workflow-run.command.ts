@@ -65,6 +65,8 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
       this.logger.log(
         `Workflow run status field metadata options already contain enqueued status for workspace ${workspaceId}`,
       );
+
+      return;
     } else if (options.dryRun) {
       this.logger.log(
         `Would add enqueued status to workflow run status field metadata for workspace ${workspaceId}`,
