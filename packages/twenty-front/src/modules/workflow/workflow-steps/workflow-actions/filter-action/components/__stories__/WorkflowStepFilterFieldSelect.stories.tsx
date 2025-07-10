@@ -1,6 +1,6 @@
 import { WorkflowStepFilterDecorator } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/decorators/WorkflowStepFilterDecorator';
 import { Meta, StoryObj } from '@storybook/react';
-import { StepFilter, StepOperand } from 'twenty-shared/types';
+import { StepFilter, ViewFilterOperand } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -16,7 +16,7 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   displayValue: '',
   type: 'text',
   label: 'New Filter',
-  operand: StepOperand.EQ,
+  operand: ViewFilterOperand.Is,
   value: '',
   positionInStepFilterGroup: 0,
 };
