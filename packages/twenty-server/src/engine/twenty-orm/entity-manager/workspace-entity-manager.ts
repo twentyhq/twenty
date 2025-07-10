@@ -8,6 +8,7 @@ import {
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
+  In,
   InsertResult,
   ObjectId,
   ObjectLiteral,
@@ -32,6 +33,7 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -1076,7 +1078,30 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const entityTarget =
+      target ??
+      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+
+    const entityArray = Array.isArray(entity) ? entity : [entity];
+    const entityIds = entityArray.map((e) => (e as { id: string }).id);
+    const beforeUpdate = await this.find(
+      entityTarget,
+      {
+        where: { id: In(entityIds) },
+      },
+      permissionOptions,
+    );
+
+    const beforeUpdateMapById = beforeUpdate.reduce(
+      (acc, e: ObjectLiteral) => {
+        acc[e.id] = e;
+
+        return acc;
+      },
+      {} as Record<string, ObjectLiteral>,
+    );
+
+    const result = await new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'save',
@@ -1087,6 +1112,37 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute()
       .then(() => entity as Entity)
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const resultArray = Array.isArray(result) ? result : [result];
+
+    for (const entity of resultArray) {
+      const isUpdate = beforeUpdateMapById[entity.id];
+
+      if (isUpdate) {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadata: getObjectMetadataFromEntityTarget(
+            entityTarget,
+            this.internalContext,
+          ),
+          workspaceId: this.internalContext.workspaceId,
+          entities: entity,
+          beforeEntities: beforeUpdateMapById[entity.id],
+        });
+      } else {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.CREATED,
+          objectMetadata: getObjectMetadataFromEntityTarget(
+            entityTarget,
+            this.internalContext,
+          ),
+          workspaceId: this.internalContext.workspaceId,
+          entities: entity,
+        });
+      }
+    }
+
+    return result;
   }
 
   override remove<Entity>(
@@ -1152,7 +1208,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'remove',
@@ -1163,6 +1219,23 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute()
       .then(() => entity as Entity | Entity[])
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    // All elements in the array are of the same entity type
+    const entityTarget =
+      target ??
+      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.DESTROYED,
+      objectMetadata: getObjectMetadataFromEntityTarget(
+        entityTarget,
+        this.internalContext,
+      ),
+      workspaceId: this.internalContext.workspaceId,
+      entities: result,
+    });
+
+    return result;
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -1238,7 +1311,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'soft-remove',
@@ -1249,6 +1322,22 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute()
       .then(() => entity as Entity)
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const entityTarget =
+      target ??
+      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.DELETED,
+      objectMetadata: getObjectMetadataFromEntityTarget(
+        entityTarget,
+        this.internalContext,
+      ),
+      workspaceId: this.internalContext.workspaceId,
+      entities: result,
+    });
+
+    return result;
   }
 
   override recover<Entity>(
@@ -1320,7 +1409,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'recover',
@@ -1331,6 +1420,22 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute()
       .then(() => entity as Entity)
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const entityTarget =
+      target ??
+      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.RESTORED,
+      objectMetadata: getObjectMetadataFromEntityTarget(
+        entityTarget,
+        this.internalContext,
+      ),
+      workspaceId: this.internalContext.workspaceId,
+      entities: result,
+    });
+
+    return result;
   }
 
   // Forbidden methods
@@ -1458,6 +1563,6 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   protected getEventEmitter(): WorkspaceEventEmitter {
-    return this.internalContext.eventEmitter;
+    return this.internalContext.eventEmitterService;
   }
 }

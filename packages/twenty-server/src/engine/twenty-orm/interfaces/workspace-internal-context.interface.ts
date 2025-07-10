@@ -6,5 +6,5 @@ export interface WorkspaceInternalContext {
   workspaceId: string;
   objectMetadataMaps: ObjectMetadataMaps;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
-  eventEmitter: WorkspaceEventEmitter;
+  eventEmitterService: WorkspaceEventEmitter;
 }

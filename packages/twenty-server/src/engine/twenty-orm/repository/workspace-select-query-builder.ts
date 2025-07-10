@@ -8,11 +8,18 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -43,10 +50,32 @@ export class WorkspaceSelectQueryBuilder<
     ) as this;
   }
 
-  override execute(): Promise<T[]> {
+  override async execute(): Promise<T[]> {
     this.validatePermissions();
 
-    return super.execute();
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.execute();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult;
   }
 
   override getMany(): Promise<T[]> {
@@ -120,8 +149,24 @@ export class WorkspaceSelectQueryBuilder<
   override update(
     updateSet?: QueryDeepPartialEntity<T>,
   ): WorkspaceUpdateQueryBuilder<T> {
-    const updateQueryBuilder = updateSet
-      ? super.update(updateSet)
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const formattedUpdateSet = formatData(updateSet, objectMetadata);
+
+    const updateQueryBuilder = formattedUpdateSet
+      ? super.update(formattedUpdateSet)
       : super.update();
 
     return new WorkspaceUpdateQueryBuilder<T>(

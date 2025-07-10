@@ -194,7 +194,7 @@ export class WorkspaceDatasourceFactory {
               workspaceId,
               objectMetadataMaps: cachedObjectMetadataMaps,
               featureFlagsMap: cachedFeatureFlagMap,
-              eventEmitter: this.workspaceEventEmitter,
+              eventEmitterService: this.workspaceEventEmitter,
             },
             {
               url:

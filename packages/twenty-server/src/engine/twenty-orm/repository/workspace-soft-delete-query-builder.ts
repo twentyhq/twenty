@@ -4,10 +4,17 @@ import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBui
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceSoftDeleteQueryBuilder<
   T extends ObjectLiteral,
@@ -39,7 +46,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
     ) as this;
   }
 
-  override execute(): Promise<UpdateResult> {
+  override async execute(): Promise<UpdateResult> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
@@ -47,22 +54,66 @@ export class WorkspaceSoftDeleteQueryBuilder<
       this.shouldBypassPermissionChecks,
     );
 
-    return super.execute();
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const after = await super.execute();
+
+    const formattedAfter = formatResult<T[]>(
+      after.raw,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.DELETED,
+      objectMetadata,
+      workspaceId: this.internalContext.workspaceId,
+      entities: formattedAfter,
+    });
+
+    return {
+      ...after,
+      raw: formattedAfter,
+    };
   }
 
   override select(): WorkspaceSelectQueryBuilder<T> {
-    throw new Error('This builder cannot morph into a select builder');
+    throw new TwentyORMException(
+      'This builder cannot morph into a select builder',
+      TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T> {
-    throw new Error('This builder cannot morph into an update builder');
+    throw new TwentyORMException(
+      'This builder cannot morph into an update builder',
+      TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 
   override insert(): InsertQueryBuilder<T> {
-    throw new Error('This builder cannot morph into an insert builder');
+    throw new TwentyORMException(
+      'This builder cannot morph into an insert builder',
+      TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 
   override delete(): WorkspaceDeleteQueryBuilder<T> {
-    throw new Error('This builder cannot morph into a delete builder');
+    throw new TwentyORMException(
+      'This builder cannot morph into a delete builder',
+      TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 }
