@@ -10,6 +10,11 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   }
 
   const pathParts = rawPath.split('/');
+  if (pathParts.length < 2) {
+    throw new Error(
+      `Invalid attachment path structure: ${rawPath}. Path must have at least two segments.`,
+    );
+  }
   const filename = pathParts.pop();
 
   pathParts.pop();

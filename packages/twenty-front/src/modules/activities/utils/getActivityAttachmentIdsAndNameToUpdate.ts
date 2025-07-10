@@ -10,14 +10,15 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[] = [],
 ) => {
-  const activityAttchmentsNameAndPaths =
+  const activityAttachmentsNameAndPaths =
     getActivityAttachmentPathsAndName(newActivityBody);
-  if (activityAttchmentsNameAndPaths.length === 0) return [];
+  if (activityAttachmentsNameAndPaths.length === 0) return [];
 
-  return activityAttchmentsNameAndPaths.reduce(
+  return activityAttachmentsNameAndPaths.reduce(
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
       const foundActivity = oldActivityAttachments.find(
-        (attchment) => getAttachmentPath(attchment.fullPath) === activity.path,
+        (attachment) =>
+          getAttachmentPath(attachment.fullPath) === activity.path,
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {
         acc.push({ id: foundActivity.id, name: activity.name });
