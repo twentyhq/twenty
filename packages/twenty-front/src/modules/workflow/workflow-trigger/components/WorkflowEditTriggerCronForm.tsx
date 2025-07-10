@@ -1,6 +1,7 @@
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -15,7 +16,6 @@ import cron from 'cron-validate';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -149,7 +149,7 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'DAYS' && (
           <>
             <FormNumberFieldInput
-              label="Days Between Triggers"
+              label="Days between triggers"
               error={errorMessagesVisible ? errorMessages.DAYS_day : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.day}
@@ -198,7 +198,7 @@ export const WorkflowEditTriggerCronForm = ({
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
-              label="Trigger at Hour"
+              label="Trigger at hour"
               error={errorMessagesVisible ? errorMessages.DAYS_hour : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.hour}
@@ -247,7 +247,7 @@ export const WorkflowEditTriggerCronForm = ({
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
-              label="Trigger at Minute"
+              label="Trigger at minute"
               error={
                 errorMessagesVisible ? errorMessages.DAYS_minute : undefined
               }
