@@ -1063,6 +1063,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
+  resetTwoFactorAuthenticationMethod: ResetTwoFactorAuthenticationMethodOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
@@ -1352,6 +1353,12 @@ export type MutationResendEmailVerificationTokenArgs = {
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationResetTwoFactorAuthenticationMethodArgs = {
+  origin: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['String'];
 };
 
 
@@ -1993,6 +2000,12 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean'];
 };
 
+export type ResetTwoFactorAuthenticationMethodOutput = {
+  __typename?: 'ResetTwoFactorAuthenticationMethodOutput';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type RevokeApiKeyDto = {
   id: Scalars['String'];
 };
@@ -2330,8 +2343,8 @@ export enum TwoFactorAuthenticationProviders {
 
 export type TwoFactorAuthenticatonDto = {
   __typename?: 'TwoFactorAuthenticatonDTO';
-  isActive: Scalars['Boolean'];
-  twoFactorAuthenticationMethodId: Scalars['String'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  twoFactorAuthenticationMethodId?: Maybe<Scalars['String']>;
 };
 
 export type TwoFactorPolicy = {
