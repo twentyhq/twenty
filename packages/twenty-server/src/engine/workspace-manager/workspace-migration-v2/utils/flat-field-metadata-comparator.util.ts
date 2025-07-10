@@ -2,6 +2,7 @@ import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
@@ -73,9 +74,9 @@ export const compareTwoFlatFieldMetadata = ({
 
       // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
       if (
-        property === 'settings' &&
         isDefined(fieldMetadata.type) &&
-        shouldNotOverrideDefaultValue(fieldMetadata.type)
+        isRelationFieldMetadataType(fieldMetadata.type) &&
+        !['label', 'description', 'isActive'].includes(property)
       ) {
         return true;
       }

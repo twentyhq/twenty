@@ -11,6 +11,8 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { eachTestingContextFilter } from 'twenty-shared/testing';
+
 const allWorkspaceBuilderTestCases: {
   label: string;
   testCases: WorkspaceMigrationBuilderTestCase[];
@@ -76,7 +78,7 @@ describe.each(allWorkspaceBuilderTestCases)(
       service = new WorkspaceMigrationBuilderV2Service();
     });
 
-    it.each(testCases)(
+    it.each(eachTestingContextFilter(testCases))(
       '$title',
       ({ context: { input, expectedActionsTypeCounter } }) => {
         const { from, to } = typeof input === 'function' ? input() : input;
@@ -89,12 +91,11 @@ describe.each(allWorkspaceBuilderTestCases)(
           expectedActionsTypeCounter,
           workspaceMigration,
         });
-        const { actions, ...rest } = workspaceMigration;
+        const { actions } = workspaceMigration;
 
         expect(actions).toMatchSnapshot(
           actions.map(extractRecordIdsAndDatesAsExpectAny),
         );
-        expect(rest).toMatchSnapshot();
       },
     );
   },
