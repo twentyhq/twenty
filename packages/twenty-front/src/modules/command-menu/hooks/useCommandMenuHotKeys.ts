@@ -2,6 +2,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -12,14 +13,18 @@ import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeybo
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleCommandMenu } = useCommandMenu();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+
+  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
@@ -30,6 +35,8 @@ export const useCommandMenuHotKeys = () => {
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
+
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -53,6 +60,20 @@ export const useCommandMenuHotKeys = () => {
     },
     false,
     [openRecordsSearchPage],
+    {
+      ignoreModifiers: true,
+    },
+  );
+
+  useGlobalHotkeys(
+    ['@'],
+    () => {
+      if (isAiEnabled) {
+        openAskAIPage();
+      }
+    },
+    false,
+    [openAskAIPage, isAiEnabled],
     {
       ignoreModifiers: true,
     },

@@ -1,4 +1,5 @@
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
@@ -32,4 +33,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
+  [CommandMenuPages.AskAI, <CommandMenuAskAIPage />],
 ]);

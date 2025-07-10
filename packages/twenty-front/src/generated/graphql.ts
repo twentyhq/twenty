@@ -997,6 +997,7 @@ export enum MessageChannelVisibility {
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
+  NONE = 'NONE',
   OPENAI = 'OPENAI'
 }
 
@@ -2611,6 +2612,7 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];
+  defaultAgent?: Maybe<Agent>;
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;

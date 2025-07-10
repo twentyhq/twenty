@@ -796,6 +796,14 @@ msgstr ""
 msgid "Ascending"
 msgstr "오름차순"
 
+#. js-lingui-id: xWEvuo
+#: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
+#: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Ask AI"
+msgstr ""
+
 #. js-lingui-id: 9ch9Mz
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
