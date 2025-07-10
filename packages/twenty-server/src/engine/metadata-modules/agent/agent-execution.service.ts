@@ -10,7 +10,7 @@ import {
   ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
+import { getEffectiveModelConfig } from 'src/engine/core-modules/ai/utils/get-effective-model-config.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentChatMessageEntity,
@@ -22,6 +22,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id.util';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -45,12 +46,17 @@ export class AgentExecutionService {
     private readonly agentToolService: AgentToolService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(AgentChatMessageEntity, 'core')
-    private readonly agentChatmessageRepository: Repository<AgentChatMessageEntity>,
   ) {}
 
   getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
+      case ModelProvider.NONE: {
+        const OpenAIProvider = createOpenAI({
+          apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
+        });
+
+        return OpenAIProvider(getEffectiveModelConfig(modelId).modelId);
+      }
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
           apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
@@ -77,6 +83,9 @@ export class AgentExecutionService {
     let apiKey: string | undefined;
 
     switch (provider) {
+      case ModelProvider.NONE:
+        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
+        break;
       case ModelProvider.OPENAI:
         apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
         break;
@@ -91,7 +100,7 @@ export class AgentExecutionService {
     }
     if (!apiKey) {
       throw new AgentException(
-        `${provider.toUpperCase()} API key not configured`,
+        `${provider === ModelProvider.NONE ? 'OPENAI' : provider.toUpperCase()} API key not configured`,
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }

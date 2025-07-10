@@ -56,6 +56,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -92,6 +94,7 @@ export class WorkspaceResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
+    private readonly agentService: AgentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -220,6 +223,29 @@ export class WorkspaceResolver {
       workspace.defaultRoleId,
       workspace.id,
     );
+  }
+
+  @ResolveField(() => AgentDTO, { nullable: true })
+  async defaultAgent(@Parent() workspace: Workspace): Promise<AgentDTO | null> {
+    if (!workspace.defaultAgentId) {
+      return null;
+    }
+
+    try {
+      const agent = await this.agentService.findOneAgent(
+        workspace.defaultAgentId,
+        workspace.id,
+      );
+
+      // Convert roleId from null to undefined to match AgentDTO
+      return {
+        ...agent,
+        roleId: agent.roleId ?? undefined,
+      };
+    } catch (error) {
+      // If agent is not found, return null instead of throwing
+      return null;
+    }
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })
