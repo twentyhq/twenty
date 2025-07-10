@@ -435,7 +435,6 @@ export type ConnectionParameters = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: InputMaybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type ConnectionParametersOutput = {
@@ -444,7 +443,6 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type CreateApiKeyDto = {
@@ -672,7 +670,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
-  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
+  IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',

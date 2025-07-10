@@ -98,7 +98,10 @@ export const WorkflowEditActionSendEmail = ({
       }
     };
 
-    if (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes)) {
+    if (
+      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes))
+    ) {
       await triggerApisOAuth(connectedAccount.provider, {
         redirectLocation: redirectUrl,
         loginHint: connectedAccount.handle,
@@ -180,6 +183,7 @@ export const WorkflowEditActionSendEmail = ({
       provider: true,
       scopes: true,
       accountOwnerId: true,
+      connectionParameters: true,
     },
   });
 
