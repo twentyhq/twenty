@@ -139,17 +139,7 @@ export const ActivityRichTextEditor = ({
       targetObjectNameSingular: activityObjectNameSingular,
     });
   };
-  const saveAttachmentsName = async (
-    attachmentsToUpdate: Partial<Attachment>[],
-  ) => {
-    for (const attachmentToUpdate of attachmentsToUpdate) {
-      if (!attachmentToUpdate.id) continue;
-      await updateOneAttachment({
-        idToUpdate: attachmentToUpdate.id,
-        updateOneRecordInput: { name: attachmentToUpdate.name },
-      });
-    }
-  };
+  
 
   const prepareBody = (newStringifiedBody: string) => {
     if (!newStringifiedBody) return newStringifiedBody;
@@ -185,7 +175,17 @@ export const ActivityRichTextEditor = ({
     },
     [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
   );
-
+const saveAttachmentsName = async (
+    attachmentsToUpdate: Partial<Attachment>[],
+  ) => {
+    for (const attachmentToUpdate of attachmentsToUpdate) {
+      if (!attachmentToUpdate.id) continue;
+      await updateOneAttachment({
+        idToUpdate: attachmentToUpdate.id,
+        updateOneRecordInput: { name: attachmentToUpdate.name },
+      });
+    }
+  };
   const handleBodyChange = useRecoilCallback(
     ({ set, snapshot }) =>
       async (newStringifiedBody: string) => {
@@ -271,6 +271,7 @@ export const ActivityRichTextEditor = ({
     ],
   );
 
+
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
   const handleEditorChange = () => {
@@ -313,10 +314,6 @@ export const ActivityRichTextEditor = ({
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
-    console.log(
-      'attachmentAbsoluteURLattachmentAbsoluteURL',
-      attachmentAbsoluteURL,
-    );
 
     return attachmentAbsoluteURL;
   };
