@@ -4,20 +4,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconComponent,
-  IconGoogle,
-  IconMail,
-  IconMicrosoft,
-} from 'twenty-ui/display';
+
+import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsListCard } from '../../components/SettingsListCard';
-
-const ProviderIcons: { [k: string]: IconComponent } = {
-  google: IconGoogle,
-  microsoft: IconMicrosoft,
-  imap: IconMail,
-};
 
 export const SettingsAccountsConnectedAccountsListCard = ({
   accounts,
@@ -38,7 +28,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       items={accounts}
       getItemLabel={(account) => account.handle}
       isLoading={loading}
-      RowIconFn={(row) => ProviderIcons[row.provider]}
+      RowIconFn={(row) => SettingsConnectedAccountIcon({ account: row })}
       RowRightComponent={({ item: account }) => (
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}

@@ -64,19 +64,19 @@ const SettingsNewObject = lazy(() =>
   })),
 );
 
-const SettingsNewImapConnection = lazy(() =>
+const SettingsNewImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+    '@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsNewImapConnection,
+    default: module.SettingsAccountsNewImapSmtpCaldavConnection,
   })),
 );
 
-const SettingsEditImapConnection = lazy(() =>
+const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   import(
-    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+    '@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection'
   ).then((module) => ({
-    default: module.SettingsAccountsEditImapConnection,
+    default: module.SettingsAccountsEditImapSmtpCaldavConnection,
   })),
 );
 
@@ -375,12 +375,12 @@ export const SettingsRoutes = ({
         element={<SettingsAccountsEmails />}
       />
       <Route
-        path={SettingsPath.NewImapConnection}
-        element={<SettingsNewImapConnection />}
+        path={SettingsPath.NewImapSmtpCaldavConnection}
+        element={<SettingsNewImapSmtpCaldavConnection />}
       />
       <Route
-        path={SettingsPath.EditImapConnection}
-        element={<SettingsEditImapConnection />}
+        path={SettingsPath.EditImapSmtpCaldavConnection}
+        element={<SettingsEditImapSmtpCaldavConnection />}
       />
       <Route
         element={
