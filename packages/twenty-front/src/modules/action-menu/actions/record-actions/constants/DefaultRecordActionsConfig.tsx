@@ -10,7 +10,6 @@ import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/reco
 import { SeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordAction';
-import { CreateRelatedRecordAction } from '@/action-menu/actions/record-actions/single-record/components/CreateRelatedRecordAction';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
 import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
 import { ExportNoteActionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordAction';
@@ -413,81 +412,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <RestoreMultipleRecordsAction />,
-  },
-  [SingleRecordActionKeys.CREATE_RELATED_PEOPLE]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Create,
-    key: SingleRecordActionKeys.CREATE_RELATED_PEOPLE,
-    label: msg`Create related people`,
-    shortLabel: msg`Create people`,
-    position: 18,
-    Icon: IconUser,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      getTargetObjectReadPermission,
-      objectMetadataItem,
-    }) =>
-      isDefined(selectedRecord) &&
-      !selectedRecord.isRemote &&
-      objectPermissions.canUpdateObjectRecords &&
-      getTargetObjectReadPermission(CoreObjectNameSingular.Person) === true &&
-      isDefined(objectMetadataItem) &&
-      objectMetadataItem.fields.some(
-        (field) =>
-          field.type === 'RELATION' &&
-          field.relation?.type === 'ONE_TO_MANY' &&
-          field.relation?.targetObjectMetadata.nameSingular ===
-            CoreObjectNameSingular.Person,
-      ),
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
-    component: (
-      <CreateRelatedRecordAction recordType={CoreObjectNameSingular.Person} />
-    ),
-  },
-  [SingleRecordActionKeys.CREATE_RELATED_OPPORTUNITIES]: {
-    type: ActionType.Standard,
-    scope: ActionScope.Create,
-    key: SingleRecordActionKeys.CREATE_RELATED_OPPORTUNITIES,
-    label: msg`Create related opportunities`,
-    shortLabel: msg`Create opportunities`,
-    position: 19,
-    Icon: IconTargetArrow,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      getTargetObjectReadPermission,
-      objectMetadataItem,
-    }) =>
-      isDefined(selectedRecord) &&
-      !selectedRecord.isRemote &&
-      objectPermissions.canUpdateObjectRecords &&
-      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) ===
-        true &&
-      isDefined(objectMetadataItem) &&
-      objectMetadataItem.fields.some(
-        (field) =>
-          field.type === 'RELATION' &&
-          field.relation?.type === 'ONE_TO_MANY' &&
-          field.relation?.targetObjectMetadata.nameSingular ===
-            CoreObjectNameSingular.Opportunity,
-      ),
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
-    component: (
-      <CreateRelatedRecordAction
-        recordType={CoreObjectNameSingular.Opportunity}
-      />
-    ),
   },
   [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
     type: ActionType.Navigation,
