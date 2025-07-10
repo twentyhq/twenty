@@ -419,7 +419,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
-    position: 20,
+    position: 18,
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
@@ -451,7 +451,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
-    position: 21,
+    position: 19,
     Icon: IconUser,
     isPinned: false,
     availableOn: [
@@ -482,7 +482,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
-    position: 22,
+    position: 20,
     Icon: IconBuildingSkyscraper,
     isPinned: false,
     availableOn: [
@@ -513,7 +513,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 23,
+    position: 21,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
@@ -546,7 +546,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 24,
+    position: 22,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -572,7 +572,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 25,
+    position: 23,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -603,7 +603,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 26,
+    position: 24,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
