@@ -53,9 +53,6 @@ type ActivityRichTextEditorProps = {
     | CoreObjectNameSingular.Note;
 };
 
-type Activity = (Task | Note) & {
-  attachments: Attachment[];
-};
 
 export const ActivityRichTextEditor = ({
   activityId,
@@ -143,7 +140,7 @@ export const ActivityRichTextEditor = ({
   const saveAttachmentsName = async (
     attachmentsToUpdate: Partial<Attachment>[],
   ) => {
-    for (let attachmentToUpdate of attachmentsToUpdate) {
+    for (const attachmentToUpdate of attachmentsToUpdate) {
       if (!attachmentToUpdate.id) continue;
       await updateOneAttachment({
         idToUpdate: attachmentToUpdate.id,
@@ -268,6 +265,7 @@ export const ActivityRichTextEditor = ({
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
+      saveAttachmentsName
     ],
   );
 

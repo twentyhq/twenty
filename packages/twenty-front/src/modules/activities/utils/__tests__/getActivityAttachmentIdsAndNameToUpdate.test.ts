@@ -26,11 +26,9 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
         props: { url: '/files/images/test2.txt', name: 'image1' },
       },
     ]);
-    const attachmentIdsAdnameToUpdate = getActivityAttachmentIdsAndNameToUpdate(
-      activityBody,
-      attachments,
-    );
-    expect(attachmentIdsAdnameToUpdate).toEqual([]);
+    const attachmentIdsAndNameToUpdate =
+      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments);
+    expect(attachmentIdsAndNameToUpdate).toEqual([]);
   });
 
   it('should return only the IDs and new names of attachments whose names were changed in the body', () => {
@@ -57,10 +55,8 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
         props: { url: '/files/images/test2.txt', name: 'image4' },
       },
     ]);
-    const attachmentIdsAdnameToUpdate = getActivityAttachmentIdsAndNameToUpdate(
-      activityBody,
-      attachments,
-    );
-    expect(attachmentIdsAdnameToUpdate).toEqual([{ id: '2', name: 'image4' }]);
+    const attachmentIdsAndNameToUpdate =
+      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments);
+    expect(attachmentIdsAndNameToUpdate).toEqual([{ id: '2', name: 'image4' }]);
   });
 });
