@@ -21,6 +21,17 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
 };
 
+const BASE_NEW_STEP_FILTER = {
+  id: v4(),
+  type: 'unknown',
+  label: '',
+  value: '',
+  operand: ViewFilterOperand.Is,
+  displayValue: '',
+  stepFilterGroupId: '',
+  stepOutputKey: '',
+};
+
 export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
@@ -42,16 +53,10 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     closeDropdown(dropdownId);
 
     const newStepFilter = {
-      id: v4(),
-      type: 'unknown',
-      label: 'New Filter',
-      value: '',
-      operand: ViewFilterOperand.Is,
-      displayValue: '',
+      ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: stepFilterGroup.id,
-      stepOutputKey: '',
       positionInStepFilterGroup: newPositionInStepFilterGroup,
-    };
+    } satisfies StepFilter;
 
     upsertStepFilterSettings({
       stepFilterToUpsert: newStepFilter,
@@ -71,15 +76,9 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     };
 
     const newStepFilter: StepFilter = {
-      id: v4(),
-      type: 'unknown',
-      operand: ViewFilterOperand.Is,
-      value: '',
-      displayValue: '',
+      ...BASE_NEW_STEP_FILTER,
       stepFilterGroupId: newStepFilterGroupId,
       positionInStepFilterGroup: 1,
-      label: 'New Filter',
-      stepOutputKey: '',
     };
 
     upsertStepFilterSettings({
