@@ -2328,6 +2328,12 @@ export enum TwoFactorAuthenticationProviders {
   TOTP = 'TOTP'
 }
 
+export type TwoFactorAuthenticatonDto = {
+  __typename?: 'TwoFactorAuthenticatonDTO';
+  isActive: Scalars['Boolean'];
+  twoFactorAuthenticationMethodId: Scalars['String'];
+};
+
 export type TwoFactorPolicy = {
   __typename?: 'TwoFactorPolicy';
   strategy: TwoFactorAuthenticationProviders;
@@ -2567,6 +2573,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<TwoFactorAuthenticatonDto>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
