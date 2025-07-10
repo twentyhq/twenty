@@ -8,14 +8,12 @@ describe('getActivityAttachmentPathsToRestore', () => {
         type: 'paragraph',
       },
     ]);
-
     const oldActivityAttachments = [
       {
         id: '1',
-        fullPath: '/files/attachment/test.txt',
+        fullPath: '/files/images/test.txt',
       },
     ] as Attachment[];
-
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newActivityBody,
       oldActivityAttachments,
@@ -27,18 +25,18 @@ describe('getActivityAttachmentPathsToRestore', () => {
     const newActivityBody = JSON.stringify([
       {
         type: 'file',
-        props: { url: '/files/attachment/test.txt' },
+        props: { url: '/files/images/test.txt' },
       },
       {
         type: 'file',
-        props: { url: '/files/attachment/test2.txt' },
+        props: { url: '/files/images/test2.txt' },
       },
     ]);
 
     const oldActivityAttachments = [
       {
         id: '1',
-        fullPath: '/files/attachment/test.txt',
+        fullPath: '/files/images/test.txt',
       },
     ] as Attachment[];
 
@@ -46,6 +44,6 @@ describe('getActivityAttachmentPathsToRestore', () => {
       newActivityBody,
       oldActivityAttachments,
     );
-    expect(attachmentPathsToRestore).toEqual(['attachment/test2.txt']);
+    expect(attachmentPathsToRestore).toEqual(['images/test2.txt']);
   });
 });
