@@ -89,10 +89,7 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
           <Trans>to generate one-time passwords</Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
-          {!qrCode 
-            ? <Loader /> 
-            : <QRCode value={qrCode} 
-          />}
+          {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
         </StyledMainContentContainer>
         <MainButton
           title={'Next'}

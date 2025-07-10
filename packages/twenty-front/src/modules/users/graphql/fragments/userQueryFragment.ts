@@ -40,7 +40,7 @@ export const USER_QUERY_FRAGMENT = gql`
         ...ObjectPermissionFragment
       }
       twoFactorAuthenticationMethodSummary {
-        twoFactorAuthenticationMethodId,
+        twoFactorAuthenticationMethodId
         isActive
       }
     }
@@ -100,7 +100,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       twoFactorAuthenticationPolicy {
-        strategy 
+        strategy
       }
     }
     availableWorkspaces {

@@ -30,7 +30,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
             message: t`Login token missing. Two Factor Authentication setup can not be initiated.`,
             options: {
               dedupeKey: 'invalid-session-dedupe-key',
-            }
+            },
           });
           return navigate(AppPath.SignInUp);
         }
@@ -44,9 +44,8 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           },
         });
 
-        if (
-          !initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri
-        ) return;
+        if (!initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri)
+          return;
 
         setQrCodeState(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
@@ -57,13 +56,14 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           options: {
             dedupeKey:
               'two-factor-authentication-provisioning-initiation-dedupe-key',
-          }
+          },
         });
       } catch (error) {
         enqueueErrorSnackBar({
           message: t`Two factor authentication provisioning failed.`,
           options: {
-            dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-failed',
           },
         });
       }

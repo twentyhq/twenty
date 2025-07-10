@@ -27,9 +27,8 @@ export const SettingsProfile = () => {
 
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const twoFactorAuthenticationStatus = currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.isActive
-
-  console.log({currentUserWorkspace})
+  const twoFactorAuthenticationStatus =
+    currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.isActive;
 
   return (
     <SubMenuTopBarContainer
@@ -61,21 +60,26 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {!!currentWorkspace?.twoFactorAuthenticationPolicy && isTwoFactorAuthenticationEnabled === true && (
-          <Section>
-            <UndecoratedLink to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}>
-              <SettingsCard 
-                title={t`Authenticator App`}
-                Icon={<IconShield />}
-                Status={(twoFactorAuthenticationStatus 
-                    ? <Status text={'Active'} color={'turquoise'} />
-                    : <Status text={'Inactive'} color={'orange'} />
-                  ) 
-                }
-              />  
-            </UndecoratedLink>
-          </Section>
-        )}
+        {!!currentWorkspace?.twoFactorAuthenticationPolicy &&
+          isTwoFactorAuthenticationEnabled === true && (
+            <Section>
+              <UndecoratedLink
+                to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}
+              >
+                <SettingsCard
+                  title={t`Authenticator App`}
+                  Icon={<IconShield />}
+                  Status={
+                    twoFactorAuthenticationStatus ? (
+                      <Status text={'Active'} color={'turquoise'} />
+                    ) : (
+                      <Status text={'Inactive'} color={'orange'} />
+                    )
+                  }
+                />
+              </UndecoratedLink>
+            </Section>
+          )}
         <Section>
           <ChangePassword />
         </Section>

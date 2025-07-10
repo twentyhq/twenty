@@ -17,6 +17,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
@@ -24,7 +25,6 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
 import { ResetTwoFactorAuthenticationMethodInput } from './dto/reset-two-factor-authentication-method.input';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { ResetTwoFactorAuthenticationMethodOutput } from './dto/reset-two-factor-authentication-method.output';
 
 @Resolver()
@@ -103,11 +103,11 @@ export class TwoFactorAuthenticationResolver {
     );
 
     await this.twoFactorAuthenticationMethodRepository.delete({
-      id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId
-    })
+      id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+    });
 
     return {
-      success: true
-    }
+      success: true,
+    };
   }
 }

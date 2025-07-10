@@ -102,7 +102,6 @@ export const ClientConfigProviderEffect = () => {
     isTwoFactorAuthenticationEnabledState,
   );
 
-
   const { data, loading, error, fetchClientConfig } = useClientConfig();
 
   useEffect(() => {
@@ -195,7 +194,9 @@ export const ClientConfigProviderEffect = () => {
 
     setCalendarBookingPageId(data?.clientConfig?.calendarBookingPageId ?? null);
     setIsImapSmtpCaldavEnabled(data?.clientConfig?.isImapSmtpCaldavEnabled);
-    setIsTwoFactorAuthenticationEnabled(data?.clientConfig.isTwoFactorAuthenticationEnabled);
+    setIsTwoFactorAuthenticationEnabled(
+      data?.clientConfig.isTwoFactorAuthenticationEnabled,
+    );
   }, [
     data,
     loading,
@@ -224,7 +225,7 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
     setIsImapSmtpCaldavEnabled,
-    setIsTwoFactorAuthenticationEnabled
+    setIsTwoFactorAuthenticationEnabled,
   ]);
 
   return <></>;

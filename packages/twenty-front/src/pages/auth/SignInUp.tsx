@@ -61,7 +61,7 @@ const StandardContent = ({
         SignInUpStep.Password,
         SignInUpStep.TwoFactorAuthenticationProvision,
         SignInUpStep.TwoFactorAuthenticationVerification,
-        SignInUpStep.WorkspaceSelection
+        SignInUpStep.WorkspaceSelection,
       ].includes(signInUpStep) && <FooterNote />}
     </Modal.Content>
   );
@@ -95,7 +95,6 @@ export const SignInUp = () => {
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {
       return t`Choose a Workspace`;
     }
-
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
       return t`Setup your 2FA`;

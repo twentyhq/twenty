@@ -24,7 +24,6 @@ import {
 import { Toggle2FA } from './Toggle2FA';
 import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/isTwoFactorAuthenticationEnabledState';
 
-
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
   flex-direction: column;

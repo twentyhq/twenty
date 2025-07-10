@@ -6,7 +6,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,

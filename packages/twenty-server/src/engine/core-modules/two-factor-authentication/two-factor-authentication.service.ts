@@ -9,6 +9,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
 import {
@@ -17,7 +21,6 @@ import {
 } from './two-factor-authentication.exception';
 
 import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
-import { AuthException, AuthExceptionCode } from '../auth/auth.exception';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui, Trans } from '@lingui/react/macro';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AppPath } from '@/types/AppPath';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
@@ -12,7 +11,10 @@ import { getLoginToken } from '@/apollo/utils/getLoginToken';
 import { MainButton } from 'twenty-ui/input';
 import { OTPInput, SlotProps } from 'input-otp';
 import { Controller } from 'react-hook-form';
-import { OTPFormValues, useTwoFactorAuthenticationForm } from '../../hooks/useTwoFactorAuthenticationForm';
+import {
+  OTPFormValues,
+  useTwoFactorAuthenticationForm,
+} from '../../hooks/useTwoFactorAuthenticationForm';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -180,19 +182,15 @@ export const SignInUpTOTPVerification = () => {
 
     if (!loginToken) {
       enqueueErrorSnackBar({
-        message: t`Invalid email verification link.`, 
+        message: t`Invalid email verification link.`,
         options: {
-            dedupeKey: 'email-verification-link-dedupe-key',
+          dedupeKey: 'email-verification-link-dedupe-key',
         },
       });
       return navigate(AppPath.SignInUp);
     }
 
-    await getAuthTokensFromOTP(
-        values.otp,
-        loginToken,
-        captchaToken
-    );
+    await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
   };
 
   return (
@@ -205,9 +203,7 @@ export const SignInUpTOTPVerification = () => {
         <Controller
           name="otp"
           control={form.control}
-          render={({
-            field: { onChange, onBlur, value },
-          }) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <OTPInput
               maxLength={6}
               onBlur={onBlur}

@@ -15,14 +15,16 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID = 'delete-two-factor-authentication-modal';
+const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
+  'delete-two-factor-authentication-modal';
 export const DeleteTwoFactorAuthentication = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { origin } = useOrigin();
-  const [deleteTwoFactorAuthenticationMethod] = useResetTwoFactorAuthenticationMethodMutation();
+  const [deleteTwoFactorAuthenticationMethod] =
+    useResetTwoFactorAuthenticationMethodMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
@@ -30,21 +32,35 @@ export const DeleteTwoFactorAuthentication = () => {
   const navigate = useNavigateSettings();
 
   const reset2FA = async () => {
-    if (!isDefined(currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.twoFactorAuthenticationMethodId)) {
-        enqueueErrorSnackBar({
-            message: t`Invalid 2FA information.`,
-            options: {
-                dedupeKey: '2fa-dedupe-key',
-            },
-        });
-        return navigate(SettingsPath.ProfilePage);
+    if (
+      !isDefined(
+        currentUserWorkspace?.twoFactorAuthenticationMethodSummary
+          ?.twoFactorAuthenticationMethodId,
+      )
+    ) {
+      enqueueErrorSnackBar({
+        message: t`Invalid 2FA information.`,
+        options: {
+          dedupeKey: '2fa-dedupe-key',
+        },
+      });
+      return navigate(SettingsPath.ProfilePage);
     }
 
     await deleteTwoFactorAuthenticationMethod({
-        variables: {
-            origin,
-            twoFactorAuthenticationMethodId: currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.twoFactorAuthenticationMethodId
-        }
+      variables: {
+        origin,
+        twoFactorAuthenticationMethodId:
+          currentUserWorkspace?.twoFactorAuthenticationMethodSummary
+            ?.twoFactorAuthenticationMethodId,
+      },
+    });
+
+    enqueueSuccessSnackBar({
+      message: t`2FA Method has been reset successfuly.`,
+      options: {
+        dedupeKey: '2fa-dedupe-key',
+      },
     });
 
     await signOut();
@@ -71,8 +87,9 @@ export const DeleteTwoFactorAuthentication = () => {
         title={t`2FA Method Reset`}
         subtitle={
           <>
-            This action cannot be undone. This will permanently reset your
-            two factor authentication method. <br /> Please type in your email to confirm.
+            This action cannot be undone. This will permanently reset your two
+            factor authentication method. <br /> Please type in your email to
+            confirm.
           </>
         }
         onConfirmClick={reset2FA}

@@ -399,8 +399,6 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       try {
-        handleSetLoginToken(loginToken);
-
         const getAuthTokensResult = await getAuthTokensFromLoginToken({
           variables: {
             loginToken: loginToken,
@@ -425,6 +423,7 @@ export const useAuth = () => {
           error.graphQLErrors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
+          handleSetLoginToken(loginToken);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
           throw error;
         }
@@ -434,17 +433,16 @@ export const useAuth = () => {
           error.graphQLErrors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
+          handleSetLoginToken(loginToken);
           setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
           throw error;
         }
       }
     },
     [
+      handleSetLoginToken,
       getAuthTokensFromLoginToken,
-      loadCurrentUser,
       origin,
-      handleSetAuthTokens,
-      refreshObjectMetadataItems,
       handleLoadWorkspaceAfterAuthentication,
       setSignInUpStep,
     ],
@@ -749,6 +747,6 @@ export const useAuth = () => {
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
-    initiateOtpProvisioning
+    initiateOtpProvisioning,
   };
 };

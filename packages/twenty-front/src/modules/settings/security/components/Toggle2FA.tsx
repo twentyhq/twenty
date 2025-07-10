@@ -1,8 +1,7 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { TwoFactorAuthenticationProviders } from '~/generated/graphql';
@@ -15,7 +14,7 @@ export const Toggle2FA = () => {
     currentWorkspaceState,
   );
 
-  const [ updateWorkspace ] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const handleChange = async () => {
     try {
@@ -56,7 +55,7 @@ export const Toggle2FA = () => {
       }
     } catch (err: any) {
       enqueueErrorSnackBar({
-        message: err?.message, 
+        message: err?.message,
       });
     }
   };
