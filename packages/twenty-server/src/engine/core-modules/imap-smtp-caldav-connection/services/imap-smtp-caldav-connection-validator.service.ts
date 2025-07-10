@@ -18,7 +18,10 @@ export class ImapSmtpCaldavValidatorService {
     params: ConnectionParameters,
   ): ConnectionParameters {
     if (!params) {
-      throw new UserInputError('Protocol connection parameters are required');
+      throw new UserInputError('Protocol connection parameters are required', {
+        userFriendlyMessage:
+          'Please provide connection details to configure your email account.',
+      });
     }
 
     try {
@@ -31,10 +34,17 @@ export class ImapSmtpCaldavValidatorService {
 
         throw new UserInputError(
           `Protocol connection validation failed: ${errorMessages}`,
+          {
+            userFriendlyMessage:
+              'Please check your connection settings. Make sure the server host, port, and password are correct.',
+          },
         );
       }
 
-      throw new UserInputError('Protocol connection validation failed');
+      throw new UserInputError('Protocol connection validation failed', {
+        userFriendlyMessage:
+          'There was an issue with your connection settings. Please try again.',
+      });
     }
   }
 }

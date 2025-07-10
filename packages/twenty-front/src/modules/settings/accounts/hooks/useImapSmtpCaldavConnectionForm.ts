@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { SettingsPath } from '@/types/SettingsPath';
@@ -41,7 +40,6 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const formMethods = useForm<ConnectionFormData>({
@@ -104,20 +102,6 @@ export const useImapSmtpCaldavConnectionForm = ({
     );
   }, [getConfiguredProtocols, watchedValues.handle]);
 
-  const validateWorkspaceRequirements = useCallback((): boolean => {
-    if (!currentWorkspace?.id) {
-      enqueueErrorSnackBar({ message: 'Workspace ID is missing' });
-      return false;
-    }
-
-    if (!currentWorkspaceMember?.id) {
-      enqueueErrorSnackBar({ message: 'Workspace member ID is missing' });
-      return false;
-    }
-
-    return true;
-  }, [currentWorkspace?.id, currentWorkspaceMember?.id, enqueueErrorSnackBar]);
-
   const saveIndividualConnection = useCallback(
     async (
       protocol: keyof ImapSmtpCaldavAccount,
@@ -151,10 +135,6 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const handleSave = useCallback(
     async (formValues: ConnectionFormData): Promise<void> => {
-      if (!validateWorkspaceRequirements()) {
-        return;
-      }
-
       const configuredProtocols = getConfiguredProtocols(formValues);
 
       try {
@@ -180,7 +160,6 @@ export const useImapSmtpCaldavConnectionForm = ({
       }
     },
     [
-      validateWorkspaceRequirements,
       getConfiguredProtocols,
       saveIndividualConnection,
       isEditing,

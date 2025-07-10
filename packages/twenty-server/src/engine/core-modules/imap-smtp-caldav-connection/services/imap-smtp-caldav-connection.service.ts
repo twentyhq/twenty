@@ -57,16 +57,27 @@ export class ImapSmtpCaldavService {
       if (error.authenticationFailed) {
         throw new UserInputError(
           'IMAP authentication failed. Please check your credentials.',
+          {
+            userFriendlyMessage:
+              "We couldn't log in to your email account. Please check your email address and password, then try again.",
+          },
         );
       }
 
       if (error.code === 'ECONNREFUSED') {
         throw new UserInputError(
           `IMAP connection refused. Please verify server and port.`,
+          {
+            userFriendlyMessage:
+              "We couldn't connect to your email server. Please check your server settings and try again.",
+          },
         );
       }
 
-      throw new UserInputError(`IMAP connection failed: ${error.message}`);
+      throw new UserInputError(`IMAP connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          'We encountered an issue connecting to your email account. Please check your settings and try again.',
+      });
     } finally {
       if (client.authenticated) {
         await client.logout();
@@ -97,7 +108,10 @@ export class ImapSmtpCaldavService {
         `SMTP connection failed: ${error.message}`,
         error.stack,
       );
-      throw new UserInputError(`SMTP connection failed: ${error.message}`);
+      throw new UserInputError(`SMTP connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again.",
+      });
     }
 
     return true;
@@ -131,6 +145,10 @@ export class ImapSmtpCaldavService {
 
     throw new UserInputError(
       'Invalid account type. Must be one of: IMAP, SMTP, CALDAV',
+      {
+        userFriendlyMessage:
+          'Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again.',
+      },
     );
   }
 

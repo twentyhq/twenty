@@ -144,9 +144,9 @@ export class ImapSmtpCalDavAPIService {
             type: MessageChannelType.EMAIL,
             handle,
             isSyncEnabled: shouldEnableSync,
-            ...(shouldEnableSync
-              ? { syncStatus: MessageChannelSyncStatus.ONGOING }
-              : {}),
+            syncStatus: shouldEnableSync
+              ? MessageChannelSyncStatus.ONGOING
+              : MessageChannelSyncStatus.NOT_SYNCED,
           },
           {},
         );
@@ -217,7 +217,9 @@ export class ImapSmtpCalDavAPIService {
           },
           {
             syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
+            syncStatus: shouldEnableSync
+              ? MessageChannelSyncStatus.ONGOING
+              : MessageChannelSyncStatus.NOT_SYNCED,
             syncCursor: '',
             syncStageStartedAt: null,
             isSyncEnabled: shouldEnableSync,

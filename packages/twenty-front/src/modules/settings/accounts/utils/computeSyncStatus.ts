@@ -5,12 +5,7 @@ import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 export const computeSyncStatus = (
   messageChannelSyncStatus: MessageChannelSyncStatus,
   calendarChannelSyncStatus: CalendarChannelSyncStatus,
-  isMessageChannelSyncEnabled?: boolean,
 ) => {
-  if (isMessageChannelSyncEnabled === false) {
-    return null;
-  }
-
   if (
     messageChannelSyncStatus === MessageChannelSyncStatus.FAILED_UNKNOWN ||
     messageChannelSyncStatus ===
