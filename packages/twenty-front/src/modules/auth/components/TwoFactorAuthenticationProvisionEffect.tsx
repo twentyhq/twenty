@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AppPath } from '@/types/AppPath';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
@@ -12,9 +11,8 @@ import { getLoginToken } from '@/apollo/utils/getLoginToken';
 import { qrCodeState } from '@/auth/states/qrCode';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
-  const { initiateTwoFactorAuthenticationProvisioning } = useAuth();
-
-  const { enqueueSnackBar } = useSnackBar();
+  const { initiateOtpProvisioning } = useAuth();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
@@ -28,15 +26,17 @@ export const TwoFactorAuthenticationSetupEffect = () => {
     const handleTwoFactorAuthenticationProvisioningInitiation = async () => {
       try {
         if (!loginToken) {
-          enqueueSnackBar(t`Invalid email verification link.`, {
-            dedupeKey: 'email-verification-link-dedupe-key',
-            variant: SnackBarVariant.Error,
+          enqueueErrorSnackBar({
+            message: t`Invalid session.`,
+            options: {
+              dedupeKey: 'invalid-session-dedupe-key',
+            }
           });
           return navigate(AppPath.SignInUp);
         }
 
         const token = await readCaptchaToken();
-        const ts = await initiateTwoFactorAuthenticationProvisioning({
+        const initiateOTPProvisioningResult = await initiateOtpProvisioning({
           variables: {
             loginToken: loginToken,
             captchaToken: token,
@@ -44,19 +44,28 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           },
         });
 
-        if (!ts.data?.initiateOTPProvisioning.uri) return;
+        if (
+          !initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri
+        ) return;
 
         setQrCodeState(
-          ts.data?.initiateOTPProvisioning.uri,
+          initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
 
-        enqueueSnackBar(t`Two factor authentication provisioning initiated.`, {
-          dedupeKey:
-            'two-factor-authentication-provisioning-initiation-dedupe-key',
-          variant: SnackBarVariant.Success,
+        enqueueSuccessSnackBar({
+          message: t`Two factor authentication provisioning initiated.`,
+          options: {
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-dedupe-key',
+          }
         });
       } catch (error) {
-        // TODO: AAAAH
+        enqueueErrorSnackBar({
+          message: t`Two factor authentication provisioning failed.`,
+          options: {
+            dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
+          },
+        });
       }
     };
 

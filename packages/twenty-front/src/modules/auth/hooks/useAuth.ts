@@ -23,6 +23,7 @@ import {
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
+  useInitiateOtpProvisioningMutation,
   useSignInMutation,
   useSignUpInWorkspaceMutation,
   useSignUpMutation,
@@ -114,6 +115,7 @@ export const useAuth = () => {
   const [getLoginTokenFromEmailVerificationToken] =
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const [initiateOtpProvisioning] = useInitiateOtpProvisioningMutation();
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
@@ -672,5 +674,6 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
+    initiateOtpProvisioning
   };
 };
