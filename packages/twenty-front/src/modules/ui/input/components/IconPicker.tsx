@@ -18,10 +18,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { t } from '@lingui/core/macro';
 import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
 import {
+  Button,
   IconButton,
   IconButtonSize,
   IconButtonVariant,
-  LightIconButton,
 } from 'twenty-ui/input';
 
 export type IconPickerProps = {
@@ -48,7 +48,7 @@ const StyledMenuIconItemsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledLightIconButton = styled(LightIconButton)<{
+const StyledLightIconButton = styled(Button)<{
   isSelected?: boolean;
   isFocused?: boolean;
 }>`
@@ -58,6 +58,7 @@ const StyledLightIconButton = styled(LightIconButton)<{
       : isFocused
         ? theme.background.transparent.light
         : 'transparent'};
+  width: 100%;
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>
