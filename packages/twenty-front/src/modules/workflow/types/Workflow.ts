@@ -22,7 +22,6 @@ import {
   workflowRunOutputStepsOutputSchema,
   workflowRunSchema,
   workflowRunStateSchema,
-  WorkflowRunStateStepsInfosSchema,
   workflowRunStatusSchema,
   workflowRunStepStatusSchema,
   workflowSendEmailActionSchema,
@@ -157,10 +156,6 @@ export type WorkflowRunStatus = z.infer<typeof workflowRunStatusSchema>;
 export type WorkflowRun = z.infer<typeof workflowRunSchema>;
 
 export type WorkflowRunState = z.infer<typeof workflowRunStateSchema>;
-
-export type WorkflowRunStateStepsInfos = z.infer<
-  typeof WorkflowRunStateStepsInfosSchema
->;
 
 export type WorkflowRunStepStatus = z.infer<typeof workflowRunStepStatusSchema>;
 

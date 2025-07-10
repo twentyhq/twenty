@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
@@ -19,7 +20,6 @@ import {
   WorkflowBranchExecutorInput,
   WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -219,7 +219,7 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const steps = workflowRun.output?.flow.steps;
+    const steps = workflowRun.state?.flow.steps;
 
     const context = workflowRun.context;
 
