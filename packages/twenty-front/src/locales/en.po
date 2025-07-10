@@ -140,7 +140,9 @@ msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} will be unassigned from the following role:"
 
 #. js-lingui-id: CwstSL
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
 
@@ -218,8 +220,8 @@ msgstr "24h ({hour24Label})"
 
 #. js-lingui-id: IbMa7Z
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "993"
-msgstr "993"
+#~ msgid "993"
+#~ msgstr "993"
 
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -294,6 +296,8 @@ msgstr "Account Deletion"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -973,6 +977,36 @@ msgstr "By using Twenty, you agree to the"
 msgid "Calculate"
 msgstr "Calculate"
 
+#. js-lingui-id: GixROH
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Configuration"
+msgstr "CalDAV Configuration"
+
+#. js-lingui-id: Lw3Ou8
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Encryption"
+msgstr "CalDAV Encryption"
+
+#. js-lingui-id: 4dwQbl
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Password"
+msgstr "CalDAV Password"
+
+#. js-lingui-id: 5wnjvr
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Port"
+msgstr "CalDAV Port"
+
+#. js-lingui-id: JUGLyW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Server"
+msgstr "CalDAV Server"
+
+#. js-lingui-id: +x0fpb
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "caldav.example.com"
+msgstr "caldav.example.com"
+
 #. js-lingui-id: AjVXBS
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
@@ -1271,6 +1305,11 @@ msgstr "Configure an SSO connection"
 msgid "Configure and customize your calendar preferences."
 msgstr "Configure and customize your calendar preferences."
 
+#. js-lingui-id: 6MDr1S
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure CalDAV settings to sync your calendar events."
+msgstr "Configure CalDAV settings to sync your calendar events."
+
 #. js-lingui-id: aGwm+D
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure how dates are displayed across the app"
@@ -1281,6 +1320,16 @@ msgstr "Configure how dates are displayed across the app"
 msgid "Configure how we should display your events in your calendar"
 msgstr "Configure how we should display your events in your calendar"
 
+#. js-lingui-id: jbuOOX
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure IMAP settings to receive and sync your emails."
+msgstr "Configure IMAP settings to receive and sync your emails."
+
+#. js-lingui-id: gk/8eh
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure SMTP settings to send emails from your account."
+msgstr "Configure SMTP settings to send emails from your account."
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -1288,8 +1337,8 @@ msgstr "Configure your emails and calendar settings."
 
 #. js-lingui-id: W4D3v/
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Configure your IMAP email account"
-msgstr "Configure your IMAP email account"
+#~ msgid "Configure your IMAP email account"
+#~ msgstr "Configure your IMAP email account"
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -1310,6 +1359,11 @@ msgstr "Confirm deletion of {roleName} role? This cannot be undone. All members 
 msgid "Connect a new account to your workspace"
 msgstr "Connect a new account to your workspace"
 
+#. js-lingui-id: ffVcxj
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect Email Account"
+msgstr "Connect Email Account"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
@@ -1317,8 +1371,8 @@ msgstr "Connect with Google"
 
 #. js-lingui-id: VZvZWq
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "Connect with IMAP"
-msgstr "Connect with IMAP"
+#~ msgid "Connect with IMAP"
+#~ msgstr "Connect with IMAP"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1329,6 +1383,21 @@ msgstr "Connect with Microsoft"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Connected accounts"
+
+#. js-lingui-id: W4Kgwq
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Connection settings"
+msgstr "Connection settings"
+
+#. js-lingui-id: f6bbrz
+#: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+msgid "Connection successfully created"
+msgstr "Connection successfully created"
+
+#. js-lingui-id: aJTn2g
+#: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+msgid "Connection successfully updated"
+msgstr "Connection successfully updated"
 
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -1710,6 +1779,11 @@ msgstr "Date and time"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
 msgstr "Date format"
+
+#. js-lingui-id: cpDASC
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Days between triggers"
+msgstr "Days between triggers"
 
 #. js-lingui-id: 5y3O+A
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2133,6 +2207,13 @@ msgstr "Edit {objectLabel}"
 msgid "Edit CRM data structure and fields"
 msgstr "Edit CRM data structure and fields"
 
+#. js-lingui-id: AyPkS4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Edit Email Account"
+msgstr "Edit Email Account"
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -2146,8 +2227,8 @@ msgstr "Edit Fields"
 #. js-lingui-id: 8gm+y4
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
-msgid "Edit IMAP Connection"
-msgstr "Edit IMAP Connection"
+#~ msgid "Edit IMAP Connection"
+#~ msgstr "Edit IMAP Connection"
 
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
@@ -2180,7 +2261,7 @@ msgid "Email"
 msgstr "Email"
 
 #. js-lingui-id: hzKQCy
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Email Address"
 msgstr "Email Address"
 
@@ -2197,8 +2278,8 @@ msgstr "Email cannot be empty"
 #. js-lingui-id: Zb5c/r
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
-msgid "Email Connections"
-msgstr "Email Connections"
+#~ msgid "Email Connections"
+#~ msgstr "Email Connections"
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2294,8 +2375,8 @@ msgstr "Empty Object"
 
 #. js-lingui-id: q1srUM
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Encryption"
-msgstr "Encryption"
+#~ msgid "Encryption"
+#~ msgstr "Encryption"
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2628,6 +2709,11 @@ msgstr "Export workflows"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#. js-lingui-id: 1JBTZV
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Expression"
+msgstr "Expression"
 
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -3019,6 +3105,11 @@ msgstr "Hide empty groups"
 msgid "Hide hidden groups"
 msgstr "Hide hidden groups"
 
+#. js-lingui-id: N0Yhtw
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Hours between triggers"
+msgstr "Hours between triggers"
+
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -3086,33 +3177,48 @@ msgstr "If this is unexpected, please verify your settings."
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 
+#. js-lingui-id: ijW9MW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Configuration"
+msgstr "IMAP Configuration"
+
 #. js-lingui-id: 3rtE4o
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "IMAP Connection Details"
-msgstr "IMAP Connection Details"
+#~ msgid "IMAP Connection Details"
+#~ msgstr "IMAP Connection Details"
 
 #. js-lingui-id: jXXECN
 #: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
-msgid "IMAP connection successfully created"
-msgstr "IMAP connection successfully created"
+#~ msgid "IMAP connection successfully created"
+#~ msgstr "IMAP connection successfully created"
 
 #. js-lingui-id: Fz/wXI
 #: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
-msgid "IMAP connection successfully updated"
-msgstr "IMAP connection successfully updated"
+#~ msgid "IMAP connection successfully updated"
+#~ msgstr "IMAP connection successfully updated"
+
+#. js-lingui-id: N+Oh7x
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Encryption"
+msgstr "IMAP Encryption"
+
+#. js-lingui-id: Ubs0tf
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Password"
+msgstr "IMAP Password"
 
 #. js-lingui-id: TE8s2c
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Port"
 msgstr "IMAP Port"
 
 #. js-lingui-id: /RAwfY
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Server"
 msgstr "IMAP Server"
 
 #. js-lingui-id: +8jOVa
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "imap.example.com"
 msgstr "imap.example.com"
 
@@ -3403,7 +3509,7 @@ msgid "Japanese"
 msgstr "Japanese"
 
 #. js-lingui-id: wrLOeW
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
 msgstr "john.doe@example.com"
 
@@ -3521,6 +3627,21 @@ msgstr "Launch"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Layout"
 msgstr "Layout"
+
+#. js-lingui-id: 8QyoLb
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need calendar sync."
+msgstr "Leave blank if you don't need calendar sync."
+
+#. js-lingui-id: EY3IAD
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need to import emails."
+msgstr "Leave blank if you don't need to import emails."
+
+#. js-lingui-id: O7a3Du
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need to send emails."
+msgstr "Leave blank if you don't need to send emails."
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3723,6 +3844,11 @@ msgstr "Metadata file generation failed"
 msgid "Min"
 msgstr "Min"
 
+#. js-lingui-id: APfhM/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minutes between triggers"
+msgstr "Minutes between triggers"
+
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
@@ -3899,6 +4025,13 @@ msgstr "New account"
 msgid "New Approved Access Domain"
 msgstr "New Approved Access Domain"
 
+#. js-lingui-id: 7JRigF
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "New Email Account"
+msgstr "New Email Account"
+
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -3907,8 +4040,8 @@ msgstr "New Field"
 #. js-lingui-id: GeB/fA
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
-msgid "New IMAP Connection"
-msgstr "New IMAP Connection"
+#~ msgid "New IMAP Connection"
+#~ msgstr "New IMAP Connection"
 
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -4386,7 +4519,6 @@ msgstr "Page Not Found"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr "Password"
 
@@ -5298,8 +5430,6 @@ msgstr "Setting up your database..."
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5401,6 +5531,36 @@ msgstr "Singular and plural names must be different"
 #: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Skip"
+
+#. js-lingui-id: w+rJId
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Configuration"
+msgstr "SMTP Configuration"
+
+#. js-lingui-id: 0sIQAM
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Encryption"
+msgstr "SMTP Encryption"
+
+#. js-lingui-id: UeDEV/
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Password"
+msgstr "SMTP Password"
+
+#. js-lingui-id: 4waP7/
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Port"
+msgstr "SMTP Port"
+
+#. js-lingui-id: oKqFNn
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Server"
+msgstr "SMTP Server"
+
+#. js-lingui-id: 4oakKm
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "smtp.example.com"
+msgstr "smtp.example.com"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5936,6 +6096,22 @@ msgstr "Trial expired. Please contact your admin"
 msgid "Trial expired. Please update your billing details."
 msgstr "Trial expired. Please update your billing details."
 
+#. js-lingui-id: EfDzVR
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at hour"
+msgstr "Trigger at hour"
+
+#. js-lingui-id: gV4kml
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at minute"
+msgstr "Trigger at minute"
+
+#. js-lingui-id: jGYsS/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger interval"
+msgstr "Trigger interval"
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -6030,10 +6206,15 @@ msgstr "update"
 msgid "Update"
 msgstr "Update"
 
+#. js-lingui-id: cAn7CC
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
+msgstr "Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
+
 #. js-lingui-id: Vmsh9w
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Update your IMAP email account configuration"
-msgstr "Update your IMAP email account configuration"
+#~ msgid "Update your IMAP email account configuration"
+#~ msgstr "Update your IMAP email account configuration"
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -6404,6 +6585,8 @@ msgstr "Workflows"
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Workspace"
@@ -6497,6 +6680,11 @@ msgstr "You are not allowed to create records for this object"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
 #~ msgstr "You are not allowed to create records in this object"
+
+#. js-lingui-id: OLE3Ky
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
+msgstr "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 
 #. js-lingui-id: TBApzn
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
