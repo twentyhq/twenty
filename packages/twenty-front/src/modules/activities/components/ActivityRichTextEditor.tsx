@@ -22,6 +22,7 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
+import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -31,6 +32,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
@@ -104,7 +106,9 @@ export const ActivityRichTextEditor = ({
         },
       },
     });
-
+  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
   });
@@ -138,6 +142,17 @@ export const ActivityRichTextEditor = ({
       id: activityId,
       targetObjectNameSingular: activityObjectNameSingular,
     });
+  };
+  const saveAttachmentsName = async (
+    attachmentsToUpdate: Partial<Attachment>[],
+  ) => {
+    for (let attachmentToUpdate of attachmentsToUpdate) {
+      if (!attachmentToUpdate.id) continue;
+      await updateOneAttachment({
+        idToUpdate: attachmentToUpdate.id,
+        updateOneRecordInput: { name: attachmentToUpdate.name },
+      });
+    }
   };
 
   const prepareBody = (newStringifiedBody: string) => {
@@ -180,7 +195,7 @@ export const ActivityRichTextEditor = ({
       async (newStringifiedBody: string) => {
         const oldActivity = snapshot
           .getLoadable(recordStoreFamilyState(activityId))
-          .getValue() as Activity;
+          .getValue();
 
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
@@ -212,7 +227,8 @@ export const ActivityRichTextEditor = ({
 
         const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
+          oldActivity?.bodyV2.blocknote,
         );
 
         if (attachmentIdsToDelete.length > 0) {
@@ -223,7 +239,7 @@ export const ActivityRichTextEditor = ({
 
         const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
           newStringifiedBody,
-          oldActivity.attachments,
+          oldActivity?.attachments,
         );
 
         if (attachmentPathsToRestore.length > 0) {
@@ -238,6 +254,13 @@ export const ActivityRichTextEditor = ({
           await restoreAttachments({
             idsToRestore: attachmentIdsToRestore,
           });
+        }
+        const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
+          newStringifiedBody,
+          oldActivity?.attachments,
+        );
+        if (attachmentsToUpdate.length > 0) {
+          await saveAttachmentsName(attachmentsToUpdate);
         }
       },
     [
@@ -293,6 +316,10 @@ export const ActivityRichTextEditor = ({
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
+    console.log(
+      'attachmentAbsoluteURLattachmentAbsoluteURL',
+      attachmentAbsoluteURL,
+    );
 
     return attachmentAbsoluteURL;
   };
