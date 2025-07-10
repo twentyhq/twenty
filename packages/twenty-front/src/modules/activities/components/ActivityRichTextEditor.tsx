@@ -53,7 +53,6 @@ type ActivityRichTextEditorProps = {
     | CoreObjectNameSingular.Note;
 };
 
-
 export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
@@ -265,7 +264,7 @@ export const ActivityRichTextEditor = ({
       deleteAttachments,
       restoreAttachments,
       findSoftDeletedAttachments,
-      saveAttachmentsName
+      saveAttachmentsName,
     ],
   );
 
