@@ -27,7 +27,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
       try {
         if (!loginToken) {
           enqueueErrorSnackBar({
-            message: t`Invalid session.`,
+            message: t`Login token missing. Two Factor Authentication setup can not be initiated.`,
             options: {
               dedupeKey: 'invalid-session-dedupe-key',
             }

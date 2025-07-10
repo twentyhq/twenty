@@ -79,9 +79,12 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { loginTokenState } from '../states/loginTokenState';
+import { AuthToken } from '~/generated/graphql';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
+  const setLoginToken = useSetRecoilState(loginTokenState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetRecoilState(
@@ -372,34 +375,12 @@ export const useAuth = () => {
     [setTokenPair],
   );
 
-  const handleGetAuthTokensFromLoginToken = useCallback(
-    async (loginToken: string) => {
-      const getAuthTokensResult = await getAuthTokensFromLoginToken({
-        variables: {
-          loginToken,
-          origin,
-        },
-      });
-
-      if (isDefined(getAuthTokensResult.errors)) {
-        throw getAuthTokensResult.errors;
-      }
-
-      if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
-        throw new Error('No getAuthTokensFromLoginToken result');
-      }
-
-      handleLoadWorkspaceAfterAuthentication(
-        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens
-      );
+  const handleSetLoginToken = useCallback(
+    (token: AuthToken['token']) => {
+      setLoginToken(token);
+      cookieStorage.setItem('loginToken', JSON.stringify(token));
     },
-    [
-      getAuthTokensFromLoginToken,
-      loadCurrentUser,
-      origin,
-      handleSetAuthTokens,
-      refreshObjectMetadataItems,
-    ],
+    [setLoginToken],
   );
 
   const handleLoadWorkspaceAfterAuthentication = useCallback(
@@ -413,6 +394,60 @@ export const useAuth = () => {
       await loadCurrentUser();
     },
     [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
+  );
+
+  const handleGetAuthTokensFromLoginToken = useCallback(
+    async (loginToken: string) => {
+      try {
+        handleSetLoginToken(loginToken);
+
+        const getAuthTokensResult = await getAuthTokensFromLoginToken({
+          variables: {
+            loginToken: loginToken,
+            origin,
+          },
+        });
+
+        if (isDefined(getAuthTokensResult.errors)) {
+          throw getAuthTokensResult.errors;
+        }
+
+        if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+          throw new Error('No getAuthTokensFromLoginToken result');
+        }
+
+        handleLoadWorkspaceAfterAuthentication(
+          getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
+        );
+      } catch (error) {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.subCode ===
+            'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
+        ) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+          throw error;
+        }
+
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.subCode ===
+            'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
+        ) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
+          throw error;
+        }
+      }
+    },
+    [
+      getAuthTokensFromLoginToken,
+      loadCurrentUser,
+      origin,
+      handleSetAuthTokens,
+      refreshObjectMetadataItems,
+      handleLoadWorkspaceAfterAuthentication,
+      setSignInUpStep,
+    ],
   );
 
   const handleCredentialsSignIn = useCallback(
