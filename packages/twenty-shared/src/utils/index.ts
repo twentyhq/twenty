@@ -12,8 +12,7 @@ export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
-  sanitizeURL,
-  getLogoUrlFromDomainName,
+  getLogoUrlFromDomainName, sanitizeURL
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { parseJson } from './parseJson';
@@ -38,3 +37,4 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
+
