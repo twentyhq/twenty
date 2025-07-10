@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -8,7 +8,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { MCPMetadataService } from 'src/engine/api/mcp/services/mcp-metadata.service';
 
 @Controller('mcp-metadata')
@@ -18,7 +17,6 @@ export class McpMetadataController {
 
   @Post()
   async getMcpMetadata(
-    @Body() body: JsonRpc,
     @AuthWorkspace() workspace: Workspace,
     @AuthApiKey() apiKey: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,

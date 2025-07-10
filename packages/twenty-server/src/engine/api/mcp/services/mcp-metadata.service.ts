@@ -17,6 +17,7 @@ import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.too
 import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
 import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
 import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class MCPMetadataService {
@@ -31,6 +32,7 @@ export class MCPMetadataService {
     private readonly updateToolsService: UpdateToolsService,
     private readonly deleteToolsService: DeleteToolsService,
     private readonly getToolsService: GetToolsService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   async onModuleInit() {
@@ -105,7 +107,14 @@ export class MCPMetadataService {
     return roleId;
   }
 
-  get listTool() {
+  async listTool(roleId: string, workspaceId: string) {
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId,
+      });
+
+    const objectPermissions = rolesPermissions[roleId];
+
     return [
       ...this.createToolsService.tools,
       ...this.updateToolsService.tools,
@@ -116,9 +125,11 @@ export class MCPMetadataService {
 
   async handleToolCall(
     request: Request,
+    roleId: string,
+    workspaceId: string,
   ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
     try {
-      const tool = this.listTool.find(
+      const tool = (await this.listTool(roleId, workspaceId)).find(
         ({ name }) => name === request.body.params.name,
       );
 
@@ -159,10 +170,16 @@ export class MCPMetadataService {
         return this.handleInitialize(request.body.id);
       }
 
+      const roleId = await this.getRoleId(
+        workspace.id,
+        userWorkspaceId,
+        apiKey,
+      );
+
       if (request.body.method === 'tools/call' && request.body.params) {
         return wrapJsonRpcResponse(
           request.body.id,
-          await this.handleToolCall(request),
+          await this.handleToolCall(request, roleId, workspace.id),
         );
       }
 
@@ -171,7 +188,7 @@ export class MCPMetadataService {
           capabilities: {
             tools: { listChanged: false },
           },
-          tools: Object.values(this.listTool),
+          tools: Object.values(await this.listTool(roleId, workspace.id)),
         },
       });
     } catch (error) {
