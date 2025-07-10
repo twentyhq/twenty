@@ -22,6 +22,10 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -950,5 +954,77 @@ export class WorkspaceRepository<
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
 
     return formatResult(data, objectMetadata, objectMetadataMaps) as T;
+  }
+
+  protected getEventEmitter() {
+    return this.internalContext.eventEmitter;
+  }
+
+  protected async emitMutationEvent(
+    action: DatabaseEventAction,
+    entities: T | T[],
+    beforeEntities?: T | T[],
+  ) {
+    const eventEmitter = this.getEventEmitter();
+
+    if (!eventEmitter) return;
+    const objectMetadata = await this.getObjectMetadataFromTarget();
+    const workspaceId = this.internalContext.workspaceId;
+    const objectMetadataNameSingular = objectMetadata.nameSingular;
+    const fields = Object.values(objectMetadata.fieldsById ?? {});
+    const entityArray = Array.isArray(entities) ? entities : [entities];
+    let events: (
+      | ObjectRecordCreateEvent<T>
+      | ObjectRecordUpdateEvent<T>
+      | ObjectRecordDeleteEvent<T>
+    )[] = [];
+
+    switch (action) {
+      case DatabaseEventAction.CREATED:
+        events = entityArray.map((after) => {
+          const event = new ObjectRecordCreateEvent<T>();
+
+          event.recordId = after.id;
+          event.objectMetadata = { ...objectMetadata, fields };
+          event.properties = { after };
+
+          return event;
+        });
+        break;
+      case DatabaseEventAction.UPDATED:
+        events = entityArray.map((after, idx) => {
+          const before = Array.isArray(beforeEntities)
+            ? beforeEntities?.[idx]
+            : beforeEntities;
+
+          const event = new ObjectRecordUpdateEvent<T>();
+
+          event.recordId = after.id;
+          event.objectMetadata = { ...objectMetadata, fields };
+          event.properties = { before: before ?? after, after };
+
+          return event;
+        });
+        break;
+      case DatabaseEventAction.DELETED:
+        events = entityArray.map((before) => {
+          const event = new ObjectRecordDeleteEvent<T>();
+
+          event.recordId = before.id;
+          event.objectMetadata = { ...objectMetadata, fields };
+          event.properties = { before };
+
+          return event;
+        });
+        break;
+      default:
+        return;
+    }
+    eventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular,
+      action,
+      events,
+      workspaceId,
+    });
   }
 }

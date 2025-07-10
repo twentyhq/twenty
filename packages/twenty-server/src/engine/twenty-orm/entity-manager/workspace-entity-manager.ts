@@ -53,6 +53,7 @@ import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -1454,5 +1455,9 @@ export class WorkspaceEntityManager extends EntityManager {
 
       return entity;
     });
+  }
+
+  protected getEventEmitter(): WorkspaceEventEmitter {
+    return this.internalContext.eventEmitter;
   }
 }
