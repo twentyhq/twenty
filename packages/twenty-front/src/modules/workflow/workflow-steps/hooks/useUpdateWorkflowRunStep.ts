@@ -49,7 +49,7 @@ export const useUpdateWorkflowRunStep = () => {
 
     if (
       !isDefined(cachedRecord) ||
-      !isDefined(cachedRecord?.output?.flow?.steps)
+      !isDefined(cachedRecord?.state?.flow?.steps)
     ) {
       return;
     }
@@ -57,10 +57,10 @@ export const useUpdateWorkflowRunStep = () => {
     const newCachedRecord = {
       ...cachedRecord,
       output: {
-        ...cachedRecord.output,
+        ...cachedRecord.state,
         flow: {
-          ...cachedRecord.output.flow,
-          steps: cachedRecord.output.flow.steps.map((step: WorkflowAction) => {
+          ...cachedRecord.state.flow,
+          steps: cachedRecord.state.flow.steps.map((step: WorkflowAction) => {
             if (step.id === updatedStep.id) {
               return updatedStep;
             }

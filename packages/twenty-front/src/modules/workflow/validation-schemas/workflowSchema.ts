@@ -317,6 +317,33 @@ export const workflowRunOutputSchema = z.object({
   error: z.any().optional(),
 });
 
+export const workflowRunStepStatusSchema = z.enum([
+  'NOT_STARTED',
+  'RUNNING',
+  'SUCCESS',
+  'FAILED',
+  'PENDING',
+]);
+
+export const workflowRunStateStepInfosSchema = z.object({
+  result: z.any().optional(),
+  error: z.any().optional(),
+  status: workflowRunStepStatusSchema,
+});
+
+export const WorkflowRunStateStepsInfosSchema = z.record(
+  workflowRunStateStepInfosSchema,
+);
+
+export const workflowRunStateSchema = z.object({
+  flow: z.object({
+    trigger: workflowTriggerSchema,
+    steps: z.array(workflowActionSchema),
+  }),
+  stepInfos: WorkflowRunStateStepsInfosSchema,
+  workflowRunError: z.any().optional(),
+});
+
 export const workflowRunContextSchema = z.record(z.any());
 
 export const workflowRunStatusSchema = z.enum([
@@ -335,6 +362,7 @@ export const workflowRunSchema = z
     workflowId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
+    state: workflowRunStateSchema.nullable(),
     status: workflowRunStatusSchema,
     createdAt: z.string(),
     deletedAt: z.string().nullable(),

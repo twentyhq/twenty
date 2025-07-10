@@ -29,15 +29,15 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const step = workflowRun?.output?.flow.steps.find(
+  const step = workflowRun?.state?.flow.steps.find(
     (step) => step.id === stepId,
   );
 
   if (
     !(
       isDefined(workflowRun) &&
-      isDefined(workflowRun.context) &&
-      isDefined(workflowRun.output?.flow) &&
+      isDefined(workflowRun.state?.stepInfos) &&
+      isDefined(workflowRun.state?.flow) &&
       isDefined(step)
     )
   ) {
@@ -46,7 +46,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   const previousStepId = getWorkflowPreviousStepId({
     stepId,
-    steps: workflowRun.output.flow.steps,
+    steps: workflowRun.state.flow.steps,
   });
 
   if (previousStepId === undefined) {
@@ -55,8 +55,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
-    trigger: workflowRun.output.flow.trigger,
-    steps: workflowRun.output.flow.steps,
+    trigger: workflowRun.state.flow.trigger,
+    steps: workflowRun.state.flow.steps,
   });
   if (stepDefinition?.type !== 'action') {
     throw new Error('The input tab must be rendered with an action step.');
@@ -76,10 +76,11 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const allVariablesUsedInStep = Array.from(variablesUsedInStep);
 
   const stepContext = getWorkflowRunStepContext({
-    context: workflowRun.context,
-    flow: workflowRun.output.flow,
+    stepsInfos: workflowRun.state.stepInfos,
+    flow: workflowRun.state.flow,
     stepId,
   });
+
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }

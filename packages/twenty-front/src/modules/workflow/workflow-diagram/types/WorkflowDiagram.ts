@@ -1,5 +1,6 @@
 import {
   WorkflowActionType,
+  WorkflowRunStepStatus,
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { Edge, Node } from '@xyflow/react';
@@ -21,32 +22,26 @@ export type WorkflowDiagram = {
   edges: Array<WorkflowDiagramEdge>;
 };
 
-export type WorkflowDiagramRunStatus =
-  | 'running'
-  | 'success'
-  | 'failure'
-  | 'not-executed';
-
 export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
       name: string;
       icon?: string;
-      runStatus?: WorkflowDiagramRunStatus;
+      runStatus?: WorkflowRunStepStatus;
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
       name: string;
-      runStatus?: WorkflowDiagramRunStatus;
+      runStatus?: WorkflowRunStepStatus;
     };
 
 export type WorkflowRunDiagramStepNodeData = Exclude<
   WorkflowDiagramStepNodeData,
   'runStatus'
 > & {
-  runStatus: WorkflowDiagramRunStatus;
+  runStatus: WorkflowRunStepStatus;
 };
 
 export type WorkflowDiagramCreateStepNodeData = {
@@ -66,7 +61,7 @@ export type WorkflowDiagramNodeData =
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
   'runStatus'
-> & { runStatus: WorkflowDiagramRunStatus };
+> & { runStatus: WorkflowRunStepStatus };
 
 export type EdgeData = {
   stepId?: string;

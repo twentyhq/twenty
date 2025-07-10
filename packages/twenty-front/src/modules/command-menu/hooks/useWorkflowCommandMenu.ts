@@ -4,7 +4,6 @@ import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/wor
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
 import {
@@ -13,6 +12,7 @@ import {
   IconSettingsAutomation,
 } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const useWorkflowCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -142,7 +142,7 @@ export const useWorkflowCommandMenu = () => {
         title: string;
         icon: IconComponent;
         workflowSelectedNode: string;
-        stepExecutionStatus: WorkflowDiagramRunStatus;
+        stepExecutionStatus: WorkflowRunStepStatus;
       }) => {
         const pageId = v4();
 

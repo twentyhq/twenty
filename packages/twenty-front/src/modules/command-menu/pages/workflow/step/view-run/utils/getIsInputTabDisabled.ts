@@ -1,15 +1,15 @@
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const getIsInputTabDisabled = ({
   stepExecutionStatus,
   workflowSelectedNode,
 }: {
   workflowSelectedNode: string;
-  stepExecutionStatus: WorkflowDiagramRunStatus;
+  stepExecutionStatus: WorkflowRunStepStatus;
 }) => {
   return (
     workflowSelectedNode === TRIGGER_STEP_ID ||
-    stepExecutionStatus === 'not-executed'
+    stepExecutionStatus === 'NOT_STARTED'
   );
 };

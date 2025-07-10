@@ -1,11 +1,11 @@
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const getIsOutputTabDisabled = ({
   stepExecutionStatus,
 }: {
-  stepExecutionStatus: WorkflowDiagramRunStatus;
+  stepExecutionStatus: WorkflowRunStepStatus;
 }) => {
   return (
-    stepExecutionStatus === 'running' || stepExecutionStatus === 'not-executed'
+    stepExecutionStatus === 'RUNNING' || stepExecutionStatus === 'NOT_STARTED'
   );
 };

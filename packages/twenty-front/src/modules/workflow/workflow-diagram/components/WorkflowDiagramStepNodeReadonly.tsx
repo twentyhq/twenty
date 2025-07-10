@@ -1,27 +1,7 @@
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
-import {
-  WorkflowDiagramRunStatus,
-  WorkflowDiagramStepNodeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-
-const getNodeVariantFromRunStatus = (
-  runStatus: WorkflowDiagramRunStatus | undefined,
-): WorkflowDiagramNodeVariant => {
-  switch (runStatus) {
-    case 'success':
-      return 'success';
-    case 'failure':
-      return 'failure';
-    case 'running':
-      return 'running';
-    case 'not-executed':
-      return 'not-executed';
-    default:
-      return 'default';
-  }
-};
+import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   data,
@@ -31,7 +11,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
   return (
     <WorkflowDiagramStepNodeBase
       name={data.name}
-      variant={getNodeVariantFromRunStatus(data.runStatus)}
+      variant={getNodeVariantFromStepRunStatus(data.runStatus)}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
     />
