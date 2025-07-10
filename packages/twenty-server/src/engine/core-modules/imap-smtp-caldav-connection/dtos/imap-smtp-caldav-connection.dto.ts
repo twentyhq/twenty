@@ -26,6 +26,18 @@ export class ConnectionParameters {
   secure?: boolean;
 }
 
+@InputType()
+export class EmailAccountConnectionParameters {
+  @Field(() => ConnectionParameters, { nullable: true })
+  IMAP?: ConnectionParameters;
+
+  @Field(() => ConnectionParameters, { nullable: true })
+  SMTP?: ConnectionParameters;
+
+  @Field(() => ConnectionParameters, { nullable: true })
+  CALDAV?: ConnectionParameters;
+}
+
 @ObjectType()
 export class ConnectionParametersOutput {
   @Field(() => String)
