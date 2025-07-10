@@ -16,6 +16,7 @@ import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/is
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
@@ -27,6 +28,8 @@ export const SettingsProfile = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const twoFactorAuthenticationStatus = currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.isActive
+
+  console.log({currentUserWorkspace})
 
   return (
     <SubMenuTopBarContainer
@@ -60,15 +63,17 @@ export const SettingsProfile = () => {
         </Section>
         {!!currentWorkspace?.twoFactorAuthenticationPolicy && isTwoFactorAuthenticationEnabled === true && (
           <Section>
-            <SettingsCard
-              title={t`Authenticator App`}
-              Icon={<IconShield />}
-              Status={(twoFactorAuthenticationStatus 
-                  ? <Status text={'Active'} color={'turquoise'} />
-                  : <Status text={'Inactive'} color={'orange'} />
-                ) 
-              }
-            />  
+            <UndecoratedLink to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}>
+              <SettingsCard 
+                title={t`Authenticator App`}
+                Icon={<IconShield />}
+                Status={(twoFactorAuthenticationStatus 
+                    ? <Status text={'Active'} color={'turquoise'} />
+                    : <Status text={'Inactive'} color={'orange'} />
+                  ) 
+                }
+              />  
+            </UndecoratedLink>
           </Section>
         )}
         <Section>
