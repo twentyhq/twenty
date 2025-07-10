@@ -14,7 +14,7 @@ export const CreateRelatedRecordAction = ({
   // Get the source record ID
   const sourceRecordId = useSelectedRecordIdOrThrow();
 
-  // Get the target object metadata item - People
+  // Get the target object metadata item
   const { objectMetadataItem: targetObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular:
