@@ -65,7 +65,7 @@ export class AgentStreamingService {
 
       this.setupStreamingHeaders(res);
 
-      const { textStream } =
+      const { fullStream } =
         await this.agentExecutionService.streamChatResponse({
           agentId: thread.agent.id,
           userMessage,
@@ -74,9 +74,24 @@ export class AgentStreamingService {
 
       let aiResponse = '';
 
-      for await (const chunk of textStream) {
-        aiResponse += chunk;
-        res.write(chunk);
+      for await (const chunk of fullStream) {
+        switch (chunk.type) {
+          case 'text-delta':
+            aiResponse += chunk.textDelta;
+            this.sendStreamEvent(res, {
+              type: chunk.type,
+              message: chunk.textDelta,
+            });
+            break;
+          case 'tool-call':
+            this.sendStreamEvent(res, {
+              type: chunk.type,
+              message: chunk.args?.toolDescription,
+            });
+            break;
+          default:
+            break;
+        }
       }
 
       await this.agentChatService.addMessage({
@@ -90,8 +105,24 @@ export class AgentStreamingService {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
 
-      return { success: false, error: errorMessage };
+      if (!res.headersSent) {
+        this.setupStreamingHeaders(res);
+      }
+
+      this.sendStreamEvent(res, {
+        type: 'error',
+        message: errorMessage,
+      });
+
+      res.end();
     }
+  }
+
+  private sendStreamEvent(
+    res: Response,
+    event: { type: string; message: string },
+  ): void {
+    res.write(JSON.stringify(event) + '\n');
   }
 
   private setupStreamingHeaders(res: Response): void {

@@ -1,4 +1,4 @@
-import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig';
+import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
@@ -30,7 +30,7 @@ export const useRegisteredActions = (
     objectMetadataItem,
   });
 
-  const recordAgnosticActionConfig = RECORD_AGNOSTIC_ACTIONS_CONFIG;
+  const recordAgnosticActionConfig = useRecordAgnosticActions();
 
   const actionsConfig = {
     ...recordActionConfig,

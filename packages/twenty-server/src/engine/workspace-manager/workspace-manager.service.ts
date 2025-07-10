@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -42,6 +44,7 @@ export class WorkspaceManagerService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    private readonly agentService: AgentService,
   ) {}
 
   public async init({
@@ -94,6 +97,17 @@ export class WorkspaceManagerService {
     this.logger.log(
       `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
     );
+
+    if (featureFlags[FeatureFlagKey.IS_AI_ENABLED]) {
+      const defaultAgentEnabledStart = performance.now();
+
+      await this.initDefaultAgent(workspaceId);
+      const defaultAgentEnabledEnd = performance.now();
+
+      this.logger.log(
+        `Default agent enabled took ${defaultAgentEnabledEnd - defaultAgentEnabledStart}ms`,
+      );
+    }
 
     const prefillStandardObjectsStart = performance.now();
 
@@ -192,6 +206,23 @@ export class WorkspaceManagerService {
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,
+    });
+  }
+
+  private async initDefaultAgent(workspaceId: string) {
+    const agent = await this.agentService.createOneAgent(
+      {
+        label: 'Routing Agent',
+        name: 'routing-agent',
+        description: 'Default Routing Agent',
+        prompt: '',
+        modelId: 'auto',
+      },
+      workspaceId,
+    );
+
+    await this.workspaceRepository.update(workspaceId, {
+      defaultAgentId: agent.id,
     });
   }
 }
