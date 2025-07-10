@@ -6,6 +6,7 @@ import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/
 
 // Should test more things such as flatFieldIndex diffing
 const objectMetadataId = faker.string.uuid();
+
 export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
     {

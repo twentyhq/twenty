@@ -30,7 +30,7 @@ export const getFlatFieldMetadataMock = <
     isUnique: false,
     relationTargetFieldMetadataId: undefined,
     relationTargetObjectMetadataId: undefined,
-    // @ts-expect-error
+    // @ts-expect-error prastoin to handle
     type: FieldMetadataType.TEXT,
     isLabelSyncedWithName: false,
     isSystem: false,
