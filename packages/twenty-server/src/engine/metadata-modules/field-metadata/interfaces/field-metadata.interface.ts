@@ -5,6 +5,8 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+
 export interface FieldMetadataInterface<
   T extends FieldMetadataType = FieldMetadataType,
 > {
@@ -25,6 +27,7 @@ export interface FieldMetadataInterface<
   relationTargetFieldMetadata?: FieldMetadataInterface;
   relationTargetObjectMetadataId?: string;
   relationTargetObjectMetadata?: ObjectMetadataInterface;
+  relation?: RelationDTO;
   isCustom?: boolean;
   isSystem?: boolean;
   isActive?: boolean;

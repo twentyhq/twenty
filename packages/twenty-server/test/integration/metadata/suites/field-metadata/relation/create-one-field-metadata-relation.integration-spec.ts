@@ -6,6 +6,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -60,13 +61,13 @@ describe('createOne FieldMetadataService relation fields', () => {
         relationType: RelationType;
         objectMetadataId: string;
         targetObjectMetadataId: string;
-        type: FieldMetadataType;
+        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
       }
     | ((args: { objectMetadataId: string; targetObjectMetadataId: string }) => {
         relationType: RelationType;
         objectMetadataId: string;
         targetObjectMetadataId: string;
-        type: FieldMetadataType;
+        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
       })
   >[];
 
@@ -109,8 +110,8 @@ describe('createOne FieldMetadataService relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('person');
-    expect(createdField.relation.type).toBe(contextPayload.relationType);
-    expect(createdField.relation.targetFieldMetadata.id).toBeDefined();
+    expect(createdField.relation?.type).toBe(contextPayload.relationType);
+    expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
     // TODO: expect(createdField.morphRelations).toBeUndefined();
     const isManyToOne =
       contextPayload.relationType === RelationType.MANY_TO_ONE;
@@ -119,6 +120,10 @@ describe('createOne FieldMetadataService relation fields', () => {
       expect(createdField.settings?.joinColumnName).toBe('personId');
     } else {
       expect(createdField.settings?.joinColumnName).toBeUndefined();
+    }
+
+    if (!isDefined(createdField.relation?.targetFieldMetadata?.id)) {
+      throw new Error('targetFieldMetadata.id is not defined');
     }
 
     const opportunityFieldOnPerson = await findFieldMetadata({

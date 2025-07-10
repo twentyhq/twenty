@@ -4,8 +4,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-
 export const createRelationBetweenObjects = async ({
   objectMetadataId,
   targetObjectMetadataId,
@@ -19,7 +17,7 @@ export const createRelationBetweenObjects = async ({
 }: {
   objectMetadataId: string;
   targetObjectMetadataId: string;
-  type: FieldMetadataType;
+  type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
   relationType: RelationType;
   name?: string;
   label?: string;
@@ -43,7 +41,7 @@ export const createRelationBetweenObjects = async ({
 
   const {
     data: { createOneField: createdFieldPerson },
-  } = await createOneFieldMetadata({
+  } = await createOneFieldMetadata<typeof type>({
     input: createFieldInput,
     gqlFields: `
             id
@@ -65,5 +63,5 @@ export const createRelationBetweenObjects = async ({
     expectToFail: false,
   });
 
-  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.RELATION>;
+  return createdFieldPerson;
 };
