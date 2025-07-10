@@ -62,6 +62,14 @@ describe('Field metadata relation creation should fail', () => {
           targetFieldLabel: collisionFieldLabel,
         }),
       },
+      {
+        title: 'when type is not provided',
+        context: { type: undefined },
+      },
+      {
+        title: 'when type is a wrong value',
+        context: { type: 'wrong' as RelationType },
+      },
     ];
 
   beforeAll(async () => {
@@ -118,7 +126,7 @@ describe('Field metadata relation creation should fail', () => {
   });
 
   it.each(failingLabelsCreationTestsUseCase)(
-    'relation $title',
+    'relation ONE_TO_MANY $title',
     async ({ context }) => {
       const computedContext =
         typeof context === 'function' ? context(globalTestContext) : context;
@@ -134,6 +142,36 @@ describe('Field metadata relation creation should fail', () => {
           relationCreationPayload: {
             targetFieldLabel: 'defaultTargetFieldLabel',
             type: RelationType.ONE_TO_MANY,
+            targetObjectMetadataId:
+              globalTestContext.objectMetadataIds.targetObjectId,
+            targetFieldIcon: 'IconBuildingSkyscraper',
+            ...computedContext,
+          },
+        },
+      });
+
+      expect(errors).toBeDefined();
+      expect(errors).toMatchSnapshot();
+    },
+  );
+
+  it.each(failingLabelsCreationTestsUseCase)(
+    'relation MANY_TO_ONE $title',
+    async ({ context }) => {
+      const computedContext =
+        typeof context === 'function' ? context(globalTestContext) : context;
+
+      const { errors } = await createOneFieldMetadata({
+        expectToFail: true,
+        input: {
+          objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
+          name: 'fieldname',
+          label: 'Relation field',
+          isLabelSyncedWithName: false,
+          type: FieldMetadataType.RELATION,
+          relationCreationPayload: {
+            targetFieldLabel: 'defaultTargetFieldLabel',
+            type: RelationType.MANY_TO_ONE,
             targetObjectMetadataId:
               globalTestContext.objectMetadataIds.targetObjectId,
             targetFieldIcon: 'IconBuildingSkyscraper',
