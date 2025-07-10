@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const INITIATE_TWO_FACTOR_AUTHENTICATION_PROVISIONING = gql`
-  mutation InitiateTwoFactorAuthenticationProvisioning(
+export const INITIATE_OTP_PROVISIONING = gql`
+  mutation initiateOTPProvisioning(
     $loginToken: String!
     $captchaToken: String
     $origin: String!
