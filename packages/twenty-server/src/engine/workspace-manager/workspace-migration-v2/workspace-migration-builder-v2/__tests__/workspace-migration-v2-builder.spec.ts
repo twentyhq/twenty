@@ -1,19 +1,20 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceMigrationObjectInput } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-object-input';
+import { FlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 describe('WorkspaceMigrationBuilderV2Service', () => {
   let service: WorkspaceMigrationBuilderV2Service;
 
-  const baseObject: WorkspaceMigrationObjectInput = {
+  const baseObject: FlatObjectMetadata = {
     uniqueIdentifier: '20202020-e89b-12d3-a456-426614175000',
     nameSingular: 'Contact',
     namePlural: 'Contacts',
     labelSingular: 'Contact',
+    flatIndexMetadatas: [],
     labelPlural: 'Contacts',
     description: 'A contact',
-    fields: [
+    flatFieldMetadatas: [
       {
         uniqueIdentifier: '20202020-e89b-12d3-a456-426614174000',
         name: 'firstName',
@@ -30,8 +31,8 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should return a migration when nameSingular changes', () => {
-    const from: WorkspaceMigrationObjectInput = baseObject;
-    const to: WorkspaceMigrationObjectInput = {
+    const from: FlatObjectMetadata = baseObject;
+    const to: FlatObjectMetadata = {
       ...from,
       nameSingular: 'Person',
     };
@@ -41,7 +42,25 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "flatObjectMetadata": {
+        "description": "A contact",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Person",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      },
       "type": "update_object",
       "updates": [
         {
@@ -57,14 +76,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should return a migration when creating a new object', () => {
-    const newObject: WorkspaceMigrationObjectInput = {
+    const newObject: FlatObjectMetadata = {
       uniqueIdentifier: '20202020-e89b-12d3-a456-426614175001',
       nameSingular: 'Company',
       namePlural: 'Companies',
+      flatIndexMetadatas: [],
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fields: [
+      flatFieldMetadatas: [
         {
           uniqueIdentifier: '20202020-e89b-12d3-a456-426614174001',
           name: 'name',
@@ -82,9 +102,9 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "object": {
+      "flatObjectMetadata": {
         "description": "A company",
-        "fields": [
+        "flatFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -94,17 +114,17 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
             "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
           },
         ],
+        "flatIndexMetadatas": [],
         "labelPlural": "Companies",
         "labelSingular": "Company",
         "namePlural": "Companies",
         "nameSingular": "Company",
         "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
       },
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
       "type": "create_object",
     },
     {
-      "field": {
+      "flatFieldMetadata": {
         "defaultValue": "",
         "description": "",
         "label": "Name",
@@ -112,8 +132,25 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "ADDRESS",
         "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
+      "flatObjectMetadata": {
+        "description": "A company",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "Name",
+            "name": "name",
+            "type": "ADDRESS",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174001",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175001",
+      },
       "type": "create_field",
     },
   ],
@@ -128,7 +165,25 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "flatObjectMetadata": {
+        "description": "A contact",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Contact",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      },
       "type": "delete_object",
     },
   ],
@@ -137,11 +192,11 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should handle multiple operations in a single migration', () => {
-    const objectToUpdate: WorkspaceMigrationObjectInput = {
+    const objectToUpdate: FlatObjectMetadata = {
       ...baseObject,
       nameSingular: 'Person',
-      fields: [
-        ...baseObject.fields,
+      flatFieldMetadatas: [
+        ...baseObject.flatFieldMetadatas,
         {
           defaultValue: '',
           label: 'New field',
@@ -156,14 +211,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ...baseObject,
       uniqueIdentifier: '20202020-59ef-4a14-a509-0a02acb248d5',
     };
-    const objectToCreate: WorkspaceMigrationObjectInput = {
+    const objectToCreate: FlatObjectMetadata = {
       uniqueIdentifier: '20202020-1218-4fc0-b32d-fc4f005c4bab',
       nameSingular: 'Company',
       namePlural: 'Companies',
+      flatIndexMetadatas: [],
       labelSingular: 'Company',
       labelPlural: 'Companies',
       description: 'A company',
-      fields: [
+      flatFieldMetadatas: [
         {
           uniqueIdentifier: '20202020-1016-4f09-bad6-e75681f385f4',
           name: 'name',
@@ -184,9 +240,9 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 {
   "actions": [
     {
-      "object": {
+      "flatObjectMetadata": {
         "description": "A company",
-        "fields": [
+        "flatFieldMetadatas": [
           {
             "defaultValue": "",
             "description": "",
@@ -196,34 +252,65 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
             "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
           },
         ],
+        "flatIndexMetadatas": [],
         "labelPlural": "Companies",
         "labelSingular": "Company",
         "namePlural": "Companies",
         "nameSingular": "Company",
         "uniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
       },
-      "objectMetadataUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
       "type": "create_object",
     },
     {
-      "field": {
-        "defaultValue": "",
-        "description": "",
-        "label": "Name",
-        "name": "name",
-        "type": "ADDRESS",
-        "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
+      "flatObjectMetadata": {
+        "description": "A contact",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Contact",
+        "uniqueIdentifier": "20202020-59ef-4a14-a509-0a02acb248d5",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
-      "objectMetadataUniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
-      "type": "create_field",
-    },
-    {
-      "objectMetadataUniqueIdentifier": "20202020-59ef-4a14-a509-0a02acb248d5",
       "type": "delete_object",
     },
     {
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "flatObjectMetadata": {
+        "description": "A contact",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+          {
+            "defaultValue": "",
+            "description": "new field description",
+            "label": "New field",
+            "name": "newField",
+            "type": "NUMBER",
+            "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Person",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      },
       "type": "update_object",
       "updates": [
         {
@@ -234,7 +321,37 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
       ],
     },
     {
-      "field": {
+      "flatFieldMetadata": {
+        "defaultValue": "",
+        "description": "",
+        "label": "Name",
+        "name": "name",
+        "type": "ADDRESS",
+        "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
+      },
+      "flatObjectMetadata": {
+        "description": "A company",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "Name",
+            "name": "name",
+            "type": "ADDRESS",
+            "uniqueIdentifier": "20202020-1016-4f09-bad6-e75681f385f4",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Companies",
+        "labelSingular": "Company",
+        "namePlural": "Companies",
+        "nameSingular": "Company",
+        "uniqueIdentifier": "20202020-1218-4fc0-b32d-fc4f005c4bab",
+      },
+      "type": "create_field",
+    },
+    {
+      "flatFieldMetadata": {
         "defaultValue": "",
         "description": "new field description",
         "label": "New field",
@@ -242,8 +359,33 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         "type": "NUMBER",
         "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
       },
-      "fieldMetadataUniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
-      "objectMetadataUniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      "flatObjectMetadata": {
+        "description": "A contact",
+        "flatFieldMetadatas": [
+          {
+            "defaultValue": "",
+            "description": "",
+            "label": "First Name",
+            "name": "firstName",
+            "type": "FULL_NAME",
+            "uniqueIdentifier": "20202020-e89b-12d3-a456-426614174000",
+          },
+          {
+            "defaultValue": "",
+            "description": "new field description",
+            "label": "New field",
+            "name": "newField",
+            "type": "NUMBER",
+            "uniqueIdentifier": "20202020-3ad3-4fec-9c46-8dc9158980e3",
+          },
+        ],
+        "flatIndexMetadatas": [],
+        "labelPlural": "Contacts",
+        "labelSingular": "Contact",
+        "namePlural": "Contacts",
+        "nameSingular": "Person",
+        "uniqueIdentifier": "20202020-e89b-12d3-a456-426614175000",
+      },
       "type": "create_field",
     },
   ],
@@ -252,14 +394,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
   });
 
   it('should treat objects with the same name but different IDs as distinct', () => {
-    const objectA: WorkspaceMigrationObjectInput = {
+    const objectA: FlatObjectMetadata = {
       uniqueIdentifier: 'id-1',
+      flatIndexMetadatas: [],
       nameSingular: 'Duplicate',
       namePlural: 'Duplicates',
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
       description: 'First object',
-      fields: [
+      flatFieldMetadatas: [
         {
           uniqueIdentifier: 'field-1',
           name: 'fieldA',
@@ -270,14 +413,15 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
         },
       ],
     };
-    const objectB: WorkspaceMigrationObjectInput = {
+    const objectB: FlatObjectMetadata = {
       uniqueIdentifier: 'id-2',
       nameSingular: 'Duplicate',
       namePlural: 'Duplicates',
       labelSingular: 'Duplicate',
       labelPlural: 'Duplicates',
+      flatIndexMetadatas: [],
       description: 'Second object',
-      fields: [
+      flatFieldMetadatas: [
         {
           uniqueIdentifier: 'field-2',
           name: 'fieldB',
@@ -291,37 +435,169 @@ describe('WorkspaceMigrationBuilderV2Service', () => {
 
     const result = service.build({ from: [], to: [objectA, objectB] });
 
-    expect(result.actions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          type: 'create_object',
-          objectMetadataUniqueIdentifier: 'id-1',
-        }),
-        expect.objectContaining({
-          type: 'create_object',
-          objectMetadataUniqueIdentifier: 'id-2',
-        }),
-      ]),
-    );
+    expect(result.actions).toMatchInlineSnapshot(`
+[
+  {
+    "flatObjectMetadata": {
+      "description": "First object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field A",
+          "name": "fieldA",
+          "type": "FULL_NAME",
+          "uniqueIdentifier": "field-1",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-1",
+    },
+    "type": "create_object",
+  },
+  {
+    "flatObjectMetadata": {
+      "description": "Second object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field B",
+          "name": "fieldB",
+          "type": "ADDRESS",
+          "uniqueIdentifier": "field-2",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-2",
+    },
+    "type": "create_object",
+  },
+  {
+    "flatFieldMetadata": {
+      "defaultValue": "",
+      "description": "",
+      "label": "Field A",
+      "name": "fieldA",
+      "type": "FULL_NAME",
+      "uniqueIdentifier": "field-1",
+    },
+    "flatObjectMetadata": {
+      "description": "First object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field A",
+          "name": "fieldA",
+          "type": "FULL_NAME",
+          "uniqueIdentifier": "field-1",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-1",
+    },
+    "type": "create_field",
+  },
+  {
+    "flatFieldMetadata": {
+      "defaultValue": "",
+      "description": "",
+      "label": "Field B",
+      "name": "fieldB",
+      "type": "ADDRESS",
+      "uniqueIdentifier": "field-2",
+    },
+    "flatObjectMetadata": {
+      "description": "Second object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field B",
+          "name": "fieldB",
+          "type": "ADDRESS",
+          "uniqueIdentifier": "field-2",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-2",
+    },
+    "type": "create_field",
+  },
+]
+`);
 
     const deleteResult = service.build({ from: [objectA, objectB], to: [] });
 
-    expect(deleteResult.actions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          type: 'delete_object',
-          objectMetadataUniqueIdentifier: 'id-1',
-        }),
-        expect.objectContaining({
-          type: 'delete_object',
-          objectMetadataUniqueIdentifier: 'id-2',
-        }),
-      ]),
-    );
+    expect(deleteResult.actions).toMatchInlineSnapshot(`
+[
+  {
+    "flatObjectMetadata": {
+      "description": "First object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field A",
+          "name": "fieldA",
+          "type": "FULL_NAME",
+          "uniqueIdentifier": "field-1",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-1",
+    },
+    "type": "delete_object",
+  },
+  {
+    "flatObjectMetadata": {
+      "description": "Second object",
+      "flatFieldMetadatas": [
+        {
+          "defaultValue": "",
+          "description": "",
+          "label": "Field B",
+          "name": "fieldB",
+          "type": "ADDRESS",
+          "uniqueIdentifier": "field-2",
+        },
+      ],
+      "flatIndexMetadatas": [],
+      "labelPlural": "Duplicates",
+      "labelSingular": "Duplicate",
+      "namePlural": "Duplicates",
+      "nameSingular": "Duplicate",
+      "uniqueIdentifier": "id-2",
+    },
+    "type": "delete_object",
+  },
+]
+`);
   });
 
   it('should emit no actions when from and to are deeply equal', () => {
-    const obj: WorkspaceMigrationObjectInput = { ...baseObject };
+    const obj: FlatObjectMetadata = { ...baseObject };
     const result = service.build({ from: [obj], to: [obj] });
 
     expect(result.actions).toEqual([]);

@@ -121,6 +121,7 @@ export const FormNumberFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           onBlur={onBlur}
         >
@@ -134,7 +135,6 @@ export const FormNumberFieldInput = ({
               }
               value={draftValue.value}
               copyButton={false}
-              hotkeyScope="record-create"
               onChange={handleChange}
               disabled={readonly}
             />

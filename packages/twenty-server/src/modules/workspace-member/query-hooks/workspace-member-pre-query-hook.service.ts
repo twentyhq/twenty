@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -10,14 +10,10 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 @Injectable()
 export class WorkspaceMemberPreQueryHookService {
-  constructor(
-    private readonly permissionsService: PermissionsService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   async validateWorkspaceMemberUpdatePermissionOrThrow({
     userWorkspaceId,
@@ -30,7 +26,7 @@ export class WorkspaceMemberPreQueryHookService {
     workspaceMemberId?: string;
     targettedWorkspaceMemberId?: string;
     workspaceId: string;
-    apiKey?: ApiKeyWorkspaceEntity | null;
+    apiKey?: ApiKey | null;
   }) {
     if (isDefined(apiKey)) {
       return;

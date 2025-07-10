@@ -10,9 +10,11 @@ import { v4 } from 'uuid';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
@@ -60,7 +62,9 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly agentChatService: AgentChatService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async createWorkflowVersionStep({
@@ -332,16 +336,10 @@ export class WorkflowVersionStepWorkspaceService {
       },
     };
 
-    const updatedContext = {
-      ...workflowRun.context,
-      [stepId]: enrichedResponse,
-    };
-
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
       workspaceId,
       workflowRunId,
       stepOutput: newStepOutput,
-      context: updatedContext,
       stepStatus: StepStatus.SUCCESS,
     });
 
@@ -594,8 +592,8 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              filterGroups: [],
-              filters: [],
+              stepFilterGroups: [],
+              stepFilters: [],
             },
           },
         };
@@ -618,20 +616,32 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const newAgent = await this.agentService.createOneAgent(
+        const newAgent = await this.agentService.createOneAgentAndFirstThread(
           {
-            name: 'AI Agent Workflow Step',
+            label: 'AI Agent Workflow Step',
+            name: 'ai-agent-workflow',
             description: 'Created automatically for workflow step',
             prompt: '',
-            modelId: 'gpt-4o',
+            modelId: 'auto',
           },
           workspaceId,
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId,
         );
 
         if (!isDefined(newAgent)) {
           throw new WorkflowVersionStepException(
             'Failed to create AI Agent Step',
             WorkflowVersionStepExceptionCode.FAILURE,
+          );
+        }
+
+        const userWorkspaceId =
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
+
+        if (userWorkspaceId) {
+          await this.agentChatService.createThread(
+            newAgent.id,
+            userWorkspaceId,
           );
         }
 

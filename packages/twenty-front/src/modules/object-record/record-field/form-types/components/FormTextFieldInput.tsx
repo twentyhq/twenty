@@ -71,6 +71,7 @@ export const FormTextFieldInput = ({
 
       <FormFieldInputRowContainer multiline={multiline}>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
           onBlur={onBlur}

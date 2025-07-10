@@ -38,11 +38,13 @@ export const MatchColumnToFieldSelect = ({
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
   const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
-
   const { closeDropdown } = useCloseDropdown();
-
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
+
+  const doNotImportOption = options.find(
+    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
+  );
 
   const handleFieldMetadataItemSelect = (
     selectedFieldMetadataItem: FieldMetadataItem,
@@ -56,9 +58,8 @@ export const MatchColumnToFieldSelect = ({
 
       if (isDefined(correspondingOption)) {
         setSelectedFieldMetadataItem(null);
-
         onChange(correspondingOption);
-        closeDropdown();
+        closeDropdown(dropdownId);
       }
     }
   };
@@ -79,7 +80,6 @@ export const MatchColumnToFieldSelect = ({
 
     if (isDefined(correspondingOption)) {
       setSelectedFieldMetadataItem(null);
-
       onChange(correspondingOption);
       closeDropdown(dropdownId);
     }
@@ -112,13 +112,9 @@ export const MatchColumnToFieldSelect = ({
     closeDropdown(dropdownId);
   };
 
-  const doNotImportOption = options.find(
-    (option) => option.value === DO_NOT_IMPORT_OPTION_KEY,
-  );
-
-  const shouldDisplaySubFieldMetadataItemSelect =
-    isDefined(selectedFieldMetadataItem?.type) &&
-    isCompositeFieldType(selectedFieldMetadataItem?.type);
+  const shouldShowSubField =
+    isDefined(selectedFieldMetadataItem) &&
+    isCompositeFieldType(selectedFieldMetadataItem.type);
 
   return (
     <Dropdown
@@ -133,7 +129,7 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        shouldDisplaySubFieldMetadataItemSelect && selectedFieldMetadataItem ? (
+        shouldShowSubField ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
             fieldMetadataItem={selectedFieldMetadataItem}
             onSubFieldSelect={handleSubFieldSelect}

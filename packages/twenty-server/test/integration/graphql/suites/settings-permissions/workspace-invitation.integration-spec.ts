@@ -19,7 +19,7 @@ describe('workspace invitation permissions', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -45,7 +45,7 @@ describe('workspace invitation permissions', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -72,7 +72,7 @@ describe('workspace invitation permissions', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -96,7 +96,7 @@ describe('workspace invitation permissions', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {

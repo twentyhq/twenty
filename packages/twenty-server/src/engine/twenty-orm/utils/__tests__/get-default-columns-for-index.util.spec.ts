@@ -1,4 +1,4 @@
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-columns-for-index.util';
 
 describe('getColumnsForIndex', () => {

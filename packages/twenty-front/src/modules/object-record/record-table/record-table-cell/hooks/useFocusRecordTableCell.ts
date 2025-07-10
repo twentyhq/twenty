@@ -1,6 +1,3 @@
-import { useRecoilCallback } from 'recoil';
-
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
@@ -9,6 +6,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilCallback } from 'recoil';
 import { TableCellPosition } from '../../types/TableCellPosition';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
 
@@ -68,10 +66,6 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
             type: FocusComponentType.RECORD_TABLE_CELL,
             instanceId: cellFocusId,
           },
-          hotkeyScope: {
-            scope: RecordIndexHotkeyScope.RecordIndex,
-          },
-          memoizeKey: cellFocusId,
         });
       };
     },

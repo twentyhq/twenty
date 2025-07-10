@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
+import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
+import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -31,6 +33,10 @@ export const seedCoreSchema = async ({
   });
   await seedUsers(dataSource, schemaName);
   await seedUserWorkspaces(dataSource, schemaName, workspaceId);
+
+  await seedAgents(dataSource, schemaName, workspaceId);
+
+  await seedApiKeys(dataSource, schemaName, workspaceId);
 
   if (shouldSeedFeatureFlags) {
     await seedFeatureFlags(dataSource, schemaName, workspaceId);

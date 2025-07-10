@@ -11,4 +11,5 @@ export enum CommandMenuPages {
   WorkflowStepEdit = 'workflow-step-edit',
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
+  AskAI = 'ask-ai',
 }

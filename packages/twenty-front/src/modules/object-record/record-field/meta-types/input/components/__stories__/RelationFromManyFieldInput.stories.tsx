@@ -20,7 +20,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -78,7 +77,6 @@ const RelationManyFieldInputWithContext = () => {
         type: FocusComponentType.OPENED_FIELD_INPUT,
         instanceId: 'relation-from-many-field-input',
       },
-      hotkeyScope: DEFAULT_CELL_SCOPE,
     });
     openFieldInput({
       fieldDefinition,

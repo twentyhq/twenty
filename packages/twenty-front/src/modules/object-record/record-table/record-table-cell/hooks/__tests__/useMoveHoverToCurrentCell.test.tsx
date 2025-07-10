@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -14,17 +13,9 @@ import {
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(currentHotkeyScopeState, {
-        scope: RecordIndexHotkeyScope.RecordIndex,
-        customScopes: {},
-      });
-    }}
-  >
+  <RecoilRoot>
     <RecordTableComponentInstance
       recordTableId="test-record-table-instance-id"
       onColumnsChange={jest.fn()}

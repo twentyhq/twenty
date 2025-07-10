@@ -7,7 +7,7 @@ import {
   RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 

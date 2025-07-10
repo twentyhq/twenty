@@ -4,14 +4,11 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
-import { Key } from 'ts-key-enum';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -27,14 +24,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   } = useContext(RecordTableColumnAggregateFooterDropdownContext);
   const { closeDropdown } = useCloseDropdown();
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      closeDropdown(dropdownId);
-    },
-    TableOptionsHotkeyScope.Dropdown,
-  );
 
   const availableAggregateOperation = useMemo(
     () =>

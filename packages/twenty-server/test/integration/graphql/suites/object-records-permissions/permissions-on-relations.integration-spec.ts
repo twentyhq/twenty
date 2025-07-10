@@ -37,7 +37,7 @@ describe('permissionsOnRelations', () => {
 
     const rolesResponse = await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(getRolesQuery);
 
     originalMemberRoleId = rolesResponse.body.data.getRoles.find(
@@ -91,7 +91,7 @@ describe('permissionsOnRelations', () => {
 
     await client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(restoreMemberRoleQuery);
   });
 

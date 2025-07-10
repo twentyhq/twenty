@@ -1,25 +1,34 @@
 import { useRecoilCallback } from 'recoil';
 
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
 
+export const KEYBOARD_SHORTCUT_MENU_INSTANCE_ID = 'keyboard-shortcut-menu';
+
 export const useKeyboardShortcutMenu = () => {
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const openKeyboardShortcutMenu = useRecoilCallback(
     ({ set }) =>
       () => {
         set(isKeyboardShortcutMenuOpenedState, true);
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: AppHotkeyScope.KeyboardShortcutMenu,
+        pushFocusItemToFocusStack({
+          focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
+          component: {
+            type: FocusComponentType.KEYBOARD_SHORTCUT_MENU,
+            instanceId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+            enableGlobalHotkeysWithModifiers: false,
+          },
         });
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [pushFocusItemToFocusStack],
   );
 
   const closeKeyboardShortcutMenu = useRecoilCallback(
@@ -31,10 +40,12 @@ export const useKeyboardShortcutMenu = () => {
 
         if (isKeyboardShortcutMenuOpened) {
           set(isKeyboardShortcutMenuOpenedState, false);
-          goBackToPreviousHotkeyScope();
+          removeFocusItemFromFocusStackById({
+            focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
+          });
         }
       },
-    [goBackToPreviousHotkeyScope],
+    [removeFocusItemFromFocusStackById],
   );
 
   const toggleKeyboardShortcutMenu = useRecoilCallback(

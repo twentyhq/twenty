@@ -1,9 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
-import { INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY } from '@/object-record/record-inline-cell/constants/InlineCellHotkeyScopeMemoizeKey';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { TitleInputHotkeyScope } from '@/ui/input/types/TitleInputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { Theme, withTheme } from '@emotion/react';
@@ -68,10 +66,6 @@ export const RecordTitleFullNameFieldDisplay = ({
             type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordTitleCellId,
           },
-          hotkeyScope: {
-            scope: TitleInputHotkeyScope.TitleInput,
-          },
-          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
         });
 
         openInlineCell();

@@ -10,7 +10,6 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 type FullNameFieldInputProps = {
@@ -101,7 +100,6 @@ export const FullNameFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onPaste={handlePaste}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
     />
   );

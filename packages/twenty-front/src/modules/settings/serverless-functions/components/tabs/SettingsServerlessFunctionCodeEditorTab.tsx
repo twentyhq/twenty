@@ -3,14 +3,10 @@ import {
   SettingsServerlessFunctionCodeEditor,
 } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
 import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
-import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 import {
   H2Title,
   IconGitCommit,
@@ -19,8 +15,6 @@ import {
 } from 'twenty-ui/display';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTabList = styled(TabList)`
   border-bottom: none;
@@ -89,19 +83,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         })}
       componentInstanceId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
     />
-  );
-
-  const navigate = useNavigateSettings();
-  useHotkeyScopeOnMount(
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(SettingsPath.ServerlessFunctions);
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );
 
   return (

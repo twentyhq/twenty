@@ -81,6 +81,7 @@ export {
   IconAt,
   IconBaselineDensitySmall,
   IconBell,
+  IconBlockquote,
   IconBolt,
   IconBook2,
   IconBookmark,

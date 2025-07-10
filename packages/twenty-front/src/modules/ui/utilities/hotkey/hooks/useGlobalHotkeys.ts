@@ -11,8 +11,6 @@ export const useGlobalHotkeys = (
   keys: Keys,
   callback: HotkeyCallback,
   containsModifier: boolean,
-  // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string,
   dependencies?: unknown[],
   options?: UseHotkeysOptionsWithoutBuggyOptions,
 ) => {
@@ -59,7 +57,6 @@ export const useGlobalHotkeys = (
         callback: () => {
           handleCallback(keyboardEvent, hotkeysEvent);
         },
-        scope,
         preventDefault,
         containsModifier,
       });

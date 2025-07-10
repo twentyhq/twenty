@@ -1,7 +1,7 @@
 import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 export type RecordFilter = {
   id: string;

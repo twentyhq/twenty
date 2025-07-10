@@ -2,8 +2,12 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class PermissionsException extends CustomException {
   declare code: PermissionsExceptionCode;
-  constructor(message: string, code: PermissionsExceptionCode) {
-    super(message, code);
+  constructor(
+    message: string,
+    code: PermissionsExceptionCode,
+    userFriendlyMessage?: string,
+  ) {
+    super(message, code, userFriendlyMessage);
   }
 }
 
@@ -31,10 +35,19 @@ export enum PermissionsExceptionCode {
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
   NO_PERMISSIONS_FOUND_IN_DATASOURCE = 'NO_PERMISSIONS_FOUND_IN_DATASOURCE',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT',
+  CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   RAW_SQL_NOT_ALLOWED = 'RAW_SQL_NOT_ALLOWED',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT',
   CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION = 'CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION',
+  FIELD_METADATA_NOT_FOUND = 'FIELD_METADATA_NOT_FOUND',
+  ONLY_FIELD_RESTRICTION_ALLOWED = 'ONLY_FIELD_RESTRICTION_ALLOWED',
+  FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT = 'FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT',
+  FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT',
+  UPSERT_FIELD_PERMISSION_FAILED = 'UPSERT_FIELD_PERMISSION_FAILED',
+  PERMISSION_NOT_FOUND = 'PERMISSION_NOT_FOUND',
+  OBJECT_PERMISSION_NOT_FOUND = 'OBJECT_PERMISSION_NOT_FOUND',
+  EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'EMPTY_FIELD_PERMISSION_NOT_ALLOWED',
 }
 
 export enum PermissionsExceptionMessage {
@@ -60,6 +73,15 @@ export enum PermissionsExceptionMessage {
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   NO_PERMISSIONS_FOUND_IN_DATASOURCE = 'No permissions found in datasource',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',
+  CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add field permission on system object',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'Cannot give update permission to non-readable object',
   CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION = 'Cannot give writing permission without reading permission',
+  FIELD_METADATA_NOT_FOUND = 'Field metadata not found',
+  ONLY_FIELD_RESTRICTION_ALLOWED = 'Field permission can only introduce a restriction',
+  FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT = 'Field restriction only makes sense on readable object',
+  FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
+  UPSERT_FIELD_PERMISSION_FAILED = 'Failed to upsert field permission',
+  PERMISSION_NOT_FOUND = 'Permission not found',
+  OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
+  EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
 }
