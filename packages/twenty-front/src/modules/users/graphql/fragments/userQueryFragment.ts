@@ -39,6 +39,10 @@ export const USER_QUERY_FRAGMENT = gql`
       objectPermissions {
         ...ObjectPermissionFragment
       }
+      twoFactorAuthenticationMethodSummary {
+        twoFactorAuthenticationMethodId,
+        isActive
+      }
     }
     currentWorkspace {
       id
@@ -95,12 +99,12 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultAgent {
         id
       }
+      twoFactorAuthenticationPolicy {
+        strategy 
+      }
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
-    }
-    twoFactorAuthenticationPolicy {
-      providers
     }
     userVars
   }
