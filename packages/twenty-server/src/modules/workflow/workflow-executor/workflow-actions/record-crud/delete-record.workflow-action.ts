@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import { isValidUuid } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -30,9 +25,6 @@ import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-e
 export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
@@ -88,19 +80,6 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
         { shouldBypassPermissionChecks: true },
       );
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: workflowActionInput.objectName,
-      },
-    });
-
-    if (!objectMetadata) {
-      throw new RecordCRUDActionException(
-        'Failed to delete: Object metadata not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
     const objectRecord = await repository.findOne({
       where: {
         id: workflowActionInput.objectRecordId,
@@ -115,21 +94,6 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     }
 
     await repository.softDelete(workflowActionInput.objectRecordId);
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowActionInput.objectName,
-      action: DatabaseEventAction.DELETED,
-      events: [
-        {
-          recordId: objectRecord.id,
-          objectMetadata,
-          properties: {
-            before: objectRecord,
-          },
-        },
-      ],
-      workspaceId,
-    });
 
     return {
       result: objectRecord,

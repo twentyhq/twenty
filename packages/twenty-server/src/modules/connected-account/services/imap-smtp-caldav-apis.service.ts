@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   AccountType,
   ConnectionParameters,
@@ -15,9 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageChannelSyncStage,
@@ -37,10 +31,6 @@ export class ImapSmtpCalDavAPIService {
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async setupConnectedAccount(input: {
@@ -90,7 +80,7 @@ export class ImapSmtpCalDavAPIService {
 
     await workspaceDataSource.transaction(async () => {
       if (!existingAccountId) {
-        const newConnectedAccount = await connectedAccountRepository.save(
+        await connectedAccountRepository.save(
           {
             id: newOrExistingConnectedAccountId,
             handle,
@@ -103,27 +93,7 @@ export class ImapSmtpCalDavAPIService {
           {},
         );
 
-        const connectedAccountMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'connectedAccount', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'connectedAccount',
-          action: DatabaseEventAction.CREATED,
-          events: [
-            {
-              recordId: newConnectedAccount.id,
-              objectMetadata: connectedAccountMetadata,
-              properties: {
-                after: newConnectedAccount,
-              },
-            },
-          ],
-          workspaceId,
-        });
-
-        const newMessageChannel = await messageChannelRepository.save(
+        await messageChannelRepository.save(
           {
             id: v4(),
             connectedAccountId: newOrExistingConnectedAccountId,
@@ -133,28 +103,8 @@ export class ImapSmtpCalDavAPIService {
           },
           {},
         );
-
-        const messageChannelMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'messageChannel', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'messageChannel',
-          action: DatabaseEventAction.CREATED,
-          events: [
-            {
-              recordId: newMessageChannel.id,
-              objectMetadata: messageChannelMetadata,
-              properties: {
-                after: newMessageChannel,
-              },
-            },
-          ],
-          workspaceId,
-        });
       } else {
-        const updatedConnectedAccount = await connectedAccountRepository.update(
+        await connectedAccountRepository.update(
           {
             id: newOrExistingConnectedAccountId,
           },
@@ -166,35 +116,7 @@ export class ImapSmtpCalDavAPIService {
           },
         );
 
-        const connectedAccountMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'connectedAccount', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'connectedAccount',
-          action: DatabaseEventAction.UPDATED,
-          events: [
-            {
-              recordId: newOrExistingConnectedAccountId,
-              objectMetadata: connectedAccountMetadata,
-              properties: {
-                before: connectedAccount,
-                after: {
-                  ...connectedAccount,
-                  ...updatedConnectedAccount.raw[0],
-                },
-              },
-            },
-          ],
-          workspaceId,
-        });
-
-        const messageChannels = await messageChannelRepository.find({
-          where: { connectedAccountId: newOrExistingConnectedAccountId },
-        });
-
-        const messageChannelUpdates = await messageChannelRepository.update(
+        await messageChannelRepository.update(
           {
             connectedAccountId: newOrExistingConnectedAccountId,
           },
@@ -205,25 +127,6 @@ export class ImapSmtpCalDavAPIService {
             syncStageStartedAt: null,
           },
         );
-
-        const messageChannelMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'messageChannel', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'messageChannel',
-          action: DatabaseEventAction.UPDATED,
-          events: messageChannels.map((messageChannel) => ({
-            recordId: messageChannel.id,
-            objectMetadata: messageChannelMetadata,
-            properties: {
-              before: messageChannel,
-              after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
-            },
-          })),
-          workspaceId,
-        });
       }
     });
 

@@ -13,8 +13,6 @@ import { DeleteManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
@@ -45,30 +43,16 @@ export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResol
       executionArgs.args.filter,
     );
 
-    const nonFormattedDeletedObjectRecords = await queryBuilder
+    const deletedObjectRecords = await queryBuilder
       .softDelete()
       .returning('*')
       .execute();
-
-    const formattedDeletedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedDeletedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    this.apiEventEmitterService.emitDeletedEvents({
-      records: structuredClone(formattedDeletedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: formattedDeletedRecords,
+        parentObjectRecords: deletedObjectRecords.raw as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -81,7 +65,7 @@ export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResol
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return formattedDeletedRecords.map((record: ObjectRecord) =>
+    return deletedObjectRecords.raw.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,
