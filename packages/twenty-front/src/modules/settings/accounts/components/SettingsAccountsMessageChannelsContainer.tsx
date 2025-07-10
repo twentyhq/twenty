@@ -48,16 +48,6 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         eq: true,
       },
     },
-    recordGqlFields: {
-      id: true,
-      handle: true,
-      isSyncEnabled: true,
-      connectedAccount: {
-        id: true,
-        provider: true,
-        connectionParameters: true,
-      },
-    },
     skip: !accounts.length,
   });
 
