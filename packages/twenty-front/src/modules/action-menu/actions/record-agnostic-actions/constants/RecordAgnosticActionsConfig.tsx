@@ -6,7 +6,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { msg } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui/display';
+import { IconSearch, IconSparkles } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
@@ -48,6 +48,26 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
       />
     ),
     hotKeys: ['/'],
+    shouldBeRegistered: () => true,
+  },
+  [RecordAgnosticActionsKeys.ASK_AI]: {
+    type: ActionType.Standard,
+    scope: ActionScope.Global,
+    key: RecordAgnosticActionsKeys.ASK_AI,
+    label: msg`Ask AI`,
+    shortLabel: msg`Ask AI`,
+    position: 2,
+    isPinned: false,
+    Icon: IconSparkles,
+    availableOn: [ActionViewType.GLOBAL],
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.AskAI}
+        pageTitle="Ask AI"
+        pageIcon={IconSparkles}
+      />
+    ),
+    hotKeys: ['@'],
     shouldBeRegistered: () => true,
   },
 };

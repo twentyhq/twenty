@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { AgentResolver } from 'src/engine/metadata-modules/agent/agent.resolver';
 import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { AgentResolver } from 'src/engine/metadata-modules/agent/agent.resolver';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 
 // Mock the agent service
 jest.mock('../../../../../src/engine/metadata-modules/agent/agent.service');
