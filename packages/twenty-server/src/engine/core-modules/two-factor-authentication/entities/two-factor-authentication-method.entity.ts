@@ -7,6 +7,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -29,7 +30,7 @@ export class TwoFactorAuthenticationMethod {
   userWorkspaceId: string;
 
   @Field(() => UserWorkspace)
-  @ManyToOne(
+  @OneToOne(
     () => UserWorkspace,
     (userWorkspace) => userWorkspace.twoFactorAuthenticationMethod,
     {
