@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateRelatedRecordActions } from './generateRelatedRecordActions';
+import { generateRelatedRecordActions } from '../generateRelatedRecordActions';
 
 describe('generateRelatedRecordActions', () => {
   const mockGetTargetObjectReadPermission = jest.fn();
@@ -122,7 +122,7 @@ describe('generateRelatedRecordActions', () => {
     expect(result['create-related-person']).toBeUndefined();
   });
 
-  it('should assign correct positions starting from 18', () => {
+  it('should assign correct positions to each action', () => {
     const objectMetadataItem = {
       fields: [
         {
