@@ -98,6 +98,7 @@ describe('ClientConfigController', () => {
         isConfigVariablesInDbEnabled: false,
         isIMAPMessagingEnabled: false,
         calendarBookingPageId: undefined,
+        isTwoFactorAuthenticationEnabled: false
       };
 
       jest

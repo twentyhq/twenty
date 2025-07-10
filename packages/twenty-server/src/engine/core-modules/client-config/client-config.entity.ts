@@ -182,4 +182,7 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isTwoFactorAuthenticationEnabled: boolean;
 }
