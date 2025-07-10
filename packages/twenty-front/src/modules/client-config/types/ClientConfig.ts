@@ -35,4 +35,5 @@ export type ClientConfig = {
   sentry: Sentry;
   signInPrefilled: boolean;
   support: Support;
+  isTwoFactorAuthenticationEnabled: boolean;
 };

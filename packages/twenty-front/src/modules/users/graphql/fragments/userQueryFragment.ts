@@ -99,6 +99,9 @@ export const USER_QUERY_FRAGMENT = gql`
     availableWorkspaces {
       ...AvailableWorkspacesFragment
     }
+    twoFactorAuthenticationPolicy {
+      providers
+    }
     userVars
   }
 
