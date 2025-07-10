@@ -15,7 +15,7 @@ export const Toggle2FA = () => {
     currentWorkspaceState,
   );
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [ updateWorkspace ] = useUpdateWorkspaceMutation();
 
   const handleChange = async () => {
     try {
@@ -65,7 +65,7 @@ export const Toggle2FA = () => {
     <SettingsOptionCardContentToggle
       Icon={IconLifebuoy}
       title={t`Two Factor Authentication`}
-      checked={!currentWorkspace?.twoFactorAuthenticationPolicy}
+      checked={!!currentWorkspace?.twoFactorAuthenticationPolicy}
       onChange={handleChange}
       advancedMode
     />
