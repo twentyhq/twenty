@@ -497,7 +497,9 @@ export class AuthResolver {
         origin,
       );
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace
+    );
 
     if (workspaceId !== workspace.id) {
       throw new AuthException(
@@ -517,7 +519,11 @@ export class AuthResolver {
       currentUserWorkspace.twoFactorAuthenticationMethod,
     );
 
-    return await this.authService.verify(email, workspace.id, authProvider);
+    return await this.authService.verify(
+      email,
+      workspace.id,
+      authProvider
+    );
   }
 
   @Mutation(() => AuthorizeApp)
