@@ -9,11 +9,27 @@ import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePic
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, Status, IconShield } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useRecoilValue } from 'recoil';
+import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/isTwoFactorAuthenticationEnabledState';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
+
+  const isTwoFactorAuthenticationEnabled = useRecoilValue(
+    isTwoFactorAuthenticationEnabledState,
+  );
+
+  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const twoFactorAuthenticationStatus = currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.isActive
+
+  console.log({currentUserWorkspace})
 
   return (
     <SubMenuTopBarContainer
@@ -45,6 +61,21 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
+        {!!currentWorkspace?.twoFactorAuthenticationPolicy && isTwoFactorAuthenticationEnabled === true && (
+          <Section>
+            <UndecoratedLink to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}>
+              <SettingsCard 
+                title={t`Authenticator App`}
+                Icon={<IconShield />}
+                Status={(twoFactorAuthenticationStatus 
+                    ? <Status text={'Active'} color={'turquoise'} />
+                    : <Status text={'Inactive'} color={'orange'} />
+                  ) 
+                }
+              />  
+            </UndecoratedLink>
+          </Section>
+        )}
         <Section>
           <ChangePassword />
         </Section>

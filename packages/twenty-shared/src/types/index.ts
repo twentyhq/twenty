@@ -14,7 +14,6 @@ export type { IsExactly } from './IsExactly';
 export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export type { ObjectRecordsPermissionsByRoleId } from './ObjectRecordsPermissionsByRoleId';
 export type { StepFilterGroup, StepFilter } from './StepFilters';
-export { StepLogicalOperator, StepOperand } from './StepFilters';
-export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { StepLogicalOperator } from './StepFilters';
+export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';

@@ -20,9 +20,11 @@ import {
   AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
+  useGetAuthTokensFromOtpMutation,
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
+  useInitiateOtpProvisioningMutation,
   useSignInMutation,
   useSignUpInWorkspaceMutation,
   useSignUpMutation,
@@ -77,9 +79,12 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { loginTokenState } from '../states/loginTokenState';
+import { AuthToken } from '~/generated/graphql';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
+  const setLoginToken = useSetRecoilState(loginTokenState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetRecoilState(
@@ -114,6 +119,8 @@ export const useAuth = () => {
   const [getLoginTokenFromEmailVerificationToken] =
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const [initiateOtpProvisioning] = useInitiateOtpProvisioningMutation();
+  const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
@@ -368,26 +375,17 @@ export const useAuth = () => {
     [setTokenPair],
   );
 
-  const handleGetAuthTokensFromLoginToken = useCallback(
-    async (loginToken: string) => {
-      const getAuthTokensResult = await getAuthTokensFromLoginToken({
-        variables: {
-          loginToken,
-          origin,
-        },
-      });
+  const handleSetLoginToken = useCallback(
+    (token: AuthToken['token']) => {
+      setLoginToken(token);
+      cookieStorage.setItem('loginToken', JSON.stringify(token));
+    },
+    [setLoginToken],
+  );
 
-      if (isDefined(getAuthTokensResult.errors)) {
-        throw getAuthTokensResult.errors;
-      }
-
-      if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
-        throw new Error('No getAuthTokensFromLoginToken result');
-      }
-
-      handleSetAuthTokens(
-        getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
-      );
+  const handleLoadWorkspaceAfterAuthentication = useCallback(
+    async (authTokens: AuthTokenPair) => {
+      handleSetAuthTokens(authTokens);
 
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
       // then UserProvider updates its children and PrefetchDataProvider is triggered
@@ -395,12 +393,60 @@ export const useAuth = () => {
       await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
+    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
+  );
+
+  const handleGetAuthTokensFromLoginToken = useCallback(
+    async (loginToken: string) => {
+      try {
+        handleSetLoginToken(loginToken);
+
+        const getAuthTokensResult = await getAuthTokensFromLoginToken({
+          variables: {
+            loginToken: loginToken,
+            origin,
+          },
+        });
+
+        if (isDefined(getAuthTokensResult.errors)) {
+          throw getAuthTokensResult.errors;
+        }
+
+        if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+          throw new Error('No getAuthTokensFromLoginToken result');
+        }
+
+        handleLoadWorkspaceAfterAuthentication(
+          getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
+        );
+      } catch (error) {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.subCode ===
+            'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
+        ) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+          throw error;
+        }
+
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.subCode ===
+            'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
+        ) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
+          throw error;
+        }
+      }
+    },
     [
       getAuthTokensFromLoginToken,
       loadCurrentUser,
       origin,
       handleSetAuthTokens,
       refreshObjectMetadataItems,
+      handleLoadWorkspaceAfterAuthentication,
+      setSignInUpStep,
     ],
   );
 
@@ -654,6 +700,36 @@ export const useAuth = () => {
     [buildRedirectUrl, redirect],
   );
 
+  const handleGetAuthTokensFromOTP = useCallback(
+    async (otp: string, loginToken: string, captchaToken?: string) => {
+      try {
+        const getAuthTokensFromOtpResult = await getAuthTokensFromOtp({
+          variables: {
+            captchaToken,
+            origin,
+            otp,
+            loginToken,
+          },
+        });
+
+        if (isDefined(getAuthTokensFromOtpResult.errors)) {
+          throw getAuthTokensFromOtpResult.errors;
+        }
+
+        if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
+          throw new Error('No getAuthTokensFromLoginToken result');
+        }
+
+        handleLoadWorkspaceAfterAuthentication(
+          getAuthTokensFromOtpResult.data.getAuthTokensFromOTP.tokens,
+        );
+      } catch (error) {
+        return 'aaaah';
+      }
+    },
+    [getAuthTokensFromOtp, origin, handleLoadWorkspaceAfterAuthentication],
+  );
+
   return {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     getLoginTokenFromEmailVerificationToken:
@@ -672,5 +748,7 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
+    getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
+    initiateOtpProvisioning
   };
 };
