@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-add-enqueued-status-to-workflow-run.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
@@ -49,12 +50,14 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     FixSchemaArrayTypeCommand,
     MigrateWorkflowRunStatesCommand,
     MigrateApiKeysWebhooksToCoreCommand,
+    AddEnqueuedStatusToWorkflowRunCommand,
   ],
   exports: [
     FixUpdateStandardFieldsIsLabelSyncedWithName,
     FixSchemaArrayTypeCommand,
     MigrateWorkflowRunStatesCommand,
     MigrateApiKeysWebhooksToCoreCommand,
+    AddEnqueuedStatusToWorkflowRunCommand,
   ],
 })
 export class V1_1_UpgradeVersionCommandModule {}
