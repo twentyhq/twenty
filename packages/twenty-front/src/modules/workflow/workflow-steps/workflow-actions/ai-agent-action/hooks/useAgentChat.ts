@@ -1,12 +1,13 @@
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { agentChatUploadedFilesState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesState';
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
@@ -22,6 +23,8 @@ interface OptimisticMessage extends AgentChatMessage {
 
 export const useAgentChat = (agentId: string) => {
   const apolloClient = useApolloClient();
+
+  const agentChatUploadedFiles = useRecoilValue(agentChatUploadedFilesState);
 
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
@@ -93,6 +96,9 @@ export const useAgentChat = (agentId: string) => {
         requestBody: {
           threadId: currentThreadId,
           userMessage: content,
+          ...(agentChatUploadedFiles.length > 0 && {
+            fileIds: agentChatUploadedFiles.map((file) => file.id),
+          }),
         },
       },
       context: {
