@@ -4,8 +4,15 @@ import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 export const isCreateFieldInput = (
   input: UpdateFieldInput | CreateFieldInput,
 ): input is CreateFieldInput => {
-  return Object.prototype.hasOwnProperty.call(
-    input,
-    'relationCreationPayload' as const satisfies keyof CreateFieldInput,
+  return (
+    Object.prototype.hasOwnProperty.call(
+      input,
+      'objectMetadataId' as const satisfies keyof CreateFieldInput,
+    ) &&
+    !Object.prototype.hasOwnProperty.call(
+      input,
+      // @ts-expect-error Expecting update key not to be in CreateFieldInput
+      'update' as const satisfies keyof CreateFieldInput,
+    )
   );
 };
