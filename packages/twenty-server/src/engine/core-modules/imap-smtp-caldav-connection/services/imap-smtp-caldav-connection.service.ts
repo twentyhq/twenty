@@ -135,9 +135,16 @@ export class ImapSmtpCaldavService {
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
+      if (error.code === 'FailedToOpenSocket') {
+        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+          userFriendlyMessage:
+            "We couldn't connect to your CalDAV server. Please check your server settings and try again.",
+        });
+      }
+
       throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
         userFriendlyMessage:
-          "We couldn't connect to your CalDAV server. Please check your server settings and try again.",
+          'Invalid credentials. Please check your username and password.',
       });
     }
 
