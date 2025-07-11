@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CalDavCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav.provider';
+import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav.provider';
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
 import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -10,7 +10,7 @@ export class CalDavCalendarGetEventsService {
   private readonly logger = new Logger(CalDavCalendarGetEventsService.name);
 
   constructor(
-    private readonly caldavCalendarClientProvider: CalDavCalendarClientProvider,
+    private readonly caldavCalendarClientProvider: CalDavClientProvider,
   ) {}
 
   public async getCalendarEvents(

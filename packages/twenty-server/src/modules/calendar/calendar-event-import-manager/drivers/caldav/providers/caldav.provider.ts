@@ -4,7 +4,7 @@ import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class CalDavCalendarClientProvider {
+export class CalDavClientProvider {
   public async getCalDavCalendarClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
