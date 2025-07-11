@@ -5,7 +5,6 @@ import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -17,6 +16,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { isCreateFieldInput } from 'src/engine/metadata-modules/field-metadata/types/is-create-field-input.type';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -91,8 +91,8 @@ export class FieldMetadataRelationService {
       workspaceId: fieldMetadataInput.workspaceId,
     });
 
-    const targetFieldMetadataToCreateWithRelation =
-      await this.addCustomRelationFieldMetadataForCreation({
+    const targetFieldMetadataRelationSettings =
+      this.computeRelationSettingsIconAndRelationTargetObjectMetadataId({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,
@@ -106,14 +106,9 @@ export class FieldMetadataRelationService {
         objectMetadata,
       });
 
-    // todo better type
-    const targetFieldMetadataToCreateWithRelationWithId = {
-      id: v4(),
-      ...targetFieldMetadataToCreateWithRelation,
-    };
-
     const targetFieldMetadata = await fieldMetadataRepository.save({
-      ...targetFieldMetadataToCreateWithRelationWithId,
+      // id: v4(), // useless ?
+      ...targetFieldMetadataRelationSettings,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
@@ -140,44 +135,39 @@ export class FieldMetadataRelationService {
       fieldMetadataType === FieldMetadataType.RELATION ||
       fieldMetadataType === FieldMetadataType.MORPH_RELATION;
 
+    if (!isRelation) {
+      return fieldMetadataInput;
+    }
+
     if (
-      isRelation &&
-      isDefined(
-        (fieldMetadataInput as unknown as CreateFieldInput)
-          .relationCreationPayload,
-      )
+      isCreateFieldInput(fieldMetadataInput) &&
+      isDefined(fieldMetadataInput.relationCreationPayload)
     ) {
-      const relationCreationPayload = (
-        fieldMetadataInput as unknown as CreateFieldInput
-      ).relationCreationPayload;
+      const { relationCreationPayload } = fieldMetadataInput;
 
-      if (isDefined(relationCreationPayload)) {
-        await this.validateRelationCreationPayloadOrThrow(
-          relationCreationPayload,
-        );
-        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        );
+      await this.validateRelationCreationPayloadOrThrow(
+        relationCreationPayload,
+      );
+      const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+        relationCreationPayload.targetFieldLabel,
+      );
 
-        validateMetadataNameOrThrow(computedMetadataNameFromLabel);
+      validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
-        const objectMetadataTarget =
-          objectMetadataMaps.byId[
-            relationCreationPayload.targetObjectMetadataId
-          ];
+      const objectMetadataTarget =
+        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
 
-        if (!isDefined(objectMetadataTarget)) {
-          throw new FieldMetadataException(
-            `Object metadata relation target not found for relation creation payload`,
-            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-          );
-        }
-
-        validateFieldNameAvailabilityOrThrow(
-          computedMetadataNameFromLabel,
-          objectMetadataTarget,
+      if (!isDefined(objectMetadataTarget)) {
+        throw new FieldMetadataException(
+          `Object metadata relation target not found for relation creation payload`,
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         );
       }
+
+      validateFieldNameAvailabilityOrThrow({
+        name: computedMetadataNameFromLabel,
+        objectMetadata: objectMetadataTarget,
+      });
     }
 
     return fieldMetadataInput;
@@ -282,7 +272,8 @@ export class FieldMetadataRelationService {
     });
   }
 
-  addCustomRelationFieldMetadataForCreation({
+  // Hell to type due to nestJs OmitType that prevents passing a generic type here
+  computeRelationSettingsIconAndRelationTargetObjectMetadataId({
     fieldMetadataInput,
     relationCreationPayload,
     objectMetadata,
@@ -290,7 +281,12 @@ export class FieldMetadataRelationService {
     fieldMetadataInput: CreateFieldInput;
     relationCreationPayload: CreateFieldInput['relationCreationPayload'];
     objectMetadata: ObjectMetadataItemWithFieldMaps;
-  }) {
+  }): Pick<
+    FieldMetadataEntity<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
+    'settings' | 'icon' | 'relationTargetObjectMetadataId'
+  > {
     const isRelation =
       isFieldMetadataInterfaceOfType(
         fieldMetadataInput,
@@ -301,13 +297,26 @@ export class FieldMetadataRelationService {
         FieldMetadataType.MORPH_RELATION,
       );
 
-    const isManyToOne =
-      isRelation && relationCreationPayload?.type === RelationType.MANY_TO_ONE;
-
-    const isOneToMany =
-      isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
+    if (!isDefined(relationCreationPayload) || !isRelation) {
+      throw new FieldMetadataException(
+        `Field metadata must be a relation with a relationCreationPayload`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
 
     const defaultIcon = 'IconRelationOneToMany';
+
+    if (relationCreationPayload.type === RelationType.MANY_TO_ONE) {
+      return {
+        icon: fieldMetadataInput.icon ?? defaultIcon,
+        relationTargetObjectMetadataId:
+          relationCreationPayload?.targetObjectMetadataId,
+        settings: {
+          ...fieldMetadataInput.settings,
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      };
+    }
 
     const joinColumnName = isFieldMetadataInterfaceOfType(
       fieldMetadataInput,
@@ -316,26 +325,20 @@ export class FieldMetadataRelationService {
       ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
       : `${fieldMetadataInput.name}Id`;
 
+    // Should never occur as always adding Id
+    validateFieldNameAvailabilityOrThrow({
+      name: joinColumnName,
+      objectMetadata,
+    });
+
     return {
-      ...fieldMetadataInput,
       icon: fieldMetadataInput.icon ?? defaultIcon,
-      relationCreationPayload,
       relationTargetObjectMetadataId:
         relationCreationPayload?.targetObjectMetadataId,
       settings: {
-        ...fieldMetadataInput.settings,
-        ...(isOneToMany
-          ? {
-              relationType: RelationType.ONE_TO_MANY,
-            }
-          : {}),
-        ...(isManyToOne
-          ? {
-              relationType: RelationType.MANY_TO_ONE,
-              onDelete: RelationOnDeleteAction.SET_NULL,
-              joinColumnName,
-            }
-          : {}),
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName,
       },
     };
   }

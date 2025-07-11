@@ -14,6 +14,7 @@ export type RelationCreationPayload = {
   targetFieldIcon: string;
   type: RelationType;
 };
+
 @InputType()
 export class CreateFieldInput extends OmitType(
   FieldMetadataDTO,
