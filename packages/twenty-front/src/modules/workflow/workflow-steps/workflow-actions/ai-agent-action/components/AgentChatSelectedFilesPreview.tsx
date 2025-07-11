@@ -26,6 +26,7 @@ export const AgentChatSelectedFilesPreview = () => {
       {agentChatSelectedFiles.map((file) => (
         <AgentChatFilePreview
           file={file}
+          key={file.name}
           onRemove={() => {
             setAgentChatSelectedFiles(
               agentChatSelectedFiles.filter((f) => f.name !== file.name),
