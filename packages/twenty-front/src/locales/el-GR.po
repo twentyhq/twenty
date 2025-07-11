@@ -2551,7 +2551,7 @@ msgstr "Γεγονότα στα οποία συμμετείχατε εμφανί
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
 msgstr "Τα πάντα"
 
@@ -3834,7 +3834,7 @@ msgstr "Συγχρονισμός Μηνημάτων"
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Metadata"
 msgstr "Μεταδεδομένα"
 
@@ -4407,7 +4407,7 @@ msgid "Only date & participants will be shared with your team."
 msgstr "Μόνο η ημερομηνία και οι συμμετέχοντες θα μοιραστούν με την ομάδα σας."
 
 #. js-lingui-id: 50ETCF
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Μόνο η χρονική σήμανση και οι συμμετέχοντες θα μοιραστούν με την ομάδα σας."
 
@@ -5648,7 +5648,7 @@ msgstr "Η υποτομέας ενημερώθηκε"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Subject and metadata"
 msgstr "Θέμα και μεταδεδομένα"
 
@@ -6737,12 +6737,12 @@ msgstr ""
 #~ msgstr "Το πιστωτικό σας υπόλοιπο θα χρησιμοποιηθεί για την πληρωμή των μηνιαίων λογαριασμών."
 
 #. js-lingui-id: +5YqGH
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your email subjects and meeting titles will be shared with your team."
 msgstr "Τα θέματα των email σας και οι τίτλοι συναντήσεων θα μοιραστούν με την ομάδα σας."
 
 #. js-lingui-id: la0RPA
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your emails and events content will be shared with your team."
 msgstr "Το περιεχόμενο των email σας και των γεγονότων σας θα μοιραστεί με την ομάδα σας."
 
