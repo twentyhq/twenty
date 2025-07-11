@@ -121,7 +121,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces'],
+      relations: ['workspaces', 'workspaces.twoFactorAuthenticationMethod'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -149,11 +149,20 @@ export class UserResolver {
         }),
       );
 
+    const twoFactorAuthenticationMethodSummary = {
+      twoFactorAuthenticationMethodId:
+        currentUserWorkspace?.twoFactorAuthenticationMethod.id,
+      isActive:
+        currentUserWorkspace?.twoFactorAuthenticationMethod.context?.status ===
+        'VERIFIED',
+    };
+
     return {
       ...user,
       currentUserWorkspace: {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
+        twoFactorAuthenticationMethodSummary,
       },
       currentWorkspace: workspace,
     };

@@ -60,6 +60,11 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 
+import { TwoFactorAuthenticationMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
+import { twoFactorAuthenticationModuleFactory } from '../two-factor-authentication/two-factor-authentication.module-factory';
+import { TwentyConfigService } from '../twenty-config/twenty-config.service';
+
 import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
@@ -85,6 +90,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
         UserWorkspace,
+        TwoFactorAuthenticationMethod,
       ],
       'core',
     ),
@@ -103,6 +109,10 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MetricsModule,
     PermissionsModule,
     UserRoleModule,
+    TwoFactorAuthenticationModule.forRoot({
+      useFactory: twoFactorAuthenticationModuleFactory,
+      inject: [TwentyConfigService],
+    }),
   ],
   controllers: [
     GoogleAuthController,

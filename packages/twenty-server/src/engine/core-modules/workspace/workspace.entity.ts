@@ -27,6 +27,7 @@ import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { TwoFactorAuthenticationPolicy } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-policy.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -159,6 +160,10 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;
+
+  @Field(() => TwoFactorAuthenticationPolicy, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  twoFactorAuthenticationPolicy?: TwoFactorAuthenticationPolicy;
 
   @Field()
   @Column({ default: true })

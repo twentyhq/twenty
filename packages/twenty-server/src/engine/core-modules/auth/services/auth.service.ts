@@ -262,7 +262,7 @@ export class AuthService {
   async verify(
     email: string,
     workspaceId: string,
-    authProvider: AuthProviderEnum,
+    authProvider?: AuthProviderEnum,
   ): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(

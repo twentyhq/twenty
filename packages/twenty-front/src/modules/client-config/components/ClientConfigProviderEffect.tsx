@@ -26,6 +26,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { isTwoFactorAuthenticationEnabledState } from '../states/isTwoFactorAuthenticationEnabledState';
 
 export const ClientConfigProviderEffect = () => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
@@ -95,6 +96,10 @@ export const ClientConfigProviderEffect = () => {
 
   const setIsImapSmtpCaldavEnabled = useSetRecoilState(
     isImapSmtpCaldavEnabledState,
+  );
+
+  const setIsTwoFactorAuthenticationEnabled = useSetRecoilState(
+    isTwoFactorAuthenticationEnabledState,
   );
 
   const { data, loading, error, fetchClientConfig } = useClientConfig();
@@ -189,6 +194,9 @@ export const ClientConfigProviderEffect = () => {
 
     setCalendarBookingPageId(data?.clientConfig?.calendarBookingPageId ?? null);
     setIsImapSmtpCaldavEnabled(data?.clientConfig?.isImapSmtpCaldavEnabled);
+    setIsTwoFactorAuthenticationEnabled(
+      data?.clientConfig.isTwoFactorAuthenticationEnabled,
+    );
   }, [
     data,
     loading,
@@ -217,6 +225,7 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled,
     setCalendarBookingPageId,
     setIsImapSmtpCaldavEnabled,
+    setIsTwoFactorAuthenticationEnabled,
   ]);
 
   return <></>;

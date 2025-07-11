@@ -1,5 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
+  TwoFactorAuthentication = 'profile/two-factor-authentication',
   Experience = 'experience',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',

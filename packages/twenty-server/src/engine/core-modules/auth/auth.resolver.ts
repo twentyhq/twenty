@@ -63,6 +63,8 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -89,6 +91,7 @@ export class AuthResolver {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
+    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -254,6 +257,42 @@ export class AuthResolver {
     const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
 
     return { loginToken, workspaceUrls };
+  }
+
+  @Mutation(() => AuthTokens)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  async getAuthTokensFromOTP(
+    @Args()
+    twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
+    @Args('origin') origin: string,
+  ): Promise<AuthTokens> {
+    const { sub: email, authProvider } =
+      await this.loginTokenService.verifyLoginToken(
+        twoFactorAuthenticationVerificationInput.loginToken,
+      );
+
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    const user = await this.userService.getUserByEmail(email);
+
+    await this.twoFactorAuthenticationService.validateStrategy(
+      user.id,
+      twoFactorAuthenticationVerificationInput.otp,
+      workspace.id,
+    );
+
+    return await this.authService.verify(email, workspace.id, authProvider);
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
@@ -460,6 +499,19 @@ export class AuthResolver {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+
+    const user = await this.userService.getUserByEmail(email);
+
+    const currentUserWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: user.id,
+        workspaceId,
+      });
+
+    await this.twoFactorAuthenticationService.is2FARequired(
+      workspace,
+      currentUserWorkspace.twoFactorAuthenticationMethod,
+    );
 
     return await this.authService.verify(email, workspace.id, authProvider);
   }
