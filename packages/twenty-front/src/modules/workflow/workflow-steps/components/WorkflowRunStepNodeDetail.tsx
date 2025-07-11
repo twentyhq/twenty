@@ -1,7 +1,10 @@
-import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  WorkflowAction,
+  WorkflowRunStepStatus,
+  WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
@@ -21,7 +24,7 @@ type WorkflowRunStepNodeDetailProps = {
   stepId: string;
   trigger: WorkflowTrigger | null;
   steps: Array<WorkflowAction> | null;
-  stepExecutionStatus?: WorkflowDiagramRunStatus;
+  stepExecutionStatus?: WorkflowRunStepStatus;
 };
 
 export const WorkflowRunStepNodeDetail = ({
@@ -172,7 +175,7 @@ export const WorkflowRunStepNodeDetail = ({
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
-                readonly: stepExecutionStatus !== 'running',
+                readonly: stepExecutionStatus !== 'PENDING',
               }}
             />
           );

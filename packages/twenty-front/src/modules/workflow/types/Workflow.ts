@@ -18,11 +18,12 @@ import {
   workflowFormActionSettingsSchema,
   workflowHttpRequestActionSchema,
   workflowManualTriggerSchema,
-  workflowRunContextSchema,
   workflowRunOutputSchema,
   workflowRunOutputStepsOutputSchema,
   workflowRunSchema,
+  workflowRunStateSchema,
   workflowRunStatusSchema,
+  workflowRunStepStatusSchema,
   workflowSendEmailActionSchema,
   workflowSendEmailActionSettingsSchema,
   workflowTriggerSchema,
@@ -150,13 +151,15 @@ export type WorkflowRunOutputStepsOutput = z.infer<
   typeof workflowRunOutputStepsOutputSchema
 >;
 
-export type WorkflowRunContext = z.infer<typeof workflowRunContextSchema>;
-
-export type WorkflowRunFlow = WorkflowRunOutput['flow'];
-
 export type WorkflowRunStatus = z.infer<typeof workflowRunStatusSchema>;
 
 export type WorkflowRun = z.infer<typeof workflowRunSchema>;
+
+export type WorkflowRunState = z.infer<typeof workflowRunStateSchema>;
+
+export type WorkflowRunStepStatus = z.infer<typeof workflowRunStepStatusSchema>;
+
+export type WorkflowRunFlow = WorkflowRunState['flow'];
 
 export type Workflow = {
   __typename: 'Workflow';

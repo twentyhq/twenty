@@ -34,6 +34,7 @@
       "./translations/index.ts",
       "./types/index.ts",
       "./utils/index.ts",
+      "./workflow/index.ts",
       "./workspace/index.ts"
     ]
   },
@@ -44,6 +45,7 @@
     "translations",
     "types",
     "utils",
+    "workflow",
     "workspace"
   ]
 }

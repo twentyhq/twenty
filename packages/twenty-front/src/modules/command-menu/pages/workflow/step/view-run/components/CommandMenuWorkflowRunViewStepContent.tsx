@@ -20,11 +20,11 @@ import {
   WorkflowRunTabId,
   WorkflowRunTabIdType,
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
-import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import styled from '@emotion/styled';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
+import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -65,9 +65,10 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
   }
 
   const stepExecutionStatus = getWorkflowRunStepExecutionStatus({
-    workflowRunOutput: workflowRun.output,
+    workflowRunState: workflowRun.state,
     stepId: workflowSelectedNode,
   });
+
   const stepDefinition = getStepDefinitionOrThrow({
     stepId: workflowSelectedNode,
     trigger: flow.trigger,

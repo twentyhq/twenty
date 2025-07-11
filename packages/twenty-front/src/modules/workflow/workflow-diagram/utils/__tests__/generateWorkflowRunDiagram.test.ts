@@ -89,7 +89,11 @@ describe('generateWorkflowRunDiagram', () => {
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
+    const result = generateWorkflowRunDiagram({
+      trigger,
+      steps,
+      stepsInfo: stepsOutput,
+    });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -270,7 +274,11 @@ describe('generateWorkflowRunDiagram', () => {
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
+    const result = generateWorkflowRunDiagram({
+      trigger,
+      steps,
+      stepsInfo: stepsOutput,
+    });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -440,7 +448,11 @@ describe('generateWorkflowRunDiagram', () => {
 
     const stepsOutput = undefined;
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
+    const result = generateWorkflowRunDiagram({
+      trigger,
+      steps,
+      stepsInfo: stepsOutput,
+    });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -632,7 +644,11 @@ describe('generateWorkflowRunDiagram', () => {
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
+    const result = generateWorkflowRunDiagram({
+      trigger,
+      steps,
+      stepsInfo: stepsOutput,
+    });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -794,7 +810,11 @@ describe('generateWorkflowRunDiagram', () => {
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
+    const result = generateWorkflowRunDiagram({
+      trigger,
+      steps,
+      stepsInfo: stepsOutput,
+    });
 
     expect(result).toMatchInlineSnapshot(`
 {

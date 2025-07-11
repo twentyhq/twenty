@@ -6,6 +6,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -27,7 +28,6 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -302,7 +302,7 @@ export class WorkflowVersionStepWorkspaceService {
         workspaceId,
       });
 
-    const step = workflowRun.output?.flow?.steps?.find(
+    const step = workflowRun.state?.flow?.steps?.find(
       (step) => step.id === stepId,
     );
 

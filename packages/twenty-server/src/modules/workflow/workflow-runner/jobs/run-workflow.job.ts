@@ -144,7 +144,7 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStep = workflowRun.output?.flow?.steps?.find(
+    const lastExecutedStep = workflowRun.state?.flow?.steps?.find(
       (step) => step.id === lastExecutedStepId,
     );
 
