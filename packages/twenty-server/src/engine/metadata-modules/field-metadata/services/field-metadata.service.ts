@@ -657,6 +657,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       objectMetadata,
     });
 
+    // TODO Factorize
     const isRelation =
       fieldMetadataInput.type === FieldMetadataType.RELATION ||
       fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION;
@@ -671,10 +672,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
       const relationFieldMetadataForCreate =
-        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+            relationCreationPayload: fieldMetadataInput.relationCreationPayload, // why ?
             objectMetadata,
           },
         );
