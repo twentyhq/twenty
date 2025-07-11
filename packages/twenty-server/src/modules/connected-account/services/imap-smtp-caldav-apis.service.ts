@@ -90,6 +90,9 @@ export class ImapSmtpCalDavAPIService {
         workspaceId,
       });
 
+    let createdMessageChannel: MessageChannelWorkspaceEntity | null = null;
+    let createdCalendarChannel: CalendarChannelWorkspaceEntity | null = null;
+
     await workspaceDataSource.transaction(async () => {
       await this.upsertConnectedAccount(
         input,
@@ -98,13 +101,13 @@ export class ImapSmtpCalDavAPIService {
         connectedAccountRepository,
       );
 
-      await this.setupMessageChannels(
+      createdMessageChannel = await this.setupMessageChannels(
         input,
         accountId,
         messageChannelRepository,
       );
 
-      await this.setupCalendarChannels(
+      createdCalendarChannel = await this.setupCalendarChannels(
         input,
         accountId,
         calendarChannelRepository,
@@ -115,8 +118,8 @@ export class ImapSmtpCalDavAPIService {
       input,
       accountId,
       workspaceId,
-      messageChannelRepository,
-      calendarChannelRepository,
+      createdMessageChannel,
+      createdCalendarChannel,
     );
   }
 
@@ -191,7 +194,7 @@ export class ImapSmtpCalDavAPIService {
     },
     accountId: string,
     messageChannelRepository: WorkspaceRepository<MessageChannelWorkspaceEntity>,
-  ) {
+  ): Promise<MessageChannelWorkspaceEntity | null> {
     const existingChannels = await messageChannelRepository.find({
       where: { connectedAccountId: accountId },
     });
@@ -245,6 +248,8 @@ export class ImapSmtpCalDavAPIService {
       ],
       workspaceId: input.workspaceId,
     });
+
+    return shouldEnableSync ? newMessageChannel : null;
   }
 
   private async setupCalendarChannels(
@@ -255,7 +260,7 @@ export class ImapSmtpCalDavAPIService {
     },
     accountId: string,
     calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
-  ) {
+  ): Promise<CalendarChannelWorkspaceEntity | null> {
     const existingChannels = await calendarChannelRepository.find({
       where: { connectedAccountId: accountId },
     });
@@ -306,7 +311,11 @@ export class ImapSmtpCalDavAPIService {
         ],
         workspaceId: input.workspaceId,
       });
+
+      return newCalendarChannel;
     }
+
+    return null;
   }
 
   private async enqueueSyncJobs(
@@ -315,39 +324,27 @@ export class ImapSmtpCalDavAPIService {
     },
     accountId: string,
     workspaceId: string,
-    messageChannelRepository: WorkspaceRepository<MessageChannelWorkspaceEntity>,
-    calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity | null,
+    calendarChannel: CalendarChannelWorkspaceEntity | null,
   ) {
-    if (input.connectionParameters.IMAP) {
-      const messageChannels = await messageChannelRepository.find({
-        where: { connectedAccountId: accountId, isSyncEnabled: true },
-      });
-
-      for (const messageChannel of messageChannels) {
-        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-          MessagingMessageListFetchJob.name,
-          {
-            workspaceId,
-            messageChannelId: messageChannel.id,
-          },
-        );
-      }
+    if (input.connectionParameters.IMAP && messageChannel) {
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        {
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
     }
 
-    if (input.connectionParameters.CALDAV) {
-      const calendarChannels = await calendarChannelRepository.find({
-        where: { connectedAccountId: accountId, isSyncEnabled: true },
-      });
-
-      for (const calendarChannel of calendarChannels) {
-        await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-          CalendarEventListFetchJob.name,
-          {
-            workspaceId,
-            calendarChannelId: calendarChannel.id,
-          },
-        );
-      }
+    if (input.connectionParameters.CALDAV && calendarChannel) {
+      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+        CalendarEventListFetchJob.name,
+        {
+          workspaceId,
+          calendarChannelId: calendarChannel.id,
+        },
+      );
     }
   }
 }

@@ -4,10 +4,12 @@ import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
 import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-
 @Injectable()
 export class CalDavGetEventsService {
   private readonly logger = new Logger(CalDavGetEventsService.name);
+
+  private static readonly PAST_DAYS_WINDOW = 30;
+  private static readonly FUTURE_DAYS_WINDOW = 30;
 
   constructor(
     private readonly caldavCalendarClientProvider: CalDavClientProvider,
@@ -28,8 +30,14 @@ export class CalDavGetEventsService {
           connectedAccount,
         );
 
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      const startDate = new Date(
+        Date.now() -
+          CalDavGetEventsService.PAST_DAYS_WINDOW * 24 * 60 * 60 * 1000,
+      );
+      const endDate = new Date(
+        Date.now() +
+          CalDavGetEventsService.FUTURE_DAYS_WINDOW * 24 * 60 * 60 * 1000,
+      );
 
       const caldavEvents = await caldavCalendarClient.getAllEvents(
         startDate,
