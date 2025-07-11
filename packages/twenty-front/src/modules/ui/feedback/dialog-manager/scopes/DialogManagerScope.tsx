@@ -1,21 +1,21 @@
 import { ReactNode } from 'react';
 
-import { DialogManagerScopeInternalContext } from './scope-internal-context/DialogManagerScopeInternalContext';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 
 type DialogManagerScopeProps = {
   children: ReactNode;
-  dialogManagerScopeId: string;
+  dialogComponentInstanceId: string;
 };
 
 export const DialogManagerScope = ({
   children,
-  dialogManagerScopeId,
+  dialogComponentInstanceId,
 }: DialogManagerScopeProps) => {
   return (
-    <DialogManagerScopeInternalContext.Provider
-      value={{ scopeId: dialogManagerScopeId }}
+    <DialogComponentInstanceContext.Provider
+      value={{ instanceId: dialogComponentInstanceId }}
     >
       {children}
-    </DialogManagerScopeInternalContext.Provider>
+    </DialogComponentInstanceContext.Provider>
   );
 };

@@ -1,11 +1,14 @@
-import { useDialogManagerScopedStates } from '../hooks/internal/useDialogManagerScopedStates';
+import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { useDialogManager } from '../hooks/useDialogManager';
 
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Dialog } from './Dialog';
 import { DialogManagerEffect } from './DialogManagerEffect';
 
 export const DialogManager = ({ children }: React.PropsWithChildren) => {
-  const { dialogInternal } = useDialogManagerScopedStates();
+  const dialogInternal = useRecoilComponentValueV2(
+    dialogInternalComponentState,
+  );
   const { closeDialog } = useDialogManager();
 
   return (

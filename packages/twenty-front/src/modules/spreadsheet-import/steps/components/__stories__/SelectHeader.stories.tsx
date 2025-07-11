@@ -40,7 +40,7 @@ const meta: Meta<typeof SelectHeaderStep> = {
 
 export default meta;
 export const Default = () => (
-  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="select-header-step"

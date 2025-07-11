@@ -43,7 +43,7 @@ export default meta;
 const file = new File([''], 'file.csv');
 
 export const Default = () => (
-  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="validation-step"
