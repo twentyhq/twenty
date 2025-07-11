@@ -93,7 +93,7 @@ export class FieldMetadataRelationService {
     });
 
     const targetFieldMetadataToCreateWithRelation =
-      await this.addCustomRelationFieldMetadataForCreation({
+      this.addCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,
@@ -311,8 +311,6 @@ export class FieldMetadataRelationService {
     )
       ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
       : `${fieldMetadataInput.name}Id`;
-
-    // Should validate join column name availability
 
     return {
       ...fieldMetadataInput,

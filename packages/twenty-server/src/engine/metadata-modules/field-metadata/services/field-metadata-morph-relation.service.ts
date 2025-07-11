@@ -60,7 +60,7 @@ export class FieldMetadataMorphRelationService {
 
     for (const relation of morphRelationsCreationPayload) {
       const relationFieldMetadataForCreate =
-        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
@@ -97,7 +97,7 @@ export class FieldMetadataMorphRelationService {
       );
 
       const targetFieldMetadataToCreateWithRelation =
-        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: targetFieldMetadataToCreate,
             relationCreationPayload: {
