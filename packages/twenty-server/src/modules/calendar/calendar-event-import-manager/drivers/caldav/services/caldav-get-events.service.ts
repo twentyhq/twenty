@@ -46,10 +46,6 @@ export class CalDavGetEventsService {
         nextSyncCursor: '',
       };
     } catch (error) {
-      this.logger.error(
-        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
-        error,
-      );
       throw this.handleError(error as Error);
     }
   }
