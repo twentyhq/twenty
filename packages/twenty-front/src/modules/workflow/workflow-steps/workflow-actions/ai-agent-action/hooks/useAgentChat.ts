@@ -1,3 +1,4 @@
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -22,6 +23,7 @@ interface OptimisticMessage extends AgentChatMessage {
 
 export const useAgentChat = (agentId: string) => {
   const apolloClient = useApolloClient();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
@@ -111,6 +113,11 @@ export const useAgentChat = (agentId: string) => {
                 toolCall: message,
               }));
               scrollToBottom();
+            },
+            onError: (message: string) => {
+              enqueueErrorSnackBar({
+                message,
+              });
             },
           });
         },

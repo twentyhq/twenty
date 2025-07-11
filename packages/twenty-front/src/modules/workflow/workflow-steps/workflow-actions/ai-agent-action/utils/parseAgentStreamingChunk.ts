@@ -1,12 +1,13 @@
 export type AgentStreamingEvent = {
-  type: 'text-delta' | 'tool-call';
+  type: 'text-delta' | 'tool-call' | 'error';
   message: string;
 };
 
 export type AgentStreamingParserCallbacks = {
   onTextDelta?: (message: string) => void;
   onToolCall?: (message: string) => void;
-  onError?: (error: Error, rawLine: string) => void;
+  onError?: (message: string) => void;
+  onParseError?: (error: Error, rawLine: string) => void;
 };
 
 export const parseAgentStreamingChunk = (
@@ -27,6 +28,9 @@ export const parseAgentStreamingChunk = (
           case 'tool-call':
             callbacks.onToolCall?.(event.message);
             break;
+          case 'error':
+            callbacks.onError?.(event.message);
+            break;
         }
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -36,7 +40,7 @@ export const parseAgentStreamingChunk = (
           error instanceof Error
             ? error
             : new Error(`Unknown parsing error: ${String(error)}`);
-        callbacks.onError?.(errorMessage, line);
+        callbacks.onParseError?.(errorMessage, line);
       }
     }
   }

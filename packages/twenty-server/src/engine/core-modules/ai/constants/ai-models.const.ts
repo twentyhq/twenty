@@ -2,7 +2,7 @@ export enum ModelProvider {
   NONE = 'none',
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
-  OPEN_AI_COMPATIBLE = 'open_ai_compatible',
+  OPENAI_COMPATIBLE = 'open_ai_compatible',
 }
 
 export type ModelId =

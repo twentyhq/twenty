@@ -52,7 +52,7 @@ export class AgentExecutionService {
 
   getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
-      case ModelProvider.OPEN_AI_COMPATIBLE: {
+      case ModelProvider.OPENAI_COMPATIBLE: {
         const OpenAIProvider = createOpenAI({
           baseURL: this.twentyConfigService.get('OPENAI_COMPATIBLE_BASE_URL'),
           apiKey: this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY'),

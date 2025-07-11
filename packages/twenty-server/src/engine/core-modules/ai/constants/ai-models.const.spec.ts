@@ -79,14 +79,14 @@ describe('AiModelRegistryService', () => {
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'mistral',
-        provider: ModelProvider.OPEN_AI_COMPATIBLE,
+        provider: ModelProvider.OPENAI_COMPATIBLE,
         model: {} as any,
       },
     ]);
 
     jest.spyOn(SERVICE, 'getModel').mockReturnValue({
       modelId: 'mistral',
-      provider: ModelProvider.OPEN_AI_COMPATIBLE,
+      provider: ModelProvider.OPENAI_COMPATIBLE,
       model: {} as any,
     });
 
@@ -94,7 +94,7 @@ describe('AiModelRegistryService', () => {
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('mistral');
-    expect(RESULT.provider).toBe(ModelProvider.OPEN_AI_COMPATIBLE);
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
     expect(RESULT.inputCostPer1kTokensInCents).toBe(0.01);
     expect(RESULT.outputCostPer1kTokensInCents).toBe(0.01);
@@ -112,7 +112,7 @@ describe('AiModelRegistryService', () => {
     // Mock that the custom model exists in registry
     jest.spyOn(SERVICE, 'getModel').mockReturnValue({
       modelId: 'mistral',
-      provider: ModelProvider.OPEN_AI_COMPATIBLE,
+      provider: ModelProvider.OPENAI_COMPATIBLE,
       model: {} as any,
     });
 
@@ -120,7 +120,7 @@ describe('AiModelRegistryService', () => {
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('mistral');
-    expect(RESULT.provider).toBe(ModelProvider.OPEN_AI_COMPATIBLE);
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
     expect(RESULT.inputCostPer1kTokensInCents).toBe(0.01);
     expect(RESULT.outputCostPer1kTokensInCents).toBe(0.01);

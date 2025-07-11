@@ -90,7 +90,7 @@ export class AiModelRegistryService {
     const apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');
     const provider = createOpenAI({
       baseURL: baseUrl,
-      apiKey: apiKey || 'not-needed',
+      apiKey: apiKey,
     });
 
     const modelNames = modelNamesString
@@ -101,7 +101,7 @@ export class AiModelRegistryService {
     modelNames.forEach((modelId) => {
       this.modelRegistry.set(modelId, {
         modelId,
-        provider: ModelProvider.OPEN_AI_COMPATIBLE,
+        provider: ModelProvider.OPENAI_COMPATIBLE,
         model: provider(modelId),
       });
     });
