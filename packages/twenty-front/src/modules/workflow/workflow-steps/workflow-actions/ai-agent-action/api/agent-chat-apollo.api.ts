@@ -42,3 +42,22 @@ export const STREAM_CHAT_QUERY = gql`
       )
   }
 `;
+
+export const UPLOAD_AGENT_CHAT_FILE = gql`
+  mutation UploadAgentChatFile($fileData: JSON!) {
+    uploadAgentChatFile(fileData: $fileData)
+      @rest(
+        type: "AgentChatFile"
+        path: "/agent-chat/files"
+        method: "POST"
+        bodyKey: "fileData"
+      ) {
+      id
+      name
+      fullPath
+      size
+      type
+      createdAt
+    }
+  }
+`;
