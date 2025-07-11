@@ -324,6 +324,7 @@ export class FieldMetadataRelationService {
       ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
       : `${fieldMetadataInput.name}Id`;
 
+    // Should never occur as always adding Id
     validateFieldNameAvailabilityOrThrow({
       name: joinColumnName,
       objectMetadata,
