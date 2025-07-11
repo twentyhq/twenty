@@ -11,10 +11,16 @@ export class CalDavClientProvider {
       'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
   ): Promise<CalDAVClient> {
+    if (
+      !connectedAccount.connectionParameters?.CALDAV?.password ||
+      !connectedAccount.connectionParameters?.CALDAV?.host
+    ) {
+      throw new Error('Missing required CalDAV connection parameters');
+    }
     const caldavClient = new CalDAVClient({
       username: connectedAccount.handle,
-      password: connectedAccount.connectionParameters?.CALDAV?.password || '',
-      serverUrl: connectedAccount.connectionParameters?.CALDAV?.host || '',
+      password: connectedAccount.connectionParameters.CALDAV.password,
+      serverUrl: connectedAccount.connectionParameters.CALDAV.host,
     });
 
     return caldavClient;
