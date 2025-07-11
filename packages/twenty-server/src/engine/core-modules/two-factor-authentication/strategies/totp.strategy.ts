@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { authenticator } from 'otplib';
-import { HashAlgorithms, TOTP, TOTPOptions } from '@otplib/core';
+import { TOTP, TOTPOptions } from '@otplib/core';
 import { SafeParseReturnType, z } from 'zod';
 import { isDefined } from 'twenty-shared/utils';
 import { createDigest } from '@otplib/plugin-crypto';
@@ -70,11 +70,10 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
       }
     }
 
-    const config: Partial<TOTPOptions<string>> = {
+    const config = {
       ...result?.data,
-      algorithm: result?.data?.algorithm as HashAlgorithms | undefined,
       createDigest,
-    };
+    } as Partial<TOTPOptions<string>>;
 
     this.totp = new TOTP(config);
   }

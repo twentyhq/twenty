@@ -1,17 +1,17 @@
 import { Logger } from '@nestjs/common';
 
-import { totp } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { totp } from 'otplib';
 
-import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
-} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import {
   OTPHashAlgorithms,
   OTPKeyEncodings,
   TotpContext,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 
 import { TotpStrategy, TOTPStrategyConfig } from './totp.strategy';
 
