@@ -50,7 +50,14 @@ export const useOpenDropdown = () => {
             type: FocusComponentType.DROPDOWN,
             instanceId: dropdownComponentInstanceId,
           },
-          globalHotkeysConfig: args?.globalHotkeysConfig ?? undefined,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard:
+              args?.globalHotkeysConfig
+                ?.enableGlobalHotkeysConflictingWithKeyboard ?? false,
+            enableGlobalHotkeysWithModifiers:
+              args?.globalHotkeysConfig?.enableGlobalHotkeysWithModifiers ??
+              false,
+          },
         });
       },
     [
