@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import omit from 'lodash.omit';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -59,8 +58,8 @@ export class FieldMetadataMorphRelationService {
     const fieldsCreated: FieldMetadataEntity[] = [];
 
     for (const relation of morphRelationsCreationPayload) {
-      const relationFieldMetadataForCreate =
-        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+      const sourceRelationSettings =
+        this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
@@ -70,14 +69,24 @@ export class FieldMetadataMorphRelationService {
 
       await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
         {
-          fieldMetadataInput: relationFieldMetadataForCreate,
-          fieldMetadataType: relationFieldMetadataForCreate.type,
+          fieldMetadataInput: {
+            ...fieldMetadataForCreate,
+            ...sourceRelationSettings,
+          },
+          fieldMetadataType: fieldMetadataForCreate.type,
           objectMetadataMaps,
         },
       );
 
+      // Why omitting id here exactly ?
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        omit(relationFieldMetadataForCreate, 'id'),
+        omit(
+          {
+            ...fieldMetadataForCreate,
+            ...sourceRelationSettings,
+          },
+          'id',
+        ),
       );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
@@ -96,8 +105,8 @@ export class FieldMetadataMorphRelationService {
         },
       );
 
-      const targetFieldMetadataToCreateWithRelation =
-        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+      const targetRelationSettings =
+        this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
             fieldMetadataInput: targetFieldMetadataToCreate,
             relationCreationPayload: {
@@ -113,14 +122,11 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
-      // todo better type
-      const targetFieldMetadataToCreateWithRelationWithId = {
-        id: v4(),
-        ...targetFieldMetadataToCreateWithRelation,
-      };
-
+      // Should we omit the id here too ?
       const targetFieldMetadata = await fieldMetadataRepository.save({
-        ...targetFieldMetadataToCreateWithRelationWithId,
+        // id: v4(), // not needed ?
+        ...targetFieldMetadataToCreate,
+        ...targetRelationSettings,
         relationTargetFieldMetadataId: createdFieldMetadataItem.id,
       });
 
