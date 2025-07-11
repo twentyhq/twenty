@@ -8,8 +8,8 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
-    CleanupOrphanedFilesJob,
-    CleanupOrphanedFilesJobData,
+  CleanupOrphanedFilesJob,
+  CleanupOrphanedFilesJobData,
 } from 'src/engine/core-modules/file/jobs/cleanup-orphaned-files.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -62,7 +62,6 @@ export class CleanupOrphanedFilesCronJob {
           continue;
         }
 
-        // Process files in batches of 100 to avoid memory issues
         const batchSize = 100;
         const fileBatches = chunk(orphanedFiles, batchSize);
 

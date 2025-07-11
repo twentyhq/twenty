@@ -7,6 +7,7 @@ import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/job
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { FileController } from './controllers/file.controller';
 import { CleanupOrphanedFilesCronCommand } from './crons/commands/cleanup-orphaned-files.cron.command';
@@ -17,7 +18,10 @@ import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
 
 @Module({
-  imports: [JwtModule, TypeOrmModule.forFeature([FileEntity], 'core')],
+  imports: [
+    JwtModule,
+    TypeOrmModule.forFeature([FileEntity, Workspace], 'core'),
+  ],
   providers: [
     FileService,
     FileMetadataService,
@@ -30,7 +34,7 @@ import { FileService } from './services/file.service';
     CleanupOrphanedFilesCronJob,
     CleanupOrphanedFilesCronCommand,
   ],
-  exports: [FileService, FileMetadataService],
+  exports: [FileService, FileMetadataService, CleanupOrphanedFilesCronCommand],
   controllers: [FileController],
 })
 export class FileModule {}

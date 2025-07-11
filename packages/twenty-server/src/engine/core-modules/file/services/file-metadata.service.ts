@@ -42,8 +42,9 @@ export class FileMetadataService {
     }
 
     try {
-      const folderPath = file.fullPath.split('/').slice(0, -1).join('/');
-      const filename = file.fullPath.split('/').pop();
+      const relativePath = this.fileService.extractRelativePath(file.fullPath);
+      const folderPath = relativePath.split('/').slice(0, -1).join('/');
+      const filename = relativePath.split('/').pop();
 
       if (filename) {
         await this.fileService.deleteFile({
