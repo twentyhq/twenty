@@ -1,11 +1,11 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
@@ -13,6 +13,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AgentChatMessage } from '../hooks/useAgentChatMessages';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
+import { AgentChatSelectedFilesPreview } from './AgentChatSelectedFilesPreview';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -172,11 +173,13 @@ const StyledToolCallContainer = styled.div`
   }
 `;
 
-type AIChatTabProps = {
-  agentId: string;
-};
+const StyledButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
 
-export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
+export const AIChatTab = ({ agentId }: { agentId: string }) => {
   const theme = useTheme();
 
   const {
@@ -282,21 +285,25 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
       {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
       <StyledInputArea>
+        <AgentChatSelectedFilesPreview />
         <TextArea
           textAreaId={`${agentId}-chat-input`}
           placeholder={t`Enter a question...`}
           value={input}
           onChange={handleInputChange}
         />
-        <Button
-          variant="primary"
-          accent="blue"
-          size="small"
-          hotkeys={input && !isLoading ? ['⏎'] : undefined}
-          disabled={!input || isLoading}
-          title={t`Send`}
-          onClick={handleSendMessage}
-        />
+        <StyledButtonsContainer>
+          <AgentChatFileUpload />
+          <Button
+            variant="primary"
+            accent="blue"
+            size="small"
+            hotkeys={input && !isLoading ? ['⏎'] : undefined}
+            disabled={!input || isLoading}
+            title={t`Send`}
+            onClick={handleSendMessage}
+          />
+        </StyledButtonsContainer>
       </StyledInputArea>
     </StyledContainer>
   );
