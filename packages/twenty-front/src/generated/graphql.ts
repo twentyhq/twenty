@@ -22,10 +22,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type AccountType = {
-  type: Scalars['String'];
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -637,6 +633,12 @@ export type EditSsoOutput = {
   type: IdentityProviderType;
 };
 
+export type EmailAccountConnectionParameters = {
+  CALDAV?: InputMaybe<ConnectionParameters>;
+  IMAP?: InputMaybe<ConnectionParameters>;
+  SMTP?: InputMaybe<ConnectionParameters>;
+};
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -1058,7 +1060,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
-  saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
+  saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1343,10 +1345,9 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
-export type MutationSaveImapSmtpCaldavArgs = {
+export type MutationSaveImapSmtpCaldavAccountArgs = {
   accountOwnerId: Scalars['String'];
-  accountType: AccountType;
-  connectionParameters: ConnectionParameters;
+  connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
 };
