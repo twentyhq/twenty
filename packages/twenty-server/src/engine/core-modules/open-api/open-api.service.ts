@@ -50,8 +50,8 @@ export class OpenApiService {
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
-      request,
       this.twentyConfigService.get('SERVER_URL'),
+      `${request.protocol}://${request.get('host')}`,
     );
 
     const schema = baseSchema('core', baseUrl);
@@ -135,8 +135,8 @@ export class OpenApiService {
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
     const baseUrl = getServerUrl(
-      request,
       this.twentyConfigService.get('SERVER_URL'),
+      `${request.protocol}://${request.get('host')}`,
     );
 
     const schema = baseSchema('metadata', baseUrl);

@@ -1,29 +1,44 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ToolSet } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
+import { Request } from 'express';
 import { Repository } from 'typeorm';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
+import { JSONSchema7 } from 'json-schema';
 
-import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
+import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
+import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
+import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
 
 @Injectable()
-export class McpService {
+export class MCPMetadataService {
+  schemas: Record<string, JSONSchema7>;
+
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly toolService: ToolService,
     private readonly userRoleService: UserRoleService,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
+    private readonly createToolsService: CreateToolsService,
+    private readonly updateToolsService: UpdateToolsService,
+    private readonly deleteToolsService: DeleteToolsService,
+    private readonly getToolsService: GetToolsService,
   ) {}
+
+  async onModuleInit() {
+    this.schemas = validationMetadatasToSchemas() as Record<
+      string,
+      JSONSchema7
+    >;
+  }
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
     const isAiEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -90,93 +105,72 @@ export class McpService {
     return roleId;
   }
 
+  get listTool() {
+    return [
+      ...this.createToolsService.tools,
+      ...this.updateToolsService.tools,
+      ...this.deleteToolsService.tools,
+      ...this.getToolsService.tools,
+    ];
+  }
+
+  async handleToolCall(
+    request: Request,
+  ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
+    const tool = this.listTool.find(
+      ({ name }) => name === request.body.params.name,
+    );
+
+    if (tool) {
+      return {
+        result: await tool.execute(request),
+      };
+    }
+
+    return {
+      error: {
+        code: HttpStatus.NOT_FOUND,
+        message: `Tool ${request.body.params.name} not found`,
+      },
+    };
+  }
+
   async executeTool(
-    { id, method, params }: JsonRpc,
+    request: Request,
     {
       workspace,
-      userWorkspaceId,
-      apiKey,
     }: { workspace: Workspace; userWorkspaceId?: string; apiKey?: string },
   ): Promise<Record<string, unknown>> {
     try {
       await this.checkAiEnabled(workspace.id);
 
-      if (method === 'initialize') {
-        return this.handleInitialize(id);
+      if (request.body.method === 'initialize') {
+        return this.handleInitialize(request.body.id);
       }
 
-      const roleId = await this.getRoleId(
-        workspace.id,
-        userWorkspaceId,
-        apiKey,
-      );
-
-      const toolSet = await this.toolService.listTools(roleId, workspace.id);
-
-      if (method === 'tools/call' && params) {
-        return await this.handleToolCall(id, toolSet, params);
+      if (request.body.method === 'tools/call' && request.body.params) {
+        return wrapJsonRpcResponse(
+          request.body.id,
+          await this.handleToolCall(request),
+        );
       }
 
-      return await this.handleToolsListing(id, toolSet);
+      return wrapJsonRpcResponse(request.body.id, {
+        result: {
+          capabilities: {
+            tools: { listChanged: false },
+          },
+          tools: Object.values(this.listTool),
+        },
+      });
     } catch (error) {
-      return wrapJsonRpcResponse(id, {
+      return wrapJsonRpcResponse(request.body.id, {
         error: {
           code: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          message: error.message || 'Failed to execute tool',
+          message:
+            error.response?.messages?.join?.('\n') || 'Failed to execute tool',
         },
       });
     }
-  }
-
-  private async handleToolCall(
-    id: string | number | null,
-    toolSet: ToolSet,
-    params: Record<string, unknown>,
-  ) {
-    const toolName = params.name as keyof typeof toolSet;
-    const tool = toolSet[toolName];
-
-    if (isDefined(tool) && isDefined(tool.execute)) {
-      return wrapJsonRpcResponse(id, {
-        result: {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                await tool.execute(params.arguments, {
-                  toolCallId: '1',
-                  messages: [],
-                }),
-              ),
-            },
-          ],
-          isError: false,
-        },
-      });
-    }
-
-    throw new HttpException(
-      `Tool '${params.name}' not found`,
-      HttpStatus.NOT_FOUND,
-    );
-  }
-
-  private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
-    const toolsArray = Object.entries(toolSet)
-      .filter(([, def]) => !!def.parameters.jsonSchema)
-      .map(([name, def]) => ({
-        name,
-        description: def.description,
-        inputSchema: def.parameters.jsonSchema,
-      }));
-
-    return wrapJsonRpcResponse(id, {
-      result: {
-        capabilities: {
-          tools: { listChanged: false },
-        },
-        tools: toolsArray,
-      },
-    });
   }
 }

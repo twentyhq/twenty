@@ -2,12 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
-import { Request } from 'express';
 
 import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { getServerUrl } from 'src/utils/get-server-url';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 export enum GraphqlApiType {
   CORE = 'core',
@@ -16,18 +14,15 @@ export enum GraphqlApiType {
 
 @Injectable()
 export class RestApiService {
-  constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly httpService: HttpService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
-  async call(graphqlApiType: GraphqlApiType, request: Request, data: Query) {
-    const baseUrl = getServerUrl(
-      request,
-      this.twentyConfigService.get('SERVER_URL'),
-    );
+  async call(
+    graphqlApiType: GraphqlApiType,
+    requestContext: RequestContext,
+    data: Query,
+  ) {
     let response: AxiosResponse;
-    const url = `${baseUrl}/${
+    const url = `${requestContext.baseUrl}/${
       graphqlApiType === GraphqlApiType.CORE
         ? 'graphql'
         : GraphqlApiType.METADATA
@@ -37,7 +32,7 @@ export class RestApiService {
       response = await this.httpService.axiosRef.post(url, data, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: request.headers.authorization,
+          Authorization: requestContext.headers.authorization,
         },
       });
     } catch (err) {
