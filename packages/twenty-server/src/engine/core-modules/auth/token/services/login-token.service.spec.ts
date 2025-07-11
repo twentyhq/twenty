@@ -59,7 +59,6 @@ describe('LoginTokenService', () => {
       const result = await service.generateLoginToken(
         email,
         workspaceId,
-        userId,
       );
 
       expect(result).toEqual({
