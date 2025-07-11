@@ -96,7 +96,7 @@ export class ImapSmtpCaldavResolver {
       );
     }
 
-    const validatedParams = this.validateAndTestConnectionParameters(
+    const validatedParams = await this.validateAndTestConnectionParameters(
       connectionParameters,
       handle,
     );
@@ -105,7 +105,7 @@ export class ImapSmtpCaldavResolver {
       handle,
       workspaceMemberId: accountOwnerId,
       workspaceId: workspace.id,
-      connectionParameters: await validatedParams,
+      connectionParameters: validatedParams,
       connectedAccountId: id,
     });
 
