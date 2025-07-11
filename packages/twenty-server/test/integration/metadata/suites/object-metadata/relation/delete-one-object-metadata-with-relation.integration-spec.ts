@@ -11,13 +11,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
+type DeleteOneObjectMetadataItemTestingContext = EachTestingContext<
   (args: { objectMetadataIdToDelete: string; relationFieldId: string }) => {
     objectMetadataIdToDelete: string;
     relationFieldId: string;
   }
 >[];
-const successfulDeleteSourceUseCase: CreateOneObjectMetadataItemTestingContext =
+const successfulDeleteSourceUseCase: DeleteOneObjectMetadataItemTestingContext =
   [
     {
       title:
@@ -29,7 +29,7 @@ const successfulDeleteSourceUseCase: CreateOneObjectMetadataItemTestingContext =
     },
   ];
 
-const successfulDeleteTargetUseCase: CreateOneObjectMetadataItemTestingContext =
+const successfulDeleteTargetUseCase: DeleteOneObjectMetadataItemTestingContext =
   [
     {
       title:
@@ -178,7 +178,7 @@ const findFieldMetadata = async ({
       filter: {
         id: { eq: fieldMetadataId },
       },
-      paging: { first: 10 },
+      paging: { first: 1 },
     },
   });
 

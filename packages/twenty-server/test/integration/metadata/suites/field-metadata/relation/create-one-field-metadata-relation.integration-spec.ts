@@ -92,7 +92,9 @@ describe('createOne FieldMetadataService relation fields', () => {
       targetObjectMetadataId: createdObjectMetadataPersonId,
     });
 
-    const createdField = await createRelationBetweenObjects({
+    const createdField = await createRelationBetweenObjects<
+      typeof contextPayload.type
+    >({
       objectMetadataId: contextPayload.objectMetadataId,
       targetObjectMetadataId: contextPayload.targetObjectMetadataId,
       type: contextPayload.type,
