@@ -13,6 +13,7 @@ export class ScopedWorkspaceContextFactory {
     workspaceId: string | null;
     userWorkspaceId: string | null;
     isExecutedByApiKey: boolean;
+    isSuperAdmin: boolean;
   } {
     const workspaceId: string | undefined =
       // @ts-expect-error legacy noImplicitAny
@@ -21,6 +22,14 @@ export class ScopedWorkspaceContextFactory {
       this.request?.['params']?.['workspaceId'] ||
       // @ts-expect-error legacy noImplicitAny
       this.request?.['workspace']?.['id']; // rest api
+
+    // Check if the current user is a Super Admin
+    const isSuperAdmin = !!(
+      // @ts-expect-error legacy noImplicitAny
+      this.request?.['req']?.['user']?.canAccessFullAdminPanel ||
+      // @ts-expect-error legacy noImplicitAny
+      this.request?.['user']?.canAccessFullAdminPanel
+    );
 
     return {
       workspaceId: workspaceId ?? null,
@@ -34,6 +43,7 @@ export class ScopedWorkspaceContextFactory {
         // @ts-expect-error legacy noImplicitAny
         (this.request?.['req']?.['apiKey'] || this.request?.['apiKey'])
       ),
+      isSuperAdmin,
     };
   }
 }

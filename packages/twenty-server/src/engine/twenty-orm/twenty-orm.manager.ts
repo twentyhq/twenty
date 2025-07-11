@@ -30,7 +30,7 @@ export class TwentyORMManager {
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const { workspaceId, userWorkspaceId, isExecutedByApiKey } =
+    const { workspaceId, userWorkspaceId, isExecutedByApiKey, isSuperAdmin } =
       this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
@@ -63,7 +63,7 @@ export class TwentyORMManager {
       roleId = roleTarget?.roleId;
     }
 
-    const shouldBypassPermissionChecks = !!isExecutedByApiKey;
+    const shouldBypassPermissionChecks = !!isExecutedByApiKey || isSuperAdmin;
 
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,
