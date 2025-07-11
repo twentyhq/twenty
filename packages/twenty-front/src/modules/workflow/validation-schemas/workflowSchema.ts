@@ -326,7 +326,7 @@ export const workflowRunStateStepInfosSchema = z.object({
   status: workflowRunStepStatusSchema,
 });
 
-export const WorkflowRunStateStepsInfosSchema = z.record(
+export const workflowRunStateStepsInfosSchema = z.record(
   workflowRunStateStepInfosSchema,
 );
 
@@ -335,7 +335,7 @@ export const workflowRunStateSchema = z.object({
     trigger: workflowTriggerSchema,
     steps: z.array(workflowActionSchema),
   }),
-  stepInfos: WorkflowRunStateStepsInfosSchema,
+  stepInfos: workflowRunStateStepsInfosSchema,
   workflowRunError: z.any().optional(),
 });
 

@@ -20,6 +20,7 @@ import {
   ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { JsonValue } from 'type-fest';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
@@ -133,7 +134,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             elements={stepContext.map(({ id, name, context }) => ({
               id,
               label: name,
-              value: context,
+              value: context as JsonValue,
             }))}
             Icon={IconBrackets}
             depth={0}

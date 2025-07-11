@@ -24,6 +24,12 @@ export const WithLock = (
         throw new Error('cacheLockService not available on instance');
       }
 
+      if (typeof args[0] !== 'object') {
+        throw new Error(
+          `You must use one object parameter to use @WithLock decorator. Received ${args}`,
+        );
+      }
+
       const key = args[0][lockKeyParamPath];
 
       if (typeof key !== 'string') {

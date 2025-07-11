@@ -21,7 +21,7 @@ export interface MessageQueueProcessorOptions {
  * Represents a worker that is able to process jobs from the queue.
  * @param queueName name of the queue to process
  */
-export function Processor(queueName: string): ClassDecorator;
+export function Processor(queueName: MessageQueue): ClassDecorator;
 /**
  * Represents a worker that is able to process jobs from the queue.
  * @param processorOptions processor options
@@ -30,10 +30,10 @@ export function Processor(
   processorOptions: MessageQueueProcessorOptions,
 ): ClassDecorator;
 export function Processor(
-  queueNameOrOptions?: string | MessageQueueProcessorOptions,
+  queueNameOrOptions: string | MessageQueueProcessorOptions,
 ): ClassDecorator {
   const options =
-    queueNameOrOptions && typeof queueNameOrOptions === 'object'
+    typeof queueNameOrOptions === 'object'
       ? queueNameOrOptions
       : { queueName: queueNameOrOptions };
 

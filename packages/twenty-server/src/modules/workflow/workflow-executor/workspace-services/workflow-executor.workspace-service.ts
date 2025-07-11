@@ -224,7 +224,7 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         status: WorkflowRunStatus.FAILED,
-        error: `WorkflowRun ${workflowRunId} don't have any state`,
+        error: `WorkflowRun ${workflowRunId} doesn't have any state`,
       });
 
       return;

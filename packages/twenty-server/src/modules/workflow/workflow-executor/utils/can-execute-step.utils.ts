@@ -12,7 +12,10 @@ export const canExecuteStep = ({
   stepInfos: WorkflowRunStepInfos;
   stepId: string;
 }) => {
-  if (stepInfos[stepId]?.status !== StepStatus.NOT_STARTED) {
+  if (
+    isDefined(stepInfos[stepId]?.status) &&
+    stepInfos[stepId].status !== StepStatus.NOT_STARTED
+  ) {
     return false;
   }
 

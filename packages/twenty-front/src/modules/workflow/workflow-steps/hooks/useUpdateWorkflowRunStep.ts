@@ -56,7 +56,7 @@ export const useUpdateWorkflowRunStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      output: {
+      state: {
         ...cachedRecord.state,
         flow: {
           ...cachedRecord.state.flow,
@@ -71,7 +71,7 @@ export const useUpdateWorkflowRunStep = () => {
     };
 
     const recordGqlFields = {
-      output: true,
+      state: true,
     };
     updateRecordFromCache({
       objectMetadataItems,
