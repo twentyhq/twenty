@@ -1043,7 +1043,8 @@ export enum MessageChannelVisibility {
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
-  OPENAI = 'OPENAI'
+  OPENAI = 'OPENAI',
+  OPEN_AI_COMPATIBLE = 'OPEN_AI_COMPATIBLE'
 }
 
 export type Mutation = {
