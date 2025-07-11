@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 
 import {
   query,
@@ -27,9 +27,9 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
         {children}
-      </SnackBarProviderScope>
+      </SnackBarComponentInstanceContextProvider>
     </MockedProvider>
   </RecoilRoot>
 );

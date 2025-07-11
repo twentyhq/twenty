@@ -14,7 +14,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 
 const mockCurrentUser = {
   id: 'fake-user-id',
@@ -45,9 +45,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <RecoilRoot initializeState={initializeState}>
       <MemoryRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+        <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="test-scope-id">
           {children}
-        </SnackBarProviderScope>
+        </SnackBarComponentInstanceContextProvider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>
