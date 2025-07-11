@@ -9,7 +9,6 @@ import { IconSearch } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
@@ -26,20 +25,16 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
   const [, setVectorSearchInputValue] = useRecoilComponentStateV2(
     vectorSearchInputComponentState,
-    VIEW_BAR_FILTER_DROPDOWN_ID,
   );
   const { setVectorSearchInputValueFromExistingFilter } =
-    useSetVectorSearchInputValueFromExistingFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
+    useSetVectorSearchInputValueFromExistingFilter();
 
-  const fieldSearchInputValue = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
-    VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
   const { applyVectorSearchFilter } = useVectorSearchFilterActions();
-  const { openVectorSearchFilter } = useOpenVectorSearchFilter(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter();
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
@@ -49,9 +44,9 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
   const handleSearchClick = () => {
     openVectorSearchFilter();
 
-    if (fieldSearchInputValue.length > 0) {
-      setVectorSearchInputValue(fieldSearchInputValue);
-      applyVectorSearchFilter(fieldSearchInputValue);
+    if (objectFilterDropdownSearchInput.length > 0) {
+      setVectorSearchInputValue(objectFilterDropdownSearchInput);
+      applyVectorSearchFilter(objectFilterDropdownSearchInput);
     } else {
       setVectorSearchInputValueFromExistingFilter();
     }
@@ -69,8 +64,8 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
         text={
           <>
             {t`Search`}
-            {fieldSearchInputValue && (
-              <StyledSearchText>{t`· ${fieldSearchInputValue}`}</StyledSearchText>
+            {objectFilterDropdownSearchInput && (
+              <StyledSearchText>{t`· ${objectFilterDropdownSearchInput}`}</StyledSearchText>
             )}
           </>
         }

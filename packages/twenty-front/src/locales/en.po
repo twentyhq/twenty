@@ -66,8 +66,13 @@ msgstr ": Today"
 
 #. js-lingui-id: nSri0b
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
-msgid "· {fieldSearchInputValue}"
-msgstr "· {fieldSearchInputValue}"
+#~ msgid "· {fieldSearchInputValue}"
+#~ msgstr "· {fieldSearchInputValue}"
+
+#. js-lingui-id: 4tCM3o
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+msgid "· {objectFilterDropdownSearchInput}"
+msgstr "· {objectFilterDropdownSearchInput}"
 
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2546,7 +2551,7 @@ msgstr "Events you participated in are displayed in red."
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
 msgstr "Everything"
 
@@ -2798,6 +2803,7 @@ msgstr "Fields Count"
 
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Filter"
@@ -3829,7 +3835,7 @@ msgstr "Message Sync"
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -4402,7 +4408,7 @@ msgid "Only date & participants will be shared with your team."
 msgstr "Only date & participants will be shared with your team."
 
 #. js-lingui-id: 50ETCF
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Only the timestamp & participants will be shared with your team."
 
@@ -5042,12 +5048,15 @@ msgid "Schema"
 msgstr "Schema"
 
 #. js-lingui-id: A1taO8
-#: src/modules/views/components/ViewBarFilterDropdownVectorSearchInput.tsx
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownFilterInputMenuHeader.tsx
+#: src/modules/views/components/EditableFilterChipDropdownMenuHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -5565,6 +5574,7 @@ msgstr "smtp.example.com"
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sort"
 msgstr "Sort"
@@ -5643,7 +5653,7 @@ msgstr "Subdomain updated"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Subject and metadata"
 msgstr "Subject and metadata"
 
@@ -6732,12 +6742,12 @@ msgstr "You're about to change your workspace subdomain. This action will log ou
 #~ msgstr "Your credit balance will be used to pay the monthly bills."
 
 #. js-lingui-id: +5YqGH
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your email subjects and meeting titles will be shared with your team."
 msgstr "Your email subjects and meeting titles will be shared with your team."
 
 #. js-lingui-id: la0RPA
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your emails and events content will be shared with your team."
 msgstr "Your emails and events content will be shared with your team."
 
