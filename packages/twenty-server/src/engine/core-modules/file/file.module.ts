@@ -9,7 +9,10 @@ import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listen
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
 import { FileController } from './controllers/file.controller';
+import { CleanupOrphanedFilesCronCommand } from './crons/commands/cleanup-orphaned-files.cron.command';
+import { CleanupOrphanedFilesCronJob } from './crons/jobs/cleanup-orphaned-files.cron.job';
 import { FileEntity } from './entities/file.entity';
+import { CleanupOrphanedFilesJob } from './jobs/cleanup-orphaned-files.job';
 import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
 
@@ -23,6 +26,9 @@ import { FileService } from './services/file.service';
     FileWorkspaceMemberListener,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
+    CleanupOrphanedFilesJob,
+    CleanupOrphanedFilesCronJob,
+    CleanupOrphanedFilesCronCommand,
   ],
   exports: [FileService, FileMetadataService],
   controllers: [FileController],
