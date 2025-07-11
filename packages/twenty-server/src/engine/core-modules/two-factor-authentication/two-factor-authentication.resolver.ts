@@ -5,7 +5,6 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
-import { User } from 'src/engine/core-modules/user/user.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,6 +17,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
@@ -26,7 +26,6 @@ import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiat
 import { ResetTwoFactorAuthenticationMethodInput } from './dto/reset-two-factor-authentication-method.input';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 import { ResetTwoFactorAuthenticationMethodOutput } from './dto/reset-two-factor-authentication-method.output';
-import { UserService } from '../user/services/user.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -47,10 +46,9 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
-    const { sub: userEmail } =
-      await this.loginTokenService.verifyLoginToken(
-        initiateTwoFactorAuthenticationProvisioningInput.loginToken,
-      );
+    const { sub: userEmail } = await this.loginTokenService.verifyLoginToken(
+      initiateTwoFactorAuthenticationProvisioningInput.loginToken,
+    );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
