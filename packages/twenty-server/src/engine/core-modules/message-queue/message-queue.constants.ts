@@ -1,6 +1,7 @@
+import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+
 export const PROCESSOR_METADATA = Symbol('message-queue:processor_metadata');
 export const PROCESS_METADATA = Symbol('message-queue:process_metadata');
-export const WORKER_METADATA = Symbol('bullmq:worker_metadata');
 export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 
 export enum MessageQueue {
@@ -21,3 +22,11 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   subscriptionsQueue = 'subscriptions-queue',
 }
+
+export const MESSAGE_QUEUE_OPTIONS: Partial<
+  Record<MessageQueue | string, MessageQueueWorkerOptions>
+> = {
+  [MessageQueue.workflowQueue]: {
+    concurrency: 2,
+  },
+};
