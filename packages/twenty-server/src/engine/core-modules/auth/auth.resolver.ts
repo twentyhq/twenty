@@ -179,7 +179,6 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      user.id,
       // email validation is active only for password flow
       AuthProviderEnum.Password,
     );
@@ -252,7 +251,6 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       appToken.user.email,
       workspace.id,
-      appToken.user.id,
       authProvider,
     );
 
@@ -270,7 +268,6 @@ export class AuthResolver {
   ): Promise<AuthTokens> {
     const {
       sub: email,
-      userId,
       authProvider,
     } = await this.loginTokenService.verifyLoginToken(
       twoFactorAuthenticationVerificationInput.loginToken,
@@ -289,8 +286,10 @@ export class AuthResolver {
       ),
     );
 
+    const user = await this.userService.getUserByEmail(email);
+
     await this.twoFactorAuthenticationService.validateStrategy(
-      userId,
+      user.id,
       twoFactorAuthenticationVerificationInput.otp,
       workspace.id,
     );
@@ -405,7 +404,6 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      user.id,
       authProvider,
     );
 
@@ -431,7 +429,6 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      user.id,
       authProvider,
     );
 
@@ -486,7 +483,6 @@ export class AuthResolver {
     const {
       sub: email,
       workspaceId,
-      userId,
       authProvider,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
@@ -506,9 +502,11 @@ export class AuthResolver {
       );
     }
 
+    const user = await this.userService.getUserByEmail(email);
+
     const currentUserWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-        userId,
+        userId: user.id,
         workspaceId,
       });
 

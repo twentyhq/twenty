@@ -22,14 +22,12 @@ export class LoginTokenService {
   async generateLoginToken(
     email: string,
     workspaceId: string,
-    userId: string,
     authProvider?: AuthProviderEnum,
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
-      userId,
       authProvider,
     };
 
