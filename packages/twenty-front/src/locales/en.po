@@ -2546,7 +2546,7 @@ msgstr "Events you participated in are displayed in red."
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
 msgstr "Everything"
 
@@ -3829,7 +3829,7 @@ msgstr "Message Sync"
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -4402,7 +4402,7 @@ msgid "Only date & participants will be shared with your team."
 msgstr "Only date & participants will be shared with your team."
 
 #. js-lingui-id: 50ETCF
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Only the timestamp & participants will be shared with your team."
 
@@ -5643,7 +5643,7 @@ msgstr "Subdomain updated"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Subject and metadata"
 msgstr "Subject and metadata"
 
@@ -6732,12 +6732,12 @@ msgstr "You're about to change your workspace subdomain. This action will log ou
 #~ msgstr "Your credit balance will be used to pay the monthly bills."
 
 #. js-lingui-id: +5YqGH
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your email subjects and meeting titles will be shared with your team."
 msgstr "Your email subjects and meeting titles will be shared with your team."
 
 #. js-lingui-id: la0RPA
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your emails and events content will be shared with your team."
 msgstr "Your emails and events content will be shared with your team."
 

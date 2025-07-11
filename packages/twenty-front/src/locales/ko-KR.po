@@ -2551,7 +2551,7 @@ msgstr "참여한 이벤트가 빨간색으로 표시됩니다."
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Everything"
 msgstr "모두"
 
@@ -3834,7 +3834,7 @@ msgstr "메시지 동기화"
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Metadata"
 msgstr "메타데이터"
 
@@ -4407,7 +4407,7 @@ msgid "Only date & participants will be shared with your team."
 msgstr "날짜 및 참가자만 팀과 공유됩니다."
 
 #. js-lingui-id: 50ETCF
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "타임스탬프 및 참가자만 팀과 공유됩니다."
 
@@ -5648,7 +5648,7 @@ msgstr "하위 도메인이 업데이트되었습니다"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Subject and metadata"
 msgstr "주제와 메타데이터"
 
@@ -6737,12 +6737,12 @@ msgstr ""
 #~ msgstr "크레딧 잔액이 월 청구서 결제에 사용됩니다."
 
 #. js-lingui-id: +5YqGH
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your email subjects and meeting titles will be shared with your team."
 msgstr "이메일 제목과 회의 제목이 팀과 공유됩니다."
 
 #. js-lingui-id: la0RPA
-#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+#: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Your emails and events content will be shared with your team."
 msgstr "이메일과 이벤트 내용이 팀과 공유됩니다."
 
