@@ -7,12 +7,10 @@ export const canExecuteStep = ({
   stepId,
   steps,
   stepInfos,
-  context,
 }: {
   steps: WorkflowAction[];
   stepInfos: WorkflowRunStepInfos;
   stepId: string;
-  context: Record<string, unknown>;
 }) => {
   if (stepInfos[stepId]?.status !== StepStatus.NOT_STARTED) {
     return false;
@@ -23,7 +21,7 @@ export const canExecuteStep = ({
       isDefined(parentStep) && parentStep.nextStepIds?.includes(stepId),
   );
 
-  return parentSteps.every((parentStep) =>
-    Object.keys(context).includes(parentStep.id),
+  return parentSteps.every(
+    (parentStep) => stepInfos[parentStep.id]?.status === StepStatus.SUCCESS,
   );
 };

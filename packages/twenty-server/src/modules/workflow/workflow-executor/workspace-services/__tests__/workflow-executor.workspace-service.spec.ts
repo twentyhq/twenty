@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { StepStatus } from 'twenty-shared/workflow';
+import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
@@ -101,7 +101,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
   describe('execute', () => {
     const mockWorkflowRunId = 'workflow-run-id';
     const mockWorkspaceId = 'workspace-id';
-    const mockContext = { trigger: 'trigger-result' };
     const mockSteps = [
       {
         id: 'step-1',
@@ -126,10 +125,12 @@ describe('WorkflowExecutorWorkspaceService', () => {
         nextStepIds: [],
       },
     ] as WorkflowAction[];
+    const mockStepInfos = {
+      trigger: { result: {}, status: StepStatus.SUCCESS },
+    };
 
     mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValue({
-      output: { flow: { steps: mockSteps } },
-      context: mockContext,
+      state: { flow: { steps: mockSteps }, stepInfos: mockStepInfos },
     });
 
     it('should execute a step and continue to the next step on success', async () => {
@@ -152,7 +153,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(mockWorkflowExecutor.execute).toHaveBeenCalledWith({
         currentStepId: 'step-1',
         steps: mockSteps,
-        context: mockContext,
+        context: getWorkflowRunContext(mockStepInfos),
       });
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -320,8 +321,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
       ] as WorkflowAction[];
 
       mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValueOnce({
-        output: { flow: { steps: stepsWithContinueOnFailure } },
-        context: mockContext,
+        state: {
+          flow: { steps: stepsWithContinueOnFailure },
+          stepInfos: mockStepInfos,
+        },
       });
 
       mockWorkflowExecutor.execute.mockResolvedValueOnce({
@@ -386,8 +389,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
       ] as WorkflowAction[];
 
       mockWorkflowRunWorkspaceService.getWorkflowRun.mockReturnValue({
-        output: { flow: { steps: stepsWithRetryOnFailure } },
-        context: mockContext,
+        state: {
+          flow: { steps: stepsWithRetryOnFailure },
+          stepInfos: mockStepInfos,
+        },
       });
 
       mockWorkflowExecutor.execute.mockResolvedValue({

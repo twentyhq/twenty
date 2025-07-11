@@ -66,9 +66,9 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const { stepToExecute, steps, stepInfos, context } = workflowRunInfo;
+    const { stepToExecute, steps, stepInfos } = workflowRunInfo;
 
-    if (!canExecuteStep({ stepId, steps, stepInfos, context })) {
+    if (!canExecuteStep({ stepId, steps, stepInfos })) {
       return;
     }
 
@@ -98,7 +98,7 @@ export class WorkflowExecutorWorkspaceService {
       actionOutput = await workflowAction.execute({
         currentStepId: stepId,
         steps,
-        context,
+        context: getWorkflowRunContext(stepInfos),
       });
     } catch (error) {
       actionOutput = {
@@ -249,7 +249,6 @@ export class WorkflowExecutorWorkspaceService {
       stepToExecute,
       steps,
       stepInfos: workflowRun.state.stepInfos,
-      context: getWorkflowRunContext(workflowRun.state.stepInfos),
     };
   }
 
