@@ -23,7 +23,7 @@ export type SpreadsheetImportStep =
   | {
       type: SpreadsheetImportStepType.validateData;
       data: any[];
-      importedColumns: SpreadsheetColumns<string>;
+      importedColumns: SpreadsheetColumns;
     }
   | {
       type: SpreadsheetImportStepType.loading;

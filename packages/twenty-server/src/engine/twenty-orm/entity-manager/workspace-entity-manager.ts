@@ -1342,6 +1342,7 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
+  //tododo - handle null values that should not connect
   private async processRelationConnect<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
     target: EntityTarget<Entity>,
@@ -1438,6 +1439,7 @@ export class WorkspaceEntityManager extends EntityManager {
             const recordToConnectTotal = recordToConnect.length;
             const connectFieldName = connectQueryConfig.connectFieldName;
 
+            //tododo - add info on record in error
             throw new TwentyORMException(
               `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
               TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,

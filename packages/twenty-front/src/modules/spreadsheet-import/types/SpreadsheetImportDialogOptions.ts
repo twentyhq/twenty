@@ -8,11 +8,11 @@ import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types/Spreadsheet
 import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
-export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
+export type SpreadsheetImportDialogOptions = {
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
-  fields: SpreadsheetImportFields<FieldNames>;
+  spreadsheetImportFields: SpreadsheetImportFields;
   // Runs after file upload step, receives and returns raw sheet data
   uploadStepHook?: (importedRows: ImportedRow[]) => Promise<ImportedRow[]>;
   // Runs after header selection step, receives and returns raw sheet data
@@ -22,17 +22,17 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   ) => Promise<{ headerRow: ImportedRow; importedRows: ImportedRow[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    importedStructuredRows: ImportedStructuredRow<FieldNames>[],
+    importedStructuredRows: ImportedStructuredRow[],
     importedRows: ImportedRow[],
-    columns: SpreadsheetColumns<FieldNames>,
-  ) => Promise<ImportedStructuredRow<FieldNames>[]>;
+    columns: SpreadsheetColumns,
+  ) => Promise<ImportedStructuredRow[]>;
   // Runs after column matching and on entry change
-  rowHook?: SpreadsheetImportRowHook<FieldNames>;
+  rowHook?: SpreadsheetImportRowHook;
   // Runs after column matching and on entry change
-  tableHook?: SpreadsheetImportTableHook<FieldNames>;
+  tableHook?: SpreadsheetImportTableHook;
   // Function called after user finishes the flow
   onSubmit: (
-    validationResult: SpreadsheetImportImportValidationResult<FieldNames>,
+    validationResult: SpreadsheetImportImportValidationResult,
     file: File,
   ) => Promise<void>;
   // Function called when user aborts the importing flow
@@ -59,5 +59,6 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   rtl?: boolean;
   // Allow header selection
   selectHeader?: boolean;
+  // Available field for import
   availableFieldMetadataItems: FieldMetadataItem[];
 };

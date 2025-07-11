@@ -13,49 +13,49 @@ type SpreadsheetIgnoredColumn = {
   header: string;
 };
 
-type SpreadsheetMatchedColumn<T> = {
+type SpreadsheetMatchedColumn = {
   type: SpreadsheetColumnType.matched;
   index: number;
   header: string;
-  value: T;
+  value: string;
 };
 
-type SpreadsheetMatchedSwitchColumn<T> = {
+type SpreadsheetMatchedSwitchColumn = {
   type: SpreadsheetColumnType.matchedCheckbox;
   index: number;
   header: string;
-  value: T;
+  value: string;
 };
 
-export type SpreadsheetMatchedSelectColumn<T> = {
+export type SpreadsheetMatchedSelectColumn = {
   type: SpreadsheetColumnType.matchedSelect;
   index: number;
   header: string;
-  value: T;
-  matchedOptions: Partial<SpreadsheetMatchedOptions<T>>[];
+  value: string;
+  matchedOptions: Partial<SpreadsheetMatchedOptions>[];
 };
 
-export type SpreadsheetMatchedSelectOptionsColumn<T> = {
+export type SpreadsheetMatchedSelectOptionsColumn = {
   type: SpreadsheetColumnType.matchedSelectOptions;
   index: number;
   header: string;
-  value: T;
-  matchedOptions: SpreadsheetMatchedOptions<T>[];
+  value: string;
+  matchedOptions: SpreadsheetMatchedOptions[];
 };
 
-export type SpreadsheetErrorColumn<T> = {
+export type SpreadsheetErrorColumn = {
   type: SpreadsheetColumnType.matchedError;
   index: number;
   header: string;
-  value: T;
+  value: string;
   errorMessage: string;
 };
 
-export type SpreadsheetColumn<T extends string> =
+export type SpreadsheetColumn =
   | SpreadsheetEmptyColumn
   | SpreadsheetIgnoredColumn
-  | SpreadsheetMatchedColumn<T>
-  | SpreadsheetMatchedSwitchColumn<T>
-  | SpreadsheetMatchedSelectColumn<T>
-  | SpreadsheetMatchedSelectOptionsColumn<T>
-  | SpreadsheetErrorColumn<T>;
+  | SpreadsheetMatchedColumn
+  | SpreadsheetMatchedSwitchColumn
+  | SpreadsheetMatchedSelectColumn
+  | SpreadsheetMatchedSelectOptionsColumn
+  | SpreadsheetErrorColumn;

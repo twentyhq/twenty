@@ -10,9 +10,7 @@ import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogMa
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { useLingui } from '@lingui/react/macro';
 
-export const defaultSpreadsheetImportProps: Partial<
-  SpreadsheetImportProps<any>
-> = {
+export const defaultSpreadsheetImportProps: Partial<SpreadsheetImportProps> = {
   autoMapHeaders: true,
   allowInvalidSubmit: true,
   autoMapDistance: 2,
@@ -28,13 +26,11 @@ export const defaultSpreadsheetImportProps: Partial<
   maxRecords: SpreadsheetMaxRecordImportCapacity,
 } as const;
 
-export const SpreadsheetImport = <T extends string>(
-  props: SpreadsheetImportProps<T>,
-) => {
+export const SpreadsheetImport = (props: SpreadsheetImportProps) => {
   const mergedProps = {
     ...defaultSpreadsheetImportProps,
     ...props,
-  } as SpreadsheetImportProps<T>;
+  } as SpreadsheetImportProps;
 
   const { enqueueDialog } = useDialogManager();
 
