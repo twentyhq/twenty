@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetSubFieldOptionKey';
+import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import {
@@ -49,7 +49,7 @@ export const spreadsheetImportGetUnicityRowHook = (
           );
 
           return uniqueSubFields.map((subField) => ({
-            columnName: getSubFieldOptionKey(field, subField.subFieldName),
+            columnName: getCompositeSubFieldKey(field, subField.subFieldName),
             fieldType: field.type,
           }));
         }
@@ -59,7 +59,7 @@ export const spreadsheetImportGetUnicityRowHook = (
     ),
   ];
 
-  const rowHook: SpreadsheetImportRowHook<string> = (row, addError, table) => {
+  const rowHook: SpreadsheetImportRowHook = (row, addError, table) => {
     if (uniqueConstraints.length === 0) {
       return row;
     }
@@ -96,7 +96,7 @@ export const spreadsheetImportGetUnicityRowHook = (
 };
 
 const getUniqueValues = (
-  row: ImportedStructuredRow<string>,
+  row: ImportedStructuredRow,
   uniqueConstraint: Column[],
 ) => {
   return uniqueConstraint

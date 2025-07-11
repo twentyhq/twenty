@@ -1,15 +1,23 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
-import { ImportedStructuredRow } from '@/spreadsheet-import/types';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportField,
+} from '@/spreadsheet-import/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated/graphql';
 
 describe('buildRecordFromImportedStructuredRow', () => {
+  //tododo - test only relationFieldId
+  //tododo - test relation composite subfield
+  //tododo - test phones solution
   it('should successfully build a record from imported structured row', () => {
-    const importedStructuredRow: ImportedStructuredRow<string> = {
+    const importedStructuredRow: ImportedStructuredRow = {
       booleanField: 'true',
       numberField: '30',
       multiSelectField: '["tag1", "tag2", "tag3"]',
-      relationField: 'company-123',
+      'emailField (relationField)': 'john.doe@example.com',
       selectField: 'option1',
       arrayField: '["item1", "item2", "item3"]',
       jsonField: '{"key": "value", "nested": {"prop": "data"}}',
@@ -122,6 +130,9 @@ describe('buildRecordFromImportedStructuredRow', () => {
         updatedAt: '2023-01-01',
         icon: 'IconBuilding',
         description: null,
+        relation: {
+          type: RelationType.MANY_TO_ONE,
+        } as FieldMetadataItemRelation,
       },
       {
         id: '7',
@@ -337,9 +348,25 @@ describe('buildRecordFromImportedStructuredRow', () => {
       },
     ];
 
+    const spreadsheetImportFields = [
+      {
+        fieldMetadataItemId: '6',
+        isNestedField: false,
+        isRelationConnectField: true,
+        label: 'Relation Field / Email Field',
+        key: 'emailField (relationField)',
+        fieldMetadataType: FieldMetadataType.RELATION,
+        uniqueFieldMetadataItem: {
+          name: 'emailField',
+          type: FieldMetadataType.EMAILS,
+        },
+      },
+    ] as SpreadsheetImportField[];
+
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
-      fields,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields,
     });
 
     expect(result).toEqual({
@@ -350,7 +377,14 @@ describe('buildRecordFromImportedStructuredRow', () => {
       booleanField: true,
       numberField: 30,
       multiSelectField: ['tag1', 'tag2', 'tag3'],
-      relationFieldId: 'company-123',
+      relationField: {
+        connect: {
+          where: {
+            emailField: 'john.doe@example.com',
+          },
+        },
+      },
+      relationFieldId: undefined,
       selectField: 'option1',
       arrayField: ['item1', 'item2', 'item3'],
       jsonField: { key: 'value', nested: { prop: 'data' } },
@@ -407,7 +441,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
   });
 
   it('should handle case where user provides only a primaryPhoneNumber without calling code', () => {
-    const importedStructuredRow: ImportedStructuredRow<string> = {
+    const importedStructuredRow: ImportedStructuredRow = {
       'Primary Phone Number (phoneField)': '5550123',
     };
 
@@ -430,7 +464,8 @@ describe('buildRecordFromImportedStructuredRow', () => {
 
     const result = buildRecordFromImportedStructuredRow({
       importedStructuredRow,
-      fields,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields: [],
     });
 
     expect(result).toEqual({

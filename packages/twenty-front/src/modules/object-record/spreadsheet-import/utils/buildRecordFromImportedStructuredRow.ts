@@ -1,31 +1,38 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
-import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
-import { ImportedStructuredRow } from '@/spreadsheet-import/types';
+import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type BuildRecordFromImportedStructuredRowArgs = {
-  importedStructuredRow: ImportedStructuredRow<any>;
-  fields: FieldMetadataItem[];
+  importedStructuredRow: ImportedStructuredRow;
+  fieldMetadataItems: FieldMetadataItem[];
+  spreadsheetImportFields: SpreadsheetImportFields;
 };
 
 const buildCompositeFieldRecord = (
   field: FieldMetadataItem,
-  importedStructuredRow: ImportedStructuredRow<any>,
+  importedStructuredRow: ImportedStructuredRow,
   compositeFieldConfig: Record<string, ((value: any) => any) | undefined>,
 ): Record<string, any> | undefined => {
   const compositeFieldRecord = Object.entries(compositeFieldConfig).reduce(
     (acc, [compositeFieldKey, transform]) => {
       const value =
-        importedStructuredRow[getSubFieldOptionKey(field, compositeFieldKey)];
+        importedStructuredRow[
+          getCompositeSubFieldKey(field, compositeFieldKey)
+        ];
 
       return isDefined(value)
         ? { ...acc, [compositeFieldKey]: transform?.(value) || value }
@@ -37,9 +44,83 @@ const buildCompositeFieldRecord = (
   return isEmptyObject(compositeFieldRecord) ? undefined : compositeFieldRecord;
 };
 
+const buildRelationConnectFieldRecord = (
+  fieldMetadataItem: FieldMetadataItem,
+  importedStructuredRow: ImportedStructuredRow,
+  spreadsheetImportFields: SpreadsheetImportFields,
+) => {
+  if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
+    return {
+      relationIdFieldValue: undefined,
+      relationConnectFieldValue: undefined,
+    };
+
+  const relationConnectFields = spreadsheetImportFields.filter(
+    (field) =>
+      field.fieldMetadataItemId === fieldMetadataItem.id &&
+      isDefined(importedStructuredRow[field.key]),
+  );
+
+  if (relationConnectFields.length === 0)
+    return {
+      relationIdFieldValue: undefined,
+      relationConnectFieldValue: undefined,
+    };
+
+  //if only primary key is provided, only relationIdFieldValue is set to enable disconnect
+  if (
+    relationConnectFields.length === 1 &&
+    relationConnectFields[0].uniqueFieldMetadataItem?.name === 'id'
+  )
+    return {
+      relationIdFieldValue: importedStructuredRow[relationConnectFields[0].key],
+      relationConnectFieldValue: undefined,
+    };
+
+  return {
+    relationIdFieldValue: undefined,
+    relationConnectFieldValue: {
+      connect: {
+        where: relationConnectFields.reduce(
+          (acc, field) => {
+            const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
+            if (
+              !isNonEmptyString(importedStructuredRow[field.key]) ||
+              !isDefined(uniqueFieldMetadataItem)
+            )
+              return acc;
+
+            if (
+              isCompositeFieldType(uniqueFieldMetadataItem.type) &&
+              isDefined(field.compositeSubFieldKey)
+            ) {
+              return {
+                ...acc,
+                [uniqueFieldMetadataItem.name]: {
+                  ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
+                    ? acc[uniqueFieldMetadataItem.name]
+                    : {}),
+                  [field.compositeSubFieldKey]:
+                    importedStructuredRow[field.key],
+                },
+              };
+            }
+            return {
+              ...acc,
+              [uniqueFieldMetadataItem.name]: importedStructuredRow[field.key],
+            };
+          },
+          {} as Record<string, any>,
+        ),
+      },
+    },
+  };
+};
+
 export const buildRecordFromImportedStructuredRow = ({
-  fields,
+  fieldMetadataItems,
   importedStructuredRow,
+  spreadsheetImportFields,
 }: BuildRecordFromImportedStructuredRowArgs) => {
   const stringArrayJSONSchema = z
     .preprocess((value) => {
@@ -145,7 +226,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
   };
 
-  for (const field of fields) {
+  for (const field of fieldMetadataItems) {
     const importedFieldValue = importedStructuredRow[field.name];
 
     switch (field.type) {
@@ -178,12 +259,12 @@ export const buildRecordFromImportedStructuredRow = ({
 
         const primaryPhoneNumber =
           importedStructuredRow[
-            getSubFieldOptionKey(field, 'primaryPhoneNumber')
+            getCompositeSubFieldKey(field, 'primaryPhoneNumber')
           ];
 
         const primaryPhoneCallingCode =
           importedStructuredRow[
-            getSubFieldOptionKey(field, 'primaryPhoneCallingCode')
+            getCompositeSubFieldKey(field, 'primaryPhoneCallingCode')
           ];
 
         const hasUserProvidedPrimaryPhoneNumberWithoutCallingCode =
@@ -195,7 +276,7 @@ export const buildRecordFromImportedStructuredRow = ({
         if (hasUserProvidedPrimaryPhoneNumberWithoutCallingCode) {
           const primaryPhoneCountryCode =
             importedStructuredRow[
-              getSubFieldOptionKey(field, 'primaryPhoneCountryCode')
+              getCompositeSubFieldKey(field, 'primaryPhoneCountryCode')
             ];
 
           const hasUserProvidedPrimaryPhoneCountryCode =
@@ -245,14 +326,17 @@ export const buildRecordFromImportedStructuredRow = ({
           recordToBuild[field.name] = importedFieldValue;
         }
         break;
-      case FieldMetadataType.RELATION:
-        if (
-          isDefined(importedFieldValue) &&
-          isNonEmptyString(importedFieldValue)
-        )
-          recordToBuild[field.name + 'Id'] = importedFieldValue;
-
+      case FieldMetadataType.RELATION: {
+        const { relationIdFieldValue, relationConnectFieldValue } =
+          buildRelationConnectFieldRecord(
+            field,
+            importedStructuredRow,
+            spreadsheetImportFields,
+          );
+        recordToBuild[field.name] = relationConnectFieldValue;
+        recordToBuild[`${field.name}Id`] = relationIdFieldValue;
         break;
+      }
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',

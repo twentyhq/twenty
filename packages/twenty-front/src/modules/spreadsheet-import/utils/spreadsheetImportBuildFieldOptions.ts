@@ -1,15 +1,22 @@
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
+import { ReadonlyDeep } from 'type-fest';
 
-export const spreadsheetBuildFieldOptions = <T extends string>(
-  fields: SpreadsheetImportFields<T>,
-  columns: SpreadsheetColumns<string>,
-) => {
-  return fields
-    .filter((field) => field.fieldMetadataType !== FieldMetadataType.RICH_TEXT)
-    .map(({ Icon, label, key, fieldMetadataType }) => {
+export const spreadsheetImportBuildFieldOptions = (
+  fields: SpreadsheetImportFields,
+  columns: SpreadsheetColumns,
+): readonly ReadonlyDeep<SpreadsheetImportFieldOption>[] => {
+  return fields.map(
+    ({
+      Icon,
+      label,
+      key,
+      fieldMetadataType,
+      isNestedField,
+      fieldMetadataItemId,
+    }) => {
       const isSelected =
         columns.findIndex((column) => {
           if ('value' in column) {
@@ -24,7 +31,9 @@ export const spreadsheetBuildFieldOptions = <T extends string>(
         label: label,
         disabled: isSelected,
         fieldMetadataTypeLabel: getFieldMetadataTypeLabel(fieldMetadataType),
-      } as const;
-      //tododo: add a hasSubField property to the field options
-    });
+        isNestedField: isNestedField,
+        fieldMetadataItemId: fieldMetadataItemId,
+      };
+    },
+  );
 };
