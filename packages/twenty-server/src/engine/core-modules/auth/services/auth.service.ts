@@ -93,6 +93,11 @@ export class AuthService {
     workspace: Workspace,
     user: User,
   ) {
+    // Super Admin can access any workspace without being a member
+    if (user.canAccessFullAdminPanel) {
+      return;
+    }
+
     if (
       await this.userWorkspaceService.checkUserWorkspaceExists(
         user.id,

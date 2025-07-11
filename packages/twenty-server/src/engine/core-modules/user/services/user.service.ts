@@ -200,9 +200,6 @@ export class UserService extends TypeOrmQueryService<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        workspaces: {
-          workspaceId,
-        },
       },
       relations: ['workspaces'],
     });
@@ -210,10 +207,27 @@ export class UserService extends TypeOrmQueryService<User> {
     userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
-        'User does not have access to this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
       ),
     );
+
+    // Super Admin can access any workspace without being a member
+    if (user.canAccessFullAdminPanel) {
+      return;
+    }
+
+    // Check if user is a member of the workspace
+    const userWorkspace = user.workspaces.find(
+      (workspace) => workspace.workspaceId === workspaceId,
+    );
+
+    if (!userWorkspace) {
+      throw new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
   }
 
   async getUserByEmail(email: string) {

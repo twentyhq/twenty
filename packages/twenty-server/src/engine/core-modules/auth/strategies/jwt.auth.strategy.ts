@@ -132,11 +132,54 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       where: { id: userId },
     });
 
+    // Handle impersonation case
+    if (payload.isImpersonating === true) {
+      // Validate that the user can impersonate (is Super Admin)
+      if (!user?.canAccessFullAdminPanel) {
+        throw new AuthException(
+          'User not authorized to impersonate',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      // Check if impersonating the correct workspace
+      if (payload.impersonatedWorkspaceId !== payload.workspaceId) {
+        throw new AuthException(
+          'Invalid impersonation workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      // For impersonation, we don't need to check UserWorkspace relationship
+      // since the Super Admin might not be a member of the target workspace
+      return {
+        user,
+        workspace,
+        authProvider: payload.authProvider,
+        userWorkspace: undefined,
+        userWorkspaceId: payload.userWorkspaceId,
+        workspaceMemberId: payload.workspaceMemberId,
+      };
+    }
+
+    // Normal token validation (existing logic)
     if (!payload.userWorkspaceId) {
       throw new AuthException(
         'UserWorkspace not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
+    }
+
+    // Super Admin can access any workspace without being a member
+    if (user?.canAccessFullAdminPanel) {
+      return {
+        user,
+        workspace,
+        authProvider: payload.authProvider,
+        userWorkspace: undefined,
+        userWorkspaceId: payload.userWorkspaceId,
+        workspaceMemberId: payload.workspaceMemberId,
+      };
     }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({

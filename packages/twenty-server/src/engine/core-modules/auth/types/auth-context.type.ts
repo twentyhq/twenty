@@ -81,6 +81,10 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   workspaceMemberId?: string;
   userWorkspaceId: string;
   authProvider?: AuthProviderEnum;
+  // Super Admin impersonation fields
+  isImpersonating?: boolean;
+  realUserId?: string;
+  impersonatedWorkspaceId?: string;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

@@ -87,20 +87,43 @@ export class AccessTokenService {
       });
 
       if (!workspaceMember) {
-        throw new AuthException(
-          'User is not a member of the workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
+        // Super Admin can access any workspace without being a member
+        if (user.canAccessFullAdminPanel) {
+          // For Super Admin, we don't set tokenWorkspaceMemberId since they're not a workspace member
+          tokenWorkspaceMemberId = undefined;
+        } else {
+          throw new AuthException(
+            'User is not a member of the workspace',
+            AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          );
+        }
+      } else {
+        tokenWorkspaceMemberId = workspaceMember.id;
       }
-
-      tokenWorkspaceMemberId = workspaceMember.id;
     }
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
+    let userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId: user.id,
         workspaceId,
       },
     });
+
+    // Super Admin might not have a UserWorkspace record, so we need to handle this case
+    if (!userWorkspace) {
+      // If user is Super Admin, we can create a UserWorkspace record for them
+      if (user.canAccessFullAdminPanel) {
+        // Create a UserWorkspace record for Super Admin if it doesn't exist
+        // This ensures Super Admin can access any workspace without explicit membership
+        const newUserWorkspace = this.userWorkspaceRepository.create({
+          userId: user.id,
+          workspaceId,
+        });
+        
+        userWorkspace = await this.userWorkspaceRepository.save(newUserWorkspace);
+      } else {
+        userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+      }
+    }
 
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
