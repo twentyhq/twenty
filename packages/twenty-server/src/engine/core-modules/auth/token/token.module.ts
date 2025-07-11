@@ -12,7 +12,6 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,7 +26,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     ),
     TypeORMModule,
     DataSourceModule,
-    WorkspaceSSOModule,
   ],
   providers: [
     RenewTokenService,

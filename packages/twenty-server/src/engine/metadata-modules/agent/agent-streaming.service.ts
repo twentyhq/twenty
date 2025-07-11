@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
@@ -29,6 +29,8 @@ export type StreamAgentChatResult = {
 
 @Injectable()
 export class AgentStreamingService {
+  private readonly logger = new Logger(AgentStreamingService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity, 'core')
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
@@ -101,8 +103,10 @@ export class AgentStreamingService {
               });
               res.end();
             }
+            this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
             break;
           default:
+            this.logger.log(`Unknown chunk type: ${chunk.type}`);
             break;
         }
       }
@@ -126,6 +130,10 @@ export class AgentStreamingService {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
+
+      if (error instanceof AgentException) {
+        this.logger.error(`Agent Exception Code: ${error.code}`);
+      }
 
       if (!res.headersSent) {
         this.setupStreamingHeaders(res);

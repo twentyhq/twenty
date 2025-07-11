@@ -6,7 +6,8 @@ export type AgentStreamingEvent = {
 export type AgentStreamingParserCallbacks = {
   onTextDelta?: (message: string) => void;
   onToolCall?: (message: string) => void;
-  onError?: (error: string) => void;
+  onError?: (message: string) => void;
+  onParseError?: (error: Error, rawLine: string) => void;
 };
 
 export const parseAgentStreamingChunk = (
@@ -37,9 +38,9 @@ export const parseAgentStreamingChunk = (
 
         const errorMessage =
           error instanceof Error
-            ? error.message
-            : `Unknown parsing error: ${String(error)}`;
-        callbacks.onError?.(errorMessage);
+            ? error
+            : new Error(`Unknown parsing error: ${String(error)}`);
+        callbacks.onParseError?.(errorMessage, line);
       }
     }
   }

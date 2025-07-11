@@ -1,9 +1,9 @@
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -27,8 +27,8 @@ interface OptimisticMessage extends AgentChatMessage {
 
 export const useAgentChat = (agentId: string) => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const apolloClient = useApolloClient();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(
     agentChatSelectedFilesComponentState,
@@ -138,9 +138,9 @@ export const useAgentChat = (agentId: string) => {
               }));
               scrollToBottom();
             },
-            onError: (errorMessage: string) => {
+            onError: (message: string) => {
               enqueueErrorSnackBar({
-                message: t`${errorMessage}`,
+                message,
               });
             },
           });
