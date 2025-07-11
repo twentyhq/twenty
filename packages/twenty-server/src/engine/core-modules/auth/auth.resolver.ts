@@ -266,12 +266,10 @@ export class AuthResolver {
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      authProvider,
-    } = await this.loginTokenService.verifyLoginToken(
-      twoFactorAuthenticationVerificationInput.loginToken,
-    );
+    const { sub: email, authProvider } =
+      await this.loginTokenService.verifyLoginToken(
+        twoFactorAuthenticationVerificationInput.loginToken,
+      );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
