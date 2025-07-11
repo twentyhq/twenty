@@ -76,7 +76,7 @@ export const AgentChatFileUpload = () => {
         ref={fileInputRef}
         type="file"
         multiple
-        accept="image/*"
+        accept="*/*"
         onChange={handleFileInputChange}
       />
 
