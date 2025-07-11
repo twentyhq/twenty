@@ -69,6 +69,7 @@ export const useAgentChat = (agentId: string) => {
       content,
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: [],
     };
 
     const optimisticAiMessage: OptimisticMessage = {
@@ -78,6 +79,7 @@ export const useAgentChat = (agentId: string) => {
       content: '',
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: [],
     };
 
     return [optimisticUserMessage, optimisticAiMessage];

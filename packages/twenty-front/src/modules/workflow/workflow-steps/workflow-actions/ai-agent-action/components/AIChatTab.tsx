@@ -5,6 +5,7 @@ import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
 import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { t } from '@lingui/core/macro';
@@ -179,6 +180,14 @@ const StyledButtonsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledFilesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+  flex-wrap: wrap;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const AIChatTab = ({ agentId }: { agentId: string }) => {
   const theme = useTheme();
 
@@ -257,6 +266,11 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                       ? getAssistantMessageContent(msg)
                       : msg.content}
                   </StyledMessageText>
+                  <StyledFilesContainer>
+                    {msg.files.map((file) => (
+                      <AgentChatFilePreview key={file.id} file={file} />
+                    ))}
+                  </StyledFilesContainer>
                   {msg.content && (
                     <StyledMessageFooter className="message-footer">
                       <span>

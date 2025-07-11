@@ -30,7 +30,7 @@ const StyledFileInfo = styled.div`
   min-width: 0;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
-  border-inline: 1px solid ${({ theme }) => theme.border.color.light};
+  border-left: 1px solid ${({ theme }) => theme.border.color.light};
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -55,6 +55,7 @@ const StyledRemoveIconContainer = styled.div`
   justify-content: center;
   height: 100%;
   width: 40px;
+  border-left: 1px solid ${({ theme }) => theme.border.color.light};
 
   svg {
     cursor: pointer;
@@ -77,8 +78,8 @@ export const AgentChatFilePreview = ({
   isUploading,
 }: {
   file: File | AgentChatFile;
-  onRemove: () => void;
-  isUploading: boolean;
+  onRemove?: () => void;
+  isUploading?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -97,13 +98,15 @@ export const AgentChatFilePreview = ({
         <StyledFileName title={file.name}>{file.name}</StyledFileName>
         <StyledFileSize>{formatSize(file.size)}</StyledFileSize>
       </StyledFileInfo>
-      <StyledRemoveIconContainer>
-        <IconX
-          size={theme.icon.size.md}
-          color={theme.font.color.secondary}
-          onClick={onRemove}
-        />
-      </StyledRemoveIconContainer>
+      {onRemove && (
+        <StyledRemoveIconContainer>
+          <IconX
+            size={theme.icon.size.md}
+            color={theme.font.color.secondary}
+            onClick={onRemove}
+          />
+        </StyledRemoveIconContainer>
+      )}
     </StyledFileChip>
   );
 };
