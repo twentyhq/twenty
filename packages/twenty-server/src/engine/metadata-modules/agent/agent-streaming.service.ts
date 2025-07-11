@@ -17,6 +17,7 @@ export type StreamAgentChatOptions = {
   threadId: string;
   userMessage: string;
   userWorkspaceId: string;
+  fileIds?: string[];
   res: Response;
 };
 
@@ -39,6 +40,7 @@ export class AgentStreamingService {
     threadId,
     userMessage,
     userWorkspaceId,
+    fileIds = [],
     res,
   }: StreamAgentChatOptions) {
     try {
@@ -61,6 +63,7 @@ export class AgentStreamingService {
         threadId,
         role: AgentChatMessageRole.USER,
         content: userMessage,
+        fileIds,
       });
 
       this.setupStreamingHeaders(res);
@@ -70,6 +73,7 @@ export class AgentStreamingService {
           agentId: thread.agent.id,
           userMessage,
           messages: thread.messages,
+          fileIds,
         });
 
       let aiResponse = '';
