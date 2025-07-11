@@ -1,3 +1,4 @@
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
@@ -11,6 +12,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  getUniqueConstraintsFields,
   isDefined,
   lowercaseUrlOriginAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
@@ -23,23 +25,14 @@ type Column = {
 export const spreadsheetImportGetUnicityRowHook = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const uniqueConstraints = objectMetadataItem.indexMetadatas.filter(
-    (indexMetadata) => indexMetadata.isUnique,
-  );
+  const uniqueConstraintsFields = getUniqueConstraintsFields<
+    FieldMetadataItem,
+    ObjectMetadataItem
+  >(objectMetadataItem);
 
-  //tododo - re-use utils ?
-  const uniqueConstraintsWithColumnNames: Column[][] = [
-    [{ columnName: 'id', fieldType: FieldMetadataType.UUID }],
-    ...uniqueConstraints.map((indexMetadata) =>
-      indexMetadata.indexFieldMetadatas.flatMap((indexField) => {
-        const field = objectMetadataItem.fields.find(
-          (objectField) => objectField.id === indexField.fieldMetadataId,
-        );
-
-        if (!field) {
-          return [];
-        }
-
+  const uniqueConstraintsWithColumnNames: Column[][] =
+    uniqueConstraintsFields.map((uniqueConstraintFields) =>
+      uniqueConstraintFields.flatMap((field) => {
         if (isCompositeFieldType(field.type)) {
           const compositeTypeFieldConfig =
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type];
@@ -56,11 +49,9 @@ export const spreadsheetImportGetUnicityRowHook = (
 
         return [{ columnName: field.name, fieldType: field.type }];
       }),
-    ),
-  ];
-
+    );
   const rowHook: SpreadsheetImportRowHook = (row, addError, table) => {
-    if (uniqueConstraints.length === 0) {
+    if (uniqueConstraintsFields.length === 0) {
       return row;
     }
 
