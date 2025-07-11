@@ -96,8 +96,8 @@ describe('AiModelRegistryService', () => {
     expect(RESULT.modelId).toBe('mistral');
     expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
-    expect(RESULT.inputCostPer1kTokensInCents).toBe(0.01);
-    expect(RESULT.outputCostPer1kTokensInCents).toBe(0.01);
+    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
   });
 
   it('should return effective model config for specific model', () => {
@@ -122,8 +122,8 @@ describe('AiModelRegistryService', () => {
     expect(RESULT.modelId).toBe('mistral');
     expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
-    expect(RESULT.inputCostPer1kTokensInCents).toBe(0.01);
-    expect(RESULT.outputCostPer1kTokensInCents).toBe(0.01);
+    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
   });
 
   it('should throw error for non-existent model', () => {
