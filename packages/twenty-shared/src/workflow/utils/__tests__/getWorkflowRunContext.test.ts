@@ -2,7 +2,7 @@ import { getWorkflowRunContext } from '@/workflow/utils/getWorkflowRunContext';
 import {
   StepStatus,
   WorkflowRunStepInfos,
-} from '@/workflow/types/WorkflowRunStateStepsInfos';
+} from '@/workflow/types/WorkflowRunStateStepInfos';
 
 describe('getWorkflowRunContext', () => {
   it('returns a context with only steps that have a defined result', () => {

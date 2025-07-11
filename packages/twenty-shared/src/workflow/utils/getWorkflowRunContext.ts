@@ -1,5 +1,5 @@
 import { isDefined } from '@/utils';
-import { WorkflowRunStepInfos } from '@/workflow/types/WorkflowRunStateStepsInfos';
+import { WorkflowRunStepInfos } from '@/workflow/types/WorkflowRunStateStepInfos';
 
 export const getWorkflowRunContext = (stepInfos: WorkflowRunStepInfos) => {
   return Object.fromEntries(

@@ -3,16 +3,16 @@ import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPre
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
   getWorkflowRunContext,
-  WorkflowRunStepsInfos,
+  WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
 export const getWorkflowRunStepContext = ({
   stepId,
   flow,
-  stepsInfos,
+  stepInfos,
 }: {
   stepId: string;
-  stepsInfos: WorkflowRunStepsInfos;
+  stepInfos: WorkflowRunStepInfos;
   flow: WorkflowRunFlow;
 }) => {
   if (stepId === TRIGGER_STEP_ID) {
@@ -21,7 +21,7 @@ export const getWorkflowRunStepContext = ({
 
   const previousSteps = getPreviousSteps(flow.steps, stepId);
 
-  const context = getWorkflowRunContext(stepsInfos);
+  const context = getWorkflowRunContext(stepInfos);
 
   const previousStepsContext = previousSteps.map((step) => {
     return {

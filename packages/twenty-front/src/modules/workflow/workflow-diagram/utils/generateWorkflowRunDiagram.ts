@@ -9,7 +9,7 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowRunStepsInfos } from 'twenty-shared/workflow';
+import { WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
@@ -18,7 +18,7 @@ export const generateWorkflowRunDiagram = ({
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
-  stepsInfo: WorkflowRunStepsInfos | undefined;
+  stepsInfo: WorkflowRunStepInfos | undefined;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:

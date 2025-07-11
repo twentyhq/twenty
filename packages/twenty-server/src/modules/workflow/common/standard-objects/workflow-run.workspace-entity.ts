@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { WorkflowRunStepsInfos } from 'twenty-shared/workflow';
+import { WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -60,7 +60,7 @@ export type WorkflowRunState = {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
   };
-  stepInfos: WorkflowRunStepsInfos;
+  stepInfos: WorkflowRunStepInfos;
   workflowRunError?: string;
 };
 

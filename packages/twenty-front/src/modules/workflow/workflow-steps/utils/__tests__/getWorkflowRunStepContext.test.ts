@@ -16,7 +16,7 @@ describe('getWorkflowRunStepContext', () => {
       },
       steps: [],
     } satisfies WorkflowRunFlow;
-    const stepsInfos = {
+    const stepInfos = {
       [TRIGGER_STEP_ID]: {
         result: { company: { id: '123' } },
         status: StepStatus.SUCCESS,
@@ -26,7 +26,7 @@ describe('getWorkflowRunStepContext', () => {
     const result = getWorkflowRunStepContext({
       stepId: TRIGGER_STEP_ID,
       flow,
-      stepsInfos,
+      stepInfos,
     });
 
     expect(result).toEqual([]);
@@ -81,7 +81,7 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const stepsInfos = {
+    const stepInfos = {
       [TRIGGER_STEP_ID]: {
         result: { company: { id: '123' } },
         status: StepStatus.SUCCESS,
@@ -92,7 +92,7 @@ describe('getWorkflowRunStepContext', () => {
     const result = getWorkflowRunStepContext({
       stepId: 'step2',
       flow,
-      stepsInfos,
+      stepInfos,
     });
 
     expect(result).toEqual([
@@ -156,7 +156,7 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const stepsInfos = {
+    const stepInfos = {
       [TRIGGER_STEP_ID]: {
         result: { company: { id: '123' } },
         status: StepStatus.SUCCESS,
@@ -168,7 +168,7 @@ describe('getWorkflowRunStepContext', () => {
     const result = getWorkflowRunStepContext({
       stepId: 'step1',
       flow,
-      stepsInfos,
+      stepInfos,
     });
 
     expect(result).toEqual([
@@ -247,7 +247,7 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const stepsInfos = {
+    const stepInfos = {
       [TRIGGER_STEP_ID]: {
         result: { company: { id: '123' } },
         status: StepStatus.SUCCESS,
@@ -260,7 +260,7 @@ describe('getWorkflowRunStepContext', () => {
     const result = getWorkflowRunStepContext({
       stepId: 'step3',
       flow,
-      stepsInfos,
+      stepInfos,
     });
 
     expect(result).toEqual([

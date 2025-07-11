@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
+import { StepStatus } from 'twenty-shared/workflow';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -317,13 +318,7 @@ export const workflowRunOutputSchema = z.object({
   error: z.any().optional(),
 });
 
-export const workflowRunStepStatusSchema = z.enum([
-  'NOT_STARTED',
-  'RUNNING',
-  'SUCCESS',
-  'FAILED',
-  'PENDING',
-]);
+export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
 
 export const workflowRunStateStepInfosSchema = z.object({
   result: z.any().optional(),

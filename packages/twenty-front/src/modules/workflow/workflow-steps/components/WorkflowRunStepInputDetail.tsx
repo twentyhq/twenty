@@ -76,7 +76,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const allVariablesUsedInStep = Array.from(variablesUsedInStep);
 
   const stepContext = getWorkflowRunStepContext({
-    stepsInfos: workflowRun.state.stepInfos,
+    stepInfos: workflowRun.state.stepInfos,
     flow: workflowRun.state.flow,
     stepId,
   });
