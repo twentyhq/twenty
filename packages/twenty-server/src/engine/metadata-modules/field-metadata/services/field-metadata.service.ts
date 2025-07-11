@@ -584,7 +584,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             isRemoteCreation: fieldMetadataInput.isRemoteCreation ?? false,
           });
 
-          migrationActions.push(...fieldMigrationActions);
+          if (fieldMetadataInput.type !== FieldMetadataType.MORPH_RELATION) {
+            migrationActions.push(...fieldMigrationActions);
+          }
         }
       }
 

@@ -60,6 +60,15 @@ const StyledLightIconButton = styled(LightIconButton)<{
         : 'transparent'};
 `;
 
+const StyledMatrixItem = styled.div`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+
 const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
@@ -84,18 +93,20 @@ const IconPickerIcon = ({
   );
 
   return (
-    <SelectableListItem itemId={iconKey} onEnter={onClick}>
-      <StyledLightIconButton
-        key={iconKey}
-        aria-label={convertIconKeyToLabel(iconKey)}
-        size="medium"
-        title={iconKey}
-        isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
-        isFocused={iconKey === focusedIconKey}
-        Icon={Icon}
-        onClick={onClick}
-      />
-    </SelectableListItem>
+    <StyledMatrixItem>
+      <SelectableListItem itemId={iconKey} onEnter={onClick}>
+        <StyledLightIconButton
+          key={iconKey}
+          aria-label={convertIconKeyToLabel(iconKey)}
+          size="medium"
+          title={iconKey}
+          isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
+          isFocused={iconKey === focusedIconKey}
+          Icon={Icon}
+          onClick={onClick}
+        />
+      </SelectableListItem>
+    </StyledMatrixItem>
   );
 };
 

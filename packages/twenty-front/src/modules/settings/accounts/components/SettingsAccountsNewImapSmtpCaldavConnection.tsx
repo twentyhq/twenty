@@ -1,21 +1,29 @@
+import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 
-import { SetttingsAccountsImapConnectionForm } from '@/settings/accounts/components/SetttingsAccountsImapConnectionForm';
-import { useImapConnectionForm } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLingui } from '@lingui/react/macro';
+
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const SettingsAccountsNewImapConnection = () => {
+import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
+import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
+
+export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
 
-  const { formMethods, handleSave, handleSubmit, canSave, isSubmitting } =
-    useImapConnectionForm();
+  const {
+    formMethods,
+    handleSave,
+    handleSubmit,
+    canSave,
+    isSubmitting,
+    loading,
+  } = useImapSmtpCaldavConnectionForm({});
 
   const { control } = formMethods;
 
@@ -23,32 +31,30 @@ export const SettingsAccountsNewImapConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`New IMAP Connection`}
+        title={t`New Email Account`}
         links={[
           {
-            children: t`Settings`,
+            children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: t`Email Connections`,
+            children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`New IMAP Connection` },
+          { children: t`New Email Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
+            isLoading={loading}
             onCancel={() => navigate(SettingsPath.Accounts)}
-            onSave={handleSubmit(handleSave)}
+            onSave={handleSubmit((data) => handleSave(data))}
           />
         }
       >
         <SettingsPageContainer>
-          <SetttingsAccountsImapConnectionForm
-            control={control}
-            isEditing={false}
-          />
+          <SettingsAccountsConnectionForm control={control} isEditing={false} />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

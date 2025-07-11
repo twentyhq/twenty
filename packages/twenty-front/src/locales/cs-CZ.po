@@ -145,7 +145,9 @@ msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} bude odebrán z následující role:"
 
 #. js-lingui-id: CwstSL
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr ""
 
@@ -223,8 +225,8 @@ msgstr "24h ({hour24Label})"
 
 #. js-lingui-id: IbMa7Z
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "993"
-msgstr ""
+#~ msgid "993"
+#~ msgstr ""
 
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -299,6 +301,8 @@ msgstr "Smazání účtu"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Accounts"
 msgstr "Účty"
 
@@ -978,6 +982,36 @@ msgstr "Použitím Twenty souhlasíte s"
 msgid "Calculate"
 msgstr "Spočítat"
 
+#. js-lingui-id: GixROH
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Configuration"
+msgstr ""
+
+#. js-lingui-id: Lw3Ou8
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Encryption"
+msgstr ""
+
+#. js-lingui-id: 4dwQbl
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Password"
+msgstr ""
+
+#. js-lingui-id: 5wnjvr
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Port"
+msgstr ""
+
+#. js-lingui-id: JUGLyW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Server"
+msgstr ""
+
+#. js-lingui-id: +x0fpb
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "caldav.example.com"
+msgstr ""
+
 #. js-lingui-id: AjVXBS
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
@@ -1276,6 +1310,11 @@ msgstr "Nakonfigurujte připojení SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Nakonfigurujte a přizpůsobte si předvolby kalendáře."
 
+#. js-lingui-id: 6MDr1S
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure CalDAV settings to sync your calendar events."
+msgstr ""
+
 #. js-lingui-id: aGwm+D
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure how dates are displayed across the app"
@@ -1286,6 +1325,16 @@ msgstr "Nakonfigurujte, jak se mají zobrazovat data v aplikaci"
 msgid "Configure how we should display your events in your calendar"
 msgstr "Nakonfigurujte, jak by se měly zobrazovat vaše události ve vašem kalendáři"
 
+#. js-lingui-id: jbuOOX
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure IMAP settings to receive and sync your emails."
+msgstr ""
+
+#. js-lingui-id: gk/8eh
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Configure SMTP settings to send emails from your account."
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -1293,8 +1342,8 @@ msgstr "Nakonfigurujte nastavení svých e-mailů a kalendáře."
 
 #. js-lingui-id: W4D3v/
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Configure your IMAP email account"
-msgstr ""
+#~ msgid "Configure your IMAP email account"
+#~ msgstr ""
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -1315,6 +1364,11 @@ msgstr ""
 msgid "Connect a new account to your workspace"
 msgstr "Připojte nový účet k vašemu pracovnímu prostoru"
 
+#. js-lingui-id: ffVcxj
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect Email Account"
+msgstr ""
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
@@ -1322,8 +1376,8 @@ msgstr "Připojit s Google"
 
 #. js-lingui-id: VZvZWq
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "Connect with IMAP"
-msgstr ""
+#~ msgid "Connect with IMAP"
+#~ msgstr ""
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1334,6 +1388,21 @@ msgstr "Připojit s Microsoft"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Připojené účty"
+
+#. js-lingui-id: W4Kgwq
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Connection settings"
+msgstr ""
+
+#. js-lingui-id: f6bbrz
+#: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+msgid "Connection successfully created"
+msgstr ""
+
+#. js-lingui-id: aJTn2g
+#: src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+msgid "Connection successfully updated"
+msgstr ""
 
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -1715,6 +1784,11 @@ msgstr "Datum a čas"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
 msgstr "Formát data"
+
+#. js-lingui-id: cpDASC
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Days between triggers"
+msgstr ""
 
 #. js-lingui-id: 5y3O+A
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2138,6 +2212,13 @@ msgstr ""
 msgid "Edit CRM data structure and fields"
 msgstr ""
 
+#. js-lingui-id: AyPkS4
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Edit Email Account"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -2151,8 +2232,8 @@ msgstr "Upravit pole"
 #. js-lingui-id: 8gm+y4
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
-msgid "Edit IMAP Connection"
-msgstr ""
+#~ msgid "Edit IMAP Connection"
+#~ msgstr ""
 
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
@@ -2185,7 +2266,7 @@ msgid "Email"
 msgstr "E-mail"
 
 #. js-lingui-id: hzKQCy
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Email Address"
 msgstr ""
 
@@ -2202,8 +2283,8 @@ msgstr "Email nesmí být prázdný"
 #. js-lingui-id: Zb5c/r
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
-msgid "Email Connections"
-msgstr ""
+#~ msgid "Email Connections"
+#~ msgstr ""
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2299,8 +2380,8 @@ msgstr "Prázdný objekt"
 
 #. js-lingui-id: q1srUM
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Encryption"
-msgstr ""
+#~ msgid "Encryption"
+#~ msgstr ""
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2633,6 +2714,11 @@ msgstr "Exportovat pracovní postupy"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#. js-lingui-id: 1JBTZV
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Expression"
+msgstr ""
 
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -3024,6 +3110,11 @@ msgstr "Skrýt prázdné skupiny"
 msgid "Hide hidden groups"
 msgstr ""
 
+#. js-lingui-id: N0Yhtw
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Hours between triggers"
+msgstr ""
+
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -3091,33 +3182,48 @@ msgstr ""
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Pokud jste ztratili tento klíč, můžete jej obnovit, ale mějte na paměti, že všechny skripty používající tento klíč bude potřeba aktualizovat. Prosím, napište \"<b>{confirmationValue}</b>\" pro potvrzení."
 
+#. js-lingui-id: ijW9MW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Configuration"
+msgstr ""
+
 #. js-lingui-id: 3rtE4o
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "IMAP Connection Details"
-msgstr ""
+#~ msgid "IMAP Connection Details"
+#~ msgstr ""
 
 #. js-lingui-id: jXXECN
 #: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
-msgid "IMAP connection successfully created"
-msgstr ""
+#~ msgid "IMAP connection successfully created"
+#~ msgstr ""
 
 #. js-lingui-id: Fz/wXI
 #: src/modules/settings/accounts/hooks/useImapConnectionForm.ts
-msgid "IMAP connection successfully updated"
+#~ msgid "IMAP connection successfully updated"
+#~ msgstr ""
+
+#. js-lingui-id: N+Oh7x
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Encryption"
+msgstr ""
+
+#. js-lingui-id: Ubs0tf
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Password"
 msgstr ""
 
 #. js-lingui-id: TE8s2c
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Port"
 msgstr ""
 
 #. js-lingui-id: /RAwfY
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Server"
 msgstr ""
 
 #. js-lingui-id: +8jOVa
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "imap.example.com"
 msgstr ""
 
@@ -3408,7 +3514,7 @@ msgid "Japanese"
 msgstr "Japonština"
 
 #. js-lingui-id: wrLOeW
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
 msgstr ""
 
@@ -3526,6 +3632,21 @@ msgstr "Spustit"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Layout"
 msgstr "Rozvržení"
+
+#. js-lingui-id: 8QyoLb
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need calendar sync."
+msgstr ""
+
+#. js-lingui-id: EY3IAD
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need to import emails."
+msgstr ""
+
+#. js-lingui-id: O7a3Du
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Leave blank if you don't need to send emails."
+msgstr ""
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3728,6 +3849,11 @@ msgstr "Generování souboru metadat selhalo"
 msgid "Min"
 msgstr "Minimální"
 
+#. js-lingui-id: APfhM/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minutes between triggers"
+msgstr ""
+
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
@@ -3904,6 +4030,13 @@ msgstr "Nový účet"
 msgid "New Approved Access Domain"
 msgstr "Nová schválená přístupová doména"
 
+#. js-lingui-id: 7JRigF
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "New Email Account"
+msgstr ""
+
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -3912,8 +4045,8 @@ msgstr "Nové pole"
 #. js-lingui-id: GeB/fA
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
-msgid "New IMAP Connection"
-msgstr ""
+#~ msgid "New IMAP Connection"
+#~ msgstr ""
 
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -4391,7 +4524,6 @@ msgstr "Stránka nenalezena"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
-#: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Password"
 msgstr "Heslo"
 
@@ -5303,8 +5435,6 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapConnection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
@@ -5406,6 +5536,36 @@ msgstr "Jednotné a množné názvy se musí lišit"
 #: src/pages/onboarding/BookCall.tsx
 msgid "Skip"
 msgstr "Přeskočit"
+
+#. js-lingui-id: w+rJId
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Configuration"
+msgstr ""
+
+#. js-lingui-id: 0sIQAM
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Encryption"
+msgstr ""
+
+#. js-lingui-id: UeDEV/
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Password"
+msgstr ""
+
+#. js-lingui-id: 4waP7/
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Port"
+msgstr ""
+
+#. js-lingui-id: oKqFNn
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Server"
+msgstr ""
+
+#. js-lingui-id: 4oakKm
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "smtp.example.com"
+msgstr ""
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5941,6 +6101,22 @@ msgstr ""
 msgid "Trial expired. Please update your billing details."
 msgstr ""
 
+#. js-lingui-id: EfDzVR
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at hour"
+msgstr ""
+
+#. js-lingui-id: gV4kml
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger at minute"
+msgstr ""
+
+#. js-lingui-id: jGYsS/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Trigger interval"
+msgstr ""
+
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -6035,10 +6211,15 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
+#. js-lingui-id: cAn7CC
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
+msgstr ""
+
 #. js-lingui-id: Vmsh9w
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
-msgid "Update your IMAP email account configuration"
-msgstr ""
+#~ msgid "Update your IMAP email account configuration"
+#~ msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -6409,6 +6590,8 @@ msgstr ""
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Pracovní prostor"
@@ -6502,6 +6685,11 @@ msgstr "Nemáte povoleno vytvářet záznamy pro tento objekt"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
 #~ msgstr "You are not allowed to create records in this object"
+
+#. js-lingui-id: OLE3Ky
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
+msgstr ""
 
 #. js-lingui-id: TBApzn
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx

@@ -17,11 +17,11 @@ export const useTriggerProviderReconnect = () => {
     ) => {
       if (provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
         if (!accountId) {
-          navigate(SettingsPath.NewImapConnection);
+          navigate(SettingsPath.NewImapSmtpCaldavConnection);
           return;
         }
 
-        navigate(SettingsPath.EditImapConnection, {
+        navigate(SettingsPath.EditImapSmtpCaldavConnection, {
           connectedAccountId: accountId,
         });
         return;
