@@ -27,8 +27,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
 
-export type CompositeSubFieldConfig = {
-  subFieldName: string;
+export type CompositeSubFieldConfig<T> = {
+  subFieldName: keyof T;
   subFieldLabel: string;
   isImportable: boolean;
   isFilterable: boolean;
@@ -36,7 +36,7 @@ export type CompositeSubFieldConfig = {
 };
 
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
-  subFields: CompositeSubFieldConfig[];
+  subFields: CompositeSubFieldConfig<T>[];
   exampleValues: [T, T, T];
 };
 
