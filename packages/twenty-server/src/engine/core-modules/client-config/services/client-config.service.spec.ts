@@ -3,18 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-jest.mock(
-  'src/engine/core-modules/ai/utils/get-ai-models-with-auto.util',
-  () => ({
-    getAIModelsWithAuto: jest.fn(() => []),
-  }),
-);
 
 describe('ClientConfigService', () => {
   let service: ClientConfigService;
@@ -35,6 +29,12 @@ describe('ClientConfigService', () => {
           provide: DomainManagerService,
           useValue: {
             getFrontUrl: jest.fn(),
+          },
+        },
+        {
+          provide: AiModelRegistryService,
+          useValue: {
+            getAvailableModels: jest.fn().mockReturnValue([]),
           },
         },
       ],

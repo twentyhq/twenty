@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
@@ -20,7 +18,10 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
@@ -32,53 +33,11 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, useIcons } from 'twenty-ui/display';
+import { IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
-
-export const StyledInput = styled.input`
-  background: transparent;
-  border: none;
-  border-top: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 0;
-  color: ${({ theme }) => theme.font.color.primary};
-  margin: 0;
-  outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
-  height: 19px;
-  font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.sm};
-
-  font-weight: inherit;
-  max-width: 100%;
-  overflow: hidden;
-  text-decoration: none;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-  }
-`;
-
-const StyledSelectedSortDirectionContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-
-  position: absolute;
-  top: 32px;
-  width: 100%;
-  z-index: 1000;
-`;
-
-const StyledDropdownMenuHeaderEndComponent = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
-  display: flex;
-  align-items: center;
-`;
 
 export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
@@ -86,10 +45,6 @@ export const ObjectSortDropdownButton = () => {
 
   const setObjectSortDropdownSearchInput = useSetRecoilComponentStateV2(
     objectSortDropdownSearchInputComponentState,
-  );
-
-  const isRecordSortDirectionMenuUnfolded = useRecoilComponentValueV2(
-    isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
   const { resetSortDropdown } = useResetSortDropdown();
@@ -195,8 +150,6 @@ export const ObjectSortDropdownButton = () => {
 
   const { t } = useLingui();
 
-  const theme = useTheme();
-
   const selectableItemIdArray = [
     ...visibleFieldMetadataItems.map((item) => item.id),
     ...hiddenFieldMetadataItems.map((item) => item.id),
@@ -227,51 +180,50 @@ export const ObjectSortDropdownButton = () => {
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+          <DropdownMenuHeader
+            StartComponent={
+              <DropdownMenuHeaderLeftComponent
+                onClick={() => closeSortDropdown()}
+                Icon={IconX}
+              />
+            }
+          >
+            {t`Sort`}
+          </DropdownMenuHeader>
+          <DropdownMenuInnerSelect
+            dropdownId="record-sort-direction-dropdown"
+            options={RECORD_SORT_DIRECTIONS.map((sortDirection) => ({
+              value: sortDirection,
+              label: sortDirection === 'asc' ? t`Ascending` : t`Descending`,
+            }))}
+            selectedOption={{
+              value: selectedRecordSortDirection,
+              label:
+                selectedRecordSortDirection === 'asc'
+                  ? t`Ascending`
+                  : t`Descending`,
+            }}
+            onChange={(sortDirection) =>
+              handleSortDirectionClick(
+                sortDirection.value as RecordSortDirection,
+              )
+            }
+            widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+          />
+          <DropdownMenuSeparator />
+          <DropdownMenuSearchInput
+            autoFocus
+            value={objectSortDropdownSearchInput}
+            placeholder={t`Search fields`}
+            onChange={(event) =>
+              setObjectSortDropdownSearchInput(event.target.value)
+            }
+          />
           <SelectableList
             selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
             selectableItemIdArray={selectableItemIdArray}
             focusId={OBJECT_SORT_DROPDOWN_ID}
           >
-            {isRecordSortDirectionMenuUnfolded && (
-              <StyledSelectedSortDirectionContainer>
-                <DropdownMenuItemsContainer>
-                  {RECORD_SORT_DIRECTIONS.map((sortDirection, index) => (
-                    <MenuItem
-                      key={index}
-                      focused={selectedItemId === sortDirection}
-                      onClick={() => handleSortDirectionClick(sortDirection)}
-                      text={
-                        sortDirection === 'asc' ? t`Ascending` : t`Descending`
-                      }
-                    />
-                  ))}
-                </DropdownMenuItemsContainer>
-              </StyledSelectedSortDirectionContainer>
-            )}
-            <DropdownMenuHeader
-              onClick={() =>
-                setIsRecordSortDirectionMenuUnfolded(
-                  !isRecordSortDirectionMenuUnfolded,
-                )
-              }
-              EndComponent={
-                <StyledDropdownMenuHeaderEndComponent>
-                  <IconChevronDown size={theme.icon.size.md} />
-                </StyledDropdownMenuHeaderEndComponent>
-              }
-            >
-              {selectedRecordSortDirection === 'asc'
-                ? t`Ascending`
-                : t`Descending`}
-            </DropdownMenuHeader>
-            <StyledInput
-              autoFocus
-              value={objectSortDropdownSearchInput}
-              placeholder={t`Search fields`}
-              onChange={(event) =>
-                setObjectSortDropdownSearchInput(event.target.value)
-              }
-            />
             {shouldShowVisibleFields && (
               <>
                 <DropdownMenuSectionLabel label={t`Visible fields`} />
