@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import isEmpty from 'lodash.isempty';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import {
@@ -18,9 +17,6 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolverService<
@@ -39,67 +35,26 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const data = formatData(
-      executionArgs.args.data,
-      objectMetadataItemWithFieldMaps,
-    );
-
-    const existingRecordBuilder = queryBuilder.clone();
-
-    const existingRecords = (await existingRecordBuilder
-      .where({ id: executionArgs.args.id })
-      .getMany()) as ObjectRecord[];
-
-    const formattedExistingRecords = formatResult<ObjectRecord[]>(
-      existingRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    if (isEmpty(formattedExistingRecords)) {
-      throw new GraphqlQueryRunnerException(
-        'Record not found',
-        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-      );
-    }
-
-    const nonFormattedUpdatedObjectRecords = await queryBuilder
-      .update(data)
+    const updatedObjectRecords = await queryBuilder
+      .update(executionArgs.args.data)
       .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
 
-    const formattedUpdatedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedUpdatedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
+    const updatedRecord = updatedObjectRecords.raw[0];
 
-    if (formattedUpdatedRecords.length === 0) {
+    if (!updatedRecord) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
-
-    const updatedRecord = formattedUpdatedRecords[0];
-    const existingRecord = formattedExistingRecords[0];
-
-    this.apiEventEmitterService.emitUpdateEvents({
-      existingRecords: structuredClone(formattedExistingRecords),
-      records: structuredClone(formattedUpdatedRecords),
-      updatedFields: Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: [existingRecord, updatedRecord],
+        parentObjectRecords: [updatedRecord],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,

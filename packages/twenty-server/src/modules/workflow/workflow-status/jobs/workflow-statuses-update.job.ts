@@ -1,20 +1,15 @@
 import { Logger, Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -72,22 +67,10 @@ export class WorkflowStatusesUpdateJob {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ServerlessFunctionEntity, 'core')
-    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
-    const workflowObjectMetadata =
-      await this.objectMetadataRepository.findOneOrFail({
-        where: {
-          nameSingular: 'workflow',
-        },
-      });
-
     switch (event.type) {
       case WorkflowVersionEventType.CREATE:
       case WorkflowVersionEventType.DELETE:
@@ -95,7 +78,6 @@ export class WorkflowStatusesUpdateJob {
           event.workflowIds.map((workflowId) =>
             this.handleWorkflowVersionCreatedOrDeleted({
               workflowId,
-              workflowObjectMetadata,
               workspaceId: event.workspaceId,
             }),
           ),
@@ -106,7 +88,6 @@ export class WorkflowStatusesUpdateJob {
           event.statusUpdates.map((statusUpdate) =>
             this.handleWorkflowVersionStatusUpdated({
               statusUpdate,
-              workflowObjectMetadata,
               workspaceId: event.workspaceId,
             }),
           ),
@@ -119,11 +100,9 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionCreatedOrDeleted({
     workflowId,
-    workflowObjectMetadata,
     workspaceId,
   }: {
     workflowId: string;
-    workflowObjectMetadata: ObjectMetadataEntity;
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
@@ -163,13 +142,6 @@ export class WorkflowStatusesUpdateJob {
         statuses: newWorkflowStatuses,
       },
     );
-
-    this.emitWorkflowStatusUpdatedEvent({
-      currentWorkflow: previousWorkflow,
-      workflowObjectMetadata,
-      newWorkflowStatuses,
-      workspaceId,
-    });
   }
 
   private async handlePublishServerlessFunction({
@@ -222,11 +194,9 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionStatusUpdated({
     statusUpdate,
-    workflowObjectMetadata,
     workspaceId,
   }: {
     statusUpdate: WorkflowVersionStatusUpdate;
-    workflowObjectMetadata: ObjectMetadataEntity;
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
@@ -277,51 +247,6 @@ export class WorkflowStatusesUpdateJob {
         statuses: newWorkflowStatuses,
       },
     );
-
-    this.emitWorkflowStatusUpdatedEvent({
-      currentWorkflow: workflow,
-      workflowObjectMetadata,
-      newWorkflowStatuses,
-      workspaceId,
-    });
-  }
-
-  private emitWorkflowStatusUpdatedEvent({
-    currentWorkflow,
-    workflowObjectMetadata,
-    newWorkflowStatuses,
-    workspaceId,
-  }: {
-    currentWorkflow: WorkflowWorkspaceEntity;
-    workflowObjectMetadata: ObjectMetadataEntity;
-    newWorkflowStatuses: WorkflowStatus[];
-    workspaceId: string;
-  }) {
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowObjectMetadata.nameSingular,
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: currentWorkflow.id,
-          objectMetadata: workflowObjectMetadata,
-          properties: {
-            before: currentWorkflow,
-            after: {
-              ...currentWorkflow,
-              statuses: newWorkflowStatuses,
-            },
-            updatedFields: ['statuses'],
-            diff: {
-              statuses: {
-                before: currentWorkflow.statuses,
-                after: newWorkflowStatuses,
-              },
-            },
-          },
-        },
-      ],
-      workspaceId,
-    });
   }
 
   private async getWorkflowStatuses({

@@ -13,9 +13,7 @@ import { RestoreManyResolverArgs } from 'src/engine/api/graphql/workspace-resolv
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseResolverService<
@@ -45,30 +43,16 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       executionArgs.args.filter,
     );
 
-    const nonFormattedRestoredObjectRecords = await queryBuilder
+    const restoredObjectRecords = await queryBuilder
       .restore()
       .returning('*')
       .execute();
-
-    const formattedRestoredRecords = formatResult<ObjectRecord[]>(
-      nonFormattedRestoredObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    this.apiEventEmitterService.emitRestoreEvents({
-      records: structuredClone(formattedRestoredRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: formattedRestoredRecords,
+        parentObjectRecords: restoredObjectRecords.raw as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -81,7 +65,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return formattedRestoredRecords.map((record: ObjectRecord) =>
+    return restoredObjectRecords.raw.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,

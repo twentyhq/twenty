@@ -17,8 +17,6 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolverService<
@@ -37,34 +35,20 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedDeletedObjectRecords = await queryBuilder
+    const deletedObjectRecords = await queryBuilder
       .softDelete()
       .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
 
-    const formattedDeletedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedDeletedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    if (formattedDeletedRecords.length === 0) {
+    if (deletedObjectRecords.raw.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const deletedRecord = formattedDeletedRecords[0];
-
-    this.apiEventEmitterService.emitDeletedEvents({
-      records: structuredClone(formattedDeletedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
+    const deletedRecord = deletedObjectRecords.raw[0];
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

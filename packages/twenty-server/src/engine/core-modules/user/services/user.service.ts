@@ -6,17 +6,14 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -24,7 +21,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -32,13 +28,9 @@ export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
-    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(userRepository);
   }
@@ -157,38 +149,14 @@ export class UserService extends TypeOrmQueryService<User> {
           workspaceId,
           workspaceMemberRepository,
           workspaceMembers,
-          workspaceMember,
         }) => {
           await workspaceMemberRepository.delete({ userId });
-
-          const objectMetadata =
-            await this.objectMetadataRepository.findOneOrFail({
-              where: {
-                nameSingular: 'workspaceMember',
-                workspaceId,
-              },
-            });
 
           if (workspaceMembers.length === 1) {
             await this.workspaceService.deleteWorkspace(workspaceId);
 
             return;
           }
-
-          this.workspaceEventEmitter.emitDatabaseBatchEvent({
-            objectMetadataNameSingular: 'workspaceMember',
-            action: DatabaseEventAction.DELETED,
-            events: [
-              {
-                recordId: workspaceMember.id,
-                objectMetadata,
-                properties: {
-                  before: workspaceMember,
-                },
-              },
-            ],
-            workspaceId,
-          });
         },
       ),
     );

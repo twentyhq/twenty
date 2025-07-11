@@ -12,7 +12,6 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -62,14 +61,6 @@ export const createAgentToolTestModule =
           provide: TwentyORMGlobalManager,
           useValue: {
             getRepositoryForWorkspace: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emit: jest.fn(),
-            emitDatabaseBatchEvent: jest.fn(),
-            emitCustomBatchEvent: jest.fn(),
           },
         },
         {

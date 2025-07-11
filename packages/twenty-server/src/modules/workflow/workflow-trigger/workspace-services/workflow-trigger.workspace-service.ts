@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
-import { Repository } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -43,8 +39,6 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   private getWorkspaceId() {
@@ -412,33 +406,6 @@ export class WorkflowTriggerWorkspaceService {
     newStatus: WorkflowVersionStatus,
     workspaceId: string,
   ) {
-    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
-      where: {
-        nameSingular: 'workflowVersion',
-        workspaceId,
-      },
-    });
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workflowVersion',
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: workflowVersion.id,
-          objectMetadata,
-          properties: {
-            before: workflowVersion,
-            after: { ...workflowVersion, status: newStatus },
-            updatedFields: ['status'],
-            diff: {
-              status: { before: workflowVersion.status, after: newStatus },
-            },
-          },
-        },
-      ],
-      workspaceId,
-    });
-
     this.workspaceEventEmitter.emitCustomBatchEvent<WorkflowVersionStatusUpdate>(
       WORKFLOW_VERSION_STATUS_UPDATED,
       [
