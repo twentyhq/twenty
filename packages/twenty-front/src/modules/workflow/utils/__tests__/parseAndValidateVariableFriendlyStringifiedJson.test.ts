@@ -132,9 +132,7 @@ describe('parseAndValidateVariableFriendlyStringifiedJson', () => {
         parseAndValidateVariableFriendlyStringifiedJson('{"key": "value"');
 
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain(
-        "Unexpected end of JSON input",
-      );
+      expect(result.error).toContain('Unexpected end of JSON input');
     });
 
     it('should reject empty string', () => {
