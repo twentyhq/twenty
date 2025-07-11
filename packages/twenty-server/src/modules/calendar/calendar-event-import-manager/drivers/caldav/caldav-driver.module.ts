@@ -9,4 +9,4 @@ import { CalDavCalendarGetEventsService } from 'src/modules/calendar/calendar-ev
   providers: [CalDavCalendarClientProvider, CalDavCalendarGetEventsService],
   exports: [CalDavCalendarGetEventsService],
 })
-export class CalDAVCalendarDriverModule {}
+export class CalDavDriverModule {}
