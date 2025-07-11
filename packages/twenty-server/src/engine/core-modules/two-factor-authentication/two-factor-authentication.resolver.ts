@@ -26,6 +26,7 @@ import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiat
 import { ResetTwoFactorAuthenticationMethodInput } from './dto/reset-two-factor-authentication-method.input';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 import { ResetTwoFactorAuthenticationMethodOutput } from './dto/reset-two-factor-authentication-method.output';
+import { UserService } from '../user/services/user.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -34,8 +35,7 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
+    private readonly userService: UserService,
     @InjectRepository(TwoFactorAuthenticationMethod, 'core')
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
   ) {}
@@ -47,7 +47,7 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
-    const { userId, sub: userEmail } =
+    const { sub: userEmail } =
       await this.loginTokenService.verifyLoginToken(
         initiateTwoFactorAuthenticationProvisioningInput.loginToken,
       );
@@ -65,9 +65,11 @@ export class TwoFactorAuthenticationResolver {
       ),
     );
 
+    const user = await this.userService.getUserByEmail(userEmail);
+
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
-        userId,
+        user.id,
         userEmail,
         workspace.id,
       );
