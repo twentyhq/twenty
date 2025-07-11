@@ -44,8 +44,6 @@ describe('AiModelRegistryService', () => {
   it('should return effective model config for auto', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
-    // When no models are available (no API keys configured),
-    // getEffectiveModelConfig should throw an error instead of trying to use an unavailable model
     expect(() => SERVICE.getEffectiveModelConfig('auto')).toThrow(
       'No AI models are available. Please configure at least one provider.',
     );
@@ -54,7 +52,6 @@ describe('AiModelRegistryService', () => {
   it('should return effective model config for auto when models are available', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
-    // Mock that we have available models
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'gpt-4o',
@@ -79,7 +76,6 @@ describe('AiModelRegistryService', () => {
   it('should return effective model config for auto with custom model', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('mistral');
 
-    // Mock that we have available models including custom ones
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'mistral',

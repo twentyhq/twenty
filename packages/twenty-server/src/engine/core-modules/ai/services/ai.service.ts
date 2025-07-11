@@ -37,12 +37,10 @@ export class AiService {
     });
   }
 
-  // Convenience method to get available models
   getAvailableModels() {
     return this.aiModelRegistryService.getAvailableModels();
   }
 
-  // Convenience method to get default model info
   getDefaultModel() {
     return this.aiModelRegistryService.getDefaultModel();
   }

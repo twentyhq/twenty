@@ -29,12 +29,10 @@ export class ClientConfigService {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
 
-    // Get available AI models from the registry
     const availableModels = this.aiModelRegistryService.getAvailableModels();
 
     const aiModels: ClientAIModelConfig[] = availableModels.map(
       (registeredModel) => {
-        // For built-in models, get pricing info from constants
         const builtInModel = AI_MODELS.find(
           (m) => m.modelId === registeredModel.modelId,
         );
@@ -47,17 +45,16 @@ export class ClientConfigService {
             ? convertCentsToBillingCredits(
                 builtInModel.inputCostPer1kTokensInCents,
               )
-            : 0, // Custom models default to 0 cost
+            : 0,
           outputCostPer1kTokensInCredits: builtInModel
             ? convertCentsToBillingCredits(
                 builtInModel.outputCostPer1kTokensInCents,
               )
-            : 0, // Custom models default to 0 cost
+            : 0,
         };
       },
     );
 
-    // Add auto model option if there are any models available
     if (aiModels.length > 0) {
       aiModels.unshift({
         modelId: 'auto',
