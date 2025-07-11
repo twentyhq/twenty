@@ -33,6 +33,7 @@ export type DropdownMenuInnerSelectProps = {
   onChange: (value: SelectOption) => void;
   options: SelectOption[];
   dropdownId: string;
+  widthInPixels?: number;
 };
 
 export const DropdownMenuInnerSelect = ({
@@ -40,6 +41,7 @@ export const DropdownMenuInnerSelect = ({
   onChange,
   options,
   dropdownId,
+  widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
   const theme = useTheme();
 
@@ -54,7 +56,7 @@ export const DropdownMenuInnerSelect = ({
         </StyledDropdownMenuInnerSelectDropdownButton>
       }
       dropdownComponents={
-        <DropdownContent>
+        <DropdownContent widthInPixels={widthInPixels}>
           <DropdownMenuItemsContainer>
             {options.map((selectOption) => (
               <MenuItemSelect
