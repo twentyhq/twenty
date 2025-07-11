@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { SnackBar } from './SnackBar';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { SnackBar } from './SnackBar';
 
 const StyledSnackBarContainer = styled.div`
   bottom: ${({ theme }) => theme.spacing(3)};
@@ -26,7 +27,10 @@ const StyledSnackBarContainer = styled.div`
 `;
 
 export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
-  const { snackBarInternal } = useSnackBarManagerScopedStates();
+  const snackBarInternal = useRecoilComponentValueV2(
+    snackBarInternalComponentState,
+  );
+
   const { handleSnackBarClose } = useSnackBar();
   const isMobile = useIsMobile();
 
