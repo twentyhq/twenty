@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
@@ -8,19 +9,22 @@ import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listen
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
 import { FileController } from './controllers/file.controller';
+import { FileEntity } from './entities/file.entity';
+import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
 
 @Module({
-  imports: [JwtModule],
+  imports: [JwtModule, TypeOrmModule.forFeature([FileEntity], 'core')],
   providers: [
     FileService,
+    FileMetadataService,
     FilePathGuard,
     FileAttachmentListener,
     FileWorkspaceMemberListener,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
   ],
-  exports: [FileService],
+  exports: [FileService, FileMetadataService],
   controllers: [FileController],
 })
 export class FileModule {}
