@@ -5,6 +5,7 @@ import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 
+// TODO strictly type
 export const prepareCustomFieldMetadataForCreation = (
   fieldMetadataInput: CreateFieldInput,
 ) => {
