@@ -26,6 +26,8 @@ import { EmailVerificationTokenService } from './token/services/email-verificati
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
+import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -113,6 +115,14 @@ describe('AuthResolver', () => {
         },
         {
           provide: SSOService,
+          useValue: {},
+        },
+        {
+          provide: TwoFactorAuthenticationService,
+          useValue: {}
+        },
+        {
+          provide: TwentyConfigService,
           useValue: {},
         },
         // {
