@@ -5,6 +5,7 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 import { AIBillingService } from './ai-billing.service';
+import { AiModelRegistryService } from './ai-model-registry.service';
 
 describe('AIBillingService', () => {
   let service: AIBillingService;
@@ -21,12 +22,26 @@ describe('AIBillingService', () => {
       emitCustomBatchEvent: jest.fn(),
     };
 
+    const mockAiModelRegistryMethods = {
+      getEffectiveModelConfig: jest.fn().mockReturnValue({
+        modelId: 'gpt-4o',
+        label: 'GPT-4o',
+        provider: 'openai',
+        inputCostPer1kTokensInCents: 0.25,
+        outputCostPer1kTokensInCents: 1.0,
+      }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AIBillingService,
         {
           provide: WorkspaceEventEmitter,
           useValue: mockEventEmitterMethods,
+        },
+        {
+          provide: AiModelRegistryService,
+          useValue: mockAiModelRegistryMethods,
         },
       ],
     }).compile();

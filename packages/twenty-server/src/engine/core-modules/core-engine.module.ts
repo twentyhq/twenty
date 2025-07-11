@@ -6,7 +6,6 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
-import { aiModuleFactory } from 'src/engine/core-modules/ai/ai.module-factory';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
@@ -109,10 +108,7 @@ import { FileModule } from './file/file.module';
       wildcard: true,
     }),
     CacheStorageModule,
-    AiModule.forRoot({
-      useFactory: aiModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    AiModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [TwentyConfigService, FileStorageService],
