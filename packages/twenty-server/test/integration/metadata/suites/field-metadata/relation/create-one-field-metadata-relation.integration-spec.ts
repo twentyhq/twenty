@@ -57,18 +57,12 @@ describe('createOne FieldMetadataService relation fields', () => {
   });
 
   type EachTestingContextArray = EachTestingContext<
-    | {
-        relationType: RelationType;
-        objectMetadataId: string;
-        targetObjectMetadataId: string;
-        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
-      }
-    | ((args: { objectMetadataId: string; targetObjectMetadataId: string }) => {
-        relationType: RelationType;
-        objectMetadataId: string;
-        targetObjectMetadataId: string;
-        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
-      })
+    (args: { objectMetadataId: string; targetObjectMetadataId: string }) => {
+      relationType: RelationType;
+      objectMetadataId: string;
+      targetObjectMetadataId: string;
+      type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
+    }
   >[];
 
   const eachTestingContextArray: EachTestingContextArray = [
@@ -93,15 +87,14 @@ describe('createOne FieldMetadataService relation fields', () => {
   ];
 
   it.each(eachTestingContextArray)('$title', async ({ context }) => {
-    const contextPayload =
-      typeof context === 'function'
-        ? context({
-            objectMetadataId: createdObjectMetadataOpportunityId,
-            targetObjectMetadataId: createdObjectMetadataPersonId,
-          })
-        : context;
+    const contextPayload = context({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+    });
 
-    const createdField = await createRelationBetweenObjects({
+    const createdField = await createRelationBetweenObjects<
+      typeof contextPayload.type
+    >({
       objectMetadataId: contextPayload.objectMetadataId,
       targetObjectMetadataId: contextPayload.targetObjectMetadataId,
       type: contextPayload.type,

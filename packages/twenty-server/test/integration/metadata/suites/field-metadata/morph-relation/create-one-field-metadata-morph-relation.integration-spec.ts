@@ -74,24 +74,17 @@ describe('createOne FieldMetadataService morph relation fields', () => {
   });
 
   type EachTestingContextArray = EachTestingContext<
-    | {
-        relationType: RelationType;
-        objectMetadataId: string;
-        firstTargetObjectMetadataId: string;
-        secondTargetObjectMetadataId: string;
-        type: FieldMetadataType;
-      }
-    | ((args: {
-        objectMetadataId: string;
-        firstTargetObjectMetadataId: string;
-        secondTargetObjectMetadataId: string;
-      }) => {
-        relationType: RelationType;
-        objectMetadataId: string;
-        firstTargetObjectMetadataId: string;
-        secondTargetObjectMetadataId: string;
-        type: FieldMetadataType;
-      })
+    (args: {
+      objectMetadataId: string;
+      firstTargetObjectMetadataId: string;
+      secondTargetObjectMetadataId: string;
+    }) => {
+      relationType: RelationType;
+      objectMetadataId: string;
+      firstTargetObjectMetadataId: string;
+      secondTargetObjectMetadataId: string;
+      type: FieldMetadataType;
+    }
   >[];
 
   const eachTestingContextArray: EachTestingContextArray = [

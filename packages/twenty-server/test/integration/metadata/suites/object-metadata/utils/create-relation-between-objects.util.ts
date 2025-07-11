@@ -4,7 +4,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-export const createRelationBetweenObjects = async ({
+export const createRelationBetweenObjects = async <
+  T extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
+>({
   objectMetadataId,
   targetObjectMetadataId,
   type,
@@ -17,7 +19,7 @@ export const createRelationBetweenObjects = async ({
 }: {
   objectMetadataId: string;
   targetObjectMetadataId: string;
-  type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
+  type: T;
   relationType: RelationType;
   name?: string;
   label?: string;
