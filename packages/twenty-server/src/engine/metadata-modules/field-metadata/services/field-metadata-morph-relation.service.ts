@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
+import omit from 'lodash.omit';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import omit from 'lodash.omit';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
