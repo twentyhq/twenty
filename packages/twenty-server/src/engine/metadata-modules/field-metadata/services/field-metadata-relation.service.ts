@@ -305,6 +305,7 @@ export class FieldMetadataRelationService {
     }
 
     const defaultIcon = 'IconRelationOneToMany';
+
     if (relationCreationPayload.type === RelationType.MANY_TO_ONE) {
       return {
         icon: fieldMetadataInput.icon ?? defaultIcon,
