@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
@@ -57,7 +57,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
   }: WorkflowBranchExecutorInput) {
     const workflowRunInfo = await this.getWorkflowRunInfoOrEndWorkflowRun({
-      stepId: stepId,
+      stepId,
       workflowRunId,
       workspaceId,
     });
@@ -66,9 +66,9 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const { stepToExecute, steps, context } = workflowRunInfo;
+    const { stepToExecute, steps, stepInfos, context } = workflowRunInfo;
 
-    if (!canExecuteStep({ stepId: stepToExecute.id, steps, context })) {
+    if (!canExecuteStep({ stepId, steps, stepInfos, context })) {
       return;
     }
 
@@ -219,31 +219,18 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const steps = workflowRun.state?.flow.steps;
-
-    const context = workflowRun.context;
-
-    if (!isDefined(steps)) {
+    if (!isDefined(workflowRun?.state)) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
         status: WorkflowRunStatus.FAILED,
-        error: 'Steps undefined',
+        error: `WorkflowRun ${workflowRunId} don't have any state`,
       });
 
       return;
     }
 
-    if (!isDefined(context)) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: 'Context not found',
-      });
-
-      return;
-    }
+    const steps = workflowRun.state.flow.steps;
 
     const stepToExecute = steps.find((step) => step.id === stepId);
 
@@ -258,7 +245,12 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    return { stepToExecute, steps, context };
+    return {
+      stepToExecute,
+      steps,
+      stepInfos: workflowRun.state.stepInfos,
+      context: getWorkflowRunContext(workflowRun.state.stepInfos),
+    };
   }
 
   private sendWorkflowNodeRunEvent(workspaceId: string) {

@@ -1,7 +1,7 @@
 import { isDefined } from '@/utils';
-import { WorkflowRunStepsInfos } from '@/workflow/types/WorkflowRunStateStepsInfos';
+import { WorkflowRunStepInfos } from '@/workflow/types/WorkflowRunStateStepsInfos';
 
-export const getWorkflowRunContext = (stepInfos: WorkflowRunStepsInfos) => {
+export const getWorkflowRunContext = (stepInfos: WorkflowRunStepInfos) => {
   return Object.fromEntries(
     Object.entries(stepInfos)
       .filter(([, value]) => isDefined(value?.['result']))

@@ -9,7 +9,7 @@
 
 export type {
   WorkflowRunStepInfo,
-  WorkflowRunStepsInfos,
-  StepStatus,
+  WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepsInfos';
+export { StepStatus } from './types/WorkflowRunStateStepsInfos';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';

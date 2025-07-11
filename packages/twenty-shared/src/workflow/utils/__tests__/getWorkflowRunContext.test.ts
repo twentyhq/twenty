@@ -1,12 +1,12 @@
 import { getWorkflowRunContext } from '@/workflow/utils/getWorkflowRunContext';
 import {
   StepStatus,
-  WorkflowRunStepsInfos,
+  WorkflowRunStepInfos,
 } from '@/workflow/types/WorkflowRunStateStepsInfos';
 
 describe('getWorkflowRunContext', () => {
   it('returns a context with only steps that have a defined result', () => {
-    const stepInfos: WorkflowRunStepsInfos = {
+    const stepInfos: WorkflowRunStepInfos = {
       step1: { result: { res: 'value1' }, status: StepStatus.SUCCESS },
       step2: { result: {}, status: StepStatus.SUCCESS },
       step3: { status: StepStatus.NOT_STARTED },
@@ -25,7 +25,7 @@ describe('getWorkflowRunContext', () => {
   });
 
   it('returns an empty object when no step has a defined result', () => {
-    const stepInfos: WorkflowRunStepsInfos = {
+    const stepInfos: WorkflowRunStepInfos = {
       step1: { status: StepStatus.NOT_STARTED },
       step2: { status: StepStatus.NOT_STARTED },
     };
