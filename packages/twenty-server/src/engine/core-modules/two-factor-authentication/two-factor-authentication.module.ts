@@ -9,6 +9,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
 import { TwoFactorAuthenticationModuleAsyncOptions } from './two-factor-authentication.interface';
@@ -53,6 +54,7 @@ export class TwoFactorAuthenticationModule {
           [User, TwoFactorAuthenticationMethod, UserWorkspace],
           'core',
         ),
+        UserModule,
       ],
       providers: [
         TwoFactorAuthenticationService,
