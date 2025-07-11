@@ -6,8 +6,8 @@ import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-i
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class CalDavCalendarGetEventsService {
-  private readonly logger = new Logger(CalDavCalendarGetEventsService.name);
+export class CalDavGetEventsService {
+  private readonly logger = new Logger(CalDavGetEventsService.name);
 
   constructor(
     private readonly caldavCalendarClientProvider: CalDavClientProvider,
@@ -47,7 +47,7 @@ export class CalDavCalendarGetEventsService {
       };
     } catch (error) {
       this.logger.error(
-        `Error in ${CalDavCalendarGetEventsService.name} - getCalendarEvents`,
+        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
         error,
       );
       throw this.handleError(error as Error);
@@ -56,7 +56,7 @@ export class CalDavCalendarGetEventsService {
 
   private handleError(error: Error) {
     this.logger.error(
-      `Error in ${CalDavCalendarGetEventsService.name} - getCalendarEvents`,
+      `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
       error,
     );
 

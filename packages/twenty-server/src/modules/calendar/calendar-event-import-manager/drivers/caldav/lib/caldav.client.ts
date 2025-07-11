@@ -11,7 +11,7 @@ import {
   getBasicAuthHeaders,
 } from 'tsdav';
 
-import { CalDavCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
+import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
   FetchedCalendarEvent,
@@ -123,7 +123,7 @@ export class CalDAVClient {
       }, []);
     } catch (error) {
       this.logger.error(
-        `Error in ${CalDavCalendarGetEventsService.name} - getCalendarEvents`,
+        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
         error.code,
         error,
       );
@@ -346,7 +346,7 @@ export class CalDAVClient {
       };
     } catch (error) {
       this.logger.error(
-        `Error in ${CalDavCalendarGetEventsService.name} - parseICalData`,
+        `Error in ${CalDavGetEventsService.name} - parseICalData`,
         error,
       );
 
@@ -372,7 +372,7 @@ export class CalDAVClient {
       return events;
     } catch (error) {
       this.logger.error(
-        `Error in ${CalDavCalendarGetEventsService.name} - getCalendarEvents`,
+        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
         error.code,
         error,
       );

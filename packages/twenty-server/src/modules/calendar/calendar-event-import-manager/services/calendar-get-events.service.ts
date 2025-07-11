@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { CalDavCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
+import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { MicrosoftCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-get-events.service';
 import {
@@ -24,7 +24,7 @@ export class CalendarGetCalendarEventsService {
   constructor(
     private readonly googleCalendarGetEventsService: GoogleCalendarGetEventsService,
     private readonly microsoftCalendarGetEventsService: MicrosoftCalendarGetEventsService,
-    private readonly caldavCalendarGetEventsService: CalDavCalendarGetEventsService,
+    private readonly caldavCalendarGetEventsService: CalDavGetEventsService,
   ) {}
 
   public async getCalendarEvents(
