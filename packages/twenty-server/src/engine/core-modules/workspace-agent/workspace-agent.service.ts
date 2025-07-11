@@ -184,8 +184,12 @@ export class AgentService {
         workspaceId,
       });
 
+    // TODO: Use workspace entity repository
     const workspaceMembers = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
+      undefined,
+      undefined,
+      { shouldBypassPermissionChecks: true },
     );
 
     return workspaceMembers?.[0] || null;
@@ -206,12 +210,20 @@ export class AgentService {
         workspaceId,
       });
 
+    // TODO: Use workspace entity repository
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."workspaceMember" SET "agentId"='${newAgentId}' WHERE "id"='${memberId}'`,
+      undefined,
+      undefined,
+      { shouldBypassPermissionChecks: true },
     );
 
+    // TODO: Use workspace entity repository
     const updatedWorkspaceMember = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id"='${memberId}'`,
+      undefined,
+      undefined,
+      { shouldBypassPermissionChecks: true },
     );
 
     return updatedWorkspaceMember?.[0] || null;

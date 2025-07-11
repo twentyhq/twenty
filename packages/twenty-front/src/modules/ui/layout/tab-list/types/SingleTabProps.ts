@@ -10,4 +10,5 @@ export type SingleTabProps<T extends string = string> = {
   pill?: string | React.ReactElement;
   cards?: LayoutCard[];
   logo?: string;
+  incomingMessages?: number;
 };

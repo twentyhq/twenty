@@ -522,7 +522,7 @@ export const PaneChat = () => {
   };
 
   const isMessageOlderThan24Hours = (date: TDateFirestore) => {
-    const createdAt = new Date(date.toDate());
+    const createdAt = new Date(date.seconds * 1000);
     const now = new Date().getTime();
     const diffInMilliseconds = now - createdAt.getTime();
     return diffInMilliseconds > 86400000;

@@ -358,7 +358,7 @@ export const CallCenterProvider = ({
     }
 
     setActiveTabId('mine');
-  }, []);
+  }, [selectedChat]);
 
   const finalizeService = useCallback(() => {
     if (!selectedChat) return;
@@ -387,7 +387,7 @@ export const CallCenterProvider = ({
       type: MessageType.END,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.END} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
-  }, []);
+  }, [selectedChat]);
 
   const transferService = (agent?: WorkspaceMember, sector?: Sector) => {
     if (!selectedChat) return;
@@ -457,7 +457,7 @@ export const CallCenterProvider = ({
       type: MessageType.ONHOLD,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.ONHOLD} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
-  }, []);
+  }, [selectedChat]);
 
   useEffect(() => {
     setServiceActions({

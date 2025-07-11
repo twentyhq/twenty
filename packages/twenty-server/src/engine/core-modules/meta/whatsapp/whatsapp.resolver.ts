@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-graphql-resolvers-should-be-guarded */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';

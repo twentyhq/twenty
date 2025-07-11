@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
@@ -22,6 +21,8 @@ import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/googl
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
+import { WhatsappEmmitResolvedchatsJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-resolved-chats.job';
+import { WhatsappEmmitWaitingStatusJobProps } from 'src/engine/core-modules/meta/whatsapp/cron/jobs/whatsapp-emmit-waiting-status.job';
 import {
   SendMessageInput,
   SendTemplateInput,
@@ -239,16 +240,10 @@ export class WhatsappService {
   }
 
   async sendNotification(externalIds: string[], message: string) {
-    this.logger.log('chegou aqui');
     const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
     const ONESIGNAL_REST_API_KEY = this.environmentService.get(
       'ONESIGNAL_REST_API_KEY',
     );
-
-    this.logger.log('Attempting to send notification to:', externalIds);
-    this.logger.log('Message:', message);
-    this.logger.log('Using App ID:', ONESIGNAL_APPID);
-    this.logger.log('Authorization:', ONESIGNAL_REST_API_KEY);
 
     const headers = {
       Authorization: `Key ${ONESIGNAL_REST_API_KEY}`,
@@ -268,8 +263,6 @@ export class WhatsappService {
         contents: { en: message },
       };
 
-      this.logger.log('Request body:', JSON.stringify(body, null, 2));
-
       const response = await axios.post(
         'https://onesignal.com/api/v1/notifications',
         body,
@@ -277,8 +270,6 @@ export class WhatsappService {
           headers,
         },
       );
-
-      this.logger.log('Notification sent successfully:', response.data);
 
       return true;
     } catch (error) {
@@ -302,8 +293,6 @@ export class WhatsappService {
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
-
-    this.logger.log('MENSAGEM', messagesCollection);
 
     if (!docSnapshot.exists()) {
       await setDoc(docRef, {
@@ -336,8 +325,6 @@ export class WhatsappService {
         if (!sectorsFromWorkspace) {
           return true;
         }
-
-        this.logger.log('Chegou aqui');
 
         await this.sendNotification(
           sectorsFromWorkspace.flatMap((sector) =>
@@ -505,17 +492,22 @@ export class WhatsappService {
     }
   }
 
-  // TODO: Move this logic to use worker cron jobs
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  async handleChatsWaitingStatus() {
-    const chatsQuery = query(
-      collection(this.firestoreDb, 'whatsapp'),
-      where('status', '==', statusEnum.InProgress),
+  async getWorkspaceWhatsappChatsMapToReassign() {
+    this.logger.log(`Mapping whatsapp chats with SLA violation`);
+
+    const now = new Date();
+    let whatsappChatsMap: Record<string, WhatsappDocument[]> = {};
+
+    const snapshot = await getDocs(
+      query(
+        collection(this.firestoreDb, 'whatsapp'),
+        where('status', '==', statusEnum.InProgress),
+      ),
     );
 
-    const snapshot = await getDocs(chatsQuery);
+    const docs = snapshot.docs;
 
-    snapshot.forEach(async (docSnapshot) => {
+    for (const docSnapshot of docs) {
       const waDoc = docSnapshot.data() as WhatsappDocument;
 
       const workspaceExists = await this.workspaceRepository.findOne({
@@ -527,12 +519,11 @@ export class WhatsappService {
       if (!workspaceExists) return;
 
       const clientName = waDoc.client.name;
+      const docId = docSnapshot.id;
 
-      if (waDoc.lastMessage.from !== clientName) return;
+      if (waDoc.lastMessage.from !== clientName || !waDoc.workspaceId) return;
 
       const waCreatedAt = waDoc.lastMessage.createdAt;
-
-      const now = new Date();
 
       if (waCreatedAt instanceof Timestamp) {
         const createdAtDate = waCreatedAt.toDate().getTime();
@@ -540,20 +531,15 @@ export class WhatsappService {
 
         const whatsappRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
-            waDoc.workspaceId || '',
+            waDoc.workspaceId,
             'whatsapp',
           );
-
-        if (!whatsappRepository) {
-          throw new Error('Whatsapp repository not found');
-        }
 
         const integration = await whatsappRepository.findOne({
           where: { id: waDoc.integrationId },
         });
 
         if (!integration) {
-          // eslint-disable-next-line no-console
           console.error(
             'Integration not found for integrationId:',
             waDoc.integrationId,
@@ -562,24 +548,41 @@ export class WhatsappService {
           return;
         }
 
-        if (timeDifference >= integration.sla && waDoc.agent !== 'empty') {
-          const docRef = doc(this.firestoreDb, 'whatsapp', docSnapshot.id);
-
-          await setDoc(docRef, {
-            ...waDoc,
-            agent: 'empty',
-            status: statusEnum.Pending,
-          });
+        if (
+          timeDifference >= integration.sla &&
+          waDoc.agent !== 'empty' &&
+          waDoc.status !== statusEnum.Resolved
+        ) {
+          whatsappChatsMap = {
+            ...whatsappChatsMap,
+            [docId]: [
+              // eslint-disable-next-line no-unsafe-optional-chaining
+              ...(whatsappChatsMap?.[waDoc.integrationId] ?? []),
+              waDoc,
+            ],
+          };
         }
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('createdAt is not a valid Timestamp');
       }
+
+      return whatsappChatsMap;
+    }
+  }
+
+  async handleChatsWaitingStatus(data: WhatsappEmmitWaitingStatusJobProps) {
+    const docRef = doc(this.firestoreDb, 'whatsapp', data.docId);
+
+    await setDoc(docRef, {
+      ...data.waDoc,
+      agent: 'empty',
+      status: statusEnum.Pending,
     });
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  async handleResolvedChatsVisibility() {
+  async getWorkspaceWhatsappResolvedChatsMapToReassign() {
+    this.logger.log(`Mapping whatsapp resolved chats with violation`);
+
+    let whatsappChatsMap: Record<string, WhatsappDocument[]> = {};
+
     const chatsQuery = query(
       collection(this.firestoreDb, 'whatsapp'),
       where('status', '==', statusEnum.Resolved),
@@ -587,10 +590,12 @@ export class WhatsappService {
     );
 
     const snapshot = await getDocs(chatsQuery);
+    const docs = snapshot.docs;
 
-    snapshot.forEach(async (docSnapshot) => {
+    for (const docSnapshot of docs) {
       const waDoc = docSnapshot.data() as WhatsappDocument;
       const waCreatedAt = waDoc.lastMessage.createdAt;
+      const docId = docSnapshot.id;
 
       const now = new Date();
 
@@ -598,18 +603,33 @@ export class WhatsappService {
         const createdAtDate = waCreatedAt.toDate().getTime();
         const timeDifference = (now.getTime() - createdAtDate) / 1000 / 60;
 
-        if (timeDifference >= 1440) {
-          const docRef = doc(this.firestoreDb, 'whatsapp', docSnapshot.id);
-
-          await setDoc(docRef, {
-            ...waDoc,
-            isVisible: false,
-          });
+        if (timeDifference >= 1 && waDoc.status === statusEnum.Resolved) {
+          whatsappChatsMap = {
+            ...whatsappChatsMap,
+            [docId]: [
+              // eslint-disable-next-line no-unsafe-optional-chaining
+              ...(whatsappChatsMap?.[waDoc.integrationId] ?? []),
+              waDoc,
+            ],
+          };
         }
+
+        return whatsappChatsMap;
       } else {
         // eslint-disable-next-line no-console
         console.error('createdAt is not a valid Timestamp');
       }
+    }
+  }
+
+  async handleResolvedChatsVisibility(
+    data: WhatsappEmmitResolvedchatsJobProps,
+  ) {
+    const docRef = doc(this.firestoreDb, 'whatsapp', data.docId);
+
+    await setDoc(docRef, {
+      ...data.waDoc,
+      isVisible: false,
     });
   }
 }

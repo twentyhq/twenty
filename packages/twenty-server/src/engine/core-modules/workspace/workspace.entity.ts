@@ -25,6 +25,7 @@ import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/s
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { WorkspaceAgent } from 'src/engine/core-modules/workspace-agent/workspace-agent.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -131,6 +132,11 @@ export class Workspace {
     onDelete: 'CASCADE',
   })
   agents: Relation<AgentEntity[]>;
+
+  @OneToMany(() => WorkspaceAgent, (agent) => agent.workspace, {
+    onDelete: 'CASCADE',
+  })
+  workspaceAgents: Relation<WorkspaceAgent[]>;
 
   @Field()
   @Column({ default: 1 })

@@ -5,6 +5,7 @@ import { ResolvedChats } from '@/chat/call-center/components/ResolvedChats';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
+import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
@@ -26,6 +27,7 @@ const StyledTabListContainer = styled.div`
   justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
+  width: 100%;
 `;
 
 const StyledChatsContainer = styled.div<{ isScrollable: boolean }>`
@@ -47,20 +49,20 @@ export const PaneSide = () => {
     // messengerChats,
   } = useContext(CallCenterContext) as CallCenterContextType;
 
-  const tabs = [
+  const tabs: SingleTabProps[] = [
     {
       id: 'mine',
-      name: 'Mine',
+      title: 'Mine',
       incomingMessages: unreadTabMessages?.unreadMine,
     },
     {
       id: 'unassigned',
-      name: 'Unassigned',
+      title: 'Unassigned',
       incomingMessages: unreadTabMessages?.unreadUnassigned,
     },
     {
       id: 'abandoned',
-      name: 'Abandoned',
+      title: 'Abandoned',
       incomingMessages: unreadTabMessages?.unreadAbandoned,
     },
   ];
