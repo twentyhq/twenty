@@ -1,7 +1,9 @@
 import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesState';
+import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconFile, IconPhoto, IconX } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
+import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 
 const StyledFileChip = styled.div`
@@ -19,7 +21,8 @@ const StyledFileIconContainer = styled.div`
   height: 100%;
   justify-content: center;
   padding-inline: ${({ theme }) => theme.spacing(1)};
-  width: 40px;
+  width: 32px;
+  overflow: hidden;
 `;
 
 const StyledFileInfo = styled.div`
@@ -35,8 +38,8 @@ const StyledFileInfo = styled.div`
 `;
 
 const StyledFileName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -83,17 +86,17 @@ export const AgentChatFilePreview = ({
 }) => {
   const theme = useTheme();
 
+  const renderIcon = () => {
+    if (isDefined(isUploading) && isUploading) {
+      return <Loader color="yellow" />;
+    }
+
+    return getFileIcon(file, theme);
+  };
+
   return (
     <StyledFileChip key={file.name}>
-      <StyledFileIconContainer>
-        {isUploading ? (
-          <Loader color="yellow" />
-        ) : file.type.startsWith('image') ? (
-          <IconPhoto size={theme.icon.size.lg} color={theme.color.yellow} />
-        ) : (
-          <IconFile size={theme.icon.size.lg} color={theme.color.gray} />
-        )}
-      </StyledFileIconContainer>
+      <StyledFileIconContainer>{renderIcon()}</StyledFileIconContainer>
       <StyledFileInfo>
         <StyledFileName title={file.name}>{file.name}</StyledFileName>
         <StyledFileSize>{formatSize(file.size)}</StyledFileSize>
