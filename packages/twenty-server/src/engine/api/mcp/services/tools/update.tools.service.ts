@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
+import omit from 'lodash.omit';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
@@ -20,9 +21,25 @@ export class UpdateToolsService {
         name: 'update-field-metadata',
         description: 'Update a field metadata',
         inputSchema:
-          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
-            validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
-          ),
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties({
+            ...validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
+            properties: {
+              ...validationSchemaManager.getSchemas()
+                .UpdateOneFieldMetadataInput.properties,
+              update: omit(
+                validationSchemaManager.getSchemas().FieldMetadataDTO
+                  .properties,
+                [
+                  'id',
+                  'type',
+                  'createdAt',
+                  'updatedAt',
+                  'isCustom',
+                  'standardOverrides',
+                ],
+              ),
+            },
+          }),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
       {
@@ -38,12 +55,14 @@ export class UpdateToolsService {
   }
 
   async execute(request: Request, objectName: ObjectName) {
+    const { id, ...body } = request.body.params.arguments;
     const requestContext = {
-      body: request.body.params.arguments,
+      body,
       baseUrl: this.mCPMetadataToolsService.generateBaseUrl(request),
-      path: `/rest/metadata/${objectName}/${request.body.params.arguments.id}`,
+      path: `/rest/metadata/${objectName}/${id}`,
       headers: request.headers,
     };
+
     const response = await this.mCPMetadataToolsService.send(
       requestContext,
       await this.metadataQueryBuilderFactory.update(requestContext),

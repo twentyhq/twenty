@@ -18,14 +18,10 @@ export class McpMetadataController {
   @Post()
   async getMcpMetadata(
     @AuthWorkspace() workspace: Workspace,
-    @AuthApiKey() apiKey: string | undefined,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Req() request: Request,
   ) {
     return await this.mCPMetadataService.executeTool(request, {
       workspace,
-      apiKey,
-      userWorkspaceId,
     });
   }
 }

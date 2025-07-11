@@ -21,7 +21,7 @@ export class CreateToolsService {
         description: 'Create a new field metadata',
         inputSchema:
           this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
-            validationSchemaManager.getSchemas().CreateOneFieldMetadataInput,
+            validationSchemaManager.getSchemas().CreateFieldInput,
           ),
         execute: (request: Request) => this.execute(request, 'fields'),
       },

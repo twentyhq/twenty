@@ -85,14 +85,10 @@ export class MCPMetadataToolsService {
   }
 
   async send(requestContext: RequestContext, data: Query) {
-    try {
-      return await this.restApiService.call(
-        GraphqlApiType.METADATA,
-        requestContext,
-        data,
-      );
-    } catch (err) {
-      return {} as ReturnType<typeof this.restApiService.call>;
-    }
+    return await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      requestContext,
+      data,
+    );
   }
 }

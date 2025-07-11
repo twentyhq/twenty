@@ -16,9 +16,6 @@ import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.too
 import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
 import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
 import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
-import {
-  WorkspacePermissionsCacheModule
-} from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
 @Module({
   imports: [
@@ -30,7 +27,6 @@ import {
     UserRoleModule,
     RestApiModule,
     MetadataQueryBuilderModule,
-    WorkspacePermissionsCacheModule
   ],
   controllers: [McpMetadataController],
   exports: [],

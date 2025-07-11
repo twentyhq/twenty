@@ -17,7 +17,6 @@ import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.too
 import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
 import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
 import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class MCPMetadataService {
@@ -32,7 +31,6 @@ export class MCPMetadataService {
     private readonly updateToolsService: UpdateToolsService,
     private readonly deleteToolsService: DeleteToolsService,
     private readonly getToolsService: GetToolsService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   async onModuleInit() {
@@ -107,14 +105,7 @@ export class MCPMetadataService {
     return roleId;
   }
 
-  async listTool(roleId: string, workspaceId: string) {
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
-
-    const objectPermissions = rolesPermissions[roleId];
-
+  get listTool() {
     return [
       ...this.createToolsService.tools,
       ...this.updateToolsService.tools,
@@ -125,42 +116,29 @@ export class MCPMetadataService {
 
   async handleToolCall(
     request: Request,
-    roleId: string,
-    workspaceId: string,
   ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
-    try {
-      const tool = (await this.listTool(roleId, workspaceId)).find(
-        ({ name }) => name === request.body.params.name,
-      );
+    const tool = this.listTool.find(
+      ({ name }) => name === request.body.params.name,
+    );
 
-      if (tool) {
-        return {
-          result: await tool.execute(request),
-        };
-      }
-
+    if (tool) {
       return {
-        error: {
-          code: HttpStatus.NOT_FOUND,
-          message: `Tool ${request.body.params.name} not found`,
-        },
-      };
-    } catch (error) {
-      return {
-        error: {
-          code: error.status || HttpStatus.BAD_REQUEST,
-          message: error.message || 'Failed to execute tool',
-        },
+        result: await tool.execute(request),
       };
     }
+
+    return {
+      error: {
+        code: HttpStatus.NOT_FOUND,
+        message: `Tool ${request.body.params.name} not found`,
+      },
+    };
   }
 
   async executeTool(
     request: Request,
     {
       workspace,
-      userWorkspaceId,
-      apiKey,
     }: { workspace: Workspace; userWorkspaceId?: string; apiKey?: string },
   ): Promise<Record<string, unknown>> {
     try {
@@ -170,16 +148,10 @@ export class MCPMetadataService {
         return this.handleInitialize(request.body.id);
       }
 
-      const roleId = await this.getRoleId(
-        workspace.id,
-        userWorkspaceId,
-        apiKey,
-      );
-
       if (request.body.method === 'tools/call' && request.body.params) {
         return wrapJsonRpcResponse(
           request.body.id,
-          await this.handleToolCall(request, roleId, workspace.id),
+          await this.handleToolCall(request),
         );
       }
 
@@ -188,14 +160,15 @@ export class MCPMetadataService {
           capabilities: {
             tools: { listChanged: false },
           },
-          tools: Object.values(await this.listTool(roleId, workspace.id)),
+          tools: Object.values(this.listTool),
         },
       });
     } catch (error) {
       return wrapJsonRpcResponse(request.body.id, {
         error: {
           code: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          message: error.message || 'Failed to execute tool',
+          message:
+            error.response?.messages?.join?.('\n') || 'Failed to execute tool',
         },
       });
     }
