@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const SAVE_IMAP_SMTP_CALDAV_CONNECTION = gql`
+export const SAVE_IMAP_SMTP_CALDAV_ACCOUNT = gql`
   mutation SaveImapSmtpCaldavAccount(
     $accountOwnerId: String!
     $handle: String!
