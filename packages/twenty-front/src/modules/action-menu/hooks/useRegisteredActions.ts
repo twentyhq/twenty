@@ -7,11 +7,14 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
 ) => {
   const { objectMetadataItem } = shouldBeRegisteredParams;
+
+  const { getIcon } = useIcons();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -28,6 +31,7 @@ export const useRegisteredActions = (
 
   const recordActionConfig = getActionConfig({
     objectMetadataItem,
+    getIcon,
   });
 
   const recordAgnosticActionConfig = useRecordAgnosticActions();

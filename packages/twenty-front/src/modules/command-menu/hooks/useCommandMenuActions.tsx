@@ -45,6 +45,12 @@ export const useCommandMenuActions = () => {
     (action) => action.type === ActionType.Fallback,
   );
 
+  const createActions: ActionConfig[] = actions?.filter(
+    (action) =>
+      action.type === ActionType.Standard &&
+      action.scope === ActionScope.Create,
+  );
+
   return {
     navigateActions,
     actionRecordSelectionActions,
@@ -53,5 +59,6 @@ export const useCommandMenuActions = () => {
     workflowRunRecordSelectionActions,
     workflowRunGlobalActions,
     fallbackActions,
+    createActions,
   };
 };
