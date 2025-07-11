@@ -114,7 +114,9 @@ export const useImapSmtpCaldavConnectionForm = ({
         throw new Error('At least one protocol must be configured');
       }
 
-      const connectionParameters: Record<string, any> = {};
+      const connectionParameters: Partial<
+        Record<keyof ImapSmtpCaldavAccount, ConnectionParameters>
+      > = {};
       configuredProtocols.forEach((protocol) => {
         const protocolConfig = formValues[protocol];
         if (isDefined(protocolConfig)) {
