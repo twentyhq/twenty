@@ -8,7 +8,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDropdownContent';
-import { useExitVectorSearchInput } from '@/views/hooks/useExitVectorSearchInput';
+import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
@@ -21,7 +21,7 @@ export const ViewBarFilterDropdown = () => {
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
-  const { exitVectorSearchInput } = useExitVectorSearchInput();
+  const { clearVectorSearchInput } = useClearVectorSearchInput();
 
   const handleDropdownClickOutside = () => {
     const recordFilterIsEmpty =
@@ -40,7 +40,7 @@ export const ViewBarFilterDropdown = () => {
   const handleDropdownClose = () => {
     resetFilterDropdown();
     removeEmptyVectorSearchFilter();
-    exitVectorSearchInput();
+    clearVectorSearchInput();
   };
 
   const handleDropdownOpen = () => {

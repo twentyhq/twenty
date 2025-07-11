@@ -8,7 +8,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { EditableFilterChipDropdownContent } from '@/views/components/EditableFilterChipDropdownContent';
-import { useExitVectorSearchInput } from '@/views/hooks/useExitVectorSearchInput';
+import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
 type EditableFilterDropdownButtonProps = {
@@ -30,7 +30,7 @@ export const EditableFilterDropdownButton = ({
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
-  const { exitVectorSearchInput } = useExitVectorSearchInput();
+  const { clearVectorSearchInput } = useClearVectorSearchInput();
 
   const onFilterDropdownClose = useCallback(() => {
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
@@ -39,8 +39,8 @@ export const EditableFilterDropdownButton = ({
       removeRecordFilter({ recordFilterId: recordFilter.id });
     }
 
-    exitVectorSearchInput();
-  }, [recordFilter, removeRecordFilter, exitVectorSearchInput]);
+    clearVectorSearchInput();
+  }, [recordFilter, removeRecordFilter, clearVectorSearchInput]);
 
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
