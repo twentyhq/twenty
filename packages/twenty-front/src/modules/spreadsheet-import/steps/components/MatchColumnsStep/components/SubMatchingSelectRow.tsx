@@ -15,23 +15,23 @@ const StyledRowContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-interface SubMatchingSelectRowProps<T> {
-  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
+interface SubMatchingSelectRowProps {
+  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
   column:
-    | SpreadsheetMatchedSelectColumn<T>
-    | SpreadsheetMatchedSelectOptionsColumn<T>;
-  onSubChange: (val: T, index: number, option: string) => void;
+    | SpreadsheetMatchedSelectColumn
+    | SpreadsheetMatchedSelectOptionsColumn;
+  onSubChange: (val: string, index: number, option: string) => void;
   placeholder: string;
   selectedOption?:
-    | SpreadsheetMatchedOptions<T>
-    | Partial<SpreadsheetMatchedOptions<T>>;
+    | SpreadsheetMatchedOptions
+    | Partial<SpreadsheetMatchedOptions>;
 }
-export const SubMatchingSelectRow = <T extends string>({
+export const SubMatchingSelectRow = ({
   option,
   column,
   onSubChange,
   placeholder,
-}: SubMatchingSelectRowProps<T>) => {
+}: SubMatchingSelectRowProps) => {
   return (
     <StyledRowContainer>
       <SubMatchingSelectRowLeftSelect option={option} />
