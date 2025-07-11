@@ -17,6 +17,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { isCreateFieldInput } from 'src/engine/metadata-modules/field-metadata/types/is-create-field-input.type';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -140,44 +141,39 @@ export class FieldMetadataRelationService {
       fieldMetadataType === FieldMetadataType.RELATION ||
       fieldMetadataType === FieldMetadataType.MORPH_RELATION;
 
+    if (!isRelation) {
+      return fieldMetadataInput;
+    }
+
     if (
-      isRelation &&
-      isDefined(
-        (fieldMetadataInput as unknown as CreateFieldInput)
-          .relationCreationPayload,
-      )
+      isCreateFieldInput(fieldMetadataInput) &&
+      isDefined(fieldMetadataInput.relationCreationPayload)
     ) {
-      const relationCreationPayload = (
-        fieldMetadataInput as unknown as CreateFieldInput
-      ).relationCreationPayload;
+      const { relationCreationPayload } = fieldMetadataInput;
 
-      if (isDefined(relationCreationPayload)) {
-        await this.validateRelationCreationPayloadOrThrow(
-          relationCreationPayload,
-        );
-        const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
-          relationCreationPayload.targetFieldLabel,
-        );
+      await this.validateRelationCreationPayloadOrThrow(
+        relationCreationPayload,
+      );
+      const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
+        relationCreationPayload.targetFieldLabel,
+      );
 
-        validateMetadataNameOrThrow(computedMetadataNameFromLabel);
+      validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
-        const objectMetadataTarget =
-          objectMetadataMaps.byId[
-            relationCreationPayload.targetObjectMetadataId
-          ];
+      const objectMetadataTarget =
+        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
 
-        if (!isDefined(objectMetadataTarget)) {
-          throw new FieldMetadataException(
-            `Object metadata relation target not found for relation creation payload`,
-            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-          );
-        }
-
-        validateFieldNameAvailabilityOrThrow(
-          computedMetadataNameFromLabel,
-          objectMetadataTarget,
+      if (!isDefined(objectMetadataTarget)) {
+        throw new FieldMetadataException(
+          `Object metadata relation target not found for relation creation payload`,
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         );
       }
+
+      validateFieldNameAvailabilityOrThrow(
+        computedMetadataNameFromLabel,
+        objectMetadataTarget,
+      );
     }
 
     return fieldMetadataInput;
@@ -315,6 +311,8 @@ export class FieldMetadataRelationService {
     )
       ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
       : `${fieldMetadataInput.name}Id`;
+
+    // Should validate join column name availability
 
     return {
       ...fieldMetadataInput,

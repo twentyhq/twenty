@@ -36,12 +36,11 @@ export const validateFieldNameAvailabilityOrThrow = (
 ) => {
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(objectMetadata);
+  const objectMetadataFieldNames = Object.keys(
+    objectMetadata.fieldIdByName,
+  ).concat(Object.keys(objectMetadata.fieldIdByJoinColumnName));
 
-  if (
-    Object.values(objectMetadata.fieldsById).some(
-      (field) => field.name === name,
-    )
-  ) {
+  if (objectMetadataFieldNames.some((field) => field === name)) {
     throw new InvalidMetadataException(
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
