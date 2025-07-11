@@ -72,13 +72,8 @@ export class CalDAVClient {
 
   private isValidFormat(url: string): boolean {
     const allowedExtensions = ['eml', 'ics'];
-    const urlExtension = this.getFileExtension(url);
 
-    if (!allowedExtensions.includes(urlExtension)) {
-      return false;
-    }
-
-    return true;
+    return allowedExtensions.includes(this.getFileExtension(url));
   }
 
   private async getAccount(): Promise<DAVAccount> {
@@ -159,24 +154,34 @@ export class CalDAVClient {
           const dataUndefined = calendarObject.data === undefined;
 
           if (dataUndefined && hasEtag) {
-            const responseWithoutExpand = await fetchCalendarObjects({
-              urlFilter: (url) => this.isValidFormat(url),
-              calendar: {
-                url: calendar.url,
-              },
-              headers: this.headers,
-              expand: false,
-              timeRange: {
-                start: startDate.toISOString(),
-                end: endDate.toISOString(),
-              },
-            });
+            try {
+              const responseWithoutExpand = await fetchCalendarObjects({
+                urlFilter: (url) => this.isValidFormat(url),
+                calendar: {
+                  url: calendar.url,
+                },
+                headers: this.headers,
+                expand: false,
+                timeRange: {
+                  start: startDate.toISOString(),
+                  end: endDate.toISOString(),
+                },
+              });
 
-            return responseWithoutExpand.find(
-              (obj) =>
-                obj.url === calendarObject.url &&
-                obj.etag === calendarObject.etag,
-            );
+              const foundObject = responseWithoutExpand.find(
+                (obj) =>
+                  obj.url === calendarObject.url &&
+                  obj.etag === calendarObject.etag,
+              );
+
+              if (foundObject && foundObject.data === undefined) {
+                return null;
+              }
+
+              return foundObject;
+            } catch (error) {
+              return null;
+            }
           }
 
           return calendarObject;
@@ -188,7 +193,7 @@ export class CalDAVClient {
 
     const resolvedPromises = await Promise.allSettled(fetchPromises);
     const fulfilledPromises = resolvedPromises.filter(
-      (promise): promise is PromiseFulfilledResult<(DAVObject | undefined)[]> =>
+      (promise): promise is PromiseFulfilledResult<(DAVObject | null)[]> =>
         promise.status === 'fulfilled',
     );
 
