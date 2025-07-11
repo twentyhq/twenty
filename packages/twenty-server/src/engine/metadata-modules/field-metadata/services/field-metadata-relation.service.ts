@@ -272,7 +272,7 @@ export class FieldMetadataRelationService {
     });
   }
 
-  // Fking hell to type due to nestJs OmitType that prevents passing a generic type here
+  // Hell to type due to nestJs OmitType that prevents passing a generic type here
   computeRelationSettingsIconAndRelationTargetObjectMetadataId({
     fieldMetadataInput,
     relationCreationPayload,
