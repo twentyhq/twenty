@@ -1,7 +1,7 @@
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 describe('getTriggerDefaultDefinition', () => {
   it('throws if the activeNonSystemObjectMetadataItems list is empty', () => {
@@ -23,7 +23,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Created',
+      name: 'Record is created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -40,7 +40,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Updated',
+      name: 'Record is updated',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
@@ -57,7 +57,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Deleted',
+      name: 'Record is deleted',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
@@ -74,7 +74,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
-      name: 'Record is Created',
+      name: 'Record is created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},

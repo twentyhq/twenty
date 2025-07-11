@@ -1,6 +1,6 @@
 import {
-  WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
+    WorkflowDatabaseEventTrigger,
+    WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
@@ -11,7 +11,7 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
     case 'DATABASE_EVENT':
       return getDatabaseEventTriggerStepName(trigger);
     case 'CRON':
-      return 'On a Schedule';
+      return 'On a schedule';
     case 'WEBHOOK':
       return 'Webhook';
     case 'MANUAL':
