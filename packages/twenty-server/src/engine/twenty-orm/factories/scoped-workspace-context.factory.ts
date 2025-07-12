@@ -25,8 +25,8 @@ export class ScopedWorkspaceContextFactory {
 
     // Check if the current user is a Super Admin
     const isSuperAdmin = !!(
+      // @ts-expect-error legacy noImplicitAny
       (
-        // @ts-expect-error legacy noImplicitAny
         this.request?.['req']?.['user']?.canAccessFullAdminPanel ||
         // @ts-expect-error legacy noImplicitAny
         this.request?.['user']?.canAccessFullAdminPanel

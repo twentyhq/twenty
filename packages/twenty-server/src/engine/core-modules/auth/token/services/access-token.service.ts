@@ -22,7 +22,6 @@ import {
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -120,23 +119,25 @@ export class AccessTokenService {
       if (this.isSuperAdmin(user)) {
         // Create UserWorkspace for Super Admin if it doesn't exist
         // Wrap in transaction to ensure data consistency
-        await this.userWorkspaceRepository.manager.transaction(async (manager) => {
-          const newUserWorkspace = manager.create(UserWorkspace, {
-            userId: user.id,
-            workspaceId,
-          });
-
-          userWorkspace = await manager.save(UserWorkspace, newUserWorkspace);
-
-          // Assign default role if available and valid
-          if (isDefined(workspace.defaultRoleId)) {
-            await this.userRoleService.assignRoleToUserWorkspace({
+        await this.userWorkspaceRepository.manager.transaction(
+          async (manager) => {
+            const newUserWorkspace = manager.create(UserWorkspace, {
+              userId: user.id,
               workspaceId,
-              userWorkspaceId: userWorkspace.id,
-              roleId: workspace.defaultRoleId,
             });
-          }
-        });
+
+            userWorkspace = await manager.save(UserWorkspace, newUserWorkspace);
+
+            // Assign default role if available and valid
+            if (isDefined(workspace.defaultRoleId)) {
+              await this.userRoleService.assignRoleToUserWorkspace({
+                workspaceId,
+                userWorkspaceId: userWorkspace.id,
+                roleId: workspace.defaultRoleId,
+              });
+            }
+          },
+        );
       } else {
         throw new AuthException(
           'User is not a member of the workspace and lacks super admin privileges',

@@ -16,6 +16,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     ),
     TypeORMModule,
     DataSourceModule,
+    UserRoleModule,
   ],
   providers: [
     RenewTokenService,
