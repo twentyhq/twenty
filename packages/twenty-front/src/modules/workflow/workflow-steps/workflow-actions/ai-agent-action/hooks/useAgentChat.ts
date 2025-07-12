@@ -8,6 +8,7 @@ import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWr
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
@@ -24,6 +25,11 @@ interface OptimisticMessage extends AgentChatMessage {
 
 export const useAgentChat = (agentId: string) => {
   const apolloClient = useApolloClient();
+
+  const agentChatSelectedFiles = useRecoilComponentValueV2(
+    agentChatSelectedFilesComponentState,
+    agentId,
+  );
 
   const agentChatUploadedFiles = useRecoilComponentValueV2(
     agentChatUploadedFilesComponentState,
@@ -63,7 +69,11 @@ export const useAgentChat = (agentId: string) => {
       scrollToBottom();
     });
 
-  const isLoading = messagesLoading || threadsLoading || isStreaming;
+  const isLoading =
+    messagesLoading ||
+    threadsLoading ||
+    isStreaming ||
+    agentChatSelectedFiles.length > 1;
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
