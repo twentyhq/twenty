@@ -266,11 +266,13 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                       ? getAssistantMessageContent(msg)
                       : msg.content}
                   </StyledMessageText>
-                  <StyledFilesContainer>
-                    {msg.files.map((file) => (
-                      <AgentChatFilePreview key={file.id} file={file} />
-                    ))}
-                  </StyledFilesContainer>
+                  {msg.files.length > 0 && (
+                    <StyledFilesContainer>
+                      {msg.files.map((file) => (
+                        <AgentChatFilePreview key={file.id} file={file} />
+                      ))}
+                    </StyledFilesContainer>
+                  )}
                   {msg.content && (
                     <StyledMessageFooter className="message-footer">
                       <span>

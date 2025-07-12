@@ -47,7 +47,7 @@ export const AgentChatSelectedFilesPreview = ({
     });
   };
 
-  return (
+  return [...agentChatSelectedFiles, ...agentChatUploadedFiles].length > 0 ? (
     <StyledPreviewContainer>
       {agentChatSelectedFiles.map((file) => (
         <AgentChatFilePreview
@@ -70,5 +70,5 @@ export const AgentChatSelectedFilesPreview = ({
         />
       ))}
     </StyledPreviewContainer>
-  );
+  ) : null;
 };
