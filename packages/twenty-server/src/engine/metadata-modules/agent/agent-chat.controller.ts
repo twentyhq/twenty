@@ -30,12 +30,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentChatService } from './agent-chat.service';
 import { AgentStreamingService } from './agent-streaming.service';
 
-interface UploadedFile {
-  buffer: Buffer;
-  originalname: string;
-  mimetype: string;
-}
-
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(RestApiExceptionFilter)
@@ -115,7 +109,8 @@ export class AgentChatController {
   @Post('files')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @UploadedFile() file: UploadedFile,
+    @UploadedFile()
+    file: { buffer: Buffer; originalname: string; mimetype: string },
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     const buffer = file.buffer;
