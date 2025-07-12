@@ -1,5 +1,5 @@
 import { Attachment } from '@/activities/files/types/Attachment';
-import { getActivityAttachmentPaths } from '@/activities/utils/getActivityAttachmentPaths';
+import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
 import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 
 export const getActivityAttachmentPathsToRestore = (
@@ -7,11 +7,17 @@ export const getActivityAttachmentPathsToRestore = (
   oldActivityAttachments: Attachment[],
 ) => {
   const newActivityAttachmentPaths =
-    getActivityAttachmentPaths(newActivityBody);
+    getActivityAttachmentPathsAndName(newActivityBody);
 
-  return newActivityAttachmentPaths.filter((fullPath) =>
-    oldActivityAttachments.every(
-      (attachment) => getAttachmentPath(attachment.fullPath) !== fullPath,
-    ),
-  );
+  const pathsToRestore = newActivityAttachmentPaths
+    .filter(
+      (newActivity) =>
+        !oldActivityAttachments.some(
+          (attachment) =>
+            newActivity.path === getAttachmentPath(attachment.fullPath),
+        ),
+    )
+    .map((activity) => activity.path);
+
+  return pathsToRestore;
 };

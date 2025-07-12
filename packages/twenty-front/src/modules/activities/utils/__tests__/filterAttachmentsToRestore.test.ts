@@ -28,15 +28,15 @@ describe('filterAttachmentsToRestore', () => {
     const softDeletedAttachments = [
       {
         id: '1',
-        fullPath: '/files/attachment/test.txt',
+        fullPath: '/files/images/test.txt',
       },
       {
         id: '2',
-        fullPath: '/files/attachment/test2.txt',
+        fullPath: '/files/images/test2.txt',
       },
     ] as Attachment[];
     const attachmentIdsToRestore = filterAttachmentsToRestore(
-      ['attachment/test.txt'],
+      ['images/test.txt'],
       softDeletedAttachments,
     );
     expect(attachmentIdsToRestore).toEqual(['1']);
