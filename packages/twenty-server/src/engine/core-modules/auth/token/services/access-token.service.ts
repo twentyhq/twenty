@@ -47,6 +47,10 @@ export class AccessTokenService {
     private readonly userRoleService: UserRoleService,
   ) {}
 
+  private isSuperAdmin(user: User): boolean {
+    return user.canAccessFullAdminPanel;
+  }
+
   async generateAccessToken({
     userId,
     workspaceId,
@@ -91,7 +95,7 @@ export class AccessTokenService {
 
       if (!workspaceMember) {
         // Super Admin can access any workspace without being a member
-        if (user.canAccessFullAdminPanel) {
+        if (this.isSuperAdmin(user)) {
           // For Super Admin, we don't set tokenWorkspaceMemberId since they're not a workspace member
           tokenWorkspaceMemberId = undefined;
         } else {
@@ -113,24 +117,31 @@ export class AccessTokenService {
 
     // Super Admin can access any workspace without being a member
     if (!userWorkspace) {
-      if (user.canAccessFullAdminPanel) {
-        // create UserWorkspace for Super Admin if it doesn't exist
-        const newUserWorkspace = this.userWorkspaceRepository.create({
-          userId: user.id,
-          workspaceId,
-        });
-
-        userWorkspace = await this.userWorkspaceRepository.save(newUserWorkspace);
-
-        if (isDefined(workspace.defaultRoleId)) {
-          await this.userRoleService.assignRoleToUserWorkspace({
+      if (this.isSuperAdmin(user)) {
+        // Create UserWorkspace for Super Admin if it doesn't exist
+        // Wrap in transaction to ensure data consistency
+        await this.userWorkspaceRepository.manager.transaction(async (manager) => {
+          const newUserWorkspace = manager.create(UserWorkspace, {
+            userId: user.id,
             workspaceId,
-            userWorkspaceId: userWorkspace.id,
-            roleId: workspace.defaultRoleId,
           });
-        }
+
+          userWorkspace = await manager.save(UserWorkspace, newUserWorkspace);
+
+          // Assign default role if available and valid
+          if (isDefined(workspace.defaultRoleId)) {
+            await this.userRoleService.assignRoleToUserWorkspace({
+              workspaceId,
+              userWorkspaceId: userWorkspace.id,
+              roleId: workspace.defaultRoleId,
+            });
+          }
+        });
       } else {
-        userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+        throw new AuthException(
+          'User is not a member of the workspace and lacks super admin privileges',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
       }
     }
 
