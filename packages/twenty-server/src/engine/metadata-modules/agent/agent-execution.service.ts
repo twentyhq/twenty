@@ -72,7 +72,7 @@ export class AgentExecutionService {
           apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
         });
 
-        return OpenAIProvider(getEffectiveModelConfig(modelId).modelId);
+        return OpenAIProvider(modelId);
       }
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
@@ -151,10 +151,15 @@ export class AgentExecutionService {
       agent.workspaceId,
     );
 
+    const effectiveModelConfig = getEffectiveModelConfig(agent.modelId);
+
     return {
       system,
       tools,
-      model: this.getModel(agent.modelId, aiModel.provider),
+      model: this.getModel(
+        effectiveModelConfig.modelId,
+        effectiveModelConfig.provider,
+      ),
       ...(messages && { messages }),
       ...(prompt && { prompt }),
       maxSteps: AGENT_CONFIG.MAX_STEPS,
