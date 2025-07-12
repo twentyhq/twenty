@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { Readable } from 'stream';
+
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
 import {
@@ -22,6 +24,7 @@ import {
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id.util';
 import { getEffectiveModelConfig } from 'src/engine/core-modules/ai/utils/get-effective-model-config.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentChatMessageEntity,
@@ -33,6 +36,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -54,6 +58,7 @@ export class AgentExecutionService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
+    private readonly fileService: FileService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FileEntity, 'core')
@@ -175,7 +180,9 @@ export class AgentExecutionService {
       text: userMessage,
     };
 
-    const fileParts = files.map((file) => this.createFilePart(file));
+    const fileParts = await Promise.all(
+      files.map((file) => this.createFilePart(file)),
+    );
 
     return {
       role: AgentChatMessageRole.USER,
@@ -183,20 +190,33 @@ export class AgentExecutionService {
     };
   }
 
-  private createFilePart(file: FileEntity): ImagePart | FilePart {
+  private async createFilePart(
+    file: FileEntity,
+  ): Promise<ImagePart | FilePart> {
+    const relativePath = this.fileService.extractRelativePath(file.fullPath);
+    const folderPath = relativePath.split('/').slice(0, -1).join('/');
+    const filename = relativePath.split('/').pop() || '';
+
+    const fileStream = await this.fileService.getFileStream(
+      folderPath,
+      filename,
+      file.workspaceId,
+    );
+    const fileBuffer = await streamToBuffer(fileStream as Readable);
+
     if (file.type.startsWith('image')) {
       return {
         type: 'image',
-        image: file.fullPath,
+        image: fileBuffer,
+        mimeType: file.type,
+      };
+    } else {
+      return {
+        type: 'file',
+        data: fileBuffer,
         mimeType: file.type,
       };
     }
-
-    return {
-      type: 'file',
-      data: file.fullPath,
-      mimeType: file.type,
-    };
   }
 
   async streamChatResponse({
