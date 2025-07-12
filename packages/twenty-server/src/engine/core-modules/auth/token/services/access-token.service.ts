@@ -28,6 +28,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 
 @Injectable()
 export class AccessTokenService {
@@ -42,6 +45,9 @@ export class AccessTokenService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   async generateAccessToken({
@@ -120,6 +126,18 @@ export class AccessTokenService {
         });
         
         userWorkspace = await this.userWorkspaceRepository.save(newUserWorkspace);
+
+        const adminRole = await this.roleRepository.findOne({
+          where: { workspaceId, label: ADMIN_ROLE_LABEL },
+        });
+
+        if (adminRole) {
+          await this.userRoleService.assignRoleToUserWorkspace({
+            workspaceId,
+            userWorkspaceId: userWorkspace.id,
+            roleId: adminRole.id,
+          });
+        }
       } else {
         userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
       }
