@@ -27,10 +27,17 @@ export class PermissionsService {
   public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
+    isSuperAdmin = false,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
+    isSuperAdmin?: boolean;
   }): Promise<UserWorkspacePermissions> {
+    // Super Admin bypass - return full permissions without checking roles
+    if (isSuperAdmin) {
+      return this.getSuperAdminPermissions();
+    }
+
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspaceId],
@@ -114,18 +121,46 @@ export class PermissionsService {
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
+  public getSuperAdminPermissions = (): UserWorkspacePermissions =>
+    ({
+      objectRecordsPermissions: {
+        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: true,
+        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: true,
+        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: true,
+        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: true,
+      },
+      settingsPermissions: {
+        [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: true,
+        [SettingPermissionType.WORKSPACE]: true,
+        [SettingPermissionType.WORKSPACE_MEMBERS]: true,
+        [SettingPermissionType.ROLES]: true,
+        [SettingPermissionType.DATA_MODEL]: true,
+        [SettingPermissionType.ADMIN_PANEL]: true,
+        [SettingPermissionType.SECURITY]: true,
+        [SettingPermissionType.WORKFLOWS]: true,
+      },
+      objectPermissions: {},
+    }) as const satisfies UserWorkspacePermissions;
+
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
     workspaceId,
     setting,
     isExecutedByApiKey,
+    isSuperAdmin = false,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: SettingPermissionType;
     isExecutedByApiKey: boolean;
+    isSuperAdmin?: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {
+      return true;
+    }
+
+    // Super Admin has all permissions
+    if (isSuperAdmin) {
       return true;
     }
 

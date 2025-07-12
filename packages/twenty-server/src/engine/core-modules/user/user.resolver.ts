@@ -92,9 +92,11 @@ export class UserResolver {
   private async getUserWorkspacePermissions({
     currentUserWorkspace,
     workspace,
+    isSuperAdmin = false,
   }: {
     workspace: Workspace;
     currentUserWorkspace: UserWorkspace;
+    isSuperAdmin?: boolean;
   }): Promise<UserWorkspacePermissions> {
     const workspaceIsPendingOrOngoingCreation = [
       WorkspaceActivationStatus.PENDING_CREATION,
@@ -108,6 +110,7 @@ export class UserResolver {
     return await this.permissionsService.getUserWorkspacePermissions({
       userWorkspaceId: currentUserWorkspace.id,
       workspaceId: workspace.id,
+      isSuperAdmin,
     });
   }
 
@@ -152,6 +155,7 @@ export class UserResolver {
           await this.getUserWorkspacePermissions({
             currentUserWorkspace,
             workspace,
+            isSuperAdmin: user.canAccessFullAdminPanel,
           }),
         );
       returnCurrentUserWorkspace = {
