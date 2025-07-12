@@ -5,6 +5,7 @@ import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -28,6 +29,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class AccessTokenService {
@@ -42,6 +44,7 @@ export class AccessTokenService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   async generateAccessToken({
@@ -101,7 +104,7 @@ export class AccessTokenService {
         tokenWorkspaceMemberId = workspaceMember.id;
       }
     }
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
+    let userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId: user.id,
         workspaceId,
@@ -109,8 +112,26 @@ export class AccessTokenService {
     });
 
     // Super Admin can access any workspace without being a member
-    if (!userWorkspace && !user.canAccessFullAdminPanel) {
-      userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+    if (!userWorkspace) {
+      if (user.canAccessFullAdminPanel) {
+        // create UserWorkspace for Super Admin if it doesn't exist
+        const newUserWorkspace = this.userWorkspaceRepository.create({
+          userId: user.id,
+          workspaceId,
+        });
+
+        userWorkspace = await this.userWorkspaceRepository.save(newUserWorkspace);
+
+        if (isDefined(workspace.defaultRoleId)) {
+          await this.userRoleService.assignRoleToUserWorkspace({
+            workspaceId,
+            userWorkspaceId: userWorkspace.id,
+            roleId: workspace.defaultRoleId,
+          });
+        }
+      } else {
+        userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+      }
     }
 
     const jwtPayload: AccessTokenJwtPayload = {
