@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -11,6 +12,7 @@ import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions
 import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
 import { useApolloClient } from '@apollo/client';
+import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
@@ -24,6 +26,8 @@ interface OptimisticMessage extends AgentChatMessage {
 }
 
 export const useAgentChat = (agentId: string) => {
+  const { t } = useLingui();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const apolloClient = useApolloClient();
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(
@@ -133,6 +137,11 @@ export const useAgentChat = (agentId: string) => {
                 toolCall: message,
               }));
               scrollToBottom();
+            },
+            onError: (errorMessage: string) => {
+              enqueueErrorSnackBar({
+                message: t`${errorMessage}`,
+              });
             },
           });
         },

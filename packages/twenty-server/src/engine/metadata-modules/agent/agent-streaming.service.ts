@@ -59,13 +59,6 @@ export class AgentStreamingService {
         );
       }
 
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-        fileIds,
-      });
-
       this.setupStreamingHeaders(res);
 
       const { fullStream } =
@@ -93,16 +86,41 @@ export class AgentStreamingService {
               message: chunk.args?.toolDescription,
             });
             break;
+          case 'error':
+            {
+              const errorMessage =
+                chunk.error &&
+                typeof chunk.error === 'object' &&
+                'message' in chunk.error
+                  ? chunk.error.message
+                  : 'Something went wrong. Please try again.';
+
+              this.sendStreamEvent(res, {
+                type: 'error',
+                message: errorMessage as string,
+              });
+              res.end();
+            }
+            break;
           default:
             break;
         }
       }
 
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.ASSISTANT,
-        content: aiResponse,
-      });
+      if (aiResponse) {
+        await this.agentChatService.addMessage({
+          threadId,
+          role: AgentChatMessageRole.USER,
+          content: userMessage,
+          fileIds,
+        });
+
+        await this.agentChatService.addMessage({
+          threadId,
+          role: AgentChatMessageRole.ASSISTANT,
+          content: aiResponse,
+        });
+      }
 
       res.end();
     } catch (error) {
