@@ -24,6 +24,7 @@ export const AgentChatFileUpload = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const apolloClient = useApolloClient();
+
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
     agentChatSelectedFilesState,
   );
@@ -61,10 +62,6 @@ export const AgentChatFileUpload = () => {
     setAgentChatUploadedFiles([...agentChatUploadedFiles, ...uploadedFiles]);
   };
 
-  const handleFileButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-
   const handleFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -89,7 +86,9 @@ export const AgentChatFileUpload = () => {
       <Button
         variant="secondary"
         size="small"
-        onClick={handleFileButtonClick}
+        onClick={() => {
+          fileInputRef.current?.click();
+        }}
         Icon={IconPaperclip}
       />
     </StyledFileUploadContainer>
