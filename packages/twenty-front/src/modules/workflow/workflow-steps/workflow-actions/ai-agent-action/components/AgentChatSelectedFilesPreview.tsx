@@ -1,12 +1,12 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { DELETE_AGENT_CHAT_FILE } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
-import { agentChatSelectedFilesState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesState';
+import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
+import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
 import { useMutation } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 
 const StyledPreviewContainer = styled.div`
   display: flex;
@@ -17,14 +17,16 @@ const StyledPreviewContainer = styled.div`
   width: 100%;
 `;
 
-export const AgentChatSelectedFilesPreview = () => {
+export const AgentChatSelectedFilesPreview = ({
+  agentId,
+}: {
+  agentId: string;
+}) => {
   const { t } = useLingui();
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
-    agentChatSelectedFilesState,
-  );
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
-    agentChatUploadedFilesState,
-  );
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
+    useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
+    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 

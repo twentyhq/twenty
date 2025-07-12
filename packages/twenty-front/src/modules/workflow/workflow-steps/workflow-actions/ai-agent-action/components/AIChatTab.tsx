@@ -299,7 +299,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
       {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
       <StyledInputArea>
-        <AgentChatSelectedFilesPreview />
+        <AgentChatSelectedFilesPreview agentId={agentId} />
         <TextArea
           textAreaId={`${agentId}-chat-input`}
           placeholder={t`Enter a question...`}
@@ -307,7 +307,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
           onChange={handleInputChange}
         />
         <StyledButtonsContainer>
-          <AgentChatFileUpload />
+          <AgentChatFileUpload agentId={agentId} />
           <Button
             variant="primary"
             accent="blue"
