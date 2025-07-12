@@ -35,10 +35,8 @@ export const useAgentChat = (agentId: string) => {
     agentId,
   );
 
-  const agentChatUploadedFiles = useRecoilComponentValueV2(
-    agentChatUploadedFilesComponentState,
-    agentId,
-  );
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
+    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
 
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
@@ -87,7 +85,7 @@ export const useAgentChat = (agentId: string) => {
       content,
       createdAt: new Date().toISOString(),
       isPending: true,
-      files: [],
+      files: agentChatUploadedFiles,
     };
 
     const optimisticAiMessage: OptimisticMessage = {
@@ -158,6 +156,8 @@ export const useAgentChat = (agentId: string) => {
       ...prevMessages,
       ...optimisticMessages,
     ]);
+
+    setAgentChatUploadedFiles([]);
 
     setTimeout(scrollToBottom, 100);
 
