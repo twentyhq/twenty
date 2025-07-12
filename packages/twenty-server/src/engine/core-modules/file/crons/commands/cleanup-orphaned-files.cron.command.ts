@@ -1,8 +1,8 @@
 import { Command, CommandRunner } from 'nest-commander';
 
 import {
-    CLEANUP_ORPHANED_FILES_CRON_PATTERN,
-    CleanupOrphanedFilesCronJob,
+  CLEANUP_ORPHANED_FILES_CRON_PATTERN,
+  CleanupOrphanedFilesCronJob,
 } from 'src/engine/core-modules/file/crons/jobs/cleanup-orphaned-files.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
