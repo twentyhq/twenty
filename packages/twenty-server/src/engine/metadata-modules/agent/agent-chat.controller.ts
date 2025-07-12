@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -145,5 +146,22 @@ export class AgentChatController {
     });
 
     return fileRecord;
+  }
+
+  @Delete('files/:fileId')
+  async deleteFile(
+    @Param('fileId') fileId: string,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    const deletedFile = await this.fileMetadataService.deleteFileById(
+      fileId,
+      workspaceId,
+    );
+
+    if (!deletedFile) {
+      throw new Error('File not found');
+    }
+
+    return { success: true, deletedFile };
   }
 }
