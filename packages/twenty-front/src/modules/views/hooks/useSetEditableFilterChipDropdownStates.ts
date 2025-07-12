@@ -24,15 +24,6 @@ export const useSetEditableFilterChipDropdownStates = () => {
           ? filterableFieldMetadataItems.concat(vectorSearchField)
           : filterableFieldMetadataItems;
 
-        const fieldMetadataItem = filterableFieldsWithVector.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === recordFilter.fieldMetadataId,
-        );
-
-        if (!isDefined(fieldMetadataItem)) {
-          return;
-        }
-
         if (isVectorSearchFilter(recordFilter)) {
           set(
             vectorSearchInputComponentState.atomFamily({
@@ -42,12 +33,19 @@ export const useSetEditableFilterChipDropdownStates = () => {
           );
         }
 
-        set(
-          fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-            instanceId: recordFilter.id,
-          }),
-          fieldMetadataItem.id,
+        const fieldMetadataItem = filterableFieldsWithVector.find(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === recordFilter.fieldMetadataId,
         );
+
+        if (isDefined(fieldMetadataItem)) {
+          set(
+            fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
+              instanceId: recordFilter.id,
+            }),
+            fieldMetadataItem.id,
+          );
+        }
 
         set(
           selectedOperandInDropdownComponentState.atomFamily({

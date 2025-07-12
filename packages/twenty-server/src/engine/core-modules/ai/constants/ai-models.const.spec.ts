@@ -1,7 +1,9 @@
-import { getAIModelsWithAuto } from 'src/engine/core-modules/ai/utils/get-ai-models-with-auto.util';
-import { getDefaultModelConfig } from 'src/engine/core-modules/ai/utils/get-default-model-config.util';
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { AI_MODELS, DEFAULT_MODEL_ID, ModelProvider } from './ai-models.const';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+import { AI_MODELS, ModelProvider } from './ai-models.const';
 
 describe('AI_MODELS', () => {
   it('should contain all expected models', () => {
@@ -15,41 +17,120 @@ describe('AI_MODELS', () => {
       'claude-3-5-haiku-20241022',
     ]);
   });
-
-  it('should have the default model as the first model', () => {
-    const DEFAULT_MODEL = AI_MODELS.find(
-      (model) => model.modelId === DEFAULT_MODEL_ID,
-    );
-
-    expect(DEFAULT_MODEL).toBeDefined();
-    expect(DEFAULT_MODEL?.modelId).toBe(DEFAULT_MODEL_ID);
-  });
 });
 
-describe('getAIModelsWithAuto', () => {
-  it('should return AI_MODELS with auto model prepended', () => {
-    const ORIGINAL_MODELS = AI_MODELS;
-    const MODELS_WITH_AUTO = getAIModelsWithAuto();
+describe('AiModelRegistryService', () => {
+  let SERVICE: AiModelRegistryService;
+  let MOCK_CONFIG_SERVICE: jest.Mocked<TwentyConfigService>;
 
-    expect(MODELS_WITH_AUTO).toHaveLength(ORIGINAL_MODELS.length + 1);
-    expect(MODELS_WITH_AUTO[0].modelId).toBe('auto');
-    expect(MODELS_WITH_AUTO[0].label).toBe('Auto');
-    expect(MODELS_WITH_AUTO[0].provider).toBe(ModelProvider.NONE);
+  beforeEach(async () => {
+    MOCK_CONFIG_SERVICE = {
+      get: jest.fn(),
+    } as any;
 
-    // Check that the rest of the models are the same
-    expect(MODELS_WITH_AUTO.slice(1)).toEqual(ORIGINAL_MODELS);
+    const MODULE: TestingModule = await Test.createTestingModule({
+      providers: [
+        AiModelRegistryService,
+        {
+          provide: TwentyConfigService,
+          useValue: MOCK_CONFIG_SERVICE,
+        },
+      ],
+    }).compile();
+
+    SERVICE = MODULE.get<AiModelRegistryService>(AiModelRegistryService);
   });
 
-  it('should have auto model with default model costs', () => {
-    const MODELS_WITH_AUTO = getAIModelsWithAuto();
-    const AUTO_MODEL = MODELS_WITH_AUTO[0];
-    const DEFAULT_MODEL = getDefaultModelConfig();
+  it('should return effective model config for auto', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
-    expect(AUTO_MODEL.inputCostPer1kTokensInCents).toBe(
-      DEFAULT_MODEL.inputCostPer1kTokensInCents,
+    expect(() => SERVICE.getEffectiveModelConfig('auto')).toThrow(
+      'No AI models are available. Please configure at least one provider.',
     );
-    expect(AUTO_MODEL.outputCostPer1kTokensInCents).toBe(
-      DEFAULT_MODEL.outputCostPer1kTokensInCents,
+  });
+
+  it('should return effective model config for auto when models are available', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
+
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'gpt-4o',
+        provider: ModelProvider.OPENAI,
+        model: {} as any,
+      },
+    ]);
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'gpt-4o',
+      provider: ModelProvider.OPENAI,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig('auto');
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('gpt-4o');
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI);
+  });
+
+  it('should return effective model config for auto with custom model', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('mistral');
+
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'mistral',
+        provider: ModelProvider.OPENAI_COMPATIBLE,
+        model: {} as any,
+      },
+    ]);
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'mistral',
+      provider: ModelProvider.OPENAI_COMPATIBLE,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig('auto');
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('mistral');
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.label).toBe('mistral');
+    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
+  });
+
+  it('should return effective model config for specific model', () => {
+    const RESULT = SERVICE.getEffectiveModelConfig('gpt-4o-mini');
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('gpt-4o-mini');
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI);
+  });
+
+  it('should return effective model config for custom model', () => {
+    // Mock that the custom model exists in registry
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'mistral',
+      provider: ModelProvider.OPENAI_COMPATIBLE,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig('mistral');
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('mistral');
+    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.label).toBe('mistral');
+    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
+  });
+
+  it('should throw error for non-existent model', () => {
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
+
+    expect(() => SERVICE.getEffectiveModelConfig('non-existent-model')).toThrow(
+      'Model with ID non-existent-model not found',
     );
   });
 });
