@@ -6,16 +6,18 @@ import { typedTokenHelpers } from '../utils/typedTokenHelpers';
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-rest-api-methods-should-be-guarded"
 export const RULE_NAME = 'rest-api-methods-should-be-guarded';
 
-export const restApiMethodsShouldBeGuarded = (node: TSESTree.MethodDefinition) => {
+export const restApiMethodsShouldBeGuarded = (
+  node: TSESTree.MethodDefinition,
+) => {
   const hasRestApiMethodDecorator = typedTokenHelpers.nodeHasDecoratorsNamed(
     node,
-    ['Get', 'Post', 'Put', 'Delete', 'Patch', 'Options', 'Head', 'All']
+    ['Get', 'Post', 'Put', 'Delete', 'Patch', 'Options', 'Head', 'All'],
   );
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
 
   function findClassDeclaration(
-    node: TSESTree.Node
+    node: TSESTree.Node,
   ): TSESTree.ClassDeclaration | null {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
@@ -33,9 +35,7 @@ export const restApiMethodsShouldBeGuarded = (node: TSESTree.MethodDefinition) =
     : false;
 
   return (
-    hasRestApiMethodDecorator &&
-    !hasAuthGuards &&
-    !hasAuthGuardsOnController
+    hasRestApiMethodDecorator && !hasAuthGuards && !hasAuthGuardsOnController
   );
 };
 
@@ -67,4 +67,4 @@ export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
       },
     };
   },
-}); 
+});

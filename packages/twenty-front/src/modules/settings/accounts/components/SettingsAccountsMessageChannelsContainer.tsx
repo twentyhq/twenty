@@ -25,13 +25,18 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   );
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
+  // Build filter conditionally - Super Admin users don't have workspaceMember
+  const accountFilter = currentWorkspaceMember?.id
+    ? {
+        accountOwnerId: {
+          eq: currentWorkspaceMember.id,
+        },
+      }
+    : {}; // Empty filter for Super Admin - shows all accounts
+
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
-    },
+    filter: accountFilter,
   });
 
   const { records: messageChannels } = useFindManyRecords<

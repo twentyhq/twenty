@@ -43,7 +43,10 @@ export class AdminImpersonationService {
 
     userValidator.assertIsDefinedOrThrow(
       adminUser,
-      new AuthException('Admin user not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException(
+        'Admin user not found',
+        AuthExceptionCode.INVALID_INPUT,
+      ),
     );
 
     // Check if user is Super Admin

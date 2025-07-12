@@ -26,6 +26,7 @@ export class AdminImpersonationController {
 
   @Post('workspaces/:workspaceId/impersonate')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, AdminPanelGuard)
   async impersonateWorkspace(
     @Param('workspaceId') workspaceId: string,
     @AuthUser() currentUser: User,

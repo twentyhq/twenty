@@ -28,9 +28,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 
 @Injectable()
 export class AccessTokenService {
@@ -45,9 +42,6 @@ export class AccessTokenService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(RoleEntity, 'core')
-    private readonly roleRepository: Repository<RoleEntity>,
-    private readonly userRoleService: UserRoleService,
   ) {}
 
   async generateAccessToken({
@@ -107,50 +101,24 @@ export class AccessTokenService {
         tokenWorkspaceMemberId = workspaceMember.id;
       }
     }
-    let userWorkspace = await this.userWorkspaceRepository.findOne({
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId: user.id,
         workspaceId,
       },
     });
 
-    // Super Admin might not have a UserWorkspace record, so we need to handle this case
-    if (!userWorkspace) {
-      // If user is Super Admin, we can create a UserWorkspace record for them
-      if (user.canAccessFullAdminPanel) {
-        // Create a UserWorkspace record for Super Admin if it doesn't exist
-        // This ensures Super Admin can access any workspace without explicit membership
-        const newUserWorkspace = this.userWorkspaceRepository.create({
-          userId: user.id,
-          workspaceId,
-        });
-        
-        userWorkspace = await this.userWorkspaceRepository.save(newUserWorkspace);
-
-        const adminRole = await this.roleRepository.findOne({
-          where: { workspaceId, label: ADMIN_ROLE_LABEL },
-        });
-
-        if (adminRole) {
-          await this.userRoleService.assignRoleToUserWorkspace({
-            workspaceId,
-            userWorkspaceId: userWorkspace.id,
-            roleId: adminRole.id,
-          });
-        }
-      } else {
-        userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
-      }
+    // Super Admin can access any workspace without being a member
+    if (!userWorkspace && !user.canAccessFullAdminPanel) {
+      userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
     }
-
-    userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
       userId: user.id,
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
-      userWorkspaceId: userWorkspace.id,
+      userWorkspaceId: userWorkspace?.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
     };

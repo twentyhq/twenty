@@ -162,14 +162,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       };
     }
 
-    // Normal token validation (existing logic)
-    if (!payload.userWorkspaceId) {
-      throw new AuthException(
-        'UserWorkspace not found',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
     // Super Admin can access any workspace without being a member
     if (user?.canAccessFullAdminPanel) {
       return {
@@ -180,6 +172,14 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         userWorkspaceId: payload.userWorkspaceId,
         workspaceMemberId: payload.workspaceMemberId,
       };
+    }
+
+    // Normal token validation (existing logic)
+    if (!payload.userWorkspaceId) {
+      throw new AuthException(
+        'UserWorkspace not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
     }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({

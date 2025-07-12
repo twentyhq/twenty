@@ -79,7 +79,7 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   workspaceId: string;
   userId: string;
   workspaceMemberId?: string;
-  userWorkspaceId: string;
+  userWorkspaceId?: string;
   authProvider?: AuthProviderEnum;
   // Super Admin impersonation fields
   isImpersonating?: boolean;

@@ -6,16 +6,18 @@ import { typedTokenHelpers } from '../utils/typedTokenHelpers';
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-graphql-resolvers-should-be-guarded"
 export const RULE_NAME = 'graphql-resolvers-should-be-guarded';
 
-export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition) => {
+export const graphqlResolversShouldBeGuarded = (
+  node: TSESTree.MethodDefinition,
+) => {
   const hasGraphQLResolverDecorator = typedTokenHelpers.nodeHasDecoratorsNamed(
     node,
-    ['Query', 'Mutation', 'Subscription']
+    ['Query', 'Mutation', 'Subscription'],
   );
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
 
   function findClassDeclaration(
-    node: TSESTree.Node
+    node: TSESTree.Node,
   ): TSESTree.ClassDeclaration | null {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
@@ -33,9 +35,7 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     : false;
 
   return (
-    hasGraphQLResolverDecorator &&
-    !hasAuthGuards &&
-    !hasAuthGuardsOnResolver
+    hasGraphQLResolverDecorator && !hasAuthGuards && !hasAuthGuardsOnResolver
   );
 };
 
@@ -67,4 +67,4 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
       },
     };
   },
-}); 
+});

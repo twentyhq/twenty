@@ -14,9 +14,15 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const prefetchFavorites = useRecoilValue(prefetchFavoritesState);
 
-  const favorites = prefetchFavorites.filter(
-    (favorite) => favorite.forWorkspaceMemberId === currentWorkspaceMemberId,
-  );
+  // For Super Admin users (currentWorkspaceMemberId is undefined), show all favorites
+  const favorites = currentWorkspaceMemberId
+    ? prefetchFavorites.filter(
+        (favorite) =>
+          favorite.forWorkspaceMemberId === currentWorkspaceMemberId,
+      )
+    : prefetchFavorites.filter(
+        (favorite) => favorite.forWorkspaceMemberId !== null,
+      ); // Show all user favorites when Super Admin
 
   const workspaceFavorites = prefetchFavorites.filter(
     (favorite) => favorite.forWorkspaceMemberId === null,

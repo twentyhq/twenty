@@ -137,24 +137,54 @@ export class UserResolver {
       (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
-    if (!isDefined(currentUserWorkspace)) {
+    // Super Admin can access any workspace without being a member
+    if (!isDefined(currentUserWorkspace) && !user.canAccessFullAdminPanel) {
       throw new Error('Current user workspace not found');
     }
 
-    const userWorkspacePermissions =
-      fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
-        await this.getUserWorkspacePermissions({
-          currentUserWorkspace,
-          workspace,
-        }),
-      );
+    let userWorkspacePermissions;
+    let returnCurrentUserWorkspace: UserWorkspace | undefined;
+
+    if (isDefined(currentUserWorkspace)) {
+      // Normal user with UserWorkspace
+      userWorkspacePermissions =
+        fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
+          await this.getUserWorkspacePermissions({
+            currentUserWorkspace,
+            workspace,
+          }),
+        );
+      returnCurrentUserWorkspace = {
+        ...currentUserWorkspace,
+        ...userWorkspacePermissions,
+      } as UserWorkspace;
+    } else if (user.canAccessFullAdminPanel) {
+      // Super Admin without UserWorkspace - use default permissions
+      userWorkspacePermissions =
+        fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
+          await this.permissionsService.getDefaultUserWorkspacePermissions(),
+        );
+      const mockUserWorkspace: UserWorkspace = {
+        id: `super-admin-${user.id}-${workspace.id}`,
+        userId: user.id,
+        workspaceId: workspace.id,
+        user: user,
+        workspace: workspace,
+        defaultAvatarUrl: '',
+        locale: 'en',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        twoFactorMethods: [],
+        ...userWorkspacePermissions,
+      } as unknown as UserWorkspace;
+
+      returnCurrentUserWorkspace = mockUserWorkspace;
+    }
 
     return {
       ...user,
-      currentUserWorkspace: {
-        ...currentUserWorkspace,
-        ...userWorkspacePermissions,
-      },
+      currentUserWorkspace: returnCurrentUserWorkspace,
       currentWorkspace: workspace,
     };
   }

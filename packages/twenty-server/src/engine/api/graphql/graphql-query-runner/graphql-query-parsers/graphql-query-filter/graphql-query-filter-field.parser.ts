@@ -50,7 +50,25 @@ export class GraphqlQueryFilterFieldParser {
         isFirst,
       );
     }
-    const [[operator, value]] = Object.entries(filterValue);
+
+    // Handle undefined filterValue for Super Admin and other edge cases
+    if (!filterValue || typeof filterValue !== 'object') {
+      throw new GraphqlQueryRunnerException(
+        `Invalid filter value for field ${key}. Expected filter object but got: ${typeof filterValue}`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+
+    const entries = Object.entries(filterValue);
+
+    if (entries.length === 0) {
+      throw new GraphqlQueryRunnerException(
+        `Empty filter value for field ${key}. Expected at least one filter condition`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+
+    const [[operator, value]] = entries;
 
     if (
       ARRAY_OPERATORS.includes(operator) &&

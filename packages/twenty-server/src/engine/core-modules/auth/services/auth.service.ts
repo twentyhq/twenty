@@ -628,6 +628,10 @@ export class AuthService {
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
 
+    if (isAnExistingUser && userData.existingUser.canAccessFullAdminPanel) {
+      return;
+    }
+
     const email =
       userData.type === 'newUser'
         ? userData.newUserPayload.email

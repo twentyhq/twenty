@@ -21,7 +21,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
   defaultOptions: [],
   create: (context) => {
     const testHardcodedColor = (
-      literal: TSESTree.Literal | TSESTree.TemplateLiteral
+      literal: TSESTree.Literal | TSESTree.TemplateLiteral,
     ) => {
       const colorRegex = /(?:rgba?\()|(?:#[0-9a-fA-F]{3,6})\b/i;
 
@@ -42,11 +42,11 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         for (const quasi of literal.quasis) {
           const firstStringValue = quasi.value.raw;
 
-        if (colorRegex.test(firstStringValue)) {
-          context.report({
-            node: literal,
-            messageId: 'hardcodedColor',
-            data: {
+          if (colorRegex.test(firstStringValue)) {
+            context.report({
+              node: literal,
+              messageId: 'hardcodedColor',
+              data: {
                 color: firstStringValue,
               },
             });

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_console_messages"
+    ],
+    "deny": []
+  }
+}

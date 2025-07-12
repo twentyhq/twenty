@@ -25,13 +25,18 @@ export const SettingsAccounts = () => {
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
 
+  // Build filter conditionally - Super Admin users don't have workspaceMember
+  const filter = currentWorkspaceMember?.id
+    ? {
+        accountOwnerId: {
+          eq: currentWorkspaceMember.id,
+        },
+      }
+    : {}; // Empty filter for Super Admin - shows all accounts
+
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
-    },
+    filter,
     recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
   });
 

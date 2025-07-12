@@ -206,10 +206,7 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(
       user,
-      new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      ),
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
     // Super Admin can access any workspace without being a member
