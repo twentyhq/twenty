@@ -22,7 +22,6 @@ import {
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id.util';
-import { getEffectiveModelConfig } from 'src/engine/core-modules/ai/utils/get-effective-model-config.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -151,15 +150,10 @@ export class AgentExecutionService {
       agent.workspaceId,
     );
 
-    const effectiveModelConfig = getEffectiveModelConfig(agent.modelId);
-
     return {
       system,
       tools,
-      model: this.getModel(
-        effectiveModelConfig.modelId,
-        effectiveModelConfig.provider,
-      ),
+      model: this.getModel(aiModel.modelId, aiModel.provider),
       ...(messages && { messages }),
       ...(prompt && { prompt }),
       maxSteps: AGENT_CONFIG.MAX_STEPS,
