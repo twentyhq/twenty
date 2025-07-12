@@ -198,6 +198,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     input,
     handleInputChange,
     agentStreamingMessage,
+    scrollWrapperId,
   } = useAgentChat(agentId);
 
   const getAssistantMessageContent = (message: AgentChatMessage) => {
@@ -227,9 +228,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
   return (
     <StyledContainer>
       {messages.length !== 0 && (
-        <StyledScrollWrapper
-          componentInstanceId={`scroll-wrapper-ai-chat-${agentId}`}
-        >
+        <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
           {messages.map((msg) => (
             <StyledMessageBubble
               key={msg.id}

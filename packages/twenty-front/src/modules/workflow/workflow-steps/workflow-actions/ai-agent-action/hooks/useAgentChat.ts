@@ -52,7 +52,9 @@ export const useAgentChat = (agentId: string) => {
 
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
+  const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
+
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement(scrollWrapperId);
 
   const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({
@@ -204,5 +206,6 @@ export const useAgentChat = (agentId: string) => {
     handleSendMessage,
     isLoading,
     agentStreamingMessage,
+    scrollWrapperId,
   };
 };
