@@ -1,4 +1,5 @@
 import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesState';
+import { formatFileSize } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatFileSize';
 import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -65,16 +66,6 @@ const StyledRemoveIconContainer = styled.div`
   }
 `;
 
-const formatSize = (size: number) => {
-  if (size > 1024 * 1024) {
-    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  }
-  if (size > 1024) {
-    return `${(size / 1024).toFixed(1)} KB`;
-  }
-  return `${size} B`;
-};
-
 export const AgentChatFilePreview = ({
   file,
   onRemove,
@@ -99,7 +90,7 @@ export const AgentChatFilePreview = ({
       <StyledFileIconContainer>{renderIcon()}</StyledFileIconContainer>
       <StyledFileInfo>
         <StyledFileName title={file.name}>{file.name}</StyledFileName>
-        <StyledFileSize>{formatSize(file.size)}</StyledFileSize>
+        <StyledFileSize>{formatFileSize(file.size)}</StyledFileSize>
       </StyledFileInfo>
       {onRemove && (
         <StyledRemoveIconContainer>
