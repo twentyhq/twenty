@@ -120,7 +120,7 @@ export class AgentChatController {
       filename: file.originalname,
       mimeType: file.mimetype,
       fileFolder: FileFolder.Attachment,
-      workspaceId: workspaceId,
+      workspaceId,
     });
 
     if (!files.length) {
