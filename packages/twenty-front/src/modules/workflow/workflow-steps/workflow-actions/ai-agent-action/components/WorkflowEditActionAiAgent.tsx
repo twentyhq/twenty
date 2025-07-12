@@ -136,7 +136,7 @@ export const WorkflowEditActionAiAgent = ({
                     onChange={(value) => handleFieldChange('modelId', value)}
                     disabled={actionOptions.readonly || noModelsAvailable}
                     emptyOption={{
-                      label: t`No AI models available`,
+                      label: t`Auto`,
                       value: '',
                     }}
                   />

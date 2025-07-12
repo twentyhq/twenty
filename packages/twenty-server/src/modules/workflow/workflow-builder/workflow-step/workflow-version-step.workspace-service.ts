@@ -619,7 +619,7 @@ export class WorkflowVersionStepWorkspaceService {
         const newAgent = await this.agentService.createOneAgentAndFirstThread(
           {
             label: 'AI Agent Workflow Step',
-            name: 'ai-agent-workflow',
+            name: `ai-agent-workflow-${newStepId}`,
             description: 'Created automatically for workflow step',
             prompt: '',
             modelId: 'auto',
@@ -632,16 +632,6 @@ export class WorkflowVersionStepWorkspaceService {
           throw new WorkflowVersionStepException(
             'Failed to create AI Agent Step',
             WorkflowVersionStepExceptionCode.FAILURE,
-          );
-        }
-
-        const userWorkspaceId =
-          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
-
-        if (userWorkspaceId) {
-          await this.agentChatService.createThread(
-            newAgent.id,
-            userWorkspaceId,
           );
         }
 

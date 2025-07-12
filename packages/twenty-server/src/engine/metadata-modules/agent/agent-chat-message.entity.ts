@@ -5,10 +5,12 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 
 export enum AgentChatMessageRole {
@@ -36,6 +38,9 @@ export class AgentChatMessageEntity {
 
   @Column('text')
   content: string;
+
+  @OneToMany(() => FileEntity, (file) => file.message)
+  files: Relation<FileEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;

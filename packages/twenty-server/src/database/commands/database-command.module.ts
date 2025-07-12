@@ -5,6 +5,7 @@ import { ConfirmationQuestion } from 'src/database/commands/questions/confirmati
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -25,6 +26,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     AutomatedTriggerModule,
+    FileModule,
 
     // Data seeding dependencies
     TypeORMModule,

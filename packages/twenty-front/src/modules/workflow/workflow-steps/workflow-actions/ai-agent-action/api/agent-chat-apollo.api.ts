@@ -27,6 +27,7 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       role
       content
       createdAt
+      files
     }
   }
 `;
@@ -40,5 +41,45 @@ export const STREAM_CHAT_QUERY = gql`
         method: "POST"
         bodyKey: "requestBody"
       )
+  }
+`;
+
+export const UPLOAD_AGENT_CHAT_FILE = gql`
+  mutation UploadAgentChatFile($file: Upload!) {
+    uploadAgentChatFile(file: $file)
+      @rest(
+        type: "AgentChatFile"
+        path: "/agent-chat/files"
+        method: "POST"
+        bodyKey: "file"
+      ) {
+      id
+      name
+      fullPath
+      size
+      type
+      createdAt
+    }
+  }
+`;
+
+export const DELETE_AGENT_CHAT_FILE = gql`
+  mutation DeleteAgentChatFile($fileId: String!) {
+    deleteAgentChatFile(fileId: $fileId)
+      @rest(
+        type: "AgentChatFile"
+        path: "/agent-chat/files/{args.fileId}"
+        method: "DELETE"
+      ) {
+      success
+      deletedFile {
+        id
+        name
+        fullPath
+        size
+        type
+        createdAt
+      }
+    }
   }
 `;

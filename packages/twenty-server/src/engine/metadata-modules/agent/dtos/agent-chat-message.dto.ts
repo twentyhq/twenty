@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
+import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
+
 @ObjectType('AgentChatMessage')
 export class AgentChatMessageDTO {
   @Field(() => ID)
@@ -13,6 +15,9 @@ export class AgentChatMessageDTO {
 
   @Field()
   content: string;
+
+  @Field(() => [FileDTO], { nullable: true })
+  files?: FileDTO[];
 
   @Field()
   createdAt: Date;

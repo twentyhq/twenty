@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   AgentChatMessageEntity,
   AgentChatMessageRole,
@@ -20,6 +21,8 @@ export class AgentChatService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     @InjectRepository(AgentChatMessageEntity, 'core')
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
+    @InjectRepository(FileEntity, 'core')
+    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   async createThread(agentId: string, userWorkspaceId: string) {
@@ -45,10 +48,12 @@ export class AgentChatService {
     threadId,
     role,
     content,
+    fileIds,
   }: {
     threadId: string;
     role: AgentChatMessageRole;
     content: string;
+    fileIds?: string[];
   }) {
     const message = this.messageRepository.create({
       threadId,
@@ -56,7 +61,17 @@ export class AgentChatService {
       content,
     });
 
-    return this.messageRepository.save(message);
+    const savedMessage = await this.messageRepository.save(message);
+
+    if (fileIds && fileIds.length > 0) {
+      for (const fileId of fileIds) {
+        await this.fileRepository.update(fileId, {
+          messageId: savedMessage.id,
+        });
+      }
+    }
+
+    return savedMessage;
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -77,6 +92,7 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
+      relations: ['files'],
     });
   }
 }

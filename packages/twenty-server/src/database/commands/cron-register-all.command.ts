@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { CleanupOrphanedFilesCronCommand } from 'src/engine/core-modules/file/crons/commands/cleanup-orphaned-files.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
@@ -25,6 +26,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
   ) {
     super();
   }
@@ -58,6 +60,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.calendarOngoingStaleCronCommand,
       },
       { name: 'CronTrigger', command: this.cronTriggerCronCommand },
+      {
+        name: 'CleanupOrphanedFiles',
+        command: this.cleanupOrphanedFilesCronCommand,
+      },
     ];
 
     let successCount = 0;
