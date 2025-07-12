@@ -1,5 +1,5 @@
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
-import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
+import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/AgentChatFile';
 import { useQuery } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { GET_AGENT_CHAT_MESSAGES } from '../api/agent-chat-apollo.api';

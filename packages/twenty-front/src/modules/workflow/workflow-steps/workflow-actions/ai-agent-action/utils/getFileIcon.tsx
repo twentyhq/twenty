@@ -1,4 +1,4 @@
-import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
+import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/AgentChatFile';
 import {
   IconArchive,
   IconCode,
