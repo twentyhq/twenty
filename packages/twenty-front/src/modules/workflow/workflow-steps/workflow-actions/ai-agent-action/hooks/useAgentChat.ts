@@ -12,7 +12,6 @@ import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions
 import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
 import { useApolloClient } from '@apollo/client';
-import { useLingui } from '@lingui/react/macro';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
@@ -26,7 +25,6 @@ interface OptimisticMessage extends AgentChatMessage {
 }
 
 export const useAgentChat = (agentId: string) => {
-  const { t } = useLingui();
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
 
