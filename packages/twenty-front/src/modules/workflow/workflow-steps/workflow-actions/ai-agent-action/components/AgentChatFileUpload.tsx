@@ -1,8 +1,10 @@
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { UPLOAD_AGENT_CHAT_FILE } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { agentChatSelectedFilesState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesState';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import React, { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { IconPaperclip } from 'twenty-ui/display';
@@ -19,6 +21,8 @@ const StyledFileInput = styled.input`
 `;
 
 export const AgentChatFileUpload = () => {
+  const { t } = useLingui();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const apolloClient = useApolloClient();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
     agentChatSelectedFilesState,
@@ -30,16 +34,18 @@ export const AgentChatFileUpload = () => {
 
   const sendFile = async (file: File) => {
     try {
-      const { data: uploadedFile } = await apolloClient.mutate({
+      const response = await apolloClient.mutate({
         mutation: UPLOAD_AGENT_CHAT_FILE,
-        context: {
+        variables: {
           file,
         },
       });
 
-      return uploadedFile;
+      return response.data.uploadAgentChatFile;
     } catch (error) {
-      console.error('Error uploading file:', error);
+      enqueueErrorSnackBar({
+        message: t`Failed to upload file`,
+      });
     } finally {
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),

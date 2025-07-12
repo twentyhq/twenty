@@ -45,13 +45,13 @@ export const STREAM_CHAT_QUERY = gql`
 `;
 
 export const UPLOAD_AGENT_CHAT_FILE = gql`
-  mutation UploadAgentChatFile($fileData: JSON!) {
-    uploadAgentChatFile(fileData: $fileData)
+  mutation UploadAgentChatFile($file: Upload!) {
+    uploadAgentChatFile(file: $file)
       @rest(
         type: "AgentChatFile"
         path: "/agent-chat/files"
         method: "POST"
-        bodyKey: "fileData"
+        bodyKey: "file"
       ) {
       id
       name

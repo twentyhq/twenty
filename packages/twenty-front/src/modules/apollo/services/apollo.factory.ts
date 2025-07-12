@@ -22,6 +22,7 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { restFileUploadLink } from '@/apollo/utils/restFileUploadLink';
 import { i18n } from '@lingui/core';
 import {
   DefinitionNode,
@@ -34,7 +35,6 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
-import { fileUploadLink } from '../utils/fileUploadLink';
 import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
@@ -250,7 +250,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           isDebugMode ? logger : null,
           retryLink,
           streamingRestLink,
-          fileUploadLink,
+          restFileUploadLink,
           restLink,
           httpLink,
         ].filter(isDefined),
