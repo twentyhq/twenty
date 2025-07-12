@@ -17,6 +17,9 @@ export class FileDTO {
   @Field()
   type: string;
 
+  @Field(() => ID, { nullable: true })
+  messageId?: string;
+
   @Field()
   createdAt: Date;
 }

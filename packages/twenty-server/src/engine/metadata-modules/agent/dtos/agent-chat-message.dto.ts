@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 
 @ObjectType('AgentChatMessage')
