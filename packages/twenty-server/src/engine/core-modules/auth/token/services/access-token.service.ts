@@ -5,6 +5,7 @@ import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -28,6 +29,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class AccessTokenService {
@@ -42,7 +44,12 @@ export class AccessTokenService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly userRoleService: UserRoleService,
   ) {}
+
+  private isSuperAdmin(user: User): boolean {
+    return user.canAccessFullAdminPanel;
+  }
 
   async generateAccessToken({
     userId,
@@ -88,7 +95,7 @@ export class AccessTokenService {
 
       if (!workspaceMember) {
         // Super Admin can access any workspace without being a member
-        if (user.canAccessFullAdminPanel) {
+        if (this.isSuperAdmin(user)) {
           // For Super Admin, we don't set tokenWorkspaceMemberId since they're not a workspace member
           tokenWorkspaceMemberId = undefined;
         } else {
@@ -101,7 +108,7 @@ export class AccessTokenService {
         tokenWorkspaceMemberId = workspaceMember.id;
       }
     }
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
+    let userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId: user.id,
         workspaceId,
@@ -109,8 +116,33 @@ export class AccessTokenService {
     });
 
     // Super Admin can access any workspace without being a member
-    if (!userWorkspace && !user.canAccessFullAdminPanel) {
-      userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+    if (!userWorkspace) {
+      if (this.isSuperAdmin(user)) {
+        // Create UserWorkspace for Super Admin if it doesn't exist
+        // Wrap in transaction to ensure data consistency
+        await this.userWorkspaceRepository.manager.transaction(async (manager) => {
+          const newUserWorkspace = manager.create(UserWorkspace, {
+            userId: user.id,
+            workspaceId,
+          });
+
+          userWorkspace = await manager.save(UserWorkspace, newUserWorkspace);
+
+          // Assign default role if available and valid
+          if (isDefined(workspace.defaultRoleId)) {
+            await this.userRoleService.assignRoleToUserWorkspace({
+              workspaceId,
+              userWorkspaceId: userWorkspace.id,
+              roleId: workspace.defaultRoleId,
+            });
+          }
+        });
+      } else {
+        throw new AuthException(
+          'User is not a member of the workspace and lacks super admin privileges',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     const jwtPayload: AccessTokenJwtPayload = {
