@@ -1,9 +1,8 @@
+import { useFileUpload } from '@/file/hooks/useFileUpload';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { UPLOAD_AGENT_CHAT_FILE } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
-import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import React, { useRef } from 'react';
@@ -23,7 +22,7 @@ const StyledFileInput = styled.input`
 export const AgentChatFileUpload = ({ agentId }: { agentId: string }) => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const apolloClient = useApolloClient();
+  const { uploadFileAndCreateRecord } = useFileUpload();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
     useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
@@ -32,31 +31,46 @@ export const AgentChatFileUpload = ({ agentId }: { agentId: string }) => {
 
   const sendFile = async (file: File) => {
     try {
-      const response = await apolloClient.mutate({
-        mutation: UPLOAD_AGENT_CHAT_FILE,
-        variables: {
-          file,
-        },
-      });
-
-      return response.data.uploadAgentChatFile;
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message: t`Failed to upload file`,
-      });
-    } finally {
+      const uploadedFile = await uploadFileAndCreateRecord(file);
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
+      return uploadedFile;
+    } catch (error) {
+      const fileName = file.name;
+      enqueueErrorSnackBar({
+        message: t`Failed to upload file: ${fileName}`,
+      });
+      return null;
     }
   };
 
   const uploadFiles = async (files: File[]) => {
-    const uploadedFiles = await Promise.all(
+    const uploadResults = await Promise.allSettled(
       files.map((file) => sendFile(file)),
     );
 
-    setAgentChatUploadedFiles([...agentChatUploadedFiles, ...uploadedFiles]);
+    const successfulUploads = uploadResults
+      .map((result) =>
+        result.status === 'fulfilled' && result.value ? result.value : null,
+      )
+      .filter((file) => file !== null);
+
+    if (successfulUploads.length > 0) {
+      setAgentChatUploadedFiles([
+        ...agentChatUploadedFiles,
+        ...successfulUploads,
+      ]);
+    }
+
+    const failedCount = uploadResults.filter(
+      (result) => result.status === 'rejected',
+    ).length;
+    if (failedCount > 0) {
+      enqueueErrorSnackBar({
+        message: t`${failedCount} file(s) failed to upload`,
+      });
+    }
   };
 
   const handleFileInputChange = (
