@@ -1,10 +1,8 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { File as FileDocument } from '~/generated-metadata/graphql';
@@ -79,18 +77,14 @@ export const AgentChatFilePreview = ({
 }) => {
   const theme = useTheme();
 
-  const renderIcon = () => {
-    if (isDefined(isUploading) && isUploading) {
-      return <Loader color="yellow" />;
-    }
-
-    return getFileIcon(file, theme);
-  };
-
   return (
     <StyledFileChip key={file.name}>
       <StyledFileIconContainer>
-        <FileIcon fileType={getFileType(file.name)} size={24} />
+        {isUploading ? (
+          <Loader color="yellow" />
+        ) : (
+          <FileIcon fileType={getFileType(file.name)} size={24} />
+        )}
       </StyledFileIconContainer>
       <StyledFileInfo>
         <StyledFileName title={file.name}>{file.name}</StyledFileName>
