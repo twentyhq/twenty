@@ -1,6 +1,5 @@
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
-import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -26,11 +25,7 @@ export const ObjectFilterDropdownContentWrapper = ({
 
   return (
     <DropdownContent
-      widthInPixels={
-        isDateFilter
-          ? DATE_PICKER_DROPDOWN_CONTENT_WIDTH
-          : GenericDropdownContentWidth.ExtraLarge
-      }
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
     >
       {children}
     </DropdownContent>

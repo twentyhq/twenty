@@ -8,16 +8,13 @@ const StyledExternalContainer = styled.div<{
 
   align-items: flex-start;
   display: flex;
-
   flex-direction: column;
   max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
-
-  width: 100%;
-
+  width: inherit;
   height: fit-content;
-
   padding: var(--padding);
   box-sizing: border-box;
+
 `;
 
 const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`

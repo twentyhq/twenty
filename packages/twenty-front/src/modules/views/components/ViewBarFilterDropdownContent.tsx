@@ -27,13 +27,9 @@ export const ViewBarFilterDropdownContent = () => {
 
   const shouldShowFilterInput = objectFilterDropdownFilterIsSelected;
 
-  return (
-    <>
-      {shouldShowFilterInput ? (
-        <ViewBarFilterDropdownFilterInput />
-      ) : (
-        <ViewBarFilterDropdownFieldSelectMenu />
-      )}
-    </>
+  return shouldShowFilterInput ? (
+    <ViewBarFilterDropdownFilterInput />
+  ) : (
+    <ViewBarFilterDropdownFieldSelectMenu />
   );
 };
