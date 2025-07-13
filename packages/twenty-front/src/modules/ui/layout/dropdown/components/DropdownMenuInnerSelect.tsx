@@ -14,7 +14,6 @@ const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
-  
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ theme }) => theme.spacing(7)};
 

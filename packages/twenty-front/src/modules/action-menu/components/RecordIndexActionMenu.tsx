@@ -11,7 +11,7 @@ export const RecordIndexActionMenu = () => {
   );
 
   const isMobile = useIsMobile();
-  
+
   return (
     <>
       {contextStoreCurrentObjectMetadataItemId && (

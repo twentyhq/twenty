@@ -14,7 +14,6 @@ const StyledExternalContainer = styled.div<{
   height: fit-content;
   padding: var(--padding);
   box-sizing: border-box;
-
 `;
 
 const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`

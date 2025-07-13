@@ -28,7 +28,6 @@ export const StyledDropdownContentContainer = styled.div<{
   isDropdownInModal?: boolean;
 }>`
   display: flex;
-  
   z-index: ${({ isDropdownInModal }) =>
     isDropdownInModal
       ? RootStackingContextZIndices.DropdownPortalAboveModal
@@ -161,7 +160,7 @@ export const DropdownInternalContainer = ({
           data-click-outside-id={excludedClickOutsideId}
           isDropdownInModal={isDropdownInModal}
         >
-          <OverlayContainer >
+          <OverlayContainer>
             <StyledDropdownInsideContainer id={dropdownId} data-select-disable>
               {dropdownComponents}
             </StyledDropdownInsideContainer>
