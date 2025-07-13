@@ -63,6 +63,17 @@ const StyledPendingCreationLoader = styled(motion.div)`
   align-items: center;
 `;
 
+const StyledLogoWrapper = styled.div`
+  height: 200px;
+  width: 200px;
+
+  & > div {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+`;
+
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
@@ -153,13 +164,15 @@ export const CreateWorkspace = () => {
     <Modal.Content isVerticalCentered isHorizontalCentered>
       {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
         <>
-          <Logo
-            primaryLogo={
-              isNonEmptyString(currentWorkspace?.logo)
-                ? currentWorkspace?.logo
-                : undefined
-            }
-          />
+          <StyledLogoWrapper>
+            <Logo
+              primaryLogo={
+                isNonEmptyString(currentWorkspace?.logo)
+                  ? currentWorkspace?.logo
+                  : undefined
+              }
+            />
+          </StyledLogoWrapper>
           <Title>
             <Trans>Creating your workspace</Trans>
           </Title>
