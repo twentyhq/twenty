@@ -33,7 +33,7 @@ export class FileMetadataService {
   async deleteFileById(
     id: string,
     workspaceId: string,
-  ): Promise<FileEntity | null> {
+  ): Promise<FileDTO | null> {
     const file = await this.fileRepository.findOne({
       where: { id, workspaceId },
     });
@@ -55,7 +55,7 @@ export class FileMetadataService {
         });
       }
 
-      await this.fileRepository.remove(file);
+      await this.fileRepository.delete(file.id);
 
       return file;
     } catch (error) {

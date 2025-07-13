@@ -1085,7 +1085,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
-  deleteFile?: Maybe<File>;
+  deleteFile: File;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -3235,7 +3235,7 @@ export type DeleteFileMutationVariables = Exact<{
 }>;
 
 
-export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile?: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } | null };
+export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;

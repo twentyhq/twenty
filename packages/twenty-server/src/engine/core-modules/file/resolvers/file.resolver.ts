@@ -35,15 +35,19 @@ export class FileResolver {
     return fileRecord;
   }
 
-  @Mutation(() => FileDTO, { nullable: true })
+  @Mutation(() => FileDTO)
   async deleteFile(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('fileId') fileId: string,
-  ): Promise<FileDTO | null> {
+  ): Promise<FileDTO> {
     const deletedFile = await this.fileMetadataService.deleteFileById(
       fileId,
       workspaceId,
     );
+
+    if (!deletedFile) {
+      throw new Error(`File with id ${fileId} not found`);
+    }
 
     return deletedFile;
   }
