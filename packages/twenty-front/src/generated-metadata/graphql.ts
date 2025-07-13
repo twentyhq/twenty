@@ -3220,6 +3220,23 @@ export type GetOneDatabaseConnectionQueryVariables = Exact<{
 
 export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
+export type CreateFileMutationVariables = Exact<{
+  name: Scalars['String'];
+  fullPath: Scalars['String'];
+  size: Scalars['Float'];
+  type: Scalars['String'];
+}>;
+
+
+export type CreateFileMutation = { __typename?: 'Mutation', createFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
+export type DeleteFileMutationVariables = Exact<{
+  fileId: Scalars['String'];
+}>;
+
+
+export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile?: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } | null };
+
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
 }>;
@@ -5479,6 +5496,85 @@ export function useGetOneDatabaseConnectionLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetOneDatabaseConnectionQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionQuery>;
 export type GetOneDatabaseConnectionLazyQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionLazyQuery>;
 export type GetOneDatabaseConnectionQueryResult = Apollo.QueryResult<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
+export const CreateFileDocument = gql`
+    mutation CreateFile($name: String!, $fullPath: String!, $size: Float!, $type: String!) {
+  createFile(name: $name, fullPath: $fullPath, size: $size, type: $type) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type CreateFileMutationFn = Apollo.MutationFunction<CreateFileMutation, CreateFileMutationVariables>;
+
+/**
+ * __useCreateFileMutation__
+ *
+ * To run a mutation, you first call `useCreateFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFileMutation, { data, loading, error }] = useCreateFileMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      fullPath: // value for 'fullPath'
+ *      size: // value for 'size'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useCreateFileMutation(baseOptions?: Apollo.MutationHookOptions<CreateFileMutation, CreateFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFileMutation, CreateFileMutationVariables>(CreateFileDocument, options);
+      }
+export type CreateFileMutationHookResult = ReturnType<typeof useCreateFileMutation>;
+export type CreateFileMutationResult = Apollo.MutationResult<CreateFileMutation>;
+export type CreateFileMutationOptions = Apollo.BaseMutationOptions<CreateFileMutation, CreateFileMutationVariables>;
+export const DeleteFileDocument = gql`
+    mutation DeleteFile($fileId: String!) {
+  deleteFile(fileId: $fileId) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type DeleteFileMutationFn = Apollo.MutationFunction<DeleteFileMutation, DeleteFileMutationVariables>;
+
+/**
+ * __useDeleteFileMutation__
+ *
+ * To run a mutation, you first call `useDeleteFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFileMutation, { data, loading, error }] = useDeleteFileMutation({
+ *   variables: {
+ *      fileId: // value for 'fileId'
+ *   },
+ * });
+ */
+export function useDeleteFileMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFileMutation, DeleteFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(DeleteFileDocument, options);
+      }
+export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>;
+export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
+export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
 export const CreateOneObjectMetadataItemDocument = gql`
     mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
