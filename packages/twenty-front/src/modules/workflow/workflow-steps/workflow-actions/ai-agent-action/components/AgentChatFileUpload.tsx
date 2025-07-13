@@ -6,8 +6,10 @@ import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import React, { useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { File as FileDocument } from '~/generated-metadata/graphql';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;
@@ -50,11 +52,15 @@ export const AgentChatFileUpload = ({ agentId }: { agentId: string }) => {
       files.map((file) => sendFile(file)),
     );
 
-    const successfulUploads = uploadResults
-      .map((result) =>
-        result.status === 'fulfilled' && result.value ? result.value : null,
-      )
-      .filter((file) => file !== null);
+    const successfulUploads = uploadResults.reduce<FileDocument[]>(
+      (acc, result) => {
+        if (result.status === 'fulfilled' && isDefined(result.value)) {
+          acc.push(result.value);
+        }
+        return acc;
+      },
+      [],
+    );
 
     if (successfulUploads.length > 0) {
       setAgentChatUploadedFiles([
