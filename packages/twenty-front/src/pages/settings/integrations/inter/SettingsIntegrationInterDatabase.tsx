@@ -18,8 +18,6 @@ export const SettingsIntegrationInterDatabase = () => {
 
   const isIntegrationAvailable = !!integration;
 
-  console.log('OPAA', isIntegrationAvailable);
-
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
