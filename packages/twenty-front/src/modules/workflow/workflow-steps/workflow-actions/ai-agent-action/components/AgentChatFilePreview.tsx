@@ -1,4 +1,3 @@
-import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/AgentChatFile';
 import { formatFileSize } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatFileSize';
 import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
@@ -6,6 +5,7 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { File as FileDocument } from '~/generated/graphql';
 
 const StyledFileChip = styled.div`
   display: flex;
@@ -71,7 +71,7 @@ export const AgentChatFilePreview = ({
   onRemove,
   isUploading,
 }: {
-  file: File | AgentChatFile;
+  file: File | FileDocument;
   onRemove?: () => void;
   isUploading?: boolean;
 }) => {
