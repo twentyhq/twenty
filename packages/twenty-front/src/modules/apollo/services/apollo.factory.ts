@@ -22,7 +22,6 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { restFileUploadLink } from '@/apollo/utils/restFileUploadLink';
 import { i18n } from '@lingui/core';
 import {
   DefinitionNode,
@@ -75,7 +74,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     this.currentWorkspace = currentWorkspace;
 
     const buildApolloLink = (): ApolloLink => {
-      const httpLink = createUploadLink({
+      const uploadLink = createUploadLink({
         uri,
       });
 
@@ -250,9 +249,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           isDebugMode ? logger : null,
           retryLink,
           streamingRestLink,
-          restFileUploadLink,
           restLink,
-          httpLink,
+          uploadLink,
         ].filter(isDefined),
       );
     };
