@@ -42,28 +42,48 @@ export class CleanupOrphanedFilesCronJob {
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
+      select: ['id'],
     });
 
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    if (activeWorkspaces.length === 0) {
+      return;
+    }
 
-        const orphanedFiles = await this.fileRepository
-          .createQueryBuilder('file')
-          .select(['file.id'])
-          .where('file.workspaceId = :workspaceId', {
-            workspaceId: activeWorkspace.id,
-          })
-          .andWhere('file.messageId IS NULL')
-          .andWhere('file.createdAt < :oneHourAgo', { oneHourAgo })
-          .getMany();
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-        if (orphanedFiles.length === 0) {
-          continue;
+    const orphanedFiles = await this.fileRepository
+      .createQueryBuilder('file')
+      .select(['file.id', 'file.workspaceId'])
+      .where('file.workspaceId IN (:...workspaceIds)', {
+        workspaceIds: activeWorkspaceIds,
+      })
+      .andWhere('file.messageId IS NULL')
+      .andWhere('file.createdAt < :oneHourAgo', { oneHourAgo })
+      .getMany();
+
+    if (orphanedFiles.length === 0) {
+      return;
+    }
+
+    const filesByWorkspace = orphanedFiles.reduce(
+      (acc, file) => {
+        if (!acc[file.workspaceId]) {
+          acc[file.workspaceId] = [];
         }
+        acc[file.workspaceId].push(file);
 
+        return acc;
+      },
+      {} as Record<string, typeof orphanedFiles>,
+    );
+
+    for (const [workspaceId, files] of Object.entries(filesByWorkspace)) {
+      try {
         const batchSize = 100;
-        const fileBatches = chunk(orphanedFiles, batchSize);
+        const fileBatches = chunk(files, batchSize);
 
         for (const batch of fileBatches) {
           const fileIds = batch.map((file) => file.id);
@@ -71,7 +91,7 @@ export class CleanupOrphanedFilesCronJob {
           await this.messageQueueService.add<CleanupOrphanedFilesJobData>(
             CleanupOrphanedFilesJob.name,
             {
-              workspaceId: activeWorkspace.id,
+              workspaceId,
               fileIds,
             },
             { retryLimit: 3 },
@@ -80,7 +100,7 @@ export class CleanupOrphanedFilesCronJob {
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
-            id: activeWorkspace.id,
+            id: workspaceId,
           },
         });
       }
