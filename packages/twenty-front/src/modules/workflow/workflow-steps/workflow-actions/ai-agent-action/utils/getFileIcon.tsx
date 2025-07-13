@@ -10,7 +10,7 @@ import {
   IconPresentation,
   IconVideo,
 } from 'twenty-ui/display';
-import { File as FileDocument } from '~/generated/graphql';
+import { File as FileDocument } from '~/generated-metadata/graphql';
 
 export const getFileIcon = (file: FileDocument | File, theme: any) => {
   const { type, name } = file;

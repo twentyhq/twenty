@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
-import { File as FileDocument } from '~/generated/graphql';
+import { File as FileDocument } from '~/generated-metadata/graphql';
 
 const StyledFileChip = styled.div`
   display: flex;
