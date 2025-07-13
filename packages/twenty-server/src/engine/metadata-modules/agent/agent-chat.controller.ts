@@ -1,29 +1,18 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
   Res,
-  UploadedFile,
   UseFilters,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Response } from 'express';
-import { buildSignedPath } from 'twenty-shared/utils';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -37,8 +26,6 @@ export class AgentChatController {
   constructor(
     private readonly agentChatService: AgentChatService,
     private readonly agentStreamingService: AgentStreamingService,
-    private readonly fileMetadataService: FileMetadataService,
-    private readonly fileUploadService: FileUploadService,
   ) {}
 
   @Get('threads/:agentId')
@@ -104,59 +91,5 @@ export class AgentChatController {
 
       res.end();
     }
-  }
-
-  @Post('files')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(
-    @UploadedFile()
-    file: { buffer: Buffer; originalname: string; mimetype: string },
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    const buffer = file.buffer;
-
-    const { files } = await this.fileUploadService.uploadFile({
-      file: buffer,
-      filename: file.originalname,
-      mimeType: file.mimetype,
-      fileFolder: FileFolder.Attachment,
-      workspaceId,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload file');
-    }
-
-    const signedPath = buildSignedPath({
-      path: files[0].path,
-      token: files[0].token,
-    });
-
-    const fileRecord = await this.fileMetadataService.createFile({
-      name: file.originalname,
-      fullPath: `${process.env.SERVER_URL}/files/${signedPath}`,
-      size: buffer.length,
-      type: file.mimetype,
-      workspaceId: workspaceId,
-    });
-
-    return fileRecord;
-  }
-
-  @Delete('files/:fileId')
-  async deleteFile(
-    @Param('fileId') fileId: string,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    const deletedFile = await this.fileMetadataService.deleteFileById(
-      fileId,
-      workspaceId,
-    );
-
-    if (!deletedFile) {
-      throw new Error('File not found');
-    }
-
-    return { success: true, deletedFile };
   }
 }

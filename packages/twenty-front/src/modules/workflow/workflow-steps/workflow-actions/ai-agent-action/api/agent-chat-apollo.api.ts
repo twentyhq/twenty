@@ -62,24 +62,3 @@ export const UPLOAD_AGENT_CHAT_FILE = gql`
     }
   }
 `;
-
-export const DELETE_AGENT_CHAT_FILE = gql`
-  mutation DeleteAgentChatFile($fileId: String!) {
-    deleteAgentChatFile(fileId: $fileId)
-      @rest(
-        type: "AgentChatFile"
-        path: "/agent-chat/files/{args.fileId}"
-        method: "DELETE"
-      ) {
-      success
-      deletedFile {
-        id
-        name
-        fullPath
-        size
-        type
-        createdAt
-      }
-    }
-  }
-`;
