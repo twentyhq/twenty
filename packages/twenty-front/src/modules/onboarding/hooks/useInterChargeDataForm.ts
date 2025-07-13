@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -45,7 +46,7 @@ export const useInterChargeDataForm = () => {
 
   const { reset, setValue, watch } = form;
 
-  const { legalEntity } = watch();
+  const { legalEntity, cep } = watch();
 
   useEffect(() => {
     setValue('cpfCnpj', '');
@@ -58,6 +59,34 @@ export const useInterChargeDataForm = () => {
       reset();
     }
   }, [billingCheckoutSession.paymentProvider, legalEntity, reset]);
+
+  useEffect(() => {
+    const fetchAddressFromCep = async (cep: string) => {
+      const cleanedCep = cep.replace(/\D/g, '');
+
+      if (cleanedCep.length !== 8) return;
+
+      // TODO: Transfer api url to .env
+      try {
+        const response = await fetch(
+          `https://viacep.com.br/ws/${cleanedCep}/json/`,
+        );
+        const data = await response.json();
+
+        if (data.erro) return;
+
+        setValue('address', data.logradouro || '');
+        setValue('city', data.localidade || '');
+        setValue('stateUnity', data.uf || '');
+      } catch (error) {
+        console.error('Postcode not found: ', error);
+      }
+    };
+
+    if (cep) {
+      fetchAddressFromCep(cep);
+    }
+  }, [cep, setValue]);
 
   return { form };
 };
