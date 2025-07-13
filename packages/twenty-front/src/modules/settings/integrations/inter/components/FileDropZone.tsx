@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   position: relative;
   width: 100%;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 const StyledOverlay = styled.div`
@@ -48,7 +49,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledDropzoneContent = styled.div`
-  width: 100%;
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledUploadDragSubTitle = styled.div`
