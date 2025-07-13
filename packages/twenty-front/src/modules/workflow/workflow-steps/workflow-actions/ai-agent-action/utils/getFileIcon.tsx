@@ -1,4 +1,3 @@
-import { AgentChatFile } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/AgentChatFile';
 import {
   IconArchive,
   IconCode,
@@ -11,8 +10,9 @@ import {
   IconPresentation,
   IconVideo,
 } from 'twenty-ui/display';
+import { File as FileDocument } from '~/generated/graphql';
 
-export const getFileIcon = (file: File | AgentChatFile, theme: any) => {
+export const getFileIcon = (file: FileDocument | File, theme: any) => {
   const { type, name } = file;
   const fileName = name.toLowerCase();
 
