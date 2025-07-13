@@ -75,7 +75,7 @@ export const useAgentChat = (agentId: string) => {
     messagesLoading ||
     threadsLoading ||
     isStreaming ||
-    agentChatSelectedFiles.length > 1;
+    agentChatSelectedFiles.length > 0;
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
