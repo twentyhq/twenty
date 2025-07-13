@@ -12,7 +12,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export const CLEANUP_ORPHANED_FILES_CRON_PATTERN = '* * * * *';
+export const CLEANUP_ORPHANED_FILES_CRON_PATTERN = '0 2 * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanupOrphanedFilesCronJob {
