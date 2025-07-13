@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { extractRelativePath } from 'src/engine/core-modules/file/utils/extract-relative-path.utils';
 
 import { FileService } from './file.service';
 
@@ -42,7 +43,7 @@ export class FileMetadataService {
     }
 
     try {
-      const relativePath = this.fileService.extractRelativePath(file.fullPath);
+      const relativePath = extractRelativePath(file.fullPath);
       const folderPath = relativePath.split('/').slice(0, -1).join('/');
       const filename = relativePath.split('/').pop();
 

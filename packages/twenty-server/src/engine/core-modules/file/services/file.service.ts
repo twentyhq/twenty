@@ -123,28 +123,4 @@ export class FileService {
 
     return [toWorkspaceFolderPath, subFolder, toFilename];
   }
-
-  extractRelativePath(fullPath: string): string {
-    const urlWithTokenMatch = fullPath.match(
-      /\/files\/attachment\/[^/]+\/([^/]+)$/,
-    );
-
-    if (urlWithTokenMatch) {
-      return `attachment/${urlWithTokenMatch[1]}`;
-    }
-
-    const urlMatch = fullPath.match(/\/files\/(.+)$/);
-
-    if (urlMatch) {
-      return urlMatch[1];
-    }
-
-    const absMatch = fullPath.match(/attachment\/.+/);
-
-    if (absMatch) {
-      return absMatch[0];
-    }
-
-    return fullPath;
-  }
 }
