@@ -1,3 +1,5 @@
+import { getFileType } from '@/activities/files/utils/getFileType';
+import { FileIcon } from '@/file/components/FileIcon';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
@@ -87,7 +89,9 @@ export const AgentChatFilePreview = ({
 
   return (
     <StyledFileChip key={file.name}>
-      <StyledFileIconContainer>{renderIcon()}</StyledFileIconContainer>
+      <StyledFileIconContainer>
+        <FileIcon fileType={getFileType(file.name)} size={24} />
+      </StyledFileIconContainer>
       <StyledFileInfo>
         <StyledFileName title={file.name}>{file.name}</StyledFileName>
         <StyledFileSize>{formatFileSize(file.size)}</StyledFileSize>

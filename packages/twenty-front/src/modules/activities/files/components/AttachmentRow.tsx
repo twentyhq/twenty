@@ -1,6 +1,5 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
-import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -17,6 +16,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { FileIcon } from '@/file/components/FileIcon';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -162,7 +162,7 @@ export const AttachmentRow = ({
     >
       <ActivityRow disabled>
         <StyledLeftContent>
-          <AttachmentIcon attachmentType={attachment.type} />
+          <FileIcon fileType={attachment.type} />
           {isEditing ? (
             <TextInput
               instanceId={`attachment-${attachment.id}-name`}

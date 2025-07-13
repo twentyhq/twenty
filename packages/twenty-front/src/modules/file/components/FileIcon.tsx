@@ -1,7 +1,7 @@
+import { AttachmentType } from '@/activities/files/types/Attachment';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { AttachmentType } from '@/activities/files/types/Attachment';
 import {
   IconComponent,
   IconFile,
@@ -14,16 +14,16 @@ import {
   IconVideo,
 } from 'twenty-ui/display';
 
-const StyledIconContainer = styled.div<{ background: string }>`
+const StyledIconContainer = styled.div<{ background: string; size: number }>`
   align-items: center;
   background: ${({ background }) => background};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.grayScale.gray0};
   display: flex;
   flex-shrink: 0;
-  height: 20px;
+  height: ${({ size }) => size}px;
   justify-content: center;
-  width: 20px;
+  width: ${({ size }) => size}px;
 `;
 
 const IconMapping: { [key in AttachmentType]: IconComponent } = {
@@ -37,10 +37,12 @@ const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-export const AttachmentIcon = ({
-  attachmentType,
+export const FileIcon = ({
+  fileType,
+  size = 20,
 }: {
-  attachmentType: AttachmentType;
+  fileType: AttachmentType;
+  size?: number;
 }) => {
   const theme = useTheme();
 
@@ -55,10 +57,10 @@ export const AttachmentIcon = ({
     Other: theme.color.gray,
   };
 
-  const Icon = IconMapping[attachmentType];
+  const Icon = IconMapping[fileType];
 
   return (
-    <StyledIconContainer background={IconColors[attachmentType]}>
+    <StyledIconContainer background={IconColors[fileType]} size={size}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );
