@@ -1,24 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import chunk from 'lodash.chunk';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import {
-  CleanupOrphanedFilesJob,
-  CleanupOrphanedFilesJobData,
-} from 'src/engine/core-modules/file/jobs/cleanup-orphaned-files.job';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export const CLEANUP_ORPHANED_FILES_CRON_PATTERN = '0 2 * * *';
+export const CLEANUP_ORPHANED_FILES_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanupOrphanedFilesCronJob {
@@ -27,8 +21,7 @@ export class CleanupOrphanedFilesCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
-    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly fileMetadataService: FileMetadataService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -56,7 +49,7 @@ export class CleanupOrphanedFilesCronJob {
 
     const orphanedFiles = await this.fileRepository
       .createQueryBuilder('file')
-      .select(['file.id', 'file.workspaceId'])
+      .select(['file.id', 'file.workspaceId', 'file.fullPath'])
       .where('file.workspaceId IN (:...workspaceIds)', {
         workspaceIds: activeWorkspaceIds,
       })
@@ -68,42 +61,14 @@ export class CleanupOrphanedFilesCronJob {
       return;
     }
 
-    const filesByWorkspace = orphanedFiles.reduce(
-      (acc, file) => {
-        if (!acc[file.workspaceId]) {
-          acc[file.workspaceId] = [];
-        }
-        acc[file.workspaceId].push(file);
-
-        return acc;
-      },
-      {} as Record<string, typeof orphanedFiles>,
-    );
-
-    for (const [workspaceId, files] of Object.entries(filesByWorkspace)) {
-      try {
-        const batchSize = 100;
-        const fileBatches = chunk(files, batchSize);
-
-        for (const batch of fileBatches) {
-          const fileIds = batch.map((file) => file.id);
-
-          await this.messageQueueService.add<CleanupOrphanedFilesJobData>(
-            CleanupOrphanedFilesJob.name,
-            {
-              workspaceId,
-              fileIds,
-            },
-            { retryLimit: 3 },
+    for (const file of orphanedFiles) {
+      await this.fileMetadataService
+        .deleteFileById(file.id, file.workspaceId)
+        .catch((error) => {
+          throw new Error(
+            `[${CleanupOrphanedFilesCronJob.name}] Cannot delete orphaned file - ${file.fullPath}: ${error.message}`,
           );
-        }
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
-            id: workspaceId,
-          },
         });
-      }
     }
   }
 }

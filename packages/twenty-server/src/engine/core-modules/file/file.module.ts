@@ -13,7 +13,6 @@ import { FileController } from './controllers/file.controller';
 import { CleanupOrphanedFilesCronCommand } from './crons/commands/cleanup-orphaned-files.cron.command';
 import { CleanupOrphanedFilesCronJob } from './crons/jobs/cleanup-orphaned-files.cron.job';
 import { FileEntity } from './entities/file.entity';
-import { CleanupOrphanedFilesJob } from './jobs/cleanup-orphaned-files.job';
 import { FileResolver } from './resolvers/file.resolver';
 import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
@@ -32,7 +31,6 @@ import { FileService } from './services/file.service';
     FileWorkspaceMemberListener,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
-    CleanupOrphanedFilesJob,
     CleanupOrphanedFilesCronJob,
     CleanupOrphanedFilesCronCommand,
   ],
