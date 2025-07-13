@@ -1,4 +1,4 @@
-import { formatFileSize } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/formatFileSize';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { getFileIcon } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getFileIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
