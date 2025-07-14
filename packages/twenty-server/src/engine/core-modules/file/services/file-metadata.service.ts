@@ -9,6 +9,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 
 import { FileService } from './file.service';
 
@@ -70,8 +71,9 @@ export class FileMetadataService {
       return null;
     }
 
-    const folderPath = file.fullPath.split('/').slice(0, -1).join('/');
-    const filename = file.fullPath.split('/').pop() || '';
+    const { folderPath, filename } = extractFolderPathAndFilename(
+      file.fullPath,
+    );
 
     try {
       if (file.fullPath) {
