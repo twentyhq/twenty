@@ -111,20 +111,24 @@ export class AgentStreamingService {
         }
       }
 
-      if (aiResponse) {
-        await this.agentChatService.addMessage({
-          threadId,
-          role: AgentChatMessageRole.USER,
-          content: userMessage,
-          fileIds,
-        });
+      if (!aiResponse) {
+        res.end();
 
-        await this.agentChatService.addMessage({
-          threadId,
-          role: AgentChatMessageRole.ASSISTANT,
-          content: aiResponse,
-        });
+        return;
       }
+
+      await this.agentChatService.addMessage({
+        threadId,
+        role: AgentChatMessageRole.USER,
+        content: userMessage,
+        fileIds,
+      });
+
+      await this.agentChatService.addMessage({
+        threadId,
+        role: AgentChatMessageRole.ASSISTANT,
+        content: aiResponse,
+      });
 
       res.end();
     } catch (error) {
