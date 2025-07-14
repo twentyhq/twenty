@@ -14,7 +14,7 @@ import { Controller } from 'react-hook-form';
 import {
   OTPFormValues,
   useTwoFactorAuthenticationForm,
-} from '../../hooks/useTwoFactorAuthenticationForm';
+} from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -110,7 +110,7 @@ const StyledCaretContainer = styled.div`
 
 const StyledCaret = styled.div`
   width: 1px;
-  height: 2rem; /* h-8 */
+  height: 2rem;
   background-color: white;
 `;
 
