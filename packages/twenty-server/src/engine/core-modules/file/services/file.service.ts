@@ -12,7 +12,7 @@ import {
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -45,7 +45,7 @@ export class FileService {
     return buildSignedPath({
       path: url,
       token: this.encodeFileToken({
-        filename: extractFilenameFromPath(url),
+        filename: extractFolderPathAndFilename(url).filename,
         workspaceId,
       }),
     });
