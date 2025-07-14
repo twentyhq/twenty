@@ -82,7 +82,7 @@ export const AgentChatFilePreview = ({
         {isUploading ? (
           <Loader color="yellow" />
         ) : (
-          <FileIcon fileType={getFileType(file.name)} size={24} />
+          <FileIcon fileType={getFileType(file.name)} />
         )}
       </StyledFileIconContainer>
       <StyledFileInfo>

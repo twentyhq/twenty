@@ -14,16 +14,15 @@ import {
   IconVideo,
 } from 'twenty-ui/display';
 
-const StyledIconContainer = styled.div<{ background: string; size: number }>`
+const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;
   background: ${({ background }) => background};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.grayScale.gray0};
   display: flex;
   flex-shrink: 0;
-  height: ${({ size }) => size}px;
   justify-content: center;
-  width: ${({ size }) => size}px;
+  padding: ${({ theme }) => theme.spacing(1.25)};
 `;
 
 const IconMapping: { [key in AttachmentType]: IconComponent } = {
@@ -37,13 +36,7 @@ const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-export const FileIcon = ({
-  fileType,
-  size = 20,
-}: {
-  fileType: AttachmentType;
-  size?: number;
-}) => {
+export const FileIcon = ({ fileType }: { fileType: AttachmentType }) => {
   const theme = useTheme();
 
   const IconColors: { [key in AttachmentType]: string } = {
@@ -60,7 +53,7 @@ export const FileIcon = ({
   const Icon = IconMapping[fileType];
 
   return (
-    <StyledIconContainer background={IconColors[fileType]} size={size}>
+    <StyledIconContainer background={IconColors[fileType]}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );
