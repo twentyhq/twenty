@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { IsNull, LessThan, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -42,20 +42,15 @@ export class CleanupOrphanedFilesCronJob {
       return;
     }
 
-    const activeWorkspaceIds = activeWorkspaces.map(
-      (workspace) => workspace.id,
-    );
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-    const orphanedFiles = await this.fileRepository
-      .createQueryBuilder('file')
-      .select(['file.id', 'file.workspaceId', 'file.fullPath'])
-      .where('file.workspaceId IN (:...workspaceIds)', {
-        workspaceIds: activeWorkspaceIds,
-      })
-      .andWhere('file.messageId IS NULL')
-      .andWhere('file.createdAt < :oneHourAgo', { oneHourAgo })
-      .getMany();
+    const orphanedFiles = await this.fileRepository.find({
+      select: ['id', 'workspaceId', 'fullPath'],
+      where: {
+        messageId: IsNull(),
+        createdAt: LessThan(oneHourAgo),
+      },
+    });
 
     if (orphanedFiles.length === 0) {
       return;
