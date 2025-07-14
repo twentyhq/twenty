@@ -8,7 +8,6 @@ import {
   DAVCalendar,
   DAVNamespaceShort,
   DAVObject,
-  fetchCalendarObjects,
   fetchCalendars,
   getBasicAuthHeaders,
   syncCollection,
@@ -41,10 +40,6 @@ type FetchEventsOptions = {
   startDate: Date;
   endDate: Date;
   syncCursor?: CalDAVSyncCursor;
-};
-
-export type CalDAVSyncState = {
-  syncToken?: string;
 };
 
 type CalDAVSyncResult = {
@@ -147,82 +142,6 @@ export class CalDAVClient {
 
       throw error;
     }
-  }
-
-  private async fetchCalendarObjects(
-    calendars: SimpleCalendar[],
-    startDate: Date,
-    endDate: Date,
-  ): Promise<DAVObject[]> {
-    const filteredCalendars = calendars.filter((calendar) => calendar.url);
-
-    const fetchPromises = filteredCalendars.map(async (calendar) => {
-      const response = await fetchCalendarObjects({
-        urlFilter: (url) => this.isValidFormat(url),
-        calendar: {
-          url: calendar.url,
-        },
-        headers: this.headers,
-        expand: true,
-        timeRange: {
-          start: startDate.toISOString(),
-          end: endDate.toISOString(),
-        },
-      });
-
-      const processedResponse = await Promise.all(
-        response.map(async (calendarObject) => {
-          const hasEtag = calendarObject.etag !== undefined;
-          const dataUndefined = calendarObject.data === undefined;
-
-          if (dataUndefined && hasEtag) {
-            try {
-              const responseWithoutExpand = await fetchCalendarObjects({
-                urlFilter: (url) => this.isValidFormat(url),
-                calendar: {
-                  url: calendar.url,
-                },
-                headers: this.headers,
-                expand: false,
-                timeRange: {
-                  start: startDate.toISOString(),
-                  end: endDate.toISOString(),
-                },
-              });
-
-              const foundObject = responseWithoutExpand.find(
-                (obj) =>
-                  obj.url === calendarObject.url &&
-                  obj.etag === calendarObject.etag,
-              );
-
-              if (foundObject && foundObject.data === undefined) {
-                return null;
-              }
-
-              return foundObject;
-            } catch (error) {
-              return null;
-            }
-          }
-
-          return calendarObject;
-        }),
-      );
-
-      return processedResponse;
-    });
-
-    const resolvedPromises = await Promise.allSettled(fetchPromises);
-    const fulfilledPromises = resolvedPromises.filter(
-      (promise): promise is PromiseFulfilledResult<(DAVObject | null)[]> =>
-        promise.status === 'fulfilled',
-    );
-
-    return fulfilledPromises
-      .map((promise) => promise.value)
-      .flat()
-      .filter((obj) => obj !== null) as DAVObject[];
   }
 
   /**
@@ -407,12 +326,10 @@ export class CalDAVClient {
         const allEvents: FetchedCalendarEvent[] = [];
 
         const eventHrefs = syncResult
-          .filter((response) => {
-            if (response.status !== 207) return false;
-            if (!response.href || response.href.endsWith('/')) return false;
-
-            return response.props?.getetag !== undefined;
-          })
+          .filter(
+            (response) =>
+              response.href !== undefined && this.isValidFormat(response.href),
+          )
           .map((response) => response.href);
 
         if (eventHrefs.length > 0) {
