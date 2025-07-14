@@ -91,7 +91,7 @@ export class UserWorkspace {
     () => TwoFactorAuthenticationMethod,
     (twoFactorAuthenticationMethod) =>
       twoFactorAuthenticationMethod.userWorkspace,
-    { nullable: true }
+    { nullable: true },
   )
   twoFactorAuthenticationMethod: Relation<TwoFactorAuthenticationMethod>;
 
