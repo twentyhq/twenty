@@ -789,9 +789,9 @@ export type File = {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
-  Root = 'Root',
   ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
