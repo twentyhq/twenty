@@ -82,6 +82,10 @@ describe('Field metadata relation update should succeed', () => {
           isActive: false,
         },
       },
+      gqlFields: `
+        id
+        isActive
+      `,
     });
 
     expect(errors).toBeUndefined();
