@@ -2,7 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -14,8 +14,8 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
-import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 import { SupportDriver } from '~/generated/graphql';
+import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const redirectSpy = jest.fn();
 
@@ -35,9 +35,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>
       <MemoryRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+        <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="test-scope-id">
           {children}
-        </SnackBarProviderScope>
+        </SnackBarComponentInstanceContextProvider>
       </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>

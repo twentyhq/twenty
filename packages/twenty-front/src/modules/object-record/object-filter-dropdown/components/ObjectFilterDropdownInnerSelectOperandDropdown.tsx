@@ -1,4 +1,6 @@
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
+import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -7,6 +9,7 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { SelectOption } from 'twenty-ui/input';
@@ -54,9 +57,22 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     );
   };
 
-  if (!isDefined(selectedOperandInDropdown)) {
+  if (
+    !isDefined(selectedOperandInDropdown) ||
+    !isDefined(fieldMetadataItemUsedInDropdown)
+  ) {
     return null;
   }
+
+  const filterType = getFilterTypeFromFieldType(
+    fieldMetadataItemUsedInDropdown.type,
+  );
+
+  const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
+
+  const widthInPixels = isDateFilter
+    ? DATE_PICKER_DROPDOWN_CONTENT_WIDTH
+    : GenericDropdownContentWidth.ExtraLarge;
 
   return (
     <DropdownMenuInnerSelect
@@ -64,6 +80,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
       selectedOption={selectedOption}
       onChange={handleOperandChange}
       options={options}
+      widthInPixels={widthInPixels}
     />
   );
 };
