@@ -16,16 +16,11 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -40,6 +35,7 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -305,4 +301,35 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    type: FieldMetadataType.SELECT,
+    label: msg`Lead Status`,
+    description: msg`The status of the lead`,
+    icon: 'IconProgressCheck',
+    options: [
+      { value: 'NEW', label: 'New', position: 0, color: 'blue' },
+      { value: 'ASSIGNED', label: 'Assigned', position: 1, color: 'purple' },
+      { value: 'CONTACTED', label: 'Contacted', position: 2, color: 'sky' },
+      { value: 'SHOWING', label: 'Showing', position: 3, color: 'turquoise' },
+      { value: 'OFFER_MADE', label: 'Offer Made', position: 4, color: 'yellow' },
+      { value: 'CLOSED', label: 'Closed', position: 5, color: 'green' },
+    ],
+    defaultValue: "'NEW'",
+  })
+  leadStatus: string;
+
+  @WorkspaceRelation({
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Agent`,
+    description: msg`The agent assigned to this person`,
+    icon: 'IconUser',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  agent: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('agent')
+  agentId: string | null;
 }
