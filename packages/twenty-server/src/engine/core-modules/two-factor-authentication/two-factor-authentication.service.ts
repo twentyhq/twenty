@@ -13,12 +13,14 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
 
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
+import { OTPStatus } from './two-factor-authentication.interface';
 
 import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
 
@@ -32,11 +34,12 @@ export class TwoFactorAuthenticationService {
     private readonly userWorkspaceService: UserWorkspaceService,
     @Inject(TWO_FACTOR_AUTHENTICATION_STRATEGY)
     private twoFactorAuthenticationStrategy: ITwoFactorAuthStrategy,
+    private readonly keyWrappingService: KeyWrappingService,
   ) {}
 
   async is2FARequired(
     targetWorkspace: Workspace,
-    userTwoFactorAuthenticationProvider: TwoFactorAuthenticationMethod,
+    userTwoFactorAuthenticationProvider?: TwoFactorAuthenticationMethod,
   ) {
     const isTwoFactorAuthenticationEnabled = this.twentyConfigService.get(
       'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
@@ -93,10 +96,18 @@ export class TwoFactorAuthenticationService {
       0,
     );
 
+    const { wrappedKey } = await this.keyWrappingService.wrapKey(
+      Buffer.from(context.secret),
+      userId + workspaceId + 'otp-secret',
+    );
+
     await this.twoFactorAuthenticationMethodRepository.save({
       id: existing2FAMethod?.id,
       userWorkspace: userWorkspace,
-      context,
+      context: {
+        ...context,
+        secret: wrappedKey,
+      },
       strategy: this.twoFactorAuthenticationStrategy.name,
     });
 
@@ -125,8 +136,8 @@ export class TwoFactorAuthenticationService {
       });
 
     if (
-      !userTwoFactorAuthenticationMethod?.userWorkspace.user ||
-      !userTwoFactorAuthenticationMethod.context
+      !isDefined(userTwoFactorAuthenticationMethod?.userWorkspace.user) ||
+      !isDefined(userTwoFactorAuthenticationMethod.context)
     ) {
       throw new TwoFactorAuthenticationException(
         'Malformed Database Object',
@@ -134,9 +145,19 @@ export class TwoFactorAuthenticationService {
       );
     }
 
+    const { unwrappedKey } = await this.keyWrappingService.unwrapKey(
+      Buffer.from(userTwoFactorAuthenticationMethod.context.secret, 'hex'),
+      userId + workspaceId + 'otp-secret',
+    );
+
+    const otpContext = {
+      ...userTwoFactorAuthenticationMethod?.context,
+      secret: unwrappedKey,
+    };
+
     const isValid = this.twoFactorAuthenticationStrategy.validate(
       token,
-      userTwoFactorAuthenticationMethod?.context,
+      otpContext,
     );
 
     if (!isValid) {
@@ -146,10 +167,13 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    userTwoFactorAuthenticationMethod.context.status = 'VERIFIED';
-    await this.twoFactorAuthenticationMethodRepository.save(
-      userTwoFactorAuthenticationMethod,
-    );
+    await this.twoFactorAuthenticationMethodRepository.save({
+      ...userTwoFactorAuthenticationMethod,
+      context: {
+        ...userTwoFactorAuthenticationMethod.context,
+        status: OTPStatus.VERIFIED,
+      },
+    });
 
     return userTwoFactorAuthenticationMethod?.userWorkspace.user;
   }

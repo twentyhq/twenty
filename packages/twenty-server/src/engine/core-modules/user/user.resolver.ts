@@ -151,9 +151,9 @@ export class UserResolver {
 
     const twoFactorAuthenticationMethodSummary = {
       twoFactorAuthenticationMethodId:
-        currentUserWorkspace?.twoFactorAuthenticationMethod.id,
+        currentUserWorkspace?.twoFactorAuthenticationMethod?.id,
       isActive:
-        currentUserWorkspace?.twoFactorAuthenticationMethod.context?.status ===
+        currentUserWorkspace?.twoFactorAuthenticationMethod?.context?.status ===
         'VERIFIED',
     };
 

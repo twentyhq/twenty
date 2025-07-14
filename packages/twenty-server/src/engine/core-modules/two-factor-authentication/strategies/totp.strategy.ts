@@ -13,7 +13,10 @@ import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
-import { TotpContext } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+import {
+  OTPStatus,
+  TotpContext,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
 import { HOTPStrategyConfigSchema } from './hotp.strategy';
 
@@ -92,7 +95,7 @@ export class TotpStrategy implements ITwoFactorAuthStrategy {
       uri,
       context: {
         strategy: this.name,
-        status: 'PENDING',
+        status: OTPStatus.PENDING,
         secret,
       },
     };

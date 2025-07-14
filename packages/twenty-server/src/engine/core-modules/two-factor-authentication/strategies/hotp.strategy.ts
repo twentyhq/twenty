@@ -17,6 +17,7 @@ import {
   HotpContext,
   OTPHashAlgorithms,
   OTPKeyEncodings,
+  OTPStatus,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
 export type HOTPStrategyConfig = z.infer<typeof HOTPStrategyConfigSchema>;
@@ -111,7 +112,7 @@ export class HotpStrategy implements ITwoFactorAuthStrategy {
       uri,
       context: {
         strategy: this.name,
-        status: 'PENDING',
+        status: OTPStatus.PENDING,
         counter,
         secret,
       },

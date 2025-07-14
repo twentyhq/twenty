@@ -11,6 +11,7 @@ import {
   HotpContext,
   OTPHashAlgorithms,
   OTPKeyEncodings,
+  OTPStatus,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
 import { HotpStrategy, HOTPStrategyConfig } from './hotp.strategy';
@@ -126,7 +127,7 @@ describe('HOTPStrategy Configuration', () => {
       strategy = new HotpStrategy({ window: RESYNCH_WINDOW });
       context = {
         strategy: TwoFactorAuthenticationStrategy.HOTP,
-        status: 'VERIFIED' as const,
+        status: OTPStatus.VERIFIED,
         secret,
         counter: 1,
       };

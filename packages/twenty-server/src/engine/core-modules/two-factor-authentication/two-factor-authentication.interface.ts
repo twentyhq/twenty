@@ -19,6 +19,11 @@ export enum OTPKeyEncodings {
   UTF8 = 'utf8',
 }
 
+export enum OTPStatus {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+}
+
 export interface TwoFactorAuthenticationModuleOptions {
   type: TwoFactorAuthenticationStrategy;
   config: OTPStrategyConfig;
@@ -33,13 +38,13 @@ export type TwoFactorAuthenticationModuleAsyncOptions = {
 
 export type TotpContext = {
   strategy: TwoFactorAuthenticationStrategy.TOTP;
-  status: 'PENDING' | 'VERIFIED';
+  status: OTPStatus;
   secret: string;
 };
 
 export type HotpContext = {
   strategy: TwoFactorAuthenticationStrategy.HOTP;
-  status: 'PENDING' | 'VERIFIED';
+  status: OTPStatus;
   secret: string;
   counter: number;
 };

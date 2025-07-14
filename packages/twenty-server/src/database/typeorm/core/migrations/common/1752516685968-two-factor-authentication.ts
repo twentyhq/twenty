@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class TwoFactorAuthentication1752193201784
+export class TwoFactorAuthentication1752516685968
   implements MigrationInterface
 {
-  name = 'TwoFactorAuthentication1752193201784';
+  name = 'TwoFactorAuthentication1752516685968';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

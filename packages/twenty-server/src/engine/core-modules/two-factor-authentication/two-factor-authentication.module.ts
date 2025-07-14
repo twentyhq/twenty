@@ -10,6 +10,9 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { KeyWrappingModule } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.module';
+import { keyWrappingConfigFactory } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.module-factory';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { TWO_FACTOR_AUTHENTICATION_STRATEGY } from './two-factor-authentication.constants';
 import { TwoFactorAuthenticationModuleAsyncOptions } from './two-factor-authentication.interface';
@@ -46,6 +49,7 @@ export class TwoFactorAuthenticationModule {
     return {
       module: TwoFactorAuthenticationModule,
       imports: [
+        KeyWrappingModule,
         UserWorkspaceModule,
         DomainManagerModule,
         MetricsModule,
@@ -54,6 +58,10 @@ export class TwoFactorAuthenticationModule {
           [User, TwoFactorAuthenticationMethod, UserWorkspace],
           'core',
         ),
+        KeyWrappingModule.forRoot({
+          useFactory: keyWrappingConfigFactory,
+          inject: [TwentyConfigService],
+        }),
         UserModule,
       ],
       providers: [

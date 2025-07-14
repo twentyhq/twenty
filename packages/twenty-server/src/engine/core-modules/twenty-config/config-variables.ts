@@ -43,6 +43,7 @@ import {
   OTPHashAlgorithms,
   OTPKeyEncodings,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+import { KeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wrapping/enums/key-wrapping-strategies.enum';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -134,6 +135,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   OTP_SECRET_ENCODING = OTPKeyEncodings.HEX;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Specify algorithm to be used for key wrapping.',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(KeyWrappingStrategy),
+  })
+  @IsOptional()
+  KEY_WRAPPING_STRATEGY = KeyWrappingStrategy.AES_256_KEY_WRAP;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,

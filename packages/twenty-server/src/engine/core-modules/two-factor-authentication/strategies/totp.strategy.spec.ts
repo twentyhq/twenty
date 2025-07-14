@@ -6,6 +6,7 @@ import { totp } from 'otplib';
 import {
   OTPHashAlgorithms,
   OTPKeyEncodings,
+  OTPStatus,
   TotpContext,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 import {
@@ -131,7 +132,7 @@ describe('TOTPStrategy Configuration', () => {
 
       context = {
         strategy: TwoFactorAuthenticationStrategy.TOTP,
-        status: 'VERIFIED' as const,
+        status: OTPStatus.VERIFIED,
         secret,
       };
     });
