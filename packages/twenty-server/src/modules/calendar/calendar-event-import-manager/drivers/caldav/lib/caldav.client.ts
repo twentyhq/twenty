@@ -2,13 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import * as ical from 'node-ical';
 import {
+  calendarMultiGet,
   createAccount,
   DAVAccount,
   DAVCalendar,
+  DAVNamespaceShort,
   DAVObject,
   fetchCalendarObjects,
   fetchCalendars,
   getBasicAuthHeaders,
+  syncCollection,
 } from 'tsdav';
 
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
@@ -20,24 +23,43 @@ import {
 
 const DEFAULT_CALENDAR_TYPE = 'caldav';
 
-interface CalendarCredentials {
+type CalendarCredentials = {
   username: string;
   password: string;
   serverUrl: string;
-}
+};
 
-interface SimpleCalendar {
+type SimpleCalendar = {
   id: string;
   name: string;
   url: string;
   isPrimary?: boolean;
-}
+  syncToken?: string | number;
+};
 
-interface FetchEventsOptions {
-  calendars: SimpleCalendar[];
+type FetchEventsOptions = {
   startDate: Date;
   endDate: Date;
-}
+  syncCursor?: CalDAVSyncCursor;
+};
+
+export type CalDAVSyncState = {
+  syncToken?: string;
+};
+
+type CalDAVSyncResult = {
+  events: FetchedCalendarEvent[];
+  newSyncToken?: string;
+};
+
+type CalDAVSyncCursor = {
+  syncTokens: Record<string, string>;
+};
+
+type CalDAVGetEventsResponse = {
+  events: FetchedCalendarEvent[];
+  syncCursor: CalDAVSyncCursor;
+};
 
 @Injectable()
 export class CalDAVClient {
@@ -361,41 +383,160 @@ export class CalDAVClient {
 
   async getEvents(
     options: FetchEventsOptions,
-  ): Promise<FetchedCalendarEvent[]> {
-    try {
-      const davObjects = await this.fetchCalendarObjects(
-        options.calendars,
-        options.startDate,
-        options.endDate,
-      );
+  ): Promise<CalDAVGetEventsResponse> {
+    const calendars = await this.listCalendars();
+    const results = new Map<string, CalDAVSyncResult>();
 
-      const events = davObjects
-        .filter((obj) => typeof obj !== 'undefined' && obj.data)
-        .map((obj) => this.parseICalData(obj.data, obj.url))
-        .filter((event): event is FetchedCalendarEvent => event !== null);
+    const syncPromises = calendars.map(async (calendar) => {
+      try {
+        const syncToken =
+          options.syncCursor?.syncTokens[calendar.url] ||
+          calendar.syncToken?.toString();
 
-      return events;
-    } catch (error) {
-      this.logger.error(
-        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
-        error.code,
-        error,
-      );
+        const syncResult = await syncCollection({
+          url: calendar.url,
+          props: {
+            [`${DAVNamespaceShort.DAV}:getetag`]: {},
+            [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
+          },
+          syncLevel: 1,
+          ...(syncToken ? { syncToken } : {}),
+          headers: this.headers,
+        });
 
-      throw error;
+        const allEvents: FetchedCalendarEvent[] = [];
+
+        const eventHrefs = syncResult
+          .filter((response) => {
+            if (response.status !== 207) return false;
+            if (!response.href || response.href.endsWith('/')) return false;
+
+            return response.props?.getetag !== undefined;
+          })
+          .map((response) => response.href);
+
+        if (eventHrefs.length > 0) {
+          const objectUrls = eventHrefs.filter(
+            (href): href is string => href !== undefined,
+          );
+
+          try {
+            const calendarObjects = await calendarMultiGet({
+              url: calendar.url,
+              props: {
+                [`${DAVNamespaceShort.DAV}:getetag`]: {},
+                [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
+              },
+              objectUrls: objectUrls,
+              depth: '1',
+              headers: this.headers,
+            });
+
+            for (const calendarObject of calendarObjects) {
+              if (calendarObject.props?.calendarData) {
+                const event = this.parseICalData(
+                  calendarObject.props.calendarData,
+                  calendarObject.href || '',
+                );
+
+                if (
+                  event &&
+                  this.isEventInTimeRange(
+                    {
+                      url: calendarObject.href || '',
+                      data: calendarObject.props.calendarData,
+                      etag: calendarObject.props.getetag,
+                    },
+                    options.startDate,
+                    options.endDate,
+                  )
+                ) {
+                  allEvents.push(event);
+                }
+              }
+            }
+          } catch (fetchError) {
+            this.logger.error(
+              `Error in ${CalDavGetEventsService.name} - getEvents`,
+              fetchError,
+            );
+          }
+        }
+
+        let newSyncToken = syncToken;
+
+        try {
+          const account = await this.getAccount();
+          const updatedCalendars = await fetchCalendars({
+            account,
+            headers: this.headers,
+          });
+          const updatedCalendar = updatedCalendars.find(
+            (cal) => cal.url === calendar.url,
+          );
+
+          if (updatedCalendar?.syncToken) {
+            newSyncToken = updatedCalendar.syncToken.toString();
+          }
+        } catch (syncTokenError) {
+          this.logger.error(
+            `Error in ${CalDavGetEventsService.name} - getEvents`,
+            syncTokenError,
+          );
+        }
+
+        results.set(calendar.url, {
+          events: allEvents,
+          newSyncToken,
+        });
+      } catch (error) {
+        results.set(calendar.url, {
+          events: [],
+          newSyncToken: options.syncCursor?.syncTokens[calendar.url],
+        });
+      }
+    });
+
+    await Promise.all(syncPromises);
+
+    const allEvents = Array.from(results.values())
+      .map((result) => result.events)
+      .flat();
+
+    const syncTokens: Record<string, string> = {};
+
+    for (const [calendarUrl, result] of results) {
+      if (result.newSyncToken) {
+        syncTokens[calendarUrl] = result.newSyncToken;
+      }
     }
+
+    return {
+      events: allEvents,
+      syncCursor: { syncTokens },
+    };
   }
 
-  async getAllEvents(
+  private isEventInTimeRange(
+    davObject: DAVObject,
     startDate: Date,
     endDate: Date,
-  ): Promise<FetchedCalendarEvent[]> {
-    const calendars = await this.listCalendars();
+  ): boolean {
+    try {
+      if (!davObject.data) return false;
 
-    return this.getEvents({
-      calendars,
-      startDate,
-      endDate,
-    });
+      const parsed = ical.parseICS(davObject.data);
+      const events = Object.values(parsed).filter(
+        (item) => item.type === 'VEVENT',
+      );
+
+      if (events.length === 0) return false;
+
+      const event = events[0] as ical.VEvent;
+
+      return event.start < endDate && event.end > startDate;
+    } catch (error) {
+      return true;
+    }
   }
 }
