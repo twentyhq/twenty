@@ -114,9 +114,7 @@ export const useAgentChat = (agentId: string) => {
         requestBody: {
           threadId: currentThreadId,
           userMessage: content,
-          ...(agentChatUploadedFiles.length > 0 && {
-            fileIds: agentChatUploadedFiles.map((file) => file.id),
-          }),
+          fileIds: agentChatUploadedFiles.map((file) => file.id),
         },
       },
       context: {
