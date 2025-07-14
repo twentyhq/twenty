@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { CreateFileDTO } from 'src/engine/core-modules/file/dtos/create-file.dto';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { extractRelativePath } from 'src/engine/core-modules/file/utils/extract-relative-path.utils';
@@ -17,13 +18,7 @@ export class FileMetadataService {
     private readonly fileService: FileService,
   ) {}
 
-  async createFile(fileData: {
-    name: string;
-    fullPath: string;
-    size: number;
-    type: string;
-    workspaceId: string;
-  }): Promise<FileDTO> {
+  async createFile(fileData: CreateFileDTO): Promise<FileDTO> {
     const file = this.fileRepository.create(fileData);
     const savedFile = await this.fileRepository.save(file);
 
