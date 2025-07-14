@@ -21,8 +21,7 @@ const StyledFileIconContainer = styled.div`
   display: flex;
   height: 100%;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
-  width: 32px;
+  padding-inline: ${({ theme }) => theme.spacing(2)};
   overflow: hidden;
 `;
 
@@ -58,7 +57,7 @@ const StyledRemoveIconContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 40px;
+  padding-inline: ${({ theme }) => theme.spacing(3)};
   border-left: 1px solid ${({ theme }) => theme.border.color.light};
 
   svg {
