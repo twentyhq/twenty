@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -8,6 +10,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -19,20 +22,18 @@ export class FileResolver {
   @Mutation(() => FileDTO)
   async createFile(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('name') name: string,
-    @Args('fullPath') fullPath: string,
-    @Args('size') size: number,
-    @Args('type') type: string,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<FileDTO> {
-    const fileRecord = await this.fileMetadataService.createFile({
-      name,
-      fullPath,
-      size,
-      type,
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+
+    return this.fileMetadataService.createFile({
+      file: buffer,
+      filename,
+      mimeType: mimetype,
       workspaceId,
     });
-
-    return fileRecord;
   }
 
   @Mutation(() => FileDTO)

@@ -1,13 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_FILE = gql`
-  mutation CreateFile(
-    $name: String!
-    $fullPath: String!
-    $size: Float!
-    $type: String!
-  ) {
-    createFile(name: $name, fullPath: $fullPath, size: $size, type: $type) {
+  mutation CreateFile($file: Upload!) {
+    createFile(file: $file) {
       id
       name
       fullPath

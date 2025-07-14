@@ -24,7 +24,6 @@ import {
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { extractRelativePath } from 'src/engine/core-modules/file/utils/extract-relative-path.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentChatMessageEntity,
@@ -215,10 +214,8 @@ export class AgentExecutionService {
   private async createFilePart(
     file: FileEntity,
   ): Promise<ImagePart | FilePart> {
-    const relativePath = extractRelativePath(file.fullPath);
-    const folderPath = relativePath.split('/').slice(0, -1).join('/');
-    const filename = relativePath.split('/').pop() || '';
-
+    const folderPath = file.fullPath.split('/').slice(0, -1).join('/');
+    const filename = file.fullPath.split('/').pop() || '';
     const fileStream = await this.fileService.getFileStream(
       folderPath,
       filename,

@@ -1,4 +1,4 @@
-import { useFileUpload } from '@/file/hooks/useFileUpload';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
@@ -9,7 +9,10 @@ import React, { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { File as FileDocument } from '~/generated-metadata/graphql';
+import {
+  File as FileDocument,
+  useCreateFileMutation,
+} from '~/generated-metadata/graphql';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;
@@ -22,9 +25,10 @@ const StyledFileInput = styled.input`
 `;
 
 export const AgentChatFileUpload = ({ agentId }: { agentId: string }) => {
+  const coreClient = useApolloCoreClient();
+  const [createFile] = useCreateFileMutation({ client: coreClient });
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { uploadFileAndCreateRecord } = useFileUpload();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
     useRecoilComponentStateV2(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
@@ -33,7 +37,17 @@ export const AgentChatFileUpload = ({ agentId }: { agentId: string }) => {
 
   const sendFile = async (file: File) => {
     try {
-      const uploadedFile = await uploadFileAndCreateRecord(file);
+      const result = await createFile({
+        variables: {
+          file,
+        },
+      });
+
+      const uploadedFile = result?.data?.createFile;
+
+      if (!isDefined(uploadedFile)) {
+        throw new Error("Couldn't upload the file.");
+      }
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );

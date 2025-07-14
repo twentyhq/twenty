@@ -827,6 +827,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  Root = 'Root',
   ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
@@ -1217,10 +1218,7 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 
 export type MutationCreateFileArgs = {
-  fullPath: Scalars['String'];
-  name: Scalars['String'];
-  size: Scalars['Float'];
-  type: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
@@ -3221,10 +3219,7 @@ export type GetOneDatabaseConnectionQueryVariables = Exact<{
 export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
 export type CreateFileMutationVariables = Exact<{
-  name: Scalars['String'];
-  fullPath: Scalars['String'];
-  size: Scalars['Float'];
-  type: Scalars['String'];
+  file: Scalars['Upload'];
 }>;
 
 
@@ -5526,8 +5521,8 @@ export type GetOneDatabaseConnectionQueryHookResult = ReturnType<typeof useGetOn
 export type GetOneDatabaseConnectionLazyQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionLazyQuery>;
 export type GetOneDatabaseConnectionQueryResult = Apollo.QueryResult<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
 export const CreateFileDocument = gql`
-    mutation CreateFile($name: String!, $fullPath: String!, $size: Float!, $type: String!) {
-  createFile(name: $name, fullPath: $fullPath, size: $size, type: $type) {
+    mutation CreateFile($file: Upload!) {
+  createFile(file: $file) {
     id
     name
     fullPath
@@ -5552,10 +5547,7 @@ export type CreateFileMutationFn = Apollo.MutationFunction<CreateFileMutation, C
  * @example
  * const [createFileMutation, { data, loading, error }] = useCreateFileMutation({
  *   variables: {
- *      name: // value for 'name'
- *      fullPath: // value for 'fullPath'
- *      size: // value for 'size'
- *      type: // value for 'type'
+ *      file: // value for 'file'
  *   },
  * });
  */

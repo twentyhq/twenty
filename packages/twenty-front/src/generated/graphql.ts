@@ -791,6 +791,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  Root = 'Root',
   ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
@@ -1168,10 +1169,7 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 
 export type MutationCreateFileArgs = {
-  fullPath: Scalars['String'];
-  name: Scalars['String'];
-  size: Scalars['Float'];
-  type: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 

@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -13,6 +14,7 @@ import { FileController } from './controllers/file.controller';
 import { CleanupOrphanedFilesCronCommand } from './crons/commands/cleanup-orphaned-files.cron.command';
 import { CleanupOrphanedFilesCronJob } from './crons/jobs/cleanup-orphaned-files.cron.job';
 import { FileEntity } from './entities/file.entity';
+import { FileUploadService } from './file-upload/services/file-upload.service';
 import { FileResolver } from './resolvers/file.resolver';
 import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
@@ -21,6 +23,7 @@ import { FileService } from './services/file.service';
   imports: [
     JwtModule,
     TypeOrmModule.forFeature([FileEntity, Workspace], 'core'),
+    HttpModule,
   ],
   providers: [
     FileService,
@@ -33,6 +36,7 @@ import { FileService } from './services/file.service';
     FileDeletionJob,
     CleanupOrphanedFilesCronJob,
     CleanupOrphanedFilesCronCommand,
+    FileUploadService,
   ],
   exports: [FileService, FileMetadataService, CleanupOrphanedFilesCronCommand],
   controllers: [FileController],
