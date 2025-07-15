@@ -38,7 +38,6 @@ export const useBuildSpreadsheetImportFields = () => {
     relationConnectFieldOverrides?: Partial<SpreadsheetImportField>,
   ) => {
     switch (fieldMetadataItem.type) {
-      case FieldMetadataType.ACTOR:
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.EMAILS:
@@ -223,6 +222,7 @@ export const useBuildSpreadsheetImportFields = () => {
         ObjectMetadataItem
       >(targetObjectMetadataItem);
 
+      //todo - update logic when composite unique indexes will be supported
       for (const uniqueConstraintField of uniqueConstraintFields.flat()) {
         if (isCompositeFieldType(uniqueConstraintField.type)) {
           spreadsheetImportFields.push(
