@@ -1439,9 +1439,10 @@ export class WorkspaceEntityManager extends EntityManager {
             const recordToConnectTotal = recordToConnect.length;
             const connectFieldName = connectQueryConfig.connectFieldName;
 
-            //tododo - add info on record in error
             throw new TwentyORMException(
-              `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal}.`,
+              `Expected 1 record to connect to ${connectFieldName}, but found ${recordToConnectTotal} with conditions: ${JSON.stringify(
+                connectQueryConfig.recordToConnectConditionByEntityIndex[index],
+              )}.`,
               TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
             );
           }
