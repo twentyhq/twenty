@@ -96,6 +96,7 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
 
   const [, setCurrentThreadId] = useRecoilComponentStateV2(
     currentAIChatThreadComponentState,
+    agentId,
   );
 
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
@@ -146,6 +147,7 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
           {threads.map((thread) => (
             <StyledThreadItem
               onClick={() => {
+                console.log('clicked', thread.id);
                 setCurrentThreadId(thread.id);
                 openAskAIPage();
               }}
