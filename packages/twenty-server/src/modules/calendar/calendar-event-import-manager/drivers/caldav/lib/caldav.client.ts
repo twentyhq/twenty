@@ -325,18 +325,11 @@ export class CalDAVClient {
 
         const allEvents: FetchedCalendarEvent[] = [];
 
-        const eventHrefs = syncResult
-          .filter(
-            (response) =>
-              response.href !== undefined && this.isValidFormat(response.href),
-          )
-          .map((response) => response.href);
+        const objectUrls = syncResult
+          .map((event) => event.href)
+          .filter((href): href is string => !!href && this.isValidFormat(href));
 
-        if (eventHrefs.length > 0) {
-          const objectUrls = eventHrefs.filter(
-            (href): href is string => href !== undefined,
-          );
-
+        if (objectUrls.length > 0) {
           try {
             const calendarObjects = await calendarMultiGet({
               url: calendar.url,
