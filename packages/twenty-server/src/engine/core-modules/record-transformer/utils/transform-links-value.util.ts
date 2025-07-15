@@ -1,10 +1,10 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
   lowercaseUrlOriginAndRemoveTrailingSlash,
   parseJson,
 } from 'twenty-shared/utils';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
@@ -17,6 +17,7 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
+// TODO refactor this function handle partial composite field update
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {

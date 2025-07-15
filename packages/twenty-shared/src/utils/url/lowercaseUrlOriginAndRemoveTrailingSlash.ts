@@ -1,5 +1,5 @@
-import { safeNewUrl } from "@/utils/safeNewUrl";
-import { isDefined } from "@/utils/validation";
+import { safeNewUrl } from '@/utils/safeNewUrl';
+import { isDefined } from '@/utils/validation';
 
 export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   const url = safeNewUrl(rawUrl);
