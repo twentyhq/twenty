@@ -6,6 +6,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
+import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),
@@ -82,17 +83,27 @@ describe('generateWorkflowRunDiagram', () => {
       },
     ];
 
-    const stepsOutput: WorkflowRunOutputStepsOutput = {
+    const stepInfos: WorkflowRunStepInfos = {
+      trigger: {
+        result: {},
+        status: StepStatus.SUCCESS,
+      },
       step1: {
-        result: undefined,
         error: '',
+        status: StepStatus.FAILED,
+      },
+      step2: {
+        status: StepStatus.NOT_STARTED,
+      },
+      step3: {
+        status: StepStatus.NOT_STARTED,
       },
     };
 
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepInfos: stepsOutput,
+      stepInfos,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -134,7 +145,7 @@ describe('generateWorkflowRunDiagram', () => {
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -148,7 +159,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 1",
           "nodeType": "action",
-          "runStatus": "failure",
+          "runStatus": "FAILED",
         },
         "id": "step1",
         "position": {
@@ -161,7 +172,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 2",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step2",
         "position": {
@@ -174,7 +185,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 3",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step3",
         "position": {
@@ -259,25 +270,29 @@ describe('generateWorkflowRunDiagram', () => {
       },
     ];
 
-    const stepsOutput: WorkflowRunOutputStepsOutput = {
+    const stepInfos: WorkflowRunStepInfos = {
+      trigger: {
+        result: {},
+        status: StepStatus.SUCCESS,
+      },
       step1: {
         result: {},
-        error: undefined,
+        status: StepStatus.SUCCESS,
       },
       step2: {
         result: {},
-        error: undefined,
+        status: StepStatus.SUCCESS,
       },
       step3: {
         result: {},
-        error: undefined,
+        status: StepStatus.SUCCESS,
       },
     };
 
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepInfos: stepsOutput,
+      stepInfos,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -321,7 +336,7 @@ describe('generateWorkflowRunDiagram', () => {
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -335,7 +350,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 1",
           "nodeType": "action",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
         },
         "id": "step1",
         "position": {
@@ -348,7 +363,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 2",
           "nodeType": "action",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
         },
         "id": "step2",
         "position": {
@@ -361,7 +376,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 3",
           "nodeType": "action",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
         },
         "id": "step3",
         "position": {
@@ -446,12 +461,29 @@ describe('generateWorkflowRunDiagram', () => {
       },
     ];
 
-    const stepsOutput = undefined;
+    const stepInfos: WorkflowRunStepInfos = {
+      trigger: {
+        result: {},
+        status: StepStatus.SUCCESS,
+      },
+      step1: {
+        error: '',
+        status: StepStatus.RUNNING,
+      },
+      step2: {
+        error: '',
+        status: StepStatus.NOT_STARTED,
+      },
+      step3: {
+        error: '',
+        status: StepStatus.NOT_STARTED,
+      },
+    };
 
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepInfos: stepsOutput,
+      stepInfos,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -493,7 +525,7 @@ describe('generateWorkflowRunDiagram', () => {
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -507,7 +539,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 1",
           "nodeType": "action",
-          "runStatus": "running",
+          "runStatus": "RUNNING",
         },
         "id": "step1",
         "position": {
@@ -520,7 +552,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 2",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step2",
         "position": {
@@ -533,7 +565,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 3",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step3",
         "position": {
@@ -637,17 +669,29 @@ describe('generateWorkflowRunDiagram', () => {
       },
     ];
 
-    const stepsOutput: WorkflowRunOutputStepsOutput = {
+    const stepInfos: WorkflowRunStepInfos = {
+      trigger: {
+        result: {},
+        status: StepStatus.SUCCESS,
+      },
       step1: {
         result: {},
-        error: undefined,
+        status: StepStatus.SUCCESS,
+      },
+      step2: {
+        result: {},
+        status: StepStatus.RUNNING,
+      },
+      step3: {
+        result: {},
+        status: StepStatus.NOT_STARTED,
       },
     };
 
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepInfos: stepsOutput,
+      stepInfos,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -699,7 +743,7 @@ describe('generateWorkflowRunDiagram', () => {
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -713,7 +757,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 1",
           "nodeType": "action",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
         },
         "id": "step1",
         "position": {
@@ -726,7 +770,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 2",
           "nodeType": "action",
-          "runStatus": "running",
+          "runStatus": "RUNNING",
         },
         "id": "step2",
         "position": {
@@ -739,7 +783,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 3",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step3",
         "position": {
@@ -752,7 +796,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "CODE",
           "name": "Step 4",
           "nodeType": "action",
-          "runStatus": "not-executed",
+          "runStatus": "NOT_STARTED",
         },
         "id": "step4",
         "position": {
@@ -802,18 +846,30 @@ describe('generateWorkflowRunDiagram', () => {
         nextStepIds: undefined,
       },
     ];
-    const stepsOutput = {
+
+    const stepInfos: WorkflowRunStepInfos = {
+      trigger: {
+        result: {},
+        status: StepStatus.SUCCESS,
+      },
       step1: {
-        result: undefined,
-        error: undefined,
-        pendingEvent: true,
+        result: {},
+        status: StepStatus.PENDING,
+      },
+      step2: {
+        result: {},
+        status: StepStatus.NOT_STARTED,
+      },
+      step3: {
+        result: {},
+        status: StepStatus.NOT_STARTED,
       },
     };
 
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepInfos: stepsOutput,
+      stepInfos,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -837,7 +893,7 @@ describe('generateWorkflowRunDiagram', () => {
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
-          "runStatus": "success",
+          "runStatus": "SUCCESS",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -851,7 +907,7 @@ describe('generateWorkflowRunDiagram', () => {
           "actionType": "FORM",
           "name": "Step 1",
           "nodeType": "action",
-          "runStatus": "running",
+          "runStatus": "PENDING",
         },
         "id": "step1",
         "position": {
@@ -866,7 +922,7 @@ describe('generateWorkflowRunDiagram', () => {
       "actionType": "FORM",
       "name": "Step 1",
       "nodeType": "action",
-      "runStatus": "running",
+      "runStatus": "PENDING",
     },
     "id": "step1",
   },

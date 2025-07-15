@@ -1,4 +1,5 @@
 import { getWorkflowRunStepExecutionStatus } from '../getWorkflowRunStepExecutionStatus';
+import { StepStatus } from 'twenty-shared/workflow';
 
 describe('getWorkflowRunStepExecutionStatus', () => {
   const stepId = '453e0084-aca2-45b9-8d1c-458a2b8ac70a';
@@ -6,16 +7,16 @@ describe('getWorkflowRunStepExecutionStatus', () => {
   it('should return not-executed when the output is null', () => {
     expect(
       getWorkflowRunStepExecutionStatus({
-        workflowRunOutput: null,
+        workflowRunState: null,
         stepId,
       }),
-    ).toBe('not-executed');
+    ).toBe(StepStatus.NOT_STARTED);
   });
 
   it('should return success when step has result', () => {
     expect(
       getWorkflowRunStepExecutionStatus({
-        workflowRunOutput: {
+        workflowRunState: {
           flow: {
             steps: [
               {
@@ -60,15 +61,20 @@ describe('getWorkflowRunStepExecutionStatus', () => {
               },
             },
           },
-          stepsOutput: {
+          stepInfos: {
+            trigger: {
+              result: {},
+              status: StepStatus.SUCCESS,
+            },
             [stepId]: {
               result: {},
+              status: StepStatus.SUCCESS,
             },
           },
         },
         stepId,
       }),
-    ).toBe('success');
+    ).toBe(StepStatus.SUCCESS);
   });
 
   it('should return failure when workflow has error', () => {
@@ -76,7 +82,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
 
     expect(
       getWorkflowRunStepExecutionStatus({
-        workflowRunOutput: {
+        workflowRunState: {
           flow: {
             steps: [
               {
@@ -121,16 +127,21 @@ describe('getWorkflowRunStepExecutionStatus', () => {
               },
             },
           },
-          error,
-          stepsOutput: {
+          workflowRunError: error,
+          stepInfos: {
+            trigger: {
+              result: {},
+              status: StepStatus.SUCCESS,
+            },
             [stepId]: {
               error,
+              status: StepStatus.FAILED,
             },
           },
         },
         stepId,
       }),
-    ).toBe('failure');
+    ).toBe(StepStatus.FAILED);
   });
 
   it('should return not-executed when step has no output', () => {
@@ -138,7 +149,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
 
     expect(
       getWorkflowRunStepExecutionStatus({
-        workflowRunOutput: {
+        workflowRunState: {
           flow: {
             steps: [
               {
@@ -217,14 +228,23 @@ describe('getWorkflowRunStepExecutionStatus', () => {
               },
             },
           },
-          stepsOutput: {
+          stepInfos: {
+            trigger: {
+              result: {},
+              status: StepStatus.SUCCESS,
+            },
             [stepId]: {
               result: {},
+              status: StepStatus.SUCCESS,
+            },
+            [secondStepId]: {
+              result: {},
+              status: StepStatus.NOT_STARTED,
             },
           },
         },
         stepId: secondStepId,
       }),
-    ).toBe('not-executed');
+    ).toBe(StepStatus.NOT_STARTED);
   });
 });
