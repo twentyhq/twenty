@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -15,6 +15,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { computeJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -59,12 +60,26 @@ export class FieldMetadataMorphRelationService {
     const fieldsCreated: FieldMetadataEntity[] = [];
 
     for (const relation of morphRelationsCreationPayload) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[relation.targetObjectMetadataId];
+
+      if (!isDefined(targetObjectMetadata)) {
+        throw new FieldMetadataException(
+          'Target object metadata does not exist in the object metadata maps',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
+
       const relationFieldMetadataForCreate =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
-            objectMetadata,
+            joinColumnName: computeJoinColumnName({
+              fieldMetadataInput: fieldMetadataForCreate,
+              targetObjectMetadataNameSingular:
+                targetObjectMetadata.nameSingular,
+            }),
           },
         );
 
@@ -96,6 +111,7 @@ export class FieldMetadataMorphRelationService {
         },
       );
 
+      const targetObjectMetadataNameSingular = objectMetadata.nameSingular;
       const targetFieldMetadataToCreateWithRelation =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
@@ -109,7 +125,10 @@ export class FieldMetadataMorphRelationService {
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },
-            objectMetadata,
+            joinColumnName: computeJoinColumnName({
+              fieldMetadataInput: targetFieldMetadataToCreate,
+              targetObjectMetadataNameSingular,
+            }),
           },
         );
 

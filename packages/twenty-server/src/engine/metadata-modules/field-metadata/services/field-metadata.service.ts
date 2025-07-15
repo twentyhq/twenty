@@ -32,6 +32,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { computeJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-join-column-name.util';
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -674,7 +675,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-            objectMetadata,
+            joinColumnName: computeJoinColumnName({
+              fieldMetadataInput: fieldMetadataForCreate,
+            }),
           },
         );
 
