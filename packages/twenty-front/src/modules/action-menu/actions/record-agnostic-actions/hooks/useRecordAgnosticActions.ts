@@ -19,8 +19,10 @@ export const useRecordAgnosticActions = () => {
   if (isAiEnabled) {
     actions[RecordAgnosticActionsKeys.ASK_AI] =
       RECORD_AGNOSTIC_ACTIONS_CONFIG[RecordAgnosticActionsKeys.ASK_AI];
-    actions[RecordAgnosticActionsKeys.OPEN_AI_CHAT] =
-      RECORD_AGNOSTIC_ACTIONS_CONFIG[RecordAgnosticActionsKeys.OPEN_AI_CHAT];
+    actions[RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS] =
+      RECORD_AGNOSTIC_ACTIONS_CONFIG[
+        RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS
+      ];
   }
 
   return actions;

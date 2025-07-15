@@ -70,20 +70,20 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     hotKeys: ['@'],
     shouldBeRegistered: () => true,
   },
-  [RecordAgnosticActionsKeys.OPEN_AI_CHAT]: {
+  [RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS]: {
     type: ActionType.Standard,
     scope: ActionScope.Global,
-    key: RecordAgnosticActionsKeys.OPEN_AI_CHAT,
-    label: msg`Open AI Chat`,
-    shortLabel: msg`Open AI Chat`,
+    key: RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS,
+    label: msg`View Previous AI Chats`,
+    shortLabel: msg`Previous AI Chats`,
     position: 3,
     isPinned: false,
     Icon: IconSparkles,
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.OpenAIChat}
-        pageTitle="Open AI Chat"
+        page={CommandMenuPages.ViewPreviousAIChats}
+        pageTitle="View Previous AI Chats"
         pageIcon={IconSparkles}
       />
     ),

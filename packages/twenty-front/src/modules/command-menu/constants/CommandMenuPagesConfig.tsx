@@ -35,5 +35,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
   [CommandMenuPages.AskAI, <CommandMenuAskAIPage />],
-  [CommandMenuPages.OpenAIChat, <CommandMenuAIChatThreadsPage />],
+  [CommandMenuPages.ViewPreviousAIChats, <CommandMenuAIChatThreadsPage />],
 ]);

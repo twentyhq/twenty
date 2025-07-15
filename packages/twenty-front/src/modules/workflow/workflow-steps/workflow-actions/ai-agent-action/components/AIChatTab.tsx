@@ -326,7 +326,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
             Icon={IconHistory}
             onClick={() =>
               navigateCommandMenu({
-                page: CommandMenuPages.OpenAIChat,
+                page: CommandMenuPages.ViewPreviousAIChats,
                 pageTitle: 'AI Chat History',
                 pageIcon: IconHistory,
               })
