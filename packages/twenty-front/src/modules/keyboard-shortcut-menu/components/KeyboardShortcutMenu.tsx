@@ -21,7 +21,7 @@ export const KeyboardShortcutMenu = () => {
       closeCommandMenu();
       toggleKeyboardShortcutMenu();
     },
-    true,
+    false,
     [toggleKeyboardShortcutMenu],
   );
 
