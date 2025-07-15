@@ -435,7 +435,6 @@ export type ConnectionParameters = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: InputMaybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type ConnectionParametersOutput = {
@@ -444,7 +443,6 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type CreateApiKeyDto = {
@@ -708,7 +706,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
-  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
+  IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -814,8 +812,20 @@ export type FieldPermissionInput = {
   objectMetadataId: Scalars['String'];
 };
 
+export type File = {
+  __typename?: 'File';
+  createdAt: Scalars['DateTime'];
+  fullPath: Scalars['String'];
+  id: Scalars['ID'];
+  messageId?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  size: Scalars['Float'];
+  type: Scalars['String'];
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
+  File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1043,7 +1053,8 @@ export enum MessageChannelVisibility {
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
-  OPENAI = 'OPENAI'
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE'
 }
 
 export type Mutation = {
@@ -1059,6 +1070,7 @@ export type Mutation = {
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAppToken: AppToken;
@@ -1074,6 +1086,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteFile: File;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1204,6 +1217,11 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateFileArgs = {
+  file: Scalars['Upload'];
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -1274,6 +1292,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteFileArgs = {
+  fileId: Scalars['String'];
 };
 
 
@@ -3195,6 +3218,20 @@ export type GetOneDatabaseConnectionQueryVariables = Exact<{
 
 export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
+export type CreateFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type CreateFileMutation = { __typename?: 'Mutation', createFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
+export type DeleteFileMutationVariables = Exact<{
+  fileId: Scalars['String'];
+}>;
+
+
+export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
 }>;
@@ -3270,7 +3307,7 @@ export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
 }>;
 
 
-export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username: string, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username: string, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username: string, password: string } | null } | null } };
+export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -5483,6 +5520,82 @@ export function useGetOneDatabaseConnectionLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetOneDatabaseConnectionQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionQuery>;
 export type GetOneDatabaseConnectionLazyQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionLazyQuery>;
 export type GetOneDatabaseConnectionQueryResult = Apollo.QueryResult<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
+export const CreateFileDocument = gql`
+    mutation CreateFile($file: Upload!) {
+  createFile(file: $file) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type CreateFileMutationFn = Apollo.MutationFunction<CreateFileMutation, CreateFileMutationVariables>;
+
+/**
+ * __useCreateFileMutation__
+ *
+ * To run a mutation, you first call `useCreateFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFileMutation, { data, loading, error }] = useCreateFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useCreateFileMutation(baseOptions?: Apollo.MutationHookOptions<CreateFileMutation, CreateFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFileMutation, CreateFileMutationVariables>(CreateFileDocument, options);
+      }
+export type CreateFileMutationHookResult = ReturnType<typeof useCreateFileMutation>;
+export type CreateFileMutationResult = Apollo.MutationResult<CreateFileMutation>;
+export type CreateFileMutationOptions = Apollo.BaseMutationOptions<CreateFileMutation, CreateFileMutationVariables>;
+export const DeleteFileDocument = gql`
+    mutation DeleteFile($fileId: String!) {
+  deleteFile(fileId: $fileId) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type DeleteFileMutationFn = Apollo.MutationFunction<DeleteFileMutation, DeleteFileMutationVariables>;
+
+/**
+ * __useDeleteFileMutation__
+ *
+ * To run a mutation, you first call `useDeleteFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFileMutation, { data, loading, error }] = useDeleteFileMutation({
+ *   variables: {
+ *      fileId: // value for 'fileId'
+ *   },
+ * });
+ */
+export function useDeleteFileMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFileMutation, DeleteFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(DeleteFileDocument, options);
+      }
+export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>;
+export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
+export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
 export const CreateOneObjectMetadataItemDocument = gql`
     mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
@@ -6003,21 +6116,18 @@ export const GetConnectedImapSmtpCaldavAccountDocument = gql`
         host
         port
         secure
-        username
         password
       }
       SMTP {
         host
         port
         secure
-        username
         password
       }
       CALDAV {
         host
         port
         secure
-        username
         password
       }
     }

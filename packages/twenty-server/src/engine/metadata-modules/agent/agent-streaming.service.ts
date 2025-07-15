@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
@@ -17,6 +17,7 @@ export type StreamAgentChatOptions = {
   threadId: string;
   userMessage: string;
   userWorkspaceId: string;
+  fileIds?: string[];
   res: Response;
 };
 
@@ -28,6 +29,8 @@ export type StreamAgentChatResult = {
 
 @Injectable()
 export class AgentStreamingService {
+  private readonly logger = new Logger(AgentStreamingService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity, 'core')
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
@@ -39,6 +42,7 @@ export class AgentStreamingService {
     threadId,
     userMessage,
     userWorkspaceId,
+    fileIds = [],
     res,
   }: StreamAgentChatOptions) {
     try {
@@ -57,12 +61,6 @@ export class AgentStreamingService {
         );
       }
 
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-      });
-
       this.setupStreamingHeaders(res);
 
       const { fullStream } =
@@ -70,6 +68,7 @@ export class AgentStreamingService {
           agentId: thread.agent.id,
           userMessage,
           messages: thread.messages,
+          fileIds,
         });
 
       let aiResponse = '';
@@ -89,10 +88,41 @@ export class AgentStreamingService {
               message: chunk.args?.toolDescription,
             });
             break;
+          case 'error':
+            {
+              const errorMessage =
+                chunk.error &&
+                typeof chunk.error === 'object' &&
+                'message' in chunk.error
+                  ? chunk.error.message
+                  : 'Something went wrong. Please try again.';
+
+              this.sendStreamEvent(res, {
+                type: 'error',
+                message: errorMessage as string,
+              });
+              res.end();
+            }
+            this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
+            break;
           default:
+            this.logger.log(`Unknown chunk type: ${chunk.type}`);
             break;
         }
       }
+
+      if (!aiResponse) {
+        res.end();
+
+        return;
+      }
+
+      await this.agentChatService.addMessage({
+        threadId,
+        role: AgentChatMessageRole.USER,
+        content: userMessage,
+        fileIds,
+      });
 
       await this.agentChatService.addMessage({
         threadId,
@@ -104,6 +134,10 @@ export class AgentStreamingService {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
+
+      if (error instanceof AgentException) {
+        this.logger.error(`Agent Exception Code: ${error.code}`);
+      }
 
       if (!res.headersSent) {
         this.setupStreamingHeaders(res);

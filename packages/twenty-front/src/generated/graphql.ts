@@ -435,7 +435,6 @@ export type ConnectionParameters = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: InputMaybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type ConnectionParametersOutput = {
@@ -444,7 +443,6 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
-  username: Scalars['String'];
 };
 
 export type CreateApiKeyDto = {
@@ -672,7 +670,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
-  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
+  IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -778,8 +776,20 @@ export type FieldPermissionInput = {
   objectMetadataId: Scalars['String'];
 };
 
+export type File = {
+  __typename?: 'File';
+  createdAt: Scalars['DateTime'];
+  fullPath: Scalars['String'];
+  id: Scalars['ID'];
+  messageId?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  size: Scalars['Float'];
+  type: Scalars['String'];
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
+  File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1000,7 +1010,8 @@ export enum MessageChannelVisibility {
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
-  OPENAI = 'OPENAI'
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE'
 }
 
 export type Mutation = {
@@ -1016,6 +1027,7 @@ export type Mutation = {
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAppToken: AppToken;
@@ -1030,6 +1042,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteFile: File;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1155,6 +1168,11 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateFileArgs = {
+  file: Scalars['Upload'];
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -1210,6 +1228,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteFileArgs = {
+  fileId: Scalars['String'];
 };
 
 

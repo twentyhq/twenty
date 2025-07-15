@@ -4,9 +4,9 @@ import { ComponentType } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
-import { SettingsListItemCardContent } from './SettingsListItemCardContent';
-import { Card, CardFooter } from 'twenty-ui/layout';
 import { IconComponent, IconPlus } from 'twenty-ui/display';
+import { Card, CardFooter } from 'twenty-ui/layout';
+import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooter = styled(CardFooter)`
   align-items: center;

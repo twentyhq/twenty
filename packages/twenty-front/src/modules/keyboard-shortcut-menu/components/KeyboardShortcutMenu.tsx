@@ -15,15 +15,15 @@ export const KeyboardShortcutMenu = () => {
   );
   const { closeCommandMenu } = useCommandMenu();
 
-  useGlobalHotkeys(
-    'shift+?,meta+?',
-    () => {
+  useGlobalHotkeys({
+    keys: ['shift+?', 'meta+?'],
+    callback: () => {
       closeCommandMenu();
       toggleKeyboardShortcutMenu();
     },
-    true,
-    [toggleKeyboardShortcutMenu],
-  );
+    containsModifier: false,
+    dependencies: [toggleKeyboardShortcutMenu],
+  });
 
   return (
     <>{isKeyboardShortcutMenuOpened && <KeyboardShortcutMenuOpenContent />}</>
