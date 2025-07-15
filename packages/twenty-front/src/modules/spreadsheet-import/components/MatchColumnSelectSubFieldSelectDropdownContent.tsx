@@ -70,15 +70,17 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {subFieldOptions.map(({ value, label, Icon, disabled }) => (
-          <MenuItem
-            key={value}
-            onClick={() => handleSubFieldSelect(value)}
-            LeftIcon={Icon}
-            text={label}
-            disabled={disabled}
-          />
-        ))}
+        {subFieldOptions.map(
+          ({ value, shortLabelForNestedField, Icon, disabled }) => (
+            <MenuItem
+              key={value}
+              onClick={() => handleSubFieldSelect(value)}
+              LeftIcon={Icon}
+              text={shortLabelForNestedField}
+              disabled={disabled}
+            />
+          ),
+        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

@@ -238,7 +238,9 @@ export const useBuildSpreadsheetImportFields = () => {
               isNestedField: true,
               isCompositeSubField: false,
               isRelationConnectField: true,
-              uniqueFieldMetadataItem: fieldMetadataItem,
+              fieldMetadataItemId: fieldMetadataItem.id,
+              fieldMetadataType: FieldMetadataType.RELATION,
+              uniqueFieldMetadataItem: uniqueConstraintField,
               label: getRelationConnectSubFieldLabel(
                 fieldMetadataItem,
                 uniqueConstraintField,

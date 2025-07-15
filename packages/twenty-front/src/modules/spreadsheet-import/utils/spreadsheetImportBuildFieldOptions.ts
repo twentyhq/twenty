@@ -2,6 +2,7 @@ import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdow
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
+import { getShortNestedFieldLabel } from '@/spreadsheet-import/utils/getShortNestedFieldLabel';
 import { ReadonlyDeep } from 'type-fest';
 
 export const spreadsheetImportBuildFieldOptions = (
@@ -28,7 +29,10 @@ export const spreadsheetImportBuildFieldOptions = (
       return {
         Icon: Icon,
         value: key,
-        label: label,
+        label,
+        shortLabelForNestedField: isNestedField
+          ? getShortNestedFieldLabel(label)
+          : undefined,
         disabled: isSelected,
         fieldMetadataTypeLabel: getFieldMetadataTypeLabel(fieldMetadataType),
         isNestedField: isNestedField,
