@@ -281,8 +281,12 @@ export class CalDAVClient {
         isCanceled: event.status === 'CANCELLED',
         conferenceLinkLabel: '',
         conferenceLinkUrl: event.url,
-        externalCreatedAt: event.created.toISOString(),
-        externalUpdatedAt: event.lastmodified.toISOString(),
+        externalCreatedAt:
+          event.created?.toISOString() || new Date().toISOString(),
+        externalUpdatedAt:
+          event.lastmodified?.toISOString() ||
+          event.created?.toISOString() ||
+          new Date().toISOString(),
         conferenceSolution: '',
         recurringEventExternalId: event.recurrenceid
           ? String(event.recurrenceid)

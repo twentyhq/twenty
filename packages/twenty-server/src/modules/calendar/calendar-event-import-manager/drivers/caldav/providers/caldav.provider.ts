@@ -18,7 +18,9 @@ export class CalDavClientProvider {
       throw new Error('Missing required CalDAV connection parameters');
     }
     const caldavClient = new CalDAVClient({
-      username: connectedAccount.handle,
+      username:
+        connectedAccount.connectionParameters.CALDAV.username ??
+        connectedAccount.handle,
       password: connectedAccount.connectionParameters.CALDAV.password,
       serverUrl: connectedAccount.connectionParameters.CALDAV.host,
     });

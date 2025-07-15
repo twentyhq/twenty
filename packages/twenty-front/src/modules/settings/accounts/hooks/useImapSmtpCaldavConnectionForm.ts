@@ -49,7 +49,13 @@ export const useImapSmtpCaldavConnectionForm = ({
       handle: '',
       IMAP: { host: '', port: 993, password: '', secure: true },
       SMTP: { host: '', port: 587, password: '', secure: true },
-      CALDAV: { host: '', port: 443, password: '', secure: true },
+      CALDAV: {
+        host: '',
+        port: 443,
+        password: '',
+        secure: true,
+        username: undefined,
+      },
     },
   });
 

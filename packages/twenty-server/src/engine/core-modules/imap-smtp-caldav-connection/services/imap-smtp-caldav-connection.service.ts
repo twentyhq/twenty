@@ -124,7 +124,7 @@ export class ImapSmtpCaldavService {
   ): Promise<boolean> {
     const client = new CalDAVClient({
       serverUrl: params.host,
-      username: handle,
+      username: params.username ?? handle,
       password: params.password,
     });
 
