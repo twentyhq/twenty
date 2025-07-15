@@ -70,7 +70,7 @@ export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  files?: Maybe<Array<File>>;
+  files: Array<File>;
   id: Scalars['ID'];
   role: Scalars['String'];
   threadId: Scalars['ID'];
@@ -2972,6 +2972,20 @@ export type CreateAgentChatThreadMutationVariables = Exact<{
 
 export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string } };
 
+export type GetAgentChatMessagesQueryVariables = Exact<{
+  threadId: Scalars['String'];
+}>;
+
+
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+
+export type GetAgentChatThreadsQueryVariables = Exact<{
+  agentId: Scalars['String'];
+}>;
+
+
+export type GetAgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string }> };
+
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
   event?: InputMaybe<Scalars['String']>;
@@ -4187,6 +4201,92 @@ export function useCreateAgentChatThreadMutation(baseOptions?: Apollo.MutationHo
 export type CreateAgentChatThreadMutationHookResult = ReturnType<typeof useCreateAgentChatThreadMutation>;
 export type CreateAgentChatThreadMutationResult = Apollo.MutationResult<CreateAgentChatThreadMutation>;
 export type CreateAgentChatThreadMutationOptions = Apollo.BaseMutationOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
+export const GetAgentChatMessagesDocument = gql`
+    query GetAgentChatMessages($threadId: String!) {
+  agentChatMessages(threadId: $threadId) {
+    id
+    threadId
+    role
+    content
+    createdAt
+    files {
+      id
+      name
+      fullPath
+      size
+      type
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAgentChatMessagesQuery__
+ *
+ * To run a query within a React component, call `useGetAgentChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAgentChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAgentChatMessagesQuery({
+ *   variables: {
+ *      threadId: // value for 'threadId'
+ *   },
+ * });
+ */
+export function useGetAgentChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+      }
+export function useGetAgentChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+        }
+export type GetAgentChatMessagesQueryHookResult = ReturnType<typeof useGetAgentChatMessagesQuery>;
+export type GetAgentChatMessagesLazyQueryHookResult = ReturnType<typeof useGetAgentChatMessagesLazyQuery>;
+export type GetAgentChatMessagesQueryResult = Apollo.QueryResult<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>;
+export const GetAgentChatThreadsDocument = gql`
+    query GetAgentChatThreads($agentId: String!) {
+  agentChatThreads(agentId: $agentId) {
+    id
+    agentId
+    title
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetAgentChatThreadsQuery__
+ *
+ * To run a query within a React component, call `useGetAgentChatThreadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAgentChatThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAgentChatThreadsQuery({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *   },
+ * });
+ */
+export function useGetAgentChatThreadsQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+      }
+export function useGetAgentChatThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+        }
+export type GetAgentChatThreadsQueryHookResult = ReturnType<typeof useGetAgentChatThreadsQuery>;
+export type GetAgentChatThreadsLazyQueryHookResult = ReturnType<typeof useGetAgentChatThreadsLazyQuery>;
+export type GetAgentChatThreadsQueryResult = Apollo.QueryResult<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>;
 export const TrackAnalyticsDocument = gql`
     mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {

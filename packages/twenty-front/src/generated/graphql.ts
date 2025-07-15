@@ -70,7 +70,7 @@ export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  files?: Maybe<Array<File>>;
+  files: Array<File>;
   id: Scalars['ID'];
   role: Scalars['String'];
   threadId: Scalars['ID'];
