@@ -18,13 +18,12 @@ export const spreadsheetImportBuildFieldOptions = (
       isNestedField,
       fieldMetadataItemId,
     }) => {
-      const isSelected =
-        columns.findIndex((column) => {
-          if ('value' in column) {
-            return column.value === key;
-          }
-          return false;
-        }) !== -1;
+      const isSelected = columns.some((column) => {
+        if ('value' in column) {
+          return column.value === key;
+        }
+        return false;
+      });
 
       return {
         Icon: Icon,
