@@ -47,6 +47,24 @@ export class AgentChatService {
     });
   }
 
+  async getThreadById(threadId: string, userWorkspaceId: string) {
+    const thread = await this.threadRepository.findOne({
+      where: {
+        id: threadId,
+        userWorkspaceId,
+      },
+    });
+
+    if (!thread) {
+      throw new AgentException(
+        'Thread not found',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return thread;
+  }
+
   async addMessage({
     threadId,
     role,

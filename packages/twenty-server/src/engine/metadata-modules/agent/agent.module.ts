@@ -19,6 +19,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
+import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
 import { AgentStreamingService } from './agent-streaming.service';
@@ -56,6 +57,7 @@ import { AgentService } from './agent.service';
   controllers: [AgentChatController],
   providers: [
     AgentResolver,
+    AgentChatResolver,
     AgentService,
     AgentExecutionService,
     AgentToolService,

@@ -66,6 +66,25 @@ export type Agent = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentChatMessage = {
+  __typename?: 'AgentChatMessage';
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  files?: Maybe<Array<File>>;
+  id: Scalars['ID'];
+  role: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
+export type AgentChatThread = {
+  __typename?: 'AgentChatThread';
+  agentId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -443,6 +462,10 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
+};
+
+export type CreateAgentChatThreadInput = {
+  agentId: Scalars['String'];
 };
 
 export type CreateApiKeyDto = {
@@ -1023,6 +1046,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgentChatThread: AgentChatThread;
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
@@ -1144,6 +1168,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateAgentChatThreadArgs = {
+  input: CreateAgentChatThreadInput;
 };
 
 
@@ -1754,6 +1783,9 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatMessages: Array<AgentChatMessage>;
+  agentChatThread: AgentChatThread;
+  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
@@ -1796,6 +1828,21 @@ export type Query = {
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentChatMessagesArgs = {
+  threadId: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadsArgs = {
+  agentId: Scalars['String'];
 };
 
 
