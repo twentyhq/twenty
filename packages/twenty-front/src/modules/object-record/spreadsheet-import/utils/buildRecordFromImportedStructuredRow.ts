@@ -50,44 +50,21 @@ const buildRelationConnectFieldRecord = (
   spreadsheetImportFields: SpreadsheetImportFields,
 ) => {
   if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
-    return {
-      relationIdFieldValue: undefined,
-      relationConnectFieldValue: undefined,
-    };
+    return undefined;
 
   const relationConnectFields = spreadsheetImportFields.filter(
     (field) =>
       field.fieldMetadataItemId === fieldMetadataItem.id &&
-      isDefined(importedStructuredRow[field.key]),
+      isDefined(importedStructuredRow[field.key]) &&
+      isNonEmptyString(importedStructuredRow[field.key]),
   );
 
-  if (relationConnectFields.length === 0)
-    return {
-      relationIdFieldValue: undefined,
-      relationConnectFieldValue: undefined,
-    };
-
-  if (
-    relationConnectFields.length === 1 &&
-    relationConnectFields[0].uniqueFieldMetadataItem?.name === 'id' &&
-    isNonEmptyString(importedStructuredRow[relationConnectFields[0].key])
-  ) {
-    const value = importedStructuredRow[relationConnectFields[0].key];
-
-    return {
-      relationIdFieldValue: isNonEmptyString(value) ? value : null,
-      relationConnectFieldValue: undefined,
-    };
-  }
+  if (relationConnectFields.length === 0) return undefined;
 
   const relationConnectFieldValue = relationConnectFields.reduce(
     (acc, field) => {
       const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
-      if (
-        !isNonEmptyString(importedStructuredRow[field.key]) ||
-        !isDefined(uniqueFieldMetadataItem)
-      )
-        return acc;
+      if (!isDefined(uniqueFieldMetadataItem)) return acc;
 
       if (
         isCompositeFieldType(uniqueFieldMetadataItem.type) &&
@@ -111,12 +88,9 @@ const buildRelationConnectFieldRecord = (
     {} as Record<string, any>,
   );
 
-  return {
-    relationIdFieldValue: undefined,
-    relationConnectFieldValue: isEmptyObject(relationConnectFieldValue)
-      ? undefined
-      : { connect: { where: relationConnectFieldValue } },
-  };
+  return isEmptyObject(relationConnectFieldValue)
+    ? undefined
+    : { connect: { where: relationConnectFieldValue } };
 };
 
 export const buildRecordFromImportedStructuredRow = ({
@@ -329,14 +303,11 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       case FieldMetadataType.RELATION: {
-        const { relationIdFieldValue, relationConnectFieldValue } =
-          buildRelationConnectFieldRecord(
-            field,
-            importedStructuredRow,
-            spreadsheetImportFields,
-          );
-        recordToBuild[field.name] = relationConnectFieldValue;
-        recordToBuild[`${field.name}Id`] = relationIdFieldValue;
+        recordToBuild[field.name] = buildRelationConnectFieldRecord(
+          field,
+          importedStructuredRow,
+          spreadsheetImportFields,
+        );
         break;
       }
       case FieldMetadataType.ACTOR:
