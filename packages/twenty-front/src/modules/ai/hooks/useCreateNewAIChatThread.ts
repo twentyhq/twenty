@@ -6,6 +6,7 @@ import { useCreateAgentChatThreadMutation } from '~/generated-metadata/graphql';
 export const useCreateNewAIChatThread = ({ agentId }: { agentId: string }) => {
   const [, setCurrentThreadId] = useRecoilComponentStateV2(
     currentAIChatThreadComponentState,
+    agentId,
   );
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
