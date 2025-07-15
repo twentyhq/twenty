@@ -3,6 +3,7 @@ import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAI
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconSparkles } from 'twenty-ui/display';
 import { AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -75,6 +76,7 @@ export const AIChatThreadGroup = ({
   agentId: string;
   title: string;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const [, setCurrentThreadId] = useRecoilComponentStateV2(
     currentAIChatThreadComponentState,
@@ -106,7 +108,7 @@ export const AIChatThreadGroup = ({
             </StyledSparkleIcon>
             <StyledThreadContent>
               <StyledThreadTitle>
-                {thread.title || 'Untitled'}
+                {thread.title || t`Untitled`}
               </StyledThreadTitle>
             </StyledThreadContent>
           </StyledThreadItem>
