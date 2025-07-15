@@ -5,27 +5,25 @@ export const groupThreadsByDate = (threads: AgentChatThread[]) => {
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
-  const todayThreads = threads.filter((thread) => {
-    const threadDate = new Date(thread.createdAt);
-    return threadDate.toDateString() === today.toDateString();
-  });
+  return threads.reduce<{
+    today: AgentChatThread[];
+    yesterday: AgentChatThread[];
+    older: AgentChatThread[];
+  }>(
+    (acc, thread) => {
+      const threadDate = new Date(thread.createdAt);
+      const threadDateString = threadDate.toDateString();
 
-  const yesterdayThreads = threads.filter((thread) => {
-    const threadDate = new Date(thread.createdAt);
-    return threadDate.toDateString() === yesterday.toDateString();
-  });
+      if (threadDateString === today.toDateString()) {
+        acc.today.push(thread);
+      } else if (threadDateString === yesterday.toDateString()) {
+        acc.yesterday.push(thread);
+      } else {
+        acc.older.push(thread);
+      }
 
-  const olderThreads = threads.filter((thread) => {
-    const threadDate = new Date(thread.createdAt);
-    return (
-      threadDate.toDateString() !== today.toDateString() &&
-      threadDate.toDateString() !== yesterday.toDateString()
-    );
-  });
-
-  return {
-    today: todayThreads,
-    yesterday: yesterdayThreads,
-    older: olderThreads,
-  };
+      return acc;
+    },
+    { today: [], yesterday: [], older: [] },
+  );
 };
