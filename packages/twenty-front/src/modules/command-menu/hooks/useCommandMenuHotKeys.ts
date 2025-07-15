@@ -43,41 +43,41 @@ export const useCommandMenuHotKeys = () => {
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
-  useGlobalHotkeys(
-    'ctrl+k,meta+k',
-    () => {
+  useGlobalHotkeys({
+    keys: ['ctrl+k', 'meta+k'],
+    callback: () => {
       closeKeyboardShortcutMenu();
       toggleCommandMenu();
     },
-    true,
-    [closeKeyboardShortcutMenu, toggleCommandMenu],
-  );
+    containsModifier: true,
+    dependencies: [closeKeyboardShortcutMenu, toggleCommandMenu],
+  });
 
-  useGlobalHotkeys(
-    ['/'],
-    () => {
+  useGlobalHotkeys({
+    keys: ['/'],
+    callback: () => {
       openRecordsSearchPage();
     },
-    false,
-    [openRecordsSearchPage],
-    {
+    containsModifier: false,
+    dependencies: [openRecordsSearchPage],
+    options: {
       ignoreModifiers: true,
     },
-  );
+  });
 
-  useGlobalHotkeys(
-    ['@'],
-    () => {
+  useGlobalHotkeys({
+    keys: ['@'],
+    callback: () => {
       if (isAiEnabled) {
         openAskAIPage();
       }
     },
-    false,
-    [openAskAIPage, isAiEnabled],
-    {
+    containsModifier: false,
+    dependencies: [openAskAIPage, isAiEnabled],
+    options: {
       ignoreModifiers: true,
     },
-  );
+  });
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],

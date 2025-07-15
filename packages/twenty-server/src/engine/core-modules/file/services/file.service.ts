@@ -3,18 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { basename, dirname, extname } from 'path';
 import { Stream } from 'stream';
 
-import { v4 as uuidV4 } from 'uuid';
-import { buildSignedPath } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
+import { buildSignedPath } from 'twenty-shared/utils';
+import { v4 as uuidV4 } from 'uuid';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import {
   FileTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class FileService {
@@ -45,7 +45,7 @@ export class FileService {
     return buildSignedPath({
       path: url,
       token: this.encodeFileToken({
-        filename: extractFilenameFromPath(url),
+        filename: extractFolderPathAndFilename(url).filename,
         workspaceId,
       }),
     });

@@ -10,7 +10,7 @@ it('returns the expected name for a DATABASE_EVENT trigger', () => {
         outputSchema: {},
       },
     }),
-  ).toBe('Record is Created');
+  ).toBe('Record is created');
 });
 
 it('returns the expected name for a MANUAL trigger without a defined objectType', () => {

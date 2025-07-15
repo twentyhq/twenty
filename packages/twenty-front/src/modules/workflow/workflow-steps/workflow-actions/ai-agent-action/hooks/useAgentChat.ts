@@ -6,8 +6,11 @@ import { Key } from 'ts-key-enum';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
+import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 import { agentChatInputState } from '../states/agentChatInputState';
@@ -25,6 +28,14 @@ export const useAgentChat = (agentId: string) => {
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
 
+  const agentChatSelectedFiles = useRecoilComponentValueV2(
+    agentChatSelectedFilesComponentState,
+    agentId,
+  );
+
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
+    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
+
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
     agentId,
@@ -39,7 +50,9 @@ export const useAgentChat = (agentId: string) => {
 
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
+  const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
+
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement(scrollWrapperId);
 
   const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({
@@ -58,7 +71,11 @@ export const useAgentChat = (agentId: string) => {
       scrollToBottom();
     });
 
-  const isLoading = messagesLoading || threadsLoading || isStreaming;
+  const isLoading =
+    messagesLoading ||
+    threadsLoading ||
+    isStreaming ||
+    agentChatSelectedFiles.length > 0;
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -68,6 +85,7 @@ export const useAgentChat = (agentId: string) => {
       content,
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: agentChatUploadedFiles,
     };
 
     const optimisticAiMessage: OptimisticMessage = {
@@ -77,6 +95,7 @@ export const useAgentChat = (agentId: string) => {
       content: '',
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: [],
     };
 
     return [optimisticUserMessage, optimisticAiMessage];
@@ -95,6 +114,7 @@ export const useAgentChat = (agentId: string) => {
         requestBody: {
           threadId: currentThreadId,
           userMessage: content,
+          fileIds: agentChatUploadedFiles.map((file) => file.id),
         },
       },
       context: {
@@ -134,6 +154,8 @@ export const useAgentChat = (agentId: string) => {
       ...prevMessages,
       ...optimisticMessages,
     ]);
+
+    setAgentChatUploadedFiles([]);
 
     setTimeout(scrollToBottom, 100);
 
@@ -180,5 +202,6 @@ export const useAgentChat = (agentId: string) => {
     handleSendMessage,
     isLoading,
     agentStreamingMessage,
+    scrollWrapperId,
   };
 };
