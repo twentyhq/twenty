@@ -111,7 +111,6 @@ export class FieldMetadataMorphRelationService {
         },
       );
 
-      const targetObjectMetadataNameSingular = objectMetadata.nameSingular;
       const targetFieldMetadataToCreateWithRelation =
         await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
@@ -127,7 +126,6 @@ export class FieldMetadataMorphRelationService {
             },
             joinColumnName: computeJoinColumnName({
               fieldMetadataInput: targetFieldMetadataToCreate,
-              targetObjectMetadataNameSingular,
             }),
           },
         );
