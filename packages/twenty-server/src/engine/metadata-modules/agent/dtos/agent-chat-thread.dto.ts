@@ -8,6 +8,9 @@ export class AgentChatThreadDTO {
   @Field(() => ID)
   agentId: string;
 
+  @Field({ nullable: true })
+  title: string;
+
   @Field()
   createdAt: Date;
 

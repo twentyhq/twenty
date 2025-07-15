@@ -5,6 +5,7 @@ import { GET_AGENT_CHAT_THREADS } from '../api/agent-chat-apollo.api';
 export interface AgentChatThread {
   id: string;
   agentId: string;
+  title?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -9,6 +9,7 @@ export const GET_AGENT_CHAT_THREADS = gql`
       ) {
       id
       agentId
+      title
       createdAt
       updatedAt
     }
