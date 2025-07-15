@@ -2,6 +2,7 @@ import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   DeleteQueryBuilder,
   DeleteResult,
+  EntityTarget,
   InsertQueryBuilder,
   ObjectLiteral,
 } from 'typeorm';
@@ -58,14 +59,7 @@ export class WorkspaceDeleteQueryBuilder<
       this.shouldBypassPermissionChecks,
     );
 
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -75,7 +69,7 @@ export class WorkspaceDeleteQueryBuilder<
     const result = await super.execute();
 
     const formattedResult = formatResult<T[]>(
-      result,
+      result.raw,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
     );
@@ -91,6 +85,19 @@ export class WorkspaceDeleteQueryBuilder<
       ...result,
       raw: formattedResult,
     };
+  }
+
+  private getMainAliasTarget(): EntityTarget<T> {
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    return mainAliasTarget;
   }
 
   override select(): WorkspaceSelectQueryBuilder<T> {

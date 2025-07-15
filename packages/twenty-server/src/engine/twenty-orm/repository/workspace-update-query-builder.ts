@@ -1,5 +1,10 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { ObjectLiteral, UpdateQueryBuilder, UpdateResult } from 'typeorm';
+import {
+  EntityTarget,
+  ObjectLiteral,
+  UpdateQueryBuilder,
+  UpdateResult,
+} from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -54,21 +59,25 @@ export class WorkspaceUpdateQueryBuilder<
       this.shouldBypassPermissionChecks,
     );
 
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
       this.internalContext,
     );
 
-    const before = await this.getBeforeUpdateSelectQueryBuilder().getMany();
+    const beforeSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
+      this as unknown as WorkspaceSelectQueryBuilder<T>,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
+
+    beforeSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
+    beforeSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
+    beforeSelectQueryBuilder.setParameters(this.getParameters());
+
+    const before = await beforeSelectQueryBuilder.getMany();
 
     const formattedBefore = formatResult<T[]>(
       before,
@@ -98,30 +107,8 @@ export class WorkspaceUpdateQueryBuilder<
     };
   }
 
-  private getBeforeUpdateSelectQueryBuilder(): WorkspaceSelectQueryBuilder<T> {
-    const beforeSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
-      this as unknown as WorkspaceSelectQueryBuilder<T>,
-      this.objectRecordsPermissions,
-      this.internalContext,
-      this.shouldBypassPermissionChecks,
-    );
-
-    beforeSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
-    beforeSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
-    beforeSelectQueryBuilder.setParameters(this.getParameters());
-
-    return beforeSelectQueryBuilder;
-  }
-
   override set(_values: QueryDeepPartialEntity<T>): this {
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -159,5 +146,18 @@ export class WorkspaceUpdateQueryBuilder<
       'This builder cannot morph into a soft delete builder',
       TwentyORMExceptionCode.METHOD_NOT_ALLOWED,
     );
+  }
+
+  private getMainAliasTarget(): EntityTarget<T> {
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    return mainAliasTarget;
   }
 }

@@ -1,5 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { EntityTarget, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -53,14 +53,7 @@ export class WorkspaceSelectQueryBuilder<
   override async execute(): Promise<T[]> {
     this.validatePermissions();
 
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -149,14 +142,7 @@ export class WorkspaceSelectQueryBuilder<
   override update(
     updateSet?: QueryDeepPartialEntity<T>,
   ): WorkspaceUpdateQueryBuilder<T> {
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -224,5 +210,18 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext.objectMetadataMaps,
       this.shouldBypassPermissionChecks,
     );
+  }
+
+  private getMainAliasTarget(): EntityTarget<T> {
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    return mainAliasTarget;
   }
 }

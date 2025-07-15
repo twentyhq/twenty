@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import deepEqual from 'deep-equal';
 import { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -130,7 +131,7 @@ export class WorkspaceEventEmitter {
         typeof afterValue === 'object' &&
         afterValue !== null
       ) {
-        if (JSON.stringify(beforeValue) !== JSON.stringify(afterValue)) {
+        if (!deepEqual(beforeValue, afterValue)) {
           updatedFields.push(key as string);
         }
       } else {

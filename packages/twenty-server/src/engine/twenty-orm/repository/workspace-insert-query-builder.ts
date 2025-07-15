@@ -1,5 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { InsertQueryBuilder, ObjectLiteral } from 'typeorm';
+import { EntityTarget, InsertQueryBuilder, ObjectLiteral } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -51,14 +51,7 @@ export class WorkspaceInsertQueryBuilder<
   override values(
     values: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
   ): this {
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -79,14 +72,7 @@ export class WorkspaceInsertQueryBuilder<
       this.shouldBypassPermissionChecks,
     );
 
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
-
-    if (!mainAliasTarget) {
-      throw new TwentyORMException(
-        'Main alias target is missing',
-        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
-      );
-    }
+    const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -96,7 +82,7 @@ export class WorkspaceInsertQueryBuilder<
     const result = await super.execute();
 
     const formattedResult = formatResult<T[]>(
-      result,
+      result.raw,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
     );
@@ -109,6 +95,19 @@ export class WorkspaceInsertQueryBuilder<
     });
 
     return formattedResult;
+  }
+
+  private getMainAliasTarget(): EntityTarget<T> {
+    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+
+    if (!mainAliasTarget) {
+      throw new TwentyORMException(
+        'Main alias target is missing',
+        TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET,
+      );
+    }
+
+    return mainAliasTarget;
   }
 
   override select(): WorkspaceSelectQueryBuilder<T> {

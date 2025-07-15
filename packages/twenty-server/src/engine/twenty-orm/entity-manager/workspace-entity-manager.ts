@@ -1125,7 +1125,7 @@ export class WorkspaceEntityManager extends EntityManager {
             this.internalContext,
           ),
           workspaceId: this.internalContext.workspaceId,
-          entities: entity,
+          entities: [entity],
           beforeEntities: beforeUpdateMapById[entity.id],
         });
       } else {
@@ -1136,7 +1136,7 @@ export class WorkspaceEntityManager extends EntityManager {
             this.internalContext,
           ),
           workspaceId: this.internalContext.workspaceId,
-          entities: entity,
+          entities: [entity],
         });
       }
     }
