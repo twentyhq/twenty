@@ -12,7 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
-  lowercaseUrlAndRemoveTrailingSlash,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
 
 type Column = {
@@ -108,7 +108,7 @@ const getUniqueValues = (
             .primaryLinkUrl,
         )
       ) {
-        return lowercaseUrlAndRemoveTrailingSlash(
+        return lowercaseUrlOriginAndRemoveTrailingSlash(
           row?.[columnName]?.toString().trim() || '',
         );
       }
