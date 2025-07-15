@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
+import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import omit from 'lodash.omit';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -67,7 +67,7 @@ export class FieldMetadataMorphRelationService {
           },
         );
 
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
         {
           fieldMetadataInput: {
             ...fieldMetadataForCreate,

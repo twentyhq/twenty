@@ -627,6 +627,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
+  // We need a transaction here isn't it @weiko ?
   private async validateAndCreateFieldMetadataItems(
     fieldMetadataInput: CreateFieldInput,
     objectMetadata: ObjectMetadataItemWithFieldMaps,
@@ -671,11 +672,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
+      const relationCreationPayload = await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
+        {
+          fieldMetadataInput: fieldMetadataForCreate,
+          objectMetadataMaps,
+        },
+      );
+
       const relationSettings =
         this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
             fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: fieldMetadataInput.relationCreationPayload, // why ?
+            relationCreationPayload, // why ?
             objectMetadata,
           },
         );
@@ -684,16 +692,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...relationSettings,
       };
 
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationSpecifics(
-        {
-          fieldMetadataInput: fieldMetadataInputWithRelationSettings,
-          fieldMetadataType: fieldMetadataForCreate.type,
-          objectMetadataMaps,
-        },
-      );
-
       return await this.fieldMetadataRelationService.createRelationFieldMetadataItems(
         {
+          relationCreationPayload,
           fieldMetadataInput: fieldMetadataInputWithRelationSettings,
           objectMetadata,
           fieldMetadataRepository,
