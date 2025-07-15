@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 export const useOpenAskAIPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
 
-  const openAskAIPage = (pageTitle?: string) => {
+  const openAskAIPage = (pageTitle?: string | null) => {
     navigateCommandMenu({
       page: CommandMenuPages.AskAI,
       pageTitle: pageTitle ?? t`Ask AI`,
