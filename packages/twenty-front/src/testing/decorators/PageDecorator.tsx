@@ -13,7 +13,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -77,7 +77,7 @@ await dynamicActivate(SOURCE_LOCALE);
 const Providers = () => {
   return (
     <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
         <RecoilDebugObserverEffect />
         <ApolloProvider client={mockedApolloClient}>
           <I18nProvider i18n={i18n}>
@@ -125,7 +125,7 @@ const Providers = () => {
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>
-      </SnackBarProviderScope>
+      </SnackBarComponentInstanceContextProvider>
     </RecoilRoot>
   );
 };

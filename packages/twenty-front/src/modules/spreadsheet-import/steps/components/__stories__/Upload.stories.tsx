@@ -44,7 +44,7 @@ const meta: Meta<typeof UploadStep> = {
 export default meta;
 
 export const Default = () => (
-  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper modalId="upload-step" onClose={() => null}>
         <UploadStep

@@ -79,11 +79,10 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
   it('should return row with error if row is not unique - index on composite field', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
-
     const testData: ImportedStructuredRow<string>[] = [
-      { 'Link URL (domainName)': 'duplicaTe.com' },
-      { 'Link URL (domainName)': 'duplicate.com ' },
-      { 'Link URL (domainName)': 'other.com' },
+      { 'Link URL (domainName)': 'https://duplicaTe.com' },
+      { 'Link URL (domainName)': 'https://duplicate.com' },
+      { 'Link URL (domainName)': 'https://other.com' },
     ];
 
     const addErrorMock = jest.fn();

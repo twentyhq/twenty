@@ -105,11 +105,7 @@ describe('removeUndefinedFields', () => {
       },
       expected: {
         names: ['John', 'Jane', null],
-        tags: [
-          { id: 1, label: 'active' },
-          { label: 'pending' },
-          { id: 3 },
-        ],
+        tags: [{ id: 1, label: 'active' }, { label: 'pending' }, { id: 3 }],
       },
     },
     {
@@ -131,4 +127,4 @@ describe('removeUndefinedFields', () => {
       expect(removeUndefinedFields(input)).toEqual(expected);
     });
   });
-}); 
+});
