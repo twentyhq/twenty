@@ -3,17 +3,15 @@ import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInpu
 import { isDefined } from 'twenty-shared/utils';
 import { useVectorSearchFilterState } from './useVectorSearchFilterState';
 
-export const useSetVectorSearchInputValueFromExistingFilter = (
-  filterDropdownId: string,
-) => {
+export const useSetVectorSearchInputValueFromExistingFilter = () => {
   const [, setVectorSearchInputValue] = useRecoilComponentStateV2(
     vectorSearchInputComponentState,
-    filterDropdownId,
   );
   const { getExistingVectorSearchFilter } = useVectorSearchFilterState();
 
   const setVectorSearchInputValueFromExistingFilter = () => {
     const existingVectorSearchFilter = getExistingVectorSearchFilter();
+
     if (isDefined(existingVectorSearchFilter)) {
       setVectorSearchInputValue(existingVectorSearchFilter.value);
     }

@@ -51,7 +51,7 @@ export const AppRouterProviders = () => {
                         <UserThemeProviderEffect />
                         <SnackBarProvider>
                           <ErrorMessageEffect />
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManagerScope dialogComponentInstanceId="dialog-manager">
                             <DialogManager>
                               <StrictMode>
                                 <PromiseRejectionEffect />

@@ -195,6 +195,7 @@ export class FieldMetadataValidationService {
     if (
       isRelationField &&
       isDefined(existingFieldMetadata) &&
+      isDefined(fieldMetadataInput.name) &&
       fieldMetadataInput.name !== existingFieldMetadata.name
     ) {
       throw new FieldMetadataException(

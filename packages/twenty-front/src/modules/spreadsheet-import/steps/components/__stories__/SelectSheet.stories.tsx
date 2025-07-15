@@ -40,7 +40,7 @@ export default meta;
 const sheetNames = ['Sheet1', 'Sheet2', 'Sheet3'];
 
 export const Default = () => (
-  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="select-sheet-step"
