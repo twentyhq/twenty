@@ -6,7 +6,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { InMemoryCache } from '@apollo/client';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -25,7 +25,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
 }) => {
   return ({ children }: { children: ReactNode }) => (
     <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
         <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
           <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId: 'instanceId' }}
@@ -53,7 +53,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
             </RecordFiltersComponentInstanceContext.Provider>
           </RecordFilterGroupsComponentInstanceContext.Provider>
         </MockedProvider>
-      </SnackBarProviderScope>
+      </SnackBarComponentInstanceContextProvider>
     </RecoilRoot>
   );
 };

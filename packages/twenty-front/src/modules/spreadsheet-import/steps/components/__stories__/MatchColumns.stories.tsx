@@ -62,7 +62,7 @@ const mockData = [
 ];
 
 export const Default = () => (
-  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
         modalId="match-columns-step"
