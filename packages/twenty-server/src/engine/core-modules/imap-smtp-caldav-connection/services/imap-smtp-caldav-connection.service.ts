@@ -10,6 +10,7 @@ import {
   ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
@@ -121,7 +122,31 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    this.logger.log('CALDAV connection testing not yet implemented', params);
+    const client = new CalDAVClient({
+      serverUrl: params.host,
+      username: params.username ?? handle,
+      password: params.password,
+    });
+
+    try {
+      await client.listCalendars();
+    } catch (error) {
+      this.logger.error(
+        `CALDAV connection failed: ${error.message}`,
+        error.stack,
+      );
+      if (error.code === 'FailedToOpenSocket') {
+        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+          userFriendlyMessage:
+            "We couldn't connect to your CalDAV server. Please check your server settings and try again.",
+        });
+      }
+
+      throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+        userFriendlyMessage:
+          'Invalid credentials. Please check your username and password.',
+      });
+    }
 
     return true;
   }
