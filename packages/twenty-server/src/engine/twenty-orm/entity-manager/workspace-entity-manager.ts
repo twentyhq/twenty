@@ -1342,7 +1342,6 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
-  //tododo - handle null values that should not connect
   private async processRelationConnect<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
     target: EntityTarget<Entity>,

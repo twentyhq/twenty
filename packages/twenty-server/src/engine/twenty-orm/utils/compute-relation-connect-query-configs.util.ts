@@ -218,14 +218,14 @@ const hasRelationConnect = (value: unknown): value is ConnectObject => {
   return whereKeys.every((key) => {
     const whereValue = where[key];
 
-    if (typeof whereValue === 'string') {
+    if (typeof whereValue === 'string' || whereValue === null) {
       return true;
     }
     if (whereValue && typeof whereValue === 'object') {
       const subObj = whereValue as Record<string, unknown>;
 
       return Object.values(subObj).every(
-        (subValue) => typeof subValue === 'string',
+        (subValue) => typeof subValue === 'string' || subValue === null,
       );
     }
 
