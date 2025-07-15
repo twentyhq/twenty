@@ -5,10 +5,10 @@ import { currentAIChatThreadComponentState } from '@/ai/components/states/curren
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useAgentChatThreads } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useAgentChatThreads';
 import { useTheme } from '@emotion/react';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { useGetAgentChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -103,7 +103,10 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
-  const { data: { threads = [] } = {}, loading } = useAgentChatThreads(agentId);
+  const { data: { agentChatThreads = [] } = {}, loading } =
+    useGetAgentChatThreadsQuery({
+      variables: { agentId },
+    });
 
   const groupThreadsByDate = (threads: any[]) => {
     const today = new Date();
@@ -135,7 +138,7 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
     };
   };
 
-  const groupedThreads = groupThreadsByDate(threads);
+  const groupedThreads = groupThreadsByDate(agentChatThreads);
 
   const renderThreadGroup = (title: string, threads: any[]) => {
     if (threads.length === 0) return null;
@@ -170,7 +173,7 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
     );
   };
 
-  if (loading) {
+  if (loading === true) {
     return <StyledContainer>Loading...</StyledContainer>;
   }
 

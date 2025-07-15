@@ -19,15 +19,15 @@ import {
   useGetAgentChatMessagesQuery,
   useGetAgentChatThreadsQuery,
 } from '~/generated-metadata/graphql';
+import { AgentChatMessage } from '~/generated/graphql';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
 import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
-import { AgentChatMessage } from './useAgentChatMessages';
 
-interface OptimisticMessage extends AgentChatMessage {
+type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
-}
+};
 
 export const useAgentChat = (agentId: string) => {
   const apolloClient = useApolloClient();
