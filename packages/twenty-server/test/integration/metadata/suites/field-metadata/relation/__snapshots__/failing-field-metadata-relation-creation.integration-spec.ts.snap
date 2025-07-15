@@ -93,6 +93,20 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
 ]
 `;
 
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when field name conflicts with an existing join col on source object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+    },
+    "message": "Name "companyId" is not available, check that it is not duplicating another field's name.",
+    "name": "UserInputError",
+  },
+]
+`;
+
 exports[`Field metadata relation creation should fail relation ONE_TO_MANY when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
 [
   {
