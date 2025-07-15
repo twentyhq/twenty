@@ -1,7 +1,7 @@
+import { AttachmentType } from '@/activities/files/types/Attachment';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { AttachmentType } from '@/activities/files/types/Attachment';
 import {
   IconComponent,
   IconFile,
@@ -21,9 +21,8 @@ const StyledIconContainer = styled.div<{ background: string }>`
   color: ${({ theme }) => theme.grayScale.gray0};
   display: flex;
   flex-shrink: 0;
-  height: 20px;
   justify-content: center;
-  width: 20px;
+  padding: ${({ theme }) => theme.spacing(1.25)};
 `;
 
 const IconMapping: { [key in AttachmentType]: IconComponent } = {
@@ -37,11 +36,7 @@ const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-export const AttachmentIcon = ({
-  attachmentType,
-}: {
-  attachmentType: AttachmentType;
-}) => {
+export const FileIcon = ({ fileType }: { fileType: AttachmentType }) => {
   const theme = useTheme();
 
   const IconColors: { [key in AttachmentType]: string } = {
@@ -55,10 +50,10 @@ export const AttachmentIcon = ({
     Other: theme.color.gray,
   };
 
-  const Icon = IconMapping[attachmentType];
+  const Icon = IconMapping[fileType];
 
   return (
-    <StyledIconContainer background={IconColors[attachmentType]}>
+    <StyledIconContainer background={IconColors[fileType]}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );

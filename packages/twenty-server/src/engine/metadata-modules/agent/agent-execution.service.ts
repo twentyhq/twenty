@@ -1,16 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { Readable } from 'stream';
+
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { CoreMessage, generateObject, generateText, streamText } from 'ai';
-import { Repository } from 'typeorm';
+import {
+  CoreMessage,
+  CoreUserMessage,
+  FilePart,
+  generateObject,
+  generateText,
+  ImagePart,
+  streamText,
+  TextPart,
+} from 'ai';
+import { In, Repository } from 'typeorm';
 
 import {
   ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentChatMessageEntity,
@@ -22,6 +36,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -45,9 +60,12 @@ export class AgentExecutionService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
+    private readonly fileService: FileService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(FileEntity, 'core')
+    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   getModel = (modelId: ModelId, provider: ModelProvider) => {
@@ -58,9 +76,7 @@ export class AgentExecutionService {
           apiKey: this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY'),
         });
 
-        return OpenAIProvider(
-          this.aiModelRegistryService.getEffectiveModelConfig(modelId).modelId,
-        );
+        return OpenAIProvider(modelId);
       }
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
@@ -167,14 +183,73 @@ export class AgentExecutionService {
     }
   }
 
+  private async buildUserMessageWithFiles(
+    userMessage: string,
+    fileIds?: string[],
+  ): Promise<CoreUserMessage> {
+    if (!fileIds || fileIds.length === 0) {
+      return { role: AgentChatMessageRole.USER, content: userMessage };
+    }
+
+    const files = await this.fileRepository.find({
+      where: {
+        id: In(fileIds),
+      },
+    });
+
+    const textPart: TextPart = {
+      type: 'text',
+      text: userMessage,
+    };
+
+    const fileParts = await Promise.all(
+      files.map((file) => this.createFilePart(file)),
+    );
+
+    return {
+      role: AgentChatMessageRole.USER,
+      content: [textPart, ...fileParts],
+    };
+  }
+
+  private async createFilePart(
+    file: FileEntity,
+  ): Promise<ImagePart | FilePart> {
+    const { folderPath, filename } = extractFolderPathAndFilename(
+      file.fullPath,
+    );
+    const fileStream = await this.fileService.getFileStream(
+      folderPath,
+      filename,
+      file.workspaceId,
+    );
+    const fileBuffer = await streamToBuffer(fileStream as Readable);
+
+    if (file.type.startsWith('image')) {
+      return {
+        type: 'image',
+        image: fileBuffer,
+        mimeType: file.type,
+      };
+    } else {
+      return {
+        type: 'file',
+        data: fileBuffer,
+        mimeType: file.type,
+      };
+    }
+  }
+
   async streamChatResponse({
     agentId,
     userMessage,
     messages,
+    fileIds,
   }: {
     agentId: string;
     userMessage: string;
     messages: AgentChatMessageEntity[];
+    fileIds?: string[];
   }) {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -185,10 +260,12 @@ export class AgentExecutionService {
       content,
     }));
 
-    llmMessages.push({
-      role: AgentChatMessageRole.USER,
-      content: userMessage,
-    });
+    const userMessageWithFiles = await this.buildUserMessageWithFiles(
+      userMessage,
+      fileIds,
+    );
+
+    llmMessages.push(userMessageWithFiles);
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
       system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,

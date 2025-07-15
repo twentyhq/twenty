@@ -21,6 +21,7 @@ import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
+import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { i18n } from '@lingui/core';
 import {
   DefinitionNode,
@@ -30,7 +31,6 @@ import {
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
@@ -50,8 +50,6 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
 }
-
-const REST_API_BASE_URL = `${REACT_APP_SERVER_BASE_URL}/rest`;
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
@@ -76,7 +74,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     this.currentWorkspace = currentWorkspace;
 
     const buildApolloLink = (): ApolloLink => {
-      const httpLink = createUploadLink({
+      const uploadLink = createUploadLink({
         uri,
       });
 
@@ -252,7 +250,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           retryLink,
           streamingRestLink,
           restLink,
-          httpLink,
+          uploadLink,
         ].filter(isDefined),
       );
     };
