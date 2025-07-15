@@ -147,9 +147,8 @@ export const AIChatThreadsList = ({ agentId }: { agentId: string }) => {
           {threads.map((thread) => (
             <StyledThreadItem
               onClick={() => {
-                console.log('clicked', thread.id);
                 setCurrentThreadId(thread.id);
-                openAskAIPage();
+                openAskAIPage(thread.title);
               }}
               key={thread.id}
             >
