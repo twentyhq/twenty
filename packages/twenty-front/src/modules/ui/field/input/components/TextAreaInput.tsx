@@ -20,7 +20,6 @@ export type TextAreaInputProps = {
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
-  hotkeyScope: string;
   onChange?: (newText: string) => void;
   maxRows?: number;
   copyButton?: boolean;
@@ -53,7 +52,6 @@ export const TextAreaInput = ({
   placeholder,
   autoFocus,
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
   onTab,
@@ -94,7 +92,6 @@ export const TextAreaInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   return (

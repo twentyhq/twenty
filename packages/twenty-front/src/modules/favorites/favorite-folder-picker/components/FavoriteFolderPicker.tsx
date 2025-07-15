@@ -9,7 +9,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -68,7 +67,6 @@ export const FavoriteFolderPicker = ({
       onSubmit?.();
     },
     focusId: dropdownId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [onSubmit, isFavoriteFolderCreating],
   });
 
@@ -88,7 +86,6 @@ export const FavoriteFolderPicker = ({
       }
     },
     focusId: instanceId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [
       filteredFolders,
       showNoFolderOption,

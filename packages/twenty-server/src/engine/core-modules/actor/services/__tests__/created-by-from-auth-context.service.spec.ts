@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -12,12 +13,11 @@ import {
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
   workspace: Partial<Workspace>;
-  apiKey?: Partial<ApiKeyWorkspaceEntity>;
+  apiKey?: Partial<ApiKey>;
   user?: Partial<User>;
 };
 

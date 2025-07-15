@@ -11,7 +11,6 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -132,7 +131,6 @@ export const CurrencyFieldInput = ({
       onTab={handleTab}
       onChange={handleChange}
       onSelect={handleSelect}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

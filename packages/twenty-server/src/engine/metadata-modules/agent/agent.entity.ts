@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -20,6 +21,7 @@ import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
+@Unique('IDX_AGENT_NAME_WORKSPACE_ID_UNIQUE', ['name', 'workspaceId'])
 export class AgentEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,13 +29,19 @@ export class AgentEntity {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: false })
+  label: string;
+
+  @Column({ nullable: true })
+  icon: string;
+
   @Column({ nullable: true })
   description: string;
 
   @Column({ nullable: false, type: 'text' })
   prompt: string;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', default: 'auto' })
   modelId: ModelId;
 
   @Column({ nullable: true, type: 'jsonb' })
@@ -41,6 +49,9 @@ export class AgentEntity {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @Column({ default: false })
+  isCustom: boolean;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.agents, {
     onDelete: 'CASCADE',

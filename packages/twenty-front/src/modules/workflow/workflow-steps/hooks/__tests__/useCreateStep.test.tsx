@@ -1,5 +1,5 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useCreateStep } from '../useCreateStep';
@@ -63,10 +63,13 @@ describe('useCreateStep', () => {
         wrapper,
       },
     );
-    await result.current.createStep({
-      newStepType: 'CODE',
-      parentStepId: 'parent-step-id',
-      nextStepId: undefined,
+
+    await act(async () => {
+      await result.current.createStep({
+        newStepType: 'CODE',
+        parentStepId: 'parent-step-id',
+        nextStepId: undefined,
+      });
     });
 
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();

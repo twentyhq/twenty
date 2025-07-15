@@ -592,8 +592,8 @@ export class WorkflowVersionStepWorkspaceService {
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              filterGroups: [],
-              filters: [],
+              stepFilterGroups: [],
+              stepFilters: [],
             },
           },
         };
@@ -616,14 +616,16 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const newAgent = await this.agentService.createOneAgent(
+        const newAgent = await this.agentService.createOneAgentAndFirstThread(
           {
-            name: 'AI Agent Workflow Step',
+            label: 'AI Agent Workflow Step',
+            name: `ai-agent-workflow-${newStepId}`,
             description: 'Created automatically for workflow step',
             prompt: '',
-            modelId: 'gpt-4o',
+            modelId: 'auto',
           },
           workspaceId,
+          this.scopedWorkspaceContextFactory.create().userWorkspaceId,
         );
 
         if (!isDefined(newAgent)) {
@@ -632,18 +634,6 @@ export class WorkflowVersionStepWorkspaceService {
             WorkflowVersionStepExceptionCode.FAILURE,
           );
         }
-
-        const userWorkspaceId =
-          this.scopedWorkspaceContextFactory.create().userWorkspaceId;
-
-        if (!userWorkspaceId) {
-          throw new WorkflowVersionStepException(
-            'User workspace ID not found',
-            WorkflowVersionStepExceptionCode.FAILURE,
-          );
-        }
-
-        await this.agentChatService.createThread(newAgent.id, userWorkspaceId);
 
         return {
           id: newStepId,

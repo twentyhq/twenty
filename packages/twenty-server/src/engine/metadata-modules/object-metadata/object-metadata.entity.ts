@@ -17,6 +17,7 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 
 @Entity('objectMetadata')
@@ -134,4 +135,13 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     },
   )
   objectPermissions: Relation<ObjectPermissionEntity[]>;
+
+  @OneToMany(
+    () => FieldPermissionEntity,
+    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }

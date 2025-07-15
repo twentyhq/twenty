@@ -5,22 +5,15 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
-export const DEFAULT_CELL_SCOPE: HotkeyScope = {
-  scope: TableHotkeyScope.CellEditMode,
-};
 
 export type OpenTableCellArgs = {
   initialValue?: string;
   cellPosition: TableCellPosition;
   isReadOnly: boolean;
   pathToShowPage: string;
-  customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
 };

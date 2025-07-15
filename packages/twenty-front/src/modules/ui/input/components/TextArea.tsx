@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -101,7 +100,6 @@ export const TextArea = ({
       globalHotkeysConfig: {
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
-      hotkeyScope: { scope: InputHotkeyScope.TextInput },
     });
   };
 

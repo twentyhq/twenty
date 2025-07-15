@@ -79,7 +79,7 @@ export const SettingsDevelopersWebhookForm = ({
     handleSave,
     updateOperation,
     removeOperation,
-    deleteWebhook,
+    handleDelete,
     isCreationMode,
     error,
   } = useWebhookForm({ webhookId, mode });
@@ -285,7 +285,7 @@ export const SettingsDevelopersWebhookForm = ({
               Please type "yes" to confirm you want to delete this webhook.
             </Trans>
           }
-          onConfirmClick={deleteWebhook}
+          onConfirmClick={handleDelete}
           confirmButtonText={t`Delete`}
         />
       )}

@@ -25,7 +25,6 @@ type TextInputProps = {
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: string) => void;
-  hotkeyScope: string;
   onChange?: (newText: string) => void;
   copyButton?: boolean;
   shouldTrim?: boolean;
@@ -45,7 +44,6 @@ export const TextInput = ({
   placeholder,
   autoFocus,
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
   onTab,
@@ -79,7 +77,6 @@ export const TextInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   return (

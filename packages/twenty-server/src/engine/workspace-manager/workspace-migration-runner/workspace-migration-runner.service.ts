@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryRunner, Table, TableColumn } from 'typeorm';
 
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,

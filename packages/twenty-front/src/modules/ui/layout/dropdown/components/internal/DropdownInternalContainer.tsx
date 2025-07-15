@@ -1,10 +1,11 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { dropdownPlacementComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownPlacementComponentStateV2';
+import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -69,7 +70,11 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+  const isDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentState,
+  );
+
+  const { closeDropdown } = useCloseDropdown();
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
@@ -84,7 +89,7 @@ export const DropdownInternalContainer = ({
   );
 
   const setDropdownPlacement = useSetRecoilComponentStateV2(
-    dropdownPlacementComponentStateV2,
+    dropdownPlacementComponentState,
     dropdownId,
   );
 
@@ -103,7 +108,7 @@ export const DropdownInternalContainer = ({
         event.stopImmediatePropagation();
         event.preventDefault();
 
-        closeDropdown();
+        closeDropdown(dropdownId);
       }
 
       onClickOutside?.();
@@ -117,11 +122,10 @@ export const DropdownInternalContainer = ({
       if (activeDropdownFocusId !== dropdownId) return;
 
       if (isDropdownOpen) {
-        closeDropdown();
+        closeDropdown(dropdownId);
       }
     },
     focusId: dropdownId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [
       closeDropdown,
       isDropdownOpen,

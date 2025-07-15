@@ -1,5 +1,4 @@
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
-import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
@@ -71,9 +70,6 @@ export const FavoriteFolders = ({
             onSubmit={handleSubmitFavoriteFolderCreation}
             onCancel={handleCancelFavoriteFolderCreation}
             onClickOutside={handleClickOutside}
-            hotkeyScope={
-              FavoriteFolderHotkeyScope.FavoriteFolderNavigationInput
-            }
           />
         </NavigationDrawerAnimatedCollapseWrapper>
       )}

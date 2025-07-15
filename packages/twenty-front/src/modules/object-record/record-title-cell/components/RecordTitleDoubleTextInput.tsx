@@ -28,7 +28,6 @@ type RecordTitleDoubleTextInputProps = {
   secondValue: string;
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
-  hotkeyScope: string;
   onEnter: (newDoubleTextValue: FieldDoubleText) => void;
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
@@ -47,7 +46,6 @@ export const RecordTitleDoubleTextInput = ({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  hotkeyScope,
   onClickOutside,
   onEnter,
   onEscape,
@@ -96,7 +94,6 @@ export const RecordTitleDoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEnter, firstInternalValue, secondInternalValue],
   });
@@ -109,7 +106,6 @@ export const RecordTitleDoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [onEscape, firstInternalValue, secondInternalValue],
   });
@@ -127,7 +123,6 @@ export const RecordTitleDoubleTextInput = ({
         });
       }
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [
       onTab,
@@ -150,7 +145,6 @@ export const RecordTitleDoubleTextInput = ({
         });
       }
     },
-    scope: hotkeyScope,
     focusId: instanceId,
     dependencies: [
       onShiftTab,

@@ -144,11 +144,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
     IconsProviderDecorator,
     I18nFrontDecorator,
   ],
-  args: {
-    hotkeyScope: {
-      scope: 'view-bar-filter-dropdown',
-    },
-  },
 };
 
 export default meta;

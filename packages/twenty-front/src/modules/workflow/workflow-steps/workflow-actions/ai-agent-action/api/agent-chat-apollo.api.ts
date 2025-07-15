@@ -27,6 +27,19 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       role
       content
       createdAt
+      files
     }
+  }
+`;
+
+export const STREAM_CHAT_QUERY = gql`
+  query StreamChatResponse($requestBody: JSON!) {
+    streamChatResponse(requestBody: $requestBody)
+      @stream(
+        type: "StreamChatResponse"
+        path: "/agent-chat/stream"
+        method: "POST"
+        bodyKey: "requestBody"
+      )
   }
 `;

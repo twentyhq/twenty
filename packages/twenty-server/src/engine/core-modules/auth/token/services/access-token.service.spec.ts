@@ -10,7 +10,6 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -72,10 +71,6 @@ describe('AccessTokenService', () => {
         },
         {
           provide: EmailService,
-          useValue: {},
-        },
-        {
-          provide: SSOService,
           useValue: {},
         },
         {

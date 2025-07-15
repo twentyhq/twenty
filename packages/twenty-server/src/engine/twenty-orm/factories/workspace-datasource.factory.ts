@@ -166,15 +166,16 @@ export class WorkspaceDatasourceFactory {
             );
           } else {
             const entitySchemas = await Promise.all(
-              Object.values(cachedObjectMetadataMaps.byId).map(
-                (objectMetadata) =>
+              Object.values(cachedObjectMetadataMaps.byId)
+                .filter(isDefined)
+                .map((objectMetadata) =>
                   this.entitySchemaFactory.create(
                     workspaceId,
                     dataSourceMetadataVersion,
                     objectMetadata,
                     cachedObjectMetadataMaps,
                   ),
-              ),
+                ),
             );
 
             await this.workspaceCacheStorageService.setORMEntitySchema(

@@ -13,7 +13,6 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -103,7 +102,6 @@ export const ObjectFilterDropdownOptionSelect = ({
       resetSelectedItem();
     },
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [closeDropdown, resetSelectedItem],
   });
 
@@ -154,7 +152,6 @@ export const ObjectFilterDropdownOptionSelect = ({
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
       focusId={focusId}
-      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (

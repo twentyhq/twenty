@@ -5,7 +5,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMaps[] =
   [
     {
-      id: '',
+      id: '20202020-8dec-43d5-b2ff-6eef05095bec',
       standardId: '',
       nameSingular: 'person',
       namePlural: 'people',
@@ -52,7 +52,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       fieldIdByJoinColumnName: {},
     },
     {
-      id: '',
+      id: '20202020-c03c-45d6-a4b0-04afe1357c5c',
       standardId: '',
       nameSingular: 'company',
       namePlural: 'companies',
@@ -112,7 +112,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       fieldIdByJoinColumnName: {},
     },
     {
-      id: '',
+      id: '20202020-3d75-4aab-bacd-ee176c5f63ca',
       standardId: '',
       nameSingular: 'regular-custom-object',
       namePlural: 'regular-custom-objects',
@@ -172,7 +172,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       fieldIdByJoinColumnName: {},
     },
     {
-      id: '',
+      id: '20202020-540c-4397-b872-2a90ea2fb809',
       standardId: '',
       nameSingular: 'non-searchable-object',
       namePlural: 'non-searchable-objects',

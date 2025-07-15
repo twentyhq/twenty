@@ -13,12 +13,13 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_IMAP_ENABLED,
+    key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
     metadata: {
-      label: 'IMAP',
+      label: 'IMAP, SMTP, CalDAV',
       description:
-        'Easily add email accounts from any provider that supports IMAP (and soon, send emails with SMTP)',
-      imagePath: 'https://twenty.com/images/lab/is-imap-enabled.png',
+        'Easily add email accounts from any provider that supports IMAP, send emails with SMTP (and soon, sync calendars with CalDAV)',
+      imagePath:
+        'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

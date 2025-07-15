@@ -2,7 +2,6 @@ import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useNumberField } from '../../hooks/useNumberField';
@@ -70,7 +69,6 @@ export const NumberFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         onChange={handleChange}
       />
     </FieldInputContainer>

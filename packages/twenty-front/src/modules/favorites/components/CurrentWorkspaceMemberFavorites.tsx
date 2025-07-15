@@ -11,7 +11,7 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -74,7 +74,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
   const isDropdownOpenComponent = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     dropdownId,
   );
 
@@ -159,7 +159,6 @@ export const CurrentWorkspaceMemberFavorites = ({
             onSubmit={handleSubmitRename}
             onCancel={handleCancelRename}
             onClickOutside={handleClickOutside}
-            hotkeyScope="favorites-folder-input"
           />
         ) : (
           <FavoritesDroppable droppableId={`folder-header-${folder.folderId}`}>

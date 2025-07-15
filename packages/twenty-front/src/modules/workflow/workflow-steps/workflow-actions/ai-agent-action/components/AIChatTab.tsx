@@ -1,17 +1,20 @@
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useTheme } from '@emotion/react';
+import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React from 'react';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
+import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAgentChat } from '../hooks/useAgentChat';
+import { AgentChatMessage } from '../hooks/useAgentChatMessages';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
+import { AgentChatSelectedFilesPreview } from './AgentChatSelectedFilesPreview';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -86,9 +89,11 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageRow = styled.div`
+const StyledMessageRow = styled.div<{ isShowingToolCall?: boolean }>`
   display: flex;
   flex-direction: row;
+  align-items: ${({ isShowingToolCall }) =>
+    isShowingToolCall ? 'center' : 'flex-start'};
   gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
@@ -152,11 +157,38 @@ const StyledMessageContainer = styled.div`
   width: 100%;
 `;
 
-type AIChatTabProps = {
-  agentId: string;
-};
+const dots = keyframes`
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+`;
 
-export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
+const StyledToolCallContainer = styled.div`
+  &::after {
+    display: inline-block;
+    content: '';
+    animation: ${dots} 750ms steps(3, end) infinite;
+    width: 2ch;
+    text-align: left;
+  }
+`;
+
+const StyledButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFilesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+  flex-wrap: wrap;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+export const AIChatTab = ({ agentId }: { agentId: string }) => {
   const theme = useTheme();
 
   const {
@@ -166,18 +198,50 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
     input,
     handleInputChange,
     agentStreamingMessage,
+    scrollWrapperId,
   } = useAgentChat(agentId);
+
+  const getAssistantMessageContent = (message: AgentChatMessage) => {
+    if (message.content !== '') {
+      return message.content;
+    }
+
+    if (agentStreamingMessage.streamingText !== '') {
+      return agentStreamingMessage.streamingText;
+    }
+
+    if (agentStreamingMessage.toolCall !== '') {
+      return (
+        <StyledToolCallContainer>
+          {agentStreamingMessage.toolCall}
+        </StyledToolCallContainer>
+      );
+    }
+
+    return (
+      <StyledDotsIconContainer>
+        <StyledDotsIcon size={theme.icon.size.xl} />
+      </StyledDotsIconContainer>
+    );
+  };
 
   return (
     <StyledContainer>
       {messages.length !== 0 && (
-        <StyledScrollWrapper componentInstanceId={agentId}>
+        <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
           {messages.map((msg) => (
             <StyledMessageBubble
               key={msg.id}
               isUser={msg.role === AgentChatMessageRole.USER}
             >
-              <StyledMessageRow>
+              <StyledMessageRow
+                isShowingToolCall={
+                  msg.role === AgentChatMessageRole.ASSISTANT &&
+                  msg.content === '' &&
+                  agentStreamingMessage.streamingText === '' &&
+                  agentStreamingMessage.toolCall !== ''
+                }
+              >
                 {msg.role === AgentChatMessageRole.ASSISTANT && (
                   <StyledAvatarContainer>
                     <Avatar
@@ -197,14 +261,17 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
                   <StyledMessageText
                     isUser={msg.role === AgentChatMessageRole.USER}
                   >
-                    {msg.role === AgentChatMessageRole.ASSISTANT && !msg.content
-                      ? agentStreamingMessage || (
-                          <StyledDotsIconContainer>
-                            <StyledDotsIcon size={theme.icon.size.xl} />
-                          </StyledDotsIconContainer>
-                        )
+                    {msg.role === AgentChatMessageRole.ASSISTANT
+                      ? getAssistantMessageContent(msg)
                       : msg.content}
                   </StyledMessageText>
+                  {msg.files.length > 0 && (
+                    <StyledFilesContainer>
+                      {msg.files.map((file) => (
+                        <AgentChatFilePreview key={file.id} file={file} />
+                      ))}
+                    </StyledFilesContainer>
+                  )}
                   {msg.content && (
                     <StyledMessageFooter className="message-footer">
                       <span>
@@ -233,21 +300,25 @@ export const AIChatTab: React.FC<AIChatTabProps> = ({ agentId }) => {
       {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
       <StyledInputArea>
+        <AgentChatSelectedFilesPreview agentId={agentId} />
         <TextArea
           textAreaId={`${agentId}-chat-input`}
           placeholder={t`Enter a question...`}
           value={input}
           onChange={handleInputChange}
         />
-        <Button
-          variant="primary"
-          accent="blue"
-          size="small"
-          hotkeys={input && !isLoading ? ['⏎'] : undefined}
-          disabled={!input || isLoading}
-          title={t`Send`}
-          onClick={handleSendMessage}
-        />
+        <StyledButtonsContainer>
+          <AgentChatFileUpload agentId={agentId} />
+          <Button
+            variant="primary"
+            accent="blue"
+            size="small"
+            hotkeys={input && !isLoading ? ['⏎'] : undefined}
+            disabled={!input || isLoading}
+            title={t`Send`}
+            onClick={handleSendMessage}
+          />
+        </StyledButtonsContainer>
       </StyledInputArea>
     </StyledContainer>
   );

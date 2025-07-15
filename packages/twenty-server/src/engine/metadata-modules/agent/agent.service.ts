@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 import { AgentEntity } from './agent.entity';
@@ -16,6 +17,7 @@ export class AgentService {
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    private readonly agentChatService: AgentChatService,
   ) {}
 
   async findManyAgents(workspaceId: string) {
@@ -51,9 +53,35 @@ export class AgentService {
     };
   }
 
+  async createOneAgentAndFirstThread(
+    input: {
+      name: string;
+      label: string;
+      description?: string;
+      prompt: string;
+      modelId: ModelId;
+    },
+    workspaceId: string,
+    userWorkspaceId: string | null,
+  ) {
+    const agent = await this.createOneAgent(input, workspaceId);
+
+    if (!userWorkspaceId) {
+      throw new AgentException(
+        'User workspace ID not found',
+        AgentExceptionCode.USER_WORKSPACE_ID_NOT_FOUND,
+      );
+    }
+
+    await this.agentChatService.createThread(agent.id, userWorkspaceId);
+
+    return agent;
+  }
+
   async createOneAgent(
     input: {
       name: string;
+      label: string;
       description?: string;
       prompt: string;
       modelId: ModelId;

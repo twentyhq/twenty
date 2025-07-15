@@ -89,18 +89,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
 
-    const isUpdatingLabelWhenSynced =
-      instance.update.label &&
-      fieldMetadata.isLabelSyncedWithName &&
-      instance.update.isLabelSyncedWithName !== false &&
-      instance.update.label !== fieldMetadata.label;
-
-    if (isUpdatingLabelWhenSynced) {
-      throw new ValidationError(
-        'Cannot update label when it is synced with name',
-      );
-    }
-
     if (nonUpdatableFields.length > 0) {
       throw new ValidationError(
         `Only isActive, isLabelSyncedWithName, label, icon, description and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
@@ -390,13 +378,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     locale?: keyof typeof APP_LOCALES,
   ): void {
-    if (
-      fieldMetadata.isLabelSyncedWithName ||
-      update.isLabelSyncedWithName === true
-    ) {
-      return;
-    }
-
     if (!isDefined(instance.update.label)) {
       return;
     }

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
@@ -72,4 +73,10 @@ export class RoleEntity {
     (settingPermission: SettingPermissionEntity) => settingPermission.role,
   )
   settingPermissions: Relation<SettingPermissionEntity[]>;
+
+  @OneToMany(
+    () => FieldPermissionEntity,
+    (fieldPermission: FieldPermissionEntity) => fieldPermission.role,
+  )
+  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }

@@ -7,7 +7,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useArrayField } from '@/object-record/record-field/meta-types/hooks/useArrayField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -72,7 +71,6 @@ const ArrayInputWithContext = ({
         type: FocusComponentType.OPENED_FIELD_INPUT,
         instanceId: instanceId,
       },
-      hotkeyScope: DEFAULT_CELL_SCOPE,
     });
   }, [pushFocusItemToFocusStack, instanceId]);
 

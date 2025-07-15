@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -286,6 +287,7 @@ export class RoleService {
         throw new PermissionsException(
           PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
           PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
+          t`A role with this label already exists.`,
         );
       }
     }

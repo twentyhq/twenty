@@ -1,17 +1,22 @@
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { STREAM_CHAT_QUERY } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/api/agent-chat-apollo.api';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+import { agentChatSelectedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatSelectedFilesComponentState';
+import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/agentChatUploadedFilesComponentState';
+import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
-import { streamChatResponse } from '../api/streamChatResponse';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
+import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
 import { AgentChatMessage, useAgentChatMessages } from './useAgentChatMessages';
 import { useAgentChatThreads } from './useAgentChatThreads';
 
@@ -20,6 +25,17 @@ interface OptimisticMessage extends AgentChatMessage {
 }
 
 export const useAgentChat = (agentId: string) => {
+  const apolloClient = useApolloClient();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const agentChatSelectedFiles = useRecoilComponentValueV2(
+    agentChatSelectedFilesComponentState,
+    agentId,
+  );
+
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
+    useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
+
   const [agentChatMessages, setAgentChatMessages] = useRecoilComponentStateV2(
     agentChatMessagesComponentState,
     agentId,
@@ -34,23 +50,32 @@ export const useAgentChat = (agentId: string) => {
 
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement(agentId);
+  const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
 
-  const scrollToBottom = useCallback(() => {
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement(scrollWrapperId);
+
+  const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({
       top: scrollWrapperHTMLElement.scrollHeight,
       behavior: 'smooth',
     });
-  }, [scrollWrapperHTMLElement]);
+  };
 
   const { data: { threads = [] } = {}, loading: threadsLoading } =
     useAgentChatThreads(agentId);
   const currentThreadId = threads[0]?.id;
 
   const { loading: messagesLoading, refetch: refetchMessages } =
-    useAgentChatMessages(currentThreadId);
+    useAgentChatMessages(currentThreadId, ({ messages }) => {
+      setAgentChatMessages(messages);
+      scrollToBottom();
+    });
 
-  const isLoading = messagesLoading || threadsLoading || isStreaming;
+  const isLoading =
+    messagesLoading ||
+    threadsLoading ||
+    isStreaming ||
+    agentChatSelectedFiles.length > 0;
 
   const createOptimisticMessages = (content: string): AgentChatMessage[] => {
     const optimisticUserMessage: OptimisticMessage = {
@@ -60,6 +85,7 @@ export const useAgentChat = (agentId: string) => {
       content,
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: agentChatUploadedFiles,
     };
 
     const optimisticAiMessage: OptimisticMessage = {
@@ -69,6 +95,7 @@ export const useAgentChat = (agentId: string) => {
       content: '',
       createdAt: new Date().toISOString(),
       isPending: true,
+      files: [],
     };
 
     return [optimisticUserMessage, optimisticAiMessage];
@@ -81,9 +108,40 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
-    await streamChatResponse(currentThreadId, content, (chunk) => {
-      setAgentStreamingMessage(chunk);
-      scrollToBottom();
+    await apolloClient.query({
+      query: STREAM_CHAT_QUERY,
+      variables: {
+        requestBody: {
+          threadId: currentThreadId,
+          userMessage: content,
+          fileIds: agentChatUploadedFiles.map((file) => file.id),
+        },
+      },
+      context: {
+        onChunk: (chunk: string) => {
+          parseAgentStreamingChunk(chunk, {
+            onTextDelta: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                streamingText: prev.streamingText + message,
+              }));
+              scrollToBottom();
+            },
+            onToolCall: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                toolCall: message,
+              }));
+              scrollToBottom();
+            },
+            onError: (message: string) => {
+              enqueueErrorSnackBar({
+                message,
+              });
+            },
+          });
+        },
+      },
     });
 
     setIsStreaming(false);
@@ -97,6 +155,8 @@ export const useAgentChat = (agentId: string) => {
       ...optimisticMessages,
     ]);
 
+    setAgentChatUploadedFiles([]);
+
     setTimeout(scrollToBottom, 100);
 
     await streamAgentResponse(content);
@@ -104,7 +164,10 @@ export const useAgentChat = (agentId: string) => {
     const { data } = await refetchMessages();
 
     setAgentChatMessages(data?.messages);
-    setAgentStreamingMessage('');
+    setAgentStreamingMessage({
+      toolCall: '',
+      streamingText: '',
+    });
     scrollToBottom();
   };
 
@@ -117,17 +180,20 @@ export const useAgentChat = (agentId: string) => {
     await sendChatMessage(content);
   };
 
-  useScopedHotkeys(
-    [Key.Enter],
-    (event) => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: (event: KeyboardEvent) => {
       if (!event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         handleSendMessage();
       }
     },
-    InputHotkeyScope.TextInput,
-    [agentChatInput, isLoading],
-  );
+    focusId: `${agentId}-chat-input`,
+    dependencies: [agentChatInput, isLoading],
+    options: {
+      enableOnFormTags: true,
+    },
+  });
 
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),
@@ -136,5 +202,6 @@ export const useAgentChat = (agentId: string) => {
     handleSendMessage,
     isLoading,
     agentStreamingMessage,
+    scrollWrapperId,
   };
 };

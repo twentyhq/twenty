@@ -11,7 +11,6 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
@@ -106,10 +105,9 @@ export const useOpenRelationFromManyFieldInput = () => {
             type: FocusComponentType.DROPDOWN,
             instanceId: recordPickerInstanceId,
           },
-          hotkeyScope: {
-            scope: DropdownHotkeyScope.Dropdown,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
           },
-          memoizeKey: recordPickerInstanceId,
         });
       },
     [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],

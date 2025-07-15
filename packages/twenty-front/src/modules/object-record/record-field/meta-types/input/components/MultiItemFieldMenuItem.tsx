@@ -1,7 +1,7 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import React, { useState } from 'react';
@@ -37,7 +37,7 @@ export const MultiItemFieldMenuItem = <T,>({
   const [isHovered, setIsHovered] = useState(false);
   const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     dropdownId,
   );
 

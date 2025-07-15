@@ -141,7 +141,8 @@ export const workflowAiAgentActionSettingsSchema =
 export const workflowFilterActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      filter: z.record(z.any()),
+      stepFilterGroups: z.array(z.any()),
+      stepFilters: z.array(z.any()),
     }),
   });
 

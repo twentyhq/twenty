@@ -88,6 +88,20 @@ export class ImapSmtpCalDavAPIService {
         workspaceId,
       });
 
+    let shouldEnableSync = false;
+
+    if (connectedAccount) {
+      const hadOnlySmtp =
+        connectedAccount.connectionParameters?.SMTP &&
+        !connectedAccount.connectionParameters?.IMAP &&
+        !connectedAccount.connectionParameters?.CALDAV;
+
+      const isAddingImapOrCaldav =
+        input.accountType === 'IMAP' || input.accountType === 'CALDAV';
+
+      shouldEnableSync = Boolean(hadOnlySmtp && isAddingImapOrCaldav);
+    }
+
     await workspaceDataSource.transaction(async () => {
       if (!existingAccountId) {
         const newConnectedAccount = await connectedAccountRepository.save(
@@ -129,7 +143,10 @@ export class ImapSmtpCalDavAPIService {
             connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
-            syncStatus: MessageChannelSyncStatus.ONGOING,
+            isSyncEnabled: shouldEnableSync,
+            syncStatus: shouldEnableSync
+              ? MessageChannelSyncStatus.ONGOING
+              : MessageChannelSyncStatus.NOT_SYNCED,
           },
           {},
         );
@@ -200,9 +217,12 @@ export class ImapSmtpCalDavAPIService {
           },
           {
             syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
+            syncStatus: shouldEnableSync
+              ? MessageChannelSyncStatus.ONGOING
+              : MessageChannelSyncStatus.NOT_SYNCED,
             syncCursor: '',
             syncStageStartedAt: null,
+            isSyncEnabled: shouldEnableSync,
           },
         );
 
@@ -227,22 +247,24 @@ export class ImapSmtpCalDavAPIService {
       }
     });
 
-    if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
-      const messageChannels = await messageChannelRepository.find({
-        where: {
-          connectedAccountId: newOrExistingConnectedAccountId,
-        },
-      });
+    if (!shouldEnableSync) {
+      return;
+    }
 
-      for (const messageChannel of messageChannels) {
-        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-          MessagingMessageListFetchJob.name,
-          {
-            workspaceId,
-            messageChannelId: messageChannel.id,
-          },
-        );
-      }
+    const messageChannels = await messageChannelRepository.find({
+      where: {
+        connectedAccountId: newOrExistingConnectedAccountId,
+      },
+    });
+
+    for (const messageChannel of messageChannels) {
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        {
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
     }
   }
 }

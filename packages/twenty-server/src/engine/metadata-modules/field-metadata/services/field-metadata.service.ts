@@ -107,7 +107,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     let existingFieldMetadata: FieldMetadataInterface | undefined;
 
-    for (const objectMetadataItem of Object.values(objectMetadataMaps.byId)) {
+    for (const objectMetadataItem of Object.values(
+      objectMetadataMaps.byId,
+    ).filter(isDefined)) {
       const fieldMetadata = objectMetadataItem.fieldsById[id];
 
       if (fieldMetadata) {
@@ -125,6 +127,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const objectMetadataItemWithFieldMaps =
       objectMetadataMaps.byId[existingFieldMetadata.objectMetadataId];
+
+    if (!isDefined(objectMetadataItemWithFieldMaps)) {
+      throw new FieldMetadataException(
+        'Object metadata does not exist',
+        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -575,7 +584,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             isRemoteCreation: fieldMetadataInput.isRemoteCreation ?? false,
           });
 
-          migrationActions.push(...fieldMigrationActions);
+          if (fieldMetadataInput.type !== FieldMetadataType.MORPH_RELATION) {
+            migrationActions.push(...fieldMigrationActions);
+          }
         }
       }
 
@@ -703,7 +714,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     isRemoteCreation,
   }: {
     createdFieldMetadataItems: FieldMetadataEntity[];
-    objectMetadataMap: Record<string, ObjectMetadataItemWithFieldMaps>;
+    objectMetadataMap: ObjectMetadataMaps['byId'];
     isRemoteCreation: boolean;
   }): Promise<WorkspaceMigrationTableAction[]> {
     if (isRemoteCreation) {
@@ -726,10 +737,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
+      const objectMetadata =
+        objectMetadataMap[createdFieldMetadata.objectMetadataId];
+
+      if (!isDefined(objectMetadata)) {
+        throw new FieldMetadataException(
+          'Object metadata does not exist',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
+
       migrationActions.push({
-        name: computeObjectTargetTable(
-          objectMetadataMap[createdFieldMetadata.objectMetadataId],
-        ),
+        name: computeObjectTargetTable(objectMetadata),
         action: WorkspaceMigrationTableActionType.ALTER,
         columns: this.workspaceMigrationFactory.createColumnActions(
           WorkspaceMigrationColumnActionType.CREATE,

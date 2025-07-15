@@ -8,7 +8,6 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -92,7 +91,6 @@ export const RichTextFieldInput = ({
     inputValue: null,
     onClickOutside: handleClickOutside,
     onEscape: handleEscape,
-    hotkeyScope: DEFAULT_CELL_SCOPE.scope,
   });
 
   return (

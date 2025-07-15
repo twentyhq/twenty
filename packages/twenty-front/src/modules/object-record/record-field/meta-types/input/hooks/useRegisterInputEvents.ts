@@ -14,7 +14,6 @@ export const useRegisterInputEvents = <T>({
   onShiftTab,
   onClickOutside,
   focusId,
-  hotkeyScope,
 }: {
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
@@ -25,15 +24,14 @@ export const useRegisterInputEvents = <T>({
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   focusId: string;
-  hotkeyScope: string;
 }) => {
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
       onClickOutside?.(event, inputValue);
     },
+    listenerId: focusId,
     enabled: isDefined(onClickOutside),
-    listenerId: hotkeyScope,
   });
 
   useHotkeysOnFocusedElement({
@@ -42,7 +40,6 @@ export const useRegisterInputEvents = <T>({
       onEnter?.(inputValue);
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [onEnter, inputValue],
   });
 
@@ -52,7 +49,6 @@ export const useRegisterInputEvents = <T>({
       onEscape?.(inputValue);
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [onEscape, inputValue],
   });
 
@@ -62,7 +58,6 @@ export const useRegisterInputEvents = <T>({
       onTab?.(inputValue);
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [onTab, inputValue],
   });
 
@@ -72,7 +67,6 @@ export const useRegisterInputEvents = <T>({
       onShiftTab?.(inputValue);
     },
     focusId,
-    scope: hotkeyScope,
     dependencies: [onShiftTab, inputValue],
   });
 };

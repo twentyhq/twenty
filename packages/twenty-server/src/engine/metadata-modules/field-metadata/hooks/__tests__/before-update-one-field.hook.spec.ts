@@ -141,33 +141,6 @@ describe('BeforeUpdateOneField', () => {
     ).rejects.toThrow(ValidationError);
   });
 
-  it('should throw ValidationError when trying to update label when it is synced with name', async () => {
-    const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
-      id: mockFieldId,
-      update: {
-        label: 'New Label',
-      },
-    };
-
-    const mockField: Partial<FieldMetadataEntity> = {
-      id: mockFieldId,
-      isCustom: false,
-      isLabelSyncedWithName: true,
-      label: 'Old Label',
-    };
-
-    jest
-      .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
-
-    await expect(
-      hook.run(instance as UpdateOneInputType<UpdateFieldInput>, {
-        workspaceId: mockWorkspaceId,
-        locale: undefined,
-      }),
-    ).rejects.toThrow(ValidationError);
-  });
-
   it('should handle isActive updates for standard fields', async () => {
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,

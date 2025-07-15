@@ -11,7 +11,6 @@ export const useGlobalHotkeysSequence = (
   firstKey: Keys,
   secondKey: Keys,
   sequenceCallback: () => void,
-  scope: string,
   options: Options = {
     enableOnContentEditable: true,
     enableOnFormTags: true,
@@ -33,7 +32,6 @@ export const useGlobalHotkeysSequence = (
         callback: () => {
           setPendingHotkey(firstKey);
         },
-        scope,
         preventDefault: !!options.preventDefault,
       });
     },
@@ -41,7 +39,7 @@ export const useGlobalHotkeysSequence = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [setPendingHotkey, scope],
+    [setPendingHotkey],
   );
 
   useHotkeys(
@@ -66,7 +64,6 @@ export const useGlobalHotkeysSequence = (
 
           sequenceCallback();
         },
-        scope,
         preventDefault: false,
       });
     },
@@ -74,6 +71,6 @@ export const useGlobalHotkeysSequence = (
       enableOnContentEditable: options.enableOnContentEditable,
       enableOnFormTags: options.enableOnFormTags,
     },
-    [pendingHotkey, setPendingHotkey, scope, ...deps],
+    [pendingHotkey, setPendingHotkey, ...deps],
   );
 };

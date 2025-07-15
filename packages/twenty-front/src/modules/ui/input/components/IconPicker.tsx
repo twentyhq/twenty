@@ -10,7 +10,6 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -61,6 +60,15 @@ const StyledLightIconButton = styled(LightIconButton)<{
         : 'transparent'};
 `;
 
+const StyledMatrixItem = styled.div`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+
 const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
@@ -85,18 +93,20 @@ const IconPickerIcon = ({
   );
 
   return (
-    <SelectableListItem itemId={iconKey} onEnter={onClick}>
-      <StyledLightIconButton
-        key={iconKey}
-        aria-label={convertIconKeyToLabel(iconKey)}
-        size="medium"
-        title={iconKey}
-        isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
-        isFocused={iconKey === focusedIconKey}
-        Icon={Icon}
-        onClick={onClick}
-      />
-    </SelectableListItem>
+    <StyledMatrixItem>
+      <SelectableListItem itemId={iconKey} onEnter={onClick}>
+        <StyledLightIconButton
+          key={iconKey}
+          aria-label={convertIconKeyToLabel(iconKey)}
+          size="medium"
+          title={iconKey}
+          isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
+          isFocused={iconKey === focusedIconKey}
+          Icon={Icon}
+          onClick={onClick}
+        />
+      </SelectableListItem>
+    </StyledMatrixItem>
   );
 };
 
@@ -223,7 +233,6 @@ export const IconPicker = ({
               selectableListInstanceId={selectableListInstanceId}
               selectableItemIdMatrix={iconKeys2d}
               focusId={dropdownId}
-              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               <DropdownMenuSearchInput
                 placeholder={t`Search icon`}

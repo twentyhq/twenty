@@ -95,6 +95,7 @@ export const FormUuidFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
@@ -103,7 +104,6 @@ export const FormUuidFieldInput = ({
               placeholder={placeholder ?? 'Enter a UUID'}
               value={draftValue.value}
               copyButton={false}
-              hotkeyScope="record-create"
               disabled={readonly}
               onChange={handleChange}
             />

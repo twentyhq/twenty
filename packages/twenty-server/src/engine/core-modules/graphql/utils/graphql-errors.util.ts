@@ -6,6 +6,8 @@ import {
   SourceLocation,
 } from 'graphql';
 
+import { CustomException } from 'src/utils/custom-exception';
+
 declare module 'graphql' {
   export interface GraphQLErrorExtensions {
     exception?: {
@@ -48,29 +50,42 @@ export class BaseGraphQLError extends GraphQLError {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-
   constructor(
-    message: string,
+    exceptionOrMessage: string | CustomException,
     code?: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     extensions?: Record<string, any>,
   ) {
-    super(message);
+    if (exceptionOrMessage instanceof CustomException) {
+      const exception = exceptionOrMessage;
+
+      super(exception.message);
+
+      this.extensions = {
+        subCode: exception.code,
+        userFriendlyMessage: exception.userFriendlyMessage,
+        code,
+      };
+    } else {
+      const message = exceptionOrMessage;
+
+      super(message);
+
+      if (extensions?.extensions) {
+        throw new Error(
+          'Pass extensions directly as the third argument of the ApolloError constructor: `new ' +
+            'ApolloError(message, code, {myExt: value})`, not `new ApolloError(message, code, ' +
+            '{extensions: {myExt: value}})`',
+        );
+      }
+
+      this.extensions = { ...extensions, code };
+    }
 
     // if no name provided, use the default. defineProperty ensures that it stays non-enumerable
     if (!this.name) {
       Object.defineProperty(this, 'name', { value: 'GraphQLError' });
     }
-
-    if (extensions?.extensions) {
-      throw new Error(
-        'Pass extensions directly as the third argument of the ApolloError constructor: `new ' +
-          'ApolloError(message, code, {myExt: value})`, not `new ApolloError(message, code, ' +
-          '{extensions: {myExt: value}})`',
-      );
-    }
-
-    this.extensions = { ...extensions, code };
   }
 
   toJSON(): GraphQLFormattedError {
@@ -113,28 +128,62 @@ export class ValidationError extends BaseGraphQLError {
   }
 }
 
-export class AuthenticationError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.UNAUTHENTICATED, extensions);
+export class NotFoundError extends BaseGraphQLError {
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.NOT_FOUND, extensions);
+    Object.defineProperty(this, 'name', { value: 'NotFoundError' });
+  }
+}
+
+export class AuthenticationError extends BaseGraphQLError {
+  constructor(exception: CustomException);
+
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.UNAUTHENTICATED, extensions);
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.FORBIDDEN, extensions);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.FORBIDDEN, extensions);
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
 }
 
 export class PersistedQueryNotFoundError extends BaseGraphQLError {
-  constructor() {
-    super('PersistedQueryNotFound', ErrorCode.PERSISTED_QUERY_NOT_FOUND);
+  constructor(customException: CustomException);
 
+  constructor(message?: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException?: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(
+      messageOrException || 'PersistedQueryNotFound',
+      ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+      extensions,
+    );
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotFoundError',
     });
@@ -142,12 +191,15 @@ export class PersistedQueryNotFoundError extends BaseGraphQLError {
 }
 
 export class PersistedQueryNotSupportedError extends BaseGraphQLError {
-  constructor() {
+  constructor(
+    messageOrException?: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
     super(
-      'PersistedQueryNotSupported',
+      messageOrException || 'PersistedQueryNotSupported',
       ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+      extensions,
     );
-
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotSupportedError',
     });
@@ -155,52 +207,71 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.BAD_USER_INPUT, extensions);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.BAD_USER_INPUT, extensions);
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
 }
 
-export class NotFoundError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.NOT_FOUND, extensions);
-
-    Object.defineProperty(this, 'name', { value: 'NotFoundError' });
-  }
-}
-
 export class MethodNotAllowedError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.METHOD_NOT_ALLOWED);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.METHOD_NOT_ALLOWED, extensions);
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
 }
 
 export class ConflictError extends BaseGraphQLError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions) {
-    super(message, ErrorCode.CONFLICT, extensions);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.CONFLICT, extensions);
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
 }
 
 export class TimeoutError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.TIMEOUT);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.TIMEOUT, extensions);
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
 }
 
 export class InternalServerError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.INTERNAL_SERVER_ERROR);
+  constructor(exception: CustomException);
 
+  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+
+  constructor(
+    messageOrException: string | CustomException,
+    extensions?: RestrictedGraphQLErrorExtensions,
+  ) {
+    super(messageOrException, ErrorCode.INTERNAL_SERVER_ERROR, extensions);
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }

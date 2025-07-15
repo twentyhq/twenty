@@ -7,7 +7,7 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -78,7 +78,7 @@ export const Dropdown = ({
   isDropdownInModal = false,
 }: DropdownProps) => {
   const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     dropdownId,
   );
 

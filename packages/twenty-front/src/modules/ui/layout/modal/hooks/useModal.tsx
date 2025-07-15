@@ -1,4 +1,3 @@
-import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -63,17 +62,6 @@ export const useModal = () => {
             enableGlobalHotkeysWithModifiers: false,
             enableGlobalHotkeysConflictingWithKeyboard: false,
           },
-          // TODO: Remove this once we've migrated hotkey scopes to the new api
-          hotkeyScope: {
-            scope: ModalHotkeyScope.ModalFocus,
-            customScopes: {
-              goto: false,
-              commandMenu: false,
-              commandMenuOpen: false,
-              keyboardShortcutMenu: false,
-            },
-          },
-          memoizeKey: modalId,
         });
       },
     [pushFocusItemToFocusStack],

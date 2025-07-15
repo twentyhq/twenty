@@ -11,7 +11,6 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -91,7 +90,6 @@ export const MultipleRecordPicker = ({
       handleSubmit();
     },
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [handleSubmit],
   });
 

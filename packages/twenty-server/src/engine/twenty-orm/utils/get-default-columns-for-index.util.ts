@@ -1,4 +1,4 @@
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 export const getColumnsForIndex = (indexType?: IndexType) => {
   switch (indexType) {

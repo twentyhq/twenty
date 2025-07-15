@@ -49,7 +49,6 @@ export type CurrencyInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   onChange?: (newText: string) => void;
   onSelect?: (newText: string) => void;
-  hotkeyScope: string;
 };
 
 export const CurrencyInput = ({
@@ -65,7 +64,6 @@ export const CurrencyInput = ({
   onClickOutside,
   onChange,
   onSelect,
-  hotkeyScope,
 }: CurrencyInputProps) => {
   const theme = useTheme();
 
@@ -91,7 +89,6 @@ export const CurrencyInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   const currency = CURRENCIES.find(({ value }) => value === currencyCode);

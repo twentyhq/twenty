@@ -12,23 +12,19 @@ import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exce
 
 export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof InvalidMetadataException) {
-    throw new UserInputError(error.message);
+    throw new UserInputError(error);
   }
 
   if (error instanceof ObjectMetadataException) {
     switch (error.code) {
       case ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
-        throw new NotFoundError(error.message);
+        throw new NotFoundError(error);
       case ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT:
-        throw new UserInputError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
+        throw new UserInputError(error);
       case ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
-        throw new ForbiddenError(error.message);
+        throw new ForbiddenError(error);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
-        throw new ConflictError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
+        throw new ConflictError(error);
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
         throw error;
       default: {

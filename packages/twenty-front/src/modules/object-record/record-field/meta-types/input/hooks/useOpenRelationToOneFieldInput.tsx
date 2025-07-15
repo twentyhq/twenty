@@ -6,7 +6,6 @@ import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
@@ -58,9 +57,9 @@ export const useOpenRelationToOneFieldInput = () => {
             type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordPickerInstanceId,
           },
-          // TODO: Remove this once we've fully migrated away from hotkey scopes
-          hotkeyScope: { scope: DropdownHotkeyScope.Dropdown },
-          memoizeKey: recordPickerInstanceId,
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       },
     [openSingleRecordPicker, pushFocusItemToFocusStack],

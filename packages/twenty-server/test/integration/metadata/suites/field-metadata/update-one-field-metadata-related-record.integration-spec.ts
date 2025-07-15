@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { isDefined } from 'class-validator';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -9,7 +8,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
   FieldMetadataComplexOption,
@@ -85,7 +84,7 @@ describe('update-one-field-metadata-related-record', () => {
 
     const {
       data: { createOneField },
-    } = await createOneFieldMetadata({
+    } = await createOneFieldMetadata<typeof fieldMetadataType>({
       input: {
         objectMetadataId: createOneObject.id,
         type: fieldMetadataType,
@@ -258,6 +257,10 @@ describe('update-one-field-metadata-related-record', () => {
         });
 
         const optionsWithIds = createOneField.options;
+
+        if (!isDefined(optionsWithIds)) {
+          throw new Error('optionsWithIds is not defined');
+        }
         const updatedOptions = updateOptions(optionsWithIds);
 
         await updateOneFieldMetadata({
@@ -358,6 +361,10 @@ describe('update-one-field-metadata-related-record', () => {
         });
 
         const optionsWithIds = createOneField.options;
+
+        if (!isDefined(optionsWithIds)) {
+          throw new Error('optionsWithIds is not defined');
+        }
         const updatePayload = {
           options: optionsWithIds.map((option) => updateOption(option)),
         };

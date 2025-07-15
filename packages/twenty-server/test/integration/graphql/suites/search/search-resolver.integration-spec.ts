@@ -1,6 +1,5 @@
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
@@ -29,14 +28,6 @@ describe('SearchResolver', () => {
     { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
     { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
     { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
-  ];
-
-  const [apiKey] = [
-    {
-      id: TEST_API_KEY_1_ID,
-      name: 'record not searchable',
-      expiresAt: new Date(Date.now()),
-    },
   ];
 
   const [firstPet, secondPet] = [
@@ -68,13 +59,6 @@ describe('SearchResolver', () => {
         secondPerson,
         thirdPerson,
       ]);
-
-      await performCreateManyOperation(
-        'apiKey',
-        'apiKeys',
-        OBJECT_MODEL_COMMON_FIELDS,
-        [apiKey],
-      );
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);

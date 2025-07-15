@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -82,10 +82,12 @@ export class ObjectMetadataFieldRelationService {
     relationObjectMetadataStandardId: string;
     queryRunner?: QueryRunner;
   }) {
-    const targetObjectMetadata = Object.values(objectMetadataMaps.byId).find(
-      (objectMetadata) =>
-        objectMetadata.standardId === relationObjectMetadataStandardId,
-    );
+    const targetObjectMetadata = Object.values(objectMetadataMaps.byId)
+      .filter(isDefined)
+      .find(
+        (objectMetadata) =>
+          objectMetadata.standardId === relationObjectMetadataStandardId,
+      );
 
     if (!targetObjectMetadata) {
       throw new Error(

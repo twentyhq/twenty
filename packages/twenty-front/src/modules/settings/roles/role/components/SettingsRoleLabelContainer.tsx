@@ -5,8 +5,6 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
-const ROLE_LABEL_EDIT_HOTKEY_SCOPE = 'role-label-edit';
-
 const StyledHeaderTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -45,7 +43,6 @@ export const SettingsRoleLabelContainer = ({
         value={settingsDraftRole.label}
         onChange={handleChange}
         placeholder={t`Role name`}
-        hotkeyScope={ROLE_LABEL_EDIT_HOTKEY_SCOPE}
       />
     </StyledHeaderTitle>
   );

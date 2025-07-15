@@ -1,16 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { Readable } from 'stream';
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { CoreMessage, generateObject, generateText, streamText } from 'ai';
-import { Repository } from 'typeorm';
+import {
+  CoreMessage,
+  CoreUserMessage,
+  FilePart,
+  generateObject,
+  generateText,
+  ImagePart,
+  streamText,
+  TextPart,
+} from 'ai';
+import { In, Repository } from 'typeorm';
 
 import {
   ModelId,
   ModelProvider,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentChatMessageEntity,
@@ -22,6 +36,7 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constant
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -40,17 +55,29 @@ export interface AgentExecutionResult {
 
 @Injectable()
 export class AgentExecutionService {
+  private readonly logger = new Logger(AgentExecutionService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
+    private readonly fileService: FileService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(AgentChatMessageEntity, 'core')
-    private readonly agentChatmessageRepository: Repository<AgentChatMessageEntity>,
+    @InjectRepository(FileEntity, 'core')
+    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   getModel = (modelId: ModelId, provider: ModelProvider) => {
     switch (provider) {
+      case ModelProvider.OPENAI_COMPATIBLE: {
+        const OpenAIProvider = createOpenAI({
+          baseURL: this.twentyConfigService.get('OPENAI_COMPATIBLE_BASE_URL'),
+          apiKey: this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY'),
+        });
+
+        return OpenAIProvider(modelId);
+      }
       case ModelProvider.OPENAI: {
         const OpenAIProvider = createOpenAI({
           apiKey: this.twentyConfigService.get('OPENAI_API_KEY'),
@@ -84,10 +111,7 @@ export class AgentExecutionService {
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
       default:
-        throw new AgentException(
-          `Unsupported provider: ${provider}`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
+        return;
     }
     if (!apiKey) {
       throw new AgentException(
@@ -108,41 +132,124 @@ export class AgentExecutionService {
     prompt?: string;
     messages?: CoreMessage[];
   }) {
-    const aiModel = getAIModelById(agent.modelId);
-
-    if (!aiModel) {
-      throw new AgentException(
-        `AI model with id ${agent.modelId} not found`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+    try {
+      this.logger.log(
+        `Preparing AI request config for agent ${agent.id} with model ${agent.modelId}`,
       );
+
+      const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
+        agent.modelId,
+      );
+
+      if (!aiModel) {
+        const error = `AI model with id ${agent.modelId} not found`;
+
+        this.logger.error(error);
+        throw new AgentException(
+          error,
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
+      this.logger.log(
+        `Resolved model: ${aiModel.modelId} (provider: ${aiModel.provider})`,
+      );
+
+      const provider = aiModel.provider;
+
+      await this.validateApiKey(provider);
+
+      const tools = await this.agentToolService.generateToolsForAgent(
+        agent.id,
+        agent.workspaceId,
+      );
+
+      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+
+      return {
+        system,
+        tools,
+        model: this.getModel(aiModel.modelId, aiModel.provider),
+        ...(messages && { messages }),
+        ...(prompt && { prompt }),
+        maxSteps: AGENT_CONFIG.MAX_STEPS,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Failed to prepare AI request config for agent ${agent.id}:`,
+        error instanceof Error ? error.stack : error,
+      );
+      throw error;
     }
-    const provider = aiModel.provider;
+  }
 
-    await this.validateApiKey(provider);
+  private async buildUserMessageWithFiles(
+    userMessage: string,
+    fileIds?: string[],
+  ): Promise<CoreUserMessage> {
+    if (!fileIds || fileIds.length === 0) {
+      return { role: AgentChatMessageRole.USER, content: userMessage };
+    }
 
-    const tools = await this.agentToolService.generateToolsForAgent(
-      agent.id,
-      agent.workspaceId,
+    const files = await this.fileRepository.find({
+      where: {
+        id: In(fileIds),
+      },
+    });
+
+    const textPart: TextPart = {
+      type: 'text',
+      text: userMessage,
+    };
+
+    const fileParts = await Promise.all(
+      files.map((file) => this.createFilePart(file)),
     );
 
     return {
-      system,
-      tools,
-      model: this.getModel(agent.modelId, aiModel.provider),
-      ...(messages && { messages }),
-      ...(prompt && { prompt }),
-      maxSteps: AGENT_CONFIG.MAX_STEPS,
+      role: AgentChatMessageRole.USER,
+      content: [textPart, ...fileParts],
     };
+  }
+
+  private async createFilePart(
+    file: FileEntity,
+  ): Promise<ImagePart | FilePart> {
+    const { folderPath, filename } = extractFolderPathAndFilename(
+      file.fullPath,
+    );
+    const fileStream = await this.fileService.getFileStream(
+      folderPath,
+      filename,
+      file.workspaceId,
+    );
+    const fileBuffer = await streamToBuffer(fileStream as Readable);
+
+    if (file.type.startsWith('image')) {
+      return {
+        type: 'image',
+        image: fileBuffer,
+        mimeType: file.type,
+      };
+    } else {
+      return {
+        type: 'file',
+        data: fileBuffer,
+        mimeType: file.type,
+      };
+    }
   }
 
   async streamChatResponse({
     agentId,
     userMessage,
     messages,
+    fileIds,
   }: {
     agentId: string;
     userMessage: string;
     messages: AgentChatMessageEntity[];
+    fileIds?: string[];
   }) {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -153,16 +260,22 @@ export class AgentExecutionService {
       content,
     }));
 
-    llmMessages.push({
-      role: AgentChatMessageRole.USER,
-      content: userMessage,
-    });
+    const userMessageWithFiles = await this.buildUserMessageWithFiles(
+      userMessage,
+      fileIds,
+    );
+
+    llmMessages.push(userMessageWithFiles);
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
       system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,
       agent,
       messages: llmMessages,
     });
+
+    this.logger.log(
+      `Sending request to AI model with ${llmMessages.length} messages`,
+    );
 
     return streamText(aiRequestConfig);
   }

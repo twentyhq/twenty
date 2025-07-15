@@ -53,7 +53,6 @@ type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type DropdownMenuInputProps = HTMLInputProps & {
   instanceId: string;
-  hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
   onEscape?: () => void;
@@ -81,7 +80,6 @@ export const DropdownMenuInput = forwardRef<
       value,
       placeholder,
       instanceId,
-      hotkeyScope = 'dropdown-menu-input',
       onChange,
       onClickOutside,
       onEnter = () => {},
@@ -107,7 +105,6 @@ export const DropdownMenuInput = forwardRef<
       onClickOutside,
       onTab,
       onShiftTab,
-      hotkeyScope,
     });
 
     return (

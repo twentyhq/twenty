@@ -37,6 +37,7 @@ export class StandardObjectFactory {
       isGatedAndNotEnabled(
         workspaceEntityMetadataArgs.gate,
         context.featureFlags,
+        'database',
       )
     ) {
       return undefined;

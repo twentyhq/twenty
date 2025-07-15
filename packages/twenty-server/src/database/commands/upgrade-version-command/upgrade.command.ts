@@ -21,15 +21,16 @@ import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/up
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
 import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
+import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-add-enqueued-status-to-workflow-run.command';
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
-import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run.command';
+import { MigrateApiKeysWebhooksToCoreCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-api-keys-webhooks-to-core.command';
+import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
-import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
 
 const execPromise = promisify(exec);
 
@@ -143,10 +144,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.1 Commands
     protected readonly fixSchemaArrayTypeCommand: FixSchemaArrayTypeCommand,
     protected readonly fixUpdateStandardFieldsIsLabelSyncedWithNameCommand: FixUpdateStandardFieldsIsLabelSyncedWithName,
-
-    // 1.2 Commands
+    protected readonly migrateApiKeysWebhooksToCoreCommand: MigrateApiKeysWebhooksToCoreCommand,
     protected readonly migrateWorkflowRunStatesCommand: MigrateWorkflowRunStatesCommand,
     protected readonly addEnqueuedStatusToWorkflowRunCommand: AddEnqueuedStatusToWorkflowRunCommand,
+
+    // 1.2 Commands
+
+    // 1.3 Commands
   ) {
     super(
       workspaceRepository,
@@ -191,13 +195,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.fixUpdateStandardFieldsIsLabelSyncedWithNameCommand,
         this.fixSchemaArrayTypeCommand,
+        this.migrateApiKeysWebhooksToCoreCommand,
+        this.addEnqueuedStatusToWorkflowRunCommand,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
     };
 
     const commands_120: VersionCommands = {
-      beforeSyncMetadata: [this.addEnqueuedStatusToWorkflowRunCommand],
-      afterSyncMetadata: [this.migrateWorkflowRunStatesCommand],
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    };
+
+    const commands_130: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
     };
 
     this.allCommands = {
@@ -208,6 +219,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.0.0': commands_100,
       '1.1.0': commands_110,
       '1.2.0': commands_120,
+      '1.3.0': commands_130,
     };
   }
 

@@ -7,7 +7,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -91,7 +90,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
         selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
         focusId={OBJECT_OPTIONS_DROPDOWN_ID}
         selectableItemIdArray={selectableItemIdArray}
-        hotkeyScope={DropdownHotkeyScope.Dropdown}
       >
         <DropdownMenuItemsContainer scrollable={false}>
           <SelectableListItem

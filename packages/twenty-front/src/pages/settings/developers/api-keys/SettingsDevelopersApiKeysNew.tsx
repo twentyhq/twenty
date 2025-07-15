@@ -1,13 +1,10 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -18,7 +15,10 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useGenerateApiKeyTokenMutation } from '~/generated-metadata/graphql';
+import {
+  useCreateApiKeyMutation,
+  useGenerateApiKeyTokenMutation,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -34,9 +34,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: '',
   });
 
-  const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-  });
+  const [createApiKey] = useCreateApiKeyMutation();
 
   const setApiKeyTokenCallback = useRecoilCallback(
     ({ set }) =>
@@ -51,10 +49,16 @@ export const SettingsDevelopersApiKeysNew = () => {
       .plus({ days: formValues.expirationDate ?? 30 })
       .toString();
 
-    const newApiKey = await createOneApiKey?.({
-      name: formValues.name,
-      expiresAt,
+    const { data: newApiKeyData } = await createApiKey({
+      variables: {
+        input: {
+          name: formValues.name,
+          expiresAt,
+        },
+      },
     });
+
+    const newApiKey = newApiKeyData?.createApiKey;
 
     if (!newApiKey) {
       return;
@@ -77,7 +81,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       });
     }
   };
-  const canSave = !!formValues.name && createOneApiKey;
+  const canSave = !!formValues.name && createApiKey;
   return (
     <SubMenuTopBarContainer
       title={t`New key`}

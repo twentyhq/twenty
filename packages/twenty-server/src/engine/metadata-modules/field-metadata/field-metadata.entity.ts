@@ -20,6 +20,7 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
 @Entity('fieldMetadata')
 // max length of index is 63 characters
@@ -148,4 +149,10 @@ export class FieldMetadataEntity<
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(
+    () => FieldPermissionEntity,
+    (fieldPermission: FieldPermissionEntity) => fieldPermission.fieldMetadata,
+  )
+  fieldPermissions: Relation<FieldPermissionEntity[]>;
 }

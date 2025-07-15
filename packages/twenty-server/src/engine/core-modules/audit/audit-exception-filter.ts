@@ -12,7 +12,7 @@ export class AuditExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AuditExceptionCode.INVALID_TYPE:
       case AuditExceptionCode.INVALID_INPUT:
-        throw new UserInputError(exception.message);
+        throw new UserInputError(exception);
       default: {
         const _exhaustiveCheck: never = exception.code;
 

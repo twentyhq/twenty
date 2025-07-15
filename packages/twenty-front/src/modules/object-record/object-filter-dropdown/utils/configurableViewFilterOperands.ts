@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 export const configurableViewFilterOperands = new Set<ViewFilterOperand>([
   ViewFilterOperand.Is,

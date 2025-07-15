@@ -1,6 +1,5 @@
 import { Keys } from 'react-hotkeys-hook';
 
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 type HotkeyEffectProps = {
@@ -20,7 +19,6 @@ export const HotkeyEffect = ({
     keys: hotkey.key,
     callback: onHotkeyTriggered,
     focusId,
-    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [onHotkeyTriggered],
   });
 

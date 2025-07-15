@@ -9,7 +9,7 @@ import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-g
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
-import { isDropdownOpenComponentStateV2 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentStateV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { Trans } from '@lingui/react/macro';
@@ -29,7 +29,7 @@ export const ObjectOptionsDropdown = ({
     useDropdownContextCurrentContentId<ObjectOptionsContentId>();
 
   const isDropdownOpen = useRecoilComponentValueV2(
-    isDropdownOpenComponentStateV2,
+    isDropdownOpenComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
 

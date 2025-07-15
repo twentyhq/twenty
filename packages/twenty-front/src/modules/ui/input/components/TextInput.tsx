@@ -5,7 +5,6 @@ import {
   TextInputV2,
   TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
-import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -67,7 +66,6 @@ export const TextInput = ({
         globalHotkeysConfig: {
           enableGlobalHotkeysConflictingWithKeyboard: false,
         },
-        hotkeyScope: { scope: InputHotkeyScope.TextInput },
       });
     }
   };
@@ -105,7 +103,6 @@ export const TextInput = ({
     keys: [Key.Escape],
     callback: handleEscape,
     focusId: instanceId,
-    scope: InputHotkeyScope.TextInput,
     dependencies: [handleEscape],
     options: {
       preventDefault: false,
@@ -116,7 +113,6 @@ export const TextInput = ({
     keys: [Key.Enter],
     callback: handleEnter,
     focusId: instanceId,
-    scope: InputHotkeyScope.TextInput,
     dependencies: [handleEnter],
     options: {
       preventDefault: false,
