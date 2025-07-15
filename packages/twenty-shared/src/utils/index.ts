@@ -27,7 +27,7 @@ export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
-export { lowercaseUrlAndRemoveTrailingSlash } from './url/lowercaseUrlAndRemoveTrailingSlash';
+export { lowercaseUrlOriginAndRemoveTrailingSlash } from './url/lowercaseUrlOriginAndRemoveTrailingSlash';
 export { isDefined } from './validation/isDefined';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export { isValidLocale } from './validation/isValidLocale';

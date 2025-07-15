@@ -1,4 +1,4 @@
-import { lowercaseUrlAndRemoveTrailingSlash } from '@/utils/url/lowercaseUrlAndRemoveTrailingSlash';
+import { lowercaseUrlOriginAndRemoveTrailingSlash } from '@/utils/url/lowercaseUrlOriginAndRemoveTrailingSlash';
 
 interface TestContext {
   title: string;
@@ -6,7 +6,7 @@ interface TestContext {
   expected: string;
 }
 
-describe('lowercaseUrlAndRemoveTrailingSlash', () => {
+describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
   test.each<TestContext>([
     {
       title: 'should leave lowcased domain unchanged',
@@ -39,6 +39,6 @@ describe('lowercaseUrlAndRemoveTrailingSlash', () => {
       expected: 'https://www.example.com/TEST#Hash',
     },
   ])('$title', ({ input, expected }) => {
-    expect(lowercaseUrlAndRemoveTrailingSlash(input)).toBe(expected);
+    expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
   });
 });

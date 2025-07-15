@@ -1,6 +1,6 @@
 import {
   isDefined,
-  lowercaseUrlAndRemoveTrailingSlash,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
   parseJson,
 } from 'twenty-shared/utils';
 
@@ -43,14 +43,14 @@ export const transformLinksValue = (
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl)
+      ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
     secondaryLinks: JSON.stringify(
       secondaryLinks?.map((link) => ({
         ...link,
         url: isDefined(link.url)
-          ? lowercaseUrlAndRemoveTrailingSlash(link.url)
+          ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
           : link.url,
       })),
     ),
