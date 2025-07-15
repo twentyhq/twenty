@@ -81,12 +81,14 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
+
     const stepInfos = {
       [TRIGGER_STEP_ID]: {
         result: { company: { id: '123' } },
         status: StepStatus.SUCCESS,
       },
       step1: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
+      step2: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
     };
 
     const result = getWorkflowRunStepContext({
