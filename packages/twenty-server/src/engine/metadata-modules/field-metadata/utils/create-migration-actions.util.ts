@@ -40,6 +40,10 @@ export const createMigrationActions = async ({
       isFieldMetadataEntityOfType(
         createdFieldMetadata,
         FieldMetadataType.RELATION,
+      ) ||
+      isFieldMetadataEntityOfType(
+        createdFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       const relationType = createdFieldMetadata.settings?.relationType;
