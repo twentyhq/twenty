@@ -8,7 +8,7 @@ export const getCompositeSubFieldKey = (
 ) => {
   if (!isCompositeFieldType(fieldMetadataItem.type)) {
     throw new Error(
-      `getSubFieldKey can only be called for composite field types. Received: ${fieldMetadataItem.type}`,
+      `getCompositeSubFieldKey can only be called for composite field types. Received: ${fieldMetadataItem.type}`,
     );
   }
 
