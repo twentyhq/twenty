@@ -70,4 +70,23 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     hotKeys: ['@'],
     shouldBeRegistered: () => true,
   },
+  [RecordAgnosticActionsKeys.OPEN_AI_CHAT]: {
+    type: ActionType.Standard,
+    scope: ActionScope.Global,
+    key: RecordAgnosticActionsKeys.OPEN_AI_CHAT,
+    label: msg`Open AI Chat`,
+    shortLabel: msg`Open AI Chat`,
+    position: 3,
+    isPinned: false,
+    Icon: IconSparkles,
+    availableOn: [ActionViewType.GLOBAL],
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.OpenAIChat}
+        pageTitle="Open AI Chat"
+        pageIcon={IconSparkles}
+      />
+    ),
+    shouldBeRegistered: () => true,
+  },
 };
