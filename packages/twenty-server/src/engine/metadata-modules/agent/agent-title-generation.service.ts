@@ -29,7 +29,7 @@ export class AgentTitleGenerationService {
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
       });
 
-      return result.text;
+      return this.cleanTitle(result.text);
     } catch (error) {
       this.logger.error('Failed to generate title with AI:', error);
 
@@ -42,5 +42,12 @@ export class AgentTitleGenerationService {
     const title = cleanContent.substring(0, 50);
 
     return cleanContent.length > 50 ? `${title}...` : title;
+  }
+
+  private cleanTitle(title: string): string {
+    return title
+      .replace(/^["']|["']$/g, '')
+      .trim()
+      .replace(/\s+/g, ' ');
   }
 }
