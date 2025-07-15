@@ -11,7 +11,6 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -148,7 +147,7 @@ export class ConfigVariables {
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
-  MESSAGING_PROVIDER_IMAP_ENABLED = false;
+  IS_IMAP_SMTP_CALDAV_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
@@ -975,13 +974,12 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Driver for the AI chat model',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(AiDriver),
-    isEnvOnly: true,
+    description:
+      'Default model ID for AI operations (can be any available model)',
+    type: ConfigVariableType.STRING,
   })
-  @CastToUpperSnakeCase()
-  AI_DRIVER: AiDriver;
+  @IsOptional()
+  DEFAULT_MODEL_ID = 'gpt-4o';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -989,6 +987,7 @@ export class ConfigVariables {
     description: 'API key for OpenAI integration',
     type: ConfigVariableType.STRING,
   })
+  @IsOptional()
   OPENAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
@@ -997,7 +996,36 @@ export class ConfigVariables {
     description: 'API key for Anthropic integration',
     type: ConfigVariableType.STRING,
   })
+  @IsOptional()
   ANTHROPIC_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description: 'Base URL for OpenAI-compatible LLM provider (e.g., Ollama)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false, require_protocol: true })
+  OPENAI_COMPATIBLE_BASE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model names for OpenAI-compatible LLM provider (comma-separated, e.g., "llama3.1, mistral, codellama")',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  OPENAI_COMPATIBLE_MODEL_NAMES: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description:
+      'API key for OpenAI-compatible LLM provider (optional for providers like Ollama)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  OPENAI_COMPATIBLE_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,

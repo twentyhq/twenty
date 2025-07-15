@@ -4,6 +4,8 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceGateOptions {
   featureFlag: string;
+  excludeFromDatabase?: boolean;
+  excludeFromGraphQL?: boolean;
 }
 
 export function WorkspaceGate(options: WorkspaceGateOptions) {
@@ -16,19 +18,25 @@ export function WorkspaceGate(options: WorkspaceGateOptions) {
     );
   }
 
+  const gateOptions = {
+    featureFlag: options.featureFlag,
+    excludeFromDatabase: options.excludeFromDatabase ?? true,
+    excludeFromGraphQL: options.excludeFromGraphQL ?? true,
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, propertyKey?: string | symbol) => {
     if (propertyKey !== undefined) {
       TypedReflect.defineMetadata(
         'workspace:gate-metadata-args',
-        options,
+        gateOptions,
         target,
         propertyKey.toString(),
       );
     } else {
       TypedReflect.defineMetadata(
         'workspace:gate-metadata-args',
-        options,
+        gateOptions,
         target,
       );
     }

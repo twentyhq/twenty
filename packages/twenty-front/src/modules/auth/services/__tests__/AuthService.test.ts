@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { enableFetchMocks } from 'jest-fetch-mock';
+import { act } from 'react';
 
 import { renewToken } from '@/auth/services/AuthService';
 

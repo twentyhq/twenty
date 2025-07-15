@@ -12,6 +12,7 @@ export const DEFAULT_ICONS_BY_FIELD_TYPE: Record<FieldMetadataType, string> = {
   [FieldMetadataType.RATING]: 'IconStar',
   [FieldMetadataType.RAW_JSON]: 'IconBraces',
   [FieldMetadataType.RELATION]: 'IconRelationOneToMany',
+  [FieldMetadataType.MORPH_RELATION]: 'IconRelationOneToMany',
   [FieldMetadataType.SELECT]: 'IconTag',
   [FieldMetadataType.TEXT]: 'IconTypography',
   [FieldMetadataType.UUID]: 'IconId',

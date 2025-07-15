@@ -1,41 +1,50 @@
-import type { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { autoUpdate, useFloating } from '@floating-ui/react';
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
+import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
+import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
+import {
+  CustomSlashMenuProps,
+  SuggestionItem,
+} from '@/ui/input/editor/components/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { autoUpdate, useFloating } from '@floating-ui/react';
-import { motion } from 'framer-motion';
-import { createPortal } from 'react-dom';
-import { IconComponent } from 'twenty-ui/display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isDefined } from 'twenty-shared/utils';
 
-export type SuggestionItem = {
-  title: string;
-  onItemClick: () => void;
-  aliases?: string[];
-  Icon?: IconComponent;
-};
-
-type CustomSlashMenuProps = SuggestionMenuProps<SuggestionItem>;
+export type { SuggestionItem };
 
 const StyledContainer = styled.div`
   height: 1px;
   width: 1px;
 `;
 
-const StyledInnerContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  height: 250px;
-  width: 100%;
-`;
-
-export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
+export const CustomSlashMenu = ({
+  items,
+  selectedIndex,
+}: CustomSlashMenuProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
+
+  const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
+
+  useEffect(() => {
+    if (!isDefined(selectedIndex)) return;
+
+    const selectedItem = items[selectedIndex];
+
+    if (isDefined(selectedItem)) {
+      setSelectedItemId(selectedItem.title);
+    }
+  }, [items, selectedIndex, setSelectedItemId]);
 
   return (
     <StyledContainer ref={refs.setReference}>
@@ -50,21 +59,19 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
             style={floatingStyles}
             data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
-            <StyledInnerContainer>
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  {props.items.map((item, index) => (
-                    <MenuItemSuggestion
-                      key={item.title}
-                      onClick={() => item.onItemClick()}
-                      text={item.title}
-                      LeftIcon={item.Icon}
-                      selected={props.selectedIndex === index}
-                    />
+            <DropdownContent>
+              <DropdownMenuItemsContainer hasMaxHeight>
+                <SelectableList
+                  focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+                  selectableListInstanceId={SLASH_MENU_LIST_ID}
+                  selectableItemIdArray={items.map((item) => item.title)}
+                >
+                  {items.map((item) => (
+                    <CustomSlashMenuListItem key={item.title} item={item} />
                   ))}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            </StyledInnerContainer>
+                </SelectableList>
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
           </OverlayContainer>
         </motion.div>,
         document.body,

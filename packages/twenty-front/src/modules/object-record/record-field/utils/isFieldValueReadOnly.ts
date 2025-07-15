@@ -65,6 +65,16 @@ export const isFieldValueReadOnly = ({
     return true;
   }
 
+  const isFieldDateOrDateTime =
+    fieldType === FieldMetadataType.DATE ||
+    fieldType === FieldMetadataType.DATE_TIME;
+  const isFieldCreatedAtOrUpdatedAt =
+    fieldName === 'createdAt' || fieldName === 'updatedAt';
+
+  if (isFieldDateOrDateTime && isFieldCreatedAtOrUpdatedAt) {
+    return true;
+  }
+
   if (
     isDefined(fieldType) &&
     (isFieldActor({ type: fieldType }) || isFieldRichText({ type: fieldType }))

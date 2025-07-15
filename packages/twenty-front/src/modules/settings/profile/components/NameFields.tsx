@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -109,9 +109,13 @@ export const NameFields = ({
     currentWorkspaceMember,
   ]);
 
+  const firstNameTextInputId = `${currentWorkspaceMember?.id}-first-name`;
+  const lastNameTextInputId = `${currentWorkspaceMember?.id}-last-name`;
+
   return (
     <StyledComboInputContainer>
       <TextInput
+        instanceId={firstNameTextInputId}
         label={t`First Name`}
         value={firstName}
         onChange={setFirstName}
@@ -119,6 +123,7 @@ export const NameFields = ({
         fullWidth
       />
       <TextInput
+        instanceId={lastNameTextInputId}
         label={t`Last Name`}
         value={lastName}
         onChange={setLastName}

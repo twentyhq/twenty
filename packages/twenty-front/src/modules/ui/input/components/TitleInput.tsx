@@ -6,15 +6,17 @@ import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type InputProps = {
+  instanceId: string;
   value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  hotkeyScope?: string;
   onEnter?: () => void;
   onEscape?: () => void;
   onClickOutside?: () => void;
@@ -56,10 +58,10 @@ const StyledDiv = styled.div<{
 `;
 
 const Input = ({
+  instanceId,
   value,
   onChange,
   placeholder,
-  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -78,14 +80,16 @@ const Input = ({
     }
   };
 
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleLeaveFocus = () => {
     setIsOpened(false);
-    goBackToPreviousHotkeyScope();
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
   useRegisterInputEvents<string>({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue,
     onEnter: () => {
@@ -109,7 +113,6 @@ const Input = ({
       handleLeaveFocus();
       onShiftTab?.();
     },
-    hotkeyScope: hotkeyScope,
   });
 
   return (
@@ -131,12 +134,12 @@ const Input = ({
 };
 
 export const TitleInput = ({
+  instanceId,
   disabled,
   value,
   sizeVariant = 'md',
   onChange,
   placeholder,
-  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -145,17 +148,17 @@ export const TitleInput = ({
 }: TitleInputProps) => {
   const [isOpened, setIsOpened] = useState(false);
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   return (
     <>
       {isOpened ? (
         <Input
+          instanceId={instanceId}
           sizeVariant={sizeVariant}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          hotkeyScope={hotkeyScope}
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
@@ -170,8 +173,15 @@ export const TitleInput = ({
           onClick={() => {
             if (!disabled) {
               setIsOpened(true);
-              setHotkeyScopeAndMemorizePreviousScope({
-                scope: hotkeyScope,
+              pushFocusItemToFocusStack({
+                focusId: instanceId,
+                component: {
+                  type: FocusComponentType.TEXT_INPUT,
+                  instanceId: instanceId,
+                },
+                globalHotkeysConfig: {
+                  enableGlobalHotkeysConflictingWithKeyboard: false,
+                },
               });
             }
           }}

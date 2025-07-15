@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,7 +13,7 @@ export const useRegisterInputEvents = <T>({
   onTab,
   onShiftTab,
   onClickOutside,
-  hotkeyScope,
+  focusId,
 }: {
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
@@ -23,50 +23,50 @@ export const useRegisterInputEvents = <T>({
   onTab?: (inputValue: T) => void;
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
-  hotkeyScope: string;
+  focusId: string;
 }) => {
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
       onClickOutside?.(event, inputValue);
     },
+    listenerId: focusId,
     enabled: isDefined(onClickOutside),
-    listenerId: hotkeyScope,
   });
 
-  useScopedHotkeys(
-    'enter',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter?.(inputValue);
     },
-    hotkeyScope,
-    [onEnter, inputValue],
-  );
+    focusId,
+    dependencies: [onEnter, inputValue],
+  });
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       onEscape?.(inputValue);
     },
-    hotkeyScope,
-    [onEscape, inputValue],
-  );
+    focusId,
+    dependencies: [onEscape, inputValue],
+  });
 
-  useScopedHotkeys(
-    'tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Tab],
+    callback: () => {
       onTab?.(inputValue);
     },
-    hotkeyScope,
-    [onTab, inputValue],
-  );
+    focusId,
+    dependencies: [onTab, inputValue],
+  });
 
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Shift}+${Key.Tab}`],
+    callback: () => {
       onShiftTab?.(inputValue);
     },
-    hotkeyScope,
-    [onShiftTab, inputValue],
-  );
+    focusId,
+    dependencies: [onShiftTab, inputValue],
+  });
 };

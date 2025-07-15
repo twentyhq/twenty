@@ -11,7 +11,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -198,33 +197,11 @@ export class WorkflowStatusesUpdateJob {
         const newStep = { ...step };
 
         if (step.type === WorkflowActionType.CODE) {
-          try {
-            await this.serverlessFunctionService.publishOneServerlessFunction(
+          const serverlessFunction =
+            await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
               step.settings.input.serverlessFunctionId,
               workspaceId,
             );
-          } catch (e) {
-            // publishOneServerlessFunction throws if no change have been
-            // applied between draft and lastPublished version.
-            // If no change have been applied, we just use the same
-            // serverless function version
-            if (
-              e.code !==
-              ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
-            ) {
-              this.logger.error(
-                `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
-              );
-            }
-          }
-
-          const serverlessFunction =
-            await this.serverlessFunctionRepository.findOneOrFail({
-              where: {
-                id: step.settings.input.serverlessFunctionId,
-                workspaceId,
-              },
-            });
 
           const newStepSettings = { ...step.settings };
 
@@ -233,6 +210,7 @@ export class WorkflowStatusesUpdateJob {
 
           newStep.settings = newStepSettings;
         }
+
         newSteps.push(newStep);
       }
 

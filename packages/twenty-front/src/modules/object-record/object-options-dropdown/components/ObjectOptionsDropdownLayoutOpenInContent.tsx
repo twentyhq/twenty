@@ -8,7 +8,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -61,7 +60,6 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
           focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
-          hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           <SelectableListItem
             itemId={ViewOpenRecordInType.SIDE_PANEL}

@@ -92,7 +92,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
-      AppPath.PlanRequiredSuccess,
       AppPath.BookCallDecision,
       AppPath.BookCall,
     ])

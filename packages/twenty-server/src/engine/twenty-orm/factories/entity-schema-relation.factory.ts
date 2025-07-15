@@ -27,12 +27,17 @@ export class EntitySchemaRelationFactory {
     );
 
     for (const fieldMetadata of fieldMetadataCollection) {
-      if (
-        !isFieldMetadataInterfaceOfType(
+      const isRelation =
+        isFieldMetadataInterfaceOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
-        )
-      ) {
+        ) ||
+        isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        );
+
+      if (!isRelation) {
         continue;
       }
 

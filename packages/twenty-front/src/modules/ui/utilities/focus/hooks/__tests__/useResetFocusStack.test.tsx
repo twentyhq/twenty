@@ -44,7 +44,6 @@ describe('useResetFocusStack', () => {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: true,
       },
-      memoizeKey: 'global',
     };
 
     await act(async () => {
@@ -54,8 +53,6 @@ describe('useResetFocusStack', () => {
           type: focusItem.componentInstance.componentType,
           instanceId: focusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
       });
     });
 

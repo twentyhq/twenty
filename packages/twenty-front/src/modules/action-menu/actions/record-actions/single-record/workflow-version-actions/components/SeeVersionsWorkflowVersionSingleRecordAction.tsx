@@ -3,9 +3,9 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppPath } from '@/types/AppPath';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 
 export const SeeVersionsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();

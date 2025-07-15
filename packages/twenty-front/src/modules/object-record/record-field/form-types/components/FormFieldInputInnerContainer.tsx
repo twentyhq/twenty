@@ -1,5 +1,6 @@
-import { FormFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormFieldInputHotKeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef, HTMLAttributes, Ref } from 'react';
@@ -8,10 +9,13 @@ type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
-  preventSetHotkeyScope?: boolean;
+  preventFocusStackUpdate?: boolean;
+  formFieldInputInstanceId: string;
 };
 
-const StyledFormFieldInputInnerContainer = styled.div<FormFieldInputInnerContainerProps>`
+const StyledFormFieldInputInnerContainer = styled.div<
+  Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'>
+>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
@@ -46,22 +50,29 @@ export const FormFieldInputInnerContainer = forwardRef(
       hasRightElement,
       multiline,
       readonly,
-      preventSetHotkeyScope = false,
+      preventFocusStackUpdate = false,
       onClick,
+      formFieldInputInstanceId,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
-    const {
-      goBackToPreviousHotkeyScope,
-      setHotkeyScopeAndMemorizePreviousScope,
-    } = usePreviousHotkeyScope();
+    const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+    const { removeFocusItemFromFocusStackById } =
+      useRemoveFocusItemFromFocusStackById();
 
     const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(e);
 
-      if (!preventSetHotkeyScope) {
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: FormFieldInputHotKeyScope.FormFieldInput,
+      if (!preventFocusStackUpdate) {
+        pushFocusItemToFocusStack({
+          focusId: formFieldInputInstanceId,
+          component: {
+            type: FocusComponentType.FORM_FIELD_INPUT,
+            instanceId: formFieldInputInstanceId,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
       }
     };
@@ -69,8 +80,10 @@ export const FormFieldInputInnerContainer = forwardRef(
     const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
       onBlur?.(e);
 
-      if (!preventSetHotkeyScope) {
-        goBackToPreviousHotkeyScope();
+      if (!preventFocusStackUpdate) {
+        removeFocusItemFromFocusStackById({
+          focusId: formFieldInputInstanceId,
+        });
       }
     };
 

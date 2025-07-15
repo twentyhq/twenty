@@ -285,6 +285,7 @@ export const WorkflowEditActionFormBuilder = ({
 
                           <FormFieldInputRowContainer>
                             <FormFieldInputInnerContainer
+                              formFieldInputInstanceId={field.id}
                               hasRightElement={false}
                               onClick={() => {
                                 handleFieldClick(field.id);
@@ -358,6 +359,7 @@ export const WorkflowEditActionFormBuilder = ({
             <FormFieldInputContainer>
               <FormFieldInputRowContainer>
                 <FormFieldInputInnerContainer
+                  formFieldInputInstanceId="add-field-button"
                   hasRightElement={false}
                   onClick={() => {
                     const { label, name } = getDefaultFormFieldSettings(

@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
+import { responseData } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   phonesFieldDefinition,
@@ -36,6 +37,8 @@ const phoneMock = {
   additionalPhones: [],
 };
 
+const mockPersonResponse = { ...responseData, id: 'recordId' };
+
 const mocks: MockedResponse[] = [
   {
     request: {
@@ -49,9 +52,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        updatePerson: {
-          id: 'recordId',
-        },
+        updatePerson: mockPersonResponse,
       },
     })),
   },
@@ -65,9 +66,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        updatePerson: {
-          id: 'recordId',
-        },
+        updatePerson: mockPersonResponse,
       },
     })),
   },

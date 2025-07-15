@@ -75,6 +75,7 @@ describe('WorkspaceRepository', () => {
         canUpdate: false,
         canSoftDelete: false,
         canDestroy: false,
+        restrictedFields: {},
       },
     };
     mockQueryRunner = {} as QueryRunner;

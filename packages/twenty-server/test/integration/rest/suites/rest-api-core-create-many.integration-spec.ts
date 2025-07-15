@@ -102,7 +102,7 @@ describe('Core REST API Create Many endpoint', () => {
       method: 'post',
       path: `/batch/people`,
       body: requestBody,
-      bearer: ADMIN_ACCESS_TOKEN,
+      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     })
       .expect(201)
       .expect((res) => {

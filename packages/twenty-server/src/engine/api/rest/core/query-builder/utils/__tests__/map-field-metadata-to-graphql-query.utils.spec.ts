@@ -130,6 +130,12 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           } as FieldMetadataDefaultSettings;
         }
 
+        if (fieldMetadataType === FieldMetadataType.MORPH_RELATION) {
+          field.settings = {
+            relationType: RelationType.MANY_TO_ONE,
+          } as FieldMetadataDefaultSettings;
+        }
+
         expect(
           mapFieldMetadataToGraphqlQuery(objectMetadataMapsMock, field),
         ).toBeDefined();

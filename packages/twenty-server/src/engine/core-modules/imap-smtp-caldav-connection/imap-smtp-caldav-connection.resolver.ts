@@ -1,4 +1,10 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  UseFilters,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -38,36 +44,6 @@ export class ImapSmtpCaldavResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
-
-  private async checkIfFeatureEnabled(
-    workspaceId: string,
-    accountType: AccountType,
-  ): Promise<void> {
-    if (accountType.type === 'IMAP') {
-      const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_IMAP_ENABLED,
-        workspaceId,
-      );
-
-      if (!isImapEnabled) {
-        throw new UserInputError(
-          'IMAP feature is not enabled for this workspace',
-        );
-      }
-    }
-
-    if (accountType.type === 'SMTP') {
-      throw new UserInputError(
-        'SMTP feature is not enabled for this workspace',
-      );
-    }
-
-    if (accountType.type === 'CALDAV') {
-      throw new UserInputError(
-        'CALDAV feature is not enabled for this workspace',
-      );
-    }
-  }
 
   @Query(() => ConnectedImapSmtpCaldavAccount)
   @UseGuards(WorkspaceAuthGuard)
@@ -111,7 +87,18 @@ export class ImapSmtpCaldavResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccess> {
-    await this.checkIfFeatureEnabled(workspace.id, accountType);
+    const isImapSmtpCaldavFeatureFlagEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
+        workspace.id,
+      );
+
+    if (!isImapSmtpCaldavFeatureFlagEnabled) {
+      throw new HttpException(
+        'IMAP, SMTP, CalDAV feature is not enabled for this workspace',
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
     const validatedParams =
       this.mailConnectionValidatorService.validateProtocolConnectionParams(
@@ -119,6 +106,7 @@ export class ImapSmtpCaldavResolver {
       );
 
     await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav(
+      handle,
       validatedParams,
       accountType.type,
     );

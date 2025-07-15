@@ -33,7 +33,12 @@ export const WorkspaceInviteLink = ({
   return (
     <StyledContainer data-chromatic="ignore">
       <StyledLinkContainer>
-        <TextInput value={inviteLink} disabled fullWidth />
+        <TextInput
+          instanceId="workspace-invite-link"
+          value={inviteLink}
+          disabled
+          fullWidth
+        />
       </StyledLinkContainer>
       <Button
         Icon={IconLink}

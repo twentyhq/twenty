@@ -88,6 +88,7 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
+        instanceId="workspace-name"
         label={t`Name`}
         value={displayName}
         onChange={setDisplayName}

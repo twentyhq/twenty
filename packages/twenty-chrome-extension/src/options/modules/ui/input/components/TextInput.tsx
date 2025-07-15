@@ -64,15 +64,15 @@ const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   icon,
 }) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   return (
     <StyledContainer fullWidth={fullWidth}>
-      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
+      {label && <StyledLabel htmlFor={instanceId}>{label}</StyledLabel>}
       <StyledInputContainer>
         {icon && <StyledIcon>{icon}</StyledIcon>}
         <StyledInput
-          id={inputId}
+          id={instanceId}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}

@@ -72,6 +72,7 @@ describe('WorkspaceEntityManager', () => {
           canUpdate: false,
           canSoftDelete: false,
           canDestroy: false,
+          restrictedFields: {},
         },
       },
     };

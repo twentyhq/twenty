@@ -2,7 +2,6 @@ import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useNavigate } from 'react-router-dom';
 
 import { useGlobalHotkeysSequence } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysSequence';
-import { AppHotkeyScope } from '../types/AppHotkeyScope';
 
 type GoToHotkeysProps = {
   key: Keys;
@@ -24,7 +23,6 @@ export const useGoToHotkeys = ({
       preNavigateFunction?.();
       navigate(location);
     },
-    AppHotkeyScope.Goto,
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,

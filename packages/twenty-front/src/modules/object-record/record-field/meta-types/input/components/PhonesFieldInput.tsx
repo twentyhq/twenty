@@ -9,7 +9,6 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
@@ -155,7 +154,6 @@ export const PhonesFieldInput = ({
           </StyledCustomPhoneInputContainer>
         );
       }}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

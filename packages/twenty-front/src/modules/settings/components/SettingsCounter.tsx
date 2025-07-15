@@ -1,8 +1,8 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
-import { IconButton } from 'twenty-ui/input';
 import { IconMinus, IconPlus } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
 
 type SettingsCounterProps = {
   value: number;
@@ -77,6 +77,7 @@ export const SettingsCounter = ({
         disabled={disabled}
       />
       <StyledTextInput
+        instanceId="settings-counter-input"
         name="counter"
         fullWidth
         value={value.toString()}

@@ -1,4 +1,5 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { useEffect } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -36,39 +37,48 @@ const renderHooks = ({
         arePrefetchViewsLoadedState,
       );
 
-      setObjectMetadataItems(generatedMockObjectMetadataItems);
-      setArePrefetchViewsLoaded(true);
+      useEffect(() => {
+        setObjectMetadataItems(generatedMockObjectMetadataItems);
+        setArePrefetchViewsLoaded(true);
 
-      if (withExistingView) {
-        setPrefetchViews([
-          {
-            id: 'viewId',
-            name: 'Test View',
-            objectMetadataId: getMockCompanyObjectMetadataItem().id,
-            type: ViewType.Table,
-            key: null,
-            isCompact: false,
-            openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
-            viewFields: [],
-            viewGroups: [],
-            viewSorts: [],
-            kanbanFieldMetadataId: '',
-            kanbanAggregateOperation: AggregateOperations.COUNT,
-            icon: '',
-            kanbanAggregateOperationFieldMetadataId: '',
-            position: 0,
-            viewFilters: [],
-            __typename: 'View',
-          },
-        ]);
-      } else {
-        setPrefetchViews([]);
-      }
+        if (withExistingView) {
+          setPrefetchViews([
+            {
+              id: 'viewId',
+              name: 'Test View',
+              objectMetadataId: getMockCompanyObjectMetadataItem().id,
+              type: ViewType.Table,
+              key: null,
+              isCompact: false,
+              openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+              viewFields: [],
+              viewGroups: [],
+              viewSorts: [],
+              kanbanFieldMetadataId: '',
+              kanbanAggregateOperation: AggregateOperations.COUNT,
+              icon: '',
+              kanbanAggregateOperationFieldMetadataId: '',
+              position: 0,
+              viewFilters: [],
+              __typename: 'View',
+            },
+          ]);
+        } else {
+          setPrefetchViews([]);
+        }
 
-      if (withCurrentUser) {
-        setCurrentUser(mockedUserData);
-        setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
-      }
+        if (withCurrentUser) {
+          setCurrentUser(mockedUserData);
+          setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+        }
+      }, [
+        setCurrentUser,
+        setCurrentUserWorkspace,
+        setObjectMetadataItems,
+        setPrefetchViews,
+        setArePrefetchViewsLoaded,
+      ]);
+
       return useDefaultHomePagePath();
     },
     {
@@ -79,34 +89,46 @@ const renderHooks = ({
 };
 
 describe('useDefaultHomePagePath', () => {
-  it('should return proper path when no currentUser', () => {
+  it('should return proper path when no currentUser', async () => {
     const { result } = renderHooks({
       withCurrentUser: false,
       withExistingView: false,
     });
-    expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
+    });
   });
-  it('should return proper path when no currentUser and existing view', () => {
+  it('should return proper path when no currentUser and existing view', async () => {
     const { result } = renderHooks({
       withCurrentUser: false,
       withExistingView: true,
     });
-    expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
+    });
   });
-  it('should return proper path when currentUser is defined', () => {
+  it('should return proper path when currentUser is defined', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: false,
     });
-    expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
+    });
   });
-  it('should return proper path when currentUser is defined and view exists', () => {
+  it('should return proper path when currentUser is defined and view exists', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: true,
     });
-    expect(result.current.defaultHomePagePath).toEqual(
-      '/objects/companies?viewId=viewId',
-    );
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(
+        '/objects/companies?viewId=viewId',
+      );
+    });
   });
 });

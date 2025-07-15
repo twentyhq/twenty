@@ -2,7 +2,7 @@ import { settingsDataModelFieldDescriptionFormSchema } from '@/settings/data-mod
 import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { z } from 'zod';
-import { settingsDataModelFieldTypeFormSchema } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
+import { settingsDataModelFieldTypeFormSchema } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
 export const settingsFieldFormSchema = (existingOtherLabels?: string[]) => {
   return z

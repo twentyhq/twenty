@@ -14,7 +14,6 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -82,10 +81,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
           type: FocusComponentType.DROPDOWN,
           instanceId: fieldMetadataItem.id,
         },
-        hotkeyScope: {
-          scope: DropdownHotkeyScope.Dropdown,
-        },
-        memoizeKey: fieldMetadataItem.id,
       });
     }
 

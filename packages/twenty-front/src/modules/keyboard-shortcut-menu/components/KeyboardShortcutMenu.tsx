@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
@@ -16,16 +15,15 @@ export const KeyboardShortcutMenu = () => {
   );
   const { closeCommandMenu } = useCommandMenu();
 
-  useGlobalHotkeys(
-    'shift+?,meta+?',
-    () => {
+  useGlobalHotkeys({
+    keys: ['shift+?', 'meta+?'],
+    callback: () => {
       closeCommandMenu();
       toggleKeyboardShortcutMenu();
     },
-    true,
-    AppHotkeyScope.KeyboardShortcutMenu,
-    [toggleKeyboardShortcutMenu],
-  );
+    containsModifier: false,
+    dependencies: [toggleKeyboardShortcutMenu],
+  });
 
   return (
     <>{isKeyboardShortcutMenuOpened && <KeyboardShortcutMenuOpenContent />}</>

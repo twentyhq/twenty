@@ -125,6 +125,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
       <Section>
         <StyledSearchContainer>
           <StyledSearchInput
+            instanceId="role-permissions-object-search"
             value={searchFilter}
             onChange={handleSearchChange}
             placeholder={t`Search an object`}

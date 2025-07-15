@@ -101,12 +101,12 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TitleInput
+            instanceId="workflow-step-title-input"
             disabled={disabled}
             sizeVariant="md"
             value={title}
             onChange={handleChange}
             placeholder={headerType}
-            hotkeyScope="workflow-step-title"
             onEnter={saveTitle}
             onEscape={() => {
               setTitle(initialTitle);

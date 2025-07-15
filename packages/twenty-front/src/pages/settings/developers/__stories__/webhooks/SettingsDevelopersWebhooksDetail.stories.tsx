@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { expect, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -28,11 +28,20 @@ export type Story = StoryObj<typeof SettingsDevelopersWebhookDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText(
-      'We will send POST requests to this endpoint for every new event',
+    await canvas.findByDisplayValue(
+      'https://api.slackbot.io/webhooks/twenty',
       undefined,
-      { timeout: 10000 },
+      {
+        timeout: 3000,
+      },
     );
+    await canvas.findByDisplayValue('Slack notifications for lead updates');
+
+    const allObjectsLabels = await canvas.findAllByText('All Objects');
+    expect(allObjectsLabels).toHaveLength(2);
+    await canvas.findByText('Created');
+    await canvas.findByText('Updated');
+
     await canvas.findByText('Delete this webhook');
   },
 };

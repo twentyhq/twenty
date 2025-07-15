@@ -11,23 +11,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextFieldInputProps = {
+  instanceId: string;
   onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
   sizeVariant?: 'xs' | 'md';
-  hotkeyScope: string;
 };
 
 export const RecordTitleCellTextFieldInput = ({
+  instanceId,
   sizeVariant,
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-  hotkeyScope,
 }: RecordTitleCellTextFieldInputProps) => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
@@ -40,6 +40,7 @@ export const RecordTitleCellTextFieldInput = ({
   const persistField = usePersistField();
 
   useRegisterInputEvents<string>({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: (inputValue) => {
@@ -57,7 +58,6 @@ export const RecordTitleCellTextFieldInput = ({
     onShiftTab: (inputValue) => {
       onShiftTab?.(() => persistField(inputValue));
     },
-    hotkeyScope,
   });
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {

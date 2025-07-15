@@ -36,12 +36,10 @@ export class InputTypeDefinitionFactory {
     objectMetadata,
     kind,
     options,
-    isRelationConnectEnabled = false,
   }: {
     objectMetadata: ObjectMetadataInterface;
     kind: InputTypeDefinitionKind;
     options: WorkspaceBuildSchemaOptions;
-    isRelationConnectEnabled?: boolean;
   }): InputTypeDefinition {
     // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
@@ -89,7 +87,6 @@ export class InputTypeDefinitionFactory {
               kind,
               options,
               typeFactory: this.inputTypeFactory,
-              isRelationConnectEnabled,
             });
         }
       },

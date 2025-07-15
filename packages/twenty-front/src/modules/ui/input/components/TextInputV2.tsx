@@ -11,10 +11,10 @@ import {
   useRef,
   useState,
 } from 'react';
+import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
+import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { AutogrowWrapper } from 'twenty-ui/utilities';
-import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -297,12 +297,12 @@ const TextInputV2Component = forwardRef<
       onBlur?.(event);
     };
 
-    const inputId = useId();
+    const instanceId = useId();
 
     return (
       <StyledContainer className={className} fullWidth={fullWidth ?? false}>
         {label && (
-          <InputLabel htmlFor={inputId}>
+          <InputLabel htmlFor={instanceId}>
             {label + (required ? '*' : '')}
           </InputLabel>
         )}
@@ -322,7 +322,7 @@ const TextInputV2Component = forwardRef<
           )}
 
           <StyledInput
-            id={inputId}
+            id={instanceId}
             width={width}
             data-testid={dataTestId}
             autoComplete={autoComplete || 'off'}

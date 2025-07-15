@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';

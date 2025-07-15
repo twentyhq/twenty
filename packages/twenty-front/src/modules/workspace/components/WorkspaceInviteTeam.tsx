@@ -123,6 +123,7 @@ export const WorkspaceInviteTeam = () => {
             render={({ field: { value, onChange }, fieldState: { error } }) => {
               return (
                 <TextInput
+                  instanceId="workspace-invite-team-emails"
                   placeholder="tim@apple.com, jony.ive@apple.dev"
                   value={value}
                   onChange={onChange}

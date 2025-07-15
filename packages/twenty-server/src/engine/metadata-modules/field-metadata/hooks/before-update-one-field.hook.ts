@@ -16,7 +16,7 @@ import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMe
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 
 interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
   standardOverrides?: FieldStandardOverridesDTO;
@@ -88,18 +88,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       (key) =>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
-
-    const isUpdatingLabelWhenSynced =
-      instance.update.label &&
-      fieldMetadata.isLabelSyncedWithName &&
-      instance.update.isLabelSyncedWithName !== false &&
-      instance.update.label !== fieldMetadata.label;
-
-    if (isUpdatingLabelWhenSynced) {
-      throw new ValidationError(
-        'Cannot update label when it is synced with name',
-      );
-    }
 
     if (nonUpdatableFields.length > 0) {
       throw new ValidationError(
@@ -390,13 +378,6 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     locale?: keyof typeof APP_LOCALES,
   ): void {
-    if (
-      fieldMetadata.isLabelSyncedWithName ||
-      update.isLabelSyncedWithName === true
-    ) {
-      return;
-    }
-
     if (!isDefined(instance.update.label)) {
       return;
     }

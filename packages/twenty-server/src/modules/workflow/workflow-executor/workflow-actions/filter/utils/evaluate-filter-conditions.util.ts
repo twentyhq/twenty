@@ -1,9 +1,11 @@
 import {
-  Filter,
-  FilterGroup,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
+  StepFilter,
+  StepFilterGroup,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
-type ResolvedFilter = Omit<Filter, 'value' | 'stepOutputKey'> & {
+type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
   rightOperand: unknown;
   leftOperand: unknown;
 };
@@ -13,46 +15,7 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
   const rightValue = filter.rightOperand;
 
   switch (filter.operand) {
-    case 'eq':
-      return leftValue == rightValue;
-
-    case 'ne':
-      return leftValue != rightValue;
-
-    case 'gt':
-      return Number(leftValue) > Number(rightValue);
-
-    case 'gte':
-      return Number(leftValue) >= Number(rightValue);
-
-    case 'lt':
-      return Number(leftValue) < Number(rightValue);
-
-    case 'lte':
-      return Number(leftValue) <= Number(rightValue);
-
-    case 'like':
-      return String(leftValue).includes(String(rightValue));
-
-    case 'ilike':
-      return String(leftValue)
-        .toLowerCase()
-        .includes(String(rightValue).toLowerCase());
-
-    case 'in':
-      try {
-        const values = JSON.parse(String(rightValue));
-
-        return Array.isArray(values) && values.includes(leftValue);
-      } catch {
-        const values = String(rightValue)
-          .split(',')
-          .map((v) => v.trim());
-
-        return values.includes(String(leftValue));
-      }
-
-    case 'is':
+    case ViewFilterOperand.Is:
       if (String(rightValue).toLowerCase() === 'null') {
         return leftValue === null || leftValue === undefined;
       }
@@ -60,19 +23,71 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
         return leftValue !== null && leftValue !== undefined;
       }
 
-      return leftValue === rightValue;
+      return leftValue == rightValue;
+
+    case ViewFilterOperand.IsNot:
+      return leftValue != rightValue;
+
+    case ViewFilterOperand.GreaterThanOrEqual:
+      return Number(leftValue) >= Number(rightValue);
+
+    case ViewFilterOperand.LessThanOrEqual:
+      return Number(leftValue) <= Number(rightValue);
+
+    case ViewFilterOperand.Contains:
+      if (Array.isArray(leftValue)) {
+        return leftValue.includes(rightValue);
+      }
+
+      return String(leftValue).includes(String(rightValue));
+
+    case ViewFilterOperand.DoesNotContain:
+      if (Array.isArray(leftValue)) {
+        return !leftValue.includes(rightValue);
+      }
+
+      return !String(leftValue).includes(String(rightValue));
+
+    case ViewFilterOperand.IsEmpty:
+      return (
+        leftValue === null ||
+        leftValue === undefined ||
+        leftValue === '' ||
+        (Array.isArray(leftValue) && leftValue.length === 0)
+      );
+
+    case ViewFilterOperand.IsNotEmpty:
+      return (
+        leftValue !== null &&
+        leftValue !== undefined &&
+        leftValue !== '' &&
+        (!Array.isArray(leftValue) || leftValue.length > 0)
+      );
+
+    case ViewFilterOperand.IsNotNull:
+      return leftValue !== null && leftValue !== undefined;
+
+    case ViewFilterOperand.IsRelative:
+    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IsInFuture:
+    case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IsBefore:
+    case ViewFilterOperand.IsAfter:
+      // Date/time operands - for now, return false as placeholder
+      // These would need proper date logic implementation
+      return false;
+
+    case ViewFilterOperand.VectorSearch:
+      return false;
 
     default:
-      throw new Error(`Unknown operand: ${filter.operand}`);
+      assertUnreachable(filter.operand);
   }
 }
 
-/**
- * Recursively evaluates a filter group and its children
- */
 function evaluateFilterGroup(
   groupId: string,
-  filterGroups: FilterGroup[],
+  filterGroups: StepFilterGroup[],
   filters: ResolvedFilter[],
 ): boolean {
   const group = filterGroups.find((g) => g.id === groupId);
@@ -81,16 +96,14 @@ function evaluateFilterGroup(
     throw new Error(`Filter group with id ${groupId} not found`);
   }
 
-  // Get all direct child groups
   const childGroups = filterGroups
-    .filter((g) => g.parentRecordFilterGroupId === groupId)
+    .filter((g) => g.parentStepFilterGroupId === groupId)
     .sort(
       (a, b) =>
-        (a.positionInRecordFilterGroup || 0) -
-        (b.positionInRecordFilterGroup || 0),
+        (a.positionInStepFilterGroup || 0) - (b.positionInStepFilterGroup || 0),
     );
 
-  const groupFilters = filters.filter((f) => f.recordFilterGroupId === groupId);
+  const groupFilters = filters.filter((f) => f.stepFilterGroupId === groupId);
 
   const filterResults = groupFilters.map((filter) => evaluateFilter(filter));
 
@@ -120,7 +133,7 @@ export function evaluateFilterConditions({
   filterGroups = [],
   filters = [],
 }: {
-  filterGroups?: FilterGroup[];
+  filterGroups?: StepFilterGroup[];
   filters?: ResolvedFilter[];
 }): boolean {
   if (filterGroups.length === 0 && filters.length === 0) {
@@ -131,15 +144,15 @@ export function evaluateFilterConditions({
     const groupIds = new Set(filterGroups.map((g) => g.id));
 
     for (const filter of filters) {
-      if (!groupIds.has(filter.recordFilterGroupId)) {
+      if (!groupIds.has(filter.stepFilterGroupId)) {
         throw new Error(
-          `Filter group with id ${filter.recordFilterGroupId} not found`,
+          `Filter group with id ${filter.stepFilterGroupId} not found`,
         );
       }
     }
   }
 
-  const rootGroups = filterGroups.filter((g) => !g.parentRecordFilterGroupId);
+  const rootGroups = filterGroups.filter((g) => !g.parentStepFilterGroupId);
 
   if (rootGroups.length === 0 && filters.length > 0) {
     const filterResults = filters.map((filter) => evaluateFilter(filter));

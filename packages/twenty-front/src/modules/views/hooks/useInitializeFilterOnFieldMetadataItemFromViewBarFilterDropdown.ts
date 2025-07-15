@@ -10,7 +10,6 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -74,10 +73,9 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
                   type: FocusComponentType.DROPDOWN,
                   instanceId: fieldMetadataItem.id,
                 },
-                hotkeyScope: {
-                  scope: DropdownHotkeyScope.Dropdown,
+                globalHotkeysConfig: {
+                  enableGlobalHotkeysConflictingWithKeyboard: false,
                 },
-                memoizeKey: fieldMetadataItem.id,
               });
             }
 

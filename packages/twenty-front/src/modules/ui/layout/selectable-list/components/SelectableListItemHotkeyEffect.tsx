@@ -8,13 +8,12 @@ export const SelectableListItemHotkeyEffect = ({
   itemId: string;
   onEnter: () => void;
 }) => {
-  const { focusId, hotkeyScope } = useSelectableListContextOrThrow();
+  const { focusId } = useSelectableListContextOrThrow();
 
   useSelectableListListenToEnterHotkeyOnItem({
     focusId,
     itemId,
     onEnter,
-    hotkeyScope,
   });
 
   return null;

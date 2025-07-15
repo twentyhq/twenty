@@ -36,7 +36,7 @@ export enum WorkspaceCacheKeys {
   MetadataPermissionsUserWorkspaceRoleMapVersion = 'metadata:permissions:user-workspace-role-map-version',
 }
 
-const TTL_INFINITE = 0;
+const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 @Injectable()
 export class WorkspaceCacheStorageService {
@@ -55,7 +55,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
       `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
       entitySchemas,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
   }
 
@@ -77,7 +77,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<number>(
       `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
       metadataVersion,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
   }
 
@@ -95,7 +95,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<ObjectMetadataMaps>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
       objectMetadataMaps,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
   }
 
@@ -141,7 +141,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<string>(
       `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
       typeDefs,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
   }
 
@@ -162,7 +162,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<string[]>(
       `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
       usedScalarNames,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
   }
 
@@ -189,7 +189,7 @@ export class WorkspaceCacheStorageService {
     await this.cacheStorageService.set<string>(
       `${WorkspaceCacheKeys.FeatureFlagMapVersion}:${workspaceId}`,
       featureFlagMapVersion,
-      TTL_INFINITE,
+      TTL_ONE_WEEK,
     );
 
     return featureFlagMapVersion;
@@ -205,7 +205,7 @@ export class WorkspaceCacheStorageService {
       this.cacheStorageService.set<FeatureFlagMap>(
         `${WorkspaceCacheKeys.FeatureFlagMap}:${workspaceId}`,
         featureFlagMap,
-        TTL_INFINITE,
+        TTL_ONE_WEEK,
       ),
       this.setFeatureFlagsMapVersion(workspaceId),
     ]);

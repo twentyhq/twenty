@@ -1,10 +1,6 @@
-import { fireEvent, renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act, fireEvent, renderHook } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useGoToHotkeys } from '../useGoToHotkeys';
 
@@ -24,10 +20,6 @@ describe('useGoToHotkeys', () => {
   it('should navigate on hotkey trigger', () => {
     const { result } = renderHook(() => {
       useGoToHotkeys({ key: 'a', location: '/three' });
-
-      const setHotkeyScope = useSetHotkeyScope();
-
-      setHotkeyScope(AppHotkeyScope.App, { goto: true });
 
       const location = useLocation();
 

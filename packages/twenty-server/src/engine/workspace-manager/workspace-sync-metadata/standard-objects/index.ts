@@ -37,7 +37,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
-  ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
   CalendarEventWorkspaceEntity,
@@ -55,7 +54,6 @@ export const standardObjectMetadataDefinitions = [
   ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
-  WebhookWorkspaceEntity,
   WorkflowWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkflowRunWorkspaceEntity,
@@ -73,4 +71,6 @@ export const standardObjectMetadataDefinitions = [
   PersonWorkspaceEntity,
   TaskWorkspaceEntity,
   TaskTargetWorkspaceEntity,
+  ApiKeyWorkspaceEntity,
+  WebhookWorkspaceEntity,
 ];

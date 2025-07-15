@@ -8,6 +8,7 @@ export enum FileFolder {
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
   ServerlessFunction = 'serverless-function',
+  File = 'file',
 }
 
 registerEnumType(FileFolder, {
@@ -32,6 +33,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.ServerlessFunction]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.File]: {
     ignoreExpirationToken: false,
   },
 };

@@ -1,18 +1,19 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
   AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useEffect } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const AddressValueSetterEffect = ({
@@ -43,21 +44,29 @@ const AddressInputWithContext = ({
   onTab,
   onShiftTab,
 }: AddressInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const instanceId = getRecordFieldInputInstanceId({
+    recordId: recordId ?? '',
+    fieldName: 'Address',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   useEffect(() => {
-    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
-  }, [setHotKeyScope]);
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: instanceId,
+      },
+    });
+  }, [instanceId, pushFocusItemToFocusStack]);
 
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: getRecordFieldInputId(
-            recordId ?? '',
-            'Address',
-            'record-table-cell',
-          ),
+          instanceId: instanceId,
         }}
       >
         <FieldContext.Provider
@@ -80,11 +89,11 @@ const AddressInputWithContext = ({
         >
           <AddressValueSetterEffect value={value} />
           <AddressInput
+            instanceId={instanceId}
             onEnter={onEnter}
             onEscape={onEscape}
             onClickOutside={onClickOutside}
             value={value}
-            hotkeyScope={DEFAULT_CELL_SCOPE.scope}
             onTab={onTab}
             onShiftTab={onShiftTab}
           />
@@ -116,7 +125,16 @@ const meta: Meta = {
   title: 'UI/Data/Field/Input/AddressFieldInput',
   component: AddressInputWithContext,
   args: {
-    value: 'text',
+    value: {
+      addressStreet1: 'Address 1',
+      addressStreet2: null,
+      addressCity: null,
+      addressState: null,
+      addressPostcode: null,
+      addressCountry: null,
+      addressLat: null,
+      addressLng: null,
+    },
     onEnter: enterJestFn,
     onEscape: escapeJestfn,
     onClickOutside: clickOutsideJestFn,
@@ -148,7 +166,10 @@ export const Enter: Story = {
 
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    await canvas.findByText('Address 1');
+    const addressInput = await canvas.findByDisplayValue('Address 1');
+
+    await userEvent.click(addressInput);
+
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {

@@ -6,7 +6,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
@@ -30,10 +29,6 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-
-export type UpdateViewButtonGroupProps = {
-  hotkeyScope: HotkeyScope;
-};
 
 export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();

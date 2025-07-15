@@ -8,6 +8,12 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
+export type RelationCreationPayload = {
+  targetObjectMetadataId: string;
+  targetFieldLabel: string;
+  targetFieldIcon: string;
+  type: RelationType;
+};
 @InputType()
 export class CreateFieldInput extends OmitType(
   FieldMetadataDTO,
@@ -25,12 +31,11 @@ export class CreateFieldInput extends OmitType(
   // TODO @prastoin implement validation for this with validate nested and dedicated class instance
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  relationCreationPayload?: {
-    targetObjectMetadataId: string;
-    targetFieldLabel: string;
-    targetFieldIcon: string;
-    type: RelationType;
-  };
+  relationCreationPayload?: RelationCreationPayload;
+
+  @IsOptional()
+  @Field(() => [GraphQLJSON], { nullable: true })
+  morphRelationsCreationPayload?: RelationCreationPayload[];
 }
 
 @InputType()

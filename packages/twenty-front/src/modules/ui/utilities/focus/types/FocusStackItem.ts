@@ -5,5 +5,4 @@ export type FocusStackItem = {
   focusId: string;
   componentInstance: FocusComponentInstance;
   globalHotkeysConfig: GlobalHotkeysConfig;
-  memoizeKey: string;
 };

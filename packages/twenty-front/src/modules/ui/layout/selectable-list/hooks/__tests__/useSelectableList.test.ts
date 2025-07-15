@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';

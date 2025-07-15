@@ -2,11 +2,9 @@ import styled from '@emotion/styled';
 import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from 'twenty-shared/utils';
+import { useUpdateApiKeyMutation } from '~/generated-metadata/graphql';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -29,9 +27,7 @@ export const ApiKeyNameInput = ({
   disabled,
   onNameUpdate,
 }: ApiKeyNameInputProps) => {
-  const { updateOneRecord: updateApiKey } = useUpdateOneRecord<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-  });
+  const [updateApiKey] = useUpdateApiKeyMutation();
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -43,10 +39,18 @@ export const ApiKeyNameInput = ({
       if (!apiKeyName) {
         return;
       }
-      await updateApiKey({
-        idToUpdate: apiKeyId,
-        updateOneRecordInput: { name },
+      const { data: updatedApiKeyData } = await updateApiKey({
+        variables: {
+          input: {
+            id: apiKeyId,
+            name,
+          },
+        },
       });
+      const updatedApiKey = updatedApiKeyData?.updateApiKey;
+      if (isDefined(updatedApiKey)) {
+        onNameUpdate?.(updatedApiKey.name);
+      }
     }, 500),
     [updateApiKey, onNameUpdate],
   );
@@ -56,9 +60,12 @@ export const ApiKeyNameInput = ({
     return debouncedUpdate.cancel;
   }, [debouncedUpdate, apiKeyName]);
 
+  const nameTextInputId = `${apiKeyId}-name`;
+
   return (
     <StyledComboInputContainer>
       <TextInput
+        instanceId={nameTextInputId}
         placeholder="E.g. backoffice integration"
         onChange={onNameUpdate}
         fullWidth

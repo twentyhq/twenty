@@ -1,13 +1,13 @@
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
-import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { WORKFLOW_DIAGRAM_CREATE_STEP_NODE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramCreateStepNodeClickOutsideId';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
@@ -55,11 +55,11 @@ export const CommandMenuOpenContainer = ({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
-        const hotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+        const currentFocusId = snapshot
+          .getLoadable(currentFocusIdSelector)
           .getValue();
 
-        if (hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused) {
+        if (currentFocusId === SIDE_PANEL_FOCUS_ID) {
           event.stopImmediatePropagation();
           event.preventDefault();
           closeCommandMenu();

@@ -8,6 +8,7 @@ export const EmailField = () => {
 
   return (
     <TextInput
+      instanceId={`user-email-${currentUser?.id}`}
       value={currentUser?.email}
       disabled
       fullWidth

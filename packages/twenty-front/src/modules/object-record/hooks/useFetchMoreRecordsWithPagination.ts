@@ -5,6 +5,7 @@ import {
   OperationVariables,
   WatchQueryFetchPolicy,
 } from '@apollo/client';
+import { Unmasked } from '@apollo/client/masking';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
@@ -54,7 +55,7 @@ type UseFindManyRecordsStateParams<
       updateQuery?: (
         previousQueryResult: TData,
         options: {
-          fetchMoreResult: TFetchData;
+          fetchMoreResult: Unmasked<TFetchData>;
           variables: TFetchVars;
         },
       ) => TData;

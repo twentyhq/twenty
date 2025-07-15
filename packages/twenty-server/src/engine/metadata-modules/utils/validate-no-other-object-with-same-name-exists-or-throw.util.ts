@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ObjectMetadataException,
@@ -19,14 +20,16 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
   existingObjectMetadataId,
   objectMetadataMaps,
 }: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) => {
-  const objectAlreadyExists = Object.values(objectMetadataMaps.byId).find(
-    (objectMetadata) =>
-      (objectMetadata.nameSingular === objectMetadataNameSingular ||
-        objectMetadata.namePlural === objectMetadataNamePlural ||
-        objectMetadata.nameSingular === objectMetadataNamePlural ||
-        objectMetadata.namePlural === objectMetadataNameSingular) &&
-      objectMetadata.id !== existingObjectMetadataId,
-  );
+  const objectAlreadyExists = Object.values(objectMetadataMaps.byId)
+    .filter(isDefined)
+    .find(
+      (objectMetadata) =>
+        (objectMetadata.nameSingular === objectMetadataNameSingular ||
+          objectMetadata.namePlural === objectMetadataNamePlural ||
+          objectMetadata.nameSingular === objectMetadataNamePlural ||
+          objectMetadata.namePlural === objectMetadataNameSingular) &&
+        objectMetadata.id !== existingObjectMetadataId,
+    );
 
   if (objectAlreadyExists) {
     throw new ObjectMetadataException(

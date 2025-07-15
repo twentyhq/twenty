@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 @Injectable()
-export class FilterWorkflowAction implements WorkflowExecutor {
-  async execute(input: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+export class FilterWorkflowAction implements WorkflowAction {
+  async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const { currentStepId, steps, context } = input;
 
     const step = steps.find((step) => step.id === currentStepId);
@@ -33,23 +33,24 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const { filterGroups, filters } = step.settings.input;
+    const { stepFilterGroups, stepFilters } = step.settings.input;
 
-    if (!filterGroups || !filters) {
-      throw new WorkflowStepExecutorException(
-        'Filter is not defined',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_SETTINGS,
-      );
+    if (!stepFilterGroups || !stepFilters) {
+      return {
+        result: {
+          shouldEndWorkflowRun: false,
+        },
+      };
     }
 
-    const resolvedFilters = filters.map((filter) => ({
+    const resolvedFilters = stepFilters.map((filter) => ({
       ...filter,
       rightOperand: resolveInput(filter.value, context),
       leftOperand: resolveInput(filter.stepOutputKey, context),
     }));
 
     const matchesFilter = evaluateFilterConditions({
-      filterGroups,
+      filterGroups: stepFilterGroups,
       filters: resolvedFilters,
     });
 
@@ -57,6 +58,7 @@ export class FilterWorkflowAction implements WorkflowExecutor {
       result: {
         matchesFilter,
       },
+      shouldEndWorkflowRun: !matchesFilter,
     };
   }
 }

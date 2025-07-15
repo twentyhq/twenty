@@ -16,7 +16,6 @@ type RecordTitleFullNameFieldInputProps = {
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
   sizeVariant?: 'xs' | 'md';
-  hotkeyScope: string;
 };
 
 export const RecordTitleFullNameFieldInput = ({
@@ -26,7 +25,6 @@ export const RecordTitleFullNameFieldInput = ({
   onTab,
   onShiftTab,
   sizeVariant,
-  hotkeyScope,
 }: RecordTitleFullNameFieldInputProps) => {
   const { draftValue, setDraftValue, persistFullNameField } =
     useFullNameField();
@@ -96,7 +94,6 @@ export const RecordTitleFullNameFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onPaste={handlePaste}
-      hotkeyScope={hotkeyScope}
       onChange={handleChange}
       sizeVariant={sizeVariant}
     />

@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -38,11 +39,15 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.TS_VECTOR,
   ].includes(fieldType);
 
+  const isRelation =
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.MORPH_RELATION);
+
   if (fieldIsSimpleValue) {
     return field.name;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.MANY_TO_ONE
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;
@@ -53,6 +58,10 @@ export const mapFieldMetadataToGraphqlQuery = (
 
     const relationMetadataItem =
       objectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!isDefined(relationMetadataItem)) {
+      return '';
+    }
 
     return `${field.name}
     {
@@ -69,7 +78,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     }`;
   } else if (
     maxDepthForRelations > 0 &&
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    isRelation &&
     field.settings?.relationType === RelationType.ONE_TO_MANY
   ) {
     const targetObjectMetadataId = field.relationTargetObjectMetadataId;

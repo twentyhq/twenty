@@ -42,6 +42,9 @@ export const SettingsRoleSettings = ({
 
   const { openModal } = useModal();
 
+  const descriptionTextAreaId = `${roleId}-description`;
+  const nameTextInputId = `${roleId}-name`;
+
   return (
     <>
       <Section>
@@ -60,6 +63,7 @@ export const SettingsRoleSettings = ({
             />
           </StyledInputContainer>
           <TextInput
+            instanceId={nameTextInputId}
             value={settingsDraftRole.label}
             fullWidth
             onChange={(value: string) => {
@@ -73,6 +77,7 @@ export const SettingsRoleSettings = ({
           />
         </StyledInputsContainer>
         <TextArea
+          textAreaId={descriptionTextAreaId}
           minRows={4}
           placeholder={t`Write a description`}
           value={settingsDraftRole.description || ''}

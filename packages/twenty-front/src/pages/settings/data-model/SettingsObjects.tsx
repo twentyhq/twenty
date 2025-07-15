@@ -170,6 +170,7 @@ export const SettingsObjects = () => {
             <H2Title title={t`Existing objects`} />
 
             <StyledSearchInput
+              instanceId="settings-objects-search"
               LeftIcon={IconSearch}
               placeholder={t`Search for an object...`}
               value={searchTerm}

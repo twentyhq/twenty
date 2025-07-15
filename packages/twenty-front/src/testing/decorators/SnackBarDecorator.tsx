@@ -1,9 +1,9 @@
 import { Decorator } from '@storybook/react';
 
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 
 export const SnackBarDecorator: Decorator = (Story) => (
-  <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
     <Story />
-  </SnackBarProviderScope>
+  </SnackBarComponentInstanceContextProvider>
 );

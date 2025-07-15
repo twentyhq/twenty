@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -11,7 +9,6 @@ import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/wor
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
 import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
@@ -213,13 +210,6 @@ export class TypeDefinitionsGenerator {
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
-    const isRelationConnectEnabled = isDefined(options.workspaceId)
-      ? await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_RELATION_CONNECT_ENABLED,
-          options.workspaceId,
-        )
-      : false;
-
     const inputTypeDefs = objectMetadataCollection
       .map((objectMetadata) => {
         const optionalExtendedObjectMetadata = {
@@ -236,13 +226,11 @@ export class TypeDefinitionsGenerator {
             objectMetadata,
             kind: InputTypeDefinitionKind.Create,
             options,
-            isRelationConnectEnabled,
           }),
           // Input type for update
           this.inputTypeDefinitionFactory.create({
             objectMetadata: optionalExtendedObjectMetadata,
             kind: InputTypeDefinitionKind.Update,
-            isRelationConnectEnabled,
             options,
           }),
           // Filter input type

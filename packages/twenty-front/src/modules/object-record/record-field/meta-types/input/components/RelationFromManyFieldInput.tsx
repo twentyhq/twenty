@@ -10,14 +10,15 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldInputInstanceId } from '@/object-record/record-field/utils/getFieldInputInstanceId';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
@@ -31,10 +32,9 @@ export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const recordPickerInstanceId = getFieldInputInstanceId({
-    recordId,
-    fieldName: fieldDefinition.metadata.fieldName,
-  });
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const { updateRelation } = useUpdateRelationFromManyFieldInput();
   const fieldName = fieldDefinition.metadata.fieldName;
@@ -94,7 +94,7 @@ export const RelationFromManyFieldInput = ({
   const multipleRecordPickerPickableMorphItemsCallbackState =
     useRecoilComponentCallbackStateV2(
       multipleRecordPickerPickableMorphItemsComponentState,
-      recordPickerInstanceId,
+      instanceId,
     );
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
@@ -123,7 +123,7 @@ export const RelationFromManyFieldInput = ({
         set(multipleRecordPickerPickableMorphItemsCallbackState, newMorphItems);
 
         multipleRecordPickerPerformSearch({
-          multipleRecordPickerInstanceId: recordPickerInstanceId,
+          multipleRecordPickerInstanceId: instanceId,
           forceSearchFilter: searchInput,
           forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
           forcePickableMorphItems: newMorphItems,
@@ -132,7 +132,7 @@ export const RelationFromManyFieldInput = ({
     [
       createNewRecordAndOpenRightDrawer,
       relationObjectMetadataItem,
-      recordPickerInstanceId,
+      instanceId,
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
     ],
@@ -142,15 +142,15 @@ export const RelationFromManyFieldInput = ({
 
   return (
     <MultipleRecordPicker
-      focusId={recordPickerInstanceId}
-      componentInstanceId={recordPickerInstanceId}
+      focusId={instanceId}
+      componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
         if (isRelationFromActivityTargets) {
           updateActivityTargetFromCell({
             morphItem,
             activityTargetWithTargetRecords: activityTargetObjectRecords,
-            recordPickerInstanceId,
+            recordPickerInstanceId: instanceId,
           });
         } else {
           updateRelation(morphItem);

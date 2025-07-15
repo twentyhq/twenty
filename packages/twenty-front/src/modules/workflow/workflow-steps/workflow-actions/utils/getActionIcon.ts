@@ -9,6 +9,8 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
     case 'DELETE_RECORD':
     case 'FIND_RECORDS':
       return RECORD_ACTIONS.find((item) => item.type === actionType)?.icon;
+    case 'FILTER':
+      return 'IconFilter';
     default:
       return OTHER_ACTIONS.find((item) => item.type === actionType)?.icon;
   }

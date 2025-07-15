@@ -18,6 +18,7 @@ export const ConfigVariableSearchInput = ({
 }: ConfigVariableSearchInputProps) => {
   return (
     <StyledSearchInput
+      instanceId="config-variable-search"
       placeholder={t`Search config variables`}
       value={value}
       onChange={onChange}

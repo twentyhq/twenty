@@ -2,16 +2,15 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-
 import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
+import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
 import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -96,31 +95,35 @@ export const Dialog = ({
     closed: { y: '50vh' },
   };
 
-  useScopedHotkeys(
-    Key.Enter,
-    (event: KeyboardEvent) => {
-      const confirmButton = buttons.find((button) => button.role === 'confirm');
+  const handleEnter = (event: KeyboardEvent) => {
+    const confirmButton = buttons.find((button) => button.role === 'confirm');
 
-      event.preventDefault();
+    event.preventDefault();
 
-      if (isDefined(confirmButton)) {
-        confirmButton?.onClick?.(event);
-        onClose?.();
-      }
-    },
-    DialogHotkeyScope.Dialog,
-    [],
-  );
-
-  useScopedHotkeys(
-    Key.Escape,
-    (event: KeyboardEvent) => {
-      event.preventDefault();
+    if (isDefined(confirmButton)) {
+      confirmButton?.onClick?.(event);
       onClose?.();
-    },
-    DialogHotkeyScope.Dialog,
-    [],
-  );
+    }
+  };
+
+  const handleEscape = (event: KeyboardEvent) => {
+    event.preventDefault();
+    onClose?.();
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: handleEnter,
+    focusId: DIALOG_FOCUS_ID,
+    dependencies: [buttons],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: DIALOG_FOCUS_ID,
+    dependencies: [handleEscape],
+  });
 
   const dialogRef = useRef<HTMLDivElement>(null);
 

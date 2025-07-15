@@ -8,7 +8,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   BooleanFieldInput,
   BooleanFieldInputProps,
@@ -43,11 +44,11 @@ const BooleanFieldInputWithContext = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId(
-          recordId ?? '',
-          'Boolean',
-          'record-table-cell',
-        ),
+        instanceId: getRecordFieldInputInstanceId({
+          recordId: recordId ?? '',
+          fieldName: 'Boolean',
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        }),
       }}
     >
       <FieldContext.Provider

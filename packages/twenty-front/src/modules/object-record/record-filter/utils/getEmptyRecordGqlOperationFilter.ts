@@ -19,8 +19,8 @@ import {
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { computeEmptyGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isNonEmptyString } from '@sniptt/guards';
+import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 

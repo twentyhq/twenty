@@ -2,11 +2,11 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hooks/useRecordBoardSelectAllHotkeys';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -65,7 +65,6 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     keys: ['x'],
     callback: handleSelectCard,
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleSelectCard],
   });
 
@@ -77,7 +76,6 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     ],
     callback: handleOpenRecordInCommandMenu,
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleOpenRecordInCommandMenu],
   });
 
@@ -85,7 +83,11 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     keys: [Key.Escape],
     callback: handleEscape,
     focusId,
-    scope: RecordIndexHotkeyScope.RecordIndex,
     dependencies: [handleEscape],
+  });
+
+  useRecordBoardSelectAllHotkeys({
+    recordBoardId,
+    focusId,
   });
 };

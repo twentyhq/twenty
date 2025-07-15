@@ -31,7 +31,7 @@ export const FormUuidFieldInput = ({
   readonly,
   VariablePicker,
 }: FormUuidFieldInputProps) => {
-  const inputId = useId();
+  const instanceId = useId();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -91,19 +91,19 @@ export const FormUuidFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
+      {label ? <InputLabel htmlFor={instanceId}>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
+          formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
-              inputId={inputId}
+              instanceId={instanceId}
               placeholder={placeholder ?? 'Enter a UUID'}
               value={draftValue.value}
               copyButton={false}
-              hotkeyScope="record-create"
               disabled={readonly}
               onChange={handleChange}
             />
@@ -117,7 +117,7 @@ export const FormUuidFieldInput = ({
 
         {VariablePicker && !readonly ? (
           <VariablePicker
-            inputId={inputId}
+            instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}

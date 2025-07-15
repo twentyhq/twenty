@@ -79,7 +79,7 @@ export const SettingsDevelopersWebhookForm = ({
     handleSave,
     updateOperation,
     removeOperation,
-    deleteWebhook,
+    handleDelete,
     isCreationMode,
     error,
   } = useWebhookForm({ webhookId, mode });
@@ -114,6 +114,10 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'Updated', value: 'updated', Icon: IconBox },
     { label: 'Deleted', value: 'deleted', Icon: IconTrash },
   ];
+
+  const descriptionTextAreaId = `${webhookId}-description`;
+  const targetUrlTextInputId = `${webhookId}-target-url`;
+  const secretTextInputId = `${webhookId}-secret`;
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -156,6 +160,7 @@ export const SettingsDevelopersWebhookForm = ({
               }) => {
                 return (
                   <TextInput
+                    instanceId={targetUrlTextInputId}
                     placeholder={t`https://example.com/webhook`}
                     value={value}
                     onChange={onChange}
@@ -177,6 +182,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextArea
+                  textAreaId={descriptionTextAreaId}
                   placeholder={t`Write a description`}
                   minRows={4}
                   value={value || ''}
@@ -242,6 +248,7 @@ export const SettingsDevelopersWebhookForm = ({
               control={formConfig.control}
               render={({ field: { onChange, value } }) => (
                 <TextInput
+                  instanceId={secretTextInputId}
                   placeholder={t`Secret (optional)`}
                   value={value || ''}
                   onChange={onChange}
@@ -278,7 +285,7 @@ export const SettingsDevelopersWebhookForm = ({
               Please type "yes" to confirm you want to delete this webhook.
             </Trans>
           }
-          onConfirmClick={deleteWebhook}
+          onConfirmClick={handleDelete}
           confirmButtonText={t`Delete`}
         />
       )}

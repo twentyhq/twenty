@@ -1,5 +1,6 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
@@ -10,6 +11,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -58,11 +60,16 @@ export const useCreateNewIndexRecord = ({
             isNewRecord: true,
           });
 
-          openRecordTitleCell({
-            recordId,
-            fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-            containerType: RecordTitleCellContainerType.ShowPage,
-          });
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          if (isDefined(labelIdentifierFieldMetadataItem)) {
+            openRecordTitleCell({
+              recordId,
+              fieldName: labelIdentifierFieldMetadataItem.name,
+              containerType: RecordTitleCellContainerType.ShowPage,
+            });
+          }
         } else {
           navigate(AppPath.RecordShowPage, {
             objectNameSingular: objectMetadataItem.nameSingular,
@@ -74,8 +81,7 @@ export const useCreateNewIndexRecord = ({
       buildRecordInputFromFilters,
       createOneRecord,
       navigate,
-      objectMetadataItem.labelIdentifierFieldMetadataId,
-      objectMetadataItem.nameSingular,
+      objectMetadataItem,
       openRecordInCommandMenu,
       openRecordTitleCell,
     ],

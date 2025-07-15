@@ -76,6 +76,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: undefined,
         variablePathLabel: 'Step 1 > undefined',
+        variableType: 'unknown',
       });
     });
 
@@ -89,6 +90,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Name',
         variablePathLabel: 'Step 1 > Company > Name',
+        variableType: 'unknown',
       });
     });
 
@@ -102,6 +104,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Email',
         variablePathLabel: 'Step 1 > Person > Email',
+        variableType: 'unknown',
       });
     });
 
@@ -115,6 +118,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Company',
         variablePathLabel: 'Step 1 > Company > Company',
+        variableType: 'unknown',
       });
     });
 
@@ -128,6 +132,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Person',
         variablePathLabel: 'Step 1 > Person > Person',
+        variableType: 'unknown',
       });
     });
 
@@ -141,6 +146,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Simple Data',
         variablePathLabel: 'Step 1 > Simple Data',
+        variableType: 'unknown',
       });
     });
 
@@ -154,6 +160,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Field 1',
         variablePathLabel: 'Step 1 > Nested Data > Field 1',
+        variableType: 'unknown',
       });
     });
 
@@ -167,6 +174,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: undefined,
         variablePathLabel: 'Step 1 > undefined',
+        variableType: 'unknown',
       });
     });
 
@@ -180,6 +188,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: undefined,
         variablePathLabel: 'Step 1 > undefined',
+        variableType: 'unknown',
       });
     });
 
@@ -208,6 +217,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Field 1',
         variablePathLabel: 'Step 1 > Complex Field > Field 1',
+        variableType: 'unknown',
       });
     });
   });
@@ -274,6 +284,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Name',
         variablePathLabel: 'Record is Created > Name',
+        variableType: FieldMetadataType.TEXT,
       });
     });
 
@@ -288,6 +299,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: ' Amount Micros',
         variablePathLabel: 'Record is Created > ARR >  Amount Micros',
+        variableType: FieldMetadataType.NUMERIC,
       });
     });
 
@@ -301,6 +313,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: 'Company',
         variablePathLabel: 'Record is Created > Company',
+        variableType: 'unknown',
       });
     });
 
@@ -314,6 +327,7 @@ describe('searchVariableThroughOutputSchema', () => {
       expect(result).toEqual({
         variableLabel: undefined,
         variablePathLabel: 'Record is Created > undefined',
+        variableType: 'unknown',
       });
     });
   });

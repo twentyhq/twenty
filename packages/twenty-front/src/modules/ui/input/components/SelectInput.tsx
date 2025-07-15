@@ -86,7 +86,7 @@ export const SelectInput = ({
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
-
+      event.preventDefault();
       const weAreNotInAnHTMLInput = !(
         event.target instanceof HTMLInputElement &&
         event.target.tagName === 'INPUT'

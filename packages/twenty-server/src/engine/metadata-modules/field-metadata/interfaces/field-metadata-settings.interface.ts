@@ -22,7 +22,7 @@ export enum DateDisplayFormat {
 export type FieldNumberVariant = 'number' | 'percentage';
 
 export type FieldMetadataNumberSettings = {
-  dataType: NumberDataType;
+  dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
@@ -51,6 +51,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
 };
 
 export type FieldMetadataSettings<

@@ -2,7 +2,6 @@ import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   DeepPartial,
   DeleteResult,
-  EntitySchema,
   EntityTarget,
   FindManyOptions,
   FindOneOptions,
@@ -28,12 +27,12 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceRepository<
   T extends ObjectLiteral,
@@ -552,7 +551,9 @@ export class WorkspaceRepository<
    * INSERT METHODS
    */
   override async insert(
-    entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    entity:
+      | QueryDeepPartialEntityWithRelationConnect<T>
+      | QueryDeepPartialEntityWithRelationConnect<T>[],
     entityManager?: WorkspaceEntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
@@ -913,36 +914,7 @@ export class WorkspaceRepository<
    * PRIVATE METHODS
    */
   private async getObjectMetadataFromTarget() {
-    const objectMetadataName =
-      typeof this.target === 'string'
-        ? this.target
-        : WorkspaceEntitiesStorage.getObjectMetadataName(
-            this.internalContext.workspaceId,
-            this.target as EntitySchema,
-          );
-
-    if (!objectMetadataName) {
-      throw new Error('Object metadata name is missing');
-    }
-
-    const objectMetadata = getObjectMetadataMapItemByNameSingular(
-      this.internalContext.objectMetadataMaps,
-      objectMetadataName,
-    );
-
-    if (!objectMetadata) {
-      throw new Error(
-        `Object metadata for object "${objectMetadataName}" is missing ` +
-          `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${
-            Object.keys(
-              this.internalContext.objectMetadataMaps.idByNameSingular,
-            ).length
-          }`,
-      );
-    }
-
-    return objectMetadata;
+    return getObjectMetadataFromEntityTarget(this.target, this.internalContext);
   }
 
   private async transformOptions<

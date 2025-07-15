@@ -7,10 +7,10 @@ import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldVal
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
@@ -20,7 +20,7 @@ import { viewableRecordNameSingularState } from '@/object-record/record-right-dr
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -32,11 +32,6 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
-export const DEFAULT_CELL_SCOPE: HotkeyScope = {
-  scope: TableHotkeyScope.CellEditMode,
-};
 
 export type OpenTableCellArgs = {
   initialValue?: string;
@@ -166,6 +161,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
         openFieldInput({
           fieldDefinition,
           recordId,
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
         });
 
         setCurrentTableCellInEditModePosition(cellPosition);
@@ -174,11 +170,11 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
-          fieldComponentInstanceId: getRecordFieldInputId(
+          fieldComponentInstanceId: getRecordFieldInputInstanceId({
             recordId,
-            fieldDefinition.metadata.fieldName,
-            'record-table-cell',
-          ),
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+          }),
         });
 
         toggleClickOutside(false);

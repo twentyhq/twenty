@@ -1,19 +1,19 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ToolSet } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
-import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class McpService {

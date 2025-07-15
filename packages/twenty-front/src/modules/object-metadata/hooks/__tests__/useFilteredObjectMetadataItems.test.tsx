@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import {
   query,
@@ -27,7 +27,11 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
+  <RecoilRoot
+    initializeState={({ set }) =>
+      set(objectMetadataItemsState, generatedMockObjectMetadataItems)
+    }
+  >
     <MockedProvider mocks={mocks} addTypename={false}>
       {children}
     </MockedProvider>
@@ -36,17 +40,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemByNamePlural', async () => {
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useFilteredObjectMetadataItems();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(useFilteredObjectMetadataItems, {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       const res =
@@ -57,17 +53,9 @@ describe('useFilteredObjectMetadataItems', () => {
   });
 
   it('should findObjectMetadataItemByNamePlural', async () => {
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useFilteredObjectMetadataItems();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(useFilteredObjectMetadataItems, {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       const res = result.current.findObjectMetadataItemByNamePlural('people');
@@ -81,17 +69,9 @@ describe('useFilteredObjectMetadataItems', () => {
       (item) => item.namePlural === 'people',
     );
 
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useFilteredObjectMetadataItems();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(useFilteredObjectMetadataItems, {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       const res = result.current.findObjectMetadataItemById(
@@ -103,17 +83,9 @@ describe('useFilteredObjectMetadataItems', () => {
   });
 
   it('should findObjectMetadataItemByNamePlural', async () => {
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useFilteredObjectMetadataItems();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(useFilteredObjectMetadataItems, {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       const res =

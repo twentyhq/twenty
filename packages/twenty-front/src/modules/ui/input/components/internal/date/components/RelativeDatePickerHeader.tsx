@@ -72,6 +72,7 @@ export const RelativeDatePickerHeader = (
         fullWidth
       />
       <TextInput
+        instanceId="relative-date-picker-amount"
         width={50}
         value={textInputValue}
         onChange={(text) => {

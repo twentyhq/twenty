@@ -35,14 +35,14 @@ export const MenuItemToggle = ({
   onToggleChange,
   toggleSize,
 }: MenuItemToggleProps) => {
-  const inputId = useId();
+  const instanceId = useId();
   return (
     <StyledMenuItemBase className={className} focused={focused}>
-      <StyledToggleContainer htmlFor={inputId}>
+      <StyledToggleContainer htmlFor={instanceId}>
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
         <StyledMenuItemRightContent>
           <Toggle
-            id={inputId}
+            id={instanceId}
             value={toggled}
             onChange={onToggleChange}
             toggleSize={toggleSize}

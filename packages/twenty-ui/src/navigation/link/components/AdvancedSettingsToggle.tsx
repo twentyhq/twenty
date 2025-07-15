@@ -48,7 +48,7 @@ export const AdvancedSettingsToggle = ({
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
-  const inputId = useId();
+  const instanceId = useId();
 
   return (
     <StyledContainer>
@@ -59,11 +59,11 @@ export const AdvancedSettingsToggle = ({
           fill={MAIN_COLORS.yellow}
         />
       </StyledIconContainer>
-      <StyledToggleContainer htmlFor={inputId}>
+      <StyledToggleContainer htmlFor={instanceId}>
         <StyledText>{label}</StyledText>
 
         <Toggle
-          id={inputId}
+          id={instanceId}
           onChange={onChange}
           color={MAIN_COLORS.yellow}
           value={isAdvancedModeEnabled}

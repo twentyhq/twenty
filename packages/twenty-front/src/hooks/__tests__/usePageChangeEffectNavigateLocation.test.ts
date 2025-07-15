@@ -210,7 +210,7 @@ const testCases: {
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: undefined },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
-  { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: undefined },
+  { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.CreateWorkspace },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },

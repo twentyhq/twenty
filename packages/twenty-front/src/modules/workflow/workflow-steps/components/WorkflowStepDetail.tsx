@@ -7,6 +7,7 @@ import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
@@ -185,8 +186,12 @@ export const WorkflowStepDetail = ({
           );
         }
         case 'FILTER': {
-          throw new Error(
-            "The Filter action isn't meant to be displayed as a node.",
+          return (
+            <WorkflowEditActionFilter
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
           );
         }
 

@@ -41,7 +41,6 @@ const firstFocusItem = {
     enableGlobalHotkeysWithModifiers: true,
     enableGlobalHotkeysConflictingWithKeyboard: true,
   },
-  memoizeKey: 'global',
 };
 
 const secondFocusItem = {
@@ -54,7 +53,6 @@ const secondFocusItem = {
     enableGlobalHotkeysWithModifiers: true,
     enableGlobalHotkeysConflictingWithKeyboard: true,
   },
-  memoizeKey: 'global',
 };
 
 describe('useRemoveFocusItemFromFocusStackById', () => {
@@ -68,8 +66,6 @@ describe('useRemoveFocusItemFromFocusStackById', () => {
           type: firstFocusItem.componentInstance.componentType,
           instanceId: firstFocusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: firstFocusItem.memoizeKey,
       });
     });
 
@@ -80,8 +76,6 @@ describe('useRemoveFocusItemFromFocusStackById', () => {
           type: secondFocusItem.componentInstance.componentType,
           instanceId: secondFocusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: secondFocusItem.memoizeKey,
       });
     });
 
@@ -111,8 +105,6 @@ describe('useRemoveFocusItemFromFocusStackById', () => {
           type: firstFocusItem.componentInstance.componentType,
           instanceId: firstFocusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
       });
     });
 
@@ -123,8 +115,6 @@ describe('useRemoveFocusItemFromFocusStackById', () => {
           type: secondFocusItem.componentInstance.componentType,
           instanceId: secondFocusItem.componentInstance.componentInstanceId,
         },
-        hotkeyScope: { scope: 'test-scope' },
-        memoizeKey: 'global',
       });
     });
 

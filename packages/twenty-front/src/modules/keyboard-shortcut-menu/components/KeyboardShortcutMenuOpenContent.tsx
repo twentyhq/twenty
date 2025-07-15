@@ -2,11 +2,13 @@ import { Key } from 'ts-key-enum';
 
 import { KEYBOARD_SHORTCUTS_GENERAL } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral';
 import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsTable';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
-import { useKeyboardShortcutMenu } from '../hooks/useKeyboardShortcutMenu';
+import {
+  KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
+  useKeyboardShortcutMenu,
+} from '../hooks/useKeyboardShortcutMenu';
 
-import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { KeyboardMenuDialog } from './KeyboardShortcutMenuDialog';
 import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
@@ -15,15 +17,14 @@ export const KeyboardShortcutMenuOpenContent = () => {
   const { toggleKeyboardShortcutMenu, closeKeyboardShortcutMenu } =
     useKeyboardShortcutMenu();
 
-  useGlobalHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       closeKeyboardShortcutMenu();
     },
-    false,
-    AppHotkeyScope.KeyboardShortcutMenuOpen,
-    [closeKeyboardShortcutMenu],
-  );
+    focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
+    dependencies: [closeKeyboardShortcutMenu],
+  });
 
   return (
     <>

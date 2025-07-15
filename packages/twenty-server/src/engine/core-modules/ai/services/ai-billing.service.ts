@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/core-modules/ai/constants/dollar-to-credit-multiplier';
-import { getAIModelById } from 'src/engine/core-modules/ai/utils/get-ai-model-by-id';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
@@ -18,10 +18,13 @@ export interface TokenUsage {
 export class AIBillingService {
   private readonly logger = new Logger(AIBillingService.name);
 
-  constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
+  constructor(
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly aiModelRegistryService: AiModelRegistryService,
+  ) {}
 
   async calculateCost(modelId: ModelId, usage: TokenUsage): Promise<number> {
-    const model = getAIModelById(modelId);
+    const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
 
     if (!model) {
       throw new Error(`AI model with id ${modelId} not found`);

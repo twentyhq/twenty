@@ -5,7 +5,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.utils';
+import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,

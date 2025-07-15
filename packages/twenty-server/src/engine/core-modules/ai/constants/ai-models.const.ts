@@ -1,15 +1,19 @@
 export enum ModelProvider {
+  NONE = 'none',
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
+  OPENAI_COMPATIBLE = 'open_ai_compatible',
 }
 
 export type ModelId =
+  | 'auto'
   | 'gpt-4o'
   | 'gpt-4o-mini'
   | 'gpt-4-turbo'
   | 'claude-opus-4-20250514'
   | 'claude-sonnet-4-20250514'
-  | 'claude-3-5-haiku-20241022';
+  | 'claude-3-5-haiku-20241022'
+  | string; // Allow custom model names
 
 export interface AIModelConfig {
   modelId: ModelId;

@@ -19,17 +19,19 @@ export class RelationTypeV2Factory {
   ) {}
 
   public create(
-    fieldMetadata: FieldMetadataInterface<FieldMetadataType.RELATION>,
+    fieldMetadata: FieldMetadataInterface<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
   ): GraphQLOutputType {
     if (!fieldMetadata.settings) {
       throw new Error(
-        `Field Metadata of type RELATION with id ${fieldMetadata.id} has no settings`,
+        `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no settings`,
       );
     }
 
     if (!fieldMetadata.relationTargetObjectMetadataId) {
       throw new Error(
-        `Field Metadata of type RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
+        `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
       );
     }
 

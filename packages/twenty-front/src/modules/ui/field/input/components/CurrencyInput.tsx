@@ -37,6 +37,7 @@ const StyledIcon = styled.div`
 `;
 
 export type CurrencyInputProps = {
+  instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -48,10 +49,10 @@ export type CurrencyInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   onChange?: (newText: string) => void;
   onSelect?: (newText: string) => void;
-  hotkeyScope: string;
 };
 
 export const CurrencyInput = ({
+  instanceId,
   autoFocus,
   value,
   currencyCode,
@@ -63,7 +64,6 @@ export const CurrencyInput = ({
   onClickOutside,
   onChange,
   onSelect,
-  hotkeyScope,
 }: CurrencyInputProps) => {
   const theme = useTheme();
 
@@ -81,6 +81,7 @@ export const CurrencyInput = ({
   };
 
   useRegisterInputEvents({
+    focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: internalText,
     onEnter,
@@ -88,7 +89,6 @@ export const CurrencyInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    hotkeyScope,
   });
 
   const currency = CURRENCIES.find(({ value }) => value === currencyCode);
