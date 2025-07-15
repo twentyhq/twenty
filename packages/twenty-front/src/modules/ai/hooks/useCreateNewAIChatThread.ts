@@ -1,4 +1,4 @@
-import { currentAIChatThreadComponentState } from '@/ai/components/states/currentAIChatThreadComponentState';
+import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useCreateAgentChatThreadMutation } from '~/generated-metadata/graphql';
