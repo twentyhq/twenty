@@ -21,10 +21,10 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
   IconFilter,
-  IconFilterPlus,
   IconFilterX,
   IconGitBranchDeleted,
   IconPlus,
+  IconTrash,
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -33,10 +33,9 @@ const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
 `;
 
-const StyledRoundedIconButtonGroup = styled(IconButtonGroup)`
-  border-radius: 50px;
-  overflow: hidden;
-  pointer-events: all;
+const StyledConfiguredFilterContainer = styled.div`
+  height: 26px;
+  width: 26px;
 `;
 
 const StyledContainer = styled.div<{ labelX: number; labelY: number }>`
@@ -145,30 +144,50 @@ export const WorkflowDiagramEdgeV2Content = ({
           isSelected || hovered || isDropdownOpen || isDefined(filter)
         }
       >
-        {isDefined(filter) && !hovered && !isDropdownOpen && !isSelected ? (
-          <StyledRoundedIconButtonGroup
-            className="nodrag nopan"
-            iconButtons={[
-              {
-                Icon: IconFilterPlus,
-              },
-            ]}
-          />
+        {isDefined(filter) ? (
+          <StyledConfiguredFilterContainer>
+            {hovered || isDropdownOpen || isSelected ? (
+              <StyledIconButtonGroup
+                className="nodrag nopan"
+                iconButtons={[
+                  {
+                    Icon: IconFilter,
+                  },
+                  {
+                    Icon: IconDotsVertical,
+                    onClick: () => {
+                      openDropdown({
+                        dropdownComponentInstanceIdFromProps: dropdownId,
+                      });
+                    },
+                  },
+                ]}
+              />
+            ) : (
+              <StyledIconButtonGroup
+                className="nodrag nopan"
+                iconButtons={[
+                  {
+                    Icon: IconFilter,
+                  },
+                ]}
+              />
+            )}
+          </StyledConfiguredFilterContainer>
         ) : (
           <StyledIconButtonGroup
             className="nodrag nopan"
             iconButtons={[
               {
-                Icon: IconFilterPlus,
+                Icon: IconFilter,
                 onClick: handleFilterButtonClick,
               },
               {
-                Icon: IconDotsVertical,
-                onClick: () => {
-                  openDropdown({
-                    dropdownComponentInstanceIdFromProps: dropdownId,
-                  });
-                },
+                Icon: IconPlus,
+                onClick: onCreateNode,
+              },
+              {
+                Icon: IconTrash,
               },
             ]}
           />
@@ -181,7 +200,7 @@ export const WorkflowDiagramEdgeV2Content = ({
           dropdownPlacement="bottom-start"
           dropdownStrategy="absolute"
           dropdownOffset={{
-            x: 0,
+            x: 24,
             y: 4,
           }}
           onOpen={() => {
