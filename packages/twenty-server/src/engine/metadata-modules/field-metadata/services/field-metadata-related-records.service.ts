@@ -71,7 +71,12 @@ export class FieldMetadataRelatedRecordsService {
       if (view.viewGroups.length === 0) {
         continue;
       }
+      const valuesToDelete = deleted.map((option) => option.value);
 
+      await viewGroupRepository.delete({
+        fieldMetadataId: newFieldMetadata.id,
+        fieldValue: In(valuesToDelete),
+      });
       const maxPosition = this.getMaxPosition(view.viewGroups);
 
       const viewGroupsToCreate = created.map((option, index) =>
@@ -102,13 +107,6 @@ export class FieldMetadataRelatedRecordsService {
           { fieldValue: newOption.value },
         );
       }
-
-      const valuesToDelete = deleted.map((option) => option.value);
-
-      await viewGroupRepository.delete({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: In(valuesToDelete),
-      });
 
       await this.syncNoValueViewGroup(
         newFieldMetadata,
