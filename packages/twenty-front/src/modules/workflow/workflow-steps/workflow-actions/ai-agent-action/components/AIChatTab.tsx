@@ -13,16 +13,11 @@ import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
 import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
-import {
-  WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
-  WorkflowAiAgentTabId,
-} from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/workflow-ai-agent-tabs';
+
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 import { AgentChatMessage } from '~/generated/graphql';
@@ -203,7 +198,13 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AIChatTab = ({ agentId }: { agentId: string }) => {
+export const AIChatTab = ({
+  agentId,
+  isWorkflowAgentNodeChat,
+}: {
+  agentId: string;
+  isWorkflowAgentNodeChat?: boolean;
+}) => {
   const theme = useTheme();
 
   const {
@@ -218,13 +219,6 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
 
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
   const { navigateCommandMenu } = useCommandMenu();
-
-  const activeTabId = useRecoilComponentValueV2(
-    activeTabIdComponentState,
-    WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID,
-  );
-
-  const isWorkflowAgentNodeChat = activeTabId === WorkflowAiAgentTabId.CHAT;
 
   const getAssistantMessageContent = (message: AgentChatMessage) => {
     if (message.content !== '') {
