@@ -9,16 +9,16 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { WorkflowRunStepInfos, StepStatus } from 'twenty-shared/workflow';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
-  stepsInfo,
+  stepInfos,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
-  stepsInfo: WorkflowRunStepInfos | undefined;
+  stepInfos: WorkflowRunStepInfos | undefined;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -43,24 +43,24 @@ export const generateWorkflowRunDiagram = ({
     workflowDiagram.nodes.filter(isStepNode).map((node) => {
       const nodeId = node.id;
 
-      const stepInfos = stepsInfo?.[nodeId];
+      const stepInfo = stepInfos?.[nodeId];
 
-      if (!isDefined(stepInfos)) {
+      if (!isDefined(stepInfo)) {
         return {
           ...node,
           data: {
             ...node.data,
-            runStatus: 'NOT_STARTED',
+            runStatus: StepStatus.NOT_STARTED,
           },
         };
       }
 
       const nodeData = {
         ...node.data,
-        runStatus: stepInfos.status,
+        runStatus: stepInfo.status,
       };
 
-      if (!isDefined(stepToOpenByDefault) && stepInfos.status === 'PENDING') {
+      if (!isDefined(stepToOpenByDefault) && stepInfo.status === 'PENDING') {
         stepToOpenByDefault = { id: nodeId, data: nodeData };
       }
 
@@ -79,13 +79,13 @@ export const generateWorkflowRunDiagram = ({
       return edge;
     }
 
-    const stepInfos = stepsInfo?.[parentNode.id];
+    const stepInfo = stepInfos?.[parentNode.id];
 
-    if (!isDefined(stepInfos)) {
+    if (!isDefined(stepInfo)) {
       return edge;
     }
 
-    if (stepInfos.status === 'SUCCESS') {
+    if (stepInfo.status === 'SUCCESS') {
       return {
         ...edge,
         ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,

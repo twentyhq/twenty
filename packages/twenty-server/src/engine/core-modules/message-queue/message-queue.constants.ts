@@ -24,7 +24,7 @@ export enum MessageQueue {
 }
 
 export const MESSAGE_QUEUE_OPTIONS: Partial<
-  Record<MessageQueue, MessageQueueWorkerOptions>
+  Record<MessageQueue | string, MessageQueueWorkerOptions>
 > = {
   [MessageQueue.workflowQueue]: {
     concurrency: 2,

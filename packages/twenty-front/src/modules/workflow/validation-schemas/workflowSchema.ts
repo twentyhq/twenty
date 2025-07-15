@@ -320,14 +320,14 @@ export const workflowRunOutputSchema = z.object({
 
 export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
 
-export const workflowRunStateStepInfosSchema = z.object({
+export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
   error: z.any().optional(),
   status: workflowRunStepStatusSchema,
 });
 
-export const workflowRunStateStepsInfosSchema = z.record(
-  workflowRunStateStepInfosSchema,
+export const workflowRunStateStepInfosSchema = z.record(
+  workflowRunStateStepInfoSchema,
 );
 
 export const workflowRunStateSchema = z.object({
@@ -335,7 +335,7 @@ export const workflowRunStateSchema = z.object({
     trigger: workflowTriggerSchema,
     steps: z.array(workflowActionSchema),
   }),
-  stepInfos: workflowRunStateStepsInfosSchema,
+  stepInfos: workflowRunStateStepInfosSchema,
   workflowRunError: z.any().optional(),
 });
 

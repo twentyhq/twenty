@@ -3,6 +3,7 @@ import {
   WorkflowRunStepStatus,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 
 export const getWorkflowRunStepExecutionStatus = ({
   workflowRunState,
@@ -17,5 +18,5 @@ export const getWorkflowRunStepExecutionStatus = ({
     return stepOutput.status;
   }
 
-  return 'NOT_STARTED';
+  return StepStatus.NOT_STARTED;
 };

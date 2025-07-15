@@ -92,7 +92,7 @@ describe('generateWorkflowRunDiagram', () => {
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepsInfo: stepsOutput,
+      stepInfos: stepsOutput,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -277,7 +277,7 @@ describe('generateWorkflowRunDiagram', () => {
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepsInfo: stepsOutput,
+      stepInfos: stepsOutput,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -451,7 +451,7 @@ describe('generateWorkflowRunDiagram', () => {
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepsInfo: stepsOutput,
+      stepInfos: stepsOutput,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -647,7 +647,7 @@ describe('generateWorkflowRunDiagram', () => {
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepsInfo: stepsOutput,
+      stepInfos: stepsOutput,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -813,7 +813,7 @@ describe('generateWorkflowRunDiagram', () => {
     const result = generateWorkflowRunDiagram({
       trigger,
       steps,
-      stepsInfo: stepsOutput,
+      stepInfos: stepsOutput,
     });
 
     expect(result).toMatchInlineSnapshot(`

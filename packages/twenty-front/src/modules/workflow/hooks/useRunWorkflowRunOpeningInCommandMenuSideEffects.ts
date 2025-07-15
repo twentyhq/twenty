@@ -54,7 +54,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({
           steps: workflowRunRecord.state.flow.steps,
-          stepsInfo: workflowRunRecord.state.stepInfos,
+          stepInfos: workflowRunRecord.state.stepInfos,
           trigger: workflowRunRecord.state.flow.trigger,
         });
 

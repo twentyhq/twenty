@@ -116,7 +116,7 @@ export const WorkflowRunVisualizerEffect = ({
           generateWorkflowRunDiagram({
             trigger: workflowRunState.flow.trigger,
             steps: workflowRunState.flow.steps,
-            stepsInfo: workflowRunState.stepInfos,
+            stepInfos: workflowRunState.stepInfos,
           });
 
         if (isDefined(stepToOpenByDefault)) {
