@@ -53,58 +53,21 @@ export class FieldMetadataRelationService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  // What happens here if it's the same object ?
-  async createRelationFieldMetadataItems({
+  // Shouldn't this be within a transaction ?
+  async createSourceAndTargetRelationFieldMetadata({
     fieldMetadataInput,
-    objectMetadata,
     fieldMetadataRepository,
-    relationCreationPayload,
+    targetFieldMetadataInput,
   }: {
     fieldMetadataInput: CreateFieldInput;
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    targetFieldMetadataInput: CreateFieldInput;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
-    relationCreationPayload: NonNullable<
-      CreateFieldInput['relationCreationPayload']
-    >;
   }): Promise<FieldMetadataEntity[]> {
     const createdFieldMetadataItem =
       await fieldMetadataRepository.save(fieldMetadataInput);
-    const targetFieldMetadataName = computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel, // Should be sanitized at least
-    );
-
-    validateFieldNameAvailabilityOrThrow({
-      name: targetFieldMetadataName,
-      objectMetadata,
-    });
-
-    const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation({
-      objectMetadataId: relationCreationPayload.targetObjectMetadataId,
-      type: fieldMetadataInput.type,
-      name: targetFieldMetadataName,
-      label: relationCreationPayload.targetFieldLabel,
-      icon: relationCreationPayload.targetFieldIcon,
-      workspaceId: fieldMetadataInput.workspaceId,
-    });
-
-    const targetFieldMetadataRelationSettings =
-      this.computeRelationSettingsIconAndRelationTargetObjectMetadataId({
-        fieldMetadataInput: targetFieldMetadataToCreate,
-        relationCreationPayload: {
-          targetObjectMetadataId: objectMetadata.id,
-          targetFieldLabel: fieldMetadataInput.label,
-          targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
-          type:
-            relationCreationPayload.type === RelationType.ONE_TO_MANY
-              ? RelationType.MANY_TO_ONE
-              : RelationType.ONE_TO_MANY,
-        },
-        objectMetadata,
-      });
 
     const targetFieldMetadata = await fieldMetadataRepository.save({
-      // id: v4(), // useless ?
-      ...targetFieldMetadataRelationSettings,
+      ...targetFieldMetadataInput,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
@@ -116,7 +79,7 @@ export class FieldMetadataRelationService {
     return [createdFieldMetadataItemUpdated, targetFieldMetadata];
   }
 
-  async computeTargetStuff({
+  computeRelationTargetFieldMetadataInput({
     fieldMetadataInput,
     targetObjectMetadata,
     sourceObjectMetadata,
@@ -128,7 +91,7 @@ export class FieldMetadataRelationService {
     relationCreationPayload: NonNullable<
       CreateFieldInput['relationCreationPayload']
     >;
-  }): Promise<FieldMetadataEntity[]> {
+  }): CreateFieldInput {
     const targetFieldMetadataName = computeMetadataNameFromLabel(
       relationCreationPayload.targetFieldLabel, // Should be sanitized at least
     );
@@ -157,7 +120,10 @@ export class FieldMetadataRelationService {
         objectMetadata: targetObjectMetadata,
       });
 
-    return targetFieldMetadataRelationSettings;
+    return {
+      ...fieldMetadataInput,
+      ...targetFieldMetadataRelationSettings,
+    };
   }
 
   async validateFieldMetadataRelationCreationPayloadOrThrow({
@@ -166,7 +132,11 @@ export class FieldMetadataRelationService {
   }: {
     fieldMetadataInput: CreateFieldInput;
     objectMetadataMaps: ObjectMetadataMaps;
-  }): Promise<NonNullable<CreateFieldInput['relationCreationPayload']>>{
+  }): Promise<
+    Required<Pick<CreateFieldInput, 'relationCreationPayload'>> & {
+      targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
+    }
+  > {
     if (!isDefined(fieldMetadataInput.relationCreationPayload)) {
       throw new Error(
         'TODO, relation creation payload is required for creation',
@@ -175,17 +145,19 @@ export class FieldMetadataRelationService {
 
     const { relationCreationPayload } = fieldMetadataInput;
 
-    await this.convertInputToClassValidatorRelationCreationPayload(relationCreationPayload);
+    await this.convertInputToClassValidatorRelationCreationPayloadInstance(
+      relationCreationPayload,
+    );
     const computedMetadataNameFromLabel = computeMetadataNameFromLabel(
       relationCreationPayload.targetFieldLabel,
     );
 
     validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
-    const objectMetadataTarget =
+    const targetObjectMetadata =
       objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
 
-    if (!isDefined(objectMetadataTarget)) {
+    if (!isDefined(targetObjectMetadata)) {
       throw new FieldMetadataException(
         `Object metadata relation target not found for relation creation payload`,
         FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
@@ -194,13 +166,16 @@ export class FieldMetadataRelationService {
 
     validateFieldNameAvailabilityOrThrow({
       name: computedMetadataNameFromLabel,
-      objectMetadata: objectMetadataTarget,
+      objectMetadata: targetObjectMetadata,
     });
 
-    return fieldMetadataInput.relationCreationPayload
+    return {
+      relationCreationPayload,
+      targetObjectMetadata,
+    };
   }
 
-  private async convertInputToClassValidatorRelationCreationPayload(
+  private async convertInputToClassValidatorRelationCreationPayloadInstance(
     relationCreationPayload: RelationCreationPayloadValidation,
   ) {
     try {
@@ -306,7 +281,9 @@ export class FieldMetadataRelationService {
     objectMetadata,
   }: {
     fieldMetadataInput: CreateFieldInput;
-    relationCreationPayload: NonNullable<CreateFieldInput['relationCreationPayload']>;
+    relationCreationPayload: NonNullable<
+      CreateFieldInput['relationCreationPayload']
+    >;
     objectMetadata: ObjectMetadataItemWithFieldMaps;
   }): FieldMetadataEntityRelationSettings {
     const defaultIcon = 'IconRelationOneToMany';

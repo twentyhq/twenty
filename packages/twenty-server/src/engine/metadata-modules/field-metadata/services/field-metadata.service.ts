@@ -658,32 +658,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       objectMetadata,
     });
 
-    // TODO Factorize
-    const isRelation =
-      fieldMetadataInput.type === FieldMetadataType.RELATION ||
-      fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION;
-
-    if (!isRelation) {
-      const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        fieldMetadataForCreate,
-      );
-
-      return [createdFieldMetadataItem];
-    }
-
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
-      const relationCreationPayload = await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
-        {
-          fieldMetadataInput: fieldMetadataForCreate,
-          objectMetadataMaps,
-        },
-      );
+      const { relationCreationPayload, targetObjectMetadata } =
+        await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
+          {
+            fieldMetadataInput: fieldMetadataForCreate,
+            objectMetadataMaps,
+          },
+        );
 
       const relationSettings =
         this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
             fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload, // why ?
+            relationCreationPayload,
             objectMetadata,
           },
         );
@@ -692,26 +680,43 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...relationSettings,
       };
 
-      return await this.fieldMetadataRelationService.createRelationFieldMetadataItems(
+      const targetFieldMetadataInput =
+        this.fieldMetadataRelationService.computeRelationTargetFieldMetadataInput(
+          {
+            fieldMetadataInput,
+            relationCreationPayload,
+            sourceObjectMetadata: objectMetadata,
+            targetObjectMetadata,
+          },
+        );
+
+      return await this.fieldMetadataRelationService.createSourceAndTargetRelationFieldMetadata(
         {
-          relationCreationPayload,
+          targetFieldMetadataInput,
           fieldMetadataInput: fieldMetadataInputWithRelationSettings,
-          objectMetadata,
           fieldMetadataRepository,
         },
       );
     }
 
-    return await this.fieldMetadataMorphRelationService.createMorphRelationFieldMetadataItems(
-      {
-        fieldMetadataForCreate,
-        morphRelationsCreationPayload:
-          fieldMetadataInput.morphRelationsCreationPayload,
-        objectMetadata,
-        fieldMetadataRepository,
-        objectMetadataMaps,
-      },
+    if (fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION) {
+      return await this.fieldMetadataMorphRelationService.createMorphRelationFieldMetadataItems(
+        {
+          fieldMetadataForCreate,
+          morphRelationsCreationPayload:
+            fieldMetadataInput.morphRelationsCreationPayload,
+          objectMetadata,
+          fieldMetadataRepository,
+          objectMetadataMaps,
+        },
+      );
+    }
+
+    const createdFieldMetadataItem = await fieldMetadataRepository.save(
+      fieldMetadataForCreate,
     );
+
+    return [createdFieldMetadataItem];
   }
 
   private async createMigrationActions({

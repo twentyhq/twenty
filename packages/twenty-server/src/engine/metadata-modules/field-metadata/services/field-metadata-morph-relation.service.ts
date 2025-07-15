@@ -73,7 +73,6 @@ export class FieldMetadataMorphRelationService {
             ...fieldMetadataForCreate,
             ...sourceRelationSettings,
           },
-          fieldMetadataType: fieldMetadataForCreate.type,
           objectMetadataMaps,
         },
       );
