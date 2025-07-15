@@ -43,8 +43,6 @@ const ageFieldWithValidations: SpreadsheetImportField = {
   fieldValidationDefinitions: validations,
 };
 
-type ColumnValues = 'Name' | 'Age';
-
 const nameColumn: SpreadsheetColumn = {
   type: SpreadsheetColumnType.matched,
   index: 0,
