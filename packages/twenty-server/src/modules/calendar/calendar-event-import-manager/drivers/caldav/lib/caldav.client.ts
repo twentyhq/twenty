@@ -351,8 +351,16 @@ export class CalDAVClient {
 
             for (const calendarObject of calendarObjects) {
               if (calendarObject.props?.calendarData) {
+                const iCalData = this.extractICalData(
+                  calendarObject.props?.calendarData,
+                );
+
+                if (!iCalData) {
+                  continue;
+                }
+
                 const event = this.parseICalData(
-                  calendarObject.props.calendarData,
+                  iCalData,
                   calendarObject.href || '',
                 );
 
@@ -432,6 +440,35 @@ export class CalDAVClient {
       events: allEvents,
       syncCursor: { syncTokens },
     };
+  }
+
+  /**
+   * Extracts iCal data from various CalDAV server response formats.
+   * Some servers return data directly as a string, others nest it under _cdata or some other properties.
+   */
+  private extractICalData(
+    calendarData: string | Record<string, unknown>,
+  ): string | null {
+    if (!calendarData) return null;
+
+    if (
+      typeof calendarData === 'string' &&
+      calendarData.includes('VCALENDAR')
+    ) {
+      return calendarData;
+    }
+
+    if (typeof calendarData === 'object' && calendarData !== null) {
+      for (const key in calendarData) {
+        const result = this.extractICalData(
+          calendarData[key] as string | Record<string, unknown>,
+        );
+
+        if (result) return result;
+      }
+    }
+
+    return null;
   }
 
   private isEventInTimeRange(
