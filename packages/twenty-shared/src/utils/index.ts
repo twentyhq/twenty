@@ -16,6 +16,7 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { parseJson } from './parseJson';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { safeNewUrl } from './safeNewUrl';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';

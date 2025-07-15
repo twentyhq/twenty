@@ -1,9 +1,10 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
   lowercaseUrlAndRemoveTrailingSlash,
+  parseJson,
 } from 'twenty-shared/utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
@@ -19,7 +20,7 @@ export type LinksFieldGraphQLInput =
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
-  if (!value) {
+  if (!isDefined(value)) {
     return value;
   }
 
@@ -27,15 +28,9 @@ export const transformLinksValue = (
   const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
   const secondaryLinksRaw = value.secondaryLinks as string | null;
 
-  let secondaryLinksArray: LinkMetadataNullable[] | null = null;
-
-  if (isNonEmptyString(secondaryLinksRaw)) {
-    try {
-      secondaryLinksArray = JSON.parse(secondaryLinksRaw);
-    } catch {
-      /* empty */
-    }
-  }
+  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
+    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
+    : null;
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {

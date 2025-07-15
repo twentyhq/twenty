@@ -1,24 +1,44 @@
 import { lowercaseUrlAndRemoveTrailingSlash } from '@/utils/url/lowercaseUrlAndRemoveTrailingSlash';
 
+interface TestContext {
+  title: string;
+  input: string;
+  expected: string;
+}
+
 describe('lowercaseUrlAndRemoveTrailingSlash', () => {
-  it('should leave lowcased domain unchanged', () => {
-    const primaryLinkUrl = 'https://www.example.com/test';
-    const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
-
-    expect(result).toBe('https://www.example.com/test');
-  });
-
-  it('should lowercase the domain of the primary link url', () => {
-    const primaryLinkUrl = 'htTps://wwW.exAmple.coM/TEST';
-    const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
-
-    expect(result).toBe('https://www.example.com/TEST');
-  });
-
-  it('should not add a trailing slash', () => {
-    const primaryLinkUrl = 'https://www.example.com';
-    const result = lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl);
-
-    expect(result).toBe('https://www.example.com');
+  test.each<TestContext>([
+    {
+      title: 'should leave lowcased domain unchanged',
+      input: 'https://www.example.com/test',
+      expected: 'https://www.example.com/test',
+    },
+    {
+      title: 'should lowercase the domain while preserving path case',
+      input: 'htTps://wwW.exAmple.coM/TEST',
+      expected: 'https://www.example.com/TEST',
+    },
+    {
+      title: 'should not add a trailing slash',
+      input: 'https://www.example.com',
+      expected: 'https://www.example.com',
+    },
+    {
+      title: 'should remove trailing slash',
+      input: 'https://www.example.com/',
+      expected: 'https://www.example.com',
+    },
+    {
+      title: 'should handle query parameters',
+      input: 'htTps://wwW.exAmple.coM/TEST?Param=Value',
+      expected: 'https://www.example.com/TEST?Param=Value',
+    },
+    {
+      title: 'should handle hash fragments',
+      input: 'htTps://wwW.exAmple.coM/TEST#Hash',
+      expected: 'https://www.example.com/TEST#Hash',
+    },
+  ])('$title', ({ input, expected }) => {
+    expect(lowercaseUrlAndRemoveTrailingSlash(input)).toBe(expected);
   });
 });
