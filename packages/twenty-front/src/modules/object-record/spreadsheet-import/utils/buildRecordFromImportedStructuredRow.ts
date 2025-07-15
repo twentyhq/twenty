@@ -67,53 +67,55 @@ const buildRelationConnectFieldRecord = (
       relationConnectFieldValue: undefined,
     };
 
-  //if only primary key is provided, only relationIdFieldValue is set to enable disconnect
   if (
     relationConnectFields.length === 1 &&
-    relationConnectFields[0].uniqueFieldMetadataItem?.name === 'id'
-  )
+    relationConnectFields[0].uniqueFieldMetadataItem?.name === 'id' &&
+    isNonEmptyString(importedStructuredRow[relationConnectFields[0].key])
+  ) {
+    const value = importedStructuredRow[relationConnectFields[0].key];
+
     return {
-      relationIdFieldValue: importedStructuredRow[relationConnectFields[0].key],
+      relationIdFieldValue: isNonEmptyString(value) ? value : null,
       relationConnectFieldValue: undefined,
     };
+  }
+
+  const relationConnectFieldValue = relationConnectFields.reduce(
+    (acc, field) => {
+      const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
+      if (
+        !isNonEmptyString(importedStructuredRow[field.key]) ||
+        !isDefined(uniqueFieldMetadataItem)
+      )
+        return acc;
+
+      if (
+        isCompositeFieldType(uniqueFieldMetadataItem.type) &&
+        isDefined(field.compositeSubFieldKey)
+      ) {
+        return {
+          ...acc,
+          [uniqueFieldMetadataItem.name]: {
+            ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
+              ? acc[uniqueFieldMetadataItem.name]
+              : {}),
+            [field.compositeSubFieldKey]: importedStructuredRow[field.key],
+          },
+        };
+      }
+      return {
+        ...acc,
+        [uniqueFieldMetadataItem.name]: importedStructuredRow[field.key],
+      };
+    },
+    {} as Record<string, any>,
+  );
 
   return {
     relationIdFieldValue: undefined,
-    relationConnectFieldValue: {
-      connect: {
-        where: relationConnectFields.reduce(
-          (acc, field) => {
-            const uniqueFieldMetadataItem = field.uniqueFieldMetadataItem;
-            if (
-              !isNonEmptyString(importedStructuredRow[field.key]) ||
-              !isDefined(uniqueFieldMetadataItem)
-            )
-              return acc;
-
-            if (
-              isCompositeFieldType(uniqueFieldMetadataItem.type) &&
-              isDefined(field.compositeSubFieldKey)
-            ) {
-              return {
-                ...acc,
-                [uniqueFieldMetadataItem.name]: {
-                  ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
-                    ? acc[uniqueFieldMetadataItem.name]
-                    : {}),
-                  [field.compositeSubFieldKey]:
-                    importedStructuredRow[field.key],
-                },
-              };
-            }
-            return {
-              ...acc,
-              [uniqueFieldMetadataItem.name]: importedStructuredRow[field.key],
-            };
-          },
-          {} as Record<string, any>,
-        ),
-      },
-    },
+    relationConnectFieldValue: isEmptyObject(relationConnectFieldValue)
+      ? undefined
+      : { connect: { where: relationConnectFieldValue } },
   };
 };
 
