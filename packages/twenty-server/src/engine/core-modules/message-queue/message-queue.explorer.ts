@@ -20,7 +20,6 @@ import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-qu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
-import { MESSAGE_QUEUE_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 interface ProcessorGroup {
   instance: object;
@@ -64,12 +63,10 @@ export class MessageQueueExplorer implements OnModuleInit {
     )) {
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
-      const options = MESSAGE_QUEUE_OPTIONS[queueName];
 
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        options,
       );
     }
   }
