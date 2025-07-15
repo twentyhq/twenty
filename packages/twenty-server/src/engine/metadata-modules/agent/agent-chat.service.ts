@@ -93,6 +93,7 @@ export class AgentChatService {
     }
 
     this.generateTitleIfNeeded(threadId, content);
+
     return savedMessage;
   }
 
