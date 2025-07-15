@@ -9,6 +9,7 @@
 
 export { assertUnreachable } from './assertUnreachable';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
   sanitizeURL,
@@ -16,7 +17,6 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { parseJson } from './parseJson';
 export { removeUndefinedFields } from './removeUndefinedFields';
-export { safeNewUrl } from './safeNewUrl';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
