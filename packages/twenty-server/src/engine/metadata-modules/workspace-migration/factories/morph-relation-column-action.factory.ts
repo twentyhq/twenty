@@ -64,9 +64,6 @@ export class MorphRelationColumnActionFactory extends ColumnActionAbstractFactor
     const alteredJoinColumnName = alteredFieldMetadata.settings.joinColumnName;
 
     if (!currentJoinColumnName || !alteredJoinColumnName) {
-      this.logger.error(
-        `Column name not found for current or altered field metadata, can be due to a missing or an invalid target column map. Current column name: ${currentJoinColumnName}, Altered column name: ${alteredJoinColumnName}.`,
-      );
       throw new WorkspaceMigrationException(
         `Column name not found for current or altered field metadata`,
         WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
