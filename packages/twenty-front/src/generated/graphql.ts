@@ -22,10 +22,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type AccountType = {
-  type: Scalars['String'];
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -454,6 +450,7 @@ export type ConnectionParameters = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: InputMaybe<Scalars['Boolean']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type ConnectionParametersOutput = {
@@ -462,6 +459,7 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type CreateAgentChatThreadInput = {
@@ -658,6 +656,12 @@ export type EditSsoOutput = {
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
+};
+
+export type EmailAccountConnectionParameters = {
+  CALDAV?: InputMaybe<ConnectionParameters>;
+  IMAP?: InputMaybe<ConnectionParameters>;
+  SMTP?: InputMaybe<ConnectionParameters>;
 };
 
 export type EmailPasswordResetLink = {
@@ -1096,7 +1100,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
-  saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
+  saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1396,10 +1400,9 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
-export type MutationSaveImapSmtpCaldavArgs = {
+export type MutationSaveImapSmtpCaldavAccountArgs = {
   accountOwnerId: Scalars['String'];
-  accountType: AccountType;
-  connectionParameters: ConnectionParameters;
+  connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
 };

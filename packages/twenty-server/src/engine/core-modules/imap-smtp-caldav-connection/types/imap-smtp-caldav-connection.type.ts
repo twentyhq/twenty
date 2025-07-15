@@ -1,6 +1,7 @@
 export type ConnectionParameters = {
   host: string;
   port: number;
+  username?: string;
   password: string;
   secure?: boolean;
 };

@@ -10,7 +10,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
 import {
   ConnectionParameters,
-  useSaveImapSmtpCaldavMutation,
+  useSaveImapSmtpCaldavAccountMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -49,7 +49,13 @@ export const useImapSmtpCaldavConnectionForm = ({
       handle: '',
       IMAP: { host: '', port: 993, password: '', secure: true },
       SMTP: { host: '', port: 587, password: '', secure: true },
-      CALDAV: { host: '', port: 443, password: '', secure: true },
+      CALDAV: {
+        host: '',
+        port: 443,
+        password: '',
+        secure: true,
+        username: undefined,
+      },
     },
   });
 
@@ -76,7 +82,7 @@ export const useImapSmtpCaldavConnectionForm = ({
     );
 
   const [saveConnection, { loading: saveLoading }] =
-    useSaveImapSmtpCaldavMutation();
+    useSaveImapSmtpCaldavAccountMutation();
 
   const watchedValues = watch();
 
@@ -102,47 +108,39 @@ export const useImapSmtpCaldavConnectionForm = ({
     );
   }, [getConfiguredProtocols, watchedValues.handle]);
 
-  const saveIndividualConnection = useCallback(
-    async (
-      protocol: keyof ImapSmtpCaldavAccount,
-      formValues: ConnectionFormData,
-    ): Promise<void> => {
+  const handleSave = useCallback(
+    async (formValues: ConnectionFormData): Promise<void> => {
       if (!currentWorkspaceMember?.id) {
         throw new Error('Workspace member ID is missing');
       }
 
-      const protocolConfig = formValues[protocol];
-      if (!protocolConfig) {
-        throw new Error(`${protocol} configuration is missing`);
-      }
-
-      await saveConnection({
-        variables: {
-          ...(isEditing && connectedAccountId
-            ? { id: connectedAccountId }
-            : {}),
-          accountOwnerId: currentWorkspaceMember.id,
-          handle: formValues.handle,
-          accountType: {
-            type: protocol,
-          },
-          connectionParameters: protocolConfig,
-        },
-      });
-    },
-    [saveConnection, isEditing, connectedAccountId, currentWorkspaceMember?.id],
-  );
-
-  const handleSave = useCallback(
-    async (formValues: ConnectionFormData): Promise<void> => {
       const configuredProtocols = getConfiguredProtocols(formValues);
 
+      if (configuredProtocols.length === 0) {
+        throw new Error('At least one protocol must be configured');
+      }
+
+      const connectionParameters: Partial<
+        Record<keyof ImapSmtpCaldavAccount, ConnectionParameters>
+      > = {};
+      configuredProtocols.forEach((protocol) => {
+        const protocolConfig = formValues[protocol];
+        if (isDefined(protocolConfig)) {
+          connectionParameters[protocol] = protocolConfig;
+        }
+      });
+
       try {
-        await Promise.all(
-          configuredProtocols.map((protocol) =>
-            saveIndividualConnection(protocol, formValues),
-          ),
-        );
+        await saveConnection({
+          variables: {
+            ...(isEditing && connectedAccountId
+              ? { id: connectedAccountId }
+              : {}),
+            accountOwnerId: currentWorkspaceMember.id,
+            handle: formValues.handle,
+            connectionParameters,
+          },
+        });
 
         const successMessage = isEditing
           ? t`Connection successfully updated`
@@ -160,12 +158,14 @@ export const useImapSmtpCaldavConnectionForm = ({
       }
     },
     [
+      currentWorkspaceMember?.id,
       getConfiguredProtocols,
-      saveIndividualConnection,
+      saveConnection,
       isEditing,
+      connectedAccountId,
       enqueueSuccessSnackBar,
-      enqueueErrorSnackBar,
       navigate,
+      enqueueErrorSnackBar,
     ],
   );
 
