@@ -79,7 +79,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
   it('should return row with error if row is not unique - index on composite field', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
-    const testData: ImportedStructuredRow<string>[] = [
+    const testData: ImportedStructuredRow[] = [
       { 'Link URL (domainName)': 'https://duplicaTe.com' },
       { 'Link URL (domainName)': 'https://duplicate.com' },
       { 'Link URL (domainName)': 'https://other.com' },
