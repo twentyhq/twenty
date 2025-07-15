@@ -405,6 +405,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       const formattedUpdatedObject = {
         ...updatedObject,
         createdAt: new Date(updatedObject.createdAt),
+        updatedAt: new Date(updatedObject.updatedAt),
       };
 
       return formattedUpdatedObject;
@@ -654,11 +655,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return translationValue;
     }
 
-    const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
+    const messageId = generateMessageId(
+      objectMetadata?.standardOverrides?.[labelKey] ??
+        objectMetadata[labelKey] ??
+        '',
+    );
     const translatedMessage = i18n._(messageId);
 
     if (translatedMessage === messageId) {
-      return objectMetadata[labelKey] ?? '';
+      return (
+        objectMetadata?.standardOverrides?.[labelKey] ??
+        objectMetadata[labelKey] ??
+        ''
+      );
     }
 
     return translatedMessage;
