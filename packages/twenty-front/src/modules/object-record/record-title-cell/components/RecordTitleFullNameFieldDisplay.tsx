@@ -66,6 +66,9 @@ export const RecordTitleFullNameFieldDisplay = ({
             type: FocusComponentType.OPENED_FIELD_INPUT,
             instanceId: recordTitleCellId,
           },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
         });
 
         openInlineCell();
