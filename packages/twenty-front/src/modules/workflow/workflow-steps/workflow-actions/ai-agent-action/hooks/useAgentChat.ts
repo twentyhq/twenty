@@ -42,7 +42,6 @@ export const useAgentChat = (agentId: string) => {
     currentAIChatThreadComponentState,
     agentId,
   );
-
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
     useRecoilComponentStateV2(agentChatUploadedFilesComponentState, agentId);
 
