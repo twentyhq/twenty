@@ -7,13 +7,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 
-export const useGlobalHotkeys = (
-  keys: Keys,
-  callback: HotkeyCallback,
-  containsModifier: boolean,
-  dependencies?: unknown[],
-  options?: UseHotkeysOptionsWithoutBuggyOptions,
-) => {
+export const useGlobalHotkeys = ({
+  keys,
+  callback,
+  containsModifier,
+  dependencies,
+  options,
+}: {
+  keys: Keys;
+  callback: HotkeyCallback;
+  containsModifier: boolean;
+  dependencies?: unknown[];
+  options?: UseHotkeysOptionsWithoutBuggyOptions;
+}) => {
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
