@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { lowercaseUrlAndRemoveTrailingSlash } from 'twenty-shared/utils';
+import { lowercaseUrlOriginAndRemoveTrailingSlash } from 'twenty-shared/utils';
 import { DeepPartial, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -58,7 +58,7 @@ export class CreateCompanyService {
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
       domainName: company.domainName
-        ? lowercaseUrlAndRemoveTrailingSlash(company.domainName)
+        ? lowercaseUrlOriginAndRemoveTrailingSlash(company.domainName)
         : undefined,
     }));
 
