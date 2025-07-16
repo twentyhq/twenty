@@ -6,8 +6,8 @@ import { agentChatUploadedFilesComponentState } from '@/workflow/workflow-steps/
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    File as FileDocument,
-    useCreateFileMutation,
+  File as FileDocument,
+  useCreateFileMutation,
 } from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
@@ -31,7 +31,7 @@ export const useAIChatFileUpload = ({ agentId }: { agentId: string }) => {
       const uploadedFile = result?.data?.createFile;
 
       if (!isDefined(uploadedFile)) {
-        throw new Error("Couldn't upload the file.");
+        throw new Error(t`Couldn't upload the file.`);
       }
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
