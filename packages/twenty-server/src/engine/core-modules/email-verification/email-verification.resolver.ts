@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.input';
 import { ResendEmailVerificationTokenOutput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.output';
@@ -41,7 +39,7 @@ export class EmailVerificationResolver {
     return await this.emailVerificationService.resendEmailVerificationToken(
       resendEmailVerificationTokenInput.email,
       workspace,
-      context.req.headers['x-locale'] ?? SOURCE_LOCALE,
+      context.req.locale,
     );
   }
 }
