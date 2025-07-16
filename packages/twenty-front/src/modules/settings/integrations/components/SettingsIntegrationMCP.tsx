@@ -7,8 +7,6 @@ import { IconCopy, IconDatabase, IconSitemap } from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import * as monaco from 'monaco-editor';
-import { useEffect } from 'react';
 
 const StyledWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
