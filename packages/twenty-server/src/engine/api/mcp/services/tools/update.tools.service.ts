@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import omit from 'lodash.omit';
+import pick from 'lodash.pick';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
@@ -23,22 +24,17 @@ export class UpdateToolsService {
         inputSchema:
           this.mCPMetadataToolsService.mergeSchemaWithCommonProperties({
             ...validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
-            properties: {
-              ...validationSchemaManager.getSchemas()
-                .UpdateOneFieldMetadataInput.properties,
-              update: omit(
-                validationSchemaManager.getSchemas().FieldMetadataDTO
-                  .properties,
-                [
-                  'id',
-                  'type',
-                  'createdAt',
-                  'updatedAt',
-                  'isCustom',
-                  'standardOverrides',
-                ],
-              ),
-            },
+            properties: omit(
+              validationSchemaManager.getSchemas().FieldMetadataDTO.properties,
+              [
+                'id',
+                'type',
+                'createdAt',
+                'updatedAt',
+                'isCustom',
+                'standardOverrides',
+              ],
+            ),
           }),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
@@ -65,7 +61,10 @@ export class UpdateToolsService {
 
     const response = await this.mCPMetadataToolsService.send(
       requestContext,
-      await this.metadataQueryBuilderFactory.update(requestContext),
+      await this.metadataQueryBuilderFactory.update(
+        requestContext,
+        pick(request.body.params.arguments, ['fields', 'objects']),
+      ),
     );
 
     return response.data.data;

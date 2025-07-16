@@ -5,7 +5,9 @@ import {
   ObjectNameSingularAndPlural,
 } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
 
-const getResult = (objectName: ObjectName): ObjectNameSingularAndPlural => {
+const getObjectNames = (
+  objectName: ObjectName,
+): ObjectNameSingularAndPlural => {
   return {
     objectNameSingular: objectName.substring(
       0,
@@ -34,10 +36,13 @@ export const parseMetadataPath = (
 
   const hasId = queryAction.length === 2;
 
-  const result = getResult(queryAction[0] as ObjectName);
+  const { objectNameSingular, objectNamePlural } = getObjectNames(
+    queryAction[0] as ObjectName,
+  );
 
   return {
-    ...result,
+    objectNameSingular,
+    objectNamePlural,
     ...(hasId ? { id: queryAction[1] } : {}),
   };
 };

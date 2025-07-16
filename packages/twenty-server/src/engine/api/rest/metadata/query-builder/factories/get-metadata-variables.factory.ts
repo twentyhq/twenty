@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
-
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';

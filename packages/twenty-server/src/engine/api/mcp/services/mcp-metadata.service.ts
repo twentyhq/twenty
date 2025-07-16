@@ -1,8 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { Repository } from 'typeorm';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { JSONSchema7 } from 'json-schema';
 
@@ -10,13 +8,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
 import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
 import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
 import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 @Injectable()
 export class MCPMetadataService {
@@ -24,13 +21,11 @@ export class MCPMetadataService {
 
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly userRoleService: UserRoleService,
-    @InjectRepository(RoleEntity, 'core')
-    private readonly roleRepository: Repository<RoleEntity>,
     private readonly createToolsService: CreateToolsService,
     private readonly updateToolsService: UpdateToolsService,
     private readonly deleteToolsService: DeleteToolsService,
     private readonly getToolsService: GetToolsService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async onModuleInit() {
@@ -66,46 +61,64 @@ export class MCPMetadataService {
     });
   }
 
-  async getRoleId(
-    workspaceId: string,
-    userWorkspaceId?: string,
-    apiKey?: string,
-  ) {
-    if (apiKey) {
-      const roles = await this.roleRepository.find({
-        where: {
-          workspaceId,
-          label: ADMIN_ROLE_LABEL,
+  get commonProperties() {
+    return {
+      fields: {
+        type: 'array',
+        items: {
+          type: 'string',
+          description:
+            'Names of field properties to include in the response for field entities. ',
+          examples: [
+            'type',
+            'name',
+            'label',
+            'description',
+            'icon',
+            'isCustom',
+            'isActive',
+            'isSystem',
+            'isNullable',
+            'createdAt',
+            'updatedAt',
+            'defaultValue',
+            'options',
+            'relation',
+          ],
         },
-      });
-
-      if (roles.length === 0) {
-        throw new HttpException('Admin role not found', HttpStatus.FORBIDDEN);
-      }
-
-      return roles[0].id;
-    }
-
-    if (!userWorkspaceId) {
-      throw new HttpException(
-        'User workspace ID missing',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    if (!roleId) {
-      throw new HttpException('Role ID missing', HttpStatus.FORBIDDEN);
-    }
-
-    return roleId;
+        description:
+          'List of field names to select in the query for field entity. Strongly recommended to limit token usage and reduce response size. Use this to include only the properties you need.',
+      },
+      objects: {
+        type: 'array',
+        items: {
+          type: 'string',
+          description:
+            'Object property names to include in the response for object entities.',
+          examples: [
+            'dataSourceId',
+            'nameSingular',
+            'namePlural',
+            'labelSingular',
+            'labelPlural',
+            'description',
+            'icon',
+            'isCustom',
+            'isActive',
+            'isSystem',
+            'createdAt',
+            'updatedAt',
+            'labelIdentifierFieldMetadataId',
+            'imageIdentifierFieldMetadataId',
+          ],
+        },
+        description:
+          'List of object properties to select in the query for object entities. Strongly recommended to limit token usage and reduce response size. Specify only the necessary properties to optimize your request.',
+      },
+    };
   }
 
-  get listTool() {
+  get tools() {
     return [
       ...this.createToolsService.tools,
       ...this.updateToolsService.tools,
@@ -117,14 +130,30 @@ export class MCPMetadataService {
   async handleToolCall(
     request: Request,
   ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
-    const tool = this.listTool.find(
+    const tool = this.tools.find(
       ({ name }) => name === request.body.params.name,
     );
 
     if (tool) {
-      return {
-        result: await tool.execute(request),
-      };
+      try {
+        const result = await tool.execute(request);
+
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.AIToolExecutionSucceeded,
+          attributes: {
+            tool: request.body.params.name,
+          },
+        });
+
+        return { result };
+      } catch (err) {
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.AIToolExecutionFailed,
+          attributes: {
+            tool: request.body.params.name,
+          },
+        });
+      }
     }
 
     return {
@@ -135,7 +164,19 @@ export class MCPMetadataService {
     };
   }
 
-  async executeTool(
+  async listTools(request: Request) {
+    return wrapJsonRpcResponse(request.body.id, {
+      result: {
+        capabilities: {
+          tools: { listChanged: false },
+        },
+        commonProperties: this.commonProperties,
+        tools: Object.values(this.tools),
+      },
+    });
+  }
+
+  async handleMCPQuery(
     request: Request,
     {
       workspace,
@@ -148,6 +189,16 @@ export class MCPMetadataService {
         return this.handleInitialize(request.body.id);
       }
 
+      if (request.body.method === 'ping') {
+        return wrapJsonRpcResponse(
+          request.body.id,
+          {
+            result: {},
+          },
+          true,
+        );
+      }
+
       if (request.body.method === 'tools/call' && request.body.params) {
         return wrapJsonRpcResponse(
           request.body.id,
@@ -155,14 +206,7 @@ export class MCPMetadataService {
         );
       }
 
-      return wrapJsonRpcResponse(request.body.id, {
-        result: {
-          capabilities: {
-            tools: { listChanged: false },
-          },
-          tools: Object.values(this.listTool),
-        },
-      });
+      return this.listTools(request);
     } catch (error) {
       return wrapJsonRpcResponse(request.body.id, {
         error: {

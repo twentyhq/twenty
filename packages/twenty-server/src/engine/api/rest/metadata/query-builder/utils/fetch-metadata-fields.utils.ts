@@ -1,6 +1,8 @@
+import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+
 export const fetchMetadataFields = (
   objectNamePlural: string,
-  selector?: { fields?: Array<string>; objects?: Array<string> },
+  selector: Selectors,
 ) => {
   const defaultFields = `
     type

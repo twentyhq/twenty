@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
+import pick from 'lodash.pick';
 
 import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.factory';
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
@@ -46,7 +47,10 @@ export class CreateToolsService {
     };
     const response = await this.mCPMetadataToolsService.send(
       requestContext,
-      await this.metadataQueryBuilderFactory.create(requestContext),
+      await this.metadataQueryBuilderFactory.create(
+        requestContext,
+        pick(request.body.params.arguments, ['fields', 'objects']),
+      ),
     );
 
     return response.data.data;
