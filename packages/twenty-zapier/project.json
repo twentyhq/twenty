@@ -40,7 +40,8 @@
         "commands": ["nx run twenty-zapier:build && zapier versions"]
       }
     },
-    "watch":{"executor": "nx:run-commands",
+    "watch":{
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["nx run twenty-zapier:clean && npx tsc --watch"]
