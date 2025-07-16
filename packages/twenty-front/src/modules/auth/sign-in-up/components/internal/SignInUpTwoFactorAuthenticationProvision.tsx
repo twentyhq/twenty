@@ -58,34 +58,13 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
       <StyledForm>
         <StyledTextContainer>
           <Trans>Use authenticator apps and browser extensions like</Trans>{' '}
-          <a
-            href="https://twenty.com/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Trans>1Password</Trans>,
-          </a>{' '}
-          <a
-            href="https://twenty.com/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+            <Trans>1Password</Trans>, 
             <Trans>Authy</Trans>,
-          </a>{' '}
-          <a
-            href="https://twenty.com/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          {' '}
             <Trans>Microsoft</Trans>,
-          </a>{' '}
-          <a
-            href="https://twenty.com/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          {' '}
             <Trans>Authenticator</Trans>
-          </a>{' '}
+          {' '}
           <Trans>to generate one-time passwords</Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
