@@ -8,7 +8,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
@@ -294,14 +294,6 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.NUMERIC:
         recordToBuild[field.name] = Number(importedFieldValue);
         break;
-      case FieldMetadataType.UUID:
-        if (
-          isDefined(importedFieldValue) &&
-          isNonEmptyString(importedFieldValue)
-        ) {
-          recordToBuild[field.name] = importedFieldValue;
-        }
-        break;
       case FieldMetadataType.RELATION: {
         recordToBuild[field.name] = buildRelationConnectFieldRecord(
           field,
@@ -332,11 +324,30 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
-      default:
+      case FieldMetadataType.UUID:
+      case FieldMetadataType.DATE:
+      case FieldMetadataType.DATE_TIME:
+        if (
+          isDefined(importedFieldValue) &&
+          isNonEmptyString(importedFieldValue)
+        ) {
+          recordToBuild[field.name] = importedFieldValue;
+        }
+        break;
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.RATING:
+      case FieldMetadataType.TEXT:
         if (isDefined(importedFieldValue)) {
           recordToBuild[field.name] = importedFieldValue;
         }
         break;
+      case FieldMetadataType.MORPH_RELATION:
+      case FieldMetadataType.POSITION:
+      case FieldMetadataType.RICH_TEXT:
+      case FieldMetadataType.TS_VECTOR:
+        break;
+      default:
+        assertUnreachable(field.type);
     }
   }
 

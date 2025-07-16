@@ -15,7 +15,11 @@ import {
   SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { useRecoilValue } from 'recoil';
-import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  getUniqueConstraintsFields,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -69,10 +73,28 @@ export const useBuildSpreadsheetImportFields = () => {
               : {}),
           }),
         ];
-      default:
+      case FieldMetadataType.DATE_TIME:
+      case FieldMetadataType.DATE:
+      case FieldMetadataType.NUMBER:
+      case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.TEXT:
+      case FieldMetadataType.UUID:
+      case FieldMetadataType.ARRAY:
+      case FieldMetadataType.RATING:
+      case FieldMetadataType.RAW_JSON:
         return [
           createBaseField(fieldMetadataItem, relationConnectFieldOverrides),
         ];
+
+      case FieldMetadataType.POSITION:
+      case FieldMetadataType.MORPH_RELATION:
+      case FieldMetadataType.ACTOR:
+      case FieldMetadataType.TS_VECTOR:
+      case FieldMetadataType.RICH_TEXT:
+        return [];
+
+      default:
+        return assertUnreachable(fieldMetadataItem.type);
     }
   };
 
