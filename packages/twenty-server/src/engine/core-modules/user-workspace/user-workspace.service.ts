@@ -222,9 +222,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: ['userWorkspaces', 'userWorkspaces.workspace'],
       order: {
-        workspaces: {
+        userWorkspaces: {
           workspace: {
             createdAt: 'ASC',
           },
@@ -232,7 +232,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       },
     });
 
-    const workspace = user?.workspaces?.[0]?.workspace;
+    const workspace = user?.userWorkspaces?.[0]?.workspace;
 
     workspaceValidator.assertIsDefinedOrThrow(
       workspace,
@@ -251,15 +251,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         email,
       },
       relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceSSOIdentityProviders',
-        'workspaces.workspace.approvedAccessDomains',
+        'userWorkspaces',
+        'userWorkspaces.workspace',
+        'userWorkspaces.workspace.workspaceSSOIdentityProviders',
+        'userWorkspaces.workspace.approvedAccessDomains',
       ],
     });
 
     const alreadyMemberWorkspaces = user
-      ? user.workspaces.map(({ workspace }) => ({ workspace }))
+      ? user.userWorkspaces.map(({ workspace }) => ({ workspace }))
       : [];
 
     const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(

@@ -23,6 +23,7 @@ export class EmailVerificationResolver {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
+  // TODO: this should be an authenticated endpoint
   @Mutation(() => ResendEmailVerificationTokenOutput)
   @UseGuards(PublicEndpointGuard)
   async resendEmailVerificationToken(

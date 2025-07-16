@@ -615,7 +615,7 @@ describe('UserWorkspaceService', () => {
       } as unknown as Workspace;
       const user = {
         email,
-        workspaces: [
+        userWorkspaces: [
           {
             workspaceId: workspace1.id,
             workspace: workspace1,
@@ -694,7 +694,7 @@ describe('UserWorkspaceService', () => {
 
       const user = {
         email,
-        workspaces: [
+        userWorkspaces: [
           {
             workspaceId: workspace1.id,
             workspace: workspace1,
