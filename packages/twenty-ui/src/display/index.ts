@@ -376,6 +376,7 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
+  IconSitemap,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
