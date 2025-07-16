@@ -448,7 +448,7 @@ export class AuthService {
     if (!firstUserWorkspace) {
       throw new AuthException(
         'User does not have a workspace',
-        AuthExceptionCode.USER_NOT_FOUND,
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 
