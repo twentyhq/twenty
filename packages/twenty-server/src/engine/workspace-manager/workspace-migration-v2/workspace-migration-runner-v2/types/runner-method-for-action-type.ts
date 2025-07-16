@@ -1,4 +1,4 @@
-import { ConvertActionTypeToCamelCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/convert-actiont-type-to-camel-case.type';
+import { ConvertActionTypeToCamelCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/convert-action-type-to-camel-case.type';
 import {
   WorkspaceMigrationActionTypeV2,
   WorkspaceMigrationActionV2,
