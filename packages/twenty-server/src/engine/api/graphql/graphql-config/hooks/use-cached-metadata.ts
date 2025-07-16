@@ -60,7 +60,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return endResponse(earlyResponse);
       }
     },
-    onResponse: async ({ response, serverContext, request }) => {
+    onResponse: async ({ response, serverContext }) => {
       if (!config.operationsToCache.includes(getOperationName(serverContext))) {
         return;
       }
