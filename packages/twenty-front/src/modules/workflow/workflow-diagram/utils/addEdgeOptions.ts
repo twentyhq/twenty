@@ -16,7 +16,7 @@ export const addEdgeOptions = ({
         ...edge,
         data: {
           ...edge.data,
-          shouldDisplayEdgeOptions: true,
+          isEdgeEditable: true,
         },
       };
     }),

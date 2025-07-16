@@ -11,6 +11,7 @@ import {
   EdgeProps,
   getStraightPath,
 } from '@xyflow/react';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramDefaultEdgeProps = EdgeProps<WorkflowDiagramEdge>;
@@ -37,6 +38,10 @@ export const WorkflowDiagramDefaultEdge = ({
     targetY,
   });
 
+  if (!isDefined(data)) {
+    throw new Error('Edge data is not defined');
+  }
+
   return (
     <>
       <BaseEdge
@@ -45,33 +50,37 @@ export const WorkflowDiagramDefaultEdge = ({
         path={edgePath}
         style={{ stroke: theme.border.color.strong }}
       />
-      {data?.shouldDisplayEdgeOptions && (
-        <EdgeLabelRenderer>
-          {!isWorkflowFilteringEnabled ? (
+
+      <EdgeLabelRenderer>
+        {!isWorkflowFilteringEnabled ? (
+          data.isEdgeEditable ? (
             <WorkflowDiagramEdgeV1
               labelY={labelY}
               parentStepId={source}
               nextStepId={target}
             />
-          ) : data.edgeType === 'default' ? (
+          ) : null
+        ) : data.edgeType === 'default' ? (
+          data.isEdgeEditable ? (
             <WorkflowDiagramEdgeV2Empty
               labelX={labelX}
               labelY={labelY}
               parentStepId={source}
               nextStepId={target}
             />
-          ) : (
-            <WorkflowDiagramEdgeV2Filter
-              labelX={labelX}
-              labelY={labelY}
-              stepId={data.stepId}
-              parentStepId={source}
-              nextStepId={target}
-              filter={data.filter}
-            />
-          )}
-        </EdgeLabelRenderer>
-      )}
+          ) : null
+        ) : (
+          <WorkflowDiagramEdgeV2Filter
+            labelX={labelX}
+            labelY={labelY}
+            stepId={data.stepId}
+            parentStepId={source}
+            nextStepId={target}
+            filter={data.filter}
+            isEdgeEditable={data.isEdgeEditable}
+          />
+        )}
+      </EdgeLabelRenderer>
     </>
   );
 };

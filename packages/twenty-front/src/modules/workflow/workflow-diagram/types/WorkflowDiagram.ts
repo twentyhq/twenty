@@ -74,12 +74,12 @@ export type WorkflowDiagramFilterEdgeData = {
   filter: Record<string, any>;
   name: string;
   runStatus?: WorkflowDiagramRunStatus;
-  shouldDisplayEdgeOptions?: true;
+  isEdgeEditable: boolean;
 };
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
-  shouldDisplayEdgeOptions?: boolean;
+  isEdgeEditable: boolean;
 };
 
 export type WorkflowDiagramEdgeData =

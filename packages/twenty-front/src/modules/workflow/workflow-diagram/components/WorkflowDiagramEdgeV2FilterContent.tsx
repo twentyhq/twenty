@@ -47,6 +47,7 @@ type WorkflowDiagramEdgeV2FilterContentProps = {
   filter: Record<string, any>;
   onDeleteFilter: () => Promise<void>;
   onCreateNode: () => void;
+  isEdgeEditable: boolean;
 };
 
 export const WorkflowDiagramEdgeV2FilterContent = ({
@@ -57,6 +58,7 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   nextStepId,
   onDeleteFilter,
   onCreateNode,
+  isEdgeEditable,
 }: WorkflowDiagramEdgeV2FilterContentProps) => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -94,6 +96,18 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
     workflowSelectedNodeComponentState,
   );
 
+  const handleMouseEnter = () => {
+    if (!isEdgeEditable) {
+      return;
+    }
+
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
+
   const handleFilterButtonClick = () => {
     setWorkflowSelectedNode(stepId);
 
@@ -111,8 +125,8 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
       data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
       labelX={labelX}
       labelY={labelY}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
         <StyledConfiguredFilterContainer>
@@ -140,6 +154,7 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
               iconButtons={[
                 {
                   Icon: IconFilter,
+                  onClick: handleFilterButtonClick,
                 },
               ]}
             />
@@ -168,7 +183,12 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
                 <MenuItem
                   text="Filter"
                   LeftIcon={IconFilter}
-                  onClick={() => {}}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    setHovered(false);
+
+                    handleFilterButtonClick();
+                  }}
                 />
                 <MenuItem
                   text="Remove Filter"
