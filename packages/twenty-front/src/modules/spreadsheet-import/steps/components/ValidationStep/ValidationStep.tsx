@@ -1,5 +1,6 @@
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
+import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -106,6 +107,7 @@ export const ValidationStep = ({
   setCurrentStepState,
   onBack,
 }: ValidationStepProps) => {
+  const hideStepBar = useHideStepBar();
   const { enqueueDialog } = useDialogManager();
   const {
     spreadsheetImportFields: fields,
@@ -244,6 +246,7 @@ export const ValidationStep = ({
       type: SpreadsheetImportStepType.importData,
       recordsToImportCount: calculatedData.validStructuredRows.length,
     });
+    hideStepBar();
 
     await onSubmit(calculatedData, file);
     onClose();
