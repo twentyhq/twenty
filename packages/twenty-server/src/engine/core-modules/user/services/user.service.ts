@@ -11,7 +11,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -38,7 +37,6 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
-    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(userRepository);
   }

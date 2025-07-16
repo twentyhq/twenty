@@ -39,7 +39,7 @@ export class TwoFactorAuthenticationService {
 
   async is2FARequired(
     targetWorkspace: Workspace,
-    userTwoFactorAuthenticationProvider?: TwoFactorAuthenticationMethod,
+    userTwoFactorAuthenticationProvider?: TwoFactorAuthenticationMethod[],
   ) {
     const isTwoFactorAuthenticationEnabled = this.twentyConfigService.get(
       'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',

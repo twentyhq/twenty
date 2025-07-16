@@ -6,7 +6,7 @@ import {
   Entity,
   Index,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -29,9 +29,9 @@ export class TwoFactorAuthenticationMethod {
   userWorkspaceId: string;
 
   @Field(() => UserWorkspace)
-  @OneToOne(
+  @ManyToOne(
     () => UserWorkspace,
-    (userWorkspace) => userWorkspace.twoFactorAuthenticationMethod,
+    (userWorkspace) => userWorkspace.twoFactorAuthenticationMethods,
     {
       onDelete: 'CASCADE',
     },

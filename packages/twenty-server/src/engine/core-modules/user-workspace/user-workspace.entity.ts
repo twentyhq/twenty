@@ -10,7 +10,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   Unique,
@@ -87,13 +87,13 @@ export class UserWorkspace {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
-  @OneToOne(
+  @OneToMany(
     () => TwoFactorAuthenticationMethod,
     (twoFactorAuthenticationMethod) =>
       twoFactorAuthenticationMethod.userWorkspace,
     { nullable: true },
   )
-  twoFactorAuthenticationMethod: Relation<TwoFactorAuthenticationMethod>;
+  twoFactorAuthenticationMethods: Relation<TwoFactorAuthenticationMethod[]>;
 
   @Field(() => [SettingPermissionType], { nullable: true })
   settingsPermissions?: SettingPermissionType[];
@@ -107,6 +107,6 @@ export class UserWorkspace {
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
 
-  @Field(() => TwoFactorAuthenticationMethodSummaryDto, { nullable: true })
-  twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto;
+  @Field(() => [TwoFactorAuthenticationMethodSummaryDto], { nullable: true })
+  twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto[];
 }

@@ -510,7 +510,7 @@ export class AuthResolver {
 
     await this.twoFactorAuthenticationService.is2FARequired(
       workspace,
-      currentUserWorkspace.twoFactorAuthenticationMethod,
+      currentUserWorkspace.twoFactorAuthenticationMethods,
     );
 
     return await this.authService.verify(email, workspace.id, authProvider);

@@ -155,7 +155,7 @@ describe('TwoFactorAuthenticationService', () => {
       const mockWorkspace = {
         twoFactorAuthenticationPolicy: 'REQUIRED',
       } as unknown as Workspace;
-      const mockProvider = {} as TwoFactorAuthenticationMethod;
+      const mockProvider = [{}] as TwoFactorAuthenticationMethod[];
       const expectedError = new AuthException(
         'Two factor authentication verification required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,

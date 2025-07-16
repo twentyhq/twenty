@@ -60,6 +60,7 @@ import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/e
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -121,7 +122,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.twoFactorAuthenticationMethod'],
+      relations: ['workspaces', 'workspaces.twoFactorAuthenticationMethods'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -149,13 +150,10 @@ export class UserResolver {
         }),
       );
 
-    const twoFactorAuthenticationMethodSummary = {
-      twoFactorAuthenticationMethodId:
-        currentUserWorkspace?.twoFactorAuthenticationMethod?.id,
-      isActive:
-        currentUserWorkspace?.twoFactorAuthenticationMethod?.context?.status ===
-        'VERIFIED',
-    };
+    const twoFactorAuthenticationMethodSummary =
+      buildTwoFactorAuthenticationMethodSummary(
+        currentUserWorkspace.twoFactorAuthenticationMethods,
+      );
 
     return {
       ...user,
