@@ -2,12 +2,11 @@ import { Injectable, ValidationError } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -62,8 +61,9 @@ export class FieldMetadataRelationService {
     targetFieldMetadataForCreate: Partial<FieldMetadataEntity>;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
-    const createdFieldMetadataItem =
-      await fieldMetadataRepository.save(fieldMetadataForCreate);
+    const createdFieldMetadataItem = await fieldMetadataRepository.save(
+      fieldMetadataForCreate,
+    );
 
     const targetFieldMetadata = await fieldMetadataRepository.save({
       ...targetFieldMetadataForCreate,
@@ -120,7 +120,7 @@ export class FieldMetadataRelationService {
       });
 
     return {
-      ...fieldMetadataInput,
+      ...targetFieldMetadataToCreate,
       ...targetFieldMetadataRelationSettings,
     };
   }
@@ -270,6 +270,50 @@ export class FieldMetadataRelationService {
       };
     });
   }
+
+  validateAndCreateRelationFieldMetadata = async ({
+    objectMetadataMaps,
+    objectMetadata,
+    fieldMetadataRepository,
+    fieldMetadataInput,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    fieldMetadataInput: CreateFieldInput;
+    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    fieldMetadataRepository: Repository<FieldMetadataEntity>;
+  }) => {
+    const { targetObjectMetadata, relationCreationPayload } =
+      await this.validateRelationCreationPayloadOrThrow({
+        relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+        objectMetadataMaps,
+      });
+
+    const relationSettings =
+      this.computeRelationSettingsIconAndRelationTargetObjectMetadataId({
+        fieldMetadataInput,
+        relationCreationPayload,
+        objectMetadata,
+      });
+
+    const fieldMetadataForCreateWithRelationSettings = {
+      ...prepareCustomFieldMetadataForCreation(fieldMetadataInput),
+      ...relationSettings,
+    };
+
+    const targetFieldMetadataForCreate =
+      this.computeRelationTargetFieldForCreate({
+        fieldMetadataInput,
+        relationCreationPayload,
+        sourceObjectMetadata: objectMetadata,
+        targetObjectMetadata,
+      });
+
+    return await this.createSourceAndTargetRelationFieldMetadata({
+      fieldMetadataForCreate: fieldMetadataForCreateWithRelationSettings,
+      targetFieldMetadataForCreate,
+      fieldMetadataRepository,
+    });
+  };
 
   // Hell to type due to nestJs OmitType that prevents passing a generic type here
   computeRelationSettingsIconAndRelationTargetObjectMetadataId({

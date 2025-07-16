@@ -659,42 +659,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
-      const { relationCreationPayload, targetObjectMetadata } =
-        await this.fieldMetadataRelationService.validateRelationCreationPayloadOrThrow(
-          {
-            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-            objectMetadataMaps,
-          },
-        );
-
-      const relationSettings =
-        this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
-          {
-            fieldMetadataInput,
-            relationCreationPayload,
-            objectMetadata,
-          },
-        );
-      const fieldMetadataForCreateWithRelationSettings = {
-        ...fieldMetadataForCreate,
-        ...relationSettings,
-      };
-
-      const targetFieldMetadataForCreate =
-        this.fieldMetadataRelationService.computeRelationTargetFieldForCreate({
-          fieldMetadataInput,
-          relationCreationPayload,
-          sourceObjectMetadata: objectMetadata,
-          targetObjectMetadata,
-        });
-
-      return await this.fieldMetadataRelationService.createSourceAndTargetRelationFieldMetadata(
-        {
-          fieldMetadataForCreate: fieldMetadataForCreateWithRelationSettings,
-          targetFieldMetadataForCreate,
-          fieldMetadataRepository,
-        },
-      );
+      return await this.fieldMetadataRelationService.validateAndCreateRelationFieldMetadata({
+        fieldMetadataInput,
+        fieldMetadataRepository,
+        objectMetadata,
+        objectMetadataMaps,
+      });
     }
 
     if (fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION) {

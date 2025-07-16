@@ -58,6 +58,7 @@ export class FieldMetadataMorphRelationService {
     const fieldsCreated: FieldMetadataEntity[] = [];
 
     for (const relationCreationPayload of morphRelationsCreationPayload) {
+      // Unless I'm mistaken this logic could be factorized ? using validateAndCreateRelationFieldMetadata
       await this.fieldMetadataRelationService.validateRelationCreationPayloadOrThrow(
         {
           relationCreationPayload,
@@ -131,6 +132,7 @@ export class FieldMetadataMorphRelationService {
           ...createdFieldMetadataItem,
           relationTargetFieldMetadataId: targetFieldMetadata.id,
         });
+      /// END of factorization
 
       fieldsCreated.push(createdFieldMetadataItemUpdated, targetFieldMetadata);
     }
