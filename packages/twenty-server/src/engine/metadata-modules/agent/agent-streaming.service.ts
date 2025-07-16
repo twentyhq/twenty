@@ -17,6 +17,7 @@ export type StreamAgentChatOptions = {
   threadId: string;
   userMessage: string;
   userWorkspaceId: string;
+  fileIds?: string[];
   res: Response;
 };
 
@@ -41,6 +42,7 @@ export class AgentStreamingService {
     threadId,
     userMessage,
     userWorkspaceId,
+    fileIds = [],
     res,
   }: StreamAgentChatOptions) {
     try {
@@ -59,12 +61,6 @@ export class AgentStreamingService {
         );
       }
 
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-      });
-
       this.setupStreamingHeaders(res);
 
       const { fullStream } =
@@ -72,6 +68,7 @@ export class AgentStreamingService {
           agentId: thread.agent.id,
           userMessage,
           messages: thread.messages,
+          fileIds,
         });
 
       let aiResponse = '';
@@ -92,6 +89,20 @@ export class AgentStreamingService {
             });
             break;
           case 'error':
+            {
+              const errorMessage =
+                chunk.error &&
+                typeof chunk.error === 'object' &&
+                'message' in chunk.error
+                  ? chunk.error.message
+                  : 'Something went wrong. Please try again.';
+
+              this.sendStreamEvent(res, {
+                type: 'error',
+                message: errorMessage as string,
+              });
+              res.end();
+            }
             this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
             break;
           default:
@@ -99,6 +110,19 @@ export class AgentStreamingService {
             break;
         }
       }
+
+      if (!aiResponse) {
+        res.end();
+
+        return;
+      }
+
+      await this.agentChatService.addMessage({
+        threadId,
+        role: AgentChatMessageRole.USER,
+        content: userMessage,
+        fileIds,
+      });
 
       await this.agentChatService.addMessage({
         threadId,

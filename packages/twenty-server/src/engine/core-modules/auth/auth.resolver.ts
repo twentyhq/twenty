@@ -571,7 +571,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
-      context.req.headers['x-locale'] || SOURCE_LOCALE,
+      context.req.locale,
     );
   }
 
@@ -587,11 +587,7 @@ export class AuthResolver {
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(
-      id,
-      newPassword,
-      context.req.headers['x-locale'] || SOURCE_LOCALE,
-    );
+    await this.authService.updatePassword(id, newPassword, context.req.locale);
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }

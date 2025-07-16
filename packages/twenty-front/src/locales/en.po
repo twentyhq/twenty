@@ -108,6 +108,11 @@ msgstr "{apiKeyName}"
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selected"
 
+#. js-lingui-id: POhzPf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+msgid "{failedCount} file(s) failed to upload"
+msgstr "{failedCount} file(s) failed to upload"
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -883,6 +888,11 @@ msgstr "Authorized URI"
 msgid "Authorized URL copied to clipboard"
 msgstr "Authorized URL copied to clipboard"
 
+#. js-lingui-id: R9Khdg
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Auto"
+msgstr "Auto"
+
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
@@ -989,8 +999,8 @@ msgstr "CalDAV Configuration"
 
 #. js-lingui-id: Lw3Ou8
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Encryption"
-msgstr "CalDAV Encryption"
+#~ msgid "CalDAV Encryption"
+#~ msgstr "CalDAV Encryption"
 
 #. js-lingui-id: 4dwQbl
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -999,13 +1009,18 @@ msgstr "CalDAV Password"
 
 #. js-lingui-id: 5wnjvr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Port"
-msgstr "CalDAV Port"
+#~ msgid "CalDAV Port"
+#~ msgstr "CalDAV Port"
 
 #. js-lingui-id: JUGLyW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "CalDAV Server"
 msgstr "CalDAV Server"
+
+#. js-lingui-id: kGKOiW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Username"
+msgstr "CalDAV Username"
 
 #. js-lingui-id: +x0fpb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2735,6 +2750,11 @@ msgstr "Failed to load webhook"
 #~ msgid "Failed to remove  override"
 #~ msgstr "Failed to remove  override"
 
+#. js-lingui-id: XMjWWv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+msgid "Failed to remove file"
+msgstr "Failed to remove file"
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -2744,6 +2764,11 @@ msgstr "Failed to remove override"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to update variable"
 msgstr "Failed to update variable"
+
+#. js-lingui-id: cQPyHI
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+msgid "Failed to upload file: {fileName}"
+msgstr "Failed to upload file: {fileName}"
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3514,6 +3539,11 @@ msgstr "Italian"
 msgid "Japanese"
 msgstr "Japanese"
 
+#. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "john.doe"
+msgstr "john.doe"
+
 #. js-lingui-id: wrLOeW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
@@ -4102,8 +4132,8 @@ msgstr "Next Step"
 
 #. js-lingui-id: QNbLNQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "No AI models available"
-msgstr "No AI models available"
+#~ msgid "No AI models available"
+#~ msgstr "No AI models available"
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
