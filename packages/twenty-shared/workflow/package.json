@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-shared-workflow.cjs.js",
+  "module": "dist/twenty-shared-workflow.esm.js"
+}

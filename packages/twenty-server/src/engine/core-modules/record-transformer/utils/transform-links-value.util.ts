@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
-  lowercaseUrlAndRemoveTrailingSlash,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
+  parseJson,
 } from 'twenty-shared/utils';
 
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
@@ -16,10 +17,11 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
+// TODO refactor this function handle partial composite field update
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
-  if (!value) {
+  if (!isDefined(value)) {
     return value;
   }
 
@@ -27,15 +29,9 @@ export const transformLinksValue = (
   const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
   const secondaryLinksRaw = value.secondaryLinks as string | null;
 
-  let secondaryLinksArray: LinkMetadataNullable[] | null = null;
-
-  if (isNonEmptyString(secondaryLinksRaw)) {
-    try {
-      secondaryLinksArray = JSON.parse(secondaryLinksRaw);
-    } catch {
-      /* empty */
-    }
-  }
+  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
+    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
+    : null;
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {
@@ -48,14 +44,14 @@ export const transformLinksValue = (
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseUrlAndRemoveTrailingSlash(primaryLinkUrl)
+      ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
     secondaryLinks: JSON.stringify(
       secondaryLinks?.map((link) => ({
         ...link,
         url: isDefined(link.url)
-          ? lowercaseUrlAndRemoveTrailingSlash(link.url)
+          ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
           : link.url,
       })),
     ),

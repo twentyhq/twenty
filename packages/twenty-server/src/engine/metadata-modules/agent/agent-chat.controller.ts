@@ -58,7 +58,7 @@ export class AgentChatController {
   @Post('stream')
   async streamAgentChat(
     @Body()
-    body: { threadId: string; userMessage: string },
+    body: { threadId: string; userMessage: string; fileIds?: string[] },
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Res() res: Response,
   ) {
@@ -67,6 +67,7 @@ export class AgentChatController {
         threadId: body.threadId,
         userMessage: body.userMessage,
         userWorkspaceId,
+        fileIds: body.fileIds || [],
         res,
       });
     } catch (error) {

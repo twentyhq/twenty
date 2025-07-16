@@ -27,6 +27,7 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
+import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -48,10 +49,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelPlural',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -60,10 +61,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelSingular',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -72,10 +73,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'description',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -85,10 +86,10 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveOverridableString(
+    return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'icon',
-      context.req.headers['x-locale'],
+      context.req.locale,
     );
   }
 
@@ -118,7 +119,7 @@ export class ObjectMetadataResolver {
     try {
       const updatedInput = (await this.beforeUpdateOneObject.run(input, {
         workspaceId,
-        locale: context.req.headers['x-locale'],
+        locale: context.req.locale,
       })) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
@@ -141,7 +142,7 @@ export class ObjectMetadataResolver {
         {
           objectMetadata,
           workspaceId: workspace.id,
-          locale: context.req.headers['x-locale'],
+          locale: context.req.locale,
         },
       );
 

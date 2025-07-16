@@ -7,6 +7,7 @@ module.exports = {
   documents: [
     './src/modules/auth/graphql/**/*.{ts,tsx}',
     './src/modules/users/graphql/**/*.{ts,tsx}',
+    './src/modules/ai/graphql/**/*.{ts,tsx}',
     
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-member/graphql/**/*.{ts,tsx}',
@@ -20,6 +21,7 @@ module.exports = {
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
     './src/modules/attachments/graphql/**/*.{ts,tsx}',
+    './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
     
     '!./src/**/*.test.{ts,tsx}',

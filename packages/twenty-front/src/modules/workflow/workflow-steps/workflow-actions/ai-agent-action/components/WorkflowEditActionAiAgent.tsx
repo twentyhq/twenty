@@ -108,7 +108,7 @@ export const WorkflowEditActionAiAgent = ({
         componentInstanceId={WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}
       />
       {activeTabId === WorkflowAiAgentTabId.CHAT ? (
-        <AIChatTab agentId={agentId} />
+        <AIChatTab agentId={agentId} isWorkflowAgentNodeChat />
       ) : (
         <>
           <WorkflowStepHeader
@@ -136,7 +136,7 @@ export const WorkflowEditActionAiAgent = ({
                     onChange={(value) => handleFieldChange('modelId', value)}
                     disabled={actionOptions.readonly || noModelsAvailable}
                     emptyOption={{
-                      label: t`No AI models available`,
+                      label: t`Auto`,
                       value: '',
                     }}
                   />

@@ -22,10 +22,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type AccountType = {
-  type: Scalars['String'];
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -63,6 +59,25 @@ export type Agent = {
   prompt: Scalars['String'];
   responseFormat?: Maybe<Scalars['JSON']>;
   roleId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type AgentChatMessage = {
+  __typename?: 'AgentChatMessage';
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  files: Array<File>;
+  id: Scalars['UUID'];
+  role: Scalars['String'];
+  threadId: Scalars['UUID'];
+};
+
+export type AgentChatThread = {
+  __typename?: 'AgentChatThread';
+  agentId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -435,6 +450,7 @@ export type ConnectionParameters = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: InputMaybe<Scalars['Boolean']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type ConnectionParametersOutput = {
@@ -443,6 +459,11 @@ export type ConnectionParametersOutput = {
   password: Scalars['String'];
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
+};
+
+export type CreateAgentChatThreadInput = {
+  agentId: Scalars['UUID'];
 };
 
 export type CreateApiKeyDto = {
@@ -673,6 +694,12 @@ export type EditSsoOutput = {
   type: IdentityProviderType;
 };
 
+export type EmailAccountConnectionParameters = {
+  CALDAV?: InputMaybe<ConnectionParameters>;
+  IMAP?: InputMaybe<ConnectionParameters>;
+  SMTP?: InputMaybe<ConnectionParameters>;
+};
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -812,8 +839,20 @@ export type FieldPermissionInput = {
   objectMetadataId: Scalars['String'];
 };
 
+export type File = {
+  __typename?: 'File';
+  createdAt: Scalars['DateTime'];
+  fullPath: Scalars['String'];
+  id: Scalars['ID'];
+  messageId?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  size: Scalars['Float'];
+  type: Scalars['String'];
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
+  File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1041,7 +1080,8 @@ export enum MessageChannelVisibility {
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
-  OPENAI = 'OPENAI'
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE'
 }
 
 export type Mutation = {
@@ -1053,10 +1093,12 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgentChatThread: AgentChatThread;
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAppToken: AppToken;
@@ -1072,6 +1114,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteFile: File;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1102,7 +1145,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
-  saveImapSmtpCaldav: ImapSmtpCaldavConnectionSuccess;
+  saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1181,6 +1224,11 @@ export type MutationComputeStepOutputSchemaArgs = {
 };
 
 
+export type MutationCreateAgentChatThreadArgs = {
+  input: CreateAgentChatThreadInput;
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyDto;
 };
@@ -1199,6 +1247,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateFileArgs = {
+  file: Scalars['Upload'];
 };
 
 
@@ -1272,6 +1325,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteFileArgs = {
+  fileId: Scalars['String'];
 };
 
 
@@ -1411,10 +1469,9 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
-export type MutationSaveImapSmtpCaldavArgs = {
+export type MutationSaveImapSmtpCaldavAccountArgs = {
   accountOwnerId: Scalars['String'];
-  accountType: AccountType;
-  connectionParameters: ConnectionParameters;
+  connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
 };
@@ -1818,6 +1875,9 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatMessages: Array<AgentChatMessage>;
+  agentChatThread: AgentChatThread;
+  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
@@ -1863,6 +1923,21 @@ export type Query = {
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentChatMessagesArgs = {
+  threadId: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadsArgs = {
+  agentId: Scalars['String'];
 };
 
 
@@ -2893,6 +2968,27 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type CreateAgentChatThreadMutationVariables = Exact<{
+  input: CreateAgentChatThreadInput;
+}>;
+
+
+export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: any, agentId: any, title?: string | null, createdAt: string, updatedAt: string } };
+
+export type GetAgentChatMessagesQueryVariables = Exact<{
+  threadId: Scalars['String'];
+}>;
+
+
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: any, threadId: any, role: string, content: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+
+export type GetAgentChatThreadsQueryVariables = Exact<{
+  agentId: Scalars['String'];
+}>;
+
+
+export type GetAgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: any, agentId: any, title?: string | null, createdAt: string, updatedAt: string }> };
+
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
   event?: InputMaybe<Scalars['String']>;
@@ -3193,6 +3289,20 @@ export type GetOneDatabaseConnectionQueryVariables = Exact<{
 
 export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
+export type CreateFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type CreateFileMutation = { __typename?: 'Mutation', createFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
+export type DeleteFileMutationVariables = Exact<{
+  fileId: Scalars['String'];
+}>;
+
+
+export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string } };
+
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
 }>;
@@ -3252,23 +3362,22 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
-export type SaveImapSmtpCaldavMutationVariables = Exact<{
+export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
   accountOwnerId: Scalars['String'];
   handle: Scalars['String'];
-  accountType: AccountType;
-  connectionParameters: ConnectionParameters;
+  connectionParameters: EmailAccountConnectionParameters;
   id?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type SaveImapSmtpCaldavMutation = { __typename?: 'Mutation', saveImapSmtpCaldav: { __typename?: 'ImapSmtpCaldavConnectionSuccess', success: boolean } };
+export type SaveImapSmtpCaldavAccountMutation = { __typename?: 'Mutation', saveImapSmtpCaldavAccount: { __typename?: 'ImapSmtpCaldavConnectionSuccess', success: boolean } };
 
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null } | null } };
+export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -4057,6 +4166,129 @@ ${ObjectPermissionFragmentFragmentDoc}
 ${WorkspaceUrlsFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
+export const CreateAgentChatThreadDocument = gql`
+    mutation CreateAgentChatThread($input: CreateAgentChatThreadInput!) {
+  createAgentChatThread(input: $input) {
+    id
+    agentId
+    title
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateAgentChatThreadMutationFn = Apollo.MutationFunction<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
+
+/**
+ * __useCreateAgentChatThreadMutation__
+ *
+ * To run a mutation, you first call `useCreateAgentChatThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAgentChatThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAgentChatThreadMutation, { data, loading, error }] = useCreateAgentChatThreadMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateAgentChatThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>(CreateAgentChatThreadDocument, options);
+      }
+export type CreateAgentChatThreadMutationHookResult = ReturnType<typeof useCreateAgentChatThreadMutation>;
+export type CreateAgentChatThreadMutationResult = Apollo.MutationResult<CreateAgentChatThreadMutation>;
+export type CreateAgentChatThreadMutationOptions = Apollo.BaseMutationOptions<CreateAgentChatThreadMutation, CreateAgentChatThreadMutationVariables>;
+export const GetAgentChatMessagesDocument = gql`
+    query GetAgentChatMessages($threadId: String!) {
+  agentChatMessages(threadId: $threadId) {
+    id
+    threadId
+    role
+    content
+    createdAt
+    files {
+      id
+      name
+      fullPath
+      size
+      type
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAgentChatMessagesQuery__
+ *
+ * To run a query within a React component, call `useGetAgentChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAgentChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAgentChatMessagesQuery({
+ *   variables: {
+ *      threadId: // value for 'threadId'
+ *   },
+ * });
+ */
+export function useGetAgentChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+      }
+export function useGetAgentChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>(GetAgentChatMessagesDocument, options);
+        }
+export type GetAgentChatMessagesQueryHookResult = ReturnType<typeof useGetAgentChatMessagesQuery>;
+export type GetAgentChatMessagesLazyQueryHookResult = ReturnType<typeof useGetAgentChatMessagesLazyQuery>;
+export type GetAgentChatMessagesQueryResult = Apollo.QueryResult<GetAgentChatMessagesQuery, GetAgentChatMessagesQueryVariables>;
+export const GetAgentChatThreadsDocument = gql`
+    query GetAgentChatThreads($agentId: String!) {
+  agentChatThreads(agentId: $agentId) {
+    id
+    agentId
+    title
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetAgentChatThreadsQuery__
+ *
+ * To run a query within a React component, call `useGetAgentChatThreadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAgentChatThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAgentChatThreadsQuery({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *   },
+ * });
+ */
+export function useGetAgentChatThreadsQuery(baseOptions: Apollo.QueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+      }
+export function useGetAgentChatThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>(GetAgentChatThreadsDocument, options);
+        }
+export type GetAgentChatThreadsQueryHookResult = ReturnType<typeof useGetAgentChatThreadsQuery>;
+export type GetAgentChatThreadsLazyQueryHookResult = ReturnType<typeof useGetAgentChatThreadsLazyQuery>;
+export type GetAgentChatThreadsQueryResult = Apollo.QueryResult<GetAgentChatThreadsQuery, GetAgentChatThreadsQueryVariables>;
 export const TrackAnalyticsDocument = gql`
     mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
@@ -5481,6 +5713,82 @@ export function useGetOneDatabaseConnectionLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetOneDatabaseConnectionQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionQuery>;
 export type GetOneDatabaseConnectionLazyQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionLazyQuery>;
 export type GetOneDatabaseConnectionQueryResult = Apollo.QueryResult<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
+export const CreateFileDocument = gql`
+    mutation CreateFile($file: Upload!) {
+  createFile(file: $file) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type CreateFileMutationFn = Apollo.MutationFunction<CreateFileMutation, CreateFileMutationVariables>;
+
+/**
+ * __useCreateFileMutation__
+ *
+ * To run a mutation, you first call `useCreateFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFileMutation, { data, loading, error }] = useCreateFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useCreateFileMutation(baseOptions?: Apollo.MutationHookOptions<CreateFileMutation, CreateFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFileMutation, CreateFileMutationVariables>(CreateFileDocument, options);
+      }
+export type CreateFileMutationHookResult = ReturnType<typeof useCreateFileMutation>;
+export type CreateFileMutationResult = Apollo.MutationResult<CreateFileMutation>;
+export type CreateFileMutationOptions = Apollo.BaseMutationOptions<CreateFileMutation, CreateFileMutationVariables>;
+export const DeleteFileDocument = gql`
+    mutation DeleteFile($fileId: String!) {
+  deleteFile(fileId: $fileId) {
+    id
+    name
+    fullPath
+    size
+    type
+    createdAt
+  }
+}
+    `;
+export type DeleteFileMutationFn = Apollo.MutationFunction<DeleteFileMutation, DeleteFileMutationVariables>;
+
+/**
+ * __useDeleteFileMutation__
+ *
+ * To run a mutation, you first call `useDeleteFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFileMutation, { data, loading, error }] = useDeleteFileMutation({
+ *   variables: {
+ *      fileId: // value for 'fileId'
+ *   },
+ * });
+ */
+export function useDeleteFileMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFileMutation, DeleteFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(DeleteFileDocument, options);
+      }
+export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>;
+export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
+export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
 export const CreateOneObjectMetadataItemDocument = gql`
     mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
@@ -5946,12 +6254,11 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
-export const SaveImapSmtpCaldavDocument = gql`
-    mutation SaveImapSmtpCaldav($accountOwnerId: String!, $handle: String!, $accountType: AccountType!, $connectionParameters: ConnectionParameters!, $id: String) {
-  saveImapSmtpCaldav(
+export const SaveImapSmtpCaldavAccountDocument = gql`
+    mutation SaveImapSmtpCaldavAccount($accountOwnerId: String!, $handle: String!, $connectionParameters: EmailAccountConnectionParameters!, $id: String) {
+  saveImapSmtpCaldavAccount(
     accountOwnerId: $accountOwnerId
     handle: $handle
-    accountType: $accountType
     connectionParameters: $connectionParameters
     id: $id
   ) {
@@ -5959,36 +6266,35 @@ export const SaveImapSmtpCaldavDocument = gql`
   }
 }
     `;
-export type SaveImapSmtpCaldavMutationFn = Apollo.MutationFunction<SaveImapSmtpCaldavMutation, SaveImapSmtpCaldavMutationVariables>;
+export type SaveImapSmtpCaldavAccountMutationFn = Apollo.MutationFunction<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>;
 
 /**
- * __useSaveImapSmtpCaldavMutation__
+ * __useSaveImapSmtpCaldavAccountMutation__
  *
- * To run a mutation, you first call `useSaveImapSmtpCaldavMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSaveImapSmtpCaldavMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSaveImapSmtpCaldavAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveImapSmtpCaldavAccountMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [saveImapSmtpCaldavMutation, { data, loading, error }] = useSaveImapSmtpCaldavMutation({
+ * const [saveImapSmtpCaldavAccountMutation, { data, loading, error }] = useSaveImapSmtpCaldavAccountMutation({
  *   variables: {
  *      accountOwnerId: // value for 'accountOwnerId'
  *      handle: // value for 'handle'
- *      accountType: // value for 'accountType'
  *      connectionParameters: // value for 'connectionParameters'
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useSaveImapSmtpCaldavMutation(baseOptions?: Apollo.MutationHookOptions<SaveImapSmtpCaldavMutation, SaveImapSmtpCaldavMutationVariables>) {
+export function useSaveImapSmtpCaldavAccountMutation(baseOptions?: Apollo.MutationHookOptions<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SaveImapSmtpCaldavMutation, SaveImapSmtpCaldavMutationVariables>(SaveImapSmtpCaldavDocument, options);
+        return Apollo.useMutation<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>(SaveImapSmtpCaldavAccountDocument, options);
       }
-export type SaveImapSmtpCaldavMutationHookResult = ReturnType<typeof useSaveImapSmtpCaldavMutation>;
-export type SaveImapSmtpCaldavMutationResult = Apollo.MutationResult<SaveImapSmtpCaldavMutation>;
-export type SaveImapSmtpCaldavMutationOptions = Apollo.BaseMutationOptions<SaveImapSmtpCaldavMutation, SaveImapSmtpCaldavMutationVariables>;
+export type SaveImapSmtpCaldavAccountMutationHookResult = ReturnType<typeof useSaveImapSmtpCaldavAccountMutation>;
+export type SaveImapSmtpCaldavAccountMutationResult = Apollo.MutationResult<SaveImapSmtpCaldavAccountMutation>;
+export type SaveImapSmtpCaldavAccountMutationOptions = Apollo.BaseMutationOptions<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = gql`
     query GetConnectedImapSmtpCaldavAccount($id: String!) {
   getConnectedImapSmtpCaldavAccount(id: $id) {
@@ -6011,8 +6317,7 @@ export const GetConnectedImapSmtpCaldavAccountDocument = gql`
       }
       CALDAV {
         host
-        port
-        secure
+        username
         password
       }
     }
