@@ -57205,11 +57205,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-zapier@workspace:packages/twenty-zapier"
   dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:29.7.0"
+    libphonenumber-js: "npm:^1.10.26"
     rimraf: "npm:^3.0.2"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
