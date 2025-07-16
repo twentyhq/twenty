@@ -659,12 +659,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
-      return await this.fieldMetadataRelationService.validateAndCreateRelationFieldMetadata({
-        fieldMetadataInput,
-        fieldMetadataRepository,
-        objectMetadata,
-        objectMetadataMaps,
-      });
+      return await this.fieldMetadataRelationService.validateAndCreateRelationFieldMetadata(
+        {
+          fieldMetadataInput,
+          fieldMetadataRepository,
+          objectMetadata,
+          objectMetadataMaps,
+        },
+      );
     }
 
     if (fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION) {
