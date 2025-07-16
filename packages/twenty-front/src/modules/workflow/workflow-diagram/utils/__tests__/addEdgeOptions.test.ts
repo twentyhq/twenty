@@ -2,7 +2,7 @@ import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagr
 import { addEdgeOptions } from '../addEdgeOptions';
 
 describe('addEdgeOptions', () => {
-  it('should add shouldDisplayEdgeOptions to all edges', () => {
+  it('should add isEdgeEditable to all edges', () => {
     const diagram: WorkflowDiagram = {
       nodes: [
         {
@@ -32,7 +32,7 @@ describe('addEdgeOptions', () => {
           target: 'action-1',
           data: {
             edgeType: 'default',
-            shouldDisplayEdgeOptions: true,
+            isEdgeEditable: true,
           },
         },
         {
@@ -41,6 +41,7 @@ describe('addEdgeOptions', () => {
           target: 'action-2',
           data: {
             edgeType: 'default',
+            isEdgeEditable: false,
           },
         },
       ],
@@ -57,7 +58,7 @@ describe('addEdgeOptions', () => {
       target: 'action-1',
       data: {
         edgeType: 'default',
-        shouldDisplayEdgeOptions: true,
+        isEdgeEditable: true,
       },
     });
 
@@ -67,7 +68,7 @@ describe('addEdgeOptions', () => {
       target: 'action-2',
       data: {
         edgeType: 'default',
-        shouldDisplayEdgeOptions: true,
+        isEdgeEditable: true,
       },
     });
   });

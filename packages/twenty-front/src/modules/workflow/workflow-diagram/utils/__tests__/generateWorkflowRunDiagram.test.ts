@@ -98,6 +98,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-0",
@@ -111,6 +112,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-1",
@@ -123,6 +125,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-2",
@@ -288,6 +291,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-3",
@@ -301,6 +305,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-4",
@@ -314,6 +319,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-5",
@@ -467,6 +473,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-6",
@@ -480,6 +487,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-7",
@@ -492,6 +500,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-8",
@@ -668,6 +677,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-9",
@@ -681,6 +691,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-10",
@@ -694,6 +705,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-11",
@@ -706,6 +718,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-12",
@@ -842,6 +855,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeType": "default",
+          "isEdgeEditable": false,
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-13",

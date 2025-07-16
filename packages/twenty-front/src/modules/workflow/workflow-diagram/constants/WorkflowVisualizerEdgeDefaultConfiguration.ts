@@ -9,5 +9,6 @@ export const WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION = {
   selectable: false,
   data: {
     edgeType: 'default',
+    isEdgeEditable: false,
   },
 } satisfies Partial<WorkflowDiagramEdge>;

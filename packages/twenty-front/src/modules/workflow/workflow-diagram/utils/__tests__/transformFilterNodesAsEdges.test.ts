@@ -27,7 +27,7 @@ describe('transformFilterNodesAsEdges', () => {
           target: 'C',
           data: {
             edgeType: 'default',
-            shouldDisplayEdgeOptions: true,
+            isEdgeEditable: true,
           },
         },
       ],
@@ -67,13 +67,13 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
       ],
     };
@@ -106,6 +106,7 @@ describe('transformFilterNodesAsEdges', () => {
         name: 'Filter B',
         runStatus: undefined,
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
+        isEdgeEditable: false,
       },
     });
   });
@@ -152,25 +153,25 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B1',
           source: 'A',
           target: 'B1',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
         {
           id: 'B1-C',
           source: 'B1',
           target: 'C',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
         {
           id: 'C-B2',
           source: 'C',
           target: 'B2',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
         {
           id: 'B2-D',
           source: 'B2',
           target: 'D',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
       ],
     };
@@ -199,6 +200,7 @@ describe('transformFilterNodesAsEdges', () => {
         runStatus: undefined,
         stepId: 'B1',
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B1' },
+        isEdgeEditable: false,
       },
     });
 
@@ -215,6 +217,7 @@ describe('transformFilterNodesAsEdges', () => {
         runStatus: undefined,
         stepId: 'B2',
         filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B2' },
+        isEdgeEditable: false,
       },
     });
   });
@@ -238,7 +241,7 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'A-B',
           source: 'A',
           target: 'B',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
       ],
     };
@@ -290,13 +293,13 @@ describe('transformFilterNodesAsEdges', () => {
           id: 'trigger-B',
           source: 'trigger',
           target: 'B',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
         {
           id: 'B-C',
           source: 'B',
           target: 'C',
-          data: { edgeType: 'default', shouldDisplayEdgeOptions: true },
+          data: { edgeType: 'default', isEdgeEditable: true },
         },
       ],
     };
@@ -337,6 +340,7 @@ describe('transformFilterNodesAsEdges', () => {
             actionType: 'FILTER',
             name: 'Filter B',
           },
+          isEdgeEditable: false,
         },
       },
     ]);

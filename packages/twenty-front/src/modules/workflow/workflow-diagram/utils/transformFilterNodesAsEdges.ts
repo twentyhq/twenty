@@ -49,6 +49,7 @@ export const transformFilterNodesAsEdges = ({
           filter: filterNode.data,
           name: filterNode.data.name,
           runStatus: filterNode.data.runStatus,
+          isEdgeEditable: false,
         },
       };
 
