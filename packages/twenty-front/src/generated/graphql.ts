@@ -62,6 +62,25 @@ export type Agent = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentChatMessage = {
+  __typename?: 'AgentChatMessage';
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  files: Array<File>;
+  id: Scalars['UUID'];
+  role: Scalars['String'];
+  threadId: Scalars['UUID'];
+};
+
+export type AgentChatThread = {
+  __typename?: 'AgentChatThread';
+  agentId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -442,6 +461,10 @@ export type ConnectionParametersOutput = {
   port: Scalars['Float'];
   secure?: Maybe<Scalars['Boolean']>;
   username?: Maybe<Scalars['String']>;
+};
+
+export type CreateAgentChatThreadInput = {
+  agentId: Scalars['UUID'];
 };
 
 export type CreateApiKeyDto = {
@@ -1033,6 +1056,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgentChatThread: AgentChatThread;
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDatabaseConfigVariable: Scalars['Boolean'];
@@ -1157,6 +1181,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateAgentChatThreadArgs = {
+  input: CreateAgentChatThreadInput;
 };
 
 
@@ -1787,6 +1816,9 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatMessages: Array<AgentChatMessage>;
+  agentChatThread: AgentChatThread;
+  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
@@ -1829,6 +1861,21 @@ export type Query = {
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentChatMessagesArgs = {
+  threadId: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryAgentChatThreadsArgs = {
+  agentId: Scalars['String'];
 };
 
 

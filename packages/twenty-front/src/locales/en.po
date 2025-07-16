@@ -109,7 +109,7 @@ msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selected"
 
 #. js-lingui-id: POhzPf
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} file(s) failed to upload"
 
@@ -810,6 +810,7 @@ msgstr "Ascending"
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Ask AI"
 msgstr "Ask AI"
 
@@ -1141,7 +1142,7 @@ msgstr "Change to Yearly?"
 
 #. js-lingui-id: AHZflp
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr "Chat"
 
@@ -1537,6 +1538,11 @@ msgstr "Could not delete approved access domain"
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
 msgstr "Couldn't copy to clipboard"
+
+#. js-lingui-id: S2XvS+
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Couldn't upload the file."
+msgstr "Couldn't upload the file."
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2766,7 +2772,7 @@ msgid "Failed to update variable"
 msgstr "Failed to update variable"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Failed to upload file: {fileName}"
 
@@ -4760,6 +4766,11 @@ msgstr "Prefilling your workspace data..."
 msgid "Preview"
 msgstr "Preview"
 
+#. js-lingui-id: 2WAUd8
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Previous AI Chats"
+msgstr "Previous AI Chats"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5089,6 +5100,8 @@ msgstr "Schema"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
@@ -5640,7 +5653,7 @@ msgid "Standard"
 msgstr "Standard"
 
 #. js-lingui-id: GbQzZA
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 
@@ -6223,6 +6236,11 @@ msgstr "Unknown error"
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
 
+#. js-lingui-id: wja8aL
+#: src/modules/ai/components/AIChatThreadGroup.tsx
+msgid "Untitled"
+msgstr "Untitled"
+
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
@@ -6435,6 +6453,13 @@ msgstr "View billing details"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 #~ msgid "View execution details"
 #~ msgstr "View execution details"
+
+#. js-lingui-id: ecVcAx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "View Previous AI Chats"
+msgstr "View Previous AI Chats"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx

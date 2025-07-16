@@ -6,7 +6,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { msg } from '@lingui/core/macro';
-import { IconSearch, IconSparkles } from 'twenty-ui/display';
+import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
@@ -22,7 +22,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     component: (
       <ActionOpenSidePanelPage
         page={CommandMenuPages.SearchRecords}
-        pageTitle="Search"
+        pageTitle={msg`Search`}
         pageIcon={IconSearch}
         shouldResetSearchState={true}
       />
@@ -43,7 +43,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     component: (
       <ActionOpenSidePanelPage
         page={CommandMenuPages.SearchRecords}
-        pageTitle="Search"
+        pageTitle={msg`Search`}
         pageIcon={IconSearch}
       />
     ),
@@ -63,11 +63,30 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     component: (
       <ActionOpenSidePanelPage
         page={CommandMenuPages.AskAI}
-        pageTitle="Ask AI"
+        pageTitle={msg`Ask AI`}
         pageIcon={IconSparkles}
       />
     ),
     hotKeys: ['@'],
+    shouldBeRegistered: () => true,
+  },
+  [RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS]: {
+    type: ActionType.Standard,
+    scope: ActionScope.Global,
+    key: RecordAgnosticActionsKeys.VIEW_PREVIOUS_AI_CHATS,
+    label: msg`View Previous AI Chats`,
+    shortLabel: msg`Previous AI Chats`,
+    position: 3,
+    isPinned: false,
+    Icon: IconHistory,
+    availableOn: [ActionViewType.GLOBAL],
+    component: (
+      <ActionOpenSidePanelPage
+        page={CommandMenuPages.ViewPreviousAIChats}
+        pageTitle={msg`View Previous AI Chats`}
+        pageIcon={IconSparkles}
+      />
+    ),
     shouldBeRegistered: () => true,
   },
 };

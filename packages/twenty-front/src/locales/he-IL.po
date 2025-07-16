@@ -114,7 +114,7 @@ msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} נבחר"
 
 #. js-lingui-id: POhzPf
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr ""
 
@@ -815,6 +815,7 @@ msgstr "עולה"
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Ask AI"
 msgstr ""
 
@@ -1146,7 +1147,7 @@ msgstr ""
 
 #. js-lingui-id: AHZflp
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr ""
 
@@ -1541,6 +1542,11 @@ msgstr ""
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
+msgstr ""
+
+#. js-lingui-id: S2XvS+
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Couldn't upload the file."
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -2771,7 +2777,7 @@ msgid "Failed to update variable"
 msgstr ""
 
 #. js-lingui-id: cQPyHI
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr ""
 
@@ -4765,6 +4771,11 @@ msgstr ""
 msgid "Preview"
 msgstr "תצוגה מקדימה"
 
+#. js-lingui-id: 2WAUd8
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Previous AI Chats"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5094,6 +5105,8 @@ msgstr "סכימה"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
@@ -5645,7 +5658,7 @@ msgid "Standard"
 msgstr ""
 
 #. js-lingui-id: GbQzZA
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
@@ -6228,6 +6241,11 @@ msgstr "שגיאה לא ידועה"
 msgid "Unlimited contacts"
 msgstr "אין מגבלה על מספר אנשי הקשר"
 
+#. js-lingui-id: wja8aL
+#: src/modules/ai/components/AIChatThreadGroup.tsx
+msgid "Untitled"
+msgstr ""
+
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
@@ -6440,6 +6458,13 @@ msgstr "צפייה בפרטי החשבונית"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 #~ msgid "View execution details"
 #~ msgstr "הצג פרטי ביצוע"
+
+#. js-lingui-id: ecVcAx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "View Previous AI Chats"
+msgstr ""
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx

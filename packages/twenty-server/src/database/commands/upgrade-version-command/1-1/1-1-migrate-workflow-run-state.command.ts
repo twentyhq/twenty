@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -15,10 +16,6 @@ import {
   WorkflowRunOutput,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  StepStatus,
-  WorkflowRunStepInfo,
-} from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 
 const DEFAULT_CHUNK_SIZE = 500;
 
@@ -121,7 +118,7 @@ export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspaces
   }
 
   private buildRunStateFromOutput(output: WorkflowRunOutput): WorkflowRunState {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = Object.fromEntries(
+    const stepInfos: WorkflowRunStepInfos = Object.fromEntries(
       output.flow.steps.map((step) => {
         const stepOutput = output.stepsOutput?.[step.id];
         const status = stepOutput?.pendingEvent

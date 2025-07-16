@@ -1,11 +1,6 @@
-import {
-  WorkflowRunOutputStepsOutput,
-  WorkflowStep,
-  WorkflowTrigger,
-} from '@/workflow/types/Workflow';
+import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeSuccessConfiguration';
 import {
-  WorkflowDiagramRunStatus,
   WorkflowRunDiagram,
   WorkflowRunDiagramNode,
   WorkflowRunDiagramStepNodeData,
@@ -14,15 +9,16 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkflowRunStepInfos, StepStatus } from 'twenty-shared/workflow';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
-  stepsOutput,
+  stepInfos,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
-  stepsOutput: WorkflowRunOutputStepsOutput | undefined;
+  stepInfos: WorkflowRunStepInfos | undefined;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -43,50 +39,29 @@ export const generateWorkflowRunDiagram = ({
     generateWorkflowDiagram({ trigger, steps }),
   );
 
-  let skippedExecution = false;
-
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
     workflowDiagram.nodes.filter(isStepNode).map((node) => {
-      if (node.data.nodeType === 'trigger') {
+      const nodeId = node.id;
+
+      const stepInfo = stepInfos?.[nodeId];
+
+      if (!isDefined(stepInfo)) {
         return {
           ...node,
           data: {
             ...node.data,
-            runStatus: 'success',
+            runStatus: StepStatus.NOT_STARTED,
           },
         };
       }
 
-      const nodeId = node.id;
+      const nodeData = {
+        ...node.data,
+        runStatus: stepInfo.status,
+      };
 
-      const runResult = stepsOutput?.[nodeId];
-
-      const isPendingFormAction =
-        node.data.nodeType === 'action' &&
-        node.data.actionType === 'FORM' &&
-        isDefined(runResult?.pendingEvent) &&
-        runResult.pendingEvent;
-
-      let runStatus: WorkflowDiagramRunStatus = 'success';
-
-      if (skippedExecution) {
-        runStatus = 'not-executed';
-      } else if (!isDefined(runResult) || isPendingFormAction) {
-        runStatus = 'running';
-      } else if (isDefined(runResult.error)) {
-        runStatus = 'failure';
-      }
-
-      skippedExecution =
-        skippedExecution || runStatus === 'failure' || runStatus === 'running';
-
-      const nodeData = { ...node.data, runStatus };
-
-      if (isPendingFormAction) {
-        stepToOpenByDefault = {
-          id: nodeId,
-          data: nodeData,
-        };
+      if (!isDefined(stepToOpenByDefault) && stepInfo.status === 'PENDING') {
+        stepToOpenByDefault = { id: nodeId, data: nodeData };
       }
 
       return {
@@ -100,7 +75,17 @@ export const generateWorkflowRunDiagram = ({
       (node) => node.id === edge.source,
     );
 
-    if (isDefined(parentNode) && parentNode.data.runStatus === 'success') {
+    if (!isDefined(parentNode)) {
+      return edge;
+    }
+
+    const stepInfo = stepInfos?.[parentNode.id];
+
+    if (!isDefined(stepInfo)) {
+      return edge;
+    }
+
+    if (stepInfo.status === 'SUCCESS') {
       return {
         ...edge,
         ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
