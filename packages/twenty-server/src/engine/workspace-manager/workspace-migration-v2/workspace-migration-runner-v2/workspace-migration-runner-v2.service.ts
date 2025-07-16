@@ -7,7 +7,7 @@ import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-ma
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
 
 @Injectable()
-export class WorkspaceMigrationV2Runner {
+export class WorkspaceMigrationRunnerV2Service {
   constructor(
     private readonly workspaceMetadataMigrationRunner: WorkspaceMetadataMigrationRunnerService,
     private readonly workspaceSchemaMigrationRunner: WorkspaceSchemaMigrationRunnerService,
