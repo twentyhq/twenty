@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+
+import { DataSource } from 'typeorm';
+
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-runner-service';
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class WorkspaceMigrationV2Runner {
