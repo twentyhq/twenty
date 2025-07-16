@@ -60,7 +60,7 @@ export class WorkspaceInvitationService {
           value: workspacePersonalInviteToken,
           type: AppTokenType.InvitationToken,
         },
-        relations: ['workspace'],
+        relations: { workspace: true },
       });
 
       if (!appToken) {
@@ -118,7 +118,7 @@ export class WorkspaceInvitationService {
         value: invitationToken,
         type: AppTokenType.InvitationToken,
       },
-      relations: ['workspace'],
+      relations: { workspace: true },
     });
 
     if (!appToken) {

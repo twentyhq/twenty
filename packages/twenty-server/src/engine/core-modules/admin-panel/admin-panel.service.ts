@@ -46,7 +46,7 @@ export class AdminPanelService {
           },
         },
       },
-      relations: ['userWorkspaces', 'userWorkspaces.workspace'],
+      relations: { userWorkspaces: { workspace: true } },
     });
 
     userValidator.assertIsDefinedOrThrow(

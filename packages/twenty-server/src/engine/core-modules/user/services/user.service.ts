@@ -97,7 +97,7 @@ export class UserService extends TypeOrmQueryService<User> {
       where: {
         id: userId,
       },
-      relations: ['userWorkspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(user);
@@ -204,7 +204,7 @@ export class UserService extends TypeOrmQueryService<User> {
           workspaceId,
         },
       },
-      relations: ['userWorkspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(

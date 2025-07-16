@@ -114,12 +114,12 @@ describe('AdminPanelService', () => {
       expect.objectContaining({
         where: expect.objectContaining({
           id: 'user-id',
-          workspaces: {
+          userWorkspaces: {
             workspaceId: 'workspace-id',
             workspace: { allowImpersonation: true },
           },
         }),
-        relations: ['workspaces', 'workspaces.workspace'],
+        relations: { userWorkspaces: { workspace: true } },
       }),
     );
 
