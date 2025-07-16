@@ -2661,7 +2661,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
-  twoFactorAuthenticationMethodSummary?: Maybe<TwoFactorAuthenticatonDto>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticatonDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];

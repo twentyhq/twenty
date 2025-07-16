@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useTwoFactorAuthentication } from '../hooks/useTwoFactorAuthentication';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -31,11 +32,14 @@ export const DeleteTwoFactorAuthentication = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const navigate = useNavigateSettings();
 
+  const {
+    defaultTwoFactorAuthenticationMethod
+  } = useTwoFactorAuthentication()
+
   const reset2FA = async () => {
     if (
       !isDefined(
-        currentUserWorkspace?.twoFactorAuthenticationMethodSummary
-          ?.twoFactorAuthenticationMethodId,
+        defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId
       )
     ) {
       enqueueErrorSnackBar({
@@ -50,9 +54,7 @@ export const DeleteTwoFactorAuthentication = () => {
     await deleteTwoFactorAuthenticationMethod({
       variables: {
         origin,
-        twoFactorAuthenticationMethodId:
-          currentUserWorkspace?.twoFactorAuthenticationMethodSummary
-            ?.twoFactorAuthenticationMethodId,
+        twoFactorAuthenticationMethodId:  defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId
       },
     });
 

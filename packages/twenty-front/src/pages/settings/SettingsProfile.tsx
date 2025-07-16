@@ -17,18 +17,17 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useTwoFactorAuthentication';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
 
-  const isTwoFactorAuthenticationEnabled = useRecoilValue(
-    isTwoFactorAuthenticationEnabledState,
-  );
-
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const twoFactorAuthenticationStatus =
-    currentUserWorkspace?.twoFactorAuthenticationMethodSummary?.isActive;
+  const {
+    twoFactorAuthenticationStatus,
+    isTwoFactorAuthenticationEnabled,
+    workspaceTwoFactorAuthenticationPolicy,
+  } = useTwoFactorAuthentication()
 
   return (
     <SubMenuTopBarContainer
@@ -60,8 +59,8 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {!!currentWorkspace?.twoFactorAuthenticationPolicy &&
-          isTwoFactorAuthenticationEnabled === true && (
+        {isDefined(workspaceTwoFactorAuthenticationPolicy) &&
+          isTwoFactorAuthenticationEnabled && (
             <Section>
               <UndecoratedLink
                 to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}
