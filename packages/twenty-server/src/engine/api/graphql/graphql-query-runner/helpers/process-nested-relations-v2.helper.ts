@@ -322,7 +322,7 @@ export class ProcessNestedRelationsV2Helper {
           ids,
         })
         .groupBy(column)
-        .getRawMany(); // here
+        .getRawMany();
 
       relationAggregatedFieldsResult = aggregatedFieldsValues.reduce(
         (acc, item) => {
