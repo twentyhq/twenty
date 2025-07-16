@@ -8,8 +8,8 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 
-import { HOTPStrategyConfig } from './strategies/hotp.strategy';
-import { TOTPStrategyConfig } from './strategies/totp.strategy';
+import { HOTP_DEFAULT_CONFIGURATON } from './strategies/constants/hotp.stratey.constants';
+import { TOT_DEFAULT_CONFIGURATION } from './strategies/constants/totp.strategy.constants';
 
 export const twoFactorAuthenticationModuleFactory = (
   twentyConfigService: TwentyConfigService,
@@ -17,30 +17,19 @@ export const twoFactorAuthenticationModuleFactory = (
   const strategy = twentyConfigService.get(
     'TWO_FACTOR_AUTHENTICATION_STRATEGY',
   );
-  const hotpConfig: HOTPStrategyConfig = {
-    algorithm: twentyConfigService.get('OTP_HASH_ALGORITHM'),
-    digits: twentyConfigService.get('OTP_DIGITS'),
-    encodings: twentyConfigService.get('OTP_SECRET_ENCODING'),
-    window: twentyConfigService.get('OTP_WINDOW'),
-  };
 
   switch (strategy) {
     case TwoFactorAuthenticationStrategy.HOTP: {
       return {
         type: TwoFactorAuthenticationStrategy.HOTP,
-        config: hotpConfig,
+        config: HOTP_DEFAULT_CONFIGURATON,
       };
     }
 
     case TwoFactorAuthenticationStrategy.TOTP: {
-      const config: TOTPStrategyConfig = {
-        ...hotpConfig,
-        step: twentyConfigService.get('TOTP_STEP_SIZE'),
-      };
-
       return {
         type: TwoFactorAuthenticationStrategy.TOTP,
-        config,
+        config: TOT_DEFAULT_CONFIGURATION,
       };
     }
 

@@ -39,10 +39,6 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import {
-  OTPHashAlgorithms,
-  OTPKeyEncodings,
-} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 import { KeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wrapping/enums/key-wrapping-strategies.enum';
 
 export class ConfigVariables {
@@ -89,52 +85,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   TWO_FACTOR_AUTHENTICATION_STRATEGY = TwoFactorAuthenticationStrategy.TOTP;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description:
-      'Choose the hash algorithm used for generating OTP codes (e.g., SHA1, SHA256, SHA512).',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(OTPHashAlgorithms),
-  })
-  @IsOptional()
-  OTP_HASH_ALGORITHM = OTPHashAlgorithms.SHA1;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description:
-      'Specify the number of digits in the generated OTP code (commonly 6 or 8).',
-    type: ConfigVariableType.NUMBER,
-  })
-  @IsOptional()
-  OTP_DIGITS = 6;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'TOTP step size in seconds.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @IsOptional()
-  TOTP_STEP_SIZE = 30;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description:
-      'Set the allowed time window (in steps) for OTP verification to account for clock/counter drift.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @IsOptional()
-  OTP_WINDOW = 3;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description:
-      'Specify the encoding format used to store or transmit the OTP secret (e.g. hex).',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(OTPKeyEncodings),
-  })
-  @IsOptional()
-  OTP_SECRET_ENCODING = OTPKeyEncodings.HEX;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
