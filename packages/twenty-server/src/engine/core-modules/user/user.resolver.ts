@@ -391,10 +391,7 @@ export class UserResolver {
     nullable: false,
   })
   async workspaces(@Parent() user: User) {
-    return user.userWorkspaces.map((userWorkspace) => ({
-      ...userWorkspace,
-      workspace: userWorkspace.workspace,
-    }));
+    return user.userWorkspaces;
   }
 
   @ResolveField(() => AvailableWorkspaces)
