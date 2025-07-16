@@ -58,7 +58,7 @@ export class FieldMetadataMorphRelationService {
     const fieldsCreated: FieldMetadataEntity[] = [];
 
     for (const relationCreationPayload of morphRelationsCreationPayload) {
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
+      await this.fieldMetadataRelationService.validateRelationCreationPayloadOrThrow(
         {
           relationCreationPayload,
           objectMetadataMaps,

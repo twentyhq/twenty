@@ -53,21 +53,20 @@ export class FieldMetadataRelationService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  // Shouldn't this be within a transaction ?
   async createSourceAndTargetRelationFieldMetadata({
-    fieldMetadataInput,
+    fieldMetadataForCreate,
     fieldMetadataRepository,
-    targetFieldMetadataInput,
+    targetFieldMetadataForCreate,
   }: {
-    fieldMetadataInput: CreateFieldInput;
-    targetFieldMetadataInput: CreateFieldInput;
+    fieldMetadataForCreate: Partial<FieldMetadataEntity>;
+    targetFieldMetadataForCreate: Partial<FieldMetadataEntity>;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
     const createdFieldMetadataItem =
-      await fieldMetadataRepository.save(fieldMetadataInput);
+      await fieldMetadataRepository.save(fieldMetadataForCreate);
 
     const targetFieldMetadata = await fieldMetadataRepository.save({
-      ...targetFieldMetadataInput,
+      ...targetFieldMetadataForCreate,
       relationTargetFieldMetadataId: createdFieldMetadataItem.id,
     });
 
@@ -79,7 +78,7 @@ export class FieldMetadataRelationService {
     return [createdFieldMetadataItemUpdated, targetFieldMetadata];
   }
 
-  computeRelationTargetFieldMetadataInput({
+  computeRelationTargetFieldForCreate({
     fieldMetadataInput,
     targetObjectMetadata,
     sourceObjectMetadata,
@@ -126,7 +125,7 @@ export class FieldMetadataRelationService {
     };
   }
 
-  async validateFieldMetadataRelationCreationPayloadOrThrow({
+  async validateRelationCreationPayloadOrThrow({
     relationCreationPayload,
     objectMetadataMaps,
   }: {
