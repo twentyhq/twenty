@@ -250,12 +250,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       where: {
         email,
       },
-      relations: [
-        'userWorkspaces',
-        'userWorkspaces.workspace',
-        'userWorkspaces.workspace.workspaceSSOIdentityProviders',
-        'userWorkspaces.workspace.approvedAccessDomains',
-      ],
+      relations: {
+        userWorkspaces: {
+          workspace: {
+            workspaceSSOIdentityProviders: true,
+            approvedAccessDomains: true,
+          },
+        },
+      },
     });
 
     const alreadyMemberWorkspaces = user

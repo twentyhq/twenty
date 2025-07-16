@@ -645,12 +645,14 @@ describe('UserWorkspaceService', () => {
         where: {
           email,
         },
-        relations: [
-          'workspaces',
-          'workspaces.workspace',
-          'workspaces.workspace.workspaceSSOIdentityProviders',
-          'workspaces.workspace.approvedAccessDomains',
-        ],
+        relations: {
+          userWorkspaces: {
+            workspace: {
+              workspaceSSOIdentityProviders: true,
+              approvedAccessDomains: true,
+            },
+          },
+        },
       });
 
       expect(result).toEqual({
@@ -727,12 +729,14 @@ describe('UserWorkspaceService', () => {
         where: {
           email,
         },
-        relations: [
-          'workspaces',
-          'workspaces.workspace',
-          'workspaces.workspace.workspaceSSOIdentityProviders',
-          'workspaces.workspace.approvedAccessDomains',
-        ],
+        relations: {
+          userWorkspaces: {
+            workspace: {
+              workspaceSSOIdentityProviders: true,
+              approvedAccessDomains: true,
+            },
+          },
+        },
       });
 
       expect(result).toEqual({
@@ -792,7 +796,7 @@ describe('UserWorkspaceService', () => {
       } as unknown as Workspace;
       const user = {
         id: userId,
-        workspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
+        userWorkspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
       } as unknown as User;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
