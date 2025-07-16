@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
@@ -9,6 +9,8 @@ import { emailsSchema } from '@/object-record/record-field/types/guards/isFieldE
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
@@ -26,10 +28,11 @@ export const useEmailsField = () => {
     }),
   );
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldEmailsValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldEmailsValue>();
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const draftValue = useRecoilComponentValueV2(
+    recordFieldInputDraftValueComponentState,
+  );
 
   const persistField = usePersistField();
 

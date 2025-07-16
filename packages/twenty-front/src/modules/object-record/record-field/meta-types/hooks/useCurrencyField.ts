@@ -1,14 +1,16 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
@@ -54,10 +56,11 @@ export const useCurrencyField = () => {
     persistField(newCurrencyValue);
   };
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldCurrencyValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldCurrencyValue>();
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const draftValue = useRecoilComponentValueV2(
+    recordFieldInputDraftValueComponentState,
+  );
 
   const defaultValue = fieldDefinition.defaultValue;
 
