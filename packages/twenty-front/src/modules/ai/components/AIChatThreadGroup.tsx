@@ -29,7 +29,6 @@ const StyledThreadItem = styled.div<{ isSelected?: boolean }>`
   align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   border-left: 3px solid transparent;
