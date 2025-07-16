@@ -31,6 +31,7 @@ describe('addEdgeOptions', () => {
           source: 'trigger',
           target: 'action-1',
           data: {
+            edgeType: 'default',
             shouldDisplayEdgeOptions: true,
           },
         },
@@ -38,7 +39,9 @@ describe('addEdgeOptions', () => {
           id: 'edge-2',
           source: 'action-1',
           target: 'action-2',
-          data: {},
+          data: {
+            edgeType: 'default',
+          },
         },
       ],
     };
@@ -53,6 +56,7 @@ describe('addEdgeOptions', () => {
       source: 'trigger',
       target: 'action-1',
       data: {
+        edgeType: 'default',
         shouldDisplayEdgeOptions: true,
       },
     });
@@ -62,6 +66,7 @@ describe('addEdgeOptions', () => {
       source: 'action-1',
       target: 'action-2',
       data: {
+        edgeType: 'default',
         shouldDisplayEdgeOptions: true,
       },
     });
@@ -122,15 +127,6 @@ describe('addEdgeOptions', () => {
       ],
     };
 
-    const result = addEdgeOptions(diagram);
-
-    expect(result.edges[0]).toEqual({
-      id: 'edge-1',
-      source: 'trigger',
-      target: 'action-1',
-      data: {
-        shouldDisplayEdgeOptions: true,
-      },
-    });
+    expect(() => addEdgeOptions(diagram)).toThrow('Edge data must be defined');
   });
 });

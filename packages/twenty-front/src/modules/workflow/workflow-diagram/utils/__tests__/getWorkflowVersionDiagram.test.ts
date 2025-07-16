@@ -129,6 +129,9 @@ describe('getWorkflowVersionDiagram', () => {
 {
   "edges": [
     {
+      "data": {
+        "edgeType": "default",
+      },
       "deletable": false,
       "id": "8f3b2121-f194-4ba4-9fbf-0",
       "markerEnd": "workflow-edge-arrow-rounded",

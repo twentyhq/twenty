@@ -96,6 +96,9 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-0",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -106,6 +109,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-1",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -115,6 +121,9 @@ describe('generateWorkflowRunDiagram', () => {
         "target": "step2",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-2",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -277,6 +286,9 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-3",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -287,6 +299,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-4",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -297,6 +312,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-5",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -447,6 +465,9 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-6",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -457,6 +478,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-7",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -466,6 +490,9 @@ describe('generateWorkflowRunDiagram', () => {
         "target": "step2",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-8",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -639,6 +666,9 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-9",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -649,6 +679,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-10",
         "markerEnd": "workflow-edge-green-arrow-rounded",
@@ -659,6 +692,9 @@ describe('generateWorkflowRunDiagram', () => {
         "type": "success",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-11",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -668,6 +704,9 @@ describe('generateWorkflowRunDiagram', () => {
         "target": "step3",
       },
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-12",
         "markerEnd": "workflow-edge-arrow-rounded",
@@ -801,6 +840,9 @@ describe('generateWorkflowRunDiagram', () => {
   "diagram": {
     "edges": [
       {
+        "data": {
+          "edgeType": "default",
+        },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-13",
         "markerEnd": "workflow-edge-green-arrow-rounded",
