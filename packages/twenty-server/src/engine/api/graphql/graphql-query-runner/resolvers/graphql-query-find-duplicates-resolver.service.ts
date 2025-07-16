@@ -66,17 +66,8 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
-    const columnsToSelect = buildColumnsToSelect({
-      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
-      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-    });
-
     if (executionArgs.args.ids) {
       const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
-        .setFindOptions({
-          select: columnsToSelect,
-        })
         .where({ id: In(executionArgs.args.ids) })
         .getMany()) as ObjectRecord[];
 
@@ -112,6 +103,12 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           });
         }
 
+        const columnsToSelect = buildColumnsToSelect({
+          select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+          relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+          objectMetadataItemWithFieldMaps,
+        });
+
         const duplicateRecordsQueryBuilder =
           executionArgs.repository.createQueryBuilder(
             objectMetadataItemWithFieldMaps.nameSingular,
@@ -123,8 +120,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           duplicateConditions,
         );
 
-        const nonFormattedDuplicates =
-          (await duplicateRecordsQueryBuilder.getMany()) as ObjectRecord[];
+        const nonFormattedDuplicates = (await duplicateRecordsQueryBuilder
+          .setFindOptions({
+            select: columnsToSelect,
+          })
+          .getMany()) as ObjectRecord[];
 
         const duplicates = formatResult<ObjectRecord[]>(
           nonFormattedDuplicates,
