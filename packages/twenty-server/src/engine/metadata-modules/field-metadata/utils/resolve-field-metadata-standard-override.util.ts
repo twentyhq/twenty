@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-export const resolveOverridableString = (
+export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,
     'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
