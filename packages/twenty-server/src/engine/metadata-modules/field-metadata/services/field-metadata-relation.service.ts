@@ -127,23 +127,21 @@ export class FieldMetadataRelationService {
   }
 
   async validateFieldMetadataRelationCreationPayloadOrThrow({
-    fieldMetadataInput,
+    relationCreationPayload,
     objectMetadataMaps,
   }: {
-    fieldMetadataInput: CreateFieldInput;
+    relationCreationPayload: CreateFieldInput['relationCreationPayload'];
     objectMetadataMaps: ObjectMetadataMaps;
   }): Promise<
     Required<Pick<CreateFieldInput, 'relationCreationPayload'>> & {
       targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
     }
   > {
-    if (!isDefined(fieldMetadataInput.relationCreationPayload)) {
+    if (!isDefined(relationCreationPayload)) {
       throw new Error(
         'TODO, relation creation payload is required for creation',
       );
     }
-
-    const { relationCreationPayload } = fieldMetadataInput;
 
     await this.convertInputToClassValidatorRelationCreationPayloadInstance(
       relationCreationPayload,

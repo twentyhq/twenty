@@ -32,7 +32,7 @@ export class FieldMetadataMorphRelationService {
     fieldMetadataRepository,
     objectMetadataMaps,
   }: {
-    fieldMetadataForCreate: CreateFieldInput;
+    fieldMetadataForCreate: CreateFieldInput; // That's not accurate typing invalid
     morphRelationsCreationPayload: CreateFieldInput['morphRelationsCreationPayload'];
     objectMetadata: ObjectMetadataItemWithFieldMaps;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
@@ -57,25 +57,22 @@ export class FieldMetadataMorphRelationService {
 
     const fieldsCreated: FieldMetadataEntity[] = [];
 
-    for (const relation of morphRelationsCreationPayload) {
+    for (const relationCreationPayload of morphRelationsCreationPayload) {
+      await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
+        {
+          relationCreationPayload,
+          objectMetadataMaps,
+        },
+      );
+
       const sourceRelationSettings =
         this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
             fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: relation,
+            relationCreationPayload: relationCreationPayload,
             objectMetadata,
           },
         );
-
-      await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
-        {
-          fieldMetadataInput: {
-            ...fieldMetadataForCreate,
-            ...sourceRelationSettings,
-          },
-          objectMetadataMaps,
-        },
-      );
 
       // Why omitting id here exactly ?
       const createdFieldMetadataItem = await fieldMetadataRepository.save(
@@ -89,16 +86,16 @@ export class FieldMetadataMorphRelationService {
       );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
-        relation.targetFieldLabel,
+        relationCreationPayload.targetFieldLabel,
       );
 
       const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation(
         {
-          objectMetadataId: relation.targetObjectMetadataId,
+          objectMetadataId: relationCreationPayload.targetObjectMetadataId,
           type: FieldMetadataType.RELATION,
           name: targetFieldMetadataName,
-          label: relation.targetFieldLabel,
-          icon: relation.targetFieldIcon,
+          label: relationCreationPayload.targetFieldLabel,
+          icon: relationCreationPayload.targetFieldIcon,
           workspaceId: fieldMetadataForCreate.workspaceId,
           settings: fieldMetadataForCreate.settings,
         },
@@ -113,7 +110,7 @@ export class FieldMetadataMorphRelationService {
               targetFieldLabel: fieldMetadataForCreate.label,
               targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
               type:
-                relation.type === RelationType.ONE_TO_MANY
+                relationCreationPayload.type === RelationType.ONE_TO_MANY
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },

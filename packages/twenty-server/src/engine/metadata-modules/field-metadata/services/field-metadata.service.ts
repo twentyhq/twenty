@@ -662,7 +662,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const { relationCreationPayload, targetObjectMetadata } =
         await this.fieldMetadataRelationService.validateFieldMetadataRelationCreationPayloadOrThrow(
           {
-            fieldMetadataInput: fieldMetadataForCreate,
+            relationCreationPayload: fieldMetadataInput.relationCreationPayload,
             objectMetadataMaps,
           },
         );
@@ -670,12 +670,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const relationSettings =
         this.fieldMetadataRelationService.computeRelationSettingsIconAndRelationTargetObjectMetadataId(
           {
-            fieldMetadataInput: fieldMetadataForCreate,
+            fieldMetadataInput,
             relationCreationPayload,
             objectMetadata,
           },
         );
-      const fieldMetadataInputWithRelationSettings = {
+      const fieldMetadataForCreateWithRelationSettings = {
         ...fieldMetadataForCreate,
         ...relationSettings,
       };
@@ -693,7 +693,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return await this.fieldMetadataRelationService.createSourceAndTargetRelationFieldMetadata(
         {
           targetFieldMetadataInput,
-          fieldMetadataInput: fieldMetadataInputWithRelationSettings,
+          fieldMetadataInput: fieldMetadataForCreateWithRelationSettings,
           fieldMetadataRepository,
         },
       );
