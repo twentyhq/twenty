@@ -803,9 +803,9 @@ describe('UserWorkspaceService', () => {
         where: {
           id: userId,
         },
-        relations: ['workspaces', 'workspaces.workspace'],
+        relations: { userWorkspaces: { workspace: true } },
         order: {
-          workspaces: {
+          userWorkspaces: {
             workspace: {
               createdAt: 'ASC',
             },

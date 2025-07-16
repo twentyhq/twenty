@@ -222,7 +222,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       where: {
         id: userId,
       },
-      relations: ['userWorkspaces', 'userWorkspaces.workspace'],
+      relations: { userWorkspaces: { workspace: true } },
       order: {
         userWorkspaces: {
           workspace: {

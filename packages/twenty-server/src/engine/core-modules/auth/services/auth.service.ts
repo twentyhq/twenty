@@ -141,7 +141,7 @@ export class AuthService {
       where: {
         email: input.email,
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     if (!user) {
@@ -433,7 +433,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['userWorkspaces'],
+      relations: { userWorkspaces: true },
     });
 
     if (!user) {

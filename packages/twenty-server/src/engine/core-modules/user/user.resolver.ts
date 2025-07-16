@@ -121,7 +121,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['userWorkspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -385,6 +385,16 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ) {
     return workspace;
+  }
+
+  @ResolveField(() => [UserWorkspace], {
+    nullable: false,
+  })
+  async workspaces(@Parent() user: User) {
+    return user.userWorkspaces.map((userWorkspace) => ({
+      ...userWorkspace,
+      workspace: userWorkspace.workspace,
+    }));
   }
 
   @ResolveField(() => AvailableWorkspaces)
