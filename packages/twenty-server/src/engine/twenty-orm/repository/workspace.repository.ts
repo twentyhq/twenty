@@ -22,6 +22,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -41,6 +42,7 @@ export class WorkspaceRepository<
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   private objectRecordsPermissions?: ObjectRecordsPermissions;
+  private authContext?: AuthContext;
   declare manager: WorkspaceEntityManager;
 
   constructor(
@@ -51,6 +53,7 @@ export class WorkspaceRepository<
     queryRunner?: QueryRunner,
     objectRecordsPermissions?: ObjectRecordsPermissions,
     shouldBypassPermissionChecks = false,
+    authContext?: AuthContext,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;
@@ -58,6 +61,7 @@ export class WorkspaceRepository<
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
     this.manager = manager;
+    this.authContext = authContext;
   }
 
   override createQueryBuilder<U extends T>(
@@ -78,6 +82,7 @@ export class WorkspaceRepository<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 

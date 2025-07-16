@@ -4,6 +4,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,16 +28,19 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectRecordsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
+  authContext?: AuthContext;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
+    authContext?: AuthContext,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
+    this.authContext = authContext;
   }
 
   override clone(): this {
@@ -47,6 +51,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     ) as this;
   }
 
@@ -135,6 +140,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -165,6 +171,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -176,6 +183,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -187,6 +195,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 
@@ -198,6 +207,7 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     );
   }
 

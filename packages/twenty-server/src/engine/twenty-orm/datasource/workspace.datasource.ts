@@ -15,6 +15,7 @@ import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactor
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -58,20 +59,29 @@ export class WorkspaceDataSource extends DataSource {
     target: EntityTarget<Entity>,
     shouldBypassPermissionChecks = false,
     roleId?: string,
+    authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     if (shouldBypassPermissionChecks === true) {
-      return this.manager.getRepository(target, {
-        shouldBypassPermissionChecks: true,
-      });
+      return this.manager.getRepository(
+        target,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+        authContext,
+      );
     }
 
     if (roleId) {
-      return this.manager.getRepository(target, {
-        roleId,
-      });
+      return this.manager.getRepository(
+        target,
+        {
+          roleId,
+        },
+        authContext,
+      );
     }
 
-    return this.manager.getRepository(target);
+    return this.manager.getRepository(target, undefined, authContext);
   }
 
   override createEntityManager(

@@ -34,6 +34,7 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -87,21 +88,9 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
     },
+    authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
-
-    const repositoryKey = this.getRepositoryKey({
-      target,
-      dataSource,
-      roleId: permissionOptions?.roleId,
-      shouldBypassPermissionChecks:
-        permissionOptions?.shouldBypassPermissionChecks ?? false,
-    });
-    const repoFromMap = this.repositories.get(repositoryKey);
-
-    if (repoFromMap) {
-      return repoFromMap as WorkspaceRepository<Entity>;
-    }
 
     let objectPermissions = {};
 
@@ -130,9 +119,8 @@ export class WorkspaceEntityManager extends EntityManager {
       this.queryRunner,
       objectPermissions,
       permissionOptions?.shouldBypassPermissionChecks,
+      authContext,
     );
-
-    this.repositories.set(repositoryKey, newRepository);
 
     return newRepository;
   }
@@ -360,32 +348,6 @@ export class WorkspaceEntityManager extends EntityManager {
       .set(values)
       .where(criteria)
       .execute();
-  }
-
-  private getRepositoryKey({
-    target,
-    dataSource,
-    roleId,
-    shouldBypassPermissionChecks,
-  }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: EntityTarget<unknown>;
-    dataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
-    roleId?: string;
-  }) {
-    const repositoryPrefix = dataSource.getMetadata(target).name;
-    const roleIdSuffix = roleId ? `_${roleId}` : '';
-    const rolesPermissionsVersionSuffix = dataSource.rolesPermissionsVersion
-      ? `_${dataSource.rolesPermissionsVersion}`
-      : '';
-    const featureFlagMapVersionSuffix = dataSource.featureFlagMapVersion
-      ? `_${dataSource.featureFlagMapVersion}`
-      : '';
-
-    return shouldBypassPermissionChecks
-      ? `${repositoryPrefix}_bypass${featureFlagMapVersionSuffix}`
-      : `${repositoryPrefix}${roleIdSuffix}${rolesPermissionsVersionSuffix}${featureFlagMapVersionSuffix}`;
   }
 
   validatePermissions<Entity extends ObjectLiteral>(
@@ -1120,7 +1082,7 @@ export class WorkspaceEntityManager extends EntityManager {
       if (isUpdate) {
         await this.internalContext.eventEmitterService.emitMutationEvent({
           action: DatabaseEventAction.UPDATED,
-          objectMetadata: getObjectMetadataFromEntityTarget(
+          objectMetadataItem: getObjectMetadataFromEntityTarget(
             entityTarget,
             this.internalContext,
           ),
@@ -1131,7 +1093,7 @@ export class WorkspaceEntityManager extends EntityManager {
       } else {
         await this.internalContext.eventEmitterService.emitMutationEvent({
           action: DatabaseEventAction.CREATED,
-          objectMetadata: getObjectMetadataFromEntityTarget(
+          objectMetadataItem: getObjectMetadataFromEntityTarget(
             entityTarget,
             this.internalContext,
           ),
@@ -1226,7 +1188,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     await this.internalContext.eventEmitterService.emitMutationEvent({
       action: DatabaseEventAction.DESTROYED,
-      objectMetadata: getObjectMetadataFromEntityTarget(
+      objectMetadataItem: getObjectMetadataFromEntityTarget(
         entityTarget,
         this.internalContext,
       ),
@@ -1328,7 +1290,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     await this.internalContext.eventEmitterService.emitMutationEvent({
       action: DatabaseEventAction.DELETED,
-      objectMetadata: getObjectMetadataFromEntityTarget(
+      objectMetadataItem: getObjectMetadataFromEntityTarget(
         entityTarget,
         this.internalContext,
       ),
@@ -1426,7 +1388,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     await this.internalContext.eventEmitterService.emitMutationEvent({
       action: DatabaseEventAction.RESTORED,
-      objectMetadata: getObjectMetadataFromEntityTarget(
+      objectMetadataItem: getObjectMetadataFromEntityTarget(
         entityTarget,
         this.internalContext,
       ),

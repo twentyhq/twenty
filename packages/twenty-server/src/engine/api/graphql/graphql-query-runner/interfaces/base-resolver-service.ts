@@ -125,6 +125,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
         shouldBypassPermissionChecks,
         roleId,
+        authContext,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(

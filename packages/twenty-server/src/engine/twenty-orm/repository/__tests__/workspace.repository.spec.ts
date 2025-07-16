@@ -239,7 +239,7 @@ describe('WorkspaceRepository', () => {
 
     it('should delegate to workspaceEntityManager delete', async () => {
       const criteria: FindOptionsWhere<ObjectLiteral> = { id: 'test-id' };
-      const expectedResult = { affected: 1, raw: [] };
+      const expectedResult = { affected: 1, raw: [], generatedMaps: [] };
 
       mockEntityManager.delete.mockResolvedValue(expectedResult);
 

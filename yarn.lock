@@ -57722,7 +57722,7 @@ __metadata:
 
 "typeorm@patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 0.3.20
-  resolution: "typeorm@patch:typeorm@npm%3A0.3.20#./patches/typeorm+0.3.20.patch::version=0.3.20&hash=284d6c&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "typeorm@patch:typeorm@npm%3A0.3.20#./patches/typeorm+0.3.20.patch::version=0.3.20&hash=e61204&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   dependencies:
     "@sqltools/formatter": "npm:^1.2.5"
     app-root-path: "npm:^3.1.0"
@@ -57796,7 +57796,7 @@ __metadata:
     typeorm: cli.js
     typeorm-ts-node-commonjs: cli-ts-node-commonjs.js
     typeorm-ts-node-esm: cli-ts-node-esm.js
-  checksum: 10c0/85896834e2e1fbdbab70974caebd47f03efca942d8fe9c337650c1d308a43cd43cae0ba96da62058c1e593f278f60d9b82bfb3129c9b119b8f4861a84e2fd7d5
+  checksum: 10c0/2593c3ddf6b243c6be13e3d9deebad1e9ecfcbdda8bb518b7fb633077e2e20b99c1873cdc0848df8ba44c9bfb22ecfe345937aa82702a9c857ecd73b32de8373
   languageName: node
   linkType: hard
 

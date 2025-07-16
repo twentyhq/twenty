@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import deepEqual from 'deep-equal';
 import { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
+import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 
@@ -27,19 +29,21 @@ export class WorkspaceEventEmitter {
 
   async emitMutationEvent<T extends ObjectLiteral>({
     action,
-    objectMetadata,
+    objectMetadataItem,
     workspaceId,
+    authContext,
     entities,
     beforeEntities,
   }: {
     action: DatabaseEventAction;
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps;
     workspaceId: string;
+    authContext?: AuthContext;
     entities: T | T[];
     beforeEntities?: T | T[];
   }) {
-    const objectMetadataNameSingular = objectMetadata.nameSingular;
-    const fields = Object.values(objectMetadata.fieldsById ?? {});
+    const objectMetadataNameSingular = objectMetadataItem.nameSingular;
+    const fields = Object.values(objectMetadataItem.fieldsById ?? {});
     const entityArray = Array.isArray(entities) ? entities : [entities];
     let events: (
       | ObjectRecordCreateEvent<T>
@@ -52,8 +56,9 @@ export class WorkspaceEventEmitter {
         events = entityArray.map((after) => {
           const event = new ObjectRecordCreateEvent<T>();
 
+          event.userId = authContext?.user?.id;
           event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadata, fields };
+          event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { after };
 
           return event;
@@ -61,20 +66,33 @@ export class WorkspaceEventEmitter {
         break;
       case DatabaseEventAction.UPDATED:
         events = entityArray.map((after, idx) => {
+          if (!beforeEntities) {
+            throw new Error('beforeEntities is required for UPDATED action');
+          }
+
           const before = Array.isArray(beforeEntities)
             ? beforeEntities?.[idx]
             : beforeEntities;
 
+          const diff = objectRecordChangedValues(
+            before,
+            after,
+            objectMetadataItem,
+          ) as Partial<ObjectRecordDiff<T>>;
+
+          const updatedFields = Object.keys(diff);
+
           const event = new ObjectRecordUpdateEvent<T>();
 
-          const updatedFields = this.getUpdatedFields<T>(
-            before ?? after,
-            after,
-          );
-
+          event.userId = authContext?.user?.id;
           event.recordId = after.id;
-          event.objectMetadata = { ...objectMetadata, fields };
-          event.properties = { before: before ?? after, after, updatedFields };
+          event.objectMetadata = { ...objectMetadataItem, fields };
+          event.properties = {
+            before,
+            after,
+            updatedFields,
+            diff,
+          };
 
           return event;
         });
@@ -83,8 +101,9 @@ export class WorkspaceEventEmitter {
         events = entityArray.map((before) => {
           const event = new ObjectRecordDeleteEvent<T>();
 
+          event.userId = authContext?.user?.id;
           event.recordId = before.id;
-          event.objectMetadata = { ...objectMetadata, fields };
+          event.objectMetadata = { ...objectMetadataItem, fields };
           event.properties = { before };
 
           return event;
@@ -106,47 +125,6 @@ export class WorkspaceEventEmitter {
       events,
     });
   }
-
-  private getUpdatedFields = <T extends ObjectLiteral>(
-    before: T,
-    after: T,
-  ): string[] => {
-    const updatedFields: string[] = [];
-
-    if (!before || !after) {
-      return updatedFields;
-    }
-
-    const keys = Array.from(
-      new Set([...Object.keys(before), ...Object.keys(after)]),
-    ) as (keyof T)[];
-
-    for (const key of keys) {
-      const beforeValue = before[key];
-      const afterValue = after[key];
-
-      if (
-        typeof beforeValue === 'object' &&
-        beforeValue !== null &&
-        typeof afterValue === 'object' &&
-        afterValue !== null
-      ) {
-        if (!deepEqual(beforeValue, afterValue)) {
-          updatedFields.push(key as string);
-        }
-      } else {
-        if (beforeValue !== afterValue) {
-          updatedFields.push(key as string);
-        }
-      }
-    }
-
-    const filteredUpdatedFields = updatedFields.filter(
-      (field) => field !== 'updatedAt' && field !== 'searchVector',
-    );
-
-    return filteredUpdatedFields;
-  };
 
   public emitDatabaseBatchEvent<T, A extends keyof ActionEventMap<T>>({
     objectMetadataNameSingular,

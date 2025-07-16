@@ -11,6 +11,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -28,16 +29,19 @@ export class WorkspaceDeleteQueryBuilder<
   private objectRecordsPermissions: ObjectRecordsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
+  private authContext?: AuthContext;
   constructor(
     queryBuilder: DeleteQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
+    authContext?: AuthContext,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.internalContext = internalContext;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
+    this.authContext = authContext;
   }
 
   override clone(): this {
@@ -48,6 +52,7 @@ export class WorkspaceDeleteQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+      this.authContext,
     ) as this;
   }
 
@@ -76,16 +81,17 @@ export class WorkspaceDeleteQueryBuilder<
 
     await this.internalContext.eventEmitterService.emitMutationEvent({
       action: DatabaseEventAction.DESTROYED,
-      objectMetadata,
+      objectMetadataItem: objectMetadata,
       workspaceId: this.internalContext.workspaceId,
       entities: formattedResult,
+      authContext: this.authContext,
     });
 
     return {
       raw: result.raw,
       generatedMaps: formattedResult,
       affected: result.affected,
-    } as unknown as DeleteResult;
+    };
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
