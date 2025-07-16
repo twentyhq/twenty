@@ -108,7 +108,7 @@ export const WorkflowEditActionAiAgent = ({
         componentInstanceId={WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}
       />
       {activeTabId === WorkflowAiAgentTabId.CHAT ? (
-        <AIChatTab agentId={agentId} />
+        <AIChatTab agentId={agentId} isWorkflowAgentNodeChat />
       ) : (
         <>
           <WorkflowStepHeader

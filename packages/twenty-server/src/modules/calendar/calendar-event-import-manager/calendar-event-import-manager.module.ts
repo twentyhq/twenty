@@ -16,6 +16,7 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
 import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
+import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
 import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
 import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/microsoft-calendar-driver.module';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
@@ -43,6 +44,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
     GoogleCalendarDriverModule,
+    CalDavDriverModule,
     MicrosoftCalendarDriverModule,
     BillingModule,
     RefreshTokensManagerModule,

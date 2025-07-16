@@ -18,10 +18,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     const workspaceMetadataVersion =
       serverContext.req.workspaceMetadataVersion ?? '0';
     const operationName = getOperationName(serverContext);
-    const locale =
-      serverContext.req.userWorkspace?.locale ??
-      serverContext.req.headers['x-locale'] ??
-      '';
+    const locale = serverContext.req.locale;
     const localeCacheKey = isNonEmptyString(locale) ? `:${locale}` : '';
     const queryHash = createHash('sha256')
       .update(serverContext.req.body.query)

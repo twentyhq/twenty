@@ -14,6 +14,9 @@ export class ConnectionParameters {
   @Field(() => Number)
   port: number;
 
+  @Field(() => String, { nullable: true })
+  username?: string;
+
   /**
    * Note: This field is stored in plain text in the database.
    * While encrypting it could provide an extra layer of defense, we have decided not to,
@@ -26,6 +29,18 @@ export class ConnectionParameters {
   secure?: boolean;
 }
 
+@InputType()
+export class EmailAccountConnectionParameters {
+  @Field(() => ConnectionParameters, { nullable: true })
+  IMAP?: ConnectionParameters;
+
+  @Field(() => ConnectionParameters, { nullable: true })
+  SMTP?: ConnectionParameters;
+
+  @Field(() => ConnectionParameters, { nullable: true })
+  CALDAV?: ConnectionParameters;
+}
+
 @ObjectType()
 export class ConnectionParametersOutput {
   @Field(() => String)
@@ -33,6 +48,9 @@ export class ConnectionParametersOutput {
 
   @Field(() => Number)
   port: number;
+
+  @Field(() => String, { nullable: true })
+  username?: string;
 
   @Field(() => String)
   password: string;

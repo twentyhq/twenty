@@ -14,6 +14,8 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 
+import { AgentTitleGenerationService } from './agent-title-generation.service';
+
 @Injectable()
 export class AgentChatService {
   constructor(
@@ -23,6 +25,7 @@ export class AgentChatService {
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
+    private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
   async createThread(agentId: string, userWorkspaceId: string) {
@@ -42,6 +45,24 @@ export class AgentChatService {
       },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async getThreadById(threadId: string, userWorkspaceId: string) {
+    const thread = await this.threadRepository.findOne({
+      where: {
+        id: threadId,
+        userWorkspaceId,
+      },
+    });
+
+    if (!thread) {
+      throw new AgentException(
+        'Thread not found',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return thread;
   }
 
   async addMessage({
@@ -71,6 +92,8 @@ export class AgentChatService {
       }
     }
 
+    this.generateTitleIfNeeded(threadId, content);
+
     return savedMessage;
   }
 
@@ -94,5 +117,24 @@ export class AgentChatService {
       order: { createdAt: 'ASC' },
       relations: ['files'],
     });
+  }
+
+  private async generateTitleIfNeeded(
+    threadId: string,
+    messageContent: string,
+  ) {
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId },
+      select: ['id', 'title'],
+    });
+
+    if (!thread || thread.title) {
+      return;
+    }
+
+    const title =
+      await this.titleGenerationService.generateThreadTitle(messageContent);
+
+    await this.threadRepository.update(threadId, { title });
   }
 }

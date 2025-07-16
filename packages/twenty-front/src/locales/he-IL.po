@@ -815,6 +815,7 @@ msgstr "עולה"
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Ask AI"
 msgstr ""
 
@@ -1004,8 +1005,8 @@ msgstr ""
 
 #. js-lingui-id: Lw3Ou8
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Encryption"
-msgstr ""
+#~ msgid "CalDAV Encryption"
+#~ msgstr ""
 
 #. js-lingui-id: 4dwQbl
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -1014,12 +1015,17 @@ msgstr ""
 
 #. js-lingui-id: 5wnjvr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Port"
-msgstr ""
+#~ msgid "CalDAV Port"
+#~ msgstr ""
 
 #. js-lingui-id: JUGLyW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "CalDAV Server"
+msgstr ""
+
+#. js-lingui-id: kGKOiW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Username"
 msgstr ""
 
 #. js-lingui-id: +x0fpb
@@ -3539,6 +3545,11 @@ msgstr "איטלקית"
 msgid "Japanese"
 msgstr "יפנית"
 
+#. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "john.doe"
+msgstr ""
+
 #. js-lingui-id: wrLOeW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe@example.com"
@@ -4755,6 +4766,11 @@ msgstr ""
 msgid "Preview"
 msgstr "תצוגה מקדימה"
 
+#. js-lingui-id: 2WAUd8
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Previous AI Chats"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5084,6 +5100,8 @@ msgstr "סכימה"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
@@ -6218,6 +6236,11 @@ msgstr "שגיאה לא ידועה"
 msgid "Unlimited contacts"
 msgstr "אין מגבלה על מספר אנשי הקשר"
 
+#. js-lingui-id: wja8aL
+#: src/modules/ai/components/AIChatThreadGroup.tsx
+msgid "Untitled"
+msgstr ""
+
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
@@ -6430,6 +6453,13 @@ msgstr "צפייה בפרטי החשבונית"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 #~ msgid "View execution details"
 #~ msgstr "הצג פרטי ביצוע"
+
+#. js-lingui-id: ecVcAx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "View Previous AI Chats"
+msgstr ""
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
