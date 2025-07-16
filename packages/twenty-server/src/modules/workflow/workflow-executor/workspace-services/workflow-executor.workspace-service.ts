@@ -20,7 +20,7 @@ import {
   WorkflowBranchExecutorInput,
   WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
+import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_RETRIES_ON_FAILURE = 3;

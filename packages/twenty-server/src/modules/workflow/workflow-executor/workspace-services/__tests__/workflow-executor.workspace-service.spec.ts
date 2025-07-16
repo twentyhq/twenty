@@ -15,13 +15,13 @@ import {
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.utils';
+import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 
 jest.mock(
-  'src/modules/workflow/workflow-executor/utils/can-execute-step.utils',
+  'src/modules/workflow/workflow-executor/utils/can-execute-step.util',
   () => {
     const actual = jest.requireActual(
-      'src/modules/workflow/workflow-executor/utils/can-execute-step.utils',
+      'src/modules/workflow/workflow-executor/utils/can-execute-step.util',
     );
 
     return {
