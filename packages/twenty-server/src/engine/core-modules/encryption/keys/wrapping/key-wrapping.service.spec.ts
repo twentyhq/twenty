@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { randomBytes } from 'crypto';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { IKeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wrapping/strategies/interface/key-wrapping-strategy.interface';
+import { KeyWrappingStrategyInterface } from 'src/engine/core-modules/encryption/keys/wrapping/strategies/interface/key-wrapping-strategy.interface';
 import { KEY_WRAPPING_STRATEGY } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.constants';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
@@ -13,7 +13,7 @@ const mockJwtWrapperService = {
   generateAppSecret: jest.fn(),
 };
 
-const mockWrappingStrategy: IKeyWrappingStrategy = {
+const mockWrappingStrategy: KeyWrappingStrategyInterface = {
   wrap: jest.fn(),
   unwrap: jest.fn(),
 };

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { createDecipheriv, Decipher, createCipheriv, Cipher } from 'crypto';
 
-import { IKeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wrapping/strategies/interface/key-wrapping-strategy.interface';
+import { KeyWrappingStrategyInterface } from 'src/engine/core-modules/encryption/keys/wrapping/strategies/interface/key-wrapping-strategy.interface';
 import {
   EncryptionException,
   EncryptionExceptionCode,
@@ -11,7 +11,7 @@ import { KeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wra
 import { kekValidator } from 'src/engine/core-modules/encryption/keys/validates/key.validate';
 
 @Injectable()
-export class Aes256KeyWrapStrategy implements IKeyWrappingStrategy {
+export class Aes256KeyWrapStrategy implements KeyWrappingStrategyInterface {
   private readonly KEK_LENGTH = 32;
   private readonly DEFAULT_IV = Buffer.from('A6A6A6A6A6A6A6A6', 'hex');
   readonly name = KeyWrappingStrategy.AES_256_KEY_WRAP;

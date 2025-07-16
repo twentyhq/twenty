@@ -6,7 +6,7 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KEY_WRAPPING_STRATEGY } from './key-wrapping.constants';
 import { KeyWrappingService } from './key-wrapping.service';
 
-import { IKeyWrappingStrategy } from './strategies/interface/key-wrapping-strategy.interface';
+import { KeyWrappingStrategyInterface } from './strategies/interface/key-wrapping-strategy.interface';
 import { KeyWrappingStrategy } from './enums/key-wrapping-strategies.enum';
 import { Aes256KeyWrapStrategy } from './strategies/aes-key-wrap.strategy';
 import { KeyWrappingModuleAsyncOptions } from './interface/key-wrapping.interface';
@@ -19,7 +19,7 @@ export class KeyWrappingModule {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
-        let strategy: IKeyWrappingStrategy;
+        let strategy: KeyWrappingStrategyInterface;
 
         switch (config.type) {
           case KeyWrappingStrategy.AES_256_KEY_WRAP:
