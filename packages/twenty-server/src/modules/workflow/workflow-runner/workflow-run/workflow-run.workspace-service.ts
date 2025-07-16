@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
@@ -28,9 +29,8 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { StepStatus } from 'src/modules/workflow/workflow-executor/types/workflow-run-step-info.type';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -43,7 +43,6 @@ export class WorkflowRunWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
-    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async createWorkflowRun({
@@ -141,18 +140,8 @@ export class WorkflowRunWorkspaceService {
     return workflowRun.id;
   }
 
-  async startWorkflowRun(params: {
-    workflowRunId: string;
-    workspaceId: string;
-    payload: object;
-  }) {
-    await this.cacheLockService.withLock(
-      async () => await this.startWorkflowRunWithoutLock(params),
-      params.workflowRunId,
-    );
-  }
-
-  private async startWorkflowRunWithoutLock({
+  @WithLock('workflowRunId')
+  async startWorkflowRun({
     workflowRunId,
     workspaceId,
     payload,
@@ -207,19 +196,8 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  async endWorkflowRun(params: {
-    workflowRunId: string;
-    workspaceId: string;
-    status: WorkflowRunStatus;
-    error?: string;
-  }) {
-    await this.cacheLockService.withLock(
-      async () => await this.endWorkflowRunWithoutLock(params),
-      params.workflowRunId,
-    );
-  }
-
-  private async endWorkflowRunWithoutLock({
+  @WithLock('workflowRunId')
+  async endWorkflowRun({
     workflowRunId,
     workspaceId,
     status,
@@ -259,19 +237,8 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async updateWorkflowRunStepStatus(params: {
-    workflowRunId: string;
-    stepId: string;
-    workspaceId: string;
-    stepStatus: StepStatus;
-  }) {
-    await this.cacheLockService.withLock(
-      async () => await this.updateWorkflowRunStepStatusWithoutLock(params),
-      params.workflowRunId,
-    );
-  }
-
-  private async updateWorkflowRunStepStatusWithoutLock({
+  @WithLock('workflowRunId')
+  async updateWorkflowRunStepStatus({
     workflowRunId,
     workspaceId,
     stepId,
@@ -303,19 +270,8 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  async saveWorkflowRunState(params: {
-    workflowRunId: string;
-    stepOutput: StepOutput;
-    workspaceId: string;
-    stepStatus: StepStatus;
-  }) {
-    await this.cacheLockService.withLock(
-      async () => await this.saveWorkflowRunStateWithoutLock(params),
-      params.workflowRunId,
-    );
-  }
-
-  private async saveWorkflowRunStateWithoutLock({
+  @WithLock('workflowRunId')
+  async saveWorkflowRunState({
     workflowRunId,
     stepOutput,
     workspaceId,
@@ -367,18 +323,8 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  async updateWorkflowRunStep(params: {
-    workflowRunId: string;
-    step: WorkflowAction;
-    workspaceId: string;
-  }) {
-    await this.cacheLockService.withLock(
-      async () => await this.updateWorkflowRunStepWithoutLock(params),
-      params.workflowRunId,
-    );
-  }
-
-  private async updateWorkflowRunStepWithoutLock({
+  @WithLock('workflowRunId')
+  async updateWorkflowRunStep({
     workflowRunId,
     step,
     workspaceId,

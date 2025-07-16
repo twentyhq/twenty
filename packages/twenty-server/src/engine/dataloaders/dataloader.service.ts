@@ -12,7 +12,7 @@ import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { resolveOverridableString } from 'src/engine/metadata-modules/field-metadata/utils/resolve-overridable-string.util';
+import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -177,7 +177,7 @@ export class DataloaderService {
               >(
                 (acc, field) => ({
                   ...acc,
-                  [field]: resolveOverridableString(
+                  [field]: resolveFieldMetadataStandardOverride(
                     fieldMetadata,
                     field,
                     dataLoaderParams[0].locale,

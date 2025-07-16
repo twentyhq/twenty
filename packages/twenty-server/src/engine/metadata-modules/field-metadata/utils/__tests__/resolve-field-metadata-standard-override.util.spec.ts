@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { resolveOverridableString } from 'src/engine/metadata-modules/field-metadata/utils/resolve-overridable-string.util';
+import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 
 jest.mock('@lingui/core');
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
@@ -12,7 +12,7 @@ const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
 >;
 
-describe('resolveOverridableString', () => {
+describe('resolveFieldMetadataStandardOverride', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -27,7 +27,11 @@ describe('resolveOverridableString', () => {
         standardOverrides: undefined,
       };
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(result).toBe('Custom Label');
     });
@@ -41,7 +45,7 @@ describe('resolveOverridableString', () => {
         standardOverrides: undefined,
       };
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'description',
         undefined,
@@ -59,7 +63,7 @@ describe('resolveOverridableString', () => {
         standardOverrides: undefined,
       };
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'icon',
         SOURCE_LOCALE,
@@ -81,7 +85,11 @@ describe('resolveOverridableString', () => {
         },
       };
 
-      const result = resolveOverridableString(fieldMetadata, 'icon', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'icon',
+        'fr-FR',
+      );
 
       expect(result).toBe('override-icon');
     });
@@ -104,11 +112,15 @@ describe('resolveOverridableString', () => {
         },
       };
 
-      expect(resolveOverridableString(fieldMetadata, 'label', 'fr-FR')).toBe(
-        'Libellé traduit',
-      );
       expect(
-        resolveOverridableString(fieldMetadata, 'description', 'fr-FR'),
+        resolveFieldMetadataStandardOverride(fieldMetadata, 'label', 'fr-FR'),
+      ).toBe('Libellé traduit');
+      expect(
+        resolveFieldMetadataStandardOverride(
+          fieldMetadata,
+          'description',
+          'fr-FR',
+        ),
       ).toBe('Description traduite');
     });
 
@@ -130,7 +142,11 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(result).toBe('Standard Label');
     });
@@ -153,7 +169,7 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'description',
         'fr-FR',
@@ -180,7 +196,7 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
         undefined,
@@ -205,13 +221,25 @@ describe('resolveOverridableString', () => {
       };
 
       expect(
-        resolveOverridableString(fieldMetadata, 'label', SOURCE_LOCALE),
+        resolveFieldMetadataStandardOverride(
+          fieldMetadata,
+          'label',
+          SOURCE_LOCALE,
+        ),
       ).toBe('Overridden Label');
       expect(
-        resolveOverridableString(fieldMetadata, 'description', SOURCE_LOCALE),
+        resolveFieldMetadataStandardOverride(
+          fieldMetadata,
+          'description',
+          SOURCE_LOCALE,
+        ),
       ).toBe('Overridden Description');
       expect(
-        resolveOverridableString(fieldMetadata, 'icon', SOURCE_LOCALE),
+        resolveFieldMetadataStandardOverride(
+          fieldMetadata,
+          'icon',
+          SOURCE_LOCALE,
+        ),
       ).toBe('overridden-icon');
     });
 
@@ -229,7 +257,11 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(result).toBe('Standard Label');
     });
@@ -248,7 +280,7 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
         SOURCE_LOCALE,
@@ -271,7 +303,7 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('generated-message-id');
       mockI18n._.mockReturnValue('generated-message-id');
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
         SOURCE_LOCALE,
@@ -294,7 +326,11 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('standard.label.message.id');
       mockI18n._.mockReturnValue('Libellé traduit automatiquement');
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(mockGenerateMessageId).toHaveBeenCalledWith('Standard Label');
       expect(mockI18n._).toHaveBeenCalledWith('standard.label.message.id');
@@ -315,7 +351,11 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue(messageId);
       mockI18n._.mockReturnValue(messageId);
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(result).toBe('Standard Label');
     });
@@ -338,7 +378,11 @@ describe('resolveOverridableString', () => {
         },
       };
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'fr-FR');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+      );
 
       expect(result).toBe('Translation Override');
       expect(mockGenerateMessageId).not.toHaveBeenCalled();
@@ -356,7 +400,7 @@ describe('resolveOverridableString', () => {
         },
       };
 
-      const result = resolveOverridableString(
+      const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
         SOURCE_LOCALE,
@@ -379,7 +423,11 @@ describe('resolveOverridableString', () => {
       mockGenerateMessageId.mockReturnValue('auto.translation.id');
       mockI18n._.mockReturnValue('Auto Translated Label');
 
-      const result = resolveOverridableString(fieldMetadata, 'label', 'de-DE');
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'de-DE',
+      );
 
       expect(result).toBe('Auto Translated Label');
       expect(mockGenerateMessageId).toHaveBeenCalledWith('Standard Label');

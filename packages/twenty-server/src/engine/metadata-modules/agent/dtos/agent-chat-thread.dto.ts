@@ -1,12 +1,17 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   agentId: string;
+
+  @Field({ nullable: true })
+  title: string;
 
   @Field()
   createdAt: Date;

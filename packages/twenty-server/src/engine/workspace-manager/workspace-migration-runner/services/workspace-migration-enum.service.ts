@@ -139,7 +139,13 @@ export class WorkspaceMigrationEnumService {
     }
 
     if (allEnumValues?.includes(value)) {
-      return value;
+      const isDestinationOfRename = renamedEnumValues?.some(
+        (enumVal) => enumVal.to === value,
+      );
+
+      if (!isDestinationOfRename) {
+        return value;
+      }
     }
 
     if (isDefined(defaultValueFallback)) {

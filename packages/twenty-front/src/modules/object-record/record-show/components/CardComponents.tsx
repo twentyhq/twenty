@@ -8,7 +8,7 @@ import { TimelineActivities } from '@/activities/timeline-activities/components/
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
-import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenUpdatesEffect';
+import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
@@ -192,7 +192,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
           <ListenRecordUpdatesEffect
             objectNameSingular={targetableObject.targetObjectNameSingular}
             recordId={targetableObject.id}
-            listenedFields={['status', 'output']}
+            listenedFields={['status', 'state']}
           />
           <Suspense fallback={<LoadingSkeleton />}>
             <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
