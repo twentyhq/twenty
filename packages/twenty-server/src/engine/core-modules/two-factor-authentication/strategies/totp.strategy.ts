@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createDigest } from '@otplib/plugin-crypto';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { ITwoFactorAuthStrategy } from 'src/engine/core-modules/two-factor-authentication/interfaces/two-factor-authentication.interface';
+import { TwoFactorAuthStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/interfaces/two-factor-authentication.interface';
 
 import {
   TwoFactorAuthenticationException,
@@ -34,7 +34,7 @@ const TOTPStrategyConfigSchema = HOTPStrategyConfigSchema.extend({
 });
 
 @Injectable()
-export class TotpStrategy implements ITwoFactorAuthStrategy {
+export class TotpStrategy implements TwoFactorAuthStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.TOTP;
 
   private readonly logger = new Logger(TotpStrategy.name);

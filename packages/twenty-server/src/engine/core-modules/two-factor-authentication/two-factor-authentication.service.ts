@@ -22,7 +22,7 @@ import {
 } from './two-factor-authentication.exception';
 import { OTPStatus } from './two-factor-authentication.interface';
 
-import { ITwoFactorAuthStrategy } from './interfaces/two-factor-authentication.interface';
+import { TwoFactorAuthStrategyInterface } from './interfaces/two-factor-authentication.interface';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -33,7 +33,7 @@ export class TwoFactorAuthenticationService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @Inject(TWO_FACTOR_AUTHENTICATION_STRATEGY)
-    private twoFactorAuthenticationStrategy: ITwoFactorAuthStrategy,
+    private twoFactorAuthenticationStrategy: TwoFactorAuthStrategyInterface,
     private readonly keyWrappingService: KeyWrappingService,
   ) {}
 

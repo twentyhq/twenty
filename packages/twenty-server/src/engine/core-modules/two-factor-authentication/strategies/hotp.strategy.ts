@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createDigest } from '@otplib/plugin-crypto';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { ITwoFactorAuthStrategy } from 'src/engine/core-modules/two-factor-authentication/interfaces/two-factor-authentication.interface';
+import { TwoFactorAuthStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/interfaces/two-factor-authentication.interface';
 
 import {
   TwoFactorAuthenticationException,
@@ -48,7 +48,7 @@ export const HOTPStrategyConfigSchema = z.object({
 });
 
 @Injectable()
-export class HotpStrategy implements ITwoFactorAuthStrategy {
+export class HotpStrategy implements TwoFactorAuthStrategyInterface {
   public readonly name = TwoFactorAuthenticationStrategy.HOTP;
 
   private readonly logger = new Logger(HotpStrategy.name);

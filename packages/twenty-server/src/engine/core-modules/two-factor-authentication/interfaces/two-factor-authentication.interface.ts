@@ -2,7 +2,7 @@ import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
-export interface ITwoFactorAuthStrategy {
+export interface TwoFactorAuthStrategyInterface {
   readonly name: TwoFactorAuthenticationStrategy;
   initiate(
     accountName: string,
