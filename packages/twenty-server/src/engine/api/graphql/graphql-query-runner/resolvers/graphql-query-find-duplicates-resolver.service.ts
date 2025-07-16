@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -65,8 +66,17 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     if (executionArgs.args.ids) {
       const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
+        .setFindOptions({
+          select: columnsToSelect,
+        })
         .where({ id: In(executionArgs.args.ids) })
         .getMany()) as ObjectRecord[];
 

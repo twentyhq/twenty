@@ -32,6 +32,10 @@ export class WorkspaceSelectQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
+  getFindOptions() {
+    return this.findOptions;
+  }
+
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
