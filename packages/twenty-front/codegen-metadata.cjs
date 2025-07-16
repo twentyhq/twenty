@@ -7,6 +7,7 @@ module.exports = {
   documents: [
     './src/modules/auth/graphql/**/*.{ts,tsx}',
     './src/modules/users/graphql/**/*.{ts,tsx}',
+    './src/modules/ai/graphql/**/*.{ts,tsx}',
     
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-member/graphql/**/*.{ts,tsx}',

@@ -81,7 +81,7 @@ export class FieldMetadataResolver {
     try {
       const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
-        locale: context.req.headers['x-locale'],
+        locale: context.req.locale,
       })) as UpdateOneFieldMetadataInput;
 
       return await this.fieldMetadataService.updateOne(updatedInput.id, {

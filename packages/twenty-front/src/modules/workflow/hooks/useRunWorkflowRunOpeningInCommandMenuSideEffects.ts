@@ -47,15 +47,15 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           objectPermissionsByObjectMetadataId,
         });
         if (
-          !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.output))
+          !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.state))
         ) {
           return;
         }
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({
-          steps: workflowRunRecord.output.flow.steps,
-          stepsOutput: workflowRunRecord.output.stepsOutput,
-          trigger: workflowRunRecord.output.flow.trigger,
+          steps: workflowRunRecord.state.flow.steps,
+          stepInfos: workflowRunRecord.state.stepInfos,
+          trigger: workflowRunRecord.state.flow.trigger,
         });
 
         if (!isDefined(stepToOpenByDefault)) {
@@ -86,8 +86,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           }),
           {
             workflowVersionId: workflowRunRecord.workflowVersionId,
-            trigger: workflowRunRecord.output.flow.trigger,
-            steps: workflowRunRecord.output.flow.steps,
+            trigger: workflowRunRecord.state.flow.trigger,
+            steps: workflowRunRecord.state.flow.steps,
           },
         );
         set(

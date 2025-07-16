@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
+import { StepStatus } from 'twenty-shared/workflow';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -317,6 +318,27 @@ export const workflowRunOutputSchema = z.object({
   error: z.any().optional(),
 });
 
+export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
+
+export const workflowRunStateStepInfoSchema = z.object({
+  result: z.any().optional(),
+  error: z.any().optional(),
+  status: workflowRunStepStatusSchema,
+});
+
+export const workflowRunStateStepInfosSchema = z.record(
+  workflowRunStateStepInfoSchema,
+);
+
+export const workflowRunStateSchema = z.object({
+  flow: z.object({
+    trigger: workflowTriggerSchema,
+    steps: z.array(workflowActionSchema),
+  }),
+  stepInfos: workflowRunStateStepInfosSchema,
+  workflowRunError: z.any().optional(),
+});
+
 export const workflowRunContextSchema = z.record(z.any());
 
 export const workflowRunStatusSchema = z.enum([
@@ -335,6 +357,7 @@ export const workflowRunSchema = z
     workflowId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
+    state: workflowRunStateSchema.nullable(),
     status: workflowRunStatusSchema,
     createdAt: z.string(),
     deletedAt: z.string().nullable(),

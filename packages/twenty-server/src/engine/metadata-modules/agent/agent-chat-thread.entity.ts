@@ -42,6 +42,9 @@ export class AgentChatThreadEntity {
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
 
+  @Column({ nullable: true, type: 'varchar' })
+  title: string;
+
   @OneToMany(() => AgentChatMessageEntity, (message) => message.thread)
   messages: Relation<AgentChatMessageEntity[]>;
 

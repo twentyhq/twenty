@@ -27625,7 +27625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.2":
+"axios@npm:^1.6.2, axios@npm:^1.7.7":
   version: 1.10.0
   resolution: "axios@npm:1.10.0"
   dependencies:
@@ -28823,6 +28823,13 @@ __metadata:
   dependencies:
     streamx: "npm:^2.18.0"
   checksum: 10c0/8703b1d80318496ea560483943d5f425a160ded8d3d75659571842caf5f374f52668809bc1e39b032af14df7210973995efaf273f8c35986bef697380ef4674a
+  languageName: node
+  linkType: hard
+
+"base-64@npm:1.0.0":
+  version: 1.0.0
+  resolution: "base-64@npm:1.0.0"
+  checksum: 10c0/d886cb3236cee0bed9f7075675748b59b32fad623ddb8ce1793c790306aa0f76a03238cad4b3fb398abda6527ce08a5588388533a4ccade0b97e82b9da660e28
   languageName: node
   linkType: hard
 
@@ -31760,6 +31767,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-fetch@npm:4.1.0":
+  version: 4.1.0
+  resolution: "cross-fetch@npm:4.1.0"
+  dependencies:
+    node-fetch: "npm:^2.7.0"
+  checksum: 10c0/628b134ea27cfcada67025afe6ef1419813fffc5d63d175553efa75a2334522d450300a0f3f0719029700da80e96327930709d5551cf6deb39bb62f1d536642e
+  languageName: node
+  linkType: hard
+
 "cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
@@ -32574,6 +32590,18 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10c0/cedbec45298dd5c501d01b92b119cd3faebe5438c3917ff11ae1bff86a6c722930ac9c8659792824013168ba6db7c4668225d845c633fbdafbbf902a6389f736
+  languageName: node
+  linkType: hard
+
+"debug@npm:4.4.1":
+  version: 4.4.1
+  resolution: "debug@npm:4.4.1"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10c0/d2b44bc1afd912b49bb7ebb0d50a860dc93a4dd7d946e8de94abc957bb63726b7dd5aa48c18c2386c379ec024c46692e15ed3ed97d481729f929201e671fcd55
   languageName: node
   linkType: hard
 
@@ -46345,7 +46373,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.22.1":
+"moment-timezone@npm:^0.5.45":
+  version: 0.5.48
+  resolution: "moment-timezone@npm:0.5.48"
+  dependencies:
+    moment: "npm:^2.29.4"
+  checksum: 10c0/ab14ec9d94bc33f29ac18e5417b7f8aca0b17130b952c5cc9697b8fea839e5ece9313af5fd3c9703a05db472b1560ddbfc7ad2aa24aac9afd047d6da6c3c6033
+  languageName: node
+  linkType: hard
+
+"moment@npm:^2.22.1, moment@npm:^2.29.4":
   version: 2.30.1
   resolution: "moment@npm:2.30.1"
   checksum: 10c0/865e4279418c6de666fca7786607705fd0189d8a7b7624e2e56be99290ac846f90878a6f602e34b4e0455c549b85385b1baf9966845962b313699e7cb847543a
@@ -47093,7 +47130,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2, node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9":
+"node-fetch@npm:^2, node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9, node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -47196,6 +47233,18 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10c0/00630d67dbd09a45aee0a5d55c05e3916ca9e6d427ee4f7bc392d2d3dc5fad7449b21fc098dd38260a53d9dcc9c879b36704a1994235d4707e7271af7e9a835b
+  languageName: node
+  linkType: hard
+
+"node-ical@npm:^0.20.1":
+  version: 0.20.1
+  resolution: "node-ical@npm:0.20.1"
+  dependencies:
+    axios: "npm:^1.7.7"
+    moment-timezone: "npm:^0.5.45"
+    rrule: "npm:2.8.1"
+    uuid: "npm:^10.0.0"
+  checksum: 10c0/3e95ece63f0420f96b611913e0134660120bf2e87da8b1afbc73b6db2cbe2ad20d9b76ad912fa80b20923c64f0002869d98edaa53d143aa5989d223ff12ef621
   languageName: node
   linkType: hard
 
@@ -53194,6 +53243,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rrule@npm:2.8.1":
+  version: 2.8.1
+  resolution: "rrule@npm:2.8.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/c9350620bbd57d0cdf99320b576121a2d7ed579fda4ae50891e2779c7dfd6dc7b174b558b6598adefb1f0e053549dc977740e1a265f77dcf0827aaeea60b45e7
+  languageName: node
+  linkType: hard
+
 "rrweb-cssom@npm:^0.6.0":
   version: 0.6.0
   resolution: "rrweb-cssom@npm:0.6.0"
@@ -56654,6 +56712,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsdav@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "tsdav@npm:2.1.5"
+  dependencies:
+    base-64: "npm:1.0.0"
+    cross-fetch: "npm:4.1.0"
+    debug: "npm:4.4.1"
+    xml-js: "npm:1.6.11"
+  checksum: 10c0/ff04bb9b61413c07d4532926f9d4a8b6788af77c6e3aa87813c797a06e59348398d2d9ecb15ef3e82e4ae013fe764c73511c3bbfaff5fb6c4484f5f15099499f
+  languageName: node
+  linkType: hard
+
 "tslib@npm:2, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
@@ -57002,6 +57072,7 @@ __metadata:
     lodash.uniqby: "npm:^4.7.0"
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
+    node-ical: "npm:^0.20.1"
     openid-client: "npm:^5.7.0"
     otplib: "npm:^12.0.1"
     passport: "npm:^0.7.0"
@@ -57010,6 +57081,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
+    tsdav: "npm:^2.1.5"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
@@ -58805,6 +58877,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "uuid@npm:10.0.0"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^3.3.2":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
@@ -60309,7 +60390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-js@npm:^1.6.8":
+"xml-js@npm:1.6.11, xml-js@npm:^1.6.8":
   version: 1.6.11
   resolution: "xml-js@npm:1.6.11"
   dependencies:

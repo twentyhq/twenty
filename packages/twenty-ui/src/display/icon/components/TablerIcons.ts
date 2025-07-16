@@ -212,6 +212,7 @@ export {
   IconMap,
   IconMaximize,
   IconMessage,
+  IconMessageCirclePlus,
   IconMinus,
   IconMoneybag,
   IconMoodSmile,
