@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -67,16 +67,16 @@ export type AgentChatMessage = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   files: Array<File>;
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   role: Scalars['String'];
-  threadId: Scalars['ID'];
+  threadId: Scalars['UUID'];
 };
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  agentId: Scalars['ID'];
+  agentId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -463,7 +463,7 @@ export type ConnectionParametersOutput = {
 };
 
 export type CreateAgentChatThreadInput = {
-  agentId: Scalars['String'];
+  agentId: Scalars['UUID'];
 };
 
 export type CreateApiKeyDto = {
@@ -2973,21 +2973,21 @@ export type CreateAgentChatThreadMutationVariables = Exact<{
 }>;
 
 
-export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string } };
+export type CreateAgentChatThreadMutation = { __typename?: 'Mutation', createAgentChatThread: { __typename?: 'AgentChatThread', id: any, agentId: any, title?: string | null, createdAt: string, updatedAt: string } };
 
 export type GetAgentChatMessagesQueryVariables = Exact<{
   threadId: Scalars['String'];
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: any, threadId: any, role: string, content: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['String'];
 }>;
 
 
-export type GetAgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: string, agentId: string, title?: string | null, createdAt: string, updatedAt: string }> };
+export type GetAgentChatThreadsQuery = { __typename?: 'Query', agentChatThreads: Array<{ __typename?: 'AgentChatThread', id: any, agentId: any, title?: string | null, createdAt: string, updatedAt: string }> };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;

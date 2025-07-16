@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -67,16 +67,16 @@ export type AgentChatMessage = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   files: Array<File>;
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   role: Scalars['String'];
-  threadId: Scalars['ID'];
+  threadId: Scalars['UUID'];
 };
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  agentId: Scalars['ID'];
+  agentId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -463,7 +463,7 @@ export type ConnectionParametersOutput = {
 };
 
 export type CreateAgentChatThreadInput = {
-  agentId: Scalars['String'];
+  agentId: Scalars['UUID'];
 };
 
 export type CreateApiKeyDto = {

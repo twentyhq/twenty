@@ -122,7 +122,7 @@ export const AIChatTab = ({
                     onClick={() =>
                       navigateCommandMenu({
                         page: CommandMenuPages.ViewPreviousAIChats,
-                        pageTitle: 'AI Chat History',
+                        pageTitle: t`View Previous AI Chats`,
                         pageIcon: IconHistory,
                       })
                     }

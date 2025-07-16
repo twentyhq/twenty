@@ -1,3 +1,5 @@
+import { APP_LOCALES } from 'twenty-shared/translations';
+
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -9,6 +11,7 @@ declare module 'express-serve-static-core' {
     user?: User | null;
     apiKey?: ApiKey | null;
     userWorkspace?: UserWorkspace;
+    locale: keyof typeof APP_LOCALES;
     workspace?: Workspace;
     workspaceId?: string;
     workspaceMetadataVersion?: number;
