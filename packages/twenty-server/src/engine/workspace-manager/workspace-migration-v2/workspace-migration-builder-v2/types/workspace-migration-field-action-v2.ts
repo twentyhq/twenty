@@ -31,3 +31,6 @@ export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction
   | UpdateFieldAction
   | DeleteFieldAction;
+
+export type WorkspaceMigrationFieldActionTypeV2 =
+  WorkspaceMigrationFieldActionV2['type'];
