@@ -64,6 +64,7 @@ export const Toggle2FA = () => {
     <SettingsOptionCardContentToggle
       Icon={IconLifebuoy}
       title={t`Two Factor Authentication`}
+      description={'Enforce two-step verification for every user login.'}
       checked={!!currentWorkspace?.twoFactorAuthenticationPolicy}
       onChange={handleChange}
       advancedMode
