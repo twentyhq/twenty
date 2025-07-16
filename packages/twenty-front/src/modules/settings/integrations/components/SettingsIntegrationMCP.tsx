@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
-import { useState } from 'react';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { IconCopy, IconDatabase, IconSitemap } from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -60,11 +60,11 @@ export const SettingsIntegrationMCP = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const generateMcpContent = (pathSuffix: string) => {
+  const generateMcpContent = (pathSuffix: string, serverName: string) => {
     return JSON.stringify(
       {
         mcpServers: {
-          twenty: {
+          [serverName]: {
             type: 'remote',
             url: `${REACT_APP_SERVER_BASE_URL}${pathSuffix}`,
             headers: {
@@ -83,13 +83,13 @@ export const SettingsIntegrationMCP = () => {
       label: 'Core Schema',
       value: 'core-schema',
       Icon: IconDatabase,
-      content: generateMcpContent('/mcp'),
+      content: generateMcpContent('/mcp', 'twenty'),
     },
     {
       label: 'Metadata Schema',
       value: 'metadata-schema',
       Icon: IconSitemap,
-      content: generateMcpContent('/mcp/metadata'),
+      content: generateMcpContent('/mcp/metadata', 'twenty-metadata'),
     },
   ];
   const [selectedSchemaValue, setSelectedSchemaValue] = useState(
