@@ -72,7 +72,7 @@ export class UserWorkspace {
   defaultAvatarUrl: string;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: 'en', type: 'text' })
+  @Column({ nullable: false, default: 'en', type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
 
   @Field()
