@@ -20,7 +20,6 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
-import { HotpStrategy } from './strategies/hotp.strategy';
 import { TotpStrategy } from './strategies/totp.strategy';
 
 @Global()
@@ -35,9 +34,6 @@ export class TwoFactorAuthenticationModule {
         const config = options.useFactory(...args);
 
         switch (config?.type) {
-          case TwoFactorAuthenticationStrategy.HOTP: {
-            return new HotpStrategy(config.config);
-          }
           case TwoFactorAuthenticationStrategy.TOTP: {
             return new TotpStrategy(config.config);
           }

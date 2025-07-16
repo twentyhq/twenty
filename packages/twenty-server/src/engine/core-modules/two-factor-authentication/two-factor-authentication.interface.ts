@@ -2,7 +2,6 @@ import { InjectionToken, OptionalFactoryDependency } from '@nestjs/common';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { HOTPStrategyConfig } from './strategies/hotp.strategy';
 import { TOTPStrategyConfig } from './strategies/totp.strategy';
 
 export enum OTPHashAlgorithms {
@@ -42,13 +41,6 @@ export type TotpContext = {
   secret: string;
 };
 
-export type HotpContext = {
-  strategy: TwoFactorAuthenticationStrategy.HOTP;
-  status: OTPStatus;
-  secret: string;
-  counter: number;
-};
+export type OTPContext = TotpContext;
 
-export type OTPContext = TotpContext | HotpContext;
-
-export type OTPStrategyConfig = HOTPStrategyConfig | TOTPStrategyConfig;
+export type OTPStrategyConfig = TOTPStrategyConfig;

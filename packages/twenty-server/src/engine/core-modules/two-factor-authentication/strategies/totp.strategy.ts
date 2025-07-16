@@ -14,15 +14,37 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import {
+  OTPHashAlgorithms,
+  OTPKeyEncodings,
   OTPStatus,
   TotpContext,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 
-import { HOTPStrategyConfigSchema } from './hotp.strategy';
-
 export type TOTPStrategyConfig = z.infer<typeof TOTPStrategyConfigSchema>;
 
-const TOTPStrategyConfigSchema = HOTPStrategyConfigSchema.extend({
+export const TOTPStrategyConfigSchema = z.object({
+  algorithm: z
+    .nativeEnum(OTPHashAlgorithms, {
+      errorMap: () => ({
+        message:
+          'Invalid algorithm specified. Must be SHA1, SHA256, or SHA512.',
+      }),
+    })
+    .optional(),
+  digits: z
+    .number({
+      invalid_type_error: 'Digits must be a number.',
+    })
+    .int({ message: 'Digits must be a whole number.' })
+    .min(6, { message: 'Digits must be at least 6.' })
+    .max(8, { message: 'Digits cannot be more than 8.' })
+    .optional(),
+  encodings: z
+    .nativeEnum(OTPKeyEncodings, {
+      errorMap: () => ({ message: 'Invalid encoding specified.' }),
+    })
+    .optional(),
+  window: z.number().int().min(0).optional(),
   step: z
     .number({
       invalid_type_error: 'Step must be a number.',

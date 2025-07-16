@@ -8,7 +8,6 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 
-import { HOTP_DEFAULT_CONFIGURATON } from './strategies/constants/hotp.stratey.constants';
 import { TOT_DEFAULT_CONFIGURATION } from './strategies/constants/totp.strategy.constants';
 
 export const twoFactorAuthenticationModuleFactory = (
@@ -19,13 +18,6 @@ export const twoFactorAuthenticationModuleFactory = (
   );
 
   switch (strategy) {
-    case TwoFactorAuthenticationStrategy.HOTP: {
-      return {
-        type: TwoFactorAuthenticationStrategy.HOTP,
-        config: HOTP_DEFAULT_CONFIGURATON,
-      };
-    }
-
     case TwoFactorAuthenticationStrategy.TOTP: {
       return {
         type: TwoFactorAuthenticationStrategy.TOTP,
