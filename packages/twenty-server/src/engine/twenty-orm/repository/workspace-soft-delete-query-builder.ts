@@ -82,8 +82,9 @@ export class WorkspaceSoftDeleteQueryBuilder<
     });
 
     return {
-      ...after,
-      raw: formattedAfter,
+      raw: after.raw,
+      generatedMaps: formattedAfter,
+      affected: after.affected,
     };
   }
 

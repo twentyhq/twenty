@@ -82,9 +82,10 @@ export class WorkspaceDeleteQueryBuilder<
     });
 
     return {
-      ...result,
-      raw: formattedResult,
-    };
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      affected: result.affected,
+    } as unknown as DeleteResult;
   }
 
   private getMainAliasTarget(): EntityTarget<T> {

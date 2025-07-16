@@ -41,14 +41,15 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       .returning('*')
       .execute();
 
-    if (restoredObjectRecords.raw.length === 0) {
+    if (restoredObjectRecords.generatedMaps.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const restoredRecord = restoredObjectRecords.raw[0];
+    const restoredRecord = restoredObjectRecords
+      .generatedMaps[0] as ObjectRecord;
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

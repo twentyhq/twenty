@@ -50,7 +50,8 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: deletedObjectRecords.raw as ObjectRecord[],
+        parentObjectRecords:
+          deletedObjectRecords.generatedMaps as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -64,7 +65,7 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
-      objectRecord: deletedObjectRecords.raw[0],
+      objectRecord: deletedObjectRecords.generatedMaps[0] as ObjectRecord,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,

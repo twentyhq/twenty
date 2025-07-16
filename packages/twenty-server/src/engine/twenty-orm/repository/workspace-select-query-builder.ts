@@ -50,7 +50,8 @@ export class WorkspaceSelectQueryBuilder<
     ) as this;
   }
 
-  override async execute(): Promise<T[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override async execute(): Promise<any> {
     this.validatePermissions();
 
     const mainAliasTarget = this.getMainAliasTarget();
@@ -68,7 +69,11 @@ export class WorkspaceSelectQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
-    return formattedResult;
+    return {
+      raw: result,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   override getMany(): Promise<T[]> {

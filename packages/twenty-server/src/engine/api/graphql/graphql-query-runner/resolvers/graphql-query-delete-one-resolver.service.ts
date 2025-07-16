@@ -41,14 +41,14 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       .returning('*')
       .execute();
 
-    if (deletedObjectRecords.raw.length === 0) {
+    if (deletedObjectRecords.generatedMaps.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const deletedRecord = deletedObjectRecords.raw[0];
+    const deletedRecord = deletedObjectRecords.generatedMaps[0] as ObjectRecord;
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

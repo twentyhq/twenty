@@ -41,7 +41,7 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       .returning('*')
       .execute();
 
-    const updatedRecord = updatedObjectRecords.raw[0];
+    const updatedRecord = updatedObjectRecords.generatedMaps[0] as ObjectRecord;
 
     if (!updatedRecord) {
       throw new GraphqlQueryRunnerException(

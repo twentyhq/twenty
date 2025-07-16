@@ -1,5 +1,10 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
-import { EntityTarget, InsertQueryBuilder, ObjectLiteral } from 'typeorm';
+import {
+  EntityTarget,
+  InsertQueryBuilder,
+  InsertResult,
+  ObjectLiteral,
+} from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -63,8 +68,7 @@ export class WorkspaceInsertQueryBuilder<
     return super.values(formattedValues);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override async execute(): Promise<any> {
+  override async execute(): Promise<InsertResult> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
@@ -94,7 +98,11 @@ export class WorkspaceInsertQueryBuilder<
       entities: formattedResult,
     });
 
-    return formattedResult;
+    return {
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   private getMainAliasTarget(): EntityTarget<T> {

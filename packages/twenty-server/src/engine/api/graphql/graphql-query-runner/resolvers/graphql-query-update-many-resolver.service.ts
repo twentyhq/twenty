@@ -52,7 +52,8 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: updatedObjectRecords.raw as ObjectRecord[],
+        parentObjectRecords:
+          updatedObjectRecords.generatedMaps as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -65,7 +66,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return updatedObjectRecords.raw.map((record: ObjectRecord) =>
+    return updatedObjectRecords.generatedMaps.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,
