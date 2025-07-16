@@ -18,7 +18,6 @@ import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
@@ -81,10 +80,25 @@ export class WorkspaceSelectQueryBuilder<
     };
   }
 
-  override getMany(): Promise<T[]> {
+  override async getMany(): Promise<T[]> {
     this.validatePermissions();
 
-    return super.getMany();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getMany();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,16 +115,46 @@ export class WorkspaceSelectQueryBuilder<
     return super.getRawMany();
   }
 
-  override getOne(): Promise<T | null> {
+  override async getOne(): Promise<T | null> {
     this.validatePermissions();
 
-    return super.getOne();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getOne();
+
+    const formattedResult = formatResult<T>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult;
   }
 
-  override getOneOrFail(): Promise<T> {
+  override async getOneOrFail(): Promise<T> {
     this.validatePermissions();
 
-    return super.getOneOrFail();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const result = await super.getOneOrFail();
+
+    const formattedResult = formatResult<T>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return formattedResult[0];
   }
 
   override getCount(): Promise<number> {
@@ -126,10 +170,25 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override getManyAndCount(): Promise<[T[], number]> {
+  override async getManyAndCount(): Promise<[T[], number]> {
     this.validatePermissions();
 
-    return super.getManyAndCount();
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const [result, count] = await super.getManyAndCount();
+
+    const formattedResult = formatResult<T[]>(
+      result,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    return [formattedResult, count];
   }
 
   override insert(): WorkspaceInsertQueryBuilder<T> {
@@ -153,17 +212,8 @@ export class WorkspaceSelectQueryBuilder<
   override update(
     updateSet?: QueryDeepPartialEntity<T>,
   ): WorkspaceUpdateQueryBuilder<T> {
-    const mainAliasTarget = this.getMainAliasTarget();
-
-    const objectMetadata = getObjectMetadataFromEntityTarget(
-      mainAliasTarget,
-      this.internalContext,
-    );
-
-    const formattedUpdateSet = formatData(updateSet, objectMetadata);
-
-    const updateQueryBuilder = formattedUpdateSet
-      ? super.update(formattedUpdateSet)
+    const updateQueryBuilder = updateSet
+      ? super.update(updateSet)
       : super.update();
 
     return new WorkspaceUpdateQueryBuilder<T>(

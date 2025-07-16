@@ -44,7 +44,8 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
     );
 
     const updatedObjectRecords = await queryBuilder
-      .update(executionArgs.args.data)
+      .update()
+      .set(executionArgs.args.data)
       .returning('*')
       .execute();
 

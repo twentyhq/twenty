@@ -36,7 +36,8 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     );
 
     const updatedObjectRecords = await queryBuilder
-      .update(executionArgs.args.data)
+      .update()
+      .set(executionArgs.args.data)
       .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
