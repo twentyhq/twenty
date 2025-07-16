@@ -80,6 +80,7 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 
