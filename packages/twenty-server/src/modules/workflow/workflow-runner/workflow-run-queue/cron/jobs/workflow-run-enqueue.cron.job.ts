@@ -76,7 +76,7 @@ export class WorkflowRunEnqueueJob {
 
         // Using raw query to avoid storing repository in cache
         const workflowRuns = await mainDataSource.query(
-          `SELECT * FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
+          `SELECT id FROM ${schemaName}."workflowRun" WHERE status = '${WorkflowRunStatus.NOT_STARTED}' ORDER BY "createdAt" ASC`,
         );
 
         const workflowRunsToEnqueueCount = Math.min(
