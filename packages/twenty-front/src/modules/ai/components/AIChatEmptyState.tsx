@@ -16,11 +16,10 @@ const StyledSparkleIcon = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.blue};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${({ theme }) => theme.spacing(2.5)};
   display: flex;
-  height: 40px;
   justify-content: center;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 40px;
 `;
 
 const StyledTitle = styled.div`
