@@ -34,7 +34,11 @@ export class MetadataQueryBuilderFactory {
 
     return {
       query: id
-        ? this.findOneQueryFactory.create(objectNameSingular, objectNamePlural, selectors)
+        ? this.findOneQueryFactory.create(
+            objectNameSingular,
+            objectNamePlural,
+            selectors,
+          )
         : this.findManyQueryFactory.create(objectNamePlural, selectors),
       variables: this.getMetadataVariablesFactory.create(id, request),
     };
@@ -50,7 +54,7 @@ export class MetadataQueryBuilderFactory {
       query: this.createQueryFactory.create(
         objectNameSingular,
         objectNamePlural,
-        selectors
+        selectors,
       ),
       variables: {
         input: {
@@ -78,7 +82,7 @@ export class MetadataQueryBuilderFactory {
       query: this.updateQueryFactory.create(
         objectNameSingular,
         objectNamePlural,
-        selectors
+        selectors,
       ),
       variables: {
         input: {

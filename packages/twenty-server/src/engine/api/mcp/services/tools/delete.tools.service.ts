@@ -6,7 +6,6 @@ import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
 import { validationSchemaManager } from 'src/engine/api/mcp/utils/get-json-schema';
 import { ObjectName } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
-import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 
 @Injectable()
 export class DeleteToolsService {
