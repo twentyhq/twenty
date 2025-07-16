@@ -1,4 +1,5 @@
 import { Entity } from '@microsoft/microsoft-graph-types';
+import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -42,6 +43,7 @@ import {
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
+import { RelationNestedQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -54,8 +56,10 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
+import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
@@ -179,7 +183,7 @@ export class WorkspaceEntityManager extends EntityManager {
   ): Promise<InsertResult> {
     const entityArray = Array.isArray(entity) ? entity : [entity];
 
-    const connectedEntities = await this.processRelationConnect<Entity>(
+    const updatedEntities = await this.processRelationNestedQueries<Entity>(
       entityArray,
       target,
       permissionOptions,
@@ -193,7 +197,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .insert()
       .into(target)
-      .values(connectedEntities)
+      .values(updatedEntities)
       .returning(selectedColumns)
       .execute();
   }
@@ -1485,11 +1489,40 @@ export class WorkspaceEntityManager extends EntityManager {
     );
   }
 
-  private async processRelationConnect<Entity extends ObjectLiteral>(
+  private async processRelationNestedQueries<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntityWithRelationConnect<Entity>[],
     target: EntityTarget<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<QueryDeepPartialEntity<Entity>[]> {
+    const nestedRelationQueryFieldsByEntityIndex =
+      extractNestedRelationFieldsByEntityIndex(entities);
+
+    const updatedEntitiesWithDisconnect = this.processRelationDisconnect({
+      entities,
+      nestedRelationQueryFieldsByEntityIndex,
+    });
+
+    const updatedEntitiesWithConnect = await this.processRelationConnect({
+      entities: updatedEntitiesWithDisconnect,
+      target,
+      permissionOptions,
+      nestedRelationQueryFieldsByEntityIndex,
+    });
+
+    return updatedEntitiesWithConnect;
+  }
+
+  private async processRelationConnect<Entity extends ObjectLiteral>({
+    entities,
+    target,
+    permissionOptions,
+    nestedRelationQueryFieldsByEntityIndex,
+  }: {
+    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[];
+    target: EntityTarget<Entity>;
+    permissionOptions?: PermissionOptions;
+    nestedRelationQueryFieldsByEntityIndex: RelationNestedQueryFieldsByEntityIndex;
+  }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
       this.internalContext,
@@ -1501,6 +1534,7 @@ export class WorkspaceEntityManager extends EntityManager {
       entities,
       objectMetadata,
       objectMetadataMap,
+      nestedRelationQueryFieldsByEntityIndex,
     );
 
     if (!isDefined(relationConnectQueryConfigs)) return entities;
@@ -1593,6 +1627,38 @@ export class WorkspaceEntityManager extends EntityManager {
             [connectQueryConfig.connectFieldName]: null,
           };
         }
+      }
+
+      return entity;
+    });
+  }
+
+  private processRelationDisconnect<Entity extends ObjectLiteral>({
+    entities,
+    nestedRelationQueryFieldsByEntityIndex,
+  }: {
+    entities: QueryDeepPartialEntityWithRelationConnect<Entity>[];
+    nestedRelationQueryFieldsByEntityIndex: RelationNestedQueryFieldsByEntityIndex;
+  }): QueryDeepPartialEntityWithRelationConnect<Entity>[] {
+    return entities.map((entity, index) => {
+      const nestedRelationDisconnectFields =
+        nestedRelationQueryFieldsByEntityIndex[index]?.[
+          RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT
+        ];
+
+      if (!isDefined(nestedRelationDisconnectFields)) return entity;
+
+      for (const [disconnectFieldName, disconnectObject] of Object.entries(
+        nestedRelationDisconnectFields,
+      )) {
+        entity = {
+          ...entity,
+          [disconnectFieldName]: null,
+          ...(disconnectObject[RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT] ===
+          true
+            ? { [getAssociatedRelationFieldName(disconnectFieldName)]: null }
+            : {}),
+        };
       }
 
       return entity;

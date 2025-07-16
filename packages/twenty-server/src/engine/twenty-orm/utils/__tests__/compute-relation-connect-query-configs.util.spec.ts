@@ -160,6 +160,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       peopleEntityInputs,
       personMetadata,
       objectMetadataMaps,
+      {},
     );
 
     expect(result).toEqual({});
@@ -176,11 +177,20 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
+    const nestedRelationQueryFieldsByEntityIndex = {
+      '0': {
+        connect: {
+          name: { connect: { where: { name: { lastName: 'Doe' } } } },
+        },
+      },
+    };
+
     expect(() => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
+        nestedRelationQueryFieldsByEntityIndex,
       );
     }).toThrow('Connect is not allowed for name on person');
   });
@@ -195,11 +205,20 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
+    const nestedRelationQueryFieldsByEntityIndex = {
+      '0': {
+        connect: {
+          'company-related-to-1': { connect: { where: { name: 'company1' } } },
+        },
+      },
+    };
+
     expect(() => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
+        nestedRelationQueryFieldsByEntityIndex,
       );
     }).toThrow(
       "Missing required fields: at least one unique constraint have to be fully populated for 'company-related-to-1'.",
@@ -222,11 +241,28 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
+    const nestedRelationQueryFieldsByEntityIndex = {
+      '0': {
+        connect: {
+          'company-related-to-1': {
+            connect: {
+              where: {
+                domainName: { primaryLinkUrl: 'company1.com' },
+                id: '1',
+                address: 'company1 address',
+              },
+            },
+          },
+        },
+      },
+    };
+
     expect(() => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
+        nestedRelationQueryFieldsByEntityIndex,
       );
     }).toThrow(
       "Field address is not a unique constraint field for 'company-related-to-1'.",
@@ -255,11 +291,31 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
+    const nestedRelationQueryFieldsByEntityIndex = {
+      '0': {
+        connect: {
+          'company-related-to-1': {
+            connect: {
+              where: {
+                domainName: { primaryLinkUrl: 'company1.com' },
+              },
+            },
+          },
+        },
+      },
+      '1': {
+        connect: {
+          'company-related-to-1': { connect: { where: { id: '2' } } },
+        },
+      },
+    };
+
     expect(() => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
+        nestedRelationQueryFieldsByEntityIndex,
       );
     }).toThrow(
       'Expected the same constraint fields to be used consistently across all operations for company-related-to-1.',
@@ -298,10 +354,42 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
+    const nestedRelationQueryFieldsByEntityIndex = {
+      '0': {
+        connect: {
+          'company-related-to-1': {
+            connect: {
+              where: { domainName: { primaryLinkUrl: 'company.com' } },
+            },
+          },
+          'company-related-to-2': {
+            connect: {
+              where: { id: '1' },
+            },
+          },
+        },
+      },
+      '1': {
+        connect: {
+          'company-related-to-1': {
+            connect: {
+              where: { domainName: { primaryLinkUrl: 'other-company.com' } },
+            },
+          },
+          'company-related-to-2': {
+            connect: {
+              where: { id: '2' },
+            },
+          },
+        },
+      },
+    };
+
     const result = computeRelationConnectQueryConfigs(
       peopleEntityInputs,
       personMetadata,
       objectMetadataMaps,
+      nestedRelationQueryFieldsByEntityIndex,
     );
 
     expect(result).toEqual({
