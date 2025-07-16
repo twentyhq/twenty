@@ -33,7 +33,6 @@ describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
-  let objectMetadataRepository: Repository<ObjectMetadataEntity>;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
@@ -145,9 +144,6 @@ describe('UserWorkspaceService', () => {
       getRepositoryToken(UserWorkspace, 'core'),
     );
     userRepository = module.get(getRepositoryToken(User, 'core'));
-    objectMetadataRepository = module.get(
-      getRepositoryToken(ObjectMetadataEntity, 'core'),
-    );
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
@@ -316,9 +312,6 @@ describe('UserWorkspaceService', () => {
           userEmail: 'test@example.com',
         },
       ];
-      const objectMetadata = {
-        nameSingular: 'workspaceMember',
-      } as ObjectMetadataEntity;
       const workspaceMemberRepository = {
         insert: jest.fn(),
         find: jest.fn().mockResolvedValue(workspaceMember),
@@ -331,9 +324,6 @@ describe('UserWorkspaceService', () => {
         .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
-      jest
-        .spyOn(objectMetadataRepository, 'findOneOrFail')
-        .mockResolvedValue(objectMetadata);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(workspaceMemberRepository as any);
@@ -354,12 +344,6 @@ describe('UserWorkspaceService', () => {
         userEmail: user.email,
         locale: 'en',
         avatarUrl: 'userWorkspace-avatar-url',
-      });
-      expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
-        where: {
-          nameSingular: 'workspaceMember',
-          workspaceId,
-        },
       });
     });
   });
