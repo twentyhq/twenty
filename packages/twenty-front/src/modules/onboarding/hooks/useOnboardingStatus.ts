@@ -7,5 +7,5 @@ import { OnboardingStatus } from '~/generated/graphql';
 export const useOnboardingStatus = (): OnboardingStatus | null | undefined => {
   const currentUser = useRecoilValue(currentUserState);
   const isLoggedIn = useIsLogged();
-  return OnboardingStatus.COMPLETED;
+  return isLoggedIn ? currentUser?.onboardingStatus : undefined;
 };
