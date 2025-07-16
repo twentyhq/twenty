@@ -133,7 +133,7 @@ describe('parseAndValidateVariableFriendlyStringifiedJson', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.error).toContain(
-        "SyntaxError: Expected ',' or '}' after property value in JSON at position 15 (line 1 column 16)",
+        'SyntaxError: Unexpected end of JSON input',
       );
     });
 
