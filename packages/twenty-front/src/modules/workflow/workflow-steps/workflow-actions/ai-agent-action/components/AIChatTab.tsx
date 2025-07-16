@@ -1,18 +1,28 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
+import {
+  Avatar,
+  IconDotsVertical,
+  IconHistory,
+  IconMessageCirclePlus,
+  IconSparkles,
+} from 'twenty-ui/display';
 
+import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AgentChatFilePreview } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFilePreview';
 import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
 import { AgentChatMessageRole } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/agent-chat-message-role';
+
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
+import { AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAgentChat } from '../hooks/useAgentChat';
-import { AgentChatMessage } from '../hooks/useAgentChatMessages';
 import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
 import { AgentChatSelectedFilesPreview } from './AgentChatSelectedFilesPreview';
 
@@ -188,7 +198,13 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AIChatTab = ({ agentId }: { agentId: string }) => {
+export const AIChatTab = ({
+  agentId,
+  isWorkflowAgentNodeChat,
+}: {
+  agentId: string;
+  isWorkflowAgentNodeChat?: boolean;
+}) => {
   const theme = useTheme();
 
   const {
@@ -200,6 +216,9 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     agentStreamingMessage,
     scrollWrapperId,
   } = useAgentChat(agentId);
+
+  const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
+  const { navigateCommandMenu } = useCommandMenu();
 
   const getAssistantMessageContent = (message: AgentChatMessage) => {
     if (message.content !== '') {
@@ -308,6 +327,28 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
           onChange={handleInputChange}
         />
         <StyledButtonsContainer>
+          {!isWorkflowAgentNodeChat && (
+            <>
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconHistory}
+                onClick={() =>
+                  navigateCommandMenu({
+                    page: CommandMenuPages.ViewPreviousAIChats,
+                    pageTitle: t`View Previous AI Chats`,
+                    pageIcon: IconHistory,
+                  })
+                }
+              />
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconMessageCirclePlus}
+                onClick={() => createAgentChatThread()}
+              />
+            </>
+          )}
           <AgentChatFileUpload agentId={agentId} />
           <Button
             variant="primary"
