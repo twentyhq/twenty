@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -98,6 +98,7 @@ export const CreateProfile = () => {
     handleSubmit,
     formState: { isValid, isSubmitting },
     getValues,
+    setValue,
   } = useForm<Form>({
     mode: 'onTouched',
     reValidateMode: 'onChange',
@@ -117,6 +118,16 @@ export const CreateProfile = () => {
   });
 
   const personType = useWatch({ control, name: 'personType' });
+
+  useEffect(() => {
+    setValue('document', '');
+
+    if (personType === 'CNPJ') {
+      setValue('document', formatCnpj(''));
+    } else {
+      setValue('document', formatCpf(''));
+    }
+  }, [personType, setValue]);
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
