@@ -1,18 +1,15 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { captchaTokenState } from '@/captcha/states/captchaTokenState';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
-// Mock the isCaptchaRequiredForPath function
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
 
 describe('useRequestFreshCaptchaToken', () => {
-  // Setup mocks for window.grecaptcha and window.turnstile
   const mockGrecaptchaExecute = jest.fn();
   const mockTurnstileRender = jest.fn();
   const mockTurnstileExecute = jest.fn();
@@ -20,26 +17,22 @@ describe('useRequestFreshCaptchaToken', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Mock window.grecaptcha
     window.grecaptcha = {
       execute: mockGrecaptchaExecute,
     };
 
-    // Mock window.turnstile
     window.turnstile = {
       render: mockTurnstileRender,
       execute: mockTurnstileExecute,
     };
 
-    // Default mock for isCaptchaRequiredForPath
     (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(true);
 
-    // Setup mock implementations
-    mockGrecaptchaExecute.mockImplementation((siteKey, options) => {
+    mockGrecaptchaExecute.mockImplementation((_siteKey, _options) => {
       return Promise.resolve('google-recaptcha-token');
     });
 
-    mockTurnstileRender.mockImplementation((selector, options) => {
+    mockTurnstileRender.mockImplementation((_selector, _options) => {
       return 'turnstile-widget-id';
     });
 
@@ -51,7 +44,6 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should not request a token if captcha is not required for the current path', async () => {
-    // Mock isCaptchaRequiredForPath to return false
     (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(false);
 
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
@@ -62,7 +54,6 @@ describe('useRequestFreshCaptchaToken', () => {
       await result.current.requestFreshCaptchaToken();
     });
 
-    // Verify that no captcha provider was called
     expect(mockGrecaptchaExecute).not.toHaveBeenCalled();
     expect(mockTurnstileRender).not.toHaveBeenCalled();
     expect(mockTurnstileExecute).not.toHaveBeenCalled();
@@ -77,7 +68,6 @@ describe('useRequestFreshCaptchaToken', () => {
       await result.current.requestFreshCaptchaToken();
     });
 
-    // Verify that no captcha provider was called
     expect(mockGrecaptchaExecute).not.toHaveBeenCalled();
     expect(mockTurnstileRender).not.toHaveBeenCalled();
     expect(mockTurnstileExecute).not.toHaveBeenCalled();
@@ -104,12 +94,10 @@ describe('useRequestFreshCaptchaToken', () => {
       await result.current.requestFreshCaptchaToken();
     });
 
-    // Verify that Google reCAPTCHA was called with the correct parameters
     expect(mockGrecaptchaExecute).toHaveBeenCalledWith('google-site-key', {
       action: 'submit',
     });
 
-    // Wait for the token to be set
     await waitFor(() => {
       expect(mockGrecaptchaExecute).toHaveBeenCalled();
     });
@@ -136,7 +124,6 @@ describe('useRequestFreshCaptchaToken', () => {
       await result.current.requestFreshCaptchaToken();
     });
 
-    // Verify that Turnstile was called with the correct parameters
     expect(mockTurnstileRender).toHaveBeenCalledWith('#captcha-widget', {
       sitekey: 'turnstile-site-key',
     });

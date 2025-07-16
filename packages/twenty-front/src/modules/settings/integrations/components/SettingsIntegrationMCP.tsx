@@ -9,25 +9,25 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledWrapper = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 const StyledImage = styled.img`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   height: 100%;
   object-fit: cover;
   width: 100%;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledSchemaSelector = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   padding: ${({ theme }) => theme.spacing(3)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledLabel = styled.span`
