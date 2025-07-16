@@ -67,7 +67,7 @@ describe('triggers.trigger_record.created', () => {
     );
     expect(
       // @ts-expect-error legacy noImplicitAny
-      checkDbResult.data.webhooks.filter((webhook) => (webhook.id = result.id))
+      checkDbResult.data.webhooks.filter((webhook) => webhook.id === result.id)
         .length,
     ).toEqual(0);
   });
@@ -141,7 +141,7 @@ describe('triggers.trigger_record.update', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(input: {id: "${result.id}"}){id operations}`,
+          `query webhook {webhook(input: {id: "${result.id}"}){id operations}}`,
         ),
       bundle,
     );
@@ -181,7 +181,7 @@ describe('triggers.trigger_record.update', () => {
     );
     expect(
       // @ts-expect-error legacy noImplicitAny
-      checkDbResult.data.webhooks.filter((webhook) => (webhook.id = result.id))
+      checkDbResult.data.webhooks.filter((webhook) => webhook.id === result.id)
         .length,
     ).toEqual(0);
   });
@@ -226,7 +226,7 @@ describe('triggers.trigger_record.delete', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(input: {id: "${result.id}"}){id operations}`,
+          `query webhook {webhook(input: {id: "${result.id}"}){id operations}}`,
         ),
       bundle,
     );
@@ -266,7 +266,7 @@ describe('triggers.trigger_record.delete', () => {
     );
     expect(
       // @ts-expect-error legacy noImplicitAny
-      checkDbResult.data.webhooks.filter((webhook) => (webhook.id = result.id))
+      checkDbResult.data.webhooks.filter((webhook) => webhook.id === result.id)
         .length,
     ).toEqual(0);
   });
