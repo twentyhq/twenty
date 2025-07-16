@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["nx run twenty-zapier:build && jest --testTimeout 10000 --rootDir ./lib/test"]
+        "commands": ["NODE_ENV=test && nx run twenty-zapier:build && jest --testTimeout 10000 --rootDir ./lib/test"]
       }
     },
     "validate": {
