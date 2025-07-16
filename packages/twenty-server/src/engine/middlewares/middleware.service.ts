@@ -161,8 +161,8 @@ export class MiddlewareService {
     request.authProvider = data.authProvider;
 
     request.locale =
-      ((data.userWorkspace?.locale ??
-        request.headers['x-locale']) as keyof typeof APP_LOCALES) ??
+      data.userWorkspace?.locale ??
+      (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
       SOURCE_LOCALE;
   }
 
