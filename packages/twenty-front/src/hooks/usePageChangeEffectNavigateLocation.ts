@@ -39,8 +39,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.InviteTeam,
     AppPath.PlanRequired,
     AppPath.PlanRequiredSuccess,
-    /*AppPath.BookCallDecision,
-    AppPath.BookCall,*/
+    AppPath.BookCallDecision,
+    AppPath.BookCall,
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -65,8 +65,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.PlanRequired,
       AppPath.PlanRequiredSuccess,
-      /*AppPath.BookCall,
-      AppPath.BookCallDecision,*/
+      AppPath.BookCall,
+      AppPath.BookCallDecision,
     ])
   ) {
     if (
@@ -93,8 +93,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
       AppPath.PlanRequiredSuccess,
-      /*AppPath.BookCallDecision,
-      AppPath.BookCall,*/
+      AppPath.BookCallDecision,
+      AppPath.BookCall,
     ])
   ) {
     return AppPath.CreateWorkspace;
@@ -121,12 +121,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
-  /*if (
+  if (
     onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
     !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
   ) {
     return AppPath.BookCallDecision;
-  }*/
+  }
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
