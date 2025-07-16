@@ -68,7 +68,7 @@ export type WorkflowDiagramFilterEdgeData = {
   stepId: string;
   filter: Record<string, any>;
   name: string;
-  runStatus?: WorkflowDiagramRunStatus;
+  runStatus?: WorkflowRunStepStatus;
   isEdgeEditable: boolean;
 };
 
