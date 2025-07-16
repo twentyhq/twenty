@@ -24,7 +24,9 @@ import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metada
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
-  constructor() {}
+  constructor(
+    private readonly processAggregateHelper: ProcessAggregateHelper,
+  ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
     objectMetadataMaps,
@@ -307,10 +309,12 @@ export class ProcessNestedRelationsV2Helper {
     if (aggregateForRelation) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
-      ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-        selectedAggregatedFields: aggregateForRelation,
-        queryBuilder: aggregateQueryBuilder,
-      });
+      this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
+        {
+          selectedAggregatedFields: aggregateForRelation,
+          queryBuilder: aggregateQueryBuilder,
+        },
+      );
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
         .addSelect(column)

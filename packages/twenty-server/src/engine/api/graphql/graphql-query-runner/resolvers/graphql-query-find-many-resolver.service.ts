@@ -36,7 +36,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
   FindManyResolverArgs,
   IConnection<ObjectRecord>
 > {
-  constructor() {
+  constructor(private readonly processAggregateHelper: ProcessAggregateHelper) {
     super();
   }
 
@@ -110,11 +110,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       appliedFilters,
     );
 
-    ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields:
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-      queryBuilder: aggregateQueryBuilder,
-    });
+    this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
+      {
+        selectedAggregatedFields:
+          executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+        queryBuilder: aggregateQueryBuilder,
+      },
+    );
 
     const limit =
       executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
