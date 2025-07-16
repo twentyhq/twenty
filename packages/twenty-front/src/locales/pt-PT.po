@@ -114,7 +114,7 @@ msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selecionado"
 
 #. js-lingui-id: POhzPf
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr ""
 
@@ -1147,7 +1147,7 @@ msgstr ""
 
 #. js-lingui-id: AHZflp
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr ""
 
@@ -1542,6 +1542,11 @@ msgstr ""
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
+msgstr ""
+
+#. js-lingui-id: S2XvS+
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Couldn't upload the file."
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -2772,7 +2777,7 @@ msgid "Failed to update variable"
 msgstr ""
 
 #. js-lingui-id: cQPyHI
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload.tsx
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr ""
 
@@ -5653,7 +5658,7 @@ msgid "Standard"
 msgstr ""
 
 #. js-lingui-id: GbQzZA
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
