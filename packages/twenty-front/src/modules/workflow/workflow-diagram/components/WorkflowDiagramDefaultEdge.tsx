@@ -1,5 +1,6 @@
 import { WorkflowDiagramEdgeV1 } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV1';
-import { WorkflowDiagramEdgeV2 } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2';
+import { WorkflowDiagramEdgeV2Empty } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Empty';
+import { WorkflowDiagramEdgeV2Filter } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Filter';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -46,20 +47,27 @@ export const WorkflowDiagramDefaultEdge = ({
       />
       {data?.shouldDisplayEdgeOptions && (
         <EdgeLabelRenderer>
-          {isWorkflowFilteringEnabled ? (
-            <WorkflowDiagramEdgeV2
+          {!isWorkflowFilteringEnabled ? (
+            <WorkflowDiagramEdgeV1
+              labelY={labelY}
+              parentStepId={source}
+              nextStepId={target}
+            />
+          ) : data.edgeType === 'default' ? (
+            <WorkflowDiagramEdgeV2Empty
+              labelX={labelX}
+              labelY={labelY}
+              parentStepId={source}
+              nextStepId={target}
+            />
+          ) : (
+            <WorkflowDiagramEdgeV2Filter
               labelX={labelX}
               labelY={labelY}
               stepId={data.stepId}
               parentStepId={source}
               nextStepId={target}
               filter={data.filter}
-            />
-          ) : (
-            <WorkflowDiagramEdgeV1
-              labelY={labelY}
-              parentStepId={source}
-              nextStepId={target}
             />
           )}
         </EdgeLabelRenderer>

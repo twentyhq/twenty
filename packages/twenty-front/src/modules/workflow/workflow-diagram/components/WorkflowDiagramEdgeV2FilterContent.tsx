@@ -9,11 +9,12 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -24,7 +25,6 @@ import {
   IconFilterX,
   IconGitBranchDeleted,
   IconPlus,
-  IconTrash,
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -38,43 +38,26 @@ const StyledConfiguredFilterContainer = styled.div`
   width: 26px;
 `;
 
-const StyledContainer = styled.div<{ labelX: number; labelY: number }>`
-  padding: ${({ theme }) => theme.spacing(1)};
-  pointer-events: all;
-  ${({ labelX, labelY }) => css`
-    transform: translate(-50%, -50%) translate(${labelX}px, ${labelY}px);
-  `}
-  position: absolute;
-`;
-
-const StyledOpacityOverlay = styled.div<{ shouldDisplay: boolean }>`
-  opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
-  position: relative;
-`;
-
-type WorkflowDiagramEdgeV2ContentProps = {
+type WorkflowDiagramEdgeV2FilterContentProps = {
   labelX: number;
   labelY: number;
-  stepId: string | undefined;
+  stepId: string;
   parentStepId: string;
   nextStepId: string;
-  filter: Record<string, any> | undefined;
-  onCreateFilter: () => Promise<void>;
+  filter: Record<string, any>;
   onDeleteFilter: () => Promise<void>;
   onCreateNode: () => void;
 };
 
-export const WorkflowDiagramEdgeV2Content = ({
+export const WorkflowDiagramEdgeV2FilterContent = ({
   labelX,
   labelY,
   stepId,
   parentStepId,
   nextStepId,
-  filter,
-  onCreateFilter,
   onDeleteFilter,
   onCreateNode,
-}: WorkflowDiagramEdgeV2ContentProps) => {
+}: WorkflowDiagramEdgeV2FilterContentProps) => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
@@ -107,91 +90,61 @@ export const WorkflowDiagramEdgeV2Content = ({
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const handleCreateFilter = async () => {
-    await onCreateFilter();
-
-    closeDropdown(dropdownId);
-    setHovered(false);
-  };
-
   const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
   );
 
   const handleFilterButtonClick = () => {
     setWorkflowSelectedNode(stepId);
-    if (isDefined(filter) && isDefined(workflowVisualizerWorkflowId)) {
+
+    if (isDefined(workflowVisualizerWorkflowId)) {
       openWorkflowEditStepInCommandMenu(
         workflowVisualizerWorkflowId,
         'Filter',
         IconFilter,
       );
-    } else {
-      handleCreateFilter();
     }
   };
 
   return (
-    <StyledContainer
+    <WorkflowDiagramEdgeV2Container
       data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
       labelX={labelX}
       labelY={labelY}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <StyledOpacityOverlay
-        shouldDisplay={
-          isSelected || hovered || isDropdownOpen || isDefined(filter)
-        }
-      >
-        {isDefined(filter) ? (
-          <StyledConfiguredFilterContainer>
-            {hovered || isDropdownOpen || isSelected ? (
-              <StyledIconButtonGroup
-                className="nodrag nopan"
-                iconButtons={[
-                  {
-                    Icon: IconFilter,
+      <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
+        <StyledConfiguredFilterContainer>
+          {hovered || isDropdownOpen || isSelected ? (
+            <StyledIconButtonGroup
+              className="nodrag nopan"
+              iconButtons={[
+                {
+                  Icon: IconFilter,
+                  onClick: handleFilterButtonClick,
+                },
+                {
+                  Icon: IconDotsVertical,
+                  onClick: () => {
+                    openDropdown({
+                      dropdownComponentInstanceIdFromProps: dropdownId,
+                    });
                   },
-                  {
-                    Icon: IconDotsVertical,
-                    onClick: () => {
-                      openDropdown({
-                        dropdownComponentInstanceIdFromProps: dropdownId,
-                      });
-                    },
-                  },
-                ]}
-              />
-            ) : (
-              <StyledIconButtonGroup
-                className="nodrag nopan"
-                iconButtons={[
-                  {
-                    Icon: IconFilter,
-                  },
-                ]}
-              />
-            )}
-          </StyledConfiguredFilterContainer>
-        ) : (
-          <StyledIconButtonGroup
-            className="nodrag nopan"
-            iconButtons={[
-              {
-                Icon: IconFilter,
-                onClick: handleFilterButtonClick,
-              },
-              {
-                Icon: IconPlus,
-                onClick: onCreateNode,
-              },
-              {
-                Icon: IconTrash,
-              },
-            ]}
-          />
-        )}
+                },
+              ]}
+            />
+          ) : (
+            <StyledIconButtonGroup
+              className="nodrag nopan"
+              iconButtons={[
+                {
+                  Icon: IconFilter,
+                },
+              ]}
+            />
+          )}
+        </StyledConfiguredFilterContainer>
 
         <Dropdown
           dropdownId={dropdownId}
@@ -246,7 +199,7 @@ export const WorkflowDiagramEdgeV2Content = ({
             </DropdownContent>
           }
         />
-      </StyledOpacityOverlay>
-    </StyledContainer>
+      </WorkflowDiagramEdgeV2VisibilityContainer>
+    </WorkflowDiagramEdgeV2Container>
   );
 };

@@ -6,10 +6,10 @@ import { Edge, Node } from '@xyflow/react';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
-export type WorkflowDiagramEdge = Edge<EdgeData>;
+export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData>;
 
 export type WorkflowRunDiagramNode = Node<WorkflowRunDiagramNodeData>;
-export type WorkflowRunDiagramEdge = Edge<EdgeData>;
+export type WorkflowRunDiagramEdge = Edge<WorkflowDiagramEdgeData>;
 
 export type WorkflowRunDiagram = {
   nodes: Array<WorkflowRunDiagramNode>;
@@ -68,11 +68,23 @@ export type WorkflowRunDiagramNodeData = Exclude<
   'runStatus'
 > & { runStatus: WorkflowDiagramRunStatus };
 
-export type EdgeData = {
-  stepId?: string;
-  filter?: Record<string, any>;
+export type WorkflowDiagramFilterEdgeData = {
+  edgeType: 'filter';
+  stepId: string;
+  filter: Record<string, any>;
+  name: string;
+  runStatus?: WorkflowDiagramRunStatus;
+  shouldDisplayEdgeOptions?: true;
+};
+
+export type WorkflowDiagramDefaultEdgeData = {
+  edgeType: 'default';
   shouldDisplayEdgeOptions?: boolean;
 };
+
+export type WorkflowDiagramEdgeData =
+  | WorkflowDiagramFilterEdgeData
+  | WorkflowDiagramDefaultEdgeData;
 
 export type WorkflowDiagramNodeType =
   | 'default'

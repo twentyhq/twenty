@@ -7,4 +7,7 @@ export const WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION = {
   markerEnd: EDGE_ROUNDED_ARROW_MARKER_ID,
   deletable: false,
   selectable: false,
+  data: {
+    edgeType: 'default',
+  },
 } satisfies Partial<WorkflowDiagramEdge>;
