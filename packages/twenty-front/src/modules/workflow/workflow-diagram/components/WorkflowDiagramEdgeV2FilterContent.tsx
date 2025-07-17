@@ -24,7 +24,6 @@ import {
   IconDotsVertical,
   IconFilter,
   IconFilterX,
-  IconGitBranchDeleted,
   IconPlus,
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
