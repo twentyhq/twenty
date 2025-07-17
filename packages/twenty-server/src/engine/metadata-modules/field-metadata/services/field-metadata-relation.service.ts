@@ -92,7 +92,7 @@ export class FieldMetadataRelationService {
     });
 
     const targetFieldMetadataToCreateWithRelation =
-      await this.addCustomRelationFieldMetadataForCreation({
+      this.addCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
           targetObjectMetadataId: objectMetadata.id,

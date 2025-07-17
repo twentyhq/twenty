@@ -297,7 +297,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await queryRunner.release();
     }
   }
-
+  // here
   public async deleteOneField(
     input: DeleteOneFieldInput,
     workspaceId: string,
@@ -671,7 +671,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (fieldMetadataInput.type === FieldMetadataType.RELATION) {
       const relationFieldMetadataForCreate =
-        await this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
+        this.fieldMetadataRelationService.addCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: fieldMetadataInput.relationCreationPayload,

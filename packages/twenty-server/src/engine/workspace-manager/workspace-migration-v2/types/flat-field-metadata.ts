@@ -10,9 +10,17 @@ type FieldMetadataEntityRelationProperties =
     MetadataEntitiesRelationTarget
   >;
 
+const requiredProperties = [
+  'type',
+] as const satisfies (keyof FieldMetadataEntity)[];
+type RequiredProperties = (typeof requiredProperties)[number];
+
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   Partial<
-    Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties>
+    Omit<
+      FieldMetadataEntity<T>,
+      FieldMetadataEntityRelationProperties | RequiredProperties
+    >
   > & {
     uniqueIdentifier: string;
-  };
+  } & Required<Pick<FieldMetadataEntity<T>, RequiredProperties>>;
