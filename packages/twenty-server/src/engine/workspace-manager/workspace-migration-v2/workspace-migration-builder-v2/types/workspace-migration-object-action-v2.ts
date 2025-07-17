@@ -8,21 +8,23 @@ type ObjectActionCommon = {
 };
 export type CreateObjectAction = {
   type: 'create_object';
+  // TODO strictly type
 } & ObjectActionCommon;
 
 export type UpdateObjectAction = {
   type: 'update_object';
-  updates: Partial<
+  updates: Array<
     {
       [P in FlatObjectMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<ObjectMetadataEntity[P]>;
     }[FlatObjectMetadataPropertiesToCompare]
-  >[];
+  >;
 } & ObjectActionCommon;
 
 export type DeleteObjectAction = {
   type: 'delete_object';
+  // TODO less thing to bring
 } & ObjectActionCommon;
 
 export type WorkspaceMigrationObjectActionV2 =

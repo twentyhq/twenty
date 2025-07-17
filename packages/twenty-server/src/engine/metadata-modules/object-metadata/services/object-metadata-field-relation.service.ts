@@ -66,6 +66,7 @@ export class ObjectMetadataFieldRelationService {
     return relatedObjectMetadataCollection;
   }
 
+  // This way too much duplicated
   private async createRelationAndForeignKeyMetadata({
     workspaceId,
     sourceObjectMetadata,
@@ -105,6 +106,7 @@ export class ObjectMetadataFieldRelationService {
     return targetObjectMetadata;
   }
 
+  // Duplicated
   private async createFieldMetadataRelation(
     workspaceId: string,
     sourceObjectMetadata: Pick<

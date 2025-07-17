@@ -11,6 +11,7 @@ type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
 
 const requiredProperties = [
   'id',
+  'workspaceId',
 ] as const satisfies (keyof ObjectMetadataEntity)[];
 type RequiredProperties = (typeof requiredProperties)[number];
 

@@ -166,6 +166,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
       )?.id;
 
+      // This means we cannot create an object metadata with a custom label identifier ?
+      // This is always true btw
       if (!labelIdentifierFieldMetadataId) {
         throw new ObjectMetadataException(
           'Label identifier field metadata not created properly',
@@ -182,10 +184,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         isSystem: false,
         isRemote: objectMetadataInput.isRemote,
         isSearchable: !objectMetadataInput.isRemote,
-        fields: objectMetadataInput.isRemote ? [] : baseCustomFields,
+        // fields: objectMetadataInput.isRemote ? [] : baseCustomFields, // Done through the builder's call
         labelIdentifierFieldMetadataId,
       });
 
+      // Not supported but quite late to throw no ?
       if (objectMetadataInput.isRemote) {
         throw new Error('Remote objects are not supported yet');
       } else {
