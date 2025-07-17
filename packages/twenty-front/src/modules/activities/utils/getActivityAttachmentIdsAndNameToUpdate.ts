@@ -1,9 +1,9 @@
 import { Attachment } from '@/activities/files/types/Attachment';
+import { compareUrls } from '@/activities/utils/compareUrls';
 import {
   AttachmentInfo,
   getActivityAttachmentPathsAndName,
 } from '@/activities/utils/getActivityAttachmentPathsAndName';
-import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getActivityAttachmentIdsAndNameToUpdate = (
@@ -18,7 +18,7 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
       const foundActivity = oldActivityAttachments.find(
         (attachment) =>
-          getAttachmentPath(attachment.fullPath) === activity.path,
+          compareUrls(attachment.fullPath,activity.path)
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {
         acc.push({ id: foundActivity.id, name: activity.name });

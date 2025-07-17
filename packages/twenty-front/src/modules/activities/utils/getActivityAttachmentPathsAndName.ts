@@ -1,4 +1,3 @@
-import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export type AttachmentInfo = {
@@ -16,7 +15,7 @@ export const getActivityAttachmentPathsAndName = (
       isNonEmptyString(block.props.url)
     ) {
       acc.push({
-        path: getAttachmentPath(block.props.url),
+        path: block.props.url,
         name: block.props.name,
       });
     }

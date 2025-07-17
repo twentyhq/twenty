@@ -1,6 +1,6 @@
 import { Attachment } from '@/activities/files/types/Attachment';
+import { compareUrls } from '@/activities/utils/compareUrls';
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
-import { getAttachmentPath } from '@/activities/utils/getAttachmentPath';
 
 export const getActivityAttachmentPathsToRestore = (
   newActivityBody: string,
@@ -14,7 +14,7 @@ export const getActivityAttachmentPathsToRestore = (
       (newActivity) =>
         !oldActivityAttachments.some(
           (attachment) =>
-            newActivity.path === getAttachmentPath(attachment.fullPath),
+            compareUrls(newActivity.path,attachment.fullPath)
         ),
     )
     .map((activity) => activity.path);

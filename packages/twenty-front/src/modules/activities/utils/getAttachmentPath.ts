@@ -1,4 +1,9 @@
 export const getAttachmentPath = (attachmentFullPath: string) => {
+  if (!attachmentFullPath.includes('/files/')) {
+    return attachmentFullPath;
+  }
+
+  const base = attachmentFullPath.split('/files/')[0];
   const rawPath = attachmentFullPath.split('/files/')[1]?.split('?')[0];
 
   if (!rawPath) {
@@ -6,7 +11,7 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   }
 
   if (!rawPath.startsWith('attachment/')) {
-    return rawPath;
+    return attachmentFullPath;
   }
 
   const pathParts = rawPath.split('/');
@@ -19,5 +24,5 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
 
   pathParts.pop();
 
-  return `${pathParts.join('/')}/${filename}`;
+  return `${base}/files/${pathParts.join('/')}/${filename}`;
 };
