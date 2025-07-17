@@ -77,13 +77,9 @@ export class CreateCompanyAndContactService {
       emails: uniqueHandles,
     });
 
-    const rawAlreadyCreatedContacts = await queryBuilder
+    const alreadyCreatedContacts = await queryBuilder
       .orderBy('person.createdAt', 'ASC')
       .getMany();
-
-    const alreadyCreatedContacts = await personRepository.formatResult(
-      rawAlreadyCreatedContacts,
-    );
 
     const alreadyCreatedContactEmails: string[] =
       alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
