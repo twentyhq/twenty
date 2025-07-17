@@ -6,7 +6,7 @@ import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager
 
 type WorkspaceBuilderArgs = Parameters<
   typeof WorkspaceMigrationBuilderV2Service.prototype.build
->[0];
+>[0]['objectMetadataFromToInputs'];
 
 export type CamelCasedWorkspaceMigrationActionsType =
   ConvertActionTypeToCamelCase<WorkspaceMigrationActionTypeV2>;

@@ -16,6 +16,9 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   const createdAt = faker.date.anytime();
 
   return {
+    defaultValue: null,
+    options: null,
+    settings: null,
     createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
@@ -30,11 +33,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isSystem: false,
     standardId: null,
     standardOverrides: null,
-    settings: null,
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),
-    defaultValue: null,
-    options: null,
     relationTargetFieldMetadata: undefined as never,
     relationTargetFieldMetadataId: undefined as never,
     relationTargetObjectMetadata: undefined as never,
