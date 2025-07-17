@@ -12,7 +12,6 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
@@ -79,8 +78,6 @@ export abstract class RestApiBaseHandler {
   protected readonly depthInputFactory: DepthInputFactory;
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
-  @Inject()
-  protected readonly apiEventEmitterService: ApiEventEmitterService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
 

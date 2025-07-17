@@ -97,24 +97,20 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
-        fields: [],
+        fieldIdByName: {
+          id: 'test-field-id',
+        },
+        fieldIdByJoinColumnName: {},
+        fieldsById: {
+          'test-field-id': {
+            id: 'test-field-id',
+            name: 'id',
+            type: 'string',
+            isNullable: false,
+            isUnique: true,
+          },
+        },
       });
-
-    jest.spyOn(repository as any, 'formatData').mockImplementation((data) => {
-      if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item));
-      }
-
-      return Object.assign({}, data);
-    });
-
-    jest.spyOn(repository as any, 'formatResult').mockImplementation((data) => {
-      if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item));
-      }
-
-      return Object.assign({}, data);
-    });
   });
 
   describe('Find Methods', () => {
@@ -239,7 +235,7 @@ describe('WorkspaceRepository', () => {
 
     it('should delegate to workspaceEntityManager delete', async () => {
       const criteria: FindOptionsWhere<ObjectLiteral> = { id: 'test-id' };
-      const expectedResult = { affected: 1, raw: [] };
+      const expectedResult = { affected: 1, raw: [], generatedMaps: [] };
 
       mockEntityManager.delete.mockResolvedValue(expectedResult);
 

@@ -55,8 +55,64 @@ describe('WorkspaceEntityManager', () => {
     mockInternalContext = {
       workspaceId: 'test-workspace-id',
       objectMetadataMaps: {
-        idByNameSingular: {},
+        byId: {
+          'test-entity-id': {
+            id: 'test-entity-id',
+            nameSingular: 'test-entity',
+            namePlural: 'test-entities',
+            labelSingular: 'Test Entity',
+            labelPlural: 'Test Entities',
+            workspaceId: 'test-workspace-id',
+            icon: 'test-icon',
+            color: 'test-color',
+            isCustom: false,
+            isRemote: false,
+            isAuditLogged: false,
+            isSearchable: false,
+            isSystem: false,
+            isActive: true,
+            targetTableName: 'test_entity',
+            indexMetadatas: [],
+            fieldsById: {
+              'field-id': {
+                id: 'field-id',
+                type: 'TEXT',
+                name: 'fieldName',
+                label: 'Field Name',
+                objectMetadataId: 'test-entity-id',
+                isNullable: true,
+                isLabelSyncedWithName: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            },
+            fieldIdByName: { fieldName: 'field-id' },
+            fieldIdByJoinColumnName: {},
+          },
+        },
+        idByNameSingular: {
+          'test-entity': 'test-entity-id',
+        },
       },
+      featureFlagsMap: {
+        IS_AIRTABLE_INTEGRATION_ENABLED: false,
+        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
+        IS_STRIPE_INTEGRATION_ENABLED: false,
+        IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_JSON_FILTER_ENABLED: false,
+        IS_AI_ENABLED: false,
+        IS_IMAP_SMTP_CALDAV_ENABLED: false,
+        IS_MORPH_RELATION_ENABLED: false,
+        IS_WORKFLOW_FILTERING_ENABLED: false,
+        IS_RELATION_CONNECT_ENABLED: false,
+        IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED: false,
+        IS_FIELDS_PERMISSIONS_ENABLED: false,
+      },
+      eventEmitterService: {
+        emitMutationEvent: jest.fn(),
+        emitDatabaseBatchEvent: jest.fn(),
+        emitCustomBatchEvent: jest.fn(),
+      } as any,
     } as WorkspaceInternalContext;
 
     mockDataSource = {
