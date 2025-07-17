@@ -15,9 +15,13 @@ import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-man
 export class WorkspaceMigrationBuilderV2Service {
   constructor() {}
 
-  build(
-    objectMetadataFromToInputs: FromTo<FlatObjectMetadata[]>,
-  ): WorkspaceMigrationV2 {
+  build({
+    objectMetadataFromToInputs,
+    workspaceId,
+  }: {
+    objectMetadataFromToInputs: FromTo<FlatObjectMetadata[]>;
+    workspaceId: string;
+  }): WorkspaceMigrationV2 {
     const {
       created: createdObjectMetadata,
       deleted: deletedObjectMetadata,
@@ -67,6 +71,7 @@ export class WorkspaceMigrationBuilderV2Service {
     );
 
     return {
+      workspaceId,
       actions: [
         ...objectWorkspaceMigrationActions,
         ...createdObjectWorkspaceMigrationCreateFieldActions,

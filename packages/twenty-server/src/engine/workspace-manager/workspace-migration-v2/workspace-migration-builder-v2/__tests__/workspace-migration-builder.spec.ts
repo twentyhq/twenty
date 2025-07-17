@@ -28,7 +28,7 @@ const allWorkspaceBuilderTestCases: {
   {
     label: 'index',
     testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
-  }, 
+  },
 ];
 
 const expectedActionsTypeCounterChecker = ({
@@ -83,8 +83,11 @@ describe.each(allWorkspaceBuilderTestCases)(
       ({ context: { input, expectedActionsTypeCounter } }) => {
         const { from, to } = typeof input === 'function' ? input() : input;
         const workspaceMigration = service.build({
-          from,
-          to,
+          objectMetadataFromToInputs: {
+            from,
+            to,
+          },
+          workspaceId: '20202020-52cc-4c64-ad63-76c26fc3a1e1',
         });
 
         expectedActionsTypeCounterChecker({
