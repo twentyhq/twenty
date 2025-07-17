@@ -1,4 +1,3 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,10 +7,10 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { useWorkflowVisualizerDiagramContextOrThrow } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
@@ -19,7 +18,6 @@ import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filte
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
   IconFilter,
@@ -86,11 +84,8 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
     dropdownId,
   );
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openFilterInCommandMenu } =
+    useWorkflowVisualizerDiagramContextOrThrow();
 
   const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
@@ -111,13 +106,7 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   const handleFilterButtonClick = () => {
     setWorkflowSelectedNode(stepId);
 
-    if (isDefined(workflowVisualizerWorkflowId)) {
-      openWorkflowEditStepInCommandMenu(
-        workflowVisualizerWorkflowId,
-        'Filter',
-        IconFilter,
-      );
-    }
+    openFilterInCommandMenu({});
   };
 
   return (
