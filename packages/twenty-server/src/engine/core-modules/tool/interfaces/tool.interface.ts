@@ -1,3 +1,5 @@
+import { JSONSchema7 } from 'json-schema';
+
 export type ToolInput = {
   parameters: Record<string, unknown>;
   context: ToolContext;
@@ -16,5 +18,7 @@ export type ToolOutput = {
 };
 
 export type Tool = {
+  description: string;
+  parameters: JSONSchema7;
   execute(input: ToolInput): Promise<ToolOutput>;
 };
