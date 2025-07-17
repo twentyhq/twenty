@@ -4,3 +4,7 @@ export type MetadataQuery = {
   query: string;
   variables: MetadataQueryVariables;
 };
+
+export type Selectors =
+  | { fields?: Array<string>; objects?: Array<string> }
+  | undefined;

@@ -30386,6 +30386,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"class-validator-jsonschema@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "class-validator-jsonschema@npm:5.0.2"
+  dependencies:
+    lodash.groupby: "npm:^4.6.0"
+    lodash.merge: "npm:^4.6.2"
+    openapi3-ts: "npm:^3.0.0"
+    reflect-metadata: "npm:^0.2.2"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    class-transformer: ^0.4.0 || ^0.5.0
+    class-validator: ^0.14.0
+  checksum: 10c0/58b2f99a809aabb585553398369dfda23e410a6ca5082545e50762cd3b838fcfa05e2634d7174bea907b168cedf3ab9c57e9ad4818a8302d56ab761349d6044e
+  languageName: node
+  linkType: hard
+
 "class-validator@npm:0.14.0":
   version: 0.14.0
   resolution: "class-validator@npm:0.14.0"
@@ -48093,6 +48109,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openapi3-ts@npm:^3.0.0":
+  version: 3.2.0
+  resolution: "openapi3-ts@npm:3.2.0"
+  dependencies:
+    yaml: "npm:^2.2.1"
+  checksum: 10c0/3b9a663bf71f9292880c970a80f6f1a8db0ee475451c03b4fd336da957a24372349594d7868ce0a60b3a0875844a1f0e906e8fec8ef4220c06aa70670bfa3148
+  languageName: node
+  linkType: hard
+
 "opener@npm:^1.5.1":
   version: 1.5.2
   resolution: "opener@npm:1.5.2"
@@ -51952,7 +51977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reflect-metadata@npm:^0.2.1":
+"reflect-metadata@npm:^0.2.1, reflect-metadata@npm:^0.2.2":
   version: 0.2.2
   resolution: "reflect-metadata@npm:0.2.2"
   checksum: 10c0/1cd93a15ea291e420204955544637c264c216e7aac527470e393d54b4bb075f10a17e60d8168ec96600c7e0b9fcc0cb0bb6e91c3fbf5b0d8c9056f04e6ac1ec2
@@ -56724,7 +56749,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2, tslib@npm:^2.8.0":
+"tslib@npm:2, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -57058,6 +57083,7 @@ __metadata:
     cache-manager: "npm:^5.4.0"
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
+    class-validator-jsonschema: "npm:^5.0.2"
     cloudflare: "npm:^4.0.0"
     connect-redis: "npm:^7.1.1"
     express-session: "npm:^1.18.1"
@@ -57174,11 +57200,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-zapier@workspace:packages/twenty-zapier"
   dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:29.7.0"
+    libphonenumber-js: "npm:^1.10.26"
     rimraf: "npm:^3.0.2"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
@@ -60596,6 +60625,15 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: 10c0/5c28b9eb7adc46544f28d9a8d20c5b3cb1215a886609a2fd41f51628d8aaa5878ccd628b755dbcd29f6bb4921bd04ffbc6dcc370689bb96e594e2f9813d2605f
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.2.1":
+  version: 2.8.0
+  resolution: "yaml@npm:2.8.0"
+  bin:
+    yaml: bin.mjs
+  checksum: 10c0/f6f7310cf7264a8107e72c1376f4de37389945d2fb4656f8060eca83f01d2d703f9d1b925dd8f39852a57034fafefde6225409ddd9f22aebfda16c6141b71858
   languageName: node
   linkType: hard
 
