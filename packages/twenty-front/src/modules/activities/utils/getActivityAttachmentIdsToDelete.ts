@@ -26,7 +26,9 @@ export const getActivityAttachmentIdsToDelete = (
 
   return oldActivityAttachments
     .filter((attachment) =>
-      pathsToDelete.some((pathToDelete)=>compareUrls(attachment.fullPath,pathToDelete)),
+      pathsToDelete.some((pathToDelete) =>
+        compareUrls(attachment.fullPath, pathToDelete),
+      ),
     )
     .map((attachment) => attachment.id);
 };

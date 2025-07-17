@@ -6,12 +6,12 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: '/files/images/test.txt',
+        fullPath: 'https://exemple.com/files/images/test.txt',
         name: 'image',
       },
       {
         id: '2',
-        fullPath: '/files/images/test2.txt',
+        fullPath: 'https://exemple.com/files/images/test2.txt',
         name: 'image1',
       },
     ] as Attachment[];
@@ -19,11 +19,17 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
     const activityBody = JSON.stringify([
       {
         type: 'file',
-        props: { url: '/files/images/test.txt', name: 'image' },
+        props: {
+          url: 'https://exemple.com/files/images/test.txt',
+          name: 'image',
+        },
       },
       {
         type: 'file',
-        props: { url: '/files/images/test2.txt', name: 'image1' },
+        props: {
+          url: 'https://exemple.com/files/images/test2.txt',
+          name: 'image1',
+        },
       },
     ]);
     const attachmentIdsAndNameToUpdate =
@@ -35,12 +41,12 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
     const attachments = [
       {
         id: '1',
-        fullPath: '/files/images/test.txt',
+        fullPath: 'https://exemple.com/files/images/test.txt',
         name: 'image',
       },
       {
         id: '2',
-        fullPath: '/files/images/test2.txt',
+        fullPath: 'https://exemple.com/files/images/test2.txt',
         name: 'image1',
       },
     ] as Attachment[];
@@ -48,11 +54,17 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
     const activityBody = JSON.stringify([
       {
         type: 'file',
-        props: { url: '/files/images/test.txt', name: 'image' },
+        props: {
+          url: 'https://exemple.com/files/images/test.txt',
+          name: 'image',
+        },
       },
       {
         type: 'file',
-        props: { url: '/files/images/test2.txt', name: 'image4' },
+        props: {
+          url: 'https://exemple.com/files/images/test2.txt',
+          name: 'image4',
+        },
       },
     ]);
     const attachmentIdsAndNameToUpdate =

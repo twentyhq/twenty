@@ -12,9 +12,8 @@ export const getActivityAttachmentPathsToRestore = (
   const pathsToRestore = newActivityAttachmentPaths
     .filter(
       (newActivity) =>
-        !oldActivityAttachments.some(
-          (attachment) =>
-            compareUrls(newActivity.path,attachment.fullPath)
+        !oldActivityAttachments.some((attachment) =>
+          compareUrls(newActivity.path, attachment.fullPath),
         ),
     )
     .map((activity) => activity.path);

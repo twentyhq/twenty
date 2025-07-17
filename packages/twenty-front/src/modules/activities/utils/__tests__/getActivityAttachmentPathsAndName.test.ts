@@ -36,10 +36,22 @@ describe('getActivityAttachmentPathsAndName', () => {
     const res = getActivityAttachmentPathsAndName(activityBlocknote);
 
     expect(res).toEqual([
-      { path: 'image/image.jpg', name: 'image' },
-      { path: 'file/file.pdf', name: 'file' },
-      { path: 'video/video.mp4', name: 'video' },
-      { path: 'audio/audio.mp3', name: 'audio' },
+      {
+        path: 'https://example.com/files/image/image.jpg?queryParam=value',
+        name: 'image',
+      },
+      {
+        path: 'https://example.com/files/file/file.pdf?queryParam=value',
+        name: 'file',
+      },
+      {
+        path: 'https://example.com/files/video/video.mp4?queryParam=value',
+        name: 'video',
+      },
+      {
+        path: 'https://example.com/files/audio/audio.mp3?queryParam=value',
+        name: 'audio',
+      },
     ]);
   });
 });

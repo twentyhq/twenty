@@ -1,17 +1,17 @@
 export const getAttachmentPath = (attachmentFullPath: string) => {
   if (!attachmentFullPath.includes('/files/')) {
-    return attachmentFullPath;
+    return attachmentFullPath?.split('?')[0];
   }
 
-  const base = attachmentFullPath.split('/files/')[0];
-  const rawPath = attachmentFullPath.split('/files/')[1]?.split('?')[0];
+  const base = attachmentFullPath?.split('/files/')[0];
+  const rawPath = attachmentFullPath?.split('/files/')[1]?.split('?')[0];
 
   if (!rawPath) {
     throw new Error(`Invalid attachment path: ${attachmentFullPath}`);
   }
 
   if (!rawPath.startsWith('attachment/')) {
-    return attachmentFullPath;
+    return attachmentFullPath?.split('?')[0];
   }
 
   const pathParts = rawPath.split('/');

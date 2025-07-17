@@ -16,9 +16,8 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
 
   return activityAttachmentsNameAndPaths.reduce(
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
-      const foundActivity = oldActivityAttachments.find(
-        (attachment) =>
-          compareUrls(attachment.fullPath,activity.path)
+      const foundActivity = oldActivityAttachments.find((attachment) =>
+        compareUrls(attachment.fullPath, activity.path),
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {
         acc.push({ id: foundActivity.id, name: activity.name });

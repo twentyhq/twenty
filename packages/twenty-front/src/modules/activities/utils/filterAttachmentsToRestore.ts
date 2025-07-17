@@ -7,8 +7,8 @@ export const filterAttachmentsToRestore = (
 ) => {
   return softDeletedAttachments
     .filter((attachment) =>
-      attachmentPathsToRestore.some(
-        (path) => compareUrls(attachment.fullPath,path),
+      attachmentPathsToRestore.some((path) =>
+        compareUrls(attachment.fullPath, path),
       ),
     )
     .map((attachment) => attachment.id);
