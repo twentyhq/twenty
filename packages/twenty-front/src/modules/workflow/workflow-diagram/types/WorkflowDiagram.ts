@@ -11,11 +11,10 @@ export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
 export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData>;
 
 export type WorkflowRunDiagramNode = Node<WorkflowRunDiagramNodeData>;
-export type WorkflowRunDiagramEdge = WorkflowDiagramEdge;
 
 export type WorkflowRunDiagram = {
   nodes: Array<WorkflowRunDiagramNode>;
-  edges: Array<WorkflowRunDiagramEdge>;
+  edges: Array<WorkflowDiagramEdge>;
 };
 
 export type WorkflowDiagram = {
