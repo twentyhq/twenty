@@ -190,29 +190,23 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
 
-      if (!isDefined(fieldMetadata.settings)) {
+      // typescript issue, it's not possible to use the fieldMetadata.settings directly in morphRelations.map
+      const settings = fieldMetadata.settings;
+
+      if (!isDefined(settings) || !isDefined(settings.relationType)) {
         throw new FieldMetadataException(
-          'Morph relation settings are required',
+          `Morph relation settings ${isDefined(settings) && 'relationType'} are required`,
           FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         );
       }
 
-      return morphRelations.map((morphRelation) => {
-        if (!isDefined(fieldMetadata.settings?.relationType)) {
-          throw new FieldMetadataException(
-            'Morph relation relationType are required',
-            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-          );
-        }
-
-        return {
-          type: fieldMetadata.settings.relationType,
-          sourceObjectMetadata: morphRelation.sourceObjectMetadata,
-          targetObjectMetadata: morphRelation.targetObjectMetadata,
-          sourceFieldMetadata: morphRelation.sourceFieldMetadata,
-          targetFieldMetadata: morphRelation.targetFieldMetadata,
-        };
-      });
+      return morphRelations.map((morphRelation) => ({
+        type: settings.relationType,
+        sourceObjectMetadata: morphRelation.sourceObjectMetadata,
+        targetObjectMetadata: morphRelation.targetObjectMetadata,
+        sourceFieldMetadata: morphRelation.sourceFieldMetadata,
+        targetFieldMetadata: morphRelation.targetFieldMetadata,
+      }));
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }

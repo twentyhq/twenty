@@ -237,13 +237,6 @@ export class FieldMetadataMorphRelationService {
           };
         });
 
-      if (!fieldMetadataItemsAndMorphSibling) {
-        throw new FieldMetadataException(
-          `Target field metadata with id ${relationTargetFieldMetadataId} not found for field metadata ${fieldMetadataItem.id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
       fieldMetadataItemsAndMorphSiblings.push(
         ...fieldMetadataItemsAndMorphSibling,
       );
