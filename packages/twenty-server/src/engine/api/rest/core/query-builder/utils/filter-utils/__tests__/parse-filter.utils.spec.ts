@@ -1,5 +1,3 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   fieldNumberMock,
   fieldTextMock,
@@ -8,33 +6,36 @@ import {
 import { parseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('parseFilter', () => {
-  const completeFieldNumberMock: FieldMetadataInterface = {
-    id: 'field-number-id',
+  const completeFieldNumberMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000002',
     type: fieldNumberMock.type,
     name: fieldNumberMock.name,
     label: 'Field Number',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldNumberMock.isNullable,
     defaultValue: fieldNumberMock.defaultValue,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
-  const completeFieldTextMock: FieldMetadataInterface = {
-    id: 'field-text-id',
+  const completeFieldTextMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000003',
     type: fieldTextMock.type,
     name: fieldTextMock.name,
     label: 'Field Text',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldTextMock.isNullable,
     defaultValue: fieldTextMock.defaultValue,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
   const fieldsById: FieldMetadataMap = {
     'field-number-id': completeFieldNumberMock,

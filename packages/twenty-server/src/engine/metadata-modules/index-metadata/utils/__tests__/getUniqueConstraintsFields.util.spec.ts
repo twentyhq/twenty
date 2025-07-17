@@ -1,20 +1,22 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { IndexFieldMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-field-metadata.interface';
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('getUniqueConstraintsFields', () => {
-  const mockIdField: FieldMetadataInterface = {
-    id: 'field-id-1',
+  const mockIdField = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000002',
     name: 'id',
     label: 'ID',
     type: FieldMetadataType.UUID,
-    objectMetadataId: 'object-id-1',
     isNullable: false,
     isUnique: false,
     isCustom: false,
@@ -23,14 +25,15 @@ describe('getUniqueConstraintsFields', () => {
     isLabelSyncedWithName: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-  };
+  });
 
-  const mockEmailField: FieldMetadataInterface = {
-    id: 'field-id-2',
+  const mockEmailField = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000003',
     name: 'email',
     label: 'Email',
     type: FieldMetadataType.EMAILS,
-    objectMetadataId: 'object-id-1',
     isNullable: true,
     isUnique: true,
     isCustom: false,
@@ -39,14 +42,15 @@ describe('getUniqueConstraintsFields', () => {
     isLabelSyncedWithName: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-  };
+  });
 
-  const mockNameField: FieldMetadataInterface = {
-    id: 'field-id-3',
+  const mockNameField = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000004',
     name: 'name',
     label: 'Name',
     type: FieldMetadataType.TEXT,
-    objectMetadataId: 'object-id-1',
     isNullable: true,
     isUnique: false,
     isCustom: false,
@@ -55,7 +59,7 @@ describe('getUniqueConstraintsFields', () => {
     isLabelSyncedWithName: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-  };
+  });
 
   const createMockIndexFieldMetadata = (
     fieldMetadataId: string,
@@ -88,7 +92,7 @@ describe('getUniqueConstraintsFields', () => {
   });
 
   const createMockObjectMetadata = (
-    fields: FieldMetadataInterface[],
+    fields: FieldMetadataEntity[],
     indexMetadatas: IndexMetadataInterface[] = [],
   ): ObjectMetadataInterface => ({
     id: 'object-id-1',
