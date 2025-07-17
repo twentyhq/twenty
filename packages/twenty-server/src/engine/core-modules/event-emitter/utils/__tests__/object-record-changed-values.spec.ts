@@ -1,27 +1,25 @@
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
-const mockObjectMetadata: ObjectMetadataItemWithFieldMaps = {
-  id: '1',
-  icon: 'Icon123',
+const mockObjectMetadata = getMockObjectMetadataEntity({
+  workspaceId: '20202020-0000-0000-0000-000000000000',
+  id: '20202020-0000-0000-0000-000000000001',
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',
   labelPlural: 'Objects',
   description: 'Test object metadata',
   targetTableName: 'test_table',
-  workspaceId: '1',
-  fieldsById: {},
-  fieldIdByName: {},
+  icon: 'Icon123',
   isSystem: false,
   isCustom: false,
   isActive: true,
   isRemote: false,
   isAuditLogged: true,
   isSearchable: true,
-  indexMetadatas: [],
-  fieldIdByJoinColumnName: {},
-};
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
 
 describe('objectRecordChangedValues', () => {
   it('detects changes in scalar values correctly', () => {

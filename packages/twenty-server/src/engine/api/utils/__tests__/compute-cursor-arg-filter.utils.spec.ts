@@ -5,6 +5,7 @@ import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('computeCursorArgFilter', () => {
   const objectMetadataItemWithFieldMaps = {
@@ -30,39 +31,42 @@ describe('computeCursorArgFilter', () => {
       fullName: 'fullname-id',
     },
     fieldsById: {
-      'name-id': {
-        type: FieldMetadataType.TEXT,
+      'name-id': getMockFieldMetadataEntity({
+        workspaceId: 'workspace-id',
+        objectMetadataId: 'object-id',
         id: 'name-id',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
-        objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
-      'age-id': {
-        type: FieldMetadataType.NUMBER,
+      }),
+      'age-id': getMockFieldMetadataEntity({
+        workspaceId: 'workspace-id',
+        objectMetadataId: 'object-id',
         id: 'age-id',
+        type: FieldMetadataType.NUMBER,
         name: 'age',
         label: 'Age',
-        objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
-      'fullname-id': {
-        type: FieldMetadataType.FULL_NAME,
+      }),
+      'fullname-id': getMockFieldMetadataEntity({
+        workspaceId: 'workspace-id',
+        objectMetadataId: 'object-id',
         id: 'fullname-id',
+        type: FieldMetadataType.FULL_NAME,
         name: 'fullName',
         label: 'Full Name',
-        objectMetadataId: 'object-id',
         isLabelSyncedWithName: true,
         isNullable: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
+      }),
     },
   } satisfies ObjectMetadataItemWithFieldMaps;
 
