@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
@@ -11,6 +12,7 @@ export class WorkspaceMigrationRunnerV2Service {
   constructor(
     private readonly workspaceMetadataMigrationRunner: WorkspaceMetadataMigrationRunnerService,
     private readonly workspaceSchemaMigrationRunner: WorkspaceSchemaMigrationRunnerService,
+    @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
   ) {}
 

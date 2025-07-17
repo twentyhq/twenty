@@ -15,56 +15,56 @@ export class WorkspaceSchemaMigrationRunnerService {
     private readonly workspaceSchemaFieldMigrationRunnerService: WorkspaceSchemaFieldActionRunnerService,
   ) {}
 
-  runWorkspaceSchemaMigration = ({
+  runWorkspaceSchemaMigration = async ({
     workspaceMigration,
     queryRunner,
   }: WorkspaceMigrationRunnerArgs) => {
     for (const action of workspaceMigration.actions) {
       switch (action.type) {
         case 'delete_object': {
-          this.workspaceSchemaObjectMigrationRunnerService.runDeleteObjectSchemaMigration(
+          await this.workspaceSchemaObjectMigrationRunnerService.runDeleteObjectSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_object': {
-          this.workspaceSchemaObjectMigrationRunnerService.runCreateObjectSchemaMigration(
+          await this.workspaceSchemaObjectMigrationRunnerService.runCreateObjectSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'update_object': {
-          this.workspaceSchemaObjectMigrationRunnerService.runUpdateObjectSchemaMigration(
+          await this.workspaceSchemaObjectMigrationRunnerService.runUpdateObjectSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_field': {
-          this.workspaceSchemaFieldMigrationRunnerService.runCreateFieldSchemaMigration(
+          await this.workspaceSchemaFieldMigrationRunnerService.runCreateFieldSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'update_field': {
-          this.workspaceSchemaFieldMigrationRunnerService.runUpdateFieldSchemaMigration(
+          await this.workspaceSchemaFieldMigrationRunnerService.runUpdateFieldSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'delete_field': {
-          this.workspaceSchemaFieldMigrationRunnerService.runDeleteFieldSchemaMigration(
+          await this.workspaceSchemaFieldMigrationRunnerService.runDeleteFieldSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_index': {
-          this.workspaceSchemaIndexMigrationRunnerService.runCreateIndexSchemaMigration(
+          await this.workspaceSchemaIndexMigrationRunnerService.runCreateIndexSchemaMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'delete_index': {
-          this.workspaceSchemaIndexMigrationRunnerService.runDeleteIndexSchemaMigration(
+          await this.workspaceSchemaIndexMigrationRunnerService.runDeleteIndexSchemaMigration(
             { action, queryRunner },
           );
           break;

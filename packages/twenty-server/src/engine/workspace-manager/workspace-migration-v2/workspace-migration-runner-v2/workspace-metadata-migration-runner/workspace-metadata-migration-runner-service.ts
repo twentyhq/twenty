@@ -15,56 +15,56 @@ export class WorkspaceMetadataMigrationRunnerService {
     private readonly workspaceMetadataFieldMigrationRunnerService: WorkspaceMetadataFieldActionRunnerService,
   ) {}
 
-  runWorkspaceMetadataMigration = ({
+  runWorkspaceMetadataMigration = async ({
     workspaceMigration,
     queryRunner,
   }: WorkspaceMigrationRunnerArgs) => {
     for (const action of workspaceMigration.actions) {
       switch (action.type) {
         case 'delete_object': {
-          this.workspaceMetadataObjectMigrationRunnerService.runDeleteObjectMetadataMigration(
+          await this.workspaceMetadataObjectMigrationRunnerService.runDeleteObjectMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_object': {
-          this.workspaceMetadataObjectMigrationRunnerService.runCreateObjectMetadataMigration(
+          await this.workspaceMetadataObjectMigrationRunnerService.runCreateObjectMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'update_object': {
-          this.workspaceMetadataObjectMigrationRunnerService.runUpdateObjectMetadataMigration(
+          await this.workspaceMetadataObjectMigrationRunnerService.runUpdateObjectMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_field': {
-          this.workspaceMetadataFieldMigrationRunnerService.runCreateFieldMetadataMigration(
+          await this.workspaceMetadataFieldMigrationRunnerService.runCreateFieldMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'update_field': {
-          this.workspaceMetadataFieldMigrationRunnerService.runUpdateFieldMetadataMigration(
+          await this.workspaceMetadataFieldMigrationRunnerService.runUpdateFieldMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'delete_field': {
-          this.workspaceMetadataFieldMigrationRunnerService.runDeleteFieldMetadataMigration(
+          await this.workspaceMetadataFieldMigrationRunnerService.runDeleteFieldMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'create_index': {
-          this.workspaceMetadataIndexMigrationRunnerService.runCreateIndexMetadataMigration(
+          await this.workspaceMetadataIndexMigrationRunnerService.runCreateIndexMetadataMigration(
             { action, queryRunner },
           );
           break;
         }
         case 'delete_index': {
-          this.workspaceMetadataIndexMigrationRunnerService.runDeleteIndexMetadataMigration(
+          await this.workspaceMetadataIndexMigrationRunnerService.runDeleteIndexMetadataMigration(
             { action, queryRunner },
           );
           break;
