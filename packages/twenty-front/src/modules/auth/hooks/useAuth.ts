@@ -2,11 +2,11 @@ import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
-    snapshot_UNSTABLE,
-    useGotoRecoilSnapshot,
-    useRecoilCallback,
-    useRecoilValue,
-    useSetRecoilState,
+  snapshot_UNSTABLE,
+  useGotoRecoilSnapshot,
+  useRecoilCallback,
+  useRecoilValue,
+  useSetRecoilState,
 } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -17,17 +17,17 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-    AuthTokenPair,
-    useCheckUserExistsLazyQuery,
-    useGetAuthTokensFromLoginTokenMutation,
-    useGetAuthTokensFromOtpMutation,
-    useGetCurrentUserLazyQuery,
-    useGetLoginTokenFromCredentialsMutation,
-    useGetLoginTokenFromEmailVerificationTokenMutation,
-    useInitiateOtpProvisioningMutation,
-    useSignInMutation,
-    useSignUpInWorkspaceMutation,
-    useSignUpMutation,
+  AuthTokenPair,
+  useCheckUserExistsLazyQuery,
+  useGetAuthTokensFromLoginTokenMutation,
+  useGetAuthTokensFromOtpMutation,
+  useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromCredentialsMutation,
+  useGetLoginTokenFromEmailVerificationTokenMutation,
+  useInitiateOtpProvisioningMutation,
+  useSignInMutation,
+  useSignUpInWorkspaceMutation,
+  useSignUpMutation,
 } from '~/generated-metadata/graphql';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
@@ -48,14 +48,14 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
-    SignInUpStep,
-    signInUpStepState,
+  SignInUpStep,
+  signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
-    countAvailableWorkspaces,
-    getFirstAvailableWorkspaces,
+  countAvailableWorkspaces,
+  getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
