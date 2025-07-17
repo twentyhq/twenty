@@ -191,7 +191,6 @@ export class DataloaderService {
     );
   }
 
-  // todo: this is not used anywhere, we should remove it
   private createFieldMetadataLoader() {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
