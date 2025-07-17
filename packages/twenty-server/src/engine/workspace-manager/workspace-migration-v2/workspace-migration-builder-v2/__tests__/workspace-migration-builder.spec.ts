@@ -28,7 +28,7 @@ const allWorkspaceBuilderTestCases: {
   {
     label: 'index',
     testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
-  },
+  }, 
 ];
 
 const expectedActionsTypeCounterChecker = ({

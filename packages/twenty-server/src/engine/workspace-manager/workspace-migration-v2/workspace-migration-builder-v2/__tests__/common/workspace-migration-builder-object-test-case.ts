@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 
 import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
+import { getFlatIndexMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-index-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
@@ -58,7 +59,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
     },
     {
       title:
-        'It should build a create_object and create_field actions for each of this fieldMetadata',
+        'It should build a create_object and create_field and create_index actions for each of this fieldMetadata',
       context: {
         input: () => {
           const objectMetadataId = faker.string.uuid();
@@ -70,6 +71,10 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
                 uniqueIdentifier: `field_${index}`,
               }),
           );
+          const flatIndexMetadata = getFlatIndexMetadataMock({
+            uniqueIdentifier: 'field-metadata-unique-identifier-1',
+            objectMetadataId,
+          });
           const flatObjectMetadata = getFlatObjectMetadataMock({
             uniqueIdentifier: 'pomme',
             nameSingular: 'toto',
@@ -77,7 +82,9 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
             isLabelSyncedWithName: true,
             id: objectMetadataId,
             flatFieldMetadatas,
+            flatIndexMetadatas: [flatIndexMetadata]
           });
+  
 
           return {
             from: [],
@@ -88,6 +95,7 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
         expectedActionsTypeCounter: {
           createObject: 1,
           createField: 5,
+          createIndex: 1
         },
       },
     },
