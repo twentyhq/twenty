@@ -17,6 +17,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -397,7 +398,16 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const nonFormattedUpsertedRecords = await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
       .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       })
@@ -433,6 +443,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
       shouldBypassPermissionChecks,
+      selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }
 
