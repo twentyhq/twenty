@@ -30,6 +30,7 @@ import {
 import { QueryDeepPartialEntityWithRelationConnect } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceRepository<
@@ -892,12 +893,18 @@ export class WorkspaceRepository<
 
     const transformedOptions = { ...options };
 
-    transformedOptions.where = options.where;
+    transformedOptions.where = await this.formatData(options.where);
 
     if (options.withDeleted) {
       transformedOptions.withDeleted = true;
     }
 
     return transformedOptions;
+  }
+
+  private async formatData<T>(data: T): Promise<T> {
+    const objectMetadata = await this.getObjectMetadataFromTarget();
+
+    return formatData(data, objectMetadata) as T;
   }
 }
