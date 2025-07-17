@@ -22,8 +22,8 @@ describe('WorkspaceMigrationIndexFactory', () => {
     });
 
     const objectMetadata = {
-      id: 'obj1',
-      workspaceId: 'ws1',
+      id: '20202020-0000-0000-0000-000000000002',
+      workspaceId: '20202020-0000-0000-0000-000000000000',
       nameSingular: 'Test',
       fields: [simpleField],
       isCustom: false,
@@ -70,8 +70,8 @@ describe('WorkspaceMigrationIndexFactory', () => {
     });
 
     const objectMetadata = {
-      id: 'obj2',
-      workspaceId: 'ws1',
+      id: '20202020-0000-0000-0000-000000000003',
+      workspaceId: '20202020-0000-0000-0000-000000000000',
       nameSingular: 'Attachment',
       fields: [relationField],
       isCustom: false,
