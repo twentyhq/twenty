@@ -11,7 +11,6 @@ import {
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
@@ -28,15 +27,9 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
     let objectRecords: Partial<ObjectRecord>[] = [];
 
     if (request.body.ids) {
-      const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
+      objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(request.body.ids) })
         .getMany()) as ObjectRecord[];
-
-      objectRecords = formatResult(
-        nonFormattedObjectRecords,
-        objectMetadataItemWithFieldsMaps,
-        objectMetadata.objectMetadataMaps,
-      );
     } else if (request.body.data && !isEmpty(request.body.data)) {
       objectRecords = request.body.data;
     }

@@ -1052,11 +1052,11 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
+    const isEntityArray = Array.isArray(entity);
     const entityTarget =
-      target ??
-      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
-    const entityArray = Array.isArray(entity) ? entity : [entity];
+    const entityArray = isEntityArray ? entity : [entity];
     const entityIds = entityArray.map((e) => (e as { id: string }).id);
     const beforeUpdate = await this.find(
       entityTarget,
@@ -1126,7 +1126,7 @@ export class WorkspaceEntityManager extends EntityManager {
       }
     }
 
-    return result;
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override remove<Entity>(
@@ -1186,15 +1186,15 @@ export class WorkspaceEntityManager extends EntityManager {
       ? maybeOptionsOrMaybePermissionOptions
       : entityOrMaybeOptions;
 
-    if (Array.isArray(entity) && entity.length === 0)
-      return Promise.resolve(entity);
+    const isEntityArray = Array.isArray(entity);
+
+    if (isEntityArray && entity.length === 0) return Promise.resolve(entity);
 
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
     const entityTarget =
-      target ??
-      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
     const objectMetadataItem = getObjectMetadataFromEntityTarget(
       entityTarget,
@@ -1228,7 +1228,7 @@ export class WorkspaceEntityManager extends EntityManager {
       entities: formattedResult,
     });
 
-    return formattedResult;
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -1304,9 +1304,9 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
+    const isEntityArray = Array.isArray(entity);
     const entityTarget =
-      target ??
-      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
     const objectMetadataItem = getObjectMetadataFromEntityTarget(
       entityTarget,
@@ -1340,7 +1340,7 @@ export class WorkspaceEntityManager extends EntityManager {
       entities: formattedResult,
     });
 
-    return formattedResult;
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override recover<Entity>(
@@ -1406,15 +1406,15 @@ export class WorkspaceEntityManager extends EntityManager {
       : entityOrEntitiesOrMaybeOptions;
 
     if (InstanceChecker.isEntitySchema(target)) target = target.options.name;
-    if (Array.isArray(entity) && entity.length === 0)
-      return Promise.resolve(entity);
+    const isEntityArray = Array.isArray(entity);
+
+    if (isEntityArray && entity.length === 0) return Promise.resolve(entity);
 
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
     const entityTarget =
-      target ??
-      (Array.isArray(entity) ? entity[0]?.constructor : entity.constructor);
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
 
     const objectMetadataItem = getObjectMetadataFromEntityTarget(
       entityTarget,
@@ -1448,7 +1448,7 @@ export class WorkspaceEntityManager extends EntityManager {
       entities: formattedResult,
     });
 
-    return formattedResult;
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   // Forbidden methods

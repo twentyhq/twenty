@@ -8,7 +8,6 @@ import {
 import { settings } from 'src/engine/constants/settings';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 
 export const buildDuplicateConditions = (
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
@@ -22,13 +21,11 @@ export const buildDuplicateConditions = (
   const criteriaCollection =
     objectMetadataItemWithFieldMaps.duplicateCriteria || [];
 
-  const formattedRecords = formatData(records, objectMetadataItemWithFieldMaps);
-
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     objectMetadataItemWithFieldMaps,
   );
 
-  const conditions = formattedRecords.flatMap((record) => {
+  const conditions = records.flatMap((record) => {
     const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
       criteria.every((columnName) => {
         const value = record[columnName] as string | undefined;
