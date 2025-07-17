@@ -15,6 +15,7 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -44,7 +45,7 @@ type WorkflowDiagramEdgeV2FilterContentProps = {
   stepId: string;
   parentStepId: string;
   nextStepId: string;
-  filter: Record<string, any>;
+  filterSettings: FilterSettings;
   onDeleteFilter: () => Promise<void>;
   onCreateNode: () => void;
   isEdgeEditable: boolean;

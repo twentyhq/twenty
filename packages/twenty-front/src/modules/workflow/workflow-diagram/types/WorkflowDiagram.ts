@@ -3,6 +3,7 @@ import {
   WorkflowRunStepStatus,
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { Edge, Node } from '@xyflow/react';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
@@ -66,7 +67,7 @@ export type WorkflowRunDiagramNodeData = Exclude<
 export type WorkflowDiagramFilterEdgeData = {
   edgeType: 'filter';
   stepId: string;
-  filter: Record<string, any>;
+  filterSettings: FilterSettings;
   name: string;
   runStatus?: WorkflowRunStepStatus;
   isEdgeEditable: boolean;

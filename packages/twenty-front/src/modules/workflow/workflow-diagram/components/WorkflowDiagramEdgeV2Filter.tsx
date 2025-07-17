@@ -4,6 +4,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { WorkflowDiagramEdgeV2FilterContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2FilterContent';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
+import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowDiagramEdgeV2FilterProps = {
@@ -12,7 +13,7 @@ type WorkflowDiagramEdgeV2FilterProps = {
   stepId: string;
   parentStepId: string;
   nextStepId: string;
-  filter: Record<string, any>;
+  filterSettings: FilterSettings;
   isEdgeEditable: boolean;
 };
 
@@ -22,7 +23,7 @@ export const WorkflowDiagramEdgeV2Filter = ({
   stepId,
   parentStepId,
   nextStepId,
-  filter,
+  filterSettings,
   isEdgeEditable,
 }: WorkflowDiagramEdgeV2FilterProps) => {
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
@@ -40,7 +41,7 @@ export const WorkflowDiagramEdgeV2Filter = ({
       stepId={stepId}
       parentStepId={parentStepId}
       nextStepId={nextStepId}
-      filter={filter}
+      filterSettings={filterSettings}
       isEdgeEditable={isEdgeEditable}
       onDeleteFilter={() => {
         if (!isDefined(stepId)) {
