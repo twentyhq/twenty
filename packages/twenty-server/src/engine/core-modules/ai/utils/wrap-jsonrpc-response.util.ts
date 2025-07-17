@@ -5,14 +5,19 @@ export const wrapJsonRpcResponse = (
   payload:
     | Record<'result', Record<string, unknown>>
     | Record<'error', Record<string, unknown>>,
+  omitMetadata = false,
 ) => {
   const body =
     'result' in payload
       ? {
-          result: { ...payload.result, ...MCP_SERVER_METADATA },
+          result: omitMetadata
+            ? payload.result
+            : { ...payload.result, ...MCP_SERVER_METADATA },
         }
       : {
-          error: { ...payload.error, ...MCP_SERVER_METADATA },
+          error: omitMetadata
+            ? payload.error
+            : { ...payload.error, ...MCP_SERVER_METADATA },
         };
 
   return {

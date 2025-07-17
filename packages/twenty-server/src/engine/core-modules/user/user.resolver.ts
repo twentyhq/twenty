@@ -34,6 +34,7 @@ import {
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
@@ -60,7 +61,6 @@ import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/e
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -122,7 +122,11 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.twoFactorAuthenticationMethods'],
+      relations: {
+        userWorkspaces: {
+          twoFactorAuthenticationMethods: true,
+        },
+      },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -134,7 +138,7 @@ export class UserResolver {
       return user;
     }
 
-    const currentUserWorkspace = user.workspaces.find(
+    const currentUserWorkspace = user.userWorkspaces.find(
       (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
@@ -392,6 +396,13 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ) {
     return workspace;
+  }
+
+  @ResolveField(() => [UserWorkspace], {
+    nullable: false,
+  })
+  async workspaces(@Parent() user: User) {
+    return user.userWorkspaces;
   }
 
   @ResolveField(() => AvailableWorkspaces)
