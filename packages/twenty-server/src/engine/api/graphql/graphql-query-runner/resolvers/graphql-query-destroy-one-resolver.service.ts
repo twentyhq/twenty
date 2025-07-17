@@ -15,6 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -35,10 +36,16 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const nonFormattedDeletedObjectRecords = await queryBuilder
       .delete()
       .where({ id: executionArgs.args.id })
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
     if (!nonFormattedDeletedObjectRecords.affected) {
@@ -73,6 +80,7 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 

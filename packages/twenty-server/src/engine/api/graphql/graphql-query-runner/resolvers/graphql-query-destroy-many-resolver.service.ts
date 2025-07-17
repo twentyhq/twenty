@@ -11,6 +11,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -43,9 +44,15 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       executionArgs.args.filter,
     );
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const nonFormattedDeletedObjectRecords = await queryBuilder
       .delete()
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
     const deletedRecords = formatResult<ObjectRecord[]>(
@@ -73,6 +80,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 
