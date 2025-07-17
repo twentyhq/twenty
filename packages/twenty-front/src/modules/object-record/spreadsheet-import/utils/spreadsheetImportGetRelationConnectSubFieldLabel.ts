@@ -16,5 +16,5 @@ export const getRelationConnectSubFieldLabel = (
         ]
       : undefined;
 
-  return `${fieldMetadataItem.label} / ${uniqueFieldMetadataItem.label} ${compositeSubFieldLabel ? ` / ${compositeSubFieldLabel}` : ''}`;
+  return `${fieldMetadataItem.label} / ${uniqueFieldMetadataItem.label}${compositeSubFieldLabel ? ` / ${compositeSubFieldLabel}` : ''}`;
 };
