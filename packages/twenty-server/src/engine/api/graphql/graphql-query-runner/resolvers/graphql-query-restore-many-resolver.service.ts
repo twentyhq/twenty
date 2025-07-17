@@ -11,11 +11,12 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { RestoreManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseResolverService<
@@ -45,9 +46,15 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       executionArgs.args.filter,
     );
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const nonFormattedRestoredObjectRecords = await queryBuilder
       .restore()
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
     const formattedRestoredRecords = formatResult<ObjectRecord[]>(
@@ -75,6 +82,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 

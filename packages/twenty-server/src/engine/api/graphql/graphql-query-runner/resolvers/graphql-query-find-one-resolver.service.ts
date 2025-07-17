@@ -18,6 +18,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
@@ -52,7 +53,17 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       executionArgs.args.filter ?? ({} as ObjectRecordFilter),
     );
 
-    const nonFormattedObjectRecord = await queryBuilder.getOne();
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
+    const nonFormattedObjectRecord = await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
+      .getOne();
 
     const objectRecord = formatResult<ObjectRecord>(
       nonFormattedObjectRecord,
@@ -80,6 +91,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 
