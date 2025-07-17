@@ -19,7 +19,6 @@ import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/g
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -65,8 +64,6 @@ export abstract class GraphqlQueryBaseResolverService<
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
   protected readonly queryResultGettersFactory: QueryResultGettersFactory;
-  @Inject()
-  protected readonly apiEventEmitterService: ApiEventEmitterService;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()
@@ -128,6 +125,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
         shouldBypassPermissionChecks,
         roleId,
+        authContext,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(

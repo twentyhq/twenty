@@ -23,7 +23,6 @@ import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolverService<
@@ -59,17 +58,11 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       objectMetadataItemWithFieldMaps,
     });
 
-    const nonFormattedObjectRecord = await queryBuilder
+    const objectRecord = await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .getOne();
-
-    const objectRecord = formatResult<ObjectRecord>(
-      nonFormattedObjectRecord,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
 
     if (!objectRecord) {
       throw new GraphqlQueryRunnerException(
@@ -78,7 +71,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       );
     }
 
-    const objectRecords = [objectRecord];
+    const objectRecords = [objectRecord] as ObjectRecord[];
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

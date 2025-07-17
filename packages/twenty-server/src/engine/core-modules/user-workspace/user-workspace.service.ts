@@ -9,7 +9,6 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import {
@@ -27,7 +26,6 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -35,7 +33,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
@@ -46,10 +43,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
@@ -124,27 +118,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceMember?.length === 1,
       `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
     );
-    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
-      where: {
-        nameSingular: 'workspaceMember',
-        workspaceId,
-      },
-    });
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workspaceMember',
-      action: DatabaseEventAction.CREATED,
-      events: [
-        {
-          recordId: workspaceMember[0].id,
-          objectMetadata,
-          properties: {
-            after: workspaceMember[0],
-          },
-        },
-      ],
-      workspaceId,
-    });
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(

@@ -17,7 +17,6 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -147,15 +146,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       false,
     );
 
-    const nonFormattedObjectRecords = await withOrderByQueryBuilder
+    return withOrderByQueryBuilder
       .take(workflowActionInput.limit ?? QUERY_MAX_RECORDS)
       .getMany();
-
-    return formatResult<T[]>(
-      nonFormattedObjectRecords,
-      objectMetadataItemWithFieldsMaps,
-      objectMetadataMaps,
-    );
   }
 
   private async getTotalCount(

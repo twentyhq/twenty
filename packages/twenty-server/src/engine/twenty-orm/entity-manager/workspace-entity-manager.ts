@@ -8,6 +8,7 @@ import {
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
+  In,
   InsertResult,
   ObjectId,
   ObjectLiteral,
@@ -32,6 +33,8 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -51,6 +54,8 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
@@ -85,21 +90,9 @@ export class WorkspaceEntityManager extends EntityManager {
       shouldBypassPermissionChecks?: boolean;
       roleId?: string;
     },
+    authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
-
-    const repositoryKey = this.getRepositoryKey({
-      target,
-      dataSource,
-      roleId: permissionOptions?.roleId,
-      shouldBypassPermissionChecks:
-        permissionOptions?.shouldBypassPermissionChecks ?? false,
-    });
-    const repoFromMap = this.repositories.get(repositoryKey);
-
-    if (repoFromMap) {
-      return repoFromMap as WorkspaceRepository<Entity>;
-    }
 
     let objectPermissions = {};
 
@@ -128,9 +121,8 @@ export class WorkspaceEntityManager extends EntityManager {
       this.queryRunner,
       objectPermissions,
       permissionOptions?.shouldBypassPermissionChecks,
+      authContext,
     );
-
-    this.repositories.set(repositoryKey, newRepository);
 
     return newRepository;
   }
@@ -358,32 +350,6 @@ export class WorkspaceEntityManager extends EntityManager {
       .set(values)
       .where(criteria)
       .execute();
-  }
-
-  private getRepositoryKey({
-    target,
-    dataSource,
-    roleId,
-    shouldBypassPermissionChecks,
-  }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: EntityTarget<unknown>;
-    dataSource: WorkspaceDataSource;
-    shouldBypassPermissionChecks: boolean;
-    roleId?: string;
-  }) {
-    const repositoryPrefix = dataSource.getMetadata(target).name;
-    const roleIdSuffix = roleId ? `_${roleId}` : '';
-    const rolesPermissionsVersionSuffix = dataSource.rolesPermissionsVersion
-      ? `_${dataSource.rolesPermissionsVersion}`
-      : '';
-    const featureFlagMapVersionSuffix = dataSource.featureFlagMapVersion
-      ? `_${dataSource.featureFlagMapVersion}`
-      : '';
-
-    return shouldBypassPermissionChecks
-      ? `${repositoryPrefix}_bypass${featureFlagMapVersionSuffix}`
-      : `${repositoryPrefix}${roleIdSuffix}${rolesPermissionsVersionSuffix}${featureFlagMapVersionSuffix}`;
   }
 
   validatePermissions<Entity extends ObjectLiteral>(
@@ -900,6 +866,13 @@ export class WorkspaceEntityManager extends EntityManager {
     entityLike: DeepPartial<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | undefined> {
+    const objectMetadataItem = getObjectMetadataFromEntityTarget(
+      entityClass,
+      this.internalContext,
+    );
+
+    const formattedEntityLike = formatData(entityLike, objectMetadataItem);
+
     const managerWithPermissionOptions = Object.assign(
       Object.create(Object.getPrototypeOf(this)),
       this,
@@ -915,12 +888,16 @@ export class WorkspaceEntityManager extends EntityManager {
       new PlainObjectToDatabaseEntityTransformer(managerWithPermissionOptions);
     const transformedEntity =
       await plainObjectToDatabaseEntityTransformer.transform(
-        entityLike,
+        formattedEntityLike,
         metadata,
       );
 
     if (transformedEntity)
-      return this.merge(entityClass, transformedEntity, entityLike) as Entity;
+      return this.merge(
+        entityClass,
+        transformedEntity,
+        formattedEntityLike,
+      ) as Entity;
 
     return undefined;
   }
@@ -1075,17 +1052,81 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const isEntityArray = Array.isArray(entity);
+    const entityTarget =
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
+
+    const entityArray = isEntityArray ? entity : [entity];
+    const entityIds = entityArray.map((e) => (e as { id: string }).id);
+    const beforeUpdate = await this.find(
+      entityTarget,
+      {
+        where: { id: In(entityIds) },
+      },
+      permissionOptions,
+    );
+
+    const beforeUpdateMapById = beforeUpdate.reduce(
+      (acc, e: ObjectLiteral) => {
+        acc[e.id] = e;
+
+        return acc;
+      },
+      {} as Record<string, ObjectLiteral>,
+    );
+
+    const objectMetadataItem = getObjectMetadataFromEntityTarget(
+      entityTarget,
+      this.internalContext,
+    );
+
+    const formattedEntityOrEntities = formatData(
+      entityArray,
+      objectMetadataItem,
+    );
+
+    const result = await new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'save',
       target,
-      entity as ObjectLiteral,
+      formattedEntityOrEntities as ObjectLiteral[],
       options as SaveOptions | (SaveOptions & { reload: false }),
     )
       .execute()
-      .then(() => entity as Entity)
+      .then(() => formattedEntityOrEntities as Entity[])
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const resultArray = Array.isArray(result) ? result : [result];
+
+    const formattedResult = formatResult<Entity[]>(
+      resultArray,
+      objectMetadataItem,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    for (const entity of formattedResult) {
+      const isUpdate = beforeUpdateMapById[entity.id];
+
+      if (isUpdate) {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: [entity],
+          beforeEntities: beforeUpdateMapById[entity.id],
+        });
+      } else {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.CREATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: [entity],
+        });
+      }
+    }
+
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override remove<Entity>(
@@ -1145,23 +1186,49 @@ export class WorkspaceEntityManager extends EntityManager {
       ? maybeOptionsOrMaybePermissionOptions
       : entityOrMaybeOptions;
 
-    if (Array.isArray(entity) && entity.length === 0)
-      return Promise.resolve(entity);
+    const isEntityArray = Array.isArray(entity);
+
+    if (isEntityArray && entity.length === 0) return Promise.resolve(entity);
 
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const entityTarget =
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
+
+    const objectMetadataItem = getObjectMetadataFromEntityTarget(
+      entityTarget,
+      this.internalContext,
+    );
+
+    const formattedEntity = formatData(entity, objectMetadataItem);
+
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'remove',
       target as string | undefined,
-      entity as ObjectLiteral,
+      formattedEntity as ObjectLiteral,
       options as RemoveOptions,
     )
       .execute()
-      .then(() => entity as Entity | Entity[])
+      .then(() => formattedEntity as Entity | Entity[])
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const formattedResult = formatResult<Entity[]>(
+      result,
+      objectMetadataItem,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.DESTROYED,
+      objectMetadataItem,
+      workspaceId: this.internalContext.workspaceId,
+      entities: formattedResult,
+    });
+
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -1237,17 +1304,43 @@ export class WorkspaceEntityManager extends EntityManager {
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const isEntityArray = Array.isArray(entity);
+    const entityTarget =
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
+
+    const objectMetadataItem = getObjectMetadataFromEntityTarget(
+      entityTarget,
+      this.internalContext,
+    );
+
+    const formattedEntity = formatData(entity, objectMetadataItem);
+
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'soft-remove',
       target,
-      entity as ObjectLiteral,
+      formattedEntity as ObjectLiteral,
       options as SaveOptions,
     )
       .execute()
-      .then(() => entity as Entity)
+      .then(() => formattedEntity as Entity)
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const formattedResult = formatResult<Entity[]>(
+      result,
+      objectMetadataItem,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.DELETED,
+      objectMetadataItem,
+      workspaceId: this.internalContext.workspaceId,
+      entities: formattedResult,
+    });
+
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   override recover<Entity>(
@@ -1313,23 +1406,49 @@ export class WorkspaceEntityManager extends EntityManager {
       : entityOrEntitiesOrMaybeOptions;
 
     if (InstanceChecker.isEntitySchema(target)) target = target.options.name;
-    if (Array.isArray(entity) && entity.length === 0)
-      return Promise.resolve(entity);
+    const isEntityArray = Array.isArray(entity);
+
+    if (isEntityArray && entity.length === 0) return Promise.resolve(entity);
 
     const queryRunnerForEntityPersistExecutor =
       this.connection.createQueryRunnerForEntityPersistExecutor();
 
-    return new EntityPersistExecutor(
+    const entityTarget =
+      target ?? (isEntityArray ? entity[0]?.constructor : entity.constructor);
+
+    const objectMetadataItem = getObjectMetadataFromEntityTarget(
+      entityTarget,
+      this.internalContext,
+    );
+
+    const formattedEntity = formatData(entity, objectMetadataItem);
+
+    const result = new EntityPersistExecutor(
       this.connection,
       queryRunnerForEntityPersistExecutor,
       'recover',
       target,
-      entity as ObjectLiteral,
+      formattedEntity as ObjectLiteral,
       options as SaveOptions,
     )
       .execute()
-      .then(() => entity as Entity)
+      .then(() => formattedEntity as Entity)
       .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+    const formattedResult = formatResult<Entity[]>(
+      result,
+      objectMetadataItem,
+      this.internalContext.objectMetadataMaps,
+    );
+
+    await this.internalContext.eventEmitterService.emitMutationEvent({
+      action: DatabaseEventAction.RESTORED,
+      objectMetadataItem,
+      workspaceId: this.internalContext.workspaceId,
+      entities: formattedResult,
+    });
+
+    return isEntityArray ? formattedResult : formattedResult[0];
   }
 
   // Forbidden methods
