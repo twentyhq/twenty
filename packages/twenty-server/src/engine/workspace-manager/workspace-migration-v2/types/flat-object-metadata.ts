@@ -9,20 +9,14 @@ type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
   MetadataEntitiesRelationTarget
 >;
 
-const requiredProperties = [
-  'id',
-  'workspaceId',
-] as const satisfies (keyof ObjectMetadataEntity)[];
-type RequiredProperties = (typeof requiredProperties)[number];
-
-
-export type FlatObjectMetadata = Partial<
-  Omit<ObjectMetadataEntity, ObjectMetadataRelationProperties>
+export type FlatObjectMetadata = Omit<
+  ObjectMetadataEntity,
+  ObjectMetadataRelationProperties
 > & {
   uniqueIdentifier: string;
   flatIndexMetadatas: FlatIndexMetadata[];
   flatFieldMetadatas: FlatFieldMetadata[];
-} & Required<Pick<ObjectMetadataEntity, RequiredProperties>>;
+};
 
 // Could be renamed
 export type FlatObjectMetadataWithoutFields = Omit<

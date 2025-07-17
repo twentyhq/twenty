@@ -74,22 +74,22 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<T>;
+  defaultValue: FieldMetadataDefaultValue<T> | null;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
   @Column({ nullable: true })
-  icon: string;
+  icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: FieldStandardOverridesDTO;
+  standardOverrides?: FieldStandardOverridesDTO | null;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<T>;
+  options: FieldMetadataOptions<T> | null;
 
   @Column('jsonb', { nullable: true })
-  settings?: FieldMetadataSettings<T>;
+  settings?: FieldMetadataSettings<T> | null;
 
   @Column({ default: false })
   isCustom: boolean;
@@ -101,10 +101,10 @@ export class FieldMetadataEntity<
   isSystem: boolean;
 
   @Column({ nullable: true, default: true })
-  isNullable: boolean;
+  isNullable: boolean | null;
 
   @Column({ nullable: true, default: false })
-  isUnique: boolean;
+  isUnique: boolean | null;
 
   @Column({ nullable: false, type: 'uuid' })
   @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
@@ -114,7 +114,7 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: string;
+  relationTargetFieldMetadataId: string | null;
   @OneToOne(
     () => FieldMetadataEntity,
     (fieldMetadata: FieldMetadataEntity) =>
@@ -124,7 +124,7 @@ export class FieldMetadataEntity<
   relationTargetFieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: string;
+  relationTargetObjectMetadataId: string | null;
   @ManyToOne(
     () => ObjectMetadataEntity,
     (objectMetadata: ObjectMetadataEntity) =>

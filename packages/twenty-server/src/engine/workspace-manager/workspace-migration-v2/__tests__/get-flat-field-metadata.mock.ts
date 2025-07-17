@@ -18,6 +18,9 @@ export const getFlatFieldMetadataMock = <
   const createdAt = faker.date.anytime();
 
   return {
+    defaultValue: null,
+    options: null,
+    settings: null,
     createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
@@ -28,12 +31,12 @@ export const getFlatFieldMetadataMock = <
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
-    relationTargetFieldMetadataId: undefined,
-    relationTargetObjectMetadataId: undefined,
+    relationTargetFieldMetadataId: null,
+    relationTargetObjectMetadataId: null,
     type: FieldMetadataType.TEXT as T,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardId: undefined,
+    standardId: null,
     standardOverrides: undefined,
     updatedAt: createdAt,
     workspaceId: faker.string.uuid(),

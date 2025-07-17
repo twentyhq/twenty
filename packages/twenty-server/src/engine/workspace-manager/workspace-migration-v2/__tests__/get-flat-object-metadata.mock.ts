@@ -34,7 +34,7 @@ export const getFlatObjectMetadataMock = (
     namePlural: 'defaultflatObjectMetadataNamePlural',
     nameSingular: 'defaultflatObjectMetadataNameSingular',
     shortcut: 'shortcut',
-    standardId: undefined,
+    standardId: null,
     standardOverrides: undefined,
     targetTableName: '',
     updatedAt: createdAt,
