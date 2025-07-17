@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 
@@ -91,6 +92,12 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           });
         }
 
+        const columnsToSelect = buildColumnsToSelect({
+          select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+          relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+          objectMetadataItemWithFieldMaps,
+        });
+
         const duplicateRecordsQueryBuilder =
           executionArgs.repository.createQueryBuilder(
             objectMetadataItemWithFieldMaps.nameSingular,
@@ -102,8 +109,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           duplicateConditions,
         );
 
-        const duplicates =
-          (await duplicateRecordsQueryBuilder.getMany()) as ObjectRecord[];
+        const duplicates = (await duplicateRecordsQueryBuilder
+          .setFindOptions({
+            select: columnsToSelect,
+          })
+          .getMany()) as ObjectRecord[];
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: duplicates,

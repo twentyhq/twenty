@@ -42,6 +42,10 @@ export class WorkspaceSelectQueryBuilder<
     this.authContext = authContext;
   }
 
+  getFindOptions() {
+    return this.findOptions;
+  }
+
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 

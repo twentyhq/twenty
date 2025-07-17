@@ -11,6 +11,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -43,10 +44,16 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       executionArgs.args.filter,
     );
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
     const updatedObjectRecords = await queryBuilder
       .update()
       .set(executionArgs.args.data)
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -61,6 +68,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 

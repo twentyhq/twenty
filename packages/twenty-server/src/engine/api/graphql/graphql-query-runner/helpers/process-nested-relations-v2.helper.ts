@@ -11,6 +11,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -39,6 +40,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource,
     roleId,
     shouldBypassPermissionChecks,
+    selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -51,6 +53,8 @@ export class ProcessNestedRelationsV2Helper {
     authContext: AuthContext;
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    selectedFields: Record<string, any>;
     roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -68,6 +72,10 @@ export class ProcessNestedRelationsV2Helper {
           workspaceDataSource,
           shouldBypassPermissionChecks,
           roleId,
+          selectedFields:
+            selectedFields[sourceFieldName] instanceof Object
+              ? selectedFields[sourceFieldName]
+              : undefined,
         }),
     );
 
@@ -87,6 +95,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
+    selectedFields,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
@@ -101,6 +110,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
+    selectedFields: Record<string, unknown>;
   }): Promise<void> {
     const sourceFieldMetadataId =
       parentObjectMetadataItem.fieldIdByName[sourceFieldName];
@@ -138,9 +148,19 @@ export class ProcessNestedRelationsV2Helper {
       roleId,
     );
 
-    const targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
+    let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectMetadata.nameSingular,
     );
+
+    const columnsToSelect = buildColumnsToSelect({
+      select: selectedFields,
+      relations: nestedRelations,
+      objectMetadataItemWithFieldMaps: targetObjectMetadata,
+    });
+
+    targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
+      select: columnsToSelect,
+    });
 
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
@@ -207,6 +227,7 @@ export class ProcessNestedRelationsV2Helper {
         workspaceDataSource,
         shouldBypassPermissionChecks,
         roleId,
+        selectedFields,
       });
     }
   }
@@ -323,7 +344,14 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
+    const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
+    const columnWithoutQuotes = column.replace(/["']/g, '');
+
     const result = await referenceQueryBuilder
+      .setFindOptions({
+        ...queryBuilderOptions,
+        select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
+      })
       .where(`${column} IN (:...ids)`, {
         ids,
       })

@@ -29,3 +29,6 @@ export type WorkspaceMigrationObjectActionV2 =
   | CreateObjectAction
   | UpdateObjectAction
   | DeleteObjectAction;
+
+export type WorkspaceMigrationObjectActionTypeV2 =
+  WorkspaceMigrationObjectActionV2['type'];
