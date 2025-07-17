@@ -3,7 +3,7 @@ import { Injectable, ValidationError } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsString, IsUUID, validateOrReject } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -28,6 +28,7 @@ import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/v
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 
 export class RelationCreationPayloadValidation {
   @IsUUID()
@@ -103,7 +104,9 @@ export class FieldMetadataRelationService {
               ? RelationType.MANY_TO_ONE
               : RelationType.ONE_TO_MANY,
         },
-        objectMetadata,
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: targetFieldMetadataToCreate.name,
+        }),
       });
 
     // todo better type
@@ -285,11 +288,11 @@ export class FieldMetadataRelationService {
   addCustomRelationFieldMetadataForCreation({
     fieldMetadataInput,
     relationCreationPayload,
-    objectMetadata,
+    joinColumnName,
   }: {
     fieldMetadataInput: CreateFieldInput;
     relationCreationPayload: CreateFieldInput['relationCreationPayload'];
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    joinColumnName: string;
   }) {
     const isRelation =
       isFieldMetadataInterfaceOfType(
@@ -308,13 +311,6 @@ export class FieldMetadataRelationService {
       isRelation && relationCreationPayload?.type === RelationType.ONE_TO_MANY;
 
     const defaultIcon = 'IconRelationOneToMany';
-
-    const joinColumnName = isFieldMetadataInterfaceOfType(
-      fieldMetadataInput,
-      FieldMetadataType.MORPH_RELATION,
-    )
-      ? `${fieldMetadataInput.name}${capitalize(objectMetadata.nameSingular)}Id`
-      : `${fieldMetadataInput.name}Id`;
 
     return {
       ...fieldMetadataInput,

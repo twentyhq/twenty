@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class EndingBeforeInputFactory {
-  create(request: Request): string | undefined {
-    const cursorQuery = request.query.ending_before;
+  create(request: RequestContext): string | undefined {
+    const cursorQuery = request.query?.ending_before;
 
     if (typeof cursorQuery !== 'string') {
       return undefined;
