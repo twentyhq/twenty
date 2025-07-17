@@ -78,13 +78,16 @@ export class AdminPanelService {
 
     const targetUser = await this.userRepository.findOne({
       where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
-      relations: [
-        'userWorkspaces',
-        'userWorkspaces.workspace',
-        'userWorkspaces.workspace.workspaceUsers',
-        'userWorkspaces.workspace.workspaceUsers.user',
-        'userWorkspaces.workspace.featureFlags',
-      ],
+      relations: {
+        userWorkspaces: {
+          workspace: {
+            workspaceUsers: {
+              user: true,
+            },
+            featureFlags: true,
+          },
+        },
+      },
     });
 
     userValidator.assertIsDefinedOrThrow(
