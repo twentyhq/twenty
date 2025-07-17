@@ -17,7 +17,6 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { computeJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -29,6 +28,7 @@ import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/v
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 
 export class RelationCreationPayloadValidation {
   @IsUUID()
@@ -104,8 +104,8 @@ export class FieldMetadataRelationService {
               ? RelationType.MANY_TO_ONE
               : RelationType.ONE_TO_MANY,
         },
-        joinColumnName: computeJoinColumnName({
-          fieldMetadataInput: targetFieldMetadataToCreate,
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: targetFieldMetadataToCreate.name,
         }),
       });
 

@@ -15,11 +15,12 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { computeJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMorphRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-join-column-name.util';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 
 @Injectable()
 export class FieldMetadataMorphRelationService {
@@ -75,8 +76,8 @@ export class FieldMetadataMorphRelationService {
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
-            joinColumnName: computeJoinColumnName({
-              fieldMetadataInput: fieldMetadataForCreate,
+            joinColumnName: computeMorphRelationFieldJoinColumnName({
+              name: fieldMetadataForCreate.name,
               targetObjectMetadataNameSingular:
                 targetObjectMetadata.nameSingular,
             }),
@@ -124,8 +125,8 @@ export class FieldMetadataMorphRelationService {
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },
-            joinColumnName: computeJoinColumnName({
-              fieldMetadataInput: targetFieldMetadataToCreate,
+            joinColumnName: computeRelationFieldJoinColumnName({
+              name: targetFieldMetadataToCreate.name,
             }),
           },
         );
