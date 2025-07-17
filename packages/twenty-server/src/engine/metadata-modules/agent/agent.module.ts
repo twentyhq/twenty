@@ -9,6 +9,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -53,6 +54,7 @@ import { AgentService } from './agent.service';
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
+    ToolModule,
   ],
   controllers: [AgentChatController],
   providers: [

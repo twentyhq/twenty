@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -15,6 +16,7 @@ export class AgentToolService {
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
+    private readonly toolAdapterService: ToolAdapterService,
   ) {}
 
   async generateToolsForAgent(
@@ -39,7 +41,12 @@ export class AgentToolService {
         return {};
       }
 
-      return this.toolService.listTools(role.id, workspaceId);
+      const databaseTools = this.toolService.listTools(role.id, workspaceId);
+
+      const actionTools =
+        this.toolAdapterService.generateToolsForWorkspace(workspaceId);
+
+      return { ...databaseTools, ...actionTools };
     } catch (error) {
       return {};
     }
