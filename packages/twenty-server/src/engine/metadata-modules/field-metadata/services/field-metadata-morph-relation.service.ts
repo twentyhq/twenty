@@ -193,33 +193,18 @@ export class FieldMetadataMorphRelationService {
       | 'relationTargetFieldMetadataId'
       | 'relationTargetObjectMetadataId'
       | 'name'
-    >[] = [];
-
-    fieldMetadataItems.map((fieldMetadataItem) => {
-      const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
-        fieldMetadataItem;
-
-      if (!relationTargetObjectMetadataId || !relationTargetFieldMetadataId) {
-        throw new FieldMetadataException(
-          `Relation target object metadata id or relation target field metadata id not found for field metadata ${fieldMetadataItem.id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      // cannot use fieldsByName because it is not a unique for the Morph Relation
+    >[] = fieldMetadataItems.flatMap((fieldMetadataItem) => {
       const fieldsById =
         objectMetadataMaps.byId[fieldMetadataItem.objectMetadataId]?.fieldsById;
 
       if (!isDefined(fieldsById)) {
         throw new FieldMetadataException(
-          `Fields by id not found for object metadata ${relationTargetObjectMetadataId}`,
+          `Fields by id not found for object metadata ${fieldMetadataItem.objectMetadataId}`,
           FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         );
       }
 
-      const fieldsByIdArray = Object.values(fieldsById);
-
-      const fieldMetadataItemsAndMorphSibling = fieldsByIdArray
+      return Object.values(fieldsById)
         .filter(
           (fieldMetadataById) =>
             fieldMetadataItem.name === fieldMetadataById.name,
@@ -236,10 +221,6 @@ export class FieldMetadataMorphRelationService {
             name: fieldMetadataById.name,
           };
         });
-
-      fieldMetadataItemsAndMorphSiblings.push(
-        ...fieldMetadataItemsAndMorphSibling,
-      );
     });
 
     return fieldMetadataItemsAndMorphSiblings.map((fieldMetadataItem) => {
