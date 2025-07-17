@@ -26,7 +26,6 @@ export const generateRelatedRecordActions = ({
     return relatedActions;
   }
 
-  // Find all one-to-many relation fields
   const oneToManyFields = sourceObjectMetadataItem.fields.filter(
     (field) =>
       field.type === 'RELATION' &&
@@ -40,14 +39,15 @@ export const generateRelatedRecordActions = ({
     }
 
     const targetObjectName = field.relation.targetObjectMetadata.nameSingular;
+
     const label = field.label.toLowerCase();
     const actionKey = `create-related-${label}`;
 
     relatedActions[actionKey] = {
       type: ActionType.Standard,
-      scope: ActionScope.Create,
+      scope: ActionScope.CreateRelatedRecord,
       key: actionKey,
-      label: msg`Create related ${label}`,
+      label: msg`Create ${label}`,
       shortLabel: msg`Create ${label}`,
       position: position++,
       Icon: field.icon ? getIcon(field.icon) : IconPlus,

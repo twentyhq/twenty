@@ -32,7 +32,7 @@ export const CommandMenu = () => {
     matchingWorkflowRunGlobalActions,
     matchingNavigateActions,
     fallbackActions,
-    matchingCreateActions,
+    matchingCreateRelatedRecordActions,
   } = useMatchingCommandMenuActions({
     commandMenuSearch,
   });
@@ -58,8 +58,8 @@ export const CommandMenu = () => {
       ),
     },
     {
-      heading: t`Create`,
-      items: matchingCreateActions,
+      heading: t`Create Related Record`,
+      items: matchingCreateRelatedRecordActions,
     },
     {
       heading: currentObjectMetadataItem?.labelPlural ?? t`Object`,

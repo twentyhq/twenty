@@ -1,6 +1,6 @@
 export enum ActionScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
-  Create = 'Create',
+  CreateRelatedRecord = 'CreateRelatedRecord',
   Object = 'Object',
 }
