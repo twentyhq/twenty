@@ -99,22 +99,6 @@ describe('WorkspaceRepository', () => {
         namePlural: 'test-entities',
         fields: [],
       });
-
-    jest.spyOn(repository as any, 'formatData').mockImplementation((data) => {
-      if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item));
-      }
-
-      return Object.assign({}, data);
-    });
-
-    jest.spyOn(repository as any, 'formatResult').mockImplementation((data) => {
-      if (Array.isArray(data)) {
-        return data.map((item) => Object.assign({}, item));
-      }
-
-      return Object.assign({}, data);
-    });
   });
 
   describe('Find Methods', () => {
