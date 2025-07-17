@@ -105,7 +105,7 @@ describe('transformFilterNodesAsEdges', () => {
         stepId: 'B',
         name: 'Filter B',
         runStatus: undefined,
-        filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B' },
+        filterSettings: {},
         isEdgeEditable: false,
       },
     });
@@ -199,7 +199,7 @@ describe('transformFilterNodesAsEdges', () => {
         name: 'Filter B1',
         runStatus: undefined,
         stepId: 'B1',
-        filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B1' },
+        filterSettings: {},
         isEdgeEditable: false,
       },
     });
@@ -216,7 +216,7 @@ describe('transformFilterNodesAsEdges', () => {
         name: 'Filter B2',
         runStatus: undefined,
         stepId: 'B2',
-        filter: { nodeType: 'action', actionType: 'FILTER', name: 'Filter B2' },
+        filterSettings: {},
         isEdgeEditable: false,
       },
     });
@@ -335,11 +335,7 @@ describe('transformFilterNodesAsEdges', () => {
           name: 'Filter B',
           runStatus: undefined,
           stepId: 'B',
-          filter: {
-            nodeType: 'action',
-            actionType: 'FILTER',
-            name: 'Filter B',
-          },
+          filterSettings: {},
           isEdgeEditable: false,
         },
       },
