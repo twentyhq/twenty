@@ -9,6 +9,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
@@ -211,7 +212,7 @@ export class DataloaderService {
             return [];
           }
 
-          return Object.values(objectMetadata.fieldsById).map(
+          const fields = Object.values(objectMetadata.fieldsById).map(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
               const overridesFieldToCompute = [
@@ -245,6 +246,8 @@ export class DataloaderService {
               };
             },
           );
+
+          return filterMorphRelationDuplicateFieldsDTO(fields);
         });
 
         return fieldMetadataCollection;
