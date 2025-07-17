@@ -9,6 +9,7 @@ export const GET_AGENT_CHAT_THREADS = gql`
       ) {
       id
       agentId
+      title
       createdAt
       updatedAt
     }
@@ -27,6 +28,7 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       role
       content
       createdAt
+      files
     }
   }
 `;

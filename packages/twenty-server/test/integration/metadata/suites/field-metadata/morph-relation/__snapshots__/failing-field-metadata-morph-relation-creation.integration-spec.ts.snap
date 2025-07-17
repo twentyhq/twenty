@@ -60,7 +60,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
       "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Object metadata relation target not found for relation creation payload",
+    "message": "Target object metadata does not exist in the object metadata maps",
   },
 ]
 `;
@@ -153,7 +153,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
       "exceptionEventId": "mocked-exception-id",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Object metadata relation target not found for relation creation payload",
+    "message": "Target object metadata does not exist in the object metadata maps",
   },
 ]
 `;

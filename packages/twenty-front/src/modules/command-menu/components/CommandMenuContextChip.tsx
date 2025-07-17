@@ -76,7 +76,7 @@ export const CommandMenuContextChip = ({
           <Fragment key={index}>{Icon}</Fragment>
         ))}
       </StyledIconsContainer>
-      {text?.trim() ? (
+      {text?.trim?.() ? (
         <OverflowingTextWithTooltip text={text} />
       ) : !forceEmptyText ? (
         <StyledEmptyText>Untitled</StyledEmptyText>

@@ -2,6 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -46,7 +47,7 @@ export class UserWorkspace {
   id: string;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.workspaces, {
+  @ManyToOne(() => User, (user) => user.userWorkspaces, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
@@ -71,8 +72,8 @@ export class UserWorkspace {
   defaultAvatarUrl: string;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: 'en' })
-  locale: string;
+  @Column({ nullable: false, default: 'en', type: 'varchar' })
+  locale: keyof typeof APP_LOCALES;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

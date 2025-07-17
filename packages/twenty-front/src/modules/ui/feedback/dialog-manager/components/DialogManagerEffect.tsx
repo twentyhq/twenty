@@ -3,10 +3,14 @@ import { useEffect } from 'react';
 import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useDialogManagerScopedStates } from '../hooks/internal/useDialogManagerScopedStates';
+
+import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const DialogManagerEffect = () => {
-  const { dialogInternal } = useDialogManagerScopedStates();
+  const dialogInternal = useRecoilComponentValueV2(
+    dialogInternalComponentState,
+  );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 

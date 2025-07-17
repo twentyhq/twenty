@@ -97,13 +97,13 @@ export class UserService extends TypeOrmQueryService<User> {
       where: {
         id: userId,
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(user);
 
     const prepareForUserDeletionInWorkspaces = await Promise.all(
-      user.workspaces.map(async (userWorkspace) => {
+      user.userWorkspaces.map(async (userWorkspace) => {
         const { workspaceId } = userWorkspace;
 
         const workspaceMemberRepository =
@@ -200,11 +200,11 @@ export class UserService extends TypeOrmQueryService<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        workspaces: {
+        userWorkspaces: {
           workspaceId,
         },
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(

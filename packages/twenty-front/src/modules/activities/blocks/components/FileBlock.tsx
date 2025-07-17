@@ -4,11 +4,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { AttachmentIcon } from '../../files/components/AttachmentIcon';
-import { AttachmentType } from '../../files/types/Attachment';
-import { getFileType } from '../../files/utils/getFileType';
+import { FileIcon } from '@/file/components/FileIcon';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { AttachmentType } from '../../files/types/Attachment';
+import { getFileType } from '../../files/utils/getFileType';
 
 const StyledFileInput = styled.input`
   display: none;
@@ -89,9 +89,7 @@ export const FileBlock = createReactBlockSpec(
       if (isNonEmptyString(block.props.url)) {
         return (
           <StyledFileLine>
-            <AttachmentIcon
-              attachmentType={block.props.fileType as AttachmentType}
-            ></AttachmentIcon>
+            <FileIcon fileType={block.props.fileType as AttachmentType} />
             <StyledLink href={block.props.url} target="__blank">
               {block.props.name}
             </StyledLink>

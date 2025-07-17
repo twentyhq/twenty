@@ -121,7 +121,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -133,7 +133,7 @@ export class UserResolver {
       return user;
     }
 
-    const currentUserWorkspace = user.workspaces.find(
+    const currentUserWorkspace = user.userWorkspaces.find(
       (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
@@ -385,6 +385,13 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ) {
     return workspace;
+  }
+
+  @ResolveField(() => [UserWorkspace], {
+    nullable: false,
+  })
+  async workspaces(@Parent() user: User) {
+    return user.userWorkspaces;
   }
 
   @ResolveField(() => AvailableWorkspaces)

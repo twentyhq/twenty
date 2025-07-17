@@ -57,6 +57,7 @@ const bootstrap = async () => {
 
   // Graphql file upload
   app.use(
+    '/graphql',
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize),
       maxFiles: 10,

@@ -108,6 +108,11 @@ msgstr "{apiKeyName}"
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selected"
 
+#. js-lingui-id: POhzPf
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "{failedCount} file(s) failed to upload"
+msgstr "{failedCount} file(s) failed to upload"
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -805,6 +810,7 @@ msgstr "Ascending"
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Ask AI"
 msgstr "Ask AI"
 
@@ -882,6 +888,11 @@ msgstr "Authorized URI"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
 msgstr "Authorized URL copied to clipboard"
+
+#. js-lingui-id: R9Khdg
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Auto"
+msgstr "Auto"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -989,8 +1000,8 @@ msgstr "CalDAV Configuration"
 
 #. js-lingui-id: Lw3Ou8
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Encryption"
-msgstr "CalDAV Encryption"
+#~ msgid "CalDAV Encryption"
+#~ msgstr "CalDAV Encryption"
 
 #. js-lingui-id: 4dwQbl
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -999,13 +1010,18 @@ msgstr "CalDAV Password"
 
 #. js-lingui-id: 5wnjvr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Port"
-msgstr "CalDAV Port"
+#~ msgid "CalDAV Port"
+#~ msgstr "CalDAV Port"
 
 #. js-lingui-id: JUGLyW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "CalDAV Server"
 msgstr "CalDAV Server"
+
+#. js-lingui-id: kGKOiW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Username"
+msgstr "CalDAV Username"
 
 #. js-lingui-id: +x0fpb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -1126,7 +1142,7 @@ msgstr "Change to Yearly?"
 
 #. js-lingui-id: AHZflp
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr "Chat"
 
@@ -1522,6 +1538,11 @@ msgstr "Could not delete approved access domain"
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
 msgstr "Couldn't copy to clipboard"
+
+#. js-lingui-id: S2XvS+
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Couldn't upload the file."
+msgstr "Couldn't upload the file."
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2735,6 +2756,11 @@ msgstr "Failed to load webhook"
 #~ msgid "Failed to remove  override"
 #~ msgstr "Failed to remove  override"
 
+#. js-lingui-id: XMjWWv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+msgid "Failed to remove file"
+msgstr "Failed to remove file"
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -2744,6 +2770,11 @@ msgstr "Failed to remove override"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to update variable"
 msgstr "Failed to update variable"
+
+#. js-lingui-id: cQPyHI
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Failed to upload file: {fileName}"
+msgstr "Failed to upload file: {fileName}"
 
 #. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3293,9 +3324,16 @@ msgstr "Instructions for AI"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrations"
+
+#. js-lingui-id: ntgzzG
+#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+msgid "Interact with your workspace data"
+msgstr "Interact with your workspace data"
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3513,6 +3551,11 @@ msgstr "Italian"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "Japanese"
+
+#. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "john.doe"
+msgstr "john.doe"
 
 #. js-lingui-id: wrLOeW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -3802,6 +3845,16 @@ msgstr "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records.
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 #~ msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 #~ msgstr "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+
+#. js-lingui-id: nA8kxD
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+msgid "MCP"
+msgstr "MCP"
+
+#. js-lingui-id: NvQoNb
+#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+msgid "MCP Configuration copied to clipboard"
+msgstr "MCP Configuration copied to clipboard"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -4102,8 +4155,8 @@ msgstr "Next Step"
 
 #. js-lingui-id: QNbLNQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "No AI models available"
-msgstr "No AI models available"
+#~ msgid "No AI models available"
+#~ msgstr "No AI models available"
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -4730,6 +4783,11 @@ msgstr "Prefilling your workspace data..."
 msgid "Preview"
 msgstr "Preview"
 
+#. js-lingui-id: 2WAUd8
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Previous AI Chats"
+msgstr "Previous AI Chats"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5059,6 +5117,8 @@ msgstr "Schema"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
@@ -5610,7 +5670,7 @@ msgid "Standard"
 msgstr "Standard"
 
 #. js-lingui-id: GbQzZA
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 
@@ -6193,6 +6253,11 @@ msgstr "Unknown error"
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
 
+#. js-lingui-id: wja8aL
+#: src/modules/ai/components/AIChatThreadGroup.tsx
+msgid "Untitled"
+msgstr "Untitled"
+
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
@@ -6406,6 +6471,13 @@ msgstr "View billing details"
 #~ msgid "View execution details"
 #~ msgstr "View execution details"
 
+#. js-lingui-id: ecVcAx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "View Previous AI Chats"
+msgstr "View Previous AI Chats"
+
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -6577,6 +6649,7 @@ msgstr "Workflows"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx

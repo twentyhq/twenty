@@ -9,7 +9,6 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -142,7 +141,7 @@ export class AuthService {
       where: {
         email: input.email,
       },
-      relations: ['workspaces'],
+      relations: { userWorkspaces: true },
     });
 
     if (!user) {
@@ -424,7 +423,6 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
-    locale: keyof typeof APP_LOCALES,
   ): Promise<UpdatePassword> {
     if (!userId) {
       throw new AuthException(
@@ -433,12 +431,24 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { userWorkspaces: true },
+    });
 
     if (!user) {
       throw new AuthException(
         'User not found',
         AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    const [firstUserWorkspace] = user.userWorkspaces;
+
+    if (!firstUserWorkspace) {
+      throw new AuthException(
+        'User does not have a workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 
@@ -461,13 +471,13 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
-      locale,
+      locale: firstUserWorkspace.locale,
     });
 
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
 
-    i18n.activate(locale);
+    i18n.activate(firstUserWorkspace.locale);
 
     this.emailService.send({
       from: `${this.twentyConfigService.get(

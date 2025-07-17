@@ -519,7 +519,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
-      context.req.headers['x-locale'] || SOURCE_LOCALE,
+      context.req.locale,
     );
   }
 
@@ -528,18 +528,13 @@ export class AuthResolver {
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
-    @Context() context: I18nContext,
   ): Promise<InvalidatePassword> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(
-      id,
-      newPassword,
-      context.req.headers['x-locale'] || SOURCE_LOCALE,
-    );
+    await this.authService.updatePassword(id, newPassword);
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }

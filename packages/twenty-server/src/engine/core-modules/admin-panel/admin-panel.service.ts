@@ -39,14 +39,14 @@ export class AdminPanelService {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        workspaces: {
+        userWorkspaces: {
           workspaceId,
           workspace: {
             allowImpersonation: true,
           },
         },
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: { userWorkspaces: { workspace: true } },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -59,14 +59,14 @@ export class AdminPanelService {
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
-      user.workspaces[0].workspace.id,
+      user.userWorkspaces[0].workspace.id,
     );
 
     return {
       workspace: {
-        id: user.workspaces[0].workspace.id,
+        id: user.userWorkspaces[0].workspace.id,
         workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-          user.workspaces[0].workspace,
+          user.userWorkspaces[0].workspace,
         ),
       },
       loginToken,
@@ -101,7 +101,7 @@ export class AdminPanelService {
         firstName: targetUser.firstName,
         lastName: targetUser.lastName,
       },
-      workspaces: targetUser.workspaces.map((userWorkspace) => ({
+      workspaces: targetUser.userWorkspaces.map((userWorkspace) => ({
         id: userWorkspace.workspace.id,
         name: userWorkspace.workspace.displayName ?? '',
         totalUsers: userWorkspace.workspace.workspaceUsers.length,

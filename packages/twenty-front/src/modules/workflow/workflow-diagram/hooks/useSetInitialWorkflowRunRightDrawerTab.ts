@@ -3,10 +3,10 @@ import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
   const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
@@ -16,7 +16,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
         stepExecutionStatus,
       }: {
         workflowSelectedNode: string;
-        stepExecutionStatus: WorkflowDiagramRunStatus;
+        stepExecutionStatus: WorkflowRunStepStatus;
       }) => {
         const commandMenuPageInfo = getSnapshotValue(
           snapshot,

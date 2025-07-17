@@ -105,6 +105,11 @@ msgstr ""
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr ""
 
+#. js-lingui-id: POhzPf
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "{failedCount} file(s) failed to upload"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -802,6 +807,7 @@ msgstr ""
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Ask AI"
 msgstr ""
 
@@ -878,6 +884,11 @@ msgstr ""
 #. js-lingui-id: Ovw0c6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: R9Khdg
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Auto"
 msgstr ""
 
 #. js-lingui-id: 2zJkmL
@@ -986,8 +997,8 @@ msgstr ""
 
 #. js-lingui-id: Lw3Ou8
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Encryption"
-msgstr ""
+#~ msgid "CalDAV Encryption"
+#~ msgstr ""
 
 #. js-lingui-id: 4dwQbl
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -996,12 +1007,17 @@ msgstr ""
 
 #. js-lingui-id: 5wnjvr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "CalDAV Port"
-msgstr ""
+#~ msgid "CalDAV Port"
+#~ msgstr ""
 
 #. js-lingui-id: JUGLyW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "CalDAV Server"
+msgstr ""
+
+#. js-lingui-id: kGKOiW
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "CalDAV Username"
 msgstr ""
 
 #. js-lingui-id: +x0fpb
@@ -1123,7 +1139,7 @@ msgstr ""
 
 #. js-lingui-id: AHZflp
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr ""
 
@@ -1518,6 +1534,11 @@ msgstr ""
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
+msgstr ""
+
+#. js-lingui-id: S2XvS+
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Couldn't upload the file."
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -2732,6 +2753,11 @@ msgstr ""
 #~ msgid "Failed to remove  override"
 #~ msgstr ""
 
+#. js-lingui-id: XMjWWv
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatSelectedFilesPreview.tsx
+msgid "Failed to remove file"
+msgstr ""
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -2740,6 +2766,11 @@ msgstr ""
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to update variable"
+msgstr ""
+
+#. js-lingui-id: cQPyHI
+#: src/modules/ai/hooks/useAIChatFileUpload.ts
+msgid "Failed to upload file: {fileName}"
 msgstr ""
 
 #. js-lingui-id: jARNNi
@@ -3290,8 +3321,15 @@ msgstr ""
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
+msgstr ""
+
+#. js-lingui-id: ntgzzG
+#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+msgid "Interact with your workspace data"
 msgstr ""
 
 #. js-lingui-id: GNRDhm
@@ -3509,6 +3547,11 @@ msgstr ""
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
+msgstr ""
+
+#. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "john.doe"
 msgstr ""
 
 #. js-lingui-id: wrLOeW
@@ -3799,6 +3842,16 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 #~ msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 #~ msgstr ""
+
+#. js-lingui-id: nA8kxD
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+msgid "MCP"
+msgstr ""
+
+#. js-lingui-id: NvQoNb
+#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+msgid "MCP Configuration copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -4099,8 +4152,8 @@ msgstr ""
 
 #. js-lingui-id: QNbLNQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "No AI models available"
-msgstr ""
+#~ msgid "No AI models available"
+#~ msgstr ""
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -4727,6 +4780,11 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
+#. js-lingui-id: 2WAUd8
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "Previous AI Chats"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5056,6 +5114,8 @@ msgstr ""
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search"
@@ -5607,7 +5667,7 @@ msgid "Standard"
 msgstr ""
 
 #. js-lingui-id: GbQzZA
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
@@ -6190,6 +6250,11 @@ msgstr ""
 msgid "Unlimited contacts"
 msgstr ""
 
+#. js-lingui-id: wja8aL
+#: src/modules/ai/components/AIChatThreadGroup.tsx
+msgid "Untitled"
+msgstr ""
+
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
@@ -6403,6 +6468,13 @@ msgstr ""
 #~ msgid "View execution details"
 #~ msgstr ""
 
+#. js-lingui-id: ecVcAx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AIChatTab.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+msgid "View Previous AI Chats"
+msgstr ""
+
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -6574,6 +6646,7 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
+#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
