@@ -46,7 +46,8 @@ export const transformFilterNodesAsEdges = ({
         data: {
           edgeType: 'filter',
           stepId: filterNode.id,
-          filter: filterNode.data,
+          // TODO: Get the filter settings from the filter node
+          filterSettings: {},
           name: filterNode.data.name,
           runStatus: filterNode.data.runStatus,
           isEdgeEditable: false,

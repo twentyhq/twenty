@@ -76,7 +76,7 @@ export const WorkflowDiagramDefaultEdge = ({
             stepId={data.stepId}
             parentStepId={source}
             nextStepId={target}
-            filter={data.filter}
+            filterSettings={data.filterSettings}
             isEdgeEditable={data.isEdgeEditable}
           />
         )}
