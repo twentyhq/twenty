@@ -9,8 +9,10 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
@@ -38,6 +40,19 @@ export type RelationLoaderPayload = {
   >;
 };
 
+export type MorphRelationLoaderPayload = {
+  workspaceId: string;
+  fieldMetadata: Pick<
+    FieldMetadataInterface,
+    | 'type'
+    | 'id'
+    | 'objectMetadataId'
+    | 'relationTargetFieldMetadataId'
+    | 'relationTargetObjectMetadataId'
+    | 'name'
+  >;
+};
+
 export type FieldMetadataLoaderPayload = {
   workspaceId: string;
   objectMetadata: Pick<ObjectMetadataInterface, 'id'>;
@@ -59,17 +74,20 @@ export type IndexFieldMetadataLoaderPayload = {
 export class DataloaderService {
   constructor(
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
+    private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   createLoaders(): IDataloaders {
     const relationLoader = this.createRelationLoader();
+    const morphRelationLoader = this.createMorphRelationLoader();
     const fieldMetadataLoader = this.createFieldMetadataLoader();
     const indexMetadataLoader = this.createIndexMetadataLoader();
     const indexFieldMetadataLoader = this.createIndexFieldMetadataLoader();
 
     return {
       relationLoader,
+      morphRelationLoader,
       fieldMetadataLoader,
       indexMetadataLoader,
       indexFieldMetadataLoader,
@@ -98,6 +116,38 @@ export class DataloaderService {
         );
 
       return fieldMetadataRelationCollection;
+    });
+  }
+
+  private createMorphRelationLoader() {
+    return new DataLoader<
+      MorphRelationLoaderPayload,
+      {
+        sourceObjectMetadata: ObjectMetadataEntity;
+        targetObjectMetadata: ObjectMetadataEntity;
+        sourceFieldMetadata: FieldMetadataEntity;
+        targetFieldMetadata: FieldMetadataEntity;
+      }[]
+    >(async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const fieldMetadataItems = dataLoaderParams.map(
+        (dataLoaderParam) => dataLoaderParam.fieldMetadata,
+      );
+
+      const fieldMetadataMorphRelationCollection =
+        await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
+          fieldMetadataItems,
+          workspaceId,
+        );
+
+      return fieldMetadataItems.map((fieldMetadataItem) => {
+        return fieldMetadataMorphRelationCollection.filter(
+          (fieldMetadataMorphRelation) =>
+            fieldMetadataItem.name ===
+            fieldMetadataMorphRelation.sourceFieldMetadata.name,
+        );
+      });
     });
   }
 
@@ -161,7 +211,7 @@ export class DataloaderService {
             return [];
           }
 
-          return Object.values(objectMetadata.fieldsById).map(
+          const fields = Object.values(objectMetadata.fieldsById).map(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
               const overridesFieldToCompute = [
@@ -195,6 +245,8 @@ export class DataloaderService {
               };
             },
           );
+
+          return filterMorphRelationDuplicateFieldsDTO(fields);
         });
 
         return fieldMetadataCollection;
