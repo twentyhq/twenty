@@ -265,8 +265,10 @@ export {
   IconServer2,
   IconSettings,
   IconSettings2,
-  IconSettingsAutomation, IconShield,
-  IconSitemap, IconSlash,
+  IconSettingsAutomation,
+  IconShield,
+  IconSitemap,
+  IconSlash,
   IconSortAZ,
   IconSortDescending,
   IconSortZA,
@@ -313,7 +315,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

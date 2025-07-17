@@ -7,7 +7,7 @@ export class TwoFactorAuthentication1752678255608
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."twoFactorAuthenticationMethod_strategy_enum" AS ENUM('HOTP', 'TOTP')`,
+      `CREATE TYPE "core"."twoFactorAuthenticationMethod_strategy_enum" AS ENUM('TOTP')`,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."twoFactorAuthenticationMethod" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userWorkspaceId" uuid NOT NULL, "context" jsonb, "strategy" "core"."twoFactorAuthenticationMethod_strategy_enum" NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_c455f6a499e7110fc95e4bea540" PRIMARY KEY ("id"))`,
