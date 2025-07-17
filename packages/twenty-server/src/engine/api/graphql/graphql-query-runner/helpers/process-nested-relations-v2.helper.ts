@@ -11,6 +11,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -110,7 +111,7 @@ export class ProcessNestedRelationsV2Helper {
     workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
-    selectedFields: Record<string, boolean>;
+    selectedFields: Record<string, unknown>;
   }): Promise<void> {
     const sourceFieldMetadataId =
       parentObjectMetadataItem.fieldIdByName[sourceFieldName];
@@ -152,8 +153,14 @@ export class ProcessNestedRelationsV2Helper {
       targetObjectMetadata.nameSingular,
     );
 
-    targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
+    const columnsToSelect = buildColumnsToSelect({
       select: selectedFields,
+      relations: nestedRelations,
+      objectMetadataItemWithFieldMaps: targetObjectMetadata,
+    });
+
+    targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
+      select: columnsToSelect,
     });
 
     const relationIds = this.getUniqueIds({
