@@ -14,13 +14,13 @@ export type CreateFieldAction = {
 
 export type UpdateFieldAction = {
   type: 'update_field';
-  updates: Partial<
+  updates: Array<
     {
       [P in FlatFieldMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<FieldMetadataEntity[P]>;
     }[FlatFieldMetadataPropertiesToCompare]
-  >[];
+  >;
 } & FieldAndObjectMetadataWorkspaceMigrationInput;
 
 export type DeleteFieldAction = {

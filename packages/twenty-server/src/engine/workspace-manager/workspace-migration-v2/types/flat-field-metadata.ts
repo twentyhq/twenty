@@ -12,6 +12,7 @@ type FieldMetadataEntityRelationProperties =
 
 const requiredProperties = [
   'type',
+  'id',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 type RequiredProperties = (typeof requiredProperties)[number];
 
