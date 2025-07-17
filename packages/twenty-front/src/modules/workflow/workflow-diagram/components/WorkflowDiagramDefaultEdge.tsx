@@ -84,6 +84,8 @@ export const WorkflowDiagramDefaultEdge = ({
             nextStepId={target}
             filterSettings={data.filterSettings}
             isEdgeEditable={data.isEdgeEditable}
+            name={data.name}
+            runStatus={data.runStatus}
           />
         )}
       </EdgeLabelRenderer>

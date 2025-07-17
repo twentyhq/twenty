@@ -1,10 +1,11 @@
-import { WorkflowDiagramEdgeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { StepStatus } from 'twenty-shared/workflow';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type WorkflowVisualizerDiagramContextValue = {
   openFilterInCommandMenu: (args: {
-    name: string
-    
+    stepName: string;
+    stepId: string;
+    stepExecutionStatus?: StepStatus;
   }) => void;
 };
 

@@ -1,6 +1,7 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramEdgeV2FilterContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2FilterContent';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
@@ -15,6 +16,8 @@ type WorkflowDiagramEdgeV2FilterProps = {
   nextStepId: string;
   filterSettings: FilterSettings;
   isEdgeEditable: boolean;
+  name: string;
+  runStatus?: WorkflowRunStepStatus;
 };
 
 export const WorkflowDiagramEdgeV2Filter = ({
@@ -25,6 +28,8 @@ export const WorkflowDiagramEdgeV2Filter = ({
   nextStepId,
   filterSettings,
   isEdgeEditable,
+  name,
+  runStatus,
 }: WorkflowDiagramEdgeV2FilterProps) => {
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
@@ -43,6 +48,8 @@ export const WorkflowDiagramEdgeV2Filter = ({
       nextStepId={nextStepId}
       filterSettings={filterSettings}
       isEdgeEditable={isEdgeEditable}
+      name={name}
+      runStatus={runStatus}
       onDeleteFilter={() => {
         if (!isDefined(stepId)) {
           throw new Error(

@@ -7,12 +7,12 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useWorkflowVisualizerDiagramContextOrThrow } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
-import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import styled from '@emotion/styled';
@@ -46,6 +46,8 @@ type WorkflowDiagramEdgeV2FilterContentProps = {
   onDeleteFilter: () => Promise<void>;
   onCreateNode: () => void;
   isEdgeEditable: boolean;
+  name: string;
+  runStatus?: WorkflowRunStepStatus;
 };
 
 export const WorkflowDiagramEdgeV2FilterContent = ({
@@ -57,6 +59,8 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   onDeleteFilter,
   onCreateNode,
   isEdgeEditable,
+  name,
+  runStatus,
 }: WorkflowDiagramEdgeV2FilterContentProps) => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -87,10 +91,6 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   const { openFilterInCommandMenu } =
     useWorkflowVisualizerDiagramContextOrThrow();
 
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
-    workflowSelectedNodeComponentState,
-  );
-
   const handleMouseEnter = () => {
     if (!isEdgeEditable) {
       return;
@@ -104,9 +104,11 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   };
 
   const handleFilterButtonClick = () => {
-    setWorkflowSelectedNode(stepId);
-
-    openFilterInCommandMenu({});
+    openFilterInCommandMenu({
+      stepId,
+      stepName: name,
+      stepExecutionStatus: runStatus,
+    });
   };
 
   return (
