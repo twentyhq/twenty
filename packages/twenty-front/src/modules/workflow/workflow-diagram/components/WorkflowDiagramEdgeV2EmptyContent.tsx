@@ -7,7 +7,7 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
@@ -78,9 +78,6 @@ export const WorkflowDiagramEdgeV2EmptyContent = ({
             {
               Icon: IconPlus,
               onClick: onCreateNode,
-            },
-            {
-              Icon: IconTrash,
             },
           ]}
         />
