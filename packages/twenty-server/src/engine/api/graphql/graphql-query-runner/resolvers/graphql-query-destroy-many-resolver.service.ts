@@ -12,8 +12,6 @@ import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolv
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
@@ -50,30 +48,17 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       objectMetadataItemWithFieldMaps,
     });
 
-    const nonFormattedDeletedObjectRecords = await queryBuilder
+    const deletedObjectRecords = await queryBuilder
       .delete()
       .returning(columnsToReturn)
       .execute();
-
-    const deletedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedDeletedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    this.apiEventEmitterService.emitDestroyEvents({
-      records: structuredClone(deletedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: deletedRecords,
+        parentObjectRecords:
+          deletedObjectRecords.generatedMaps as ObjectRecord[],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -87,7 +72,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return deletedRecords.map((record: ObjectRecord) =>
+    return deletedObjectRecords.generatedMaps.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,

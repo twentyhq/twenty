@@ -24,8 +24,6 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
@@ -67,20 +65,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     let objectRecords: Partial<ObjectRecord>[] = [];
 
     if (executionArgs.args.ids) {
-      const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
+      objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(executionArgs.args.ids) })
         .getMany()) as ObjectRecord[];
-
-      objectRecords = formatResult(
-        nonFormattedObjectRecords,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
     } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
-      objectRecords = formatData(
-        executionArgs.args.data,
-        objectMetadataItemWithFieldMaps,
-      );
+      objectRecords = executionArgs.args.data;
     }
 
     const duplicateConnections: IConnection<ObjectRecord>[] = await Promise.all(
@@ -120,17 +109,11 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           duplicateConditions,
         );
 
-        const nonFormattedDuplicates = (await duplicateRecordsQueryBuilder
+        const duplicates = (await duplicateRecordsQueryBuilder
           .setFindOptions({
             select: columnsToSelect,
           })
           .getMany()) as ObjectRecord[];
-
-        const duplicates = formatResult<ObjectRecord[]>(
-          nonFormattedDuplicates,
-          objectMetadataItemWithFieldMaps,
-          objectMetadataMaps,
-        );
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: duplicates,
