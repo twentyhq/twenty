@@ -211,11 +211,6 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
                     onCreateNode();
                   }}
                 />
-                <MenuItem
-                  text="Delete branch"
-                  LeftIcon={IconGitBranchDeleted}
-                  onClick={() => {}}
-                />
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }
