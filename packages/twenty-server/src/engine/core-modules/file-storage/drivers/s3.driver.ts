@@ -417,4 +417,24 @@ export class S3Driver implements StorageDriver {
 
     return true;
   }
+
+  async checkFolderExists(folderPath: string): Promise<boolean> {
+    try {
+      const listCommand = new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: folderPath,
+        MaxKeys: 1,
+      });
+
+      const result = await this.s3Client.send(listCommand);
+
+      return (result.Contents && result.Contents.length > 0) || false;
+    } catch (error) {
+      if (error instanceof NotFound) {
+        return false;
+      }
+
+      throw error;
+    }
+  }
 }
