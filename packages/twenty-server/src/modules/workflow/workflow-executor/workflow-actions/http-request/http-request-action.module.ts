@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { HttpRequestWorkflowAction } from './http-request.workflow-action';
+import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
+
+import { HttpRequestWorkflowActionAdapter } from './http-request.workflow-action-adapter';
 
 @Module({
-  providers: [HttpRequestWorkflowAction],
-  exports: [HttpRequestWorkflowAction],
+  imports: [ToolModule],
+  providers: [HttpRequestWorkflowActionAdapter],
+  exports: [HttpRequestWorkflowActionAdapter],
 })
 export class HttpRequestActionModule {}

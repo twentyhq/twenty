@@ -10,7 +10,7 @@ import { AiAgentWorkflowAction } from 'src/modules/workflow/workflow-executor/wo
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
-import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action';
+import { HttpRequestWorkflowActionAdapter } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action-adapter';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
@@ -29,7 +29,7 @@ export class WorkflowActionFactory {
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
     private readonly formWorkflowAction: FormWorkflowAction,
     private readonly filterWorkflowAction: FilterWorkflowAction,
-    private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
+    private readonly httpRequestWorkflowAction: HttpRequestWorkflowActionAdapter,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
   ) {}
 
