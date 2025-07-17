@@ -79,11 +79,11 @@ export class AdminPanelService {
     const targetUser = await this.userRepository.findOne({
       where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
       relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceUsers',
-        'workspaces.workspace.workspaceUsers.user',
-        'workspaces.workspace.featureFlags',
+        'userWorkspaces',
+        'userWorkspaces.workspace',
+        'userWorkspaces.workspace.workspaceUsers',
+        'userWorkspaces.workspace.workspaceUsers.user',
+        'userWorkspaces.workspace.featureFlags',
       ],
     });
 
