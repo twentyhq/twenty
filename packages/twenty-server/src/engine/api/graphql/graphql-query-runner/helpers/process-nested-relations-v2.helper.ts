@@ -179,8 +179,6 @@ export class ProcessNestedRelationsV2Helper {
             : 'id',
         ids: relationIds,
         limit: limit * parentObjectRecords.length,
-        objectMetadataMaps,
-        targetObjectMetadata,
         aggregate,
         sourceFieldName,
       });
@@ -285,8 +283,6 @@ export class ProcessNestedRelationsV2Helper {
     column,
     ids,
     limit,
-    objectMetadataMaps,
-    targetObjectMetadata,
     aggregate,
     sourceFieldName,
   }: {
@@ -296,8 +292,6 @@ export class ProcessNestedRelationsV2Helper {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ids: any[];
     limit: number;
-    objectMetadataMaps: ObjectMetadataMaps;
-    targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
