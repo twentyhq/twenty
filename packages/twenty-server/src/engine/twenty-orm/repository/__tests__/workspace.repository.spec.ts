@@ -97,7 +97,19 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
-        fields: [],
+        fieldIdByName: {
+          id: 'test-field-id',
+        },
+        fieldIdByJoinColumnName: {},
+        fieldsById: {
+          'test-field-id': {
+            id: 'test-field-id',
+            name: 'id',
+            type: 'string',
+            isNullable: false,
+            isUnique: true,
+          },
+        },
       });
   });
 
