@@ -1,28 +1,28 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import {
   fieldSelectMock,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { checkFilterEnumValues } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-enum-values';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('checkFilterEnumValues', () => {
-  const completeFieldSelectMock: FieldMetadataInterface = {
-    id: 'field-select-id',
+  const completeFieldSelectMock = getMockFieldMetadataEntity({
+    workspaceId: '20202020-0000-0000-0000-000000000000',
+    objectMetadataId: '20202020-0000-0000-0000-000000000001',
+    id: '20202020-0000-0000-0000-000000000002',
     type: fieldSelectMock.type,
     name: fieldSelectMock.name,
     label: 'Field Select',
-    objectMetadataId: 'object-metadata-id',
     isNullable: fieldSelectMock.isNullable,
     defaultValue: fieldSelectMock.defaultValue,
     options: fieldSelectMock.options,
     isLabelSyncedWithName: true,
     createdAt: new Date(),
     updatedAt: new Date(),
-  };
+  });
 
   const fieldsById: FieldMetadataMap = {
     'field-select-id': completeFieldSelectMock,
