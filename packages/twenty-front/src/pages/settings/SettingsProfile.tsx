@@ -11,11 +11,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { H2Title, Status, IconShield } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValue } from 'recoil';
-import { isTwoFactorAuthenticationEnabledState } from '@/client-config/states/isTwoFactorAuthenticationEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useTwoFactorAuthentication';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +23,7 @@ export const SettingsProfile = () => {
     twoFactorAuthenticationStatus,
     isTwoFactorAuthenticationEnabled,
     workspaceTwoFactorAuthenticationPolicy,
-  } = useTwoFactorAuthentication()
+  } = useTwoFactorAuthentication();
 
   return (
     <SubMenuTopBarContainer

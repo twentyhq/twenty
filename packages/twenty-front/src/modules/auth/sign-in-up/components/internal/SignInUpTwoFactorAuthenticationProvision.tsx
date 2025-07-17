@@ -58,13 +58,8 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
       <StyledForm>
         <StyledTextContainer>
           <Trans>Use authenticator apps and browser extensions like</Trans>{' '}
-            <Trans>1Password</Trans>, 
-            <Trans>Authy</Trans>,
-          {' '}
-            <Trans>Microsoft</Trans>,
-          {' '}
-            <Trans>Authenticator</Trans>
-          {' '}
+          <Trans>1Password</Trans>,<Trans>Authy</Trans>,{' '}
+          <Trans>Microsoft</Trans>, <Trans>Authenticator</Trans>{' '}
           <Trans>to generate one-time passwords</Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>

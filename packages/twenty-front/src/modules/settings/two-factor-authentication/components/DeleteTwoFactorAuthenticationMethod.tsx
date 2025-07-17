@@ -2,17 +2,16 @@ import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useResetTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
-import { useOrigin } from '@/domain-manager/hooks/useOrigin';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { isDefined } from 'twenty-shared/utils';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useTwoFactorAuthentication } from '../hooks/useTwoFactorAuthentication';
 
@@ -29,17 +28,14 @@ export const DeleteTwoFactorAuthentication = () => {
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const navigate = useNavigateSettings();
 
-  const {
-    defaultTwoFactorAuthenticationMethod
-  } = useTwoFactorAuthentication()
+  const { defaultTwoFactorAuthenticationMethod } = useTwoFactorAuthentication();
 
   const reset2FA = async () => {
     if (
       !isDefined(
-        defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId
+        defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId,
       )
     ) {
       enqueueErrorSnackBar({
@@ -54,7 +50,8 @@ export const DeleteTwoFactorAuthentication = () => {
     await deleteTwoFactorAuthenticationMethod({
       variables: {
         origin,
-        twoFactorAuthenticationMethodId:  defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId
+        twoFactorAuthenticationMethodId:
+          defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId,
       },
     });
 
