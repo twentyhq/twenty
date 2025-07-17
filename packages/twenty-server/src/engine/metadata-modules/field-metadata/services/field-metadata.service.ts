@@ -32,6 +32,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
@@ -54,9 +55,9 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -578,15 +579,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
           createdFieldMetadatas.push(...createdFieldMetadataItems);
 
-          const fieldMigrationActions = await this.createMigrationActions({
+          const fieldMigrationActions = await createMigrationActions({
             createdFieldMetadataItems,
             objectMetadataMap: objectMetadataMaps.byId,
             isRemoteCreation: fieldMetadataInput.isRemoteCreation ?? false,
+            workspaceMigrationFactory: this.workspaceMigrationFactory,
           });
 
-          if (fieldMetadataInput.type !== FieldMetadataType.MORPH_RELATION) {
-            migrationActions.push(...fieldMigrationActions);
-          }
+          migrationActions.push(...fieldMigrationActions);
         }
       }
 
@@ -675,7 +675,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-            objectMetadata,
+            joinColumnName: computeRelationFieldJoinColumnName({
+              name: fieldMetadataForCreate.name,
+            }),
           },
         );
 
@@ -706,57 +708,5 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadataMaps,
       },
     );
-  }
-
-  private async createMigrationActions({
-    createdFieldMetadataItems,
-    objectMetadataMap,
-    isRemoteCreation,
-  }: {
-    createdFieldMetadataItems: FieldMetadataEntity[];
-    objectMetadataMap: ObjectMetadataMaps['byId'];
-    isRemoteCreation: boolean;
-  }): Promise<WorkspaceMigrationTableAction[]> {
-    if (isRemoteCreation) {
-      return [];
-    }
-
-    const migrationActions: WorkspaceMigrationTableAction[] = [];
-
-    for (const createdFieldMetadata of createdFieldMetadataItems) {
-      if (
-        isFieldMetadataEntityOfType(
-          createdFieldMetadata,
-          FieldMetadataType.RELATION,
-        )
-      ) {
-        const relationType = createdFieldMetadata.settings?.relationType;
-
-        if (relationType === RelationType.ONE_TO_MANY) {
-          continue;
-        }
-      }
-
-      const objectMetadata =
-        objectMetadataMap[createdFieldMetadata.objectMetadataId];
-
-      if (!isDefined(objectMetadata)) {
-        throw new FieldMetadataException(
-          'Object metadata does not exist',
-          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
-
-      migrationActions.push({
-        name: computeObjectTargetTable(objectMetadata),
-        action: WorkspaceMigrationTableActionType.ALTER,
-        columns: this.workspaceMigrationFactory.createColumnActions(
-          WorkspaceMigrationColumnActionType.CREATE,
-          createdFieldMetadata,
-        ),
-      });
-    }
-
-    return migrationActions;
   }
 }
