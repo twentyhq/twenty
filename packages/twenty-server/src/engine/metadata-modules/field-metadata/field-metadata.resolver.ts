@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -40,7 +41,10 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import {
+  isMorphRelationFieldMetadataType,
+  isRelationFieldMetadataType,
+} from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -164,6 +168,51 @@ export class FieldMetadataResolver {
         sourceFieldMetadata,
         targetFieldMetadata,
       };
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @ResolveField(() => [RelationDTO], { nullable: true })
+  async morphRelations(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent()
+    fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<RelationDTO[] | null | undefined> {
+    if (!isMorphRelationFieldMetadataType(fieldMetadata.type)) {
+      return null;
+    }
+
+    try {
+      const morphRelations = await context.loaders.morphRelationLoader.load({
+        fieldMetadata,
+        workspaceId: workspace.id,
+      });
+
+      if (!isDefined(fieldMetadata.settings)) {
+        throw new FieldMetadataException(
+          'Morph relation settings are required',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+
+      return morphRelations.map((morphRelation) => {
+        if (!isDefined(fieldMetadata.settings?.relationType)) {
+          throw new FieldMetadataException(
+            'Morph relation relationType are required',
+            FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          );
+        }
+
+        return {
+          type: fieldMetadata.settings.relationType,
+          sourceObjectMetadata: morphRelation.sourceObjectMetadata,
+          targetObjectMetadata: morphRelation.targetObjectMetadata,
+          sourceFieldMetadata: morphRelation.sourceFieldMetadata,
+          targetFieldMetadata: morphRelation.targetFieldMetadata,
+        };
+      });
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
