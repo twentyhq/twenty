@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -41,11 +42,19 @@ const getRequiredRelationColumns = (
   for (const [relationFieldName, _] of Object.entries(relations)) {
     const fieldMetadataId = objectMetadataItem.fieldIdByName[relationFieldName];
 
-    if (!fieldMetadataId) continue;
+    if (!fieldMetadataId) {
+      throw new InternalServerError(
+        `Field metadata not found for relation field name: ${relationFieldName}`,
+      );
+    }
 
     const fieldMetadata = objectMetadataItem.fieldsById[fieldMetadataId];
 
-    if (!fieldMetadata) continue;
+    if (!fieldMetadata) {
+      throw new InternalServerError(
+        `Field metadata not found for relation field name: ${relationFieldName}`,
+      );
+    }
 
     if (
       !isFieldMetadataInterfaceOfType(fieldMetadata, FieldMetadataType.RELATION)
