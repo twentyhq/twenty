@@ -52,24 +52,22 @@ export const WorkflowDiagramDefaultEdge = ({
       />
 
       <EdgeLabelRenderer>
-        {!isWorkflowFilteringEnabled ? (
+        {!isWorkflowFilteringEnabled && data.isEdgeEditable ? (
+          <WorkflowDiagramEdgeV1
+            labelY={labelY}
+            parentStepId={source}
+            nextStepId={target}
+          />
+        ) : isWorkflowFilteringEnabled &&
+          data.edgeType === 'default' &&
           data.isEdgeEditable ? (
-            <WorkflowDiagramEdgeV1
-              labelY={labelY}
-              parentStepId={source}
-              nextStepId={target}
-            />
-          ) : null
-        ) : data.edgeType === 'default' ? (
-          data.isEdgeEditable ? (
-            <WorkflowDiagramEdgeV2Empty
-              labelX={labelX}
-              labelY={labelY}
-              parentStepId={source}
-              nextStepId={target}
-            />
-          ) : null
-        ) : (
+          <WorkflowDiagramEdgeV2Empty
+            labelX={labelX}
+            labelY={labelY}
+            parentStepId={source}
+            nextStepId={target}
+          />
+        ) : isWorkflowFilteringEnabled && data.edgeType === 'filter' ? (
           <WorkflowDiagramEdgeV2Filter
             labelX={labelX}
             labelY={labelY}
@@ -79,7 +77,7 @@ export const WorkflowDiagramDefaultEdge = ({
             filterSettings={data.filterSettings}
             isEdgeEditable={data.isEdgeEditable}
           />
-        )}
+        ) : null}
       </EdgeLabelRenderer>
     </>
   );
