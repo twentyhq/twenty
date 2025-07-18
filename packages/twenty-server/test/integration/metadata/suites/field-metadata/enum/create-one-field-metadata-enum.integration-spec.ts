@@ -71,7 +71,7 @@ describe.each(fieldMetadataEnumTypes)(
         expect(data.createOneField.type).toEqual(testedFieldMetadataType);
 
         const createdOptions = data.createOneField.options;
-        const optionsToCompare = expectedOptions ?? input.options;
+        const optionsToCompare = expectedOptions ?? input.options ?? [];
 
         expect(errors).toBeUndefined();
         expect(createdOptions?.length).toBe(optionsToCompare.length);
