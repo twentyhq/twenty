@@ -58,7 +58,7 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
 
     // check if enqueued status is already in the field metadata options
     if (
-      workflowRunStatusFieldMetadataOptions.some(
+      workflowRunStatusFieldMetadataOptions?.some(
         (option) => option.value === WorkflowRunStatus.ENQUEUED,
       )
     ) {
@@ -72,7 +72,7 @@ export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWork
         `Would add enqueued status to workflow run status field metadata for workspace ${workspaceId}`,
       );
     } else {
-      workflowRunStatusFieldMetadataOptions.push({
+      workflowRunStatusFieldMetadataOptions?.push({
         value: WorkflowRunStatus.ENQUEUED,
         label: 'Enqueued',
         position: 4,
