@@ -49,7 +49,11 @@ export const Attachments = ({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
+    if (isDefined(e.target.files)) {
+      Array.from(e.target.files).forEach((file) => {
+        onUploadFile(file);
+      });
+    }
   };
 
   const handleUploadFileClick = () => {
@@ -102,6 +106,7 @@ export const Attachments = ({
               ref={inputFileRef}
               onChange={handleFileChange}
               type="file"
+              multiple
             />
             {hasObjectUpdatePermissions && (
               <Button
@@ -123,6 +128,7 @@ export const Attachments = ({
         ref={inputFileRef}
         onChange={handleFileChange}
         type="file"
+        multiple
       />
       <AttachmentList
         targetableObject={targetableObject}
