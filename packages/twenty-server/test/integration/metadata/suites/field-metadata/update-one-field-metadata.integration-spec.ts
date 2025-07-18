@@ -141,7 +141,7 @@ describe('updateOne', () => {
       );
     });
 
-    it('should throw if the field name is not available because of other relation field with the same {name}Id', async () => {
+    it('should throw if the field name is not available because of other relation field using the same {name}Id', async () => {
       // Arrange
       await createOneFieldMetadata({
         input: {
@@ -168,7 +168,7 @@ describe('updateOne', () => {
 
       // Assert
       expect(errors[0].message).toBe(
-        'Name "testName" is not available, check that it is not duplicating another field\'s name.',
+        'Name "parentId" is not available, check that it is not duplicating another field\'s name.',
       );
     });
   });
