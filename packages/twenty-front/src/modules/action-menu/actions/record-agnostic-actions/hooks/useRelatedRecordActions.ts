@@ -40,8 +40,8 @@ export const useRelatedRecordActions = ({
   let currentPosition = startPosition;
 
   for (const field of oneToManyFields) {
-    if (!field.relation) {
-      continue;
+    if (!isDefined(field.relation)) {
+      throw new Error(`Field relation is undefined for field: ${field.id}`);
     }
 
     const targetObjectName = field.relation.targetObjectMetadata.nameSingular;
@@ -51,7 +51,9 @@ export const useRelatedRecordActions = ({
     );
 
     if (!isDefined(targetObjectMetadataItem)) {
-      continue;
+      throw new Error(
+        `Target object metadata item is undefined for field: ${field.id}`,
+      );
     }
 
     const targetObjectNameSingular = targetObjectMetadataItem.nameSingular;

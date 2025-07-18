@@ -9,6 +9,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDefined } from 'twenty-shared/utils';
 
 interface CreateRelatedRecordActionProps {
@@ -61,7 +62,8 @@ export const CreateRelatedRecordAction = ({
   const handleCreateRelatedRecord = async () => {
     const foreignKeyFieldName =
       targetFieldMetadataItemRelation.targetFieldMetadata.name;
-    const foreignKeyIdFieldName = `${foreignKeyFieldName}Id`;
+    const foreignKeyIdFieldName =
+      getForeignKeyNameFromRelationFieldName(foreignKeyFieldName);
 
     let createdRecord: ObjectRecord;
 
