@@ -1,14 +1,14 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 
-import { ToolRegistryService, ToolType } from './tool-registry.service';
+import { ToolRegistryService } from './tool-registry.service';
 
 import { HttpTool } from './tools/http-tool/http-tool';
 
 @Module({
-  providers: [ToolRegistryService, HttpTool, ToolAdapterService],
-  exports: [ToolRegistryService, ToolAdapterService],
+  providers: [ToolRegistryService, HttpTool],
+  exports: [ToolRegistryService],
 })
 export class ToolModule implements OnModuleInit {
   constructor(private readonly toolRegistryService: ToolRegistryService) {}

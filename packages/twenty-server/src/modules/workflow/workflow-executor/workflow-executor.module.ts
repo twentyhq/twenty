@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
@@ -12,6 +13,7 @@ import { FormActionModule } from 'src/modules/workflow/workflow-executor/workflo
 import { HttpRequestActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request-action.module';
 import { SendEmailActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email-action.module';
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
+import { WorkflowActionAdapter } from 'src/modules/workflow/workflow-executor/workflow-actions/workflow-action-adapter';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
@@ -28,11 +30,13 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     HttpRequestActionModule,
     AiAgentActionModule,
     FeatureFlagModule,
+    ToolModule,
   ],
   providers: [
     WorkflowExecutorWorkspaceService,
     ScopedWorkspaceContextFactory,
     WorkflowActionFactory,
+    WorkflowActionAdapter,
   ],
   exports: [WorkflowExecutorWorkspaceService],
 })

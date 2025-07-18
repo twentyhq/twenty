@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Tool } from './types/tool.type';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 
-export enum ToolType {
-  HTTP_REQUEST = 'HTTP_REQUEST',
-}
+import { Tool } from './types/tool.type';
 
 @Injectable()
 export class ToolRegistryService {
