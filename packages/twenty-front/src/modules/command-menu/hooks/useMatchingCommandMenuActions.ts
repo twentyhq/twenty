@@ -19,6 +19,7 @@ export const useMatchingCommandMenuActions = ({
     workflowRunRecordSelectionActions,
     workflowRunGlobalActions,
     fallbackActions,
+    createRelatedRecordActions,
   } = useCommandMenuActions();
 
   const matchingNavigateActions =
@@ -40,13 +41,18 @@ export const useMatchingCommandMenuActions = ({
     workflowRunGlobalActions,
   );
 
+  const matchingCreateRelatedRecordActions = filterActionsWithCommandMenuSearch(
+    createRelatedRecordActions,
+  );
+
   const noResults =
     !matchingStandardActionRecordSelectionActions.length &&
     !matchingWorkflowRunRecordSelectionActions.length &&
     !matchingStandardActionGlobalActions.length &&
     !matchingWorkflowRunGlobalActions.length &&
     !matchingStandardActionObjectActions.length &&
-    !matchingNavigateActions.length;
+    !matchingNavigateActions.length &&
+    !matchingCreateRelatedRecordActions.length;
 
   return {
     noResults,
@@ -56,6 +62,7 @@ export const useMatchingCommandMenuActions = ({
     matchingStandardActionGlobalActions,
     matchingWorkflowRunGlobalActions,
     matchingNavigateActions,
+    matchingCreateRelatedRecordActions,
     fallbackActions: noResults ? fallbackActions : [],
   };
 };

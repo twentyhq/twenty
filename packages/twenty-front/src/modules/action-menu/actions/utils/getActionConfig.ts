@@ -26,7 +26,8 @@ export const getActionConfig = ({
     case CoreObjectNameSingular.WorkflowRun: {
       return WORKFLOW_RUNS_ACTIONS_CONFIG;
     }
-    default:
+    default: {
       return DEFAULT_RECORD_ACTIONS_CONFIG;
+    }
   }
 };
