@@ -77,12 +77,12 @@ export const useRelatedRecordActions = ({
       shouldBeRegistered: ({
         selectedRecord,
         objectPermissions,
-        getTargetObjectReadPermission,
+        getTargetObjectWritePermission,
       }) =>
         isDefined(selectedRecord) &&
         !selectedRecord.isRemote &&
         objectPermissions.canUpdateObjectRecords &&
-        getTargetObjectReadPermission(targetObjectName) === true,
+        getTargetObjectWritePermission(targetObjectName) === true,
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
