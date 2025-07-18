@@ -6,7 +6,7 @@ export const useAvailableComponentInstanceIdOrThrow = <
   T extends { instanceId: string },
 >(
   Context: ComponentInstanceStateContext<T>,
-  instanceIdFromProps?: string,
+  instanceIdFromProps?: string | null | undefined,
 ): string => {
   const instanceStateContext = useComponentInstanceStateContext(Context);
 

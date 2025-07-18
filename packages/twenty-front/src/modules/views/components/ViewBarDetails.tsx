@@ -22,8 +22,10 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
+import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
@@ -181,9 +183,12 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const shouldShowAnyFieldSearchChip = isNonEmptyString(
-    viewAnyFieldSearchValue,
+  const { isDropdownOpen: isAnyFieldSearchDropdownOpen } = useIsDropdownOpen(
+    ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
+
+  const shouldShowAnyFieldSearchChip =
+    isNonEmptyString(viewAnyFieldSearchValue) || isAnyFieldSearchDropdownOpen;
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||

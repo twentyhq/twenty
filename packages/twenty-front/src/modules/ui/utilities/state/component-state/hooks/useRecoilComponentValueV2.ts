@@ -10,7 +10,7 @@ export const useRecoilComponentValueV2 = <StateType>(
     | ComponentStateV2<StateType>
     | ComponentSelectorV2<StateType>
     | ComponentReadOnlySelectorV2<StateType>,
-  instanceIdFromProps?: string,
+  instanceIdFromProps?: string | null | undefined,
 ) => {
   const instanceContext = globalComponentInstanceContextMap.get(
     componentStateV2.key,
