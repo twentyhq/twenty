@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/tool-registry.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
@@ -78,12 +77,6 @@ export const createAgentToolTestModule =
         {
           provide: ToolAdapterService,
           useClass: ToolAdapterService,
-        },
-        {
-          provide: ToolRegistryService,
-          useValue: {
-            getAllTools: jest.fn().mockReturnValue(new Map()),
-          },
         },
       ],
     }).compile();
