@@ -3,6 +3,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { viewAnyFieldSearchValueComponentState } from '@/views/states/viewAnyFieldSearchValueComponentState';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const useOpenAnyFieldSearchFilterFromViewBar = () => {
   const setViewAnyFieldSearchValueComponentState = useSetRecoilComponentStateV2(
@@ -20,7 +21,7 @@ export const useOpenAnyFieldSearchFilterFromViewBar = () => {
 
   const openAnyFieldSearchFilterFromViewBar = () => {
     const userHasAlreadyEnteredSearchInputForObjectDropdownSearch =
-      objectFilterDropdownSearchInput.length > 0;
+      isNonEmptyString(objectFilterDropdownSearchInput);
 
     if (userHasAlreadyEnteredSearchInputForObjectDropdownSearch) {
       const filterValue = objectFilterDropdownSearchInput;

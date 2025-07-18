@@ -9,7 +9,7 @@ import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDr
 export const AnyFieldSearchDropdownButton = () => {
   const { openDropdown } = useOpenDropdown();
 
-  const handleOpenAdvancedFilterDropdown = () => {
+  const handleOpenAnyFieldSearchDropdown = () => {
     openDropdown({
       dropdownComponentInstanceIdFromProps: ANY_FIELD_SEARCH_DROPDOWN_ID,
     });
@@ -22,7 +22,7 @@ export const AnyFieldSearchDropdownButton = () => {
       dropdownComponents={<AnyFieldSearchDropdownContent />}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y, x: 0 }}
       dropdownPlacement="bottom-start"
-      onOpen={handleOpenAdvancedFilterDropdown}
+      onOpen={handleOpenAnyFieldSearchDropdown}
     />
   );
 };
