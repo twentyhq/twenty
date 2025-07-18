@@ -207,7 +207,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate;
     overrideKey: 'label' | 'description' | 'icon';
     newValue: string;
-    originalValue: string;
+    originalValue: string | null;
     locale?: keyof typeof APP_LOCALES | undefined;
   }): boolean {
     // Handle localized overrides
@@ -238,7 +238,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
@@ -268,7 +268,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
-    originalValue: string,
+    originalValue: string | null,
   ): boolean {
     if (newValue !== originalValue) {
       return false;

@@ -114,7 +114,7 @@ export class RelationConnectInputTypeDefinitionFactory {
         } else {
           const scalarType = this.typeMapperService.mapToScalarType(
             field.type,
-            field.settings,
+            field.settings ?? undefined,
             field.name === 'id',
           );
 
