@@ -380,7 +380,7 @@ export const SettingsRoutes = ({
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
       <Route
-        path={SettingsPath.TwoFactorAuthentication}
+        path={SettingsPath.TwoFactorAuthenticationStrategyConfig}
         element={<SettingsTwoFactorAuthenticationMethod />}
       />
       <Route path={SettingsPath.Experience} element={<SettingsExperience />} />

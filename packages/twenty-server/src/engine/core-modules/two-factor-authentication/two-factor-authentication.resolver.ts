@@ -70,6 +70,7 @@ export class TwoFactorAuthenticationResolver {
         user.id,
         userEmail,
         workspace.id,
+        workspace.twoFactorAuthenticationPolicy.strategy,
       );
 
     if (!isDefined(uri)) {

@@ -6,6 +6,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
+  TwoFactorAuthenticationStrategy,
   WorkspaceActivationStatus,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -47,6 +48,10 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
           metadata: {},
         },
       ],
+      twoFactorAuthenticationPolicy: {
+        enforce: false,
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      },
     });
   },
 });

@@ -10,6 +10,7 @@ export function buildTwoFactorAuthenticationMethodSummary(
 
   return methods.map((method) => ({
     twoFactorAuthenticationMethodId: method.id,
-    isActive: method?.context?.status === 'VERIFIED',
+    status: method.context.status,
+    strategy: method.strategy,
   }));
 }

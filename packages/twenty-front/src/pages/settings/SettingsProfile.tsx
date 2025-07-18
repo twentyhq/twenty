@@ -13,17 +13,17 @@ import { H2Title, Status, IconShield } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useTwoFactorAuthentication';
-import { isDefined } from 'twenty-shared/utils';
+import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticatonPolicy';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
 
-  const {
-    twoFactorAuthenticationStatus,
-    isTwoFactorAuthenticationEnabled,
-    workspaceTwoFactorAuthenticationPolicy,
-  } = useTwoFactorAuthentication();
+  const { policies: workspacePolicies } =
+    useCurrentWorkspaceTwoFactorAuthenticationPolicy();
+
+  const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
+    useCurrentUserWorkspaceTwoFactorAuthentication();
 
   return (
     <SubMenuTopBarContainer
@@ -55,26 +55,30 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {isDefined(workspaceTwoFactorAuthenticationPolicy) &&
-          isTwoFactorAuthenticationEnabled && (
-            <Section>
-              <UndecoratedLink
-                to={getSettingsPath(SettingsPath.TwoFactorAuthentication)}
-              >
-                <SettingsCard
-                  title={t`Authenticator App`}
-                  Icon={<IconShield />}
-                  Status={
-                    twoFactorAuthenticationStatus ? (
-                      <Status text={'Active'} color={'turquoise'} />
-                    ) : (
-                      <Status text={'Inactive'} color={'orange'} />
-                    )
-                  }
-                />
-              </UndecoratedLink>
-            </Section>
-          )}
+        {workspacePolicies?.map((policy) => (
+          <Section>
+            <UndecoratedLink
+              to={getSettingsPath(
+                SettingsPath.TwoFactorAuthenticationStrategyConfig,
+                { twoFactorAuthenticationStrategy: policy.strategy },
+              )}
+            >
+              <SettingsCard
+                title={t`Authenticator App`}
+                Icon={<IconShield />}
+                Status={
+                  currentUserWorkspaceTwoFactorAuthenticationMethods[
+                    policy.strategy
+                  ].status === 'VERIFIED' ? (
+                    <Status text={'Active'} color={'turquoise'} />
+                  ) : (
+                    <Status text={'Inactive'} color={'orange'} />
+                  )
+                }
+              />
+            </UndecoratedLink>
+          </Section>
+        ))}
         <Section>
           <ChangePassword />
         </Section>

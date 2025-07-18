@@ -4,9 +4,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
-import { TwoFactorAuthenticationProviders } from '~/generated/graphql';
 import { IconLifebuoy } from 'twenty-ui/display';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { TwoFactorAuthenticationStrategy } from '~/generated/graphql';
 
 export const Toggle2FA = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -22,11 +22,12 @@ export const Toggle2FA = () => {
         throw new Error('User is not logged in');
       }
 
-      if (!currentWorkspace.twoFactorAuthenticationPolicy) {
+      if (currentWorkspace.twoFactorAuthenticationPolicy.enforce) {
         setCurrentWorkspace({
           ...currentWorkspace,
           twoFactorAuthenticationPolicy: {
-            strategy: TwoFactorAuthenticationProviders.HOTP,
+            strategy: TwoFactorAuthenticationStrategy.TOTP,
+            enforce: true,
           },
         });
 
@@ -34,7 +35,8 @@ export const Toggle2FA = () => {
           variables: {
             input: {
               twoFactorAuthenticationPolicy: {
-                strategy: TwoFactorAuthenticationProviders.HOTP,
+                strategy: TwoFactorAuthenticationStrategy.TOTP,
+                enforce: true,
               },
             },
           },
@@ -42,7 +44,10 @@ export const Toggle2FA = () => {
       } else {
         setCurrentWorkspace({
           ...currentWorkspace,
-          twoFactorAuthenticationPolicy: null,
+          twoFactorAuthenticationPolicy: {
+            strategy: TwoFactorAuthenticationStrategy.TOTP,
+            enforce: false,
+          },
         });
 
         await updateWorkspace({
@@ -65,7 +70,7 @@ export const Toggle2FA = () => {
       Icon={IconLifebuoy}
       title={t`Two Factor Authentication`}
       description={'Enforce two-step verification for every user login.'}
-      checked={!!currentWorkspace?.twoFactorAuthenticationPolicy}
+      checked={!!currentWorkspace?.twoFactorAuthenticationPolicy.enforce}
       onChange={handleChange}
       advancedMode
     />

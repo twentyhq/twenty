@@ -8,6 +8,7 @@ import {
 } from './two-factor-authentication.exception';
 
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { OTPStatus } from './strategies/otp/otp.constants';
 
 const assertIsDefinedOrThrow = (
   twoFactorAuthenticationMethod:
@@ -24,19 +25,34 @@ const assertIsDefinedOrThrow = (
   }
 };
 
-const isTwoFactorAuthenticationMethodDefined = (
-  twoFactorAuthenticationMethod:
-    | TwoFactorAuthenticationMethod
+const areTwoFactorAuthenticationMethodsDefined = (
+  twoFactorAuthenticationMethods:
+    | TwoFactorAuthenticationMethod[]
     | undefined
     | null,
-): twoFactorAuthenticationMethod is TwoFactorAuthenticationMethod => {
-  return isDefined(twoFactorAuthenticationMethod);
+): twoFactorAuthenticationMethods is TwoFactorAuthenticationMethod[] => {
+  return (
+    isDefined(twoFactorAuthenticationMethods) &&
+    twoFactorAuthenticationMethods.length > 0
+  );
 };
 
-export const twoFactorAuthenticationMethodValidator: {
+const isAnyTwoFactorAuthenticationMethodVerified = (
+  twoFactorAuthenticationMethods: TwoFactorAuthenticationMethod[],
+) => {
+  return (
+    twoFactorAuthenticationMethods.filter(
+      (method) => method.context?.status === OTPStatus.VERIFIED,
+    ).length > 0
+  );
+};
+
+export const twoFactorAuthenticationMethodsValidator: {
   assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
-  isDefined: typeof isTwoFactorAuthenticationMethodDefined;
+  areDefined: typeof areTwoFactorAuthenticationMethodsDefined;
+  areVerified: typeof isAnyTwoFactorAuthenticationMethodVerified;
 } = {
   assertIsDefinedOrThrow,
-  isDefined: isTwoFactorAuthenticationMethodDefined,
+  areDefined: areTwoFactorAuthenticationMethodsDefined,
+  areVerified: isAnyTwoFactorAuthenticationMethodVerified,
 };

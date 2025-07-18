@@ -70,14 +70,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Enable or disable two factor authentication for workspaces',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = true;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
     description:
       'Select the two-factor authentication strategy (e.g., TOTP or HOTP) to be used for workspace logins.',
     type: ConfigVariableType.ENUM,

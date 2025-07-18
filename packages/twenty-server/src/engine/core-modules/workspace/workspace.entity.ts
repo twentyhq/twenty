@@ -161,9 +161,13 @@ export class Workspace {
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;
 
-  @Field(() => TwoFactorAuthenticationPolicy, { nullable: true })
-  @Column({ type: 'jsonb', nullable: true })
-  twoFactorAuthenticationPolicy?: TwoFactorAuthenticationPolicy;
+  @Field(() => TwoFactorAuthenticationPolicy, { nullable: false })
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: () => `'{"enforce": true, "strategy": "TOTP"}'`,
+  })
+  twoFactorAuthenticationPolicy: TwoFactorAuthenticationPolicy;
 
   @Field()
   @Column({ default: true })

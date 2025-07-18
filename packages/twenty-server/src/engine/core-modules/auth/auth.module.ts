@@ -62,8 +62,6 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 
 import { TwoFactorAuthenticationMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
-import { twoFactorAuthenticationModuleFactory } from '../two-factor-authentication/two-factor-authentication.module-factory';
-import { TwentyConfigService } from '../twenty-config/twenty-config.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -109,10 +107,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MetricsModule,
     PermissionsModule,
     UserRoleModule,
-    TwoFactorAuthenticationModule.forRoot({
-      useFactory: twoFactorAuthenticationModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    TwoFactorAuthenticationModule,
   ],
   controllers: [
     GoogleAuthController,

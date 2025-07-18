@@ -2411,21 +2411,22 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+export type TwoFactorAuthenticationPolicy = {
+  __typename?: 'TwoFactorAuthenticationPolicy';
+  enforce: Scalars['Boolean'];
+  strategy: TwoFactorAuthenticationStrategy;
+};
+
 /** 2FA Authentication Providers */
-export enum TwoFactorAuthenticationProviders {
-  HOTP = 'HOTP',
+export enum TwoFactorAuthenticationStrategy {
   TOTP = 'TOTP'
 }
 
-export type TwoFactorAuthenticatonDto = {
-  __typename?: 'TwoFactorAuthenticatonDTO';
-  isActive?: Maybe<Scalars['Boolean']>;
-  twoFactorAuthenticationMethodId?: Maybe<Scalars['String']>;
-};
-
-export type TwoFactorPolicy = {
-  __typename?: 'TwoFactorPolicy';
-  strategy: TwoFactorAuthenticationProviders;
+export type TwoFactorAuthenticatonMethodDto = {
+  __typename?: 'TwoFactorAuthenticatonMethodDTO';
+  status: Scalars['String'];
+  strategy: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['String'];
 };
 
 export type UuidFilter = {
@@ -2663,7 +2664,7 @@ export type UserWorkspace = {
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
-  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticatonDto>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticatonMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
@@ -2760,7 +2761,7 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
-  twoFactorAuthenticationPolicy?: Maybe<TwoFactorPolicy>;
+  twoFactorAuthenticationPolicy: TwoFactorAuthenticationPolicy;
   updatedAt: Scalars['DateTime'];
   version?: Maybe<Scalars['String']>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;

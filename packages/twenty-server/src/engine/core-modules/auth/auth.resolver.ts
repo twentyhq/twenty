@@ -290,6 +290,7 @@ export class AuthResolver {
       user.id,
       twoFactorAuthenticationVerificationInput.otp,
       workspace.id,
+      workspace.twoFactorAuthenticationPolicy.strategy,
     );
 
     return await this.authService.verify(email, workspace.id, authProvider);

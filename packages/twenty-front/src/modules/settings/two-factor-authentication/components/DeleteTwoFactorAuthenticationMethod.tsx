@@ -13,7 +13,8 @@ import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useResetTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useTwoFactorAuthentication } from '../hooks/useTwoFactorAuthentication';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { useParams } from 'react-router-dom';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -29,13 +30,19 @@ export const DeleteTwoFactorAuthentication = () => {
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
   const navigate = useNavigateSettings();
+  const twoFactorAuthenticationStrategy =
+    useParams().twoFactorAuthenticationStrategy;
 
-  const { defaultTwoFactorAuthenticationMethod } = useTwoFactorAuthentication();
+  const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
+    useCurrentUserWorkspaceTwoFactorAuthentication();
 
   const reset2FA = async () => {
     if (
+      !isDefined(twoFactorAuthenticationStrategy) ||
       !isDefined(
-        defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId,
+        currentUserWorkspaceTwoFactorAuthenticationMethods[
+          twoFactorAuthenticationStrategy
+        ]?.twoFactorAuthenticationMethodId,
       )
     ) {
       enqueueErrorSnackBar({
@@ -51,7 +58,9 @@ export const DeleteTwoFactorAuthentication = () => {
       variables: {
         origin,
         twoFactorAuthenticationMethodId:
-          defaultTwoFactorAuthenticationMethod.twoFactorAuthenticationMethodId,
+          currentUserWorkspaceTwoFactorAuthenticationMethods[
+            twoFactorAuthenticationStrategy
+          ].twoFactorAuthenticationMethodId,
       },
     });
 

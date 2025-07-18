@@ -24,7 +24,12 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
         },
         {
           children: <Trans>Two-Factor Authentication</Trans>,
-          href: getSettingsPath(SettingsPath.TwoFactorAuthentication),
+        },
+        {
+          children: <Trans>Authenticaticator</Trans>,
+          href: getSettingsPath(
+            SettingsPath.TwoFactorAuthenticationStrategyConfig,
+          ),
         },
       ]}
     >

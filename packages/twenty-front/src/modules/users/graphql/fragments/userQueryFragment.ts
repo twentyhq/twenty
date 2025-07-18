@@ -41,7 +41,8 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       twoFactorAuthenticationMethodSummary {
         twoFactorAuthenticationMethodId
-        isActive
+        status
+        strategy
       }
     }
     currentWorkspace {
@@ -101,6 +102,7 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       twoFactorAuthenticationPolicy {
         strategy
+        enforce
       }
     }
     availableWorkspaces {

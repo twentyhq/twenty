@@ -6,6 +6,7 @@ import {
   SettingPermissionType,
   SubscriptionInterval,
   SubscriptionStatus,
+  TwoFactorAuthenticationStrategy,
   User,
   Workspace,
   WorkspaceActivationStatus,
@@ -90,6 +91,10 @@ export const mockCurrentWorkspace: Workspace = {
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
+  twoFactorAuthenticationPolicy: {
+    enforce: true,
+    strategy: TwoFactorAuthenticationStrategy.TOTP,
+  },
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {

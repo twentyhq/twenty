@@ -1,6 +1,5 @@
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
-import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -9,9 +8,11 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getLoginToken } from '@/apollo/utils/getLoginToken';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
-  const { initiateOtpProvisioning } = useAuth();
+  const { initiateCurrentUserWorkspaceOtpProvisioning } =
+    useCurrentUserWorkspaceTwoFactorAuthentication();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
@@ -36,13 +37,14 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         }
 
         const token = await readCaptchaToken();
-        const initiateOTPProvisioningResult = await initiateOtpProvisioning({
-          variables: {
-            loginToken: loginToken,
-            captchaToken: token,
-            origin,
-          },
-        });
+        const initiateOTPProvisioningResult =
+          await initiateCurrentUserWorkspaceOtpProvisioning({
+            variables: {
+              loginToken: loginToken,
+              captchaToken: token,
+              origin,
+            },
+          });
 
         if (!initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri)
           return;

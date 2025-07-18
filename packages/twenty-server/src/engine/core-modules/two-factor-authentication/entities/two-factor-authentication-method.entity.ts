@@ -14,7 +14,7 @@ import {
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
+import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
@@ -39,8 +39,8 @@ export class TwoFactorAuthenticationMethod {
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
 
-  @Column({ nullable: true, type: 'jsonb' })
-  context: OTPContext | null;
+  @Column({ nullable: false, type: 'jsonb' })
+  context: OTPContext;
 
   @Field(() => TwoFactorAuthenticationStrategy)
   @Column({

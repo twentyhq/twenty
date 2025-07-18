@@ -1,28 +1,29 @@
 import { Logger } from '@nestjs/common';
 
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { totp } from 'otplib';
 
-import {
-  OTPHashAlgorithms,
-  OTPKeyEncodings,
-  OTPStatus,
-  TotpContext,
-} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.interface';
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
-import { TotpStrategy, TOTPStrategyConfig } from './totp.strategy';
+import { TotpStrategy } from './totp.strategy';
+
+import {
+  TotpContext,
+  TOTPHashAlgorithms,
+  TOTPKeyEncodings,
+  TOTPStrategyConfig,
+} from './constants/totp.strategy.constants';
 
 describe('TOTPStrategy Configuration', () => {
   let warnSpy: jest.SpyInstance;
 
   const validOptions: TOTPStrategyConfig = {
-    algorithm: OTPHashAlgorithms.SHA256,
+    algorithm: TOTPHashAlgorithms.SHA256,
     digits: 8,
-    encodings: OTPKeyEncodings.HEX,
+    encodings: TOTPKeyEncodings.HEX,
     window: 5,
     step: 30,
   };
@@ -44,8 +45,8 @@ describe('TOTPStrategy Configuration', () => {
     it('should warn when all custom options are valid but not recommended', () => {
       const authenticatorIncompatibleOptions = {
         ...validOptions,
-        algorithm: OTPHashAlgorithms.SHA256,
-        encodings: OTPKeyEncodings.BASE64,
+        algorithm: TOTPHashAlgorithms.SHA256,
+        encodings: TOTPKeyEncodings.BASE64,
       };
 
       expect(
@@ -72,8 +73,8 @@ describe('TOTPStrategy Configuration', () => {
     it('should throw TwoFactorAuthenticationException for an invalid algorithm', () => {
       const invalidOptions: TOTPStrategyConfig = {
         digits: 5,
-        algorithm: 'MD5' as OTPHashAlgorithms,
-        encodings: 'utf-8' as OTPKeyEncodings,
+        algorithm: 'MD5' as TOTPHashAlgorithms,
+        encodings: 'utf-8' as TOTPKeyEncodings,
         window: -1,
         step: '' as unknown as number,
       };
@@ -112,7 +113,6 @@ describe('TOTPStrategy Configuration', () => {
       expect(result.uri).toContain(`&period=30`);
 
       expect(result.context).toEqual({
-        strategy: 'TOTP',
         status: 'PENDING',
         secret: expect.any(String),
       });
@@ -131,7 +131,6 @@ describe('TOTPStrategy Configuration', () => {
       });
 
       context = {
-        strategy: TwoFactorAuthenticationStrategy.TOTP,
         status: OTPStatus.VERIFIED,
         secret,
       };

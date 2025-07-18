@@ -1,10 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('TwoFactorAuthenticatonDTO')
+@ObjectType('TwoFactorAuthenticatonMethodDTO')
 export class TwoFactorAuthenticationMethodSummaryDto {
-  @Field({ nullable: true })
-  twoFactorAuthenticationMethodId?: string;
+  @Field({ nullable: false })
+  twoFactorAuthenticationMethodId: string;
 
-  @Field({ nullable: true })
-  isActive?: boolean;
+  @Field({ nullable: false })
+  status: string;
+
+  @Field({ nullable: false })
+  strategy?: string;
 }
