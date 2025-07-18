@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
@@ -26,9 +25,7 @@ export class HttpTool implements Tool {
       };
 
       if (['POST', 'PUT', 'PATCH'].includes(method) && body) {
-        const parsedBody = isString(body) ? JSON.parse(body) : body;
-
-        axiosConfig.data = parsedBody;
+        axiosConfig.data = body;
       }
 
       const response = await axios(axiosConfig);
