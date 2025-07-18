@@ -6,7 +6,7 @@ import { TOOLS } from 'src/engine/core-modules/tool/constants/tools.const';
 
 @Injectable()
 export class ToolAdapterService {
-  generateToolsForWorkspace(): ToolSet {
+  getCoreTools(): ToolSet {
     const tools = Array.from(TOOLS.entries()).reduce<ToolSet>(
       (acc, [toolType, tool]) => {
         acc[toolType.toLowerCase()] = {

@@ -26,8 +26,7 @@ export class AgentToolService {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspaceId);
 
-      const actionTools =
-        this.toolAdapterService.generateToolsForWorkspace(workspaceId);
+      const actionTools = this.toolAdapterService.getCoreTools();
 
       if (!agent.roleId) {
         return actionTools;
