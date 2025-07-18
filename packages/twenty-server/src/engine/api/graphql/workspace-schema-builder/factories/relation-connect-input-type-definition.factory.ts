@@ -6,6 +6,7 @@ import {
   GraphQLInputType,
   GraphQLString,
 } from 'graphql';
+import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -17,7 +18,6 @@ import {
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
 export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
@@ -62,7 +62,10 @@ export class RelationConnectInputTypeDefinitionFactory {
   private generateRelationWhereInputType(
     objectMetadata: ObjectMetadataInterface,
   ): Record<string, GraphQLInputFieldConfig> {
-    const uniqueConstraints = getUniqueConstraintsFields(objectMetadata);
+    const uniqueConstraints = getUniqueConstraintsFields<
+      FieldMetadataInterface,
+      ObjectMetadataInterface
+    >(objectMetadata);
 
     const fields: Record<
       string,
