@@ -13,9 +13,9 @@ export class ToolAdapterService {
           description: tool.description,
           parameters: tool.parameters,
           execute: async (parameters) => {
-            const result = await tool.execute(parameters.input);
+            const response = await tool.execute(parameters.input);
 
-            return result.result || result.error;
+            return response;
           },
         };
 
