@@ -58,7 +58,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_ANY_FIELD_SEARCH_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
     ])
     .execute();
