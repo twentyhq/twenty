@@ -1,13 +1,17 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
-import { IconHistory, IconMessageCirclePlus } from 'twenty-ui/display';
+import {
+  IconHistory,
+  IconMessageCirclePlus,
+  IconPlus,
+} from 'twenty-ui/display';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { AgentChatFileUpload } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentChatFileUpload';
+import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
@@ -16,8 +20,8 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
-import { AIChatSkeletonLoader } from './AIChatSkeletonLoader';
-import { AgentChatSelectedFilesPreview } from './AgentChatSelectedFilesPreview';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -68,6 +72,7 @@ export const AIChatTab = ({
     isLoading,
     handleSendMessage,
     input,
+    handleSetContext,
     handleInputChange,
     agentStreamingMessage,
     scrollWrapperId,
@@ -105,7 +110,7 @@ export const AIChatTab = ({
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
           <StyledInputArea>
-            <AgentChatSelectedFilesPreview agentId={agentId} />
+            <AgentChatContextPreview agentId={agentId} />
             <TextArea
               textAreaId={`${agentId}-chat-input`}
               placeholder={t`Enter a question...`}
@@ -133,9 +138,21 @@ export const AIChatTab = ({
                     Icon={IconMessageCirclePlus}
                     onClick={() => createAgentChatThread()}
                   />
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    Icon={IconPlus}
+                    onClick={() =>
+                      handleSetContext([
+                        {
+                          type: 'currentRecords',
+                        },
+                      ])
+                    }
+                  />
                 </>
               )}
-              <AgentChatFileUpload agentId={agentId} />
+              <AgentChatFileUploadButton agentId={agentId} />
               <Button
                 variant="primary"
                 accent="blue"

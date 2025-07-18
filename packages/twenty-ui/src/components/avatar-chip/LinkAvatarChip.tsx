@@ -1,4 +1,4 @@
-import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/AvatarChipLeftComponent';
+import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/internal/AvatarChipLeftComponent';
 import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
 import { AvatarChipVariant } from '@ui/components/avatar-chip/types/AvatarChipsVariant.type';
 import { ChipVariant } from '@ui/components/chip/Chip';

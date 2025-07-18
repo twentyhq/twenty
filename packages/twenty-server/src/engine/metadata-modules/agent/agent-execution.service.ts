@@ -13,7 +13,7 @@ import {
   generateText,
   ImagePart,
   streamText,
-  TextPart,
+  UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
@@ -37,9 +37,12 @@ import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/util
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
-import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
+import { AgentEntity } from './agent.entity';
 
 export interface AgentExecutionResult {
   result: {
@@ -61,6 +64,7 @@ export class AgentExecutionService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
@@ -184,31 +188,85 @@ export class AgentExecutionService {
   }
 
   private async buildUserMessageWithFiles(
-    userMessage: string,
-    fileIds?: string[],
-  ): Promise<CoreUserMessage> {
-    if (!fileIds || fileIds.length === 0) {
-      return { role: AgentChatMessageRole.USER, content: userMessage };
-    }
-
+    fileIds: string[],
+  ): Promise<(ImagePart | FilePart)[]> {
     const files = await this.fileRepository.find({
       where: {
         id: In(fileIds),
       },
     });
 
-    const textPart: TextPart = {
-      type: 'text',
-      text: userMessage,
-    };
+    return await Promise.all(files.map((file) => this.createFilePart(file)));
+  }
 
-    const fileParts = await Promise.all(
-      files.map((file) => this.createFilePart(file)),
-    );
+  private async buildUserMessage(
+    workspace: Workspace,
+    userMessage: string,
+    fileIds: string[],
+    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
+  ): Promise<CoreUserMessage> {
+    const content: Exclude<UserContent, string> = [
+      {
+        type: 'text',
+        text: userMessage,
+      },
+    ];
+
+    if (fileIds.length !== 0) {
+      content.push(...(await this.buildUserMessageWithFiles(fileIds)));
+    }
+
+    if (recordIdsByObjectMetadataNameSingular.length > 0) {
+      content.push(
+        await this.buildUserMessageWithContext(
+          workspace,
+          recordIdsByObjectMetadataNameSingular,
+        ),
+      );
+    }
 
     return {
       role: AgentChatMessageRole.USER,
-      content: [textPart, ...fileParts],
+      content,
+    };
+  }
+
+  private async buildUserMessageWithContext(
+    workspace: Workspace,
+    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
+  ) {
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: workspace.id,
+      });
+
+    const contextObject = (
+      await Promise.all(
+        recordIdsByObjectMetadataNameSingular.map(
+          (recordsWithObjectMetadataNameSingular) => {
+            if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
+              return [];
+            }
+
+            const repository = workspaceDataSource.getRepository(
+              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+              // @todo use role here
+              true,
+            );
+
+            return repository.find({
+              where: {
+                id: In(recordsWithObjectMetadataNameSingular.recordIds),
+              },
+            });
+          },
+        ),
+      )
+    ).flat(2);
+
+    return {
+      type: 'text' as const,
+      text: JSON.stringify(contextObject),
     };
   }
 
@@ -241,15 +299,19 @@ export class AgentExecutionService {
   }
 
   async streamChatResponse({
+    workspace,
     agentId,
     userMessage,
     messages,
     fileIds,
+    recordIdsByObjectMetadataNameSingular,
   }: {
+    workspace: Workspace;
     agentId: string;
     userMessage: string;
     messages: AgentChatMessageEntity[];
-    fileIds?: string[];
+    fileIds: string[];
+    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
     const agent = await this.agentRepository.findOneOrFail({
       where: { id: agentId },
@@ -260,12 +322,14 @@ export class AgentExecutionService {
       content,
     }));
 
-    const userMessageWithFiles = await this.buildUserMessageWithFiles(
+    const userMessageWithContext = await this.buildUserMessage(
+      workspace,
       userMessage,
       fileIds,
+      recordIdsByObjectMetadataNameSingular,
     );
 
-    llmMessages.push(userMessageWithFiles);
+    llmMessages.push(userMessageWithContext);
 
     const aiRequestConfig = await this.prepareAIRequestConfig({
       system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}`,

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from '@ui/display';
 
 const StyledChip = styled.button<{
   withText: boolean;
@@ -47,7 +47,7 @@ const StyledEmptyText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export type CommandMenuContextChipProps = {
+export type MultipleAvatarChipProps = {
   Icons: React.ReactNode[];
   text?: string;
   onClick?: () => void;
@@ -56,14 +56,14 @@ export type CommandMenuContextChipProps = {
   forceEmptyText?: boolean;
 };
 
-export const CommandMenuContextChip = ({
+export const MultipleAvatarChip = ({
   Icons,
   text,
   onClick,
   testId,
   maxWidth,
   forceEmptyText = false,
-}: CommandMenuContextChipProps) => {
+}: MultipleAvatarChipProps) => {
   return (
     <StyledChip
       withText={isNonEmptyString(text)}

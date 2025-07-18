@@ -1,4 +1,4 @@
-import { AvatarChipsLeftComponentProps } from '@ui/components/avatar-chip/AvatarChipLeftComponent';
+import { AvatarChipsLeftComponentProps } from '@ui/components/avatar-chip/internal/AvatarChipLeftComponent';
 import { ChipSize, ChipVariant } from '@ui/components/chip/Chip';
 
 export type AvatarChipsCommonProps = {

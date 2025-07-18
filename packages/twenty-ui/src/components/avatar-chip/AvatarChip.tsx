@@ -1,4 +1,4 @@
-import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/AvatarChipLeftComponent';
+import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/internal/AvatarChipLeftComponent';
 import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
 import { Chip, ChipVariant } from '@ui/components/chip/Chip';
 
@@ -7,6 +7,7 @@ export const AvatarChip = ({
   name,
   LeftIcon,
   LeftIconColor,
+  LeftIconBackgroundColor,
   avatarType,
   avatarUrl,
   className,
@@ -25,6 +26,7 @@ export const AvatarChip = ({
         name={name}
         LeftIcon={LeftIcon}
         LeftIconColor={LeftIconColor}
+        LeftIconBackgroundColor={LeftIconBackgroundColor}
         avatarType={avatarType}
         avatarUrl={avatarUrl}
         isIconInverted={isIconInverted}

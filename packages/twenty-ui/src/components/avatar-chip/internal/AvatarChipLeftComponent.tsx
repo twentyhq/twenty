@@ -6,7 +6,9 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { Nullable } from '@ui/utilities';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
+const StyledIconWithBackgroundContainer = styled.div<{
+  backgroundColor: string;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,6 +24,7 @@ export type AvatarChipsLeftComponentProps = {
   avatarType?: Nullable<AvatarType>;
   LeftIcon?: IconComponent;
   LeftIconColor?: string;
+  LeftIconBackgroundColor?: string;
   isIconInverted?: boolean;
   placeholderColorSeed?: string;
 };
@@ -36,6 +39,7 @@ export const AvatarChipsLeftComponent: React.FC<
   name,
   isIconInverted = false,
   LeftIconColor,
+  LeftIconBackgroundColor,
 }) => {
   const theme = useTheme();
   if (!isDefined(LeftIcon)) {
@@ -50,17 +54,19 @@ export const AvatarChipsLeftComponent: React.FC<
     );
   }
 
-  if (isIconInverted) {
+  if (isIconInverted || isDefined(LeftIconBackgroundColor)) {
     return (
-      <StyledInvertedIconContainer
-        backgroundColor={theme.background.invertedSecondary}
+      <StyledIconWithBackgroundContainer
+        backgroundColor={
+          LeftIconBackgroundColor ?? theme.background.invertedSecondary
+        }
       >
         <LeftIcon
           color={theme.font.color.inverted}
           size={theme.icon.size.sm}
           stroke={theme.icon.stroke.sm}
         />
-      </StyledInvertedIconContainer>
+      </StyledIconWithBackgroundContainer>
     );
   }
 
