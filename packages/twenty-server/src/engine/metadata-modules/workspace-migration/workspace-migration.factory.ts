@@ -11,7 +11,10 @@ import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/worksp
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { MorphRelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/morph-relation-column-action.factory';
 import { RelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/relation-column-action.factory';
-import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
+import {
+  TsVectorColumnActionFactory,
+  TsVectorFieldMetadata,
+} from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -124,6 +127,12 @@ export class WorkspaceMigrationFactory {
     action: WorkspaceMigrationColumnActionType.ALTER,
     currentFieldMetadata: FieldMetadataInterface,
     alteredFieldMetadata: FieldMetadataInterface,
+  ): WorkspaceMigrationColumnAction[];
+
+  createColumnActions(
+    action: WorkspaceMigrationColumnActionType.ALTER,
+    currentFieldMetadata: FieldMetadataInterface,
+    alteredFieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(
