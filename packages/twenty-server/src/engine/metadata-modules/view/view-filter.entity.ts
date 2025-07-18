@@ -34,9 +34,6 @@ export class ViewFilter {
   @Column({ nullable: false, type: 'text' })
   value: string;
 
-  @Column({ nullable: false, type: 'text' })
-  displayValue: string;
-
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
