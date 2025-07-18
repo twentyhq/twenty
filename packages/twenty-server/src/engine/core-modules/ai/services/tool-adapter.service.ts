@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { jsonSchema, ToolSet } from 'ai';
+import { ToolSet } from 'ai';
 
 import { TOOLS } from 'src/engine/core-modules/tool/constants/tools.const';
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 
 @Injectable()
 export class ToolAdapterService {
-  generateToolsForWorkspace(workspaceId: string): ToolSet {
+  generateToolsForWorkspace(): ToolSet {
     const tools = Array.from(TOOLS.entries()).reduce<ToolSet>(
       (acc, [toolType, tool]) => {
         acc[toolType.toLowerCase()] = {
           description: tool.description,
-          parameters: jsonSchema(tool.parameters),
+          parameters: tool.parameters,
           execute: async (parameters) => {
-            const toolInput: ToolInput = {
-              parameters: parameters.input,
-              context: {
-                workspaceId,
-              },
-            };
-            const result = await tool.execute(toolInput);
+            const result = await tool.execute(parameters.input);
 
             return result.result || result.error;
           },
