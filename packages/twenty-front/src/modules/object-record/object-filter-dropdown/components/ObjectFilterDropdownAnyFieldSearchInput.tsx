@@ -9,8 +9,8 @@ export const ObjectFilterDropdownAnyFieldSearchInput = () => {
   const [viewAnyFieldSearchValue, setViewAnyFieldSearchValue] =
     useRecoilComponentStateV2(viewAnyFieldSearchValueComponentState);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
 
     setViewAnyFieldSearchValue(inputValue);
   };

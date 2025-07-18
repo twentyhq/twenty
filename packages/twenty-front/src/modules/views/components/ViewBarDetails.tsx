@@ -22,7 +22,7 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
 import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
@@ -183,7 +183,8 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const { isDropdownOpen: isAnyFieldSearchDropdownOpen } = useIsDropdownOpen(
+  const isAnyFieldSearchDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
 
