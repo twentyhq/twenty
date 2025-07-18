@@ -24,6 +24,7 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
+//Tododo : move logic into values method of query builder + set/update in update + check for .save
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
 > extends InsertQueryBuilder<T> {

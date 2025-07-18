@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  GraphQLBoolean,
   GraphQLInputFieldConfig,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLString,
 } from 'graphql';
+import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -47,13 +49,18 @@ export class RelationConnectInputTypeDefinitionFactory {
   ): GraphQLInputObjectType {
     return new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}RelationInput`,
+      isOneOf: true,
       fields: () => ({
-        connect: {
+        [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
           type: new GraphQLInputObjectType({
             name: `${pascalCase(objectMetadata.nameSingular)}ConnectInput`,
             fields: this.generateRelationWhereInputType(objectMetadata),
           }),
           description: `Connect to a ${objectMetadata.nameSingular} record`,
+        },
+        [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: {
+          type: GraphQLBoolean,
+          description: `Disconnect from a ${objectMetadata.nameSingular} record`,
         },
       }),
     });
@@ -127,7 +134,7 @@ export class RelationConnectInputTypeDefinitionFactory {
     });
 
     return {
-      where: {
+      [RELATION_NESTED_QUERY_KEYWORDS.CONNECT_WHERE]: {
         type: new GraphQLInputObjectType({
           name: `${pascalCase(objectMetadata.nameSingular)}WhereUniqueInput`,
           fields: () => fields,
