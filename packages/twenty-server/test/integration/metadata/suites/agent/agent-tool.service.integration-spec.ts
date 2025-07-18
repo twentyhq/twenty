@@ -114,10 +114,9 @@ describe('AgentToolService Integration', () => {
       expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).not.toContain('create_testObject');
       expect(Object.keys(tools)).not.toContain('update_testObject');
-      expect(Object.keys(tools)).not.toContain('http_request');
     });
 
-    it('should return empty tools for agent without role', async () => {
+    it('should return only http request tool for agent without role', async () => {
       const agentWithoutRole = { ...context.testAgent, roleId: null };
 
       jest
@@ -129,7 +128,8 @@ describe('AgentToolService Integration', () => {
         context.testWorkspaceId,
       );
 
-      expect(tools).toEqual({});
+      expect(Object.keys(tools)).toHaveLength(1);
+      expect(Object.keys(tools)).toContain('http_request');
     });
 
     it('should return empty tools when role does not exist', async () => {
@@ -188,7 +188,6 @@ describe('AgentToolService Integration', () => {
       );
 
       expect(Object.keys(tools)).toHaveLength(1);
-      expect(Object.keys(tools)).not.toContain('http_request');
     });
   });
 
