@@ -120,9 +120,11 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
+  // Is this really nullable ?
   @Column({ nullable: true, default: true })
   isNullable: boolean | null;
 
+  // Is this really nullable ?
   @Column({ nullable: true, default: false })
   isUnique: boolean | null;
 
@@ -133,6 +135,7 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
+  // Refactor could be typed to be required if FieldMetadataType is RELATION or MORPH
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: string | null;
 
@@ -155,6 +158,7 @@ export class FieldMetadataEntity<
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: Relation<ObjectMetadataEntity> | null;
+  ///
 
   @OneToMany(
     () => IndexFieldMetadataEntity,

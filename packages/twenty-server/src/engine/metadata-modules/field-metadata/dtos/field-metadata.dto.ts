@@ -56,6 +56,7 @@ registerEnumType(FieldMetadataType, {
 @Relation('object', () => ObjectMetadataDTO, {
   nullable: true,
 })
+// TODO refactor nullable fields to be typed as nullable and not optional
 export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsUUID()
   @IsNotEmpty()
@@ -132,7 +133,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   // @Validate(IsFieldMetadataOptions)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  options?: FieldMetadataOptions<T>;
+  options?: FieldMetadataOptions<T> | null;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
