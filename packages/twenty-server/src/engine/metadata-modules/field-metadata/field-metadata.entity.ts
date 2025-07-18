@@ -22,6 +22,25 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
+//   defaultValue?: FieldMetadataDefaultValue<T>;
+//   options?: FieldMetadataOptions<T>;
+//   settings?: FieldMetadataSettings<T>;
+//   objectMetadataId: string;
+//   workspaceId?: string;
+//   description?: string;
+//   icon?: string;
+//   isNullable: boolean;
+//   isUnique?: boolean;
+//   relationTargetFieldMetadataId?: string;
+//   relationTargetFieldMetadata?: FieldMetadataInterface;
+//   relationTargetObjectMetadataId?: string;
+//   relationTargetObjectMetadata?: ObjectMetadataInterface;
+//   relation?: RelationDTO;
+//   isCustom?: boolean;
+//   isSystem?: boolean;
+//   isActive?: boolean;
+//   generatedType?: 'STORED' | 'VIRTUAL';
+//   asExpression?: string;
 @Entity('fieldMetadata')
 // max length of index is 63 characters
 @Index(
