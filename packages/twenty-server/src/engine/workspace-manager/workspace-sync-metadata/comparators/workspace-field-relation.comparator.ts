@@ -196,6 +196,7 @@ export class WorkspaceFieldRelationComparator {
       }
 
       const relationFieldMetadata = propertiesMap[fieldId];
+
       if (relationTypeChange) {
         result.push({
           action: ComparatorAction.DELETE,

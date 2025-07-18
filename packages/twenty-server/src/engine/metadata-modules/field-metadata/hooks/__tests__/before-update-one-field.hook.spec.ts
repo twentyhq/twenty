@@ -1,7 +1,8 @@
-import { i18n } from '@lingui/core';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { i18n } from '@lingui/core';
 import { UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ForbiddenError,
@@ -12,7 +13,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 jest.mock('@lingui/core', () => ({
   i18n: {

@@ -44,7 +44,6 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { isDefined } from 'twenty-shared/utils';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)

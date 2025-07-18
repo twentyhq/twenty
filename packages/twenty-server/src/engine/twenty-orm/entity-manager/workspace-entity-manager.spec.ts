@@ -7,8 +7,8 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
-
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+
 import { WorkspaceEntityManager } from './workspace-entity-manager';
 
 jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
