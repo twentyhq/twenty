@@ -41,7 +41,10 @@ export class AgentToolService {
         return {};
       }
 
-      const databaseTools = this.toolService.listTools(role.id, workspaceId);
+      const databaseTools = await this.toolService.listTools(
+        role.id,
+        workspaceId,
+      );
 
       const actionTools =
         this.toolAdapterService.generateToolsForWorkspace(workspaceId);
