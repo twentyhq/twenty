@@ -35,7 +35,7 @@ export class HttpTool implements Tool {
       toolDescription: {
         type: 'string',
         description:
-          'A clear, human-readable description of the HTTP request you want to make. Explain what API endpoint you are calling, what data you are sending, and what you expect to receive.',
+          'A clear, human-readable status message describing the HTTP request being made. This will be shown to the user while the tool is being called, so phrase it as a present-tense status update. Explain what endpoint you are calling and with what parameters in natural language.',
       },
       input: {
         type: 'object',
