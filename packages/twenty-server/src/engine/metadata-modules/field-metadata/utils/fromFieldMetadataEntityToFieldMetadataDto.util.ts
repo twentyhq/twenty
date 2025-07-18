@@ -20,8 +20,8 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   return {
     ...rest,
     // Should we ? seems to be typed a dateString from classValidator, should be typed as string in TypeScript ?
-    createdAt: new Date(fieldMetadataEntity.createdAt),
-    updatedAt: new Date(fieldMetadataEntity.updatedAt),
+    createdAt: new Date(createdAt),
+    updatedAt: new Date(updatedAt),
     label: label ?? undefined,
     description: description ?? undefined,
     icon: icon ?? undefined,

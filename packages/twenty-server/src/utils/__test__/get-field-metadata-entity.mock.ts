@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type GetMockFieldMetadataEntityOverride<
   T extends FieldMetadataType = FieldMetadataType,
