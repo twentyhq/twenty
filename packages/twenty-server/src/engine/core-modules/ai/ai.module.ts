@@ -7,6 +7,7 @@ import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -32,6 +33,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     AiService,
     AiModelRegistryService,
     ToolService,
+    ToolAdapterService,
     AIBillingService,
     McpService,
   ],
@@ -40,6 +42,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     AiModelRegistryService,
     AIBillingService,
     ToolService,
+    ToolAdapterService,
     McpService,
   ],
 })
