@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import deepEqual from 'deep-equal';
-import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,7 +16,7 @@ import {
   RelationConnectQueryConfig,
   UniqueConstraintCondition,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
-import { RelationNestedQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import { RelationConnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -30,15 +29,13 @@ export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
   objectMetadata: ObjectMetadataItemWithFieldMaps,
   objectMetadataMap: ObjectMetadataMaps,
-  nestedRelationQueryFieldsByEntityIndex: RelationNestedQueryFieldsByEntityIndex,
+  relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
 ) => {
   const allConnectQueryConfigs: Record<string, RelationConnectQueryConfig> = {};
 
   for (const [entityIndex, entity] of entities.entries()) {
     const nestedRelationConnectFields =
-      nestedRelationQueryFieldsByEntityIndex[entityIndex]?.[
-        RELATION_NESTED_QUERY_KEYWORDS.CONNECT
-      ];
+      relationConnectQueryFieldsByEntityIndex[entityIndex];
 
     if (!isDefined(nestedRelationConnectFields)) continue;
 

@@ -177,11 +177,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
-    const nestedRelationQueryFieldsByEntityIndex = {
+    const relationConnectQueryFieldsByEntityIndex = {
       '0': {
-        connect: {
-          name: { connect: { where: { name: { lastName: 'Doe' } } } },
-        },
+        name: { connect: { where: { name: { lastName: 'Doe' } } } },
       },
     };
 
@@ -190,7 +188,7 @@ describe('computeRelationConnectQueryConfigs', () => {
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
-        nestedRelationQueryFieldsByEntityIndex,
+        relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow('Connect is not allowed for name on person');
   });
@@ -205,11 +203,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
-    const nestedRelationQueryFieldsByEntityIndex = {
+    const relationConnectQueryFieldsByEntityIndex = {
       '0': {
-        connect: {
-          'company-related-to-1': { connect: { where: { name: 'company1' } } },
-        },
+        'company-related-to-1': { connect: { where: { name: 'company1' } } },
       },
     };
 
@@ -218,7 +214,7 @@ describe('computeRelationConnectQueryConfigs', () => {
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
-        nestedRelationQueryFieldsByEntityIndex,
+        relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
       "Missing required fields: at least one unique constraint have to be fully populated for 'company-related-to-1'.",
@@ -241,16 +237,14 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
-    const nestedRelationQueryFieldsByEntityIndex = {
+    const relationConnectQueryFieldsByEntityIndex = {
       '0': {
-        connect: {
-          'company-related-to-1': {
-            connect: {
-              where: {
-                domainName: { primaryLinkUrl: 'company1.com' },
-                id: '1',
-                address: 'company1 address',
-              },
+        'company-related-to-1': {
+          connect: {
+            where: {
+              domainName: { primaryLinkUrl: 'company1.com' },
+              id: '1',
+              address: 'company1 address',
             },
           },
         },
@@ -262,7 +256,7 @@ describe('computeRelationConnectQueryConfigs', () => {
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
-        nestedRelationQueryFieldsByEntityIndex,
+        relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
       "Field address is not a unique constraint field for 'company-related-to-1'.",
@@ -291,22 +285,18 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
-    const nestedRelationQueryFieldsByEntityIndex = {
+    const relationConnectQueryFieldsByEntityIndex = {
       '0': {
-        connect: {
-          'company-related-to-1': {
-            connect: {
-              where: {
-                domainName: { primaryLinkUrl: 'company1.com' },
-              },
+        'company-related-to-1': {
+          connect: {
+            where: {
+              domainName: { primaryLinkUrl: 'company1.com' },
             },
           },
         },
       },
       '1': {
-        connect: {
-          'company-related-to-1': { connect: { where: { id: '2' } } },
-        },
+        'company-related-to-1': { connect: { where: { id: '2' } } },
       },
     };
 
@@ -315,7 +305,7 @@ describe('computeRelationConnectQueryConfigs', () => {
         peopleEntityInputs,
         personMetadata,
         objectMetadataMaps,
-        nestedRelationQueryFieldsByEntityIndex,
+        relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
       'Expected the same constraint fields to be used consistently across all operations for company-related-to-1.',
@@ -354,32 +344,28 @@ describe('computeRelationConnectQueryConfigs', () => {
       },
     ];
 
-    const nestedRelationQueryFieldsByEntityIndex = {
+    const relationConnectQueryFieldsByEntityIndex = {
       '0': {
-        connect: {
-          'company-related-to-1': {
-            connect: {
-              where: { domainName: { primaryLinkUrl: 'company.com' } },
-            },
+        'company-related-to-1': {
+          connect: {
+            where: { domainName: { primaryLinkUrl: 'company.com' } },
           },
-          'company-related-to-2': {
-            connect: {
-              where: { id: '1' },
-            },
+        },
+        'company-related-to-2': {
+          connect: {
+            where: { id: '1' },
           },
         },
       },
       '1': {
-        connect: {
-          'company-related-to-1': {
-            connect: {
-              where: { domainName: { primaryLinkUrl: 'other-company.com' } },
-            },
+        'company-related-to-1': {
+          connect: {
+            where: { domainName: { primaryLinkUrl: 'other-company.com' } },
           },
-          'company-related-to-2': {
-            connect: {
-              where: { id: '2' },
-            },
+        },
+        'company-related-to-2': {
+          connect: {
+            where: { id: '2' },
           },
         },
       },
@@ -389,7 +375,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       peopleEntityInputs,
       personMetadata,
       objectMetadataMaps,
-      nestedRelationQueryFieldsByEntityIndex,
+      relationConnectQueryFieldsByEntityIndex,
     );
 
     expect(result).toEqual({

@@ -5,7 +5,10 @@ import {
   ConnectObject,
   DisconnectObject,
 } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
-import { RelationNestedQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
+import {
+  RelationConnectQueryFieldsByEntityIndex,
+  RelationDisconnectQueryFieldsByEntityIndex,
+} from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -82,8 +85,13 @@ const hasRelationDisconnect = (value: unknown): value is DisconnectObject => {
 
 export const extractNestedRelationFieldsByEntityIndex = (
   entities: Record<string, unknown>[],
-): RelationNestedQueryFieldsByEntityIndex => {
-  const nestedRelationQueryFieldsByEntityIndex: RelationNestedQueryFieldsByEntityIndex =
+): {
+  relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex;
+  relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex;
+} => {
+  const relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex =
+    {};
+  const relationDisconnectQueryFieldsByEntityIndex: RelationDisconnectQueryFieldsByEntityIndex =
     {};
 
   for (const [entityIndex, entity] of Object.entries(entities)) {
@@ -98,30 +106,30 @@ export const extractNestedRelationFieldsByEntityIndex = (
         );
       }
 
-      const nestedRelationQueryFields =
-        nestedRelationQueryFieldsByEntityIndex?.[entityIndex] || {};
+      const relationConnectQueryFields =
+        relationConnectQueryFieldsByEntityIndex?.[entityIndex] || {};
 
       if (hasConnect) {
-        nestedRelationQueryFieldsByEntityIndex[entityIndex] = {
-          ...nestedRelationQueryFields,
-          connect: {
-            ...(nestedRelationQueryFields.connect || {}),
-            [key]: value,
-          },
+        relationConnectQueryFieldsByEntityIndex[entityIndex] = {
+          ...relationConnectQueryFields,
+          [key]: value,
         };
+      }
 
-        if (hasDisconnect) {
-          nestedRelationQueryFieldsByEntityIndex[entityIndex] = {
-            ...nestedRelationQueryFields,
-            disconnect: {
-              ...(nestedRelationQueryFields.disconnect || {}),
-              [key]: value,
-            },
-          };
-        }
+      const relationDisconnectQueryFields =
+        relationDisconnectQueryFieldsByEntityIndex?.[entityIndex] || {};
+
+      if (hasDisconnect) {
+        relationDisconnectQueryFieldsByEntityIndex[entityIndex] = {
+          ...relationDisconnectQueryFields,
+          [key]: value,
+        };
       }
     }
   }
 
-  return nestedRelationQueryFieldsByEntityIndex;
+  return {
+    relationConnectQueryFieldsByEntityIndex,
+    relationDisconnectQueryFieldsByEntityIndex,
+  };
 };
