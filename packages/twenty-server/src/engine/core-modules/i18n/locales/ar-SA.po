@@ -1727,6 +1727,11 @@ msgstr ""
 msgid "Name"
 msgstr "الاسم"
 
+#. js-lingui-id: aD053i
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
+msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
+msgstr ""
+
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
@@ -2585,9 +2590,13 @@ msgstr "اسم نسخة سير العمل"
 msgid "The workflow version status"
 msgstr "حالة نسخة سير العمل"
 
+#. js-lingui-id: NbABJb
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+msgid "This name is not available as it is already used by another field"
+msgstr ""
+
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr ""
 

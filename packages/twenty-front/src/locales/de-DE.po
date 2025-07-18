@@ -4746,8 +4746,8 @@ msgstr ""
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-msgid "Please use different names for your source and destination fields"
-msgstr "Bitte verwenden Sie unterschiedliche Namen für Ihre Quell- und Ziel-Felder"
+#~ msgid "Please use different names for your source and destination fields"
+#~ msgstr "Bitte verwenden Sie unterschiedliche Namen für Ihre Quell- und Ziel-Felder"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
