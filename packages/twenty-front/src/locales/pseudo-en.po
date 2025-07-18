@@ -1583,6 +1583,12 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
+#. js-lingui-id: M1NpGt
+#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+msgid "Create {targetObjectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -1611,6 +1617,11 @@ msgstr ""
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Create profile"
+msgstr ""
+
+#. js-lingui-id: GPuEIc
+#: src/modules/command-menu/components/CommandMenu.tsx
+msgid "Create Related Record"
 msgstr ""
 
 #. js-lingui-id: RoyYUE
