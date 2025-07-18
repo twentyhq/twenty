@@ -3,6 +3,8 @@ import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { msg } from '@lingui/core/macro';
 import React from 'react';
@@ -10,17 +12,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconComponent, IconPlus } from 'twenty-ui/display';
 
 interface GenerateRelatedRecordActionsParams {
-  sourceObjectMetadataItem: ObjectMetadataItem;
+  sourceObjectMetadataItem?: ObjectMetadataItem;
   getIcon: (iconKey: string) => IconComponent;
-  position: number;
+  startPosition: number;
 }
 
-export const generateRelatedRecordActions = ({
+export const useRelatedRecordActions = ({
   sourceObjectMetadataItem,
   getIcon,
-  position,
+  startPosition,
 }: GenerateRelatedRecordActionsParams): Record<string, ActionConfig> => {
   const relatedActions: Record<string, ActionConfig> = {};
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!sourceObjectMetadataItem?.fields) {
     return relatedActions;
@@ -40,16 +44,31 @@ export const generateRelatedRecordActions = ({
 
     const targetObjectName = field.relation.targetObjectMetadata.nameSingular;
 
-    const label = field.label.toLowerCase();
-    const actionKey = `create-related-${label}`;
+    const targetObjectMetadataItem = objectMetadataItems.find(
+      (item) => item.nameSingular === targetObjectName,
+    );
+
+    if (!isDefined(targetObjectMetadataItem)) {
+      return;
+    }
+
+    const targetObjectNameSingular = targetObjectMetadataItem.nameSingular;
+    const targetObjectLabelSingular =
+      targetObjectNameSingular === CoreObjectNameSingular.TaskTarget
+        ? 'task'
+        : targetObjectNameSingular === CoreObjectNameSingular.NoteTarget
+          ? 'note'
+          : targetObjectMetadataItem.labelSingular.toLowerCase();
+
+    const actionKey = `create-related-${targetObjectLabelSingular}`;
 
     relatedActions[actionKey] = {
       type: ActionType.Standard,
       scope: ActionScope.CreateRelatedRecord,
       key: actionKey,
-      label: msg`Create ${label}`,
-      shortLabel: msg`Create ${label}`,
-      position: position++,
+      label: msg`Create ${targetObjectLabelSingular}`,
+      shortLabel: msg`Create ${targetObjectLabelSingular}`,
+      position: startPosition++,
       Icon: field.icon ? getIcon(field.icon) : IconPlus,
       accent: 'default',
       isPinned: false,

@@ -1,4 +1,5 @@
 import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
+import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
@@ -31,13 +32,19 @@ export const useRegisteredActions = (
 
   const recordActionConfig = getActionConfig({
     objectMetadataItem,
+  });
+
+  const relatedRecordActionConfig = useRelatedRecordActions({
+    sourceObjectMetadataItem: objectMetadataItem,
     getIcon,
+    startPosition: Object.keys(recordActionConfig).length + 1,
   });
 
   const recordAgnosticActionConfig = useRecordAgnosticActions();
 
   const actionsConfig = {
     ...recordActionConfig,
+    ...relatedRecordActionConfig,
     ...recordAgnosticActionConfig,
   };
 
