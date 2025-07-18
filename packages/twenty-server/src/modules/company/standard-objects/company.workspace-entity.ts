@@ -245,6 +245,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
