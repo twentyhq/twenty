@@ -37,9 +37,11 @@ export const useRelatedRecordActions = ({
       !field.isSystem,
   );
 
-  oneToManyFields.forEach((field) => {
+  let currentPosition = startPosition;
+
+  for (const field of oneToManyFields) {
     if (!field.relation) {
-      return;
+      continue;
     }
 
     const targetObjectName = field.relation.targetObjectMetadata.nameSingular;
@@ -49,7 +51,7 @@ export const useRelatedRecordActions = ({
     );
 
     if (!isDefined(targetObjectMetadataItem)) {
-      return;
+      continue;
     }
 
     const targetObjectNameSingular = targetObjectMetadataItem.nameSingular;
@@ -68,7 +70,7 @@ export const useRelatedRecordActions = ({
       key: actionKey,
       label: msg`Create ${targetObjectLabelSingular}`,
       shortLabel: msg`Create ${targetObjectLabelSingular}`,
-      position: startPosition++,
+      position: currentPosition,
       Icon: field.icon ? getIcon(field.icon) : IconPlus,
       accent: 'default',
       isPinned: false,
@@ -89,7 +91,9 @@ export const useRelatedRecordActions = ({
         targetFieldMetadataItemRelation: field.relation,
       }),
     };
-  });
+
+    currentPosition++;
+  }
 
   return relatedActions;
 };
