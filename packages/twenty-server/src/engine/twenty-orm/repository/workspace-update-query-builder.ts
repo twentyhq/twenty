@@ -75,7 +75,7 @@ export class WorkspaceUpdateQueryBuilder<
       this as unknown as WorkspaceSelectQueryBuilder<T>,
       this.objectRecordsPermissions,
       this.internalContext,
-      this.shouldBypassPermissionChecks,
+      true,
       this.authContext,
     );
 
