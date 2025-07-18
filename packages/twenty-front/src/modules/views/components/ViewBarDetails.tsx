@@ -22,12 +22,16 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
+import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { viewAnyFieldSearchValueComponentState } from '@/views/states/viewAnyFieldSearchValueComponentState';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/input';
 
@@ -119,6 +123,10 @@ export const ViewBarDetails = ({
     currentRecordSortsComponentState,
   );
 
+  const viewAnyFieldSearchValue = useRecoilComponentValueV2(
+    viewAnyFieldSearchValueComponentState,
+  );
+
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural: objectNamePlural,
   });
@@ -172,7 +180,19 @@ export const ViewBarDetails = ({
     toggleSoftDeleteFilterState(false);
   };
 
+  const shouldShowAdvancedFilterDropdownButton =
+    currentRecordFilterGroups.length > 0;
+
+  const isAnyFieldSearchDropdownOpen = useRecoilComponentValueV2(
+    isDropdownOpenComponentState,
+    ANY_FIELD_SEARCH_DROPDOWN_ID,
+  );
+
+  const shouldShowAnyFieldSearchChip =
+    isNonEmptyString(viewAnyFieldSearchValue) || isAnyFieldSearchDropdownOpen;
+
   const shouldExpandViewBar =
+    shouldShowAnyFieldSearchChip ||
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
     viewFilterGroupsAreDifferentFromRecordFilterGroups ||
@@ -184,9 +204,6 @@ export const ViewBarDetails = ({
   if (!shouldExpandViewBar) {
     return null;
   }
-
-  const shouldShowAdvancedFilterDropdownButton =
-    currentRecordFilterGroups.length > 0;
 
   return (
     <StyledBar>
@@ -220,6 +237,7 @@ export const ViewBarDetails = ({
                   <StyledSeperator />
                 </StyledSeperatorContainer>
               )}
+            {shouldShowAnyFieldSearchChip && <AnyFieldSearchDropdownButton />}
             {shouldShowAdvancedFilterDropdownButton && (
               <AdvancedFilterDropdownButton />
             )}

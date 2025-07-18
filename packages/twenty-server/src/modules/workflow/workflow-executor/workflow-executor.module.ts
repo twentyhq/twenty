@@ -9,9 +9,9 @@ import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/work
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
 import { FilterActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter-action.module';
 import { FormActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form-action.module';
-import { HttpRequestActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request-action.module';
 import { SendEmailActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email-action.module';
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
+import { WorkflowActionAdapter } from 'src/modules/workflow/workflow-executor/workflow-actions/workflow-action-adapter';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
@@ -25,7 +25,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkflowRunModule,
     BillingModule,
     FilterActionModule,
-    HttpRequestActionModule,
     AiAgentActionModule,
     FeatureFlagModule,
   ],
@@ -33,6 +32,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkflowExecutorWorkspaceService,
     ScopedWorkspaceContextFactory,
     WorkflowActionFactory,
+    WorkflowActionAdapter,
   ],
   exports: [WorkflowExecutorWorkspaceService],
 })

@@ -12,7 +12,7 @@ import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exce
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof InvalidMetadataException) {
-    throw new UserInputError(error.message);
+    throw new UserInputError(error);
   }
 
   if (error instanceof FieldMetadataException) {
