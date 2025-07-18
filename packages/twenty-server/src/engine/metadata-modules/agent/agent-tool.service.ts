@@ -26,8 +26,11 @@ export class AgentToolService {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspaceId);
 
+      const actionTools =
+        this.toolAdapterService.generateToolsForWorkspace(workspaceId);
+
       if (!agent.roleId) {
-        return {};
+        return actionTools;
       }
 
       const role = await this.roleRepository.findOne({
@@ -45,9 +48,6 @@ export class AgentToolService {
         role.id,
         workspaceId,
       );
-
-      const actionTools =
-        this.toolAdapterService.generateToolsForWorkspace(workspaceId);
 
       return { ...databaseTools, ...actionTools };
     } catch (error) {
