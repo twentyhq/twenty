@@ -1505,8 +1505,8 @@ msgstr "Linked Object Metadata Id"
 
 #. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Linked Opportunities"
-msgstr "Linked Opportunities"
+#~ msgid "Linked Opportunities"
+#~ msgstr "Linked Opportunities"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1925,6 +1925,7 @@ msgid "Operations"
 msgstr "Operations"
 
 #. js-lingui-id: 4MyDFl
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"

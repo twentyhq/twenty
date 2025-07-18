@@ -1510,8 +1510,8 @@ msgstr "연결된 개체 메타데이터 ID"
 
 #. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Linked Opportunities"
-msgstr "연결된 기회"
+#~ msgid "Linked Opportunities"
+#~ msgstr "연결된 기회"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1930,6 +1930,7 @@ msgid "Operations"
 msgstr "작업"
 
 #. js-lingui-id: 4MyDFl
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
