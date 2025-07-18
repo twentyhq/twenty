@@ -4746,8 +4746,8 @@ msgstr ""
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-msgid "Please use different names for your source and destination fields"
-msgstr "출처 및 목적 필드에 대해 다른 이름을 사용하십시오"
+#~ msgid "Please use different names for your source and destination fields"
+#~ msgstr "출처 및 목적 필드에 대해 다른 이름을 사용하십시오"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
