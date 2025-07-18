@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -21,6 +21,13 @@ import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-met
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+
+type IsRelationType<T extends FieldMetadataType, TType> =
+  IsExactly<T, FieldMetadataType.RELATION> extends true
+    ? TType
+    : IsExactly<T, FieldMetadataType.MORPH_RELATION> extends true
+      ? TType
+      : never;
 
 @Entity('fieldMetadata')
 @Index(
@@ -116,9 +123,8 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
-  // Refactor could be typed to be required if FieldMetadataType is RELATION or MORPH
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: string | null;
+  relationTargetFieldMetadataId: IsRelationType<T, string> | null;
 
   @OneToOne(
     () => FieldMetadataEntity,
@@ -127,10 +133,14 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
+  relationTargetFieldMetadata: IsRelationType<
+    T,
+    Relation<FieldMetadataEntity>
+  > | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: string | null;
+  relationTargetObjectMetadataId: IsRelationType<T, string> | null;
+
   @ManyToOne(
     () => ObjectMetadataEntity,
     (objectMetadata: ObjectMetadataEntity) =>
@@ -138,8 +148,10 @@ export class FieldMetadataEntity<
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
-  relationTargetObjectMetadata: Relation<ObjectMetadataEntity> | null;
-  ///
+  relationTargetObjectMetadata: IsRelationType<
+    T,
+    Relation<ObjectMetadataEntity>
+  > | null;
 
   @OneToMany(
     () => IndexFieldMetadataEntity,

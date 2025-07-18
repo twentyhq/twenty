@@ -4,6 +4,7 @@ import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/in
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
@@ -48,7 +49,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-5eef-417a-b517-ebeedaa8e10b': getMockFieldMetadataEntity({
       id: '20202020-5eef-417a-b517-ebeedaa8e10b',
       workspaceId,
@@ -67,7 +68,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-597c-44d3-98ec-ea71aea5256b': getMockFieldMetadataEntity({
       id: '20202020-597c-44d3-98ec-ea71aea5256b',
       workspaceId,
@@ -86,7 +87,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-9b94-454a-94ca-8afb09c68faf': getMockFieldMetadataEntity({
       id: '20202020-9b94-454a-94ca-8afb09c68faf',
       workspaceId,
@@ -142,7 +143,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-30a5-4d8e-9b93-12d31ece0aaa': getMockFieldMetadataEntity({
       id: '20202020-30a5-4d8e-9b93-12d31ece0aaa',
       workspaceId,
@@ -161,7 +162,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-f95f-424f-ab32-65961e8e9635': getMockFieldMetadataEntity({
       id: '20202020-f95f-424f-ab32-65961e8e9635',
       workspaceId,
@@ -180,7 +181,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-5e10-4780-babb-38a465ac546c': getMockFieldMetadataEntity({
       id: '20202020-5e10-4780-babb-38a465ac546c',
       workspaceId,
@@ -199,7 +200,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-8f4a-4f8d-822e-90fe72f75b79': getMockFieldMetadataEntity({
       id: '20202020-8f4a-4f8d-822e-90fe72f75b79',
       workspaceId,
@@ -218,7 +219,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-f120-4b59-b239-f7f1d8eb243e': getMockFieldMetadataEntity({
       id: '20202020-f120-4b59-b239-f7f1d8eb243e',
       workspaceId,
@@ -238,7 +239,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: false,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-dcc8-4318-9756-b87377692561': getMockFieldMetadataEntity({
       id: '20202020-dcc8-4318-9756-b87377692561',
       workspaceId,
@@ -258,7 +259,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: false,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-1694-4f8b-8760-61a5ff330022': getMockFieldMetadataEntity({
       id: '20202020-1694-4f8b-8760-61a5ff330022',
       workspaceId,
@@ -278,7 +279,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: false,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-4f52-4dea-a116-723f9bf7f082': getMockFieldMetadataEntity({
       id: '20202020-4f52-4dea-a116-723f9bf7f082',
       workspaceId,
@@ -302,7 +303,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-fc02-4be2-be1a-e121daf5400d': getMockFieldMetadataEntity({
       id: '20202020-fc02-4be2-be1a-e121daf5400d',
       workspaceId,
@@ -326,7 +327,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-fd9f-48f0-bd5f-5b0fec6a5de4': getMockFieldMetadataEntity({
       id: '20202020-fd9f-48f0-bd5f-5b0fec6a5de4',
       workspaceId,
@@ -349,7 +350,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-88ab-4138-98ce-80533bb423e3': getMockFieldMetadataEntity({
       id: '20202020-88ab-4138-98ce-80533bb423e3',
       workspaceId,
@@ -372,7 +373,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-4258-422b-b35b-db3f090af8da': getMockFieldMetadataEntity({
       id: '20202020-4258-422b-b35b-db3f090af8da',
       workspaceId,
@@ -395,7 +396,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-16ca-40a7-a1ba-712975c916cd': getMockFieldMetadataEntity({
       id: '20202020-16ca-40a7-a1ba-712975c916cd',
       workspaceId,
@@ -418,7 +419,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
     '20202020-92a5-47bf-a38d-c1c72b2c3e4d': getMockFieldMetadataEntity({
       id: '20202020-92a5-47bf-a38d-c1c72b2c3e4d',
       workspaceId,
@@ -441,7 +442,7 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
       isLabelSyncedWithName: true,
       createdAt: new Date('2025-06-27T12:55:13.271Z'),
       updatedAt: new Date('2025-06-27T12:55:13.271Z'),
-    }),
+    }) as FieldMetadataEntity,
   },
   fieldIdByName: {
     name: '20202020-c2f1-4435-adca-22931f8b41b6',

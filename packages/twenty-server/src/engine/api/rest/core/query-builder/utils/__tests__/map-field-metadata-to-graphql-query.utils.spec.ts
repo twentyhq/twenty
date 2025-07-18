@@ -10,6 +10,7 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -59,9 +60,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
   });
 
   const fieldsById: FieldMetadataMap = {
-    'field-number-id': typedFieldNumberMock,
-    'field-text-id': typedFieldTextMock,
-    'field-currency-id': typedFieldCurrencyMock,
+    'field-number-id': typedFieldNumberMock as FieldMetadataEntity,
+    'field-text-id': typedFieldTextMock as FieldMetadataEntity,
+    'field-currency-id': typedFieldCurrencyMock as FieldMetadataEntity,
   };
 
   const typedObjectMetadataItem: ObjectMetadataItemWithFieldMaps = {
@@ -89,19 +90,19 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldNumberMock,
+        typedFieldNumberMock as FieldMetadataEntity,
       ),
     ).toEqual('fieldNumber');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldTextMock,
+        typedFieldTextMock as FieldMetadataEntity,
       ),
     ).toEqual('fieldText');
     expect(
       mapFieldMetadataToGraphqlQuery(
         objectMetadataMapsMock,
-        typedFieldCurrencyMock,
+        typedFieldCurrencyMock as FieldMetadataEntity,
       ),
     ).toEqual(`
       fieldCurrency

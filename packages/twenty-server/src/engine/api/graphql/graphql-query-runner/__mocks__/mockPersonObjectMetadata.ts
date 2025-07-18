@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
@@ -55,7 +56,7 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }),
+    }) as FieldMetadataEntity,
     'emails-id': getMockFieldMetadataEntity({
       workspaceId,
       objectMetadataId: '',
@@ -73,7 +74,7 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }),
+    }) as FieldMetadataEntity,
     'linkedinLink-id': getMockFieldMetadataEntity({
       workspaceId,
       objectMetadataId: '',
@@ -93,7 +94,7 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }),
+    }) as FieldMetadataEntity,
     'jobTitle-id': getMockFieldMetadataEntity({
       workspaceId,
       objectMetadataId: '',
@@ -109,6 +110,6 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    }),
+    }) as FieldMetadataEntity,
   },
 });
