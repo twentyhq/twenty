@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker/.';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -14,16 +15,20 @@ type GlobalTestContext = {
     targetObjectId: string;
     sourceObjectId: string;
   };
-  collisionFieldLabel: string;
+  collisionFieldName: string;
   collisionFieldNameWithId: string;
+  collisionFieldLabel: string;
+  collisionFieldLabelWithId: string;
 };
 const globalTestContext: GlobalTestContext = {
   objectMetadataIds: {
     targetObjectId: '',
     sourceObjectId: '',
   },
-  collisionFieldLabel: 'collisionfieldlabel',
-  collisionFieldNameWithId: 'collisionId',
+  collisionFieldLabel: 'Field Name',
+  collisionFieldName: 'fieldName',
+  collisionFieldNameWithId: 'fieldNameBisId',
+  collisionFieldLabelWithId: 'Field Name Bis Id',
 };
 
 type TestedRelationCreationPayload = Partial<
@@ -43,43 +48,43 @@ type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
 describe('Field metadata relation creation should fail', () => {
   const failingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
     [
-      // // TODO @prastoin add coverage other fields such as the Type, icon etc etc ( using edge cases fuzzing etc )
-      // {
-      //   title: '(relationCreationPayload) when targetFieldLabel is empty',
-      //   context: {
-      //     input: { relationCreationPayload: { targetFieldLabel: '' } },
-      //   },
-      // },
-      // {
-      //   title:
-      //     '(relationCreationPayload) when targetFieldLabel exceeds maximum length',
-      //   context: {
-      //     input: {
-      //       relationCreationPayload: { targetFieldLabel: 'A'.repeat(64) },
-      //     },
-      //   },
-      // },
-      // {
-      //   // Not handled gracefully should be refactored
-      //   title:
-      //     '(relationCreationPayload) when targetObjectMetadataId is unknown',
-      //   context: {
-      //     input: {
-      //       relationCreationPayload: {
-      //         targetObjectMetadataId: faker.string.uuid(),
-      //       },
-      //     },
-      //   },
-      // },
-      // {
-      //   title:
-      //     '(relationCreationPayload) when targetFieldLabel contains only whitespace',
-      //   context: {
-      //     input: {
-      //       relationCreationPayload: { targetFieldLabel: '   ' },
-      //     },
-      //   },
-      // },
+      // TODO @prastoin add coverage other fields such as the Type, icon etc etc ( using edge cases fuzzing etc )
+      {
+        title: '(relationCreationPayload) when targetFieldLabel is empty',
+        context: {
+          input: { relationCreationPayload: { targetFieldLabel: '' } },
+        },
+      },
+      {
+        title:
+          '(relationCreationPayload) when targetFieldLabel exceeds maximum length',
+        context: {
+          input: {
+            relationCreationPayload: { targetFieldLabel: 'A'.repeat(64) },
+          },
+        },
+      },
+      {
+        // Not handled gracefully should be refactored
+        title:
+          '(relationCreationPayload) when targetObjectMetadataId is unknown',
+        context: {
+          input: {
+            relationCreationPayload: {
+              targetObjectMetadataId: faker.string.uuid(),
+            },
+          },
+        },
+      },
+      {
+        title:
+          '(relationCreationPayload) when targetFieldLabel contains only whitespace',
+        context: {
+          input: {
+            relationCreationPayload: { targetFieldLabel: '   ' },
+          },
+        },
+      },
       {
         title:
           '(relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id',
@@ -92,28 +97,57 @@ describe('Field metadata relation creation should fail', () => {
           },
         }),
       },
-      // {
-      //   title: '(relationCreationPayload) when type is not provided',
-      //   context: {
-      //     input: {
-      //       relationCreationPayload: { type: undefined },
-      //     },
-      //   },
-      // },
-      // {
-      //   title: '(relationCreationPayload) when type is a wrong value',
-      //   context: {
-      //     input: {
-      //       relationCreationPayload: { type: 'wrong' as RelationType },
-      //     },
-      //   },
-      // },
-      // {
-      //   title: '(relationCreationPayload) when {name}Id is already used',
-      //   context: {
-      //     input: { relationCreationPayload: { targetFieldIcon: '' } },
-      //   },
-      // },
+      {
+        title:
+          '(relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id',
+        context: ({ collisionFieldLabelWithId, objectMetadataIds }) => ({
+          input: {
+            relationCreationPayload: {
+              targetObjectMetadataId: objectMetadataIds.targetObjectId,
+              targetFieldLabel: collisionFieldLabelWithId,
+            },
+          },
+        }),
+      },
+      {
+        title: '(relationCreationPayload) when type is not provided',
+        context: {
+          input: {
+            relationCreationPayload: { type: undefined },
+          },
+        },
+      },
+      {
+        title: '(relationCreationPayload) when type is a wrong value',
+        context: {
+          input: {
+            relationCreationPayload: { type: 'wrong' as RelationType },
+          },
+        },
+      },
+      {
+        title: 'when {name}Id is already used',
+        context: ({ collisionFieldNameWithId }) => ({
+          input: {
+            name: collisionFieldNameWithId,
+            relationCreationPayload: { targetFieldIcon: '' },
+          },
+        }),
+      },
+      {
+        title:
+          'when target and source are the same object and name are the same',
+        context: {
+          input: {
+            name: 'relationName',
+            relationCreationPayload: {
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.sourceObjectId,
+              targetFieldLabel: 'Relation Name',
+            },
+          },
+        },
+      },
     ];
 
   beforeAll(async () => {
@@ -148,7 +182,7 @@ describe('Field metadata relation creation should fail', () => {
       await createOneFieldMetadata({
         input: {
           objectMetadataId: targetObjectId,
-          name: globalTestContext.collisionFieldLabel,
+          name: globalTestContext.collisionFieldName,
           label: 'LabelThatCouldBeAnything',
           isLabelSyncedWithName: false,
           type: FieldMetadataType.TEXT,
@@ -170,7 +204,7 @@ describe('Field metadata relation creation should fail', () => {
       await createOneFieldMetadata({
         input: {
           objectMetadataId: sourceObjectId,
-          name: globalTestContext.collisionFieldLabel,
+          name: globalTestContext.collisionFieldName,
           label: 'LabelThatCouldBeAnything',
           isLabelSyncedWithName: false,
           type: FieldMetadataType.TEXT,
@@ -214,11 +248,16 @@ describe('Field metadata relation creation should fail', () => {
           ? context(globalTestContext).input.relationCreationPayload
           : context.input.relationCreationPayload;
 
+      const computedName =
+        typeof context === 'function'
+          ? context(globalTestContext).input.name
+          : context.input.name;
+
       const { errors } = await createOneFieldMetadata({
         expectToFail: true,
         input: {
           objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
-          name: 'fieldname',
+          name: computedName ?? 'fieldname',
           label: 'Relation field',
           isLabelSyncedWithName: false,
           type: FieldMetadataType.RELATION,
