@@ -2,6 +2,8 @@ import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/fie
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 export const createRelationBetweenObjects = async <
@@ -41,22 +43,35 @@ export const createRelationBetweenObjects = async <
     },
   };
 
-  const {
-    data: { createOneField: createdFieldPerson },
-  } = await createOneFieldMetadata<typeof type>({
+  const { data } = await createOneFieldMetadata<typeof type>({
     input: createFieldInput,
     gqlFields: `
             id
             name
             label
             isLabelSyncedWithName
+            settings
             relation {
               type
+              sourceObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              targetObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              sourceFieldMetadata {
+                id
+                name
+              }
               targetFieldMetadata {
                 id
+                name
               }
             }
-            settings
             object {
               id
               nameSingular
@@ -65,5 +80,7 @@ export const createRelationBetweenObjects = async <
     expectToFail: false,
   });
 
-  return createdFieldPerson;
+  return data.createOneField as unknown as FieldMetadataDTO<T> & {
+    relation: RelationDTO;
+  };
 };

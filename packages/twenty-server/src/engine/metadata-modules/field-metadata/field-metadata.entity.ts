@@ -22,27 +22,7 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
-//   defaultValue?: FieldMetadataDefaultValue<T>;
-//   options?: FieldMetadataOptions<T>;
-//   settings?: FieldMetadataSettings<T>;
-//   objectMetadataId: string;
-//   workspaceId?: string;
-//   description?: string;
-//   icon?: string;
-//   isNullable: boolean;
-//   isUnique?: boolean;
-//   relationTargetFieldMetadataId?: string;
-//   relationTargetFieldMetadata?: FieldMetadataInterface;
-//   relationTargetObjectMetadataId?: string;
-//   relationTargetObjectMetadata?: ObjectMetadataInterface;
-//   relation?: RelationDTO;
-//   isCustom?: boolean;
-//   isSystem?: boolean;
-//   isActive?: boolean;
-//   generatedType?: 'STORED' | 'VIRTUAL';
-//   asExpression?: string;
 @Entity('fieldMetadata')
-// max length of index is 63 characters
 @Index(
   'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
   ['name', 'objectMetadataId', 'workspaceId'],
@@ -61,6 +41,7 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
   'objectMetadataId',
   'workspaceId',
 ])
+// TODO add some documentation about this entity
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
 > {
@@ -99,7 +80,7 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -121,11 +102,11 @@ export class FieldMetadataEntity<
   isSystem: boolean;
 
   // Is this really nullable ?
-  @Column({ nullable: true, default: true })
+  @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
   // Is this really nullable ?
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true, default: false, type: 'boolean' })
   isUnique: boolean | null;
 
   @Column({ nullable: false, type: 'uuid' })
