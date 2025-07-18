@@ -7,6 +7,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
@@ -477,4 +478,13 @@ export const objectMetadataMapItemMock: ObjectMetadataItemWithFieldMaps = {
   ),
   fieldIdByJoinColumnName: {},
   indexMetadatas: [],
+};
+export const objectMetadataMapsMock: ObjectMetadataMaps = {
+  byId: {
+    [objectMetadataMapItemMock.id || 'mock-id']: objectMetadataMapItemMock,
+  },
+  idByNameSingular: {
+    [objectMetadataMapItemMock.nameSingular]:
+      objectMetadataMapItemMock.id || 'mock-id',
+  },
 };
