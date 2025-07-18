@@ -12,11 +12,10 @@ export const getMockFieldMetadataEntity = <
   T extends FieldMetadataType = FieldMetadataType,
 >(
   overrides: GetMockFieldMetadataEntityOverride<T>,
-  // Returning a FieldMetadataEntity is intented we want it to be abstracted
-): FieldMetadataEntity => {
+): FieldMetadataEntity<T> => {
   // TODO avoid as any
   return {
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.TEXT as T,
     fieldPermissions: [],
     icon: null,
     indexFieldMetadatas: {} as any,
@@ -25,7 +24,7 @@ export const getMockFieldMetadataEntity = <
     isNullable: null,
     isSystem: false,
     isUnique: null,
-    object: {} as any, // TODO ?
+    object: {} as any,
     relationTargetFieldMetadata: null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadata: null,
@@ -37,7 +36,7 @@ export const getMockFieldMetadataEntity = <
     label: 'Default field metadata entity label',
     description: 'Default field metadata entity description',
     defaultValue: null,
-    options: [],
+    options: null,
     settings: null,
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -5,6 +5,7 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { getFieldType } from 'src/engine/api/rest/core/query-builder/utils/get-field-type.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
@@ -24,7 +25,7 @@ describe('getFieldType', () => {
   });
 
   const fieldsById: FieldMetadataMap = {
-    'field-number-id': completeFieldNumberMock,
+    'field-number-id': completeFieldNumberMock as FieldMetadataEntity,
   };
 
   const mockObjectMetadataWithFieldMaps = {

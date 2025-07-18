@@ -118,7 +118,7 @@ describe('getUniqueConstraintsFields', () => {
     const objectMetadata = createMockObjectMetadata([
       mockIdField,
       mockNameField,
-    ]);
+    ] as FieldMetadataEntity[]);
 
     const result = getUniqueConstraintsFields(objectMetadata);
 
@@ -140,7 +140,7 @@ describe('getUniqueConstraintsFields', () => {
     );
 
     const objectMetadata = createMockObjectMetadata(
-      [mockIdField, mockEmailField, mockNameField],
+      [mockIdField, mockEmailField, mockNameField] as FieldMetadataEntity[],
       [emailIndex],
     );
 

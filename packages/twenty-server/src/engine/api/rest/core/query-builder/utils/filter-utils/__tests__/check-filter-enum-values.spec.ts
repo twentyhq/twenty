@@ -5,6 +5,7 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { checkFilterEnumValues } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-enum-values';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
@@ -25,7 +26,7 @@ describe('checkFilterEnumValues', () => {
   });
 
   const fieldsById: FieldMetadataMap = {
-    'field-select-id': completeFieldSelectMock,
+    'field-select-id': completeFieldSelectMock as FieldMetadataEntity,
   };
 
   const mockObjectMetadataWithFieldMaps = {
