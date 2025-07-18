@@ -4,11 +4,9 @@ import { isString } from '@sniptt/guards';
 import axios, { AxiosRequestConfig } from 'axios';
 import { JSONSchema7 } from 'json-schema';
 
-import {
-  Tool,
-  ToolInput,
-  ToolOutput,
-} from 'src/engine/core-modules/tool/interfaces/tool.interface';
+import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
 
 export type HttpToolParameters = {
   url: string;

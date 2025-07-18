@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Tool } from './interfaces/tool.interface';
+import { Tool } from './types/tool.type';
 
 export enum ToolType {
   HTTP_REQUEST = 'HTTP_REQUEST',

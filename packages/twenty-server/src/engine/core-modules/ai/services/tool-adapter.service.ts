@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ToolSet } from 'ai';
 
-import { ToolInput } from 'src/engine/core-modules/tool/interfaces/tool.interface';
-
 import { ToolRegistryService } from 'src/engine/core-modules/tool/tool-registry.service';
+import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 
 @Injectable()
 export class ToolAdapterService {
