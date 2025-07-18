@@ -1,6 +1,7 @@
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
@@ -31,12 +32,27 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
+  shouldHide?: boolean;
+  isSecondaryDragged?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
+
+  ${({ isSecondaryDragged }) =>
+    isSecondaryDragged &&
+    `
+    opacity: 0.3;
+  `}
+
+  ${({ shouldHide }) =>
+    shouldHide &&
+    `
+    opacity: 0;
+    pointer-events: none;
+  `}
 
   &[data-selected='true'] {
     background-color: ${({ theme }) => theme.accent.quaternary};
@@ -90,6 +106,14 @@ export const RecordBoardCard = () => {
   const { recordId, rowIndex, columnIndex } = useContext(
     RecordBoardCardContext,
   );
+
+  const multiDragState = useContext(MultiDragStateContext);
+
+  const isSecondaryDraggedCard =
+    multiDragState &&
+    multiDragState.isDragging &&
+    multiDragState.draggedRecordIds.includes(recordId) &&
+    recordId !== multiDragState.primaryDraggedRecordId;
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -197,6 +221,7 @@ export const RecordBoardCard = () => {
           data-active={isCurrentCardActive}
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
+          isSecondaryDragged={isSecondaryDraggedCard}
         >
           <RecordBoardCardHeader
             isCardExpanded={isCardExpanded}
