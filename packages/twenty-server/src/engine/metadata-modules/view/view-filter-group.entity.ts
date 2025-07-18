@@ -1,0 +1,66 @@
+import { IDField } from '@ptc-org/nestjs-query-graphql';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { View } from 'src/engine/metadata-modules/view/view.entity';
+
+export enum ViewFilterGroupLogicalOperator {
+  AND = 'AND',
+  OR = 'OR',
+  NOT = 'NOT',
+}
+
+@Entity({ name: 'viewFilterGroup', schema: 'core' })
+@Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'])
+export class ViewFilterGroup {
+  @IDField(() => UUIDScalarType)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  parentViewFilterGroupId: string;
+
+  @Column({ nullable: false, default: 'AND' })
+  logicalOperator: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  viewId: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  workspaceId: string;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt?: Date | null;
+
+  // Relations
+  @ManyToOne(() => Workspace, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<Workspace>;
+
+  @ManyToOne(() => View, (view) => view.viewFilterGroups, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'viewId' })
+  view: Relation<View>;
+}
