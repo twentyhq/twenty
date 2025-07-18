@@ -11,7 +11,6 @@ import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-ada
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -24,7 +23,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     TypeOrmModule.forFeature([RoleEntity], 'core'),
     TokenModule,
     FeatureFlagModule,
-    ToolModule,
     ObjectMetadataModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,

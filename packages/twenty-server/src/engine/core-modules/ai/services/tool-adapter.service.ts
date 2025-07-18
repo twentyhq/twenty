@@ -2,16 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { ToolSet } from 'ai';
 
-import { ToolRegistryService } from 'src/engine/core-modules/tool/tool-registry.service';
+import { TOOLS } from 'src/engine/core-modules/tool/constants/tools.const';
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 
 @Injectable()
 export class ToolAdapterService {
-  constructor(private readonly toolRegistryService: ToolRegistryService) {}
-
   generateToolsForWorkspace(workspaceId: string): ToolSet {
-    const allTools = this.toolRegistryService.getAllTools();
-    const tools = Array.from(allTools.entries()).reduce<ToolSet>(
+    const tools = Array.from(TOOLS.entries()).reduce<ToolSet>(
       (acc, [toolType, tool]) => {
         acc[toolType.toLowerCase()] = {
           description: tool.description,
