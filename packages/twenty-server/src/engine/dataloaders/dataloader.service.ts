@@ -14,6 +14,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/fromFieldMetadataEntityToFieldMetadataDto.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -211,7 +212,7 @@ export class DataloaderService {
             return [];
           }
 
-          const fields = Object.values(objectMetadata.fieldsById).map(
+          const fields =  Object.values(objectMetadata.fieldsById).map<FieldMetadataDTO>(
             // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
               const overridesFieldToCompute = [
@@ -228,7 +229,14 @@ export class DataloaderService {
                 (acc, field) => ({
                   ...acc,
                   [field]: resolveFieldMetadataStandardOverride(
-                    fieldMetadata,
+                    {
+                      label: fieldMetadata.label,
+                      description: fieldMetadata.description ?? undefined,
+                      icon: fieldMetadata.icon ?? undefined,
+                      isCustom: fieldMetadata.isCustom,
+                      standardOverrides:
+                        fieldMetadata.standardOverrides ?? undefined,
+                    },
                     field,
                     dataLoaderParams[0].locale,
                   ),
@@ -236,13 +244,10 @@ export class DataloaderService {
                 {},
               );
 
-              return {
+              return fromFieldMetadataEntityToFieldMetadataDto({
                 ...fieldMetadata,
-                createdAt: new Date(fieldMetadata.createdAt),
-                updatedAt: new Date(fieldMetadata.updatedAt),
-                workspaceId: workspaceId,
                 ...overrides,
-              };
+              });
             },
           );
 
