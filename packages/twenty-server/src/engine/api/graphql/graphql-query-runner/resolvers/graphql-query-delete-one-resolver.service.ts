@@ -15,10 +15,9 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 
 @Injectable()
 export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolverService<
@@ -37,34 +36,26 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedDeletedObjectRecords = await queryBuilder
+    const columnsToReturn = buildColumnsToReturn({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
+    const deletedObjectRecords = await queryBuilder
       .softDelete()
       .where({ id: executionArgs.args.id })
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
-    const formattedDeletedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedDeletedObjectRecords.raw,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
-    if (formattedDeletedRecords.length === 0) {
+    if (deletedObjectRecords.generatedMaps.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const deletedRecord = formattedDeletedRecords[0];
-
-    this.apiEventEmitterService.emitDeletedEvents({
-      records: structuredClone(formattedDeletedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
+    const deletedRecord = deletedObjectRecords.generatedMaps[0] as ObjectRecord;
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -77,6 +68,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 

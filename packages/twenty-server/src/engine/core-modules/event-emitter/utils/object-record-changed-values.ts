@@ -2,23 +2,25 @@ import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
-  updatedKeys: string[] | undefined,
-  objectMetadataItem: ObjectMetadataInterface,
+  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
 ) => {
   return Object.keys(newRecord).reduce(
     (acc, key) => {
-      const field = objectMetadataItem.fields.find((f) => f.name === key);
+      const field =
+        objectMetadataItem.fieldsById[objectMetadataItem.fieldIdByName[key]];
+
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
 
       if (
         key === 'updatedAt' ||
-        !updatedKeys?.includes(key) ||
+        key === 'searchVector' ||
         field?.type === FieldMetadataType.RELATION ||
         deepEqual(oldRecordValue, newRecordValue)
       ) {

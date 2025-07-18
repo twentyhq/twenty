@@ -75,10 +75,27 @@ export class GraphqlQuerySelectedFieldsParser {
     for (const [fieldKey, fieldValue] of Object.entries(
       graphqlSelectedFields,
     )) {
-      const fieldMetadata =
+      const fieldMetadataBasedOnName =
         objectMetadataMapItem.fieldsById[
           objectMetadataMapItem.fieldIdByName[fieldKey]
         ];
+
+      const isFieldForeignKey =
+        !fieldMetadataBasedOnName && fieldKey.endsWith('Id');
+
+      if (isFieldForeignKey) {
+        const fieldMetadataBasedOnRelationName =
+          objectMetadataMapItem.fieldsById[
+            objectMetadataMapItem.fieldIdByName[fieldKey.slice(0, -2)]
+          ];
+
+        if (fieldMetadataBasedOnRelationName) {
+          accumulator.select[fieldKey] = true; // field is not a connection so should not be treated as a relation
+          continue;
+        }
+      }
+
+      const fieldMetadata = fieldMetadataBasedOnName;
 
       if (!fieldMetadata) {
         continue;

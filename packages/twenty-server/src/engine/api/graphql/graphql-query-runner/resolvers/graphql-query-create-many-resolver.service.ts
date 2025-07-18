@@ -17,16 +17,13 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
@@ -47,7 +44,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       executionArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
     );
 
     const shouldBypassPermissionChecks = executionArgs.isExecutedByApiKey;
@@ -104,21 +100,15 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
     await this.processRecordsToUpdate({
       partialRecordsToUpdate: recordsToUpdate,
-      existingRecords,
       repository: executionArgs.repository,
       objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: executionArgs.options.objectMetadataMaps,
       result,
-      authContext: executionArgs.options.authContext,
     });
 
     await this.processRecordsToInsert({
       recordsToInsert,
       repository: executionArgs.repository,
       result,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: executionArgs.options.objectMetadataMaps,
-      authContext: executionArgs.options.authContext,
     });
 
     return result;
@@ -272,20 +262,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
   private async processRecordsToUpdate({
     partialRecordsToUpdate,
-    existingRecords,
     repository,
     objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
     result,
-    authContext,
   }: {
     partialRecordsToUpdate: Partial<ObjectRecord>[];
-    existingRecords: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
     result: InsertResult;
-    authContext: AuthContext;
   }): Promise<void> {
     for (const partialRecordToUpdate of partialRecordsToUpdate) {
       const recordId = partialRecordToUpdate.id as string;
@@ -297,118 +281,60 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
           objectMetadataItemWithFieldMaps,
         );
 
-      const formattedPartialRecordToUpdate = formatData(
+      await repository.update(
+        recordId,
         partialRecordToUpdateWithoutCreatedByUpdate,
-        objectMetadataItemWithFieldMaps,
       );
-
-      // TODO: we should align update and insert
-      // For insert, formating is done in the server
-      // While for update, formatting is done at the resolver level
-      await repository.update(recordId, formattedPartialRecordToUpdate);
 
       result.identifiers.push({ id: recordId });
       result.generatedMaps.push({ id: recordId });
-
-      const [updatedRecord] = await repository.find({
-        where: { id: recordId },
-      });
-
-      if (!isDefined(updatedRecord)) {
-        continue;
-      }
-
-      const record = formatResult<ObjectRecord>(
-        updatedRecord,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
-
-      const existingRecord = formatResult<ObjectRecord>(
-        existingRecords.find((record) => record.id === recordId),
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      );
-
-      this.apiEventEmitterService.emitUpdateEvents({
-        existingRecords: structuredClone([existingRecord]),
-        records: structuredClone([record]),
-        updatedFields: Object.keys(formattedPartialRecordToUpdate),
-        authContext,
-        objectMetadataItem:
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            objectMetadataItemWithFieldMaps,
-          ),
-      });
     }
   }
 
   private async processRecordsToInsert({
     recordsToInsert,
     repository,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
     result,
-    authContext,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
     result: InsertResult;
-    authContext: AuthContext;
   }): Promise<void> {
-    const formattedInsertedRecords: ObjectRecord[] = [];
-
     if (recordsToInsert.length > 0) {
       const insertResult = await repository.insert(recordsToInsert);
 
       result.identifiers.push(...insertResult.identifiers);
       result.generatedMaps.push(...insertResult.generatedMaps);
       result.raw.push(...insertResult.raw);
-
-      formattedInsertedRecords.push(
-        ...insertResult.raw.map((record: ObjectRecord) =>
-          formatResult<ObjectRecord>(
-            record,
-            objectMetadataItemWithFieldMaps,
-            objectMetadataMaps,
-          ),
-        ),
-      );
     }
-
-    this.apiEventEmitterService.emitCreateEvents({
-      records: structuredClone(formattedInsertedRecords),
-      authContext,
-      objectMetadataItem: getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-        objectMetadataItemWithFieldMaps,
-      ),
-    });
   }
 
   private async fetchUpsertedRecords(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedUpsertedRecords = await queryBuilder
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+    });
+
+    const upsertedRecords = await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
       .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       })
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
-    return formatResult<ObjectRecord[]>(
-      nonFormattedUpsertedRecords,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
+    return upsertedRecords as ObjectRecord[];
   }
 
   private async processNestedRelationsIfNeeded(
@@ -433,6 +359,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
       shouldBypassPermissionChecks,
+      selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }
 

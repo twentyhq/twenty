@@ -7,11 +7,11 @@ import {
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEdgeV2Content } from '../WorkflowDiagramEdgeV2Content';
+import { WorkflowDiagramEdgeV2FilterContent } from '../WorkflowDiagramEdgeV2FilterContent';
 
-const meta: Meta<typeof WorkflowDiagramEdgeV2Content> = {
-  title: 'Modules/Workflow/WorkflowDiagramEdgeV2Content',
-  component: WorkflowDiagramEdgeV2Content,
+const meta: Meta<typeof WorkflowDiagramEdgeV2FilterContent> = {
+  title: 'Modules/Workflow/WorkflowDiagramEdgeV2FilterContent',
+  component: WorkflowDiagramEdgeV2FilterContent,
   decorators: [
     ComponentDecorator,
     ReactflowDecorator,
@@ -35,14 +35,13 @@ const meta: Meta<typeof WorkflowDiagramEdgeV2Content> = {
     labelY: 0,
     parentStepId: 'parent-step-id',
     nextStepId: 'next-step-id',
-    onCreateFilter: fn(),
     onDeleteFilter: fn(),
     onCreateNode: fn(),
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof WorkflowDiagramEdgeV2Content>;
+type Story = StoryObj<typeof WorkflowDiagramEdgeV2FilterContent>;
 
 export const ButtonsAppearOnHover: Story = {
   play: async ({ canvasElement }) => {
@@ -55,27 +54,6 @@ export const ButtonsAppearOnHover: Story = {
 
     await waitFor(() => {
       expect(filterButton).toBeVisible();
-    });
-  },
-};
-
-export const CreateFilter: Story = {
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const buttons = await canvas.findAllByRole('button');
-    const filterButton = buttons[0];
-
-    userEvent.hover(filterButton);
-
-    await waitFor(() => {
-      expect(filterButton).toBeVisible();
-    });
-
-    userEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(args.onCreateFilter).toHaveBeenCalledTimes(1);
     });
   },
 };

@@ -7,7 +7,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -102,12 +101,6 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           provide: getQueueToken(MessageQueue.contactCreationQueue),
           useValue: {
             add: jest.fn().mockResolvedValue(undefined),
-          },
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: {
-            emitDatabaseBatchEvent: jest.fn().mockResolvedValue(undefined),
           },
         },
         {

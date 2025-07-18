@@ -149,7 +149,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
     if (isManyToOne) {
       expect(createdField.settings?.joinColumnName).toBe(
-        'ownerOpportunityForMorphRelationId',
+        'ownerPersonForMorphRelationId',
       );
     } else {
       expect(createdField.settings?.joinColumnName).toBeUndefined();
