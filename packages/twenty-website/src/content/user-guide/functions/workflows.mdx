@@ -42,12 +42,12 @@ This trigger starts the workflow when a record is removed. To configure this tri
 
 ### Launch Manually
 
-This trigger starts the workflow only when manually evoked by you. You can trigger it in two ways:
+This trigger starts the workflow only when you manually launch it. There are two ways to do this, depending on whether you want the workflow to run with or without a record context:
 
-- When record is selected lets you use data from that record in later steps; you'll need to choose the object, or 
-- When no record is selected runs the workflow without any record context.
+- **When record is selected**: select a record in the table, then open the side panel with `⌘K` and choose the workflow. The workflow will run using data from the selected record, which you can reference in later steps.
+- **When no record is selected**: open the side panel with `⌘K` from anywhere in the app (no record selection needed) and choose the workflow. The workflow will run without any record context.
 
-To manually trigger the workflow, open the side panel with `⌘K` and select the workflow. Once the run completes, reload the page to see the changes.
+Once the workflow finishes running, reload the page to see the changes.
 
 ### On a Schedule
 
@@ -61,7 +61,7 @@ For `POST` requests, you can define an expected body to structure incoming data 
 
 ## Add an action
 
-Once a trigger is set, you can add action steps to define what happens next. Actions use data from the trigger to carry out tasks in your workflow. In this section, you’ll explore the different action types and how to add them.
+Once a trigger is set, you can add action steps to define what happens next. Actions use data from the trigger and previous actions to carry out tasks in your workflow. In this section, you’ll explore the different action types and how to add them.
 
 ### Create a Record
 
@@ -92,7 +92,7 @@ You can also reference variables from outputs of previous steps to further custo
 
 ### Code 
 
-This action runs custom Javascript within your workflow. You can use this action to handle logic that goes beyond built-in actions such as transforming data, performing calculations, or integrating with external APIs. 
+This action runs custom JavaScript within your workflow. You can use this action to handle logic that goes beyond built-in actions such as transforming data, performing calculations, or integrating with external APIs. 
 
 Any variables you create and return here can be reused in later steps of the workflow. You can also test your code directly in this step and view the output to confirm it works as expected.
 
@@ -112,29 +112,34 @@ This action allows you to send a request to an external API as part of your work
 4. For `POST`, `PUT`, or `PATCH`  include the body input to send with the request
 5. Paste a sample response body to preview its structure and reference keys in later steps
 
-## Executing Workflows
+## Activate Workflows
 
-Workflows can be executed in three ways: **Activate**, **Run**, and **Test**. Each serves a different purpose depending on where you are in the workflow setup.
+When you click **Activate**, your draft is published as a new version, and the workflow becomes **Active**. This means its triggers (such as schedule, record events, or manual launch) will now listen for events and start the workflow when conditions are met. 
 
-### Activate 
+Activating a workflow does not immediately execute it, instead it simply makes it eligible to run when triggered. Each activation creates a new version and moves the workflow out of **Draft** mode.
 
-To activate your workflow, click **Activate** at the top to run your workflow in the background. Each activation creates a new version and moves the workflow out of draft mode.
+### Workflow Runs
 
-### Runs
+A **Run** is a record of a workflow execution. It happens when a workflow is triggered while active or when you manually launch it for testing. Each run contains details like status, output, author, and timestamps. You can view individual runs in the **Runs** panel or open the **Workflow Runs** view for monitoring and troubleshooting.
 
-Runs are saved executions of active workflows. They provide details like status, output, author, and last updates. View past runs from the **Runs** field or open the **Workflow Runs** view for more specific insights that’ll be useful for monitoring and troubleshooting.
+## Testing Workflows
 
-### Test
+You can test workflows before activating them. This is useful for trigger types like **Launch Manually (when no record selected)** or when testing specific action nodes (e.g., **Code**).
 
-You can test workflows before activating them. This is ideal for trigger types like **Launch Manually (no record selected)** or for testing specific action nodes like **Code**. Note: Testing a workflow or individual node does not activate it. The workflow remains in draft mode.
+Testing a workflow or an individual node does not activate the workflow, instead it stays in **Draft** mode and won’t respond to triggers until you activate it.
 
 ## Workflows Statuses
 
-Workflows have three statuses: **Draft**, **Activated**, and **Deactivated**.
+Workflows can have one of four statuses: **Draft**, **Active**, **Deactivated**, or **Archived**.
 
-When you first create or edit a workflow, it remains in **Draft** mode. Once you click **Activate**, the draft becomes a live version. For example, activating your edits turns draft changes into version v2, while the previously active version (e.g. v1) is automatically **Deactivated** and saved in the **Versions**.
+- **Draft**: The workflow is being edited and has not been published yet. Only one draft version can exist at a time.
+- **Active**: The live version currently running in your app. A workflow becomes active when a draft or deactivated version is activated.
+- **Deactivated**: A workflow that was previously active but has been manually deactivated.
+- **Archived**: All past versions except the most recent draft, active, or deactivated version. You cannot directly activate an archived version; to reuse it, you must restore it as a draft first.
 
-This allows you to edit workflows safely in draft mode, activate when ready, and keep a record of all past versions.
+For example, if you have versions v1, v2 (**Active**), and v3 (**Draft**), then v1 is archived. Once v3 is activated, then v2 is archived, and v3 becomes **Active**. 
+
+This status system lets you safely edit workflows in draft, publish changes when ready, and automatically keep a history of previous versions.
 
 ## Workflow Version History
 
