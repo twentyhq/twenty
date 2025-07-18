@@ -7,7 +7,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "collisionfieldlabel" is not available",
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -100,7 +100,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
       "code": "BAD_USER_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "collisionfieldlabel" is not available",
+    "message": "Name "collisionfieldlabel" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
