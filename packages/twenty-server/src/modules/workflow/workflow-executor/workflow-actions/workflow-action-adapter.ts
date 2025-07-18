@@ -39,17 +39,7 @@ export class WorkflowActionAdapter implements WorkflowAction {
       );
     }
 
-    const toolInput: ToolInput = {
-      parameters: resolveInput(step.settings.input, context) as Record<
-        string,
-        unknown
-      >,
-      context: {
-        workspaceId: context.workspaceId as string,
-        userId: context.userId as string,
-        roleId: context.roleId as string,
-      },
-    };
+    const toolInput = resolveInput(step.settings.input, context) as ToolInput;
 
     const toolOutput = await tool.execute(toolInput);
 

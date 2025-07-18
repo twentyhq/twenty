@@ -14,7 +14,7 @@ export class HttpTool implements Tool {
     'Make an HTTP request to any URL with configurable method, headers, and body.';
   parameters = HttpToolParametersZodSchema;
 
-  async execute(parameters: ToolInput['parameters']): Promise<ToolOutput> {
+  async execute(parameters: ToolInput): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
 
     try {
