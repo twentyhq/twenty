@@ -5,10 +5,10 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -19,10 +19,10 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "subCode": "Name not available",
+      "userFriendlyMessage": "This name is not available as it is already used by another field",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Name "fieldName" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -33,10 +33,10 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "subCode": "Invalid label",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Invalid label: "   "",
     "name": "UserInputError",
   },
 ]
@@ -47,10 +47,10 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "subCode": "Exceeds max length",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Name is too long: it exceeds the 63 characters limit.",
     "name": "UserInputError",
   },
 ]
@@ -61,10 +61,10 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "subCode": "Input too short",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Input is too short: """,
     "name": "UserInputError",
   },
 ]
@@ -74,12 +74,11 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
-    "name": "UserInputError",
+    "message": "Object metadata relation target not found for relation creation payload",
   },
 ]
 `;
@@ -90,9 +89,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
     "name": "UserInputError",
   },
 ]
@@ -104,9 +103,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
     "name": "UserInputError",
   },
 ]
@@ -120,7 +119,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
     },
-    "message": "Name "fieldname" is not available, check that it is not duplicating another field's name.",
+    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
     "name": "UserInputError",
   },
 ]
@@ -148,7 +147,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       "subCode": "Name not available",
       "userFriendlyMessage": "This name is not available as it is already used by another field",
     },
-    "message": "Name "fieldNameId" is not available as it is already used by another field",
+    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
     "name": "UserInputError",
   },
 ]
@@ -246,6 +245,20 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       "userFriendlyMessage": "An error occurred.",
     },
     "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
+    "name": "UserInputError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when {name}Id is already used 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_FIELD_INPUT",
+      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+    },
+    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
     "name": "UserInputError",
   },
 ]
