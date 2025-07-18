@@ -22,12 +22,14 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
-type IsRelationType<T extends FieldMetadataType, TType> =
-  IsExactly<T, FieldMetadataType.RELATION> extends true
-    ? TType
-    : IsExactly<T, FieldMetadataType.MORPH_RELATION> extends true
-      ? TType
-      : never;
+type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? null | Ttype
+    : T extends FieldMetadataType.RELATION
+      ? Ttype
+      : T extends FieldMetadataType.MORPH_RELATION
+        ? Ttype
+        : never;
 
 @Entity('fieldMetadata')
 @Index(
@@ -124,7 +126,7 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: IsRelationType<T, string> | null;
+  relationTargetFieldMetadataId: IsRelationType<string, T>;
 
   @OneToOne(
     () => FieldMetadataEntity,
@@ -133,13 +135,10 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: IsRelationType<
-    T,
-    Relation<FieldMetadataEntity>
-  > | null;
+  relationTargetFieldMetadata: IsRelationType<Relation<FieldMetadataEntity>, T>;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: IsRelationType<T, string> | null;
+  relationTargetObjectMetadataId: IsRelationType<string, T>;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
@@ -149,9 +148,9 @@ export class FieldMetadataEntity<
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: IsRelationType<
-    T,
-    Relation<ObjectMetadataEntity>
-  > | null;
+    Relation<ObjectMetadataEntity>,
+    T
+  >;
 
   @OneToMany(
     () => IndexFieldMetadataEntity,

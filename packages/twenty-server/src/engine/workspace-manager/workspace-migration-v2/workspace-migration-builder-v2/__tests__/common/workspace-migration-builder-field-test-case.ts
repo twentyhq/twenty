@@ -5,7 +5,6 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { getFlatFieldMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/workspace-manager/workspace-migration-v2/__tests__/get-flat-object-metadata.mock';
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
 import { WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
 const basicObjectMetadataId = faker.string.uuid();
@@ -32,7 +31,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
-        }) as FlatFieldMetadata;
+        });
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
@@ -66,7 +65,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: faker.string.uuid(),
           relationTargetObjectMetadataId: faker.string.uuid(),
-        }) as FlatFieldMetadata;
+        });
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
@@ -121,7 +120,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const flatObjectMetadata = getFlatObjectMetadataMock({
           uniqueIdentifier: 'object-metadata-unique-identifier-1',
           isLabelSyncedWithName: true,
-          flatFieldMetadatas: [updatedFieldMetadata] as FlatFieldMetadata[],
+          flatFieldMetadatas: [updatedFieldMetadata],
         });
 
         return {
@@ -140,7 +139,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
                   },
                   relationTargetFieldMetadataId: faker.string.uuid(),
                   relationTargetObjectMetadataId: faker.string.uuid(),
-                }) as FlatFieldMetadata,
+                }),
               ],
             },
           ],
