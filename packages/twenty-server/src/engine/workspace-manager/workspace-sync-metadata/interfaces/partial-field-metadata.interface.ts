@@ -15,6 +15,15 @@ export type PartialFieldMetadata<
   | 'objectMetadataId'
   | 'createdAt'
   | 'updatedAt'
+  | 'standardId'
+  | 'icon'
+  | 'isSystem'
+  | 'workspaceId'
+  | 'isActive'
+  | 'asExpression'
+  | 'indexFieldMetadatas'
+  | 'fieldPermissions'
+  | 'object'
 > & {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);
@@ -24,8 +33,8 @@ export type PartialFieldMetadata<
   workspaceId: string;
   objectMetadataId?: string;
   isActive?: boolean;
-  asExpression?: string;
-  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string; // not accurate
+  generatedType?: 'STORED' | 'VIRTUAL'; // not accurate
 };
 
 export type PartialComputedFieldMetadata = {
