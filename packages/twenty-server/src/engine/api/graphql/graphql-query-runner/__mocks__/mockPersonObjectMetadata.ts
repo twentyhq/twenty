@@ -2,6 +2,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+
+const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
@@ -24,7 +27,7 @@ export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: duplicateCriteria,
   labelIdentifierFieldMetadataId: '',
   imageIdentifierFieldMetadataId: '',
-  workspaceId: '',
+  workspaceId,
   indexMetadatas: [],
   fieldIdByName: {
     name: 'name-id',
@@ -34,9 +37,10 @@ export const mockPersonObjectMetadataWithFieldMaps = (
   },
   fieldIdByJoinColumnName: {},
   fieldsById: {
-    'name-id': {
-      id: '',
+    'name-id': getMockFieldMetadataEntity({
+      workspaceId,
       objectMetadataId: '',
+      id: 'name-id',
       type: FieldMetadataType.FULL_NAME,
       name: 'name',
       label: 'Name',
@@ -44,18 +48,18 @@ export const mockPersonObjectMetadataWithFieldMaps = (
         lastName: "''",
         firstName: "''",
       },
-      description: 'Contact’s name',
+      description: "Contact's name",
       isCustom: false,
       isNullable: true,
       isUnique: false,
-      workspaceId: '',
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-    'emails-id': {
-      id: '',
+    }),
+    'emails-id': getMockFieldMetadataEntity({
+      workspaceId,
       objectMetadataId: '',
+      id: 'emails-id',
       type: FieldMetadataType.EMAILS,
       name: 'emails',
       label: 'Emails',
@@ -63,49 +67,48 @@ export const mockPersonObjectMetadataWithFieldMaps = (
         primaryEmail: "''",
         additionalEmails: null,
       },
-      description: 'Contact’s Emails',
+      description: "Contact's Emails",
       isCustom: false,
       isNullable: true,
-      workspaceId: '',
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-    'linkedinLink-id': {
-      id: '',
+    }),
+    'linkedinLink-id': getMockFieldMetadataEntity({
+      workspaceId,
       objectMetadataId: '',
+      id: 'linkedinLink-id',
       type: FieldMetadataType.LINKS,
       name: 'linkedinLink',
       label: 'Linkedin',
       defaultValue: {
         primaryLinkUrl: "''",
-        secondaryLinks: "'[]'",
+        secondaryLinks: [],
         primaryLinkLabel: "''",
       },
-      description: 'Contact’s Linkedin account',
+      description: "Contact's Linkedin account",
       isCustom: false,
       isNullable: true,
       isUnique: false,
-      workspaceId: '',
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-    'jobTitle-id': {
-      id: '',
+    }),
+    'jobTitle-id': getMockFieldMetadataEntity({
+      workspaceId,
       objectMetadataId: '',
+      id: 'jobTitle-id',
       type: FieldMetadataType.TEXT,
       name: 'jobTitle',
       label: 'Job Title',
       defaultValue: "''",
-      description: 'Contact’s job title',
+      description: "Contact's job title",
       isCustom: false,
       isNullable: false,
       isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       isLabelSyncedWithName: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
+    }),
   },
 });

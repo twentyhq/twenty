@@ -14,7 +14,10 @@ import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/inde
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
+import {
+  TsVectorColumnActionFactory,
+  TsVectorFieldMetadata,
+} from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -94,7 +97,7 @@ export class SearchVectorService {
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: this.tsVectorColumnActionFactory.handleCreateAction({
             ...searchVectorFieldMetadata,
-            defaultValue: undefined,
+            defaultValue: null,
             generatedType: 'STORED',
             asExpression: getTsVectorColumnExpressionFromFields([
               {
@@ -102,7 +105,7 @@ export class SearchVectorService {
                 name: searchableFieldForCustomObject.name,
               },
             ]),
-            options: undefined,
+            options: null,
           } as FieldMetadataInterface<FieldMetadataType.TS_VECTOR>),
         },
       ],
@@ -159,8 +162,8 @@ export class SearchVectorService {
                 fieldMetadataNameAndTypeForSearch,
               ),
               generatedType: 'STORED', // Not stored on fieldMetadata
-              options: undefined,
-            },
+              options: null,
+            } as TsVectorFieldMetadata,
           ),
         },
       ],

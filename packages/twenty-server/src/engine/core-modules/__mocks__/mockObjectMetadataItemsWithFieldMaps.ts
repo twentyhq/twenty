@@ -1,6 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+
+const workspaceId = '20202020-0000-0000-0000-000000000000';
 
 export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMaps[] =
   [
@@ -22,12 +25,13 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       isSearchable: true,
       labelIdentifierFieldMetadataId: 'nameFieldMetadataId',
       imageIdentifierFieldMetadataId: '',
-      workspaceId: '',
+      workspaceId,
       indexMetadatas: [],
       fieldsById: {
-        nameFieldMetadataId: {
+        nameFieldMetadataId: getMockFieldMetadataEntity({
+          workspaceId,
+          objectMetadataId: '20202020-8dec-43d5-b2ff-6eef05095bec',
           id: 'nameFieldMetadataId',
-          objectMetadataId: '',
           type: FieldMetadataType.FULL_NAME,
           icon: 'test-field-icon',
           name: 'name',
@@ -36,15 +40,14 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
             lastName: "''",
             firstName: "''",
           },
-          description: 'Contact’s name',
+          description: "Contact's name",
           isCustom: false,
           isNullable: true,
           isUnique: false,
-          workspaceId: '',
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
+        }),
       },
       fieldIdByName: {
         name: 'nameFieldMetadataId',
@@ -69,12 +72,13 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       isSearchable: true,
       labelIdentifierFieldMetadataId: 'nameFieldMetadataId',
       imageIdentifierFieldMetadataId: '',
-      workspaceId: '',
+      workspaceId,
       indexMetadatas: [],
       fieldsById: {
-        nameFieldMetadataId: {
+        nameFieldMetadataId: getMockFieldMetadataEntity({
+          workspaceId,
+          objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
           id: 'nameFieldMetadataId',
-          objectMetadataId: '',
           type: FieldMetadataType.TEXT,
           icon: 'test-field-icon',
           name: 'name',
@@ -83,27 +87,30 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isCustom: false,
           isNullable: true,
           isUnique: false,
-          workspaceId: '',
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
-        domainNameFieldMetadataId: {
+        }),
+        domainNameFieldMetadataId: getMockFieldMetadataEntity({
+          workspaceId,
+          objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
           id: 'domainNameFieldMetadataId',
-          objectMetadataId: '',
           type: FieldMetadataType.LINKS,
           icon: 'test-field-icon',
           name: 'domainName',
           label: 'Domain Name',
-          defaultValue: '',
+          defaultValue: {
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
+            secondaryLinks: [],
+          },
           isCustom: false,
           isNullable: true,
           isUnique: false,
-          workspaceId: '',
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
+        }),
       },
       fieldIdByName: {
         name: 'nameFieldMetadataId',
@@ -129,12 +136,13 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       isSearchable: true,
       labelIdentifierFieldMetadataId: 'nameFieldMetadataId',
       imageIdentifierFieldMetadataId: 'imageIdentifierFieldMetadataId',
-      workspaceId: '',
+      workspaceId,
       indexMetadatas: [],
       fieldsById: {
-        nameFieldMetadataId: {
+        nameFieldMetadataId: getMockFieldMetadataEntity({
+          workspaceId,
+          objectMetadataId: '20202020-3d75-4aab-bacd-ee176c5f63ca',
           id: 'nameFieldMetadataId',
-          objectMetadataId: '',
           type: FieldMetadataType.TEXT,
           icon: 'test-field-icon',
           name: 'name',
@@ -143,14 +151,14 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isCustom: false,
           isNullable: true,
           isUnique: false,
-          workspaceId: '',
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
-        imageIdentifierFieldMetadataId: {
+        }),
+        imageIdentifierFieldMetadataId: getMockFieldMetadataEntity({
+          workspaceId,
+          objectMetadataId: '20202020-3d75-4aab-bacd-ee176c5f63ca',
           id: 'imageIdentifierFieldMetadataId',
-          objectMetadataId: '',
           type: FieldMetadataType.TEXT,
           icon: 'test-field-icon',
           name: 'imageIdentifierFieldName',
@@ -159,11 +167,10 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
           isCustom: false,
           isNullable: true,
           isUnique: false,
-          workspaceId: '',
           isLabelSyncedWithName: true,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
+        }),
       },
       fieldIdByName: {
         name: 'nameFieldMetadataId',
@@ -189,7 +196,7 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       isSearchable: false,
       labelIdentifierFieldMetadataId: '',
       imageIdentifierFieldMetadataId: '',
-      workspaceId: '',
+      workspaceId,
       indexMetadatas: [],
       fieldsById: {},
       fieldIdByName: {},

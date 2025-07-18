@@ -13,17 +13,27 @@ export class TimelineActivityRepository {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async upsertOne(
-    name: string,
-    properties: Partial<ObjectRecord>,
-    objectName: string,
-    recordId: string,
-    workspaceId: string,
-    workspaceMemberId?: string,
-    linkedRecordCachedName?: string,
-    linkedRecordId?: string,
-    linkedObjectMetadataId?: string,
-  ) {
+  async upsertOne({
+    name,
+    objectName,
+    properties,
+    recordId,
+    workspaceId,
+    linkedObjectMetadataId,
+    linkedRecordCachedName,
+    linkedRecordId,
+    workspaceMemberId,
+  }: {
+    name: string;
+    properties: Partial<ObjectRecord>;
+    objectName: string;
+    recordId: string;
+    workspaceId: string;
+    workspaceMemberId?: string;
+    linkedRecordCachedName?: string;
+    linkedRecordId?: string;
+    linkedObjectMetadataId: string | null;
+  }) {
     const recentTimelineActivity = await this.findRecentTimelineActivity(
       name,
       objectName,
@@ -58,17 +68,17 @@ export class TimelineActivityRepository {
       );
     }
 
-    return this.insertTimelineActivity(
+    return this.insertTimelineActivity({
       name,
       properties,
       objectName,
       recordId,
       workspaceMemberId,
-      linkedRecordCachedName ?? '',
+      linkedRecordCachedName: linkedRecordCachedName ?? '',
       linkedRecordId,
       linkedObjectMetadataId,
       workspaceId,
-    );
+    });
   }
 
   private async findRecentTimelineActivity(
@@ -131,17 +141,27 @@ export class TimelineActivityRepository {
     });
   }
 
-  private async insertTimelineActivity(
-    name: string,
-    properties: Partial<ObjectRecord>,
-    objectName: string,
-    recordId: string,
-    workspaceMemberId: string | undefined,
-    linkedRecordCachedName: string,
-    linkedRecordId: string | undefined,
-    linkedObjectMetadataId: string | undefined,
-    workspaceId: string,
-  ) {
+  private async insertTimelineActivity({
+    linkedObjectMetadataId,
+    linkedRecordCachedName,
+    linkedRecordId,
+    name,
+    objectName,
+    properties,
+    recordId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    name: string;
+    properties: Partial<ObjectRecord>;
+    objectName: string;
+    recordId: string;
+    workspaceMemberId: string | undefined;
+    linkedRecordCachedName: string;
+    linkedRecordId: string | undefined;
+    linkedObjectMetadataId: string | null;
+    workspaceId: string;
+  }) {
     const timelineActivityTypeORMRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,

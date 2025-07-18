@@ -7,7 +7,7 @@ export const assertDoesNotNullifyDefaultValueForNonNullableField = ({
   isNullable,
   defaultValueFromUpdate,
 }: {
-  isNullable: boolean;
+  isNullable: boolean | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValueFromUpdate?: any;
 }) => {

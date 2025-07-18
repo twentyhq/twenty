@@ -28,7 +28,7 @@ export const generateObjectRecordFields = ({
         acc[field.name] = generateFakeField({
           type: field.type,
           label: field.label,
-          icon: field.icon,
+          icon: field.icon ?? undefined,
         });
 
         return acc;
@@ -49,7 +49,7 @@ export const generateObjectRecordFields = ({
 
         acc[field.name] = {
           isLeaf: false,
-          icon: field.icon,
+          icon: field.icon ?? undefined,
           label: field.label,
           value: generateFakeObjectRecord({
             objectMetadataInfo: {
