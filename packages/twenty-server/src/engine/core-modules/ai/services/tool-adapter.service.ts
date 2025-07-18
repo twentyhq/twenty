@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ToolSet } from 'ai';
+import { jsonSchema, ToolSet } from 'ai';
 
 import { TOOLS } from 'src/engine/core-modules/tool/constants/tools.const';
 import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -12,7 +12,7 @@ export class ToolAdapterService {
       (acc, [toolType, tool]) => {
         acc[toolType.toLowerCase()] = {
           description: tool.description,
-          parameters: tool.parameters,
+          parameters: jsonSchema(tool.parameters),
           execute: async (parameters) => {
             const toolInput: ToolInput = {
               parameters: parameters.input,
