@@ -49,6 +49,8 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { CreateObjectInput } from './dtos/create-object.input';
 
 @Injectable()
@@ -471,9 +473,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
-      const relationMetadataIds = objectMetadata.fields
-        .map((field) => field.relationTargetFieldMetadata?.id)
-        .filter(isDefined);
+      const relationMetadataIds = objectMetadata.fields.flatMap((field) => {
+        if (
+          isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+        ) {
+          return field.relationTargetFieldMetadata.id;
+        }
+
+        return [];
+      });
 
       await fieldMetadataRepository.delete({
         id: In(fieldMetadataIds.concat(relationMetadataIds)),
