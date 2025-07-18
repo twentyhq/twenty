@@ -76,6 +76,7 @@ msgstr ": Aujourd'hui"
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 msgid "· {objectFilterDropdownSearchInput}"
 msgstr ""
 
@@ -5178,6 +5179,14 @@ msgstr "Rechercher un index..."
 #. js-lingui-id: pFe0YS
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "Search an object"
+msgstr ""
+
+#. js-lingui-id: S+MGem
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
+#: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
+msgid "Search any field"
 msgstr ""
 
 #. js-lingui-id: 3UPqHL
