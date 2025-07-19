@@ -22,7 +22,9 @@ import {
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
+import enGB from 'date-fns/locale/en-GB'; 
 
+registerLocale('en-GB', enGB);
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
@@ -501,6 +503,7 @@ export const DateTimePicker = ({
             openToDate={hasDate ? dateToUse : new Date()}
             disabledKeyboardNavigation
             onChange={handleDateChange as any}
+            locale="en-GB"
             customInput={
               <DateTimeInput
                 date={internalDate}
