@@ -3,8 +3,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -86,7 +87,7 @@ export const fieldSelectMock = getMockFieldMetadataEntity({
       position: 1,
       color: 'purple',
     },
-  ] as FieldMetadataComplexOption[],
+  ],
   isLabelSyncedWithName: true,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -116,7 +117,7 @@ export const fieldMultiSelectMock = getMockFieldMetadataEntity({
       position: 1,
       color: 'purple',
     },
-  ] as FieldMetadataComplexOption[],
+  ],
   isLabelSyncedWithName: true,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -140,11 +141,11 @@ export const fieldRelationMock = getMockFieldMetadataEntity({
     id: 'relationTargetObjectId',
     nameSingular: 'relationTargetObject',
     namePlural: 'relationTargetObjects',
-  } as any,
+  } as ObjectMetadataEntity,
   relationTargetFieldMetadata: {
     id: 'relationTargetFieldId',
     name: 'relationTargetField',
-  } as any,
+  } as FieldMetadataEntity,
   isLabelSyncedWithName: true,
   createdAt: new Date(),
   updatedAt: new Date(),

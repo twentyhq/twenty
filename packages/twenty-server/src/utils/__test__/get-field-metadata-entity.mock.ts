@@ -2,6 +2,8 @@ import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type GetMockFieldMetadataEntityOverride<
   T extends FieldMetadataType = FieldMetadataType,
@@ -13,18 +15,17 @@ export const getMockFieldMetadataEntity = <
 >(
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity<T> => {
-  // TODO avoid as any
   return {
     type: FieldMetadataType.TEXT as T,
     fieldPermissions: [],
     icon: null,
-    indexFieldMetadatas: {} as any,
+    indexFieldMetadatas: {} as IndexFieldMetadataEntity,
     isCustom: true,
     isLabelSyncedWithName: false,
     isNullable: null,
     isSystem: false,
     isUnique: null,
-    object: {} as any,
+    object: {} as ObjectMetadataEntity,
     relationTargetFieldMetadata: null as never,
     relationTargetFieldMetadataId: null as never,
     relationTargetObjectMetadata: null as never,
