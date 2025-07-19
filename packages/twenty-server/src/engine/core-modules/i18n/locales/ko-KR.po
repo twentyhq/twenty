@@ -503,8 +503,8 @@ msgstr "본문"
 #. js-lingui-id: Nl8eMw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Body (deprecated)"
-msgstr "본문(사용 중단됨)"
+#~ msgid "Body (deprecated)"
+#~ msgstr "본문(사용 중단됨)"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1314,6 +1314,11 @@ msgstr ""
 msgid "Invalid calling code {callingCode}"
 msgstr ""
 
+#. js-lingui-id: tG/2Q/
+#: src/engine/core-modules/captcha/captcha.guard.ts
+msgid "Invalid Captcha, please try another device"
+msgstr ""
+
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
@@ -1802,7 +1807,6 @@ msgid "Note attachments"
 msgstr "노트 첨부 파일"
 
 #. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "노트 본문"
@@ -2384,7 +2388,6 @@ msgid "Task attachments"
 msgstr "작업 첨부 파일"
 
 #. js-lingui-id: X8fs74
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "작업 본문"
