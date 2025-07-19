@@ -12,7 +12,10 @@ describe('tasksResolver (e2e)', () => {
               node {
                 position
                 title
-                bodyV2
+                bodyV2 {
+                  markdown
+                  blocknote
+                }
                 dueAt
                 status
                 id
