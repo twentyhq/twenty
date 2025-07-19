@@ -48,11 +48,11 @@ export const MultiItemFieldMenuItem = <T,>({
   const handleCopyClick = async (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     event.preventDefault();
-  
+
   try {
     await navigator.clipboard.writeText(String(value));
-  } catch (e){
-    console.error("Copy Failed:", e);
+    } catch (e) {
+      console.error("Copy Failed:", e);
   }
 
     closeDropdown(dropdownId);
@@ -116,12 +116,12 @@ export const MultiItemFieldMenuItem = <T,>({
               LeftIcon={IconCopy}
               text="Copy"
               onClick={handleCopyClick}
-              />
+            />
             <MenuItem
               LeftIcon={IconCopy}
               text="Copy"
               onClick={handleCopyClick}
-              />
+            />
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
