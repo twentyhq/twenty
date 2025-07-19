@@ -60,6 +60,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat,
       timeZone,
       dateFormat,
+      isWeekStartMonday,
     } = workspaceMemberEntity;
 
     const avatarUrl = this.generateSignedAvatarUrl({
@@ -84,6 +85,7 @@ export class WorkspaceMemberTranspiler {
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,
       timeZone,
       roles,
+      isWeekStartMonday,
     } satisfies WorkspaceMember;
   }
 
