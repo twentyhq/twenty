@@ -5,6 +5,7 @@ import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-o
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+// Should get depreacted in favor of the FlatFieldMetadata
 export type PartialFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = Omit<

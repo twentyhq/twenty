@@ -6,9 +6,9 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { isDefined } from 'twenty-shared/utils';
 
 describe('createOne FieldMetadataService relation fields', () => {
   let createdObjectMetadataPersonId = '';

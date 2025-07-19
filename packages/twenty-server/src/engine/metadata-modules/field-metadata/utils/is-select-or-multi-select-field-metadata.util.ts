@@ -9,7 +9,8 @@ export type SelectOrMultiSelectFieldMetadataEntity = FieldMetadataEntity<
 >;
 export const isSelectOrMultiSelectFieldMetadata = (
   fieldMetadata: FieldMetadataInterface,
-): fieldMetadata is SelectOrMultiSelectFieldMetadataEntity => {
+): fieldMetadata is FieldMetadataInterface &
+  SelectOrMultiSelectFieldMetadataEntity => {
   return [FieldMetadataType.SELECT, FieldMetadataType.MULTI_SELECT].includes(
     fieldMetadata.type,
   );

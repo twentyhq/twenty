@@ -118,9 +118,9 @@ export class WorkspaceMigrationFactory {
     ]);
   }
 
-  createColumnActions(
+  createColumnActions<T extends FieldMetadataType = FieldMetadataType>(
     action: WorkspaceMigrationColumnActionType.CREATE,
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataInterface<T>,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(

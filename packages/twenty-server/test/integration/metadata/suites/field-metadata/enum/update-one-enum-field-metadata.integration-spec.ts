@@ -170,6 +170,7 @@ describe.each(fieldMetadataEnumTypes)(
           | FieldMetadataComplexOption[]
           | FieldMetadataDefaultOption[]
           | null = data.updateOneField.options;
+
         expect(updatedOptions).toBeDefined();
         if (!isDefined(updatedOptions))
           throw new Error(
