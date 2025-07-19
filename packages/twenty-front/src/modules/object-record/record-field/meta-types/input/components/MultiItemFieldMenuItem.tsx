@@ -49,11 +49,10 @@ export const MultiItemFieldMenuItem = <T,>({
     event.stopPropagation();
     event.preventDefault();
 
-  try {
-    await navigator.clipboard.writeText(String(value));
-    } catch (e) {
-      console.error("Copy Failed:", e);
-  }
+    try {
+      await navigator.clipboard.writeText(String(value));
+    } catch {
+    }
 
 
   closeDropdown(dropdownId);
