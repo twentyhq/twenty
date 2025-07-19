@@ -51,7 +51,8 @@ export const MultiItemFieldMenuItem = <T,>({
 
     try {
       await navigator.clipboard.writeText(String(value));
-    } catch {
+    } catch (e) {
+     // Silently ignore clipboard errors 
     }
 
 
