@@ -10,15 +10,16 @@ export function isFieldMetadataInterfaceOfType<
 >(
   fieldMetadata: Pick<Field, 'type'>,
   type: Type,
-): fieldMetadata is FieldMetadataInterface<Type> {
+): fieldMetadata is Field & FieldMetadataInterface<Type> {
   return fieldMetadata.type === type;
 }
 
-export function isFieldMetadataEntityOfType<Type extends FieldMetadataType>(
-  fieldMetadata: unknown,
+export function isFieldMetadataEntityOfType<
+  Field extends FieldMetadataEntity<FieldMetadataType>,
+  Type extends FieldMetadataType,
+>(
+  fieldMetadata: Pick<Field, 'type'>,
   type: Type,
-): fieldMetadata is FieldMetadataEntity<Type> {
-  return (fieldMetadata as { type: FieldMetadataType }).type === type;
+): fieldMetadata is Field & FieldMetadataEntity<Type> {
+  return fieldMetadata.type === type;
 }
-
-//  Should implemented static typescript tests

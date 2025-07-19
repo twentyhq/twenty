@@ -215,7 +215,6 @@ export class DataloaderService {
           const fields = Object.values(
             objectMetadata.fieldsById,
           ).map<FieldMetadataDTO>(
-            // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
             (fieldMetadata) => {
               const overridesFieldToCompute = [
                 'icon',

@@ -13,10 +13,10 @@ describe('computeSchemaComponents', () => {
   faker.seed(1);
   it('should compute schema components', () => {
     expect(
-      computeSchemaComponents([
-        objectMetadataItemMock,
-      ] as ObjectMetadataEntity[]),
-    ).toMatchInlineSnapshot(`
+  computeSchemaComponents([
+  objectMetadataItemMock] as
+  ObjectMetadataEntity[])
+).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": "Object description",
@@ -38,7 +38,9 @@ describe('computeSchemaComponents', () => {
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://narrow-help.net/",
       },
-      "fieldMultiSelect": "OPTION_1",
+      "fieldMultiSelect": [
+        "OPTION_1",
+      ],
       "fieldNumber": 346.2151663160047,
       "fieldPhones": {
         "additionalPhones": [],
@@ -46,7 +48,9 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {
@@ -535,7 +539,9 @@ describe('computeSchemaComponents', () => {
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://unlawful-blowgun.biz",
       },
-      "fieldMultiSelect": "OPTION_1",
+      "fieldMultiSelect": [
+        "OPTION_1",
+      ],
       "fieldNumber": 692.6302930536448,
       "fieldPhones": {
         "additionalPhones": [],
@@ -543,7 +549,9 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {

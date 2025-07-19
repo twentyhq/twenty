@@ -85,7 +85,7 @@ export const generateRandomFieldValue = ({
         return [];
       }
 
-      return field.options[0].value;
+      return [field.options[0].value];
     }
 
     case FieldMetadataType.MULTI_SELECT: {
@@ -93,7 +93,7 @@ export const generateRandomFieldValue = ({
         return [];
       }
 
-      return field.options[0].value;
+      return [field.options[0].value];
     }
 
     case FieldMetadataType.RELATION:

@@ -329,7 +329,7 @@ export class FieldMetadataHealthService {
           }
         } else if (
           isDefined(enumValues) &&
-          enumValues.includes(metadataDefaultValue as string)
+          !enumValues.includes(metadataDefaultValue as string)
         ) {
           issues.push({
             type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,

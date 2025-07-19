@@ -28,7 +28,7 @@ describe('BeforeUpdateOneField', () => {
   let fieldMetadataService: FieldMetadataService;
 
   const mockWorkspaceId = 'workspace-id';
-  const mockFieldId = 'workspace-id';
+  const mockFieldId = 'field-id';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

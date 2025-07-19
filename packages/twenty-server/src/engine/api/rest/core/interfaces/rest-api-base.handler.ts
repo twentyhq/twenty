@@ -161,7 +161,6 @@ export abstract class RestApiBaseHandler {
     Object.values(objectMetadata.objectMetadataMapItem.fieldsById).forEach(
       (field) => {
         if (isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION)) {
-          field;
           if (
             depth === MAX_DEPTH &&
             isDefined(field.relationTargetObjectMetadataId)
