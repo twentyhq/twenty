@@ -214,43 +214,39 @@ export class DataloaderService {
 
           const fields = Object.values(
             objectMetadata.fieldsById,
-          ).map<FieldMetadataDTO>(
-            (fieldMetadata) => {
-              const overridesFieldToCompute = [
-                'icon',
-                'label',
-                'description',
-              ] as const satisfies (keyof FieldMetadataInterface)[];
+          ).map<FieldMetadataDTO>((fieldMetadata) => {
+            const overridesFieldToCompute = [
+              'icon',
+              'label',
+              'description',
+            ] as const satisfies (keyof FieldMetadataInterface)[];
 
-              const overrides = overridesFieldToCompute.reduce<
-                Partial<
-                  Record<(typeof overridesFieldToCompute)[number], string>
-                >
-              >(
-                (acc, field) => ({
-                  ...acc,
-                  [field]: resolveFieldMetadataStandardOverride(
-                    {
-                      label: fieldMetadata.label,
-                      description: fieldMetadata.description ?? undefined,
-                      icon: fieldMetadata.icon ?? undefined,
-                      isCustom: fieldMetadata.isCustom,
-                      standardOverrides:
-                        fieldMetadata.standardOverrides ?? undefined,
-                    },
-                    field,
-                    dataLoaderParams[0].locale,
-                  ),
-                }),
-                {},
-              );
+            const overrides = overridesFieldToCompute.reduce<
+              Partial<Record<(typeof overridesFieldToCompute)[number], string>>
+            >(
+              (acc, field) => ({
+                ...acc,
+                [field]: resolveFieldMetadataStandardOverride(
+                  {
+                    label: fieldMetadata.label,
+                    description: fieldMetadata.description ?? undefined,
+                    icon: fieldMetadata.icon ?? undefined,
+                    isCustom: fieldMetadata.isCustom,
+                    standardOverrides:
+                      fieldMetadata.standardOverrides ?? undefined,
+                  },
+                  field,
+                  dataLoaderParams[0].locale,
+                ),
+              }),
+              {},
+            );
 
-              return fromFieldMetadataEntityToFieldMetadataDto({
-                ...fieldMetadata,
-                ...overrides,
-              });
-            },
-          );
+            return fromFieldMetadataEntityToFieldMetadataDto({
+              ...fieldMetadata,
+              ...overrides,
+            });
+          });
 
           return filterMorphRelationDuplicateFieldsDTO(fields);
         });

@@ -13,10 +13,10 @@ describe('computeSchemaComponents', () => {
   faker.seed(1);
   it('should compute schema components', () => {
     expect(
-  computeSchemaComponents([
-  objectMetadataItemMock] as
-  ObjectMetadataEntity[])
-).toMatchInlineSnapshot(`
+      computeSchemaComponents([
+        objectMetadataItemMock,
+      ] as ObjectMetadataEntity[]),
+    ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": "Object description",
