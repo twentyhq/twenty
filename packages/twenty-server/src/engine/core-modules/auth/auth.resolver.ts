@@ -41,6 +41,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
@@ -78,6 +79,7 @@ import { AuthService } from './services/auth.service';
 @UsePipes(ResolverValidationPipe)
 @Resolver()
 @UseFilters(
+  CaptchaGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   EmailVerificationExceptionFilter,
