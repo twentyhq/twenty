@@ -25,15 +25,40 @@ export type Equal<A, B> =
  * Tests if a type has all required properties of another type
  * Works with both class types and regular object types
  *
- * @template T - Type to check
- * @template U - Type to check against
+ * @template T - Type that should contain the properties
+ * @template U - Type whose properties should be contained in T
  */
 export type HasAllProperties<T, U> = [T] extends [new (...args: any[]) => any]
   ? HasAllProperties<InstanceType<T>, U>
   : [U] extends [new (...args: any[]) => any]
     ? HasAllProperties<T, InstanceType<U>>
     : {
-          [K in keyof T]: K extends keyof U ? Equal<T[K], U[K]> : false;
-        }[keyof T] extends true
+          [K in keyof U]: K extends keyof T ? Equal<T[K], U[K]> : false;
+        }[keyof U] extends true
       ? true
       : false;
+
+// Test class for type tests
+class TestClass {
+  id!: string;
+  name!: string;
+}
+
+// Basic type tests
+type BasicTests = [
+  // Equal tests
+  Expect<Equal<string, string>>,
+  Expect<Equal<number, number>>,
+  Expect<Equal<{ a: string }, { a: string }>>,
+
+  // HasAllProperties tests with objects
+  Expect<HasAllProperties<{ a: string; b: number }, { a: string }>>,
+  Expect<HasAllProperties<{ a: string; b: number }, { a: string; b: number }>>,
+
+  // HasAllProperties with never fields
+  Expect<HasAllProperties<{ a: never; b: never }, { a: never }>>,
+
+  // Class instance tests
+  Expect<HasAllProperties<TestClass, { id: string }>>,
+  Expect<HasAllProperties<{ id: string; name: string }, { id: string }>>,
+];

@@ -11,14 +11,7 @@ export { eachTestingContextFilter } from './EachTestingContextFilter';
 export type { EachTestingContext } from './types/EachTestingContext.type';
 export type { SuccessfulAndFailingTestCases } from './types/SuccessfulAndFailingTestCases';
 export type {
-  TSExpect,
+  Expect,
   Equal,
-  Extends,
-  IsNever,
-  IsAny,
-  IsUnion,
-  ArrayElement,
-  AllOptional,
   HasAllProperties,
-  IsSubset,
 } from './types/TestingGenerics.type';
