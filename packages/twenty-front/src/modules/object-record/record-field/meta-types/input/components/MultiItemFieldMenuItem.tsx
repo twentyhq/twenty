@@ -53,8 +53,7 @@ export const MultiItemFieldMenuItem = <T,>({
   try {
     await navigator.clipboard.writeText(String(value));
   } catch {}
-  
-  closeDropdown(dropdownId);
+
 
   closeDropdown(dropdownId);
   onCopy?.();
