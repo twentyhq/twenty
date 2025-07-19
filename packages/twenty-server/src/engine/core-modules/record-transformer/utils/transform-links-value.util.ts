@@ -5,7 +5,6 @@ import {
   parseJson,
 } from 'twenty-shared/utils';
 
-import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
@@ -17,7 +16,6 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
-// TODO refactor this function handle partial composite field update
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
@@ -25,35 +23,46 @@ export const transformLinksValue = (
     return value;
   }
 
-  const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
-  const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
-  const secondaryLinksRaw = value.secondaryLinks as string | null;
+  
+  const safeValue = value as NonNullable<LinksFieldGraphQLInput>;
 
-  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
-    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : null;
+  // Build result object only with fields that are actually provided
+  const result: NonNullable<LinksFieldGraphQLInput> = {};
 
-  const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
-    {
-      primaryLinkUrl: primaryLinkUrlRaw,
-      primaryLinkLabel: primaryLinkLabelRaw,
-      secondaryLinks: secondaryLinksArray,
-    },
-  );
+  // Handle primaryLinkUrl only if provided
+  if (isDefined(safeValue.primaryLinkUrl)) {
+    result.primaryLinkUrl = lowercaseUrlOriginAndRemoveTrailingSlash(safeValue.primaryLinkUrl);
+  }
 
-  return {
-    ...value,
-    primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
-      : primaryLinkUrl,
-    primaryLinkLabel,
-    secondaryLinks: JSON.stringify(
-      secondaryLinks?.map((link) => ({
-        ...link,
-        url: isDefined(link.url)
-          ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
-          : link.url,
-      })),
-    ),
-  };
+  if (isDefined(safeValue.primaryLinkLabel)) {
+    result.primaryLinkLabel = safeValue.primaryLinkLabel;
+  }
+
+  // Handle secondaryLinks only if provided
+  if (isDefined(safeValue.secondaryLinks)) {
+    const secondaryLinksArray = isNonEmptyString(safeValue.secondaryLinks)
+      ? parseJson<LinkMetadataNullable[]>(safeValue.secondaryLinks)
+      : null;
+
+    if (secondaryLinksArray) {
+      const transformedSecondaryLinks = secondaryLinksArray
+        .map((link: LinkMetadataNullable) => {
+          if (!isDefined(link)) return link;
+          
+          return {
+            ...link,
+            url: isDefined(link.url)
+              ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
+              : link.url,
+          };
+        })
+        .filter(isDefined);
+
+      result.secondaryLinks = JSON.stringify(transformedSecondaryLinks);
+    } else {
+      result.secondaryLinks = safeValue.secondaryLinks;
+    }
+  }
+
+  return result;
 };
