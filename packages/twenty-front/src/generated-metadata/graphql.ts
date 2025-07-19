@@ -2992,6 +2992,7 @@ export type WorkspaceMember = {
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];
+  isWeekStartMonday?: Maybe<Scalars['Boolean']>;
   locale?: Maybe<Scalars['String']>;
   name: FullName;
   roles?: Maybe<Array<Role>>;
@@ -2999,7 +3000,6 @@ export type WorkspaceMember = {
   timeZone?: Maybe<Scalars['String']>;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['String']>;
-  isWeekStartMonday?: boolean;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */

@@ -2820,6 +2820,7 @@ export type WorkspaceMember = {
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];
+  isWeekStartMonday?: Maybe<Scalars['Boolean']>;
   locale?: Maybe<Scalars['String']>;
   name: FullName;
   roles?: Maybe<Array<Role>>;
