@@ -10,7 +10,7 @@ import {
   IconBookmarkPlus,
   IconPencil,
   IconTrash,
-  IconCopy
+  IconCopy,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -20,7 +20,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  onCopy?:()=> void;
+  onCopy?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
@@ -33,7 +33,6 @@ export const MultiItemFieldMenuItem = <T,>({
   onCopy,
   onSetAsPrimary,
   onDelete,
-
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
@@ -45,19 +44,19 @@ export const MultiItemFieldMenuItem = <T,>({
     dropdownId,
   );
 
-  const handleCopyClick = async(event: React.MouseEvent<HTMLDivElement>) => {
-  event.stopPropagation();
-  event.preventDefault();
-
+  const handleCopyClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
   
   try {
     await navigator.clipboard.writeText(String(value));
-  } catch {}
+  } catch (e){
+    console.error("Copy Failed:", e);
+  }
 
-
-  closeDropdown(dropdownId);
-  onCopy?.();
-};
+    closeDropdown(dropdownId);
+    onCopy?.();
+  };
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
