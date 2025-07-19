@@ -2886,6 +2886,7 @@ export type WorkspaceMember = {
   timeZone?: Maybe<Scalars['String']>;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['String']>;
+  isWeekStartMonday?: boolean;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
