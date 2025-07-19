@@ -2832,7 +2832,6 @@ export const oneSucceededWorkflowRunQueryResult = {
       },
       '753b124e-f427-44a4-ab08-bacfe9c2f746': {
         id: '0455ca41-bae1-4a3a-968c-b268a4e809bb',
-        body: null,
         title: 'Proposal for ',
         bodyV2: {
           markdown: '',
@@ -2966,13 +2965,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                     type: 'UUID',
                     label: 'Id',
                     value: '123e4567-e89b-12d3-a456-426614174000',
-                    isLeaf: true,
-                  },
-                  body: {
-                    icon: 'IconFilePencil',
-                    type: 'RICH_TEXT',
-                    label: 'Body (deprecated)',
-                    value: 'My rich text',
                     isLeaf: true,
                   },
                   title: {
@@ -4436,7 +4428,6 @@ export const oneSucceededWorkflowRunQueryResult = {
         '753b124e-f427-44a4-ab08-bacfe9c2f746': {
           result: {
             id: '0455ca41-bae1-4a3a-968c-b268a4e809bb',
-            body: null,
             title: 'Proposal for ',
             bodyV2: {
               markdown: '',
@@ -4571,13 +4562,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                     type: 'UUID',
                     label: 'Id',
                     value: '123e4567-e89b-12d3-a456-426614174000',
-                    isLeaf: true,
-                  },
-                  body: {
-                    icon: 'IconFilePencil',
-                    type: 'RICH_TEXT',
-                    label: 'Body (deprecated)',
-                    value: 'My rich text',
                     isLeaf: true,
                   },
                   title: {
@@ -8889,7 +8873,6 @@ export const oneSucceededWorkflowRunQueryResult = {
         '753b124e-f427-44a4-ab08-bacfe9c2f746': {
           result: {
             id: '0455ca41-bae1-4a3a-968c-b268a4e809bb',
-            body: null,
             title: 'Proposal for ',
             bodyV2: {
               markdown: '',
@@ -9054,13 +9037,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                   type: 'UUID',
                   label: 'Id',
                   value: '123e4567-e89b-12d3-a456-426614174000',
-                  isLeaf: true,
-                },
-                body: {
-                  icon: 'IconFilePencil',
-                  type: 'RICH_TEXT',
-                  label: 'Body (deprecated)',
-                  value: 'My rich text',
                   isLeaf: true,
                 },
                 title: {
