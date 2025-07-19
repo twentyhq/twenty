@@ -13,7 +13,6 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -46,7 +45,6 @@ export const MultiItemFieldMenuItem = <T,>({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const { copyToClipboard } = useCopyToClipboard();
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
