@@ -13,7 +13,7 @@ describe('getFieldType', () => {
   const completeFieldNumberMock = getMockFieldMetadataEntity({
     workspaceId: '20202020-0000-0000-0000-000000000000',
     objectMetadataId: '20202020-0000-0000-0000-000000000001',
-    id: '20202020-0000-0000-0000-000000000002',
+    id: 'field-number-id',
     type: fieldNumberMock.type,
     name: fieldNumberMock.name,
     label: 'Field Number',

@@ -127,6 +127,8 @@ export class WorkspaceFieldComparator {
       standardFieldMetadataMap,
     );
 
+    console.log(fieldMetadataDifference);
+
     for (const difference of fieldMetadataDifference) {
       const fieldName = difference.path[0];
       const findField = (

@@ -294,7 +294,6 @@ describe('BeforeUpdateOneField', () => {
     const expectedResult = {
       id: mockFieldId,
       update: {
-        label: 'New Label',
         standardOverrides: {
           label: 'New Label',
         },

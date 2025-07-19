@@ -1,9 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
 import { WorkspaceFieldComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field.comparator';
-import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('WorkspaceFieldComparator', () => {
   let comparator: WorkspaceFieldComparator;
@@ -13,21 +10,28 @@ describe('WorkspaceFieldComparator', () => {
     comparator = new WorkspaceFieldComparator();
   });
 
+  function createMockFieldMetadata(values: any) {
+    return {
+      workspaceId: 'some-workspace-id',
+      type: 'TEXT',
+      name: 'DefaultFieldName',
+      label: 'Default Field Label',
+      defaultValue: null,
+      description: 'Default description',
+      isCustom: false,
+      isSystem: false,
+      isNullable: true,
+      ...values,
+    };
+  }
+
   it('should generate CREATE action for new fields', () => {
     const original = { fields: [] } as any;
     const standard = {
       fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
+        createMockFieldMetadata({
           standardId: 'no-field-1',
           name: 'New Field',
-          type: FieldMetadataType.TEXT,
-          label: 'New Field',
-          isNullable: true,
-          isLabelSyncedWithName: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         }),
       ],
     } as any;
@@ -45,34 +49,18 @@ describe('WorkspaceFieldComparator', () => {
   it('should generate UPDATE action for modified fields', () => {
     const original = {
       fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
-          standardId: 'field-1',
-          id: 'field-1',
-          name: 'Test Field',
-          type: FieldMetadataType.TEXT,
-          label: 'Test Field',
+        createMockFieldMetadata({
+          standardId: '1',
+          id: '1',
           isNullable: true,
-          isLabelSyncedWithName: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         }),
       ],
     } as any;
     const standard = {
       fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
-          standardId: 'field-1',
-          name: 'Test Field',
-          type: FieldMetadataType.TEXT,
-          label: 'Test Field',
+        createMockFieldMetadata({
+          standardId: '1',
           isNullable: false,
-          isLabelSyncedWithName: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         }),
       ],
     } as any;
@@ -82,7 +70,7 @@ describe('WorkspaceFieldComparator', () => {
     expect(result).toEqual([
       {
         action: ComparatorAction.UPDATE,
-        object: expect.objectContaining({ id: 'field-1', isNullable: false }),
+        object: expect.objectContaining({ id: '1', isNullable: false }),
       },
     ]);
   });
@@ -90,19 +78,11 @@ describe('WorkspaceFieldComparator', () => {
   it('should generate DELETE action for removed fields', () => {
     const original = {
       fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
-          standardId: 'field-1',
-          id: 'field-1',
+        createMockFieldMetadata({
+          standardId: '1',
+          id: '1',
           name: 'Removed Field',
-          type: FieldMetadataType.TEXT,
-          label: 'Removed Field',
-          isNullable: true,
-          isLabelSyncedWithName: true,
           isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         }),
       ],
     } as any;
@@ -121,37 +101,11 @@ describe('WorkspaceFieldComparator', () => {
   it('should not generate any action for identical fields', () => {
     const original = {
       fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
-          standardId: 'field-1',
-          id: 'field-1',
-          name: 'Test Field',
-          type: FieldMetadataType.TEXT,
-          label: 'Test Field',
-          isNullable: true,
-          isLabelSyncedWithName: true,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
+        createMockFieldMetadata({ standardId: '1', id: '1', isActive: true }),
       ],
     } as any;
     const standard = {
-      fields: [
-        getMockFieldMetadataEntity({
-          workspaceId: '20202020-0000-0000-0000-000000000000',
-          objectMetadataId: '20202020-0000-0000-0000-000000000001',
-          standardId: 'field-1',
-          name: 'Test Field',
-          type: FieldMetadataType.TEXT,
-          label: 'Test Field',
-          isNullable: true,
-          isLabelSyncedWithName: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      ],
+      fields: [createMockFieldMetadata({ standardId: '1' })],
     } as any;
 
     const result = comparator.compare('', original.fields, standard.fields);

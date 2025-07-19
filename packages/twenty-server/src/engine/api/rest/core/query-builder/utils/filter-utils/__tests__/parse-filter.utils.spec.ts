@@ -61,7 +61,7 @@ describe('parseFilter', () => {
         mockObjectMetadataWithFieldMaps,
       ),
     ).toEqual({
-      and: [{ fieldNumber: { eq: 1 } }, { fieldNumber: { eq: 2 } }],
+      and: [{ fieldNumber: { eq: '1' } }, { fieldNumber: { eq: '2' } }],
     });
   });
 
@@ -73,8 +73,8 @@ describe('parseFilter', () => {
       ),
     ).toEqual({
       and: [
-        { fieldNumber: { eq: 1 } },
-        { or: [{ fieldNumber: { eq: 2 } }, { fieldNumber: { eq: 3 } }] },
+        { fieldNumber: { eq: '1' } },
+        { or: [{ fieldNumber: { eq: '2' } }, { fieldNumber: { eq: '3' } }] },
       ],
     });
   });
@@ -87,15 +87,17 @@ describe('parseFilter', () => {
       ),
     ).toEqual({
       and: [
-        { fieldNumber: { eq: 1 } },
+        { fieldNumber: { eq: '1' } },
         {
           or: [
-            { fieldNumber: { eq: 2 } },
-            { fieldNumber: { eq: 3 } },
-            { and: [{ fieldNumber: { eq: 6 } }, { fieldNumber: { eq: 7 } }] },
+            { fieldNumber: { eq: '2' } },
+            { fieldNumber: { eq: '3' } },
+            {
+              and: [{ fieldNumber: { eq: '6' } }, { fieldNumber: { eq: '7' } }],
+            },
           ],
         },
-        { or: [{ fieldNumber: { eq: 4 } }, { fieldNumber: { eq: 5 } }] },
+        { or: [{ fieldNumber: { eq: '4' } }, { fieldNumber: { eq: '5' } }] },
       ],
     });
   });
@@ -115,13 +117,13 @@ describe('parseFilter', () => {
             { not: { fieldText: { startsWith: 'val' } } },
             {
               and: [
-                { fieldNumber: { eq: 6 } },
+                { fieldNumber: { eq: '6' } },
                 { fieldText: { ilike: '%val%' } },
               ],
             },
           ],
         },
-        { or: [{ fieldNumber: { eq: 4 } }, { fieldText: { is: 'NULL' } }] },
+        { or: [{ fieldNumber: { eq: '4' } }, { fieldText: { is: 'NULL' } }] },
       ],
     });
   });
@@ -134,9 +136,9 @@ describe('parseFilter', () => {
       ),
     ).toEqual({
       and: [
-        { fieldNumber: { eq: 1 } },
+        { fieldNumber: { eq: '1' } },
         {
-          not: { fieldNumber: { eq: 2 } },
+          not: { fieldNumber: { eq: '2' } },
         },
       ],
     });

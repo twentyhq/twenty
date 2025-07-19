@@ -13,7 +13,7 @@ describe('checkFilterEnumValues', () => {
   const completeFieldSelectMock = getMockFieldMetadataEntity({
     workspaceId: '20202020-0000-0000-0000-000000000000',
     objectMetadataId: '20202020-0000-0000-0000-000000000001',
-    id: '20202020-0000-0000-0000-000000000002',
+    id: 'field-select-id',
     type: fieldSelectMock.type,
     name: fieldSelectMock.name,
     label: 'Field Select',
