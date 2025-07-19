@@ -201,12 +201,16 @@ export class FieldMetadataResolver {
         );
       }
 
-      return morphRelations.map((morphRelation) => ({
+      return morphRelations.map<RelationDTO>((morphRelation) => ({
         type: settings.relationType,
         sourceObjectMetadata: morphRelation.sourceObjectMetadata,
         targetObjectMetadata: morphRelation.targetObjectMetadata,
-        sourceFieldMetadata: morphRelation.sourceFieldMetadata,
-        targetFieldMetadata: morphRelation.targetFieldMetadata,
+        sourceFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+          morphRelation.sourceFieldMetadata,
+        ),
+        targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+          morphRelation.targetFieldMetadata,
+        ),
       }));
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
