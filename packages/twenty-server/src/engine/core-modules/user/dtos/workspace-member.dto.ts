@@ -39,6 +39,9 @@ export class WorkspaceMember {
   locale: string;
 
   @Field({ nullable: true })
+  isWeekStartMonday: boolean;
+
+  @Field({ nullable: true })
   timeZone: string;
 
   @Field(() => WorkspaceMemberDateFormatEnum, { nullable: true })
