@@ -31,6 +31,42 @@ jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
   })),
 }));
 
+jest.mock('@/domain-manager/hooks/useOrigin', () => ({
+  useOrigin: jest.fn().mockImplementation(() => ({
+    origin: 'http://localhost',
+  })),
+}));
+
+jest.mock('@/captcha/hooks/useRequestFreshCaptchaToken', () => ({
+  useRequestFreshCaptchaToken: jest.fn().mockImplementation(() => ({
+    requestFreshCaptchaToken: jest.fn(),
+  })),
+}));
+
+jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
+  useSignUpInNewWorkspace: jest.fn().mockImplementation(() => ({
+    createWorkspace: jest.fn(),
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
+  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    redirectToWorkspaceDomain: jest.fn(),
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
+  useIsCurrentLocationOnAWorkspace: jest.fn().mockImplementation(() => ({
+    isOnAWorkspace: true,
+  })),
+}));
+
+jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
+  useLastAuthenticatedWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    setLastAuthenticateWorkspaceDomain: jest.fn(),
+  })),
+}));
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>

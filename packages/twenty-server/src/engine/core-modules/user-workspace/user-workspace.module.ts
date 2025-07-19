@@ -7,7 +7,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -27,7 +26,7 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [User, UserWorkspace, Workspace, TwoFactorMethod],
+          [User, UserWorkspace, Workspace],
           'core',
         ),
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),

@@ -805,6 +805,7 @@ describe('UserWorkspaceService', () => {
           userId,
           workspaceId,
         },
+        relations: ['workspace'],
       });
       expect(result).toEqual(userWorkspace);
     });

@@ -34,6 +34,7 @@ import {
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
@@ -121,7 +122,11 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: { userWorkspaces: true },
+      relations: {
+        userWorkspaces: {
+          twoFactorAuthenticationMethods: true,
+        },
+      },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -149,11 +154,17 @@ export class UserResolver {
         }),
       );
 
+    const twoFactorAuthenticationMethodSummary =
+      buildTwoFactorAuthenticationMethodSummary(
+        currentUserWorkspace.twoFactorAuthenticationMethods,
+      );
+
     return {
       ...user,
       currentUserWorkspace: {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
+        twoFactorAuthenticationMethodSummary,
       },
       currentWorkspace: workspace,
     };

@@ -21,6 +21,8 @@ import {
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 
+import { Toggle2FA } from './Toggle2FA';
+
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
   flex-direction: column;
@@ -176,6 +178,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
+          </Card>
+          <Card rounded>
+            <Toggle2FA />
           </Card>
         </>
       )}

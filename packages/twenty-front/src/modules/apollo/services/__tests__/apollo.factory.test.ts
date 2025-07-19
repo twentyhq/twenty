@@ -1,7 +1,10 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import {
+  TwoFactorAuthenticationStrategy,
+  WorkspaceActivationStatus,
+} from '~/generated/graphql';
 import { ApolloFactory, Options } from '../apollo.factory';
 
 enableFetchMocks();
@@ -52,6 +55,10 @@ const mockWorkspace = {
   workspaceUrls: {
     subdomainUrl: 'test.com',
     customUrl: 'test.com',
+  },
+  twoFactorAuthenticationPolicy: {
+    strategy: TwoFactorAuthenticationStrategy.TOTP,
+    enforce: true,
   },
 };
 

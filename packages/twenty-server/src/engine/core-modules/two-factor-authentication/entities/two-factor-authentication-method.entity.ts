@@ -4,18 +4,22 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
-@Entity({ name: 'twoFactorMethod', schema: 'core' })
+@Index(['userWorkspaceId', 'strategy'], { unique: true })
+@Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
 @ObjectType()
-export class TwoFactorMethod {
+export class TwoFactorAuthenticationMethod {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,13 +31,23 @@ export class TwoFactorMethod {
   @Field(() => UserWorkspace)
   @ManyToOne(
     () => UserWorkspace,
-    (userWorkspace) => userWorkspace.twoFactorMethods,
+    (userWorkspace) => userWorkspace.twoFactorAuthenticationMethods,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
+
+  @Column({ nullable: false, type: 'jsonb' })
+  context: OTPContext;
+
+  @Field(() => TwoFactorAuthenticationStrategy)
+  @Column({
+    type: 'enum',
+    enum: TwoFactorAuthenticationStrategy,
+  })
+  strategy: TwoFactorAuthenticationStrategy;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
