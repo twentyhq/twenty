@@ -1,7 +1,11 @@
 import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/usePhonesField';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { phoneSchema } from '@/object-record/record-field/validation-schemas/phoneSchema';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
+import { useCallback } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -19,6 +23,7 @@ export const DEFAULT_PHONE_CALLING_CODE = '1';
 
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
+  hasError?: boolean;
 }>`
   ${({ hasItem, theme }) =>
     hasItem &&
@@ -27,6 +32,13 @@ const StyledCustomPhoneInputContainer = styled.div<{
       border-radius: 4px;
       border: 1px solid ${theme.border.color.medium};
       height: 30px;
+    `}
+
+  ${({ hasError, hasItem, theme }) =>
+    hasError &&
+    hasItem &&
+    css`
+      border: 1px solid ${theme.border.color.danger};
     `}
 `;
 
@@ -93,9 +105,25 @@ export const PhonesFieldInput = ({
     });
   };
 
+  const validateInput = useCallback(
+    (input: string) => ({
+      isValid: phoneSchema.safeParse(input).success,
+      errorMessage: '',
+    }),
+    [],
+  );
+
   const getShowPrimaryIcon = (index: number) =>
     index === 0 && phones.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
+
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
+  };
 
   return (
     <MultiItemFieldInput
@@ -105,6 +133,7 @@ export const PhonesFieldInput = ({
       onCancel={onCancel}
       placeholder="Phone"
       fieldMetadataType={FieldMetadataType.PHONES}
+      validateInput={validateInput}
       formatInput={(input) => {
         const phone = parsePhoneNumber(input);
         if (phone !== undefined) {
@@ -138,9 +167,12 @@ export const PhonesFieldInput = ({
           onDelete={handleDelete}
         />
       )}
-      renderInput={({ value, onChange, autoFocus, placeholder }) => {
+      renderInput={({ value, onChange, autoFocus, placeholder, hasError }) => {
         return (
-          <StyledCustomPhoneInputContainer hasItem={!!phones.length}>
+          <StyledCustomPhoneInputContainer
+            hasItem={!!phones.length}
+            hasError={hasError}
+          >
             <StyledCustomPhoneInput
               autoFocus={autoFocus}
               placeholder={placeholder}
@@ -154,6 +186,7 @@ export const PhonesFieldInput = ({
           </StyledCustomPhoneInputContainer>
         );
       }}
+      onError={handleError}
     />
   );
 };
