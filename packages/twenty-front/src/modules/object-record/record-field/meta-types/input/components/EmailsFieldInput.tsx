@@ -80,6 +80,7 @@ export const EmailsFieldInput = ({
           dropdownId={`emails-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
+          showCopyButton={true}
           email={email}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

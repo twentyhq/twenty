@@ -9,6 +9,7 @@ type EmailsFieldMenuItemProps = {
   email: string;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
+  showCopyButton: boolean;
 };
 
 export const EmailsFieldMenuItem = ({
@@ -19,6 +20,7 @@ export const EmailsFieldMenuItem = ({
   email,
   showPrimaryIcon,
   showSetAsPrimaryButton,
+  showCopyButton,
 }: EmailsFieldMenuItemProps) => {
   return (
     <MultiItemFieldMenuItem
@@ -30,6 +32,7 @@ export const EmailsFieldMenuItem = ({
       DisplayComponent={EmailDisplay}
       showPrimaryIcon={showPrimaryIcon}
       showSetAsPrimaryButton={showSetAsPrimaryButton}
+      showCopyButton={showCopyButton}
     />
   );
 };

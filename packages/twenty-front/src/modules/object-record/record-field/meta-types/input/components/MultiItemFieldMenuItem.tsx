@@ -8,10 +8,12 @@ import React, { useState } from 'react';
 import {
   IconBookmark,
   IconBookmarkPlus,
+  IconCopy,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -22,6 +24,7 @@ type MultiItemFieldMenuItemProps<T> = {
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
+  showCopyButton?: boolean;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
@@ -33,6 +36,7 @@ export const MultiItemFieldMenuItem = <T,>({
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
+  showCopyButton,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { closeDropdown } = useCloseDropdown();
@@ -40,6 +44,7 @@ export const MultiItemFieldMenuItem = <T,>({
     isDropdownOpenComponentState,
     dropdownId,
   );
+  const { copyToClipboard } = useCopyToClipboard();
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
@@ -71,6 +76,14 @@ export const MultiItemFieldMenuItem = <T,>({
     onEdit?.();
   };
 
+  const handleCopyClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    copyToClipboard(String(value));
+    closeDropdown(dropdownId);
+  };
+
   return (
     <MenuItemWithOptionDropdown
       onMouseEnter={handleMouseEnter}
@@ -100,6 +113,13 @@ export const MultiItemFieldMenuItem = <T,>({
               text="Delete"
               onClick={handleDeleteClick}
             />
+            {showCopyButton && (
+              <MenuItem
+                LeftIcon={IconCopy}
+                text="Copy"
+                onClick={handleCopyClick}
+              />
+            )}
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
