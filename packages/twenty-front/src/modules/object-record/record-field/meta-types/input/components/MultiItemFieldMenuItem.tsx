@@ -33,6 +33,7 @@ export const MultiItemFieldMenuItem = <T,>({
   onCopy,
   onSetAsPrimary,
   onDelete,
+
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
@@ -111,6 +112,11 @@ export const MultiItemFieldMenuItem = <T,>({
               text="Edit"
               onClick={handleEditClick}
             />
+            <MenuItem
+              LeftIcon={IconCopy}
+              text="Copy"
+              onClick={handleCopyClick}
+              />
             <MenuItem
               LeftIcon={IconCopy}
               text="Copy"
