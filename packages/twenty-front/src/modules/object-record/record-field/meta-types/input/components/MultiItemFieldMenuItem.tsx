@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import {
   IconBookmark,
   IconBookmarkPlus,
+  IconCopy,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
@@ -19,9 +20,11 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  onCopy?: (value: T) => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
+  showCopyButton?: boolean;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
@@ -33,6 +36,8 @@ export const MultiItemFieldMenuItem = <T,>({
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
+  showCopyButton,
+  onCopy,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { closeDropdown } = useCloseDropdown();
@@ -71,6 +76,14 @@ export const MultiItemFieldMenuItem = <T,>({
     onEdit?.();
   };
 
+  const handleCopyClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    closeDropdown(dropdownId);
+    onCopy?.(value);
+  };
+
   return (
     <MenuItemWithOptionDropdown
       onMouseEnter={handleMouseEnter}
@@ -100,6 +113,13 @@ export const MultiItemFieldMenuItem = <T,>({
               text="Delete"
               onClick={handleDeleteClick}
             />
+            {showCopyButton && (
+              <MenuItem
+                LeftIcon={IconCopy}
+                text="Copy"
+                onClick={handleCopyClick}
+              />
+            )}
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

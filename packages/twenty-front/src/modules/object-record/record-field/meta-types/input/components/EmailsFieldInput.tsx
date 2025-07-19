@@ -6,6 +6,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
@@ -18,6 +19,7 @@ export const EmailsFieldInput = ({
   onClickOutside,
 }: EmailsFieldInputProps) => {
   const { persistEmailsField, fieldValue } = useEmailsField();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const emails = useMemo<string[]>(
     () =>
@@ -56,6 +58,10 @@ export const EmailsFieldInput = ({
     setIsFieldInError(hasError && values.length === 0);
   };
 
+  const handleCopy = (email: string) => {
+    copyToClipboard(email);
+  };
+
   return (
     <MultiItemFieldInput
       items={emails}
@@ -80,10 +86,12 @@ export const EmailsFieldInput = ({
           dropdownId={`emails-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
+          showCopyButton={true}
           email={email}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
           onDelete={handleDelete}
+          onCopy={handleCopy}
         />
       )}
       onError={handleError}
