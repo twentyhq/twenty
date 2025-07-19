@@ -70,16 +70,6 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
-    label: msg`Body (deprecated)`,
-    description: msg`Note body`,
-    icon: 'IconFilePencil',
-  })
-  @WorkspaceIsNullable()
-  body: string | null;
-
-  @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
