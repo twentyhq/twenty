@@ -56,7 +56,10 @@ const mocks: MockedResponse[] = [
                 }
               }
             }
-            body
+            bodyV2 {
+              blocknote
+              markdown
+            }
             createdAt
             dueAt
             id
