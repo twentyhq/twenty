@@ -10,6 +10,7 @@ import {
   IconBookmarkPlus,
   IconPencil,
   IconTrash,
+  IconCopy
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -19,6 +20,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  onCopy?:()=> void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
@@ -28,8 +30,10 @@ export const MultiItemFieldMenuItem = <T,>({
   dropdownId,
   value,
   onEdit,
+  onCopy,
   onSetAsPrimary,
   onDelete,
+
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
@@ -40,6 +44,21 @@ export const MultiItemFieldMenuItem = <T,>({
     isDropdownOpenComponentState,
     dropdownId,
   );
+
+  const handleCopyClick = async(event: React.MouseEvent<HTMLDivElement>) => {
+  event.stopPropagation();
+  event.preventDefault();
+
+  
+  try {
+    await navigator.clipboard.writeText(String(value));
+  } catch {}
+  
+  closeDropdown(dropdownId);
+
+  closeDropdown(dropdownId);
+  onCopy?.();
+};
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
@@ -94,6 +113,11 @@ export const MultiItemFieldMenuItem = <T,>({
               text="Edit"
               onClick={handleEditClick}
             />
+            <MenuItem
+              LeftIcon={IconCopy}
+              text="Copy"
+              onClick={handleCopyClick}
+              />
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
