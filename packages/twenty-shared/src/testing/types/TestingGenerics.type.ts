@@ -38,27 +38,22 @@ export type HasAllProperties<T, U> = [T] extends [new (...args: any[]) => any]
       ? true
       : false;
 
-// Test class for type tests
 class TestClass {
   id!: string;
   name!: string;
 }
 
-// Basic type tests
+// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
 type BasicTests = [
-  // Equal tests
   Expect<Equal<string, string>>,
   Expect<Equal<number, number>>,
   Expect<Equal<{ a: string }, { a: string }>>,
 
-  // HasAllProperties tests with objects
   Expect<HasAllProperties<{ a: string; b: number }, { a: string }>>,
   Expect<HasAllProperties<{ a: string; b: number }, { a: string; b: number }>>,
 
-  // HasAllProperties with never fields
   Expect<HasAllProperties<{ a: never; b: never }, { a: never }>>,
 
-  // Class instance tests
   Expect<HasAllProperties<TestClass, { id: string }>>,
   Expect<HasAllProperties<{ id: string; name: string }, { id: string }>>,
 ];
