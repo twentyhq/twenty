@@ -285,7 +285,7 @@ describe('WorkspaceEntityManager', () => {
     it('should call createQueryBuilder with permissionOptions for update', async () => {
       await entityManager.update('test-entity', {}, {}, mockPermissionOptions);
       expect(entityManager['createQueryBuilder']).toHaveBeenCalledWith(
-        undefined,
+        'test-entity',
         undefined,
         undefined,
         mockPermissionOptions,
