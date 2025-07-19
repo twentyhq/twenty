@@ -21,6 +21,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  onCopy?: (value: T) => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
@@ -37,6 +38,7 @@ export const MultiItemFieldMenuItem = <T,>({
   showPrimaryIcon,
   showSetAsPrimaryButton,
   showCopyButton,
+  onCopy,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { closeDropdown } = useCloseDropdown();
@@ -80,8 +82,8 @@ export const MultiItemFieldMenuItem = <T,>({
     event.stopPropagation();
     event.preventDefault();
 
-    copyToClipboard(String(value));
     closeDropdown(dropdownId);
+    onCopy?.(value);
   };
 
   return (
