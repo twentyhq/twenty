@@ -4,8 +4,8 @@ type NoteDataSeed = {
   id: string;
   position: number;
   title: string;
-  bodyV2Blocknote: string | null;
-  bodyV2Markdown: string | null;
+  bodyV2Blocknote: string
+  bodyV2Markdown: string;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
