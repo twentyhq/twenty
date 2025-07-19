@@ -10,19 +10,21 @@ type FlatFieldMetadataOverrides<
 > &
   Partial<FlatFieldMetadata<T>>;
 
-export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
+export const getFlatFieldMetadataMock = <
+  T extends FieldMetadataType = FieldMetadataType.TEXT,
+>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata<T> => {
   const createdAt = faker.date.anytime();
 
   return {
+    type: FieldMetadataType.TEXT as T,
     createdAt,
     description: 'default flat field metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
     isCustom: true,
-    type: FieldMetadataType.TEXT as T,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,
@@ -35,10 +37,10 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     workspaceId: faker.string.uuid(),
     defaultValue: null,
     options: null,
-    // TODO
-    relationTargetFieldMetadataId: null,
-    relationTargetObjectMetadataId: null,
-    ///
+    relationTargetFieldMetadata: undefined as never,
+    relationTargetFieldMetadataId: undefined as never,
+    relationTargetObjectMetadata: undefined as never,
+    relationTargetObjectMetadataId: undefined as never,
     ...overrides,
   };
 };

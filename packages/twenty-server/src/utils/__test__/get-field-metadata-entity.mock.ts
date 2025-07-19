@@ -9,7 +9,7 @@ type GetMockFieldMetadataEntityOverride<
   Required<Pick<FieldMetadataEntity<T>, 'workspaceId' | 'objectMetadataId'>>;
 
 export const getMockFieldMetadataEntity = <
-  T extends FieldMetadataType = FieldMetadataType,
+  T extends FieldMetadataType = FieldMetadataType.TEXT,
 >(
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity<T> => {
@@ -25,12 +25,10 @@ export const getMockFieldMetadataEntity = <
     isSystem: false,
     isUnique: null,
     object: {} as any,
-    // TODO handle
-    relationTargetFieldMetadata: null,
-    relationTargetFieldMetadataId: null,
-    relationTargetObjectMetadata: null,
-    relationTargetObjectMetadataId: null,
-    ///
+    relationTargetFieldMetadata: null as never,
+    relationTargetFieldMetadataId: null as never,
+    relationTargetObjectMetadata: null as never,
+    relationTargetObjectMetadataId: null as never,
     standardId: null,
     standardOverrides: null,
     id: faker.string.uuid(),
