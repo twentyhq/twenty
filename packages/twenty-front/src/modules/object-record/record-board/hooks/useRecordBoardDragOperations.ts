@@ -72,11 +72,6 @@ export const useRecordBoardDragOperations = () => {
               position: singleDragResult.position,
             },
           });
-
-          return {
-            operationType: 'single',
-            recordsUpdated: [singleDragResult.recordId],
-          };
         } else {
           const multiDragResult = processMultiDrag({
             result,
@@ -87,7 +82,7 @@ export const useRecordBoardDragOperations = () => {
             selectFieldName: selectFieldMetadataItem.name,
           });
 
-          multiDragResult.recordUpdates.forEach((update) => {
+          for (const update of multiDragResult.recordUpdates) {
             updateOneRecord({
               idToUpdate: update.recordId,
               updateOneRecordInput: {
@@ -95,14 +90,7 @@ export const useRecordBoardDragOperations = () => {
                 position: update.position,
               },
             });
-          });
-
-          return {
-            operationType: 'multi',
-            recordsUpdated: multiDragResult.recordUpdates.map(
-              (recordUpdate) => recordUpdate.recordId,
-            ),
-          };
+          }
         }
       },
     [

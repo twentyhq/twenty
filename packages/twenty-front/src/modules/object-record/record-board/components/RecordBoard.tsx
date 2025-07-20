@@ -4,7 +4,7 @@ import {
   DragStart,
   OnDragEndResponder,
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
@@ -77,8 +77,6 @@ const StyledBoardContentContainer = styled.div`
 export const RecordBoard = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
-  const [dragStartSelection, setDragStartSelection] = useState<string[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
@@ -116,8 +114,7 @@ export const RecordBoard = () => {
       recordBoardId,
     );
 
-  const { multiDragState, startDrag, endDrag } =
-    useMultiDragState(recordBoardId);
+  const { multiDragState, startDrag, endDrag } = useMultiDragState();
 
   const { processDragOperation } = useRecordBoardDragOperations();
 
@@ -133,7 +130,7 @@ export const RecordBoard = () => {
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
     callback: () => {
-      if (!isDragging) {
+      if (!multiDragState.isDragging) {
         resetRecordSelection();
         deactivateBoardCard();
         unfocusBoardCard();
@@ -146,13 +143,10 @@ export const RecordBoard = () => {
   const handleDragStart = useRecoilCallback(
     ({ snapshot }) =>
       (start: DragStart) => {
-        setIsDragging(true);
-
         const currentSelectedRecordIds = getSnapshotValue(
           snapshot,
           recordBoardSelectedRecordIdsSelector,
         );
-        setDragStartSelection(currentSelectedRecordIds);
 
         startDrag(start, currentSelectedRecordIds);
       },
@@ -161,8 +155,6 @@ export const RecordBoard = () => {
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     () => (result) => {
-      setIsDragging(false);
-
       endDrag();
 
       if (!result.destination) return;
@@ -172,11 +164,11 @@ export const RecordBoard = () => {
         return;
       }
 
-      processDragOperation(result, dragStartSelection);
+      processDragOperation(result, multiDragState.originalSelection);
     },
     [
       processDragOperation,
-      dragStartSelection,
+      multiDragState.originalSelection,
       endDrag,
       currentRecordSorts,
       openModal,
