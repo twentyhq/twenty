@@ -126,6 +126,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   employees: '20202020-8965-464a-8a75-74bafc152a0b',
   linkedinLink: '20202020-ebeb-4beb-b9ad-6848036fb451',
   xLink: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
+  googleMapsLink: '20202020-c7a9-4b1f-b3a7-5d3c8aa9d7a1',
   annualRecurringRevenue: '20202020-602a-495c-9776-f5d5b11d227b',
   idealCustomerProfile: '20202020-ba6b-438a-8213-2c5ba28d76a2',
   position: '20202020-9b4e-462b-991d-a0ee33326454',

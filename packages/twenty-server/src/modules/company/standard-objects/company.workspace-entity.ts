@@ -110,6 +110,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   xLink: LinksMetadata | null;
 
   @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.googleMapsLink,
+    type: FieldMetadataType.LINKS,
+    label: msg`Google Maps`,
+    description: msg`The company Google Maps link`,
+    icon: 'IconBrandGoogle',
+  })
+  @WorkspaceIsNullable()
+  googleMapsLink: LinksMetadata | null;
+
+  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
     label: msg`ARR`,
