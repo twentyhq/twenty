@@ -22,18 +22,14 @@ type MultiDragResult = {
   }>;
 };
 
-export const processMultiDrag = (
-  context: MultiDragContext,
-): MultiDragResult => {
-  const {
-    result,
-    selectedRecordIds,
-    recordPositionData,
-    destinationRecordIds,
-    groupValue,
-    selectFieldName,
-  } = context;
-
+export const processMultiDrag = ({
+  result,
+  selectedRecordIds,
+  recordPositionData,
+  destinationRecordIds,
+  groupValue,
+  selectFieldName,
+}: MultiDragContext): MultiDragResult => {
   const sourceGroupId = result.source.droppableId;
 
   if (!result.destination) {

@@ -19,17 +19,13 @@ type SingleDragResult = {
   selectFieldName: string;
 };
 
-export const processSingleDrag = (
-  context: SingleDragContext,
-): SingleDragResult => {
-  const {
-    result,
-    recordPositionData,
-    destinationRecordIds,
-    groupValue,
-    selectFieldName,
-  } = context;
-
+export const processSingleDrag = ({
+  result,
+  recordPositionData,
+  destinationRecordIds,
+  groupValue,
+  selectFieldName,
+}: SingleDragContext): SingleDragResult => {
   const draggedRecordId = result.draggableId;
   const sourceGroupId = result.source.droppableId;
 
