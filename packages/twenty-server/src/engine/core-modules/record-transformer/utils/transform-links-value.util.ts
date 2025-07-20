@@ -5,6 +5,7 @@ import {
   parseJson,
 } from 'twenty-shared/utils';
 
+import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
@@ -26,43 +27,50 @@ export const transformLinksValue = (
   
   const safeValue = value as NonNullable<LinksFieldGraphQLInput>;
 
-  // Build result object only with fields that are actually provided
-  const result: NonNullable<LinksFieldGraphQLInput> = {};
+  // Handle each field individually without force casting
+  const primaryLinkUrl = isDefined(safeValue.primaryLinkUrl) 
+    ? lowercaseUrlOriginAndRemoveTrailingSlash(safeValue.primaryLinkUrl)
+    : safeValue.primaryLinkUrl;
 
-  // Handle primaryLinkUrl only if provided
-  if (isDefined(safeValue.primaryLinkUrl)) {
-    result.primaryLinkUrl = lowercaseUrlOriginAndRemoveTrailingSlash(safeValue.primaryLinkUrl);
-  }
-
-  if (isDefined(safeValue.primaryLinkLabel)) {
-    result.primaryLinkLabel = safeValue.primaryLinkLabel;
-  }
+  const primaryLinkLabel = safeValue.primaryLinkLabel ?? null;
 
   // Handle secondaryLinks only if provided
+  let secondaryLinksArray: LinkMetadataNullable[] | null = null;
   if (isDefined(safeValue.secondaryLinks)) {
-    const secondaryLinksArray = isNonEmptyString(safeValue.secondaryLinks)
-      ? parseJson<LinkMetadataNullable[]>(safeValue.secondaryLinks)
-      : null;
-
-    if (secondaryLinksArray) {
-      const transformedSecondaryLinks = secondaryLinksArray
-        .map((link: LinkMetadataNullable) => {
-          if (!isDefined(link)) return link;
-          
-          return {
-            ...link,
-            url: isDefined(link.url)
-              ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
-              : link.url,
-          };
-        })
-        .filter(isDefined);
-
-      result.secondaryLinks = JSON.stringify(transformedSecondaryLinks);
-    } else {
-      result.secondaryLinks = safeValue.secondaryLinks;
+    if (isNonEmptyString(safeValue.secondaryLinks)) {
+      try {
+        secondaryLinksArray = parseJson<LinkMetadataNullable[]>(safeValue.secondaryLinks);
+        
+        if (secondaryLinksArray) {
+          secondaryLinksArray = secondaryLinksArray
+            .map((link: LinkMetadataNullable) => {
+              if (!isDefined(link)) return link;
+              
+              return {
+                url: isDefined(link.url)
+                  ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
+                  : link.url,
+                label: link.label,
+              };
+            })
+            .filter(isDefined);
+        }
+      } catch {
+        secondaryLinksArray = null;
+      }
     }
   }
 
-  return result;
+  // Apply removeEmptyLinks logic to handle fallback behavior
+  const processedLinks = removeEmptyLinks({
+    primaryLinkUrl,
+    primaryLinkLabel,
+    secondaryLinks: secondaryLinksArray,
+  });
+
+  return {
+    primaryLinkUrl: processedLinks.primaryLinkUrl,
+    primaryLinkLabel: processedLinks.primaryLinkLabel,
+    secondaryLinks: JSON.stringify(processedLinks.secondaryLinks),
+  };
 };
