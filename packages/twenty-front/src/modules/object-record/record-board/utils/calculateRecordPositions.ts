@@ -59,7 +59,7 @@ export const calculateRecordPositions = (
 
   const positions: Record<string, number> = {};
 
-  recordsToMove.forEach((recordId: string, index: number) => {
+  for (const [index, recordId] of recordsToMove.entries()) {
     if (recordsToMove.length > 1) {
       const maxIncrement = recordAfter?.position
         ? (recordAfter.position - basePosition) / (recordsToMove.length + 1)
@@ -70,7 +70,7 @@ export const calculateRecordPositions = (
     } else {
       positions[recordId] = basePosition;
     }
-  });
+  }
 
   return positions;
 };
