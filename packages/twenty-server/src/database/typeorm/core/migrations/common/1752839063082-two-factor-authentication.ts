@@ -16,7 +16,7 @@ export class TwoFactorAuthentication1752839063082
       `CREATE UNIQUE INDEX "IDX_2909f5139c479e4632df03fd5e" ON "core"."twoFactorAuthenticationMethod" ("userWorkspaceId", "strategy") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "twoFactorAuthenticationPolicy" jsonb NOT NULL DEFAULT '{"enforce": true, "strategy": "TOTP"}'`,
+      `ALTER TABLE "core"."workspace" ADD "isTwoFactorAuthenticationEnforced" boolean NOT NULL DEFAULT false`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."twoFactorAuthenticationMethod" ADD CONSTRAINT "FK_b0f44ffd7c794beb48cb1e1b1a9" FOREIGN KEY ("userWorkspaceId") REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -28,7 +28,7 @@ export class TwoFactorAuthentication1752839063082
       `ALTER TABLE "core"."twoFactorAuthenticationMethod" DROP CONSTRAINT "FK_b0f44ffd7c794beb48cb1e1b1a9"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "twoFactorAuthenticationPolicy"`,
+      `ALTER TABLE "core"."workspace" DROP COLUMN "isTwoFactorAuthenticationEnforced"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_2909f5139c479e4632df03fd5e"`,

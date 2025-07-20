@@ -5,8 +5,6 @@ export const useCurrentWorkspaceTwoFactorAuthenticationPolicy = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   return {
-    policies: currentWorkspace
-      ? [currentWorkspace.twoFactorAuthenticationPolicy]
-      : undefined,
+    isEnforced: currentWorkspace?.isTwoFactorAuthenticationEnforced ?? false,
   };
 };

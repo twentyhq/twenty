@@ -1,16 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  IsBoolean,
-  IsNotIn,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
+    IsBoolean,
+    IsNotIn,
+    IsOptional,
+    IsString,
+    IsUUID,
+    Matches,
 } from 'class-validator';
-import { GraphQLJSON } from 'graphql-type-json';
 
-import { TwoFactorAuthenticationPolicy } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-policy.entity';
+
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -194,7 +193,8 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   defaultRoleId?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field({ nullable: true })
+  @IsBoolean()
   @IsOptional()
-  twoFactorAuthenticationPolicy?: TwoFactorAuthenticationPolicy;
+  isTwoFactorAuthenticationEnforced?: boolean;
 }

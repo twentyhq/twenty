@@ -1,30 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
+import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
+    TwoFactorAuthenticationException,
+    TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
-import { TotpStrategy } from './strategies/otp/totp/totp.strategy';
-import { TOTP_DEFAULT_CONFIGURATION } from './strategies/otp/totp/constants/totp.strategy.constants';
-import { OTPStatus } from './strategies/otp/otp.constants';
 import { OTPAuthenticationStrategyInterface } from './strategies/otp/interfaces/otp.strategy.interface';
+import { OTPStatus } from './strategies/otp/otp.constants';
+import { TOTP_DEFAULT_CONFIGURATION } from './strategies/otp/totp/constants/totp.strategy.constants';
+import { TotpStrategy } from './strategies/otp/totp/totp.strategy';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -52,7 +52,7 @@ export class TwoFactorAuthenticationService {
         'Two factor authentication verification required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,
       );
-    } else if (targetWorkspace?.twoFactorAuthenticationPolicy?.enforce) {
+    } else if (targetWorkspace?.isTwoFactorAuthenticationEnforced) {
       throw new AuthException(
         'Two factor authentication setup required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,

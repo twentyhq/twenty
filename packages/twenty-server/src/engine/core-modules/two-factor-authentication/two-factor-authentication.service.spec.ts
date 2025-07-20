@@ -3,19 +3,19 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
+    TwoFactorAuthenticationException,
+    TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
+import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
@@ -122,7 +122,7 @@ describe('TwoFactorAuthenticationService', () => {
   describe('is2FARequired', () => {
     it('should do nothing if workspace does not enforce 2FA', async () => {
       const mockWorkspace = {
-        twoFactorAuthenticationPolicy: null,
+        isTwoFactorAuthenticationEnforced: false,
       } as unknown as Workspace;
 
       await expect(
@@ -132,9 +132,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw PROVISION_REQUIRED if 2FA is required but not set up', async () => {
       const mockWorkspace = {
-        twoFactorAuthenticationPolicy: {
-          enforce: true,
-        },
+        isTwoFactorAuthenticationEnforced: true,
       } as unknown as Workspace;
       const expectedError = new AuthException(
         'Two factor authentication setup required',

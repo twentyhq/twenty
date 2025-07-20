@@ -23,7 +23,7 @@ export type CurrentWorkspace = Pick<
   | 'customDomain'
   | 'workspaceUrls'
   | 'metadataVersion'
-  | 'twoFactorAuthenticationPolicy'
+  | 'isTwoFactorAuthenticationEnforced'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers'> | null;
   defaultAgent?: { id: string } | null;

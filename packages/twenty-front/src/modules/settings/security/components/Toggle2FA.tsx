@@ -7,7 +7,6 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/display';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
-import { TwoFactorAuthenticationStrategy } from '~/generated/graphql';
 
 export const Toggle2FA = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -22,31 +21,19 @@ export const Toggle2FA = () => {
       throw new Error('User is not logged in');
     }
 
-    const newEnforceValue =
-      !currentWorkspace.twoFactorAuthenticationPolicy.enforce;
+    const newEnforceValue = !currentWorkspace.isTwoFactorAuthenticationEnforced;
 
     try {
       // Optimistic update
       setCurrentWorkspace({
         ...currentWorkspace,
-        twoFactorAuthenticationPolicy: {
-          strategy: TwoFactorAuthenticationStrategy.TOTP,
-          enforce: newEnforceValue,
-        },
+        isTwoFactorAuthenticationEnforced: newEnforceValue,
       });
 
       await updateWorkspace({
         variables: {
           input: {
-            twoFactorAuthenticationPolicy: newEnforceValue
-              ? {
-                  strategy: TwoFactorAuthenticationStrategy.TOTP,
-                  enforce: true,
-                }
-              : {
-                  strategy: TwoFactorAuthenticationStrategy.TOTP,
-                  enforce: false,
-                },
+            isTwoFactorAuthenticationEnforced: newEnforceValue,
           },
         },
       });
@@ -54,10 +41,7 @@ export const Toggle2FA = () => {
       // Rollback optimistic update if error
       setCurrentWorkspace({
         ...currentWorkspace,
-        twoFactorAuthenticationPolicy: {
-          strategy: TwoFactorAuthenticationStrategy.TOTP,
-          enforce: !newEnforceValue,
-        },
+        isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
       enqueueErrorSnackBar({
         apolloError: err instanceof ApolloError ? err : undefined,
@@ -73,7 +57,7 @@ export const Toggle2FA = () => {
           Icon={IconLifebuoy}
           title={t`Two Factor Authentication`}
           description={'Enforce two-step verification for every user login.'}
-          checked={currentWorkspace.twoFactorAuthenticationPolicy.enforce}
+          checked={currentWorkspace.isTwoFactorAuthenticationEnforced}
           onChange={handleChange}
           advancedMode
         />

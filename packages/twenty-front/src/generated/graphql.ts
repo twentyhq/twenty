@@ -2413,17 +2413,6 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
-export type TwoFactorAuthenticationPolicy = {
-  __typename?: 'TwoFactorAuthenticationPolicy';
-  enforce: Scalars['Boolean'];
-  strategy: TwoFactorAuthenticationStrategy;
-};
-
-/** 2FA Authentication Providers */
-export enum TwoFactorAuthenticationStrategy {
-  TOTP = 'TOTP'
-}
-
 export type TwoFactorAuthenticatonMethodDto = {
   __typename?: 'TwoFactorAuthenticatonMethodDTO';
   status: Scalars['String'];
@@ -2580,9 +2569,9 @@ export type UpdateWorkspaceInput = {
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
+  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
-  twoFactorAuthenticationPolicy?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpsertFieldPermissionsInput = {
@@ -2760,10 +2749,10 @@ export type Workspace = {
   isMicrosoftAuthEnabled: Scalars['Boolean'];
   isPasswordAuthEnabled: Scalars['Boolean'];
   isPublicInviteLinkEnabled: Scalars['Boolean'];
+  isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
-  twoFactorAuthenticationPolicy: TwoFactorAuthenticationPolicy;
   updatedAt: Scalars['DateTime'];
   version?: Maybe<Scalars['String']>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;

@@ -21,7 +21,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 export const SettingsProfile = () => {
   const { t } = useLingui();
 
-  const { policies: workspacePolicies } =
+  const { isEnforced: isTwoFactorAuthenticationEnforced } =
     useCurrentWorkspaceTwoFactorAuthenticationPolicy();
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
@@ -61,22 +61,20 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {isTwoFactorAuthenticationEnabled &&
-          workspacePolicies?.map((policy) => (
+        {isTwoFactorAuthenticationEnabled && isTwoFactorAuthenticationEnforced && (
             <Section>
               <UndecoratedLink
                 to={getSettingsPath(
                   SettingsPath.TwoFactorAuthenticationStrategyConfig,
-                  { twoFactorAuthenticationStrategy: policy.strategy },
+                  { twoFactorAuthenticationStrategy: 'TOTP' },
                 )}
               >
                 <SettingsCard
                   title={t`Authenticator App`}
                   Icon={<IconShield />}
                   Status={
-                    currentUserWorkspaceTwoFactorAuthenticationMethods[
-                      policy.strategy
-                    ]?.status === 'VERIFIED' ? (
+                    currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']
+                      ?.status === 'VERIFIED' ? (
                       <Status text={'Active'} color={'turquoise'} />
                     ) : (
                       <Status text={'Inactive'} color={'orange'} />
@@ -85,7 +83,7 @@ export const SettingsProfile = () => {
                 />
               </UndecoratedLink>
             </Section>
-          ))}
+          )}
         <Section>
           <ChangePassword />
         </Section>
