@@ -13,7 +13,7 @@ const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
 const mockedActivity = {
-  ...pick(mockedTasks[0], ['id', 'title', 'body', 'type', 'status', 'dueAt']),
+  ...pick(mockedTasks[0], ['id', 'title', 'bodyV2', 'type', 'status', 'dueAt']),
   updatedAt: mockedDate,
 };
 
@@ -56,7 +56,10 @@ const mocks: MockedResponse[] = [
                 }
               }
             }
-            body
+            bodyV2 {
+              blocknote
+              markdown
+            }
             createdAt
             dueAt
             id

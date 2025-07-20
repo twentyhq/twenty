@@ -498,8 +498,8 @@ msgstr "Body"
 #. js-lingui-id: Nl8eMw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Body (deprecated)"
-msgstr "Body (deprecated)"
+#~ msgid "Body (deprecated)"
+#~ msgstr "Body (deprecated)"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1309,6 +1309,11 @@ msgstr "Input is too short: \"{name}\""
 msgid "Invalid calling code {callingCode}"
 msgstr "Invalid calling code {callingCode}"
 
+#. js-lingui-id: tG/2Q/
+#: src/engine/core-modules/captcha/captcha.guard.ts
+msgid "Invalid Captcha, please try another device"
+msgstr "Invalid Captcha, please try another device"
+
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
@@ -1797,7 +1802,6 @@ msgid "Note attachments"
 msgstr "Note attachments"
 
 #. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "Note body"
@@ -2379,7 +2383,6 @@ msgid "Task attachments"
 msgstr "Task attachments"
 
 #. js-lingui-id: X8fs74
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "Task body"

@@ -71,19 +71,19 @@ export class WorkspaceUpdateQueryBuilder<
       this.internalContext,
     );
 
-    const beforeSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
+    const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
       this as unknown as WorkspaceSelectQueryBuilder<T>,
       this.objectRecordsPermissions,
       this.internalContext,
-      this.shouldBypassPermissionChecks,
+      true,
       this.authContext,
     );
 
-    beforeSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
-    beforeSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
-    beforeSelectQueryBuilder.setParameters(this.getParameters());
+    eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
+    eventSelectQueryBuilder.expressionMap.aliases = this.expressionMap.aliases;
+    eventSelectQueryBuilder.setParameters(this.getParameters());
 
-    const before = await beforeSelectQueryBuilder.getMany();
+    const before = await eventSelectQueryBuilder.getMany();
 
     const formattedBefore = formatResult<T[]>(
       before,
@@ -91,10 +91,11 @@ export class WorkspaceUpdateQueryBuilder<
       this.internalContext.objectMetadataMaps,
     );
 
-    const after = await super.execute();
+    const result = await super.execute();
+    const after = await eventSelectQueryBuilder.getMany();
 
     const formattedAfter = formatResult<T[]>(
-      after.raw,
+      after,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
     );
@@ -109,9 +110,9 @@ export class WorkspaceUpdateQueryBuilder<
     });
 
     return {
-      raw: after.raw,
+      raw: result.raw,
       generatedMaps: formattedAfter,
-      affected: after.affected,
+      affected: result.affected,
     };
   }
 

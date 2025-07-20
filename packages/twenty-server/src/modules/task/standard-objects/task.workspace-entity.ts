@@ -73,16 +73,6 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
-    label: msg`Body (deprecated)`,
-    description: msg`Task body`,
-    icon: 'IconFilePencil',
-  })
-  @WorkspaceIsNullable()
-  body: string | null;
-
-  @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
