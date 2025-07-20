@@ -15,18 +15,14 @@ type PositionCalculationContext = {
   recordPositionData: RecordPositionData[];
 };
 
-export const calculateRecordPositions = (
-  context: PositionCalculationContext,
-): Record<string, number> => {
-  const {
-    destinationRecordIds,
-    recordsToMove,
-    destinationIndex,
-    sourceGroupId,
-    destinationGroupId,
-    recordPositionData,
-  } = context;
-
+export const calculateRecordPositions = ({
+  destinationRecordIds,
+  recordsToMove,
+  destinationIndex,
+  sourceGroupId,
+  destinationGroupId,
+  recordPositionData,
+}: PositionCalculationContext): Record<string, number> => {
   const otherRecordIdsInDestinationColumn = destinationRecordIds.filter(
     (recordId: string) => !recordsToMove.includes(recordId),
   );
