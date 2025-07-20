@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -11,10 +12,9 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
