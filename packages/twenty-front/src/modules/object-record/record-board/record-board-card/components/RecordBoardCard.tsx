@@ -231,7 +231,6 @@ export const RecordBoardCard = () => {
     >
       <InView>
         <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
-          {/* Render dummy cards behind when multi-dragging */}
           {isPrimaryMultiDrag &&
             Array.from({
               length: Math.min(5, multiDragState.originalSelection.length - 1),
