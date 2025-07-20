@@ -1,14 +1,13 @@
-import { useSetRecoilState } from 'recoil';
-import { useEffect } from 'react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { AppPath } from '@/types/AppPath';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getLoginToken } from '@/apollo/utils/getLoginToken';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { AppPath } from '@/types/AppPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -16,7 +15,6 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
   const { origin } = useOrigin();
   const loginToken = getLoginToken();
   const setQrCodeState = useSetRecoilState(qrCodeState);
@@ -36,12 +34,10 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           return navigate(AppPath.SignInUp);
         }
 
-        const token = await readCaptchaToken();
         const initiateOTPProvisioningResult =
           await initiateCurrentUserWorkspaceOtpProvisioning({
             variables: {
               loginToken: loginToken,
-              captchaToken: token,
               origin,
             },
           });

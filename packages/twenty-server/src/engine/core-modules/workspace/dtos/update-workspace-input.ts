@@ -1,15 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-    IsBoolean,
-    IsNotIn,
-    IsOptional,
-    IsString,
-    IsUUID,
-    Matches,
+  IsBoolean,
+  IsNotIn,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
 } from 'class-validator';
-
-
 
 @InputType()
 export class UpdateWorkspaceInput {

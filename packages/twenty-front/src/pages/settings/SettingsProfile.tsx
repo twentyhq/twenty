@@ -61,7 +61,7 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {isTwoFactorAuthenticationEnabled && isTwoFactorAuthenticationEnforced && (
+        {isTwoFactorAuthenticationEnabled && (
             <Section>
               <UndecoratedLink
                 to={getSettingsPath(

@@ -7,12 +7,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -41,7 +40,7 @@ export class TwoFactorAuthenticationResolver {
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard)
   async initiateOTPProvisioning(
     @Args()
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,

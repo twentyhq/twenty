@@ -23,8 +23,8 @@ import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.ser
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';

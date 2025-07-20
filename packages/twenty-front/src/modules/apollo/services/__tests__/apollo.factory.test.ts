@@ -1,9 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import {
-    WorkspaceActivationStatus,
-} from '~/generated/graphql';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, Options } from '../apollo.factory';
 
 enableFetchMocks();

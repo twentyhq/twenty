@@ -1,17 +1,16 @@
 import { CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-    FeatureFlagKey,
-    OnboardingStatus,
-    SettingPermissionType,
-    SubscriptionInterval,
-    SubscriptionStatus,
-
-    User,
-    Workspace,
-    WorkspaceActivationStatus,
-    WorkspaceMemberDateFormatEnum,
-    WorkspaceMemberTimeFormatEnum,
+  FeatureFlagKey,
+  OnboardingStatus,
+  SettingPermissionType,
+  SubscriptionInterval,
+  SubscriptionStatus,
+  User,
+  Workspace,
+  WorkspaceActivationStatus,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
