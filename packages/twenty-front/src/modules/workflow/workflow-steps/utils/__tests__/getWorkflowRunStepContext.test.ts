@@ -1,6 +1,7 @@
 import { WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
+import { StepStatus } from 'twenty-shared/workflow';
 
 describe('getWorkflowRunStepContext', () => {
   it('should return an empty array for trigger step', () => {
@@ -15,14 +16,17 @@ describe('getWorkflowRunStepContext', () => {
       },
       steps: [],
     } satisfies WorkflowRunFlow;
-    const context = {
-      [TRIGGER_STEP_ID]: { company: { id: '123' } },
+    const stepInfos = {
+      [TRIGGER_STEP_ID]: {
+        result: { company: { id: '123' } },
+        status: StepStatus.SUCCESS,
+      },
     };
 
     const result = getWorkflowRunStepContext({
       stepId: TRIGGER_STEP_ID,
       flow,
-      context,
+      stepInfos,
     });
 
     expect(result).toEqual([]);
@@ -77,15 +81,20 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const context = {
-      [TRIGGER_STEP_ID]: { company: { id: '123' } },
-      step1: { taskId: '456' },
+
+    const stepInfos = {
+      [TRIGGER_STEP_ID]: {
+        result: { company: { id: '123' } },
+        status: StepStatus.SUCCESS,
+      },
+      step1: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
+      step2: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
     };
 
     const result = getWorkflowRunStepContext({
       stepId: 'step2',
       flow,
-      context,
+      stepInfos,
     });
 
     expect(result).toEqual([
@@ -149,16 +158,19 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const context = {
-      [TRIGGER_STEP_ID]: { company: { id: '123' } },
-      step1: { taskId: '456' },
-      step2: { emailId: '789' },
+    const stepInfos = {
+      [TRIGGER_STEP_ID]: {
+        result: { company: { id: '123' } },
+        status: StepStatus.SUCCESS,
+      },
+      step1: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
+      step2: { result: { emailId: '789' }, status: StepStatus.SUCCESS },
     };
 
     const result = getWorkflowRunStepContext({
       stepId: 'step1',
       flow,
-      context,
+      stepInfos,
     });
 
     expect(result).toEqual([
@@ -237,17 +249,20 @@ describe('getWorkflowRunStepContext', () => {
         },
       ],
     } satisfies WorkflowRunFlow;
-    const context = {
-      [TRIGGER_STEP_ID]: { company: { id: '123' } },
-      step1: { noteId: '456' },
-      step2: { noteId: '789' },
-      step3: { noteId: '101' },
+    const stepInfos = {
+      [TRIGGER_STEP_ID]: {
+        result: { company: { id: '123' } },
+        status: StepStatus.SUCCESS,
+      },
+      step1: { result: { noteId: '456' }, status: StepStatus.SUCCESS },
+      step2: { result: { noteId: '789' }, status: StepStatus.SUCCESS },
+      step3: { result: { noteId: '101' }, status: StepStatus.SUCCESS },
     };
 
     const result = getWorkflowRunStepContext({
       stepId: 'step3',
       flow,
-      context,
+      stepInfos,
     });
 
     expect(result).toEqual([

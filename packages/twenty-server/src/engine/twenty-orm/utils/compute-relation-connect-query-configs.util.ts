@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-relation-connect.type';
@@ -218,14 +218,14 @@ const hasRelationConnect = (value: unknown): value is ConnectObject => {
   return whereKeys.every((key) => {
     const whereValue = where[key];
 
-    if (typeof whereValue === 'string') {
+    if (typeof whereValue === 'string' || whereValue === null) {
       return true;
     }
     if (whereValue && typeof whereValue === 'object') {
       const subObj = whereValue as Record<string, unknown>;
 
       return Object.values(subObj).every(
-        (subValue) => typeof subValue === 'string',
+        (subValue) => typeof subValue === 'string' || subValue === null,
       );
     }
 
@@ -238,7 +238,10 @@ const checkUniqueConstraintFullyPopulated = (
   connectObject: ConnectObject,
   connectFieldName: string,
 ) => {
-  const uniqueConstraintsFields = getUniqueConstraintsFields({
+  const uniqueConstraintsFields = getUniqueConstraintsFields<
+    FieldMetadataInterface,
+    ObjectMetadataInterface
+  >({
     ...objectMetadata,
     fields: Object.values(objectMetadata.fieldsById),
   });

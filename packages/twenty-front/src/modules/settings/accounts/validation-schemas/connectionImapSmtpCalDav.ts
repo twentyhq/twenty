@@ -6,6 +6,7 @@ const connectionParameters = z
   .object({
     host: z.string().default(''),
     port: z.number().int().nullable().default(null),
+    username: z.string().optional(),
     password: z.string().default(''),
     secure: z.boolean().default(true),
   })

@@ -1,7 +1,7 @@
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
 
-export const getFieldOptions = <T extends string>(
-  fields: SpreadsheetImportFields<T>,
+export const getFieldOptions = (
+  fields: SpreadsheetImportFields,
   fieldKey: string,
 ) => {
   const field = fields.find(({ key }) => fieldKey === key);

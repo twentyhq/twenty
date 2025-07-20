@@ -6,14 +6,12 @@ import { Repository } from 'typeorm';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -35,7 +33,6 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly recordPositionService: RecordPositionService,
     private readonly recordInputTransformerService: RecordInputTransformerService,
@@ -128,21 +125,6 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         source: FieldActorSource.WORKFLOW,
         name: 'Workflow',
       },
-    });
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowActionInput.objectName,
-      action: DatabaseEventAction.CREATED,
-      events: [
-        {
-          recordId: objectRecord.id,
-          objectMetadata,
-          properties: {
-            after: objectRecord,
-          },
-        },
-      ],
-      workspaceId,
     });
 
     return {

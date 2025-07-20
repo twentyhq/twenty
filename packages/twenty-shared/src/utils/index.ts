@@ -15,6 +15,7 @@ export {
   sanitizeURL,
   getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
+export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { parseJson } from './parseJson';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { getGenericOperationName } from './sentry/getGenericOperationName';

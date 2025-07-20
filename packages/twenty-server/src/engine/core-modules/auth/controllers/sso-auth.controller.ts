@@ -115,7 +115,7 @@ export class SSOAuthController {
     const workspaceIdentityProvider =
       await this.workspaceSSOIdentityProviderRepository.findOne({
         where: { id: req.user.identityProviderId },
-        relations: ['workspace'],
+        relations: { workspace: true },
       });
 
     try {

@@ -49,7 +49,7 @@ export class LowercaseUserAndInvitationEmailsCommand extends ActiveOrSuspendedWo
   private async lowercaseUserEmails(workspaceId: string, dryRun: boolean) {
     const users = await this.userRepository.find({
       where: {
-        workspaces: {
+        userWorkspaces: {
           workspaceId,
         },
         email: Raw((alias) => `LOWER(${alias}) != ${alias}`),

@@ -1,7 +1,10 @@
 import { createHash } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { Request } from 'express';
 import { Plugin } from 'graphql-yoga';
+import { isDefined } from 'twenty-shared/utils';
+
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type CacheMetadataPluginConfig = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,22 +15,26 @@ export type CacheMetadataPluginConfig = {
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const computeCacheKey = (serverContext: any) => {
-    const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
-    const workspaceMetadataVersion =
-      serverContext.req.workspaceMetadataVersion ?? '0';
-    const operationName = getOperationName(serverContext);
-    const locale =
-      serverContext.req.userWorkspace?.locale ??
-      serverContext.req.headers['x-locale'] ??
-      '';
-    const localeCacheKey = isNonEmptyString(locale) ? `:${locale}` : '';
+  const computeCacheKey = ({
+    operationName,
+    request,
+  }: {
+    operationName: string;
+    request: Pick<Request, 'workspace' | 'locale' | 'body'>;
+  }) => {
+    const workspace = request.workspace;
+
+    if (!isDefined(workspace)) {
+      throw new InternalServerError('Workspace is not defined');
+    }
+
+    const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
+    const locale = request.locale;
     const queryHash = createHash('sha256')
-      .update(serverContext.req.body.query)
+      .update(request.body.query)
       .digest('hex');
 
-    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}:${queryHash}`;
+    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +47,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey(serverContext);
+      const cacheKey = computeCacheKey({
+        operationName: getOperationName(serverContext),
+        // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
+        request: (serverContext as unknown as { req: Request }).req,
+      });
       const cachedResponse = await config.cacheGetter(cacheKey);
 
       if (cachedResponse) {
@@ -54,7 +65,10 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey(serverContext);
+      const cacheKey = computeCacheKey({
+        operationName: getOperationName(serverContext),
+        request: (serverContext as unknown as { req: Request }).req,
+      });
 
       const cachedResponse = await config.cacheGetter(cacheKey);
 

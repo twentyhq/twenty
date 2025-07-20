@@ -112,7 +112,7 @@ export class User {
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
-  workspaces: Relation<UserWorkspace[]>;
+  userWorkspaces: Relation<UserWorkspace[]>;
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;

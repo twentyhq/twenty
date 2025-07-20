@@ -212,6 +212,7 @@ export {
   IconMap,
   IconMaximize,
   IconMessage,
+  IconMessageCirclePlus,
   IconMinus,
   IconMoneybag,
   IconMoodSmile,
@@ -313,6 +314,7 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
+  IconSitemap,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

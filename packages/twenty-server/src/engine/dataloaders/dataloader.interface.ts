@@ -4,6 +4,7 @@ import {
   FieldMetadataLoaderPayload,
   IndexFieldMetadataLoaderPayload,
   IndexMetadataLoaderPayload,
+  MorphRelationLoaderPayload,
   RelationLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -21,6 +22,16 @@ export interface IDataloaders {
       sourceFieldMetadata: FieldMetadataEntity;
       targetFieldMetadata: FieldMetadataEntity;
     }
+  >;
+
+  morphRelationLoader: DataLoader<
+    MorphRelationLoaderPayload,
+    {
+      sourceObjectMetadata: ObjectMetadataEntity;
+      targetObjectMetadata: ObjectMetadataEntity;
+      sourceFieldMetadata: FieldMetadataEntity;
+      targetFieldMetadata: FieldMetadataEntity;
+    }[]
   >;
 
   fieldMetadataLoader: DataLoader<

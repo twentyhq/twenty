@@ -64,6 +64,14 @@ const bootstrap = async () => {
     }),
   );
 
+  app.use(
+    '/metadata',
+    graphqlUploadExpress({
+      maxFieldSize: bytes(settings.storage.maxFileSize),
+      maxFiles: 10,
+    }),
+  );
+
   // Inject the server url in the frontend page
   generateFrontConfig();
 
