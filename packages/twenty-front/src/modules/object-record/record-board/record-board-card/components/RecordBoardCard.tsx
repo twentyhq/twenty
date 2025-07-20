@@ -1,7 +1,7 @@
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
+import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
@@ -123,7 +123,7 @@ export const RecordBoardCard = () => {
     RecordBoardCardContext,
   );
 
-  const multiDragState = useContext(MultiDragStateContext);
+  const multiDragState = useBoardCardDragState();
 
   const isPrimaryMultiDrag =
     multiDragState &&

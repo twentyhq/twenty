@@ -1,4 +1,4 @@
-import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
+import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -28,7 +28,7 @@ export const RecordBoardCardMultiDragPreview = ({
   isDragging,
 }: RecordBoardCardMultiDragPreviewProps) => {
   const { recordId } = useContext(RecordBoardCardContext);
-  const multiDragState = useContext(MultiDragStateContext);
+  const multiDragState = useBoardCardDragState();
 
   const isCurrentCardSelected =
     multiDragState?.originalSelection.includes(recordId) || false;

@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { useContext } from 'react';
 
-import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
+import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -42,7 +41,7 @@ export const RecordBoardColumn = ({
     recordBoardColumnId,
   );
 
-  const multiDragState = useContext(MultiDragStateContext);
+  const multiDragState = useBoardCardDragState();
 
   const filteredRecordIds = recordIdsByGroup.filter((recordId) => {
     if (
