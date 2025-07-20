@@ -1,9 +1,7 @@
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { MultiDragStateContext } from '@/object-record/record-board/contexts/MultiDragStateContext';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 const StyledMultiDragPreview = styled.div`
   position: absolute;
@@ -30,16 +28,11 @@ export const RecordBoardCardMultiDragPreview = ({
   isDragging,
 }: RecordBoardCardMultiDragPreviewProps) => {
   const { recordId } = useContext(RecordBoardCardContext);
-  const { recordBoardId } = useContext(RecordBoardContext);
+  const multiDragState = useContext(MultiDragStateContext);
 
-  const selectedRecordIds = useRecoilValue(
-    recordBoardSelectedRecordIdsComponentSelector.selectorFamily({
-      instanceId: recordBoardId,
-    }),
-  );
-
-  const isCurrentCardSelected = selectedRecordIds.includes(recordId);
-  const selectedCount = selectedRecordIds.length;
+  const isCurrentCardSelected =
+    multiDragState?.originalSelection.includes(recordId) || false;
+  const selectedCount = multiDragState?.originalSelection.length || 0;
 
   const shouldShow = isDragging && isCurrentCardSelected && selectedCount > 1;
 

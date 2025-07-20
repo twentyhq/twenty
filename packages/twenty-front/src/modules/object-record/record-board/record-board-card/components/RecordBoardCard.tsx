@@ -33,19 +33,13 @@ import { useDebouncedCallback } from 'use-debounce';
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
   shouldHide?: boolean;
-  isSecondaryDragged?: boolean;
+  isPrimaryMultiDrag?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
-
-  ${({ isSecondaryDragged }) =>
-    isSecondaryDragged &&
-    `
-    opacity: 0.3;
-  `}
 
   ${({ shouldHide }) =>
     shouldHide &&
@@ -97,6 +91,28 @@ const StyledBoardCard = styled.div<{
   }
 `;
 
+const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
+  position: relative;
+  ${({ isPrimaryMultiDrag }) =>
+    isPrimaryMultiDrag &&
+    `
+    transform: scale(1.02);
+    z-index: 10;
+  `}
+`;
+
+const StyledDummyCard = styled.div<{ offset: number }>`
+  position: absolute;
+  top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  z-index: ${({ offset }) => -offset};
+`;
+
 const StyledBoardCardWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
@@ -109,11 +125,11 @@ export const RecordBoardCard = () => {
 
   const multiDragState = useContext(MultiDragStateContext);
 
-  const isSecondaryDraggedCard =
+  const isPrimaryMultiDrag =
     multiDragState &&
     multiDragState.isDragging &&
-    multiDragState.draggedRecordIds.includes(recordId) &&
-    recordId !== multiDragState.primaryDraggedRecordId;
+    recordId === multiDragState.primaryDraggedRecordId &&
+    multiDragState.originalSelection.length > 1;
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -214,28 +230,38 @@ export const RecordBoardCard = () => {
       onContextMenu={handleContextMenuOpen}
     >
       <InView>
-        <StyledBoardCard
-          ref={cardRef}
-          data-selected={isCurrentCardSelected}
-          data-focused={isCurrentCardFocused}
-          data-active={isCurrentCardActive}
-          onMouseLeave={onMouseLeaveBoard}
-          onClick={handleCardClick}
-          isSecondaryDragged={isSecondaryDraggedCard}
-        >
-          <RecordBoardCardHeader
-            isCardExpanded={isCardExpanded}
-            setIsCardExpanded={setIsCardExpanded}
-          />
-          <AnimatedEaseInOut
-            isOpen={isCardExpanded || !isCompactModeActive}
-            initial={false}
+        <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
+          {/* Render dummy cards behind when multi-dragging */}
+          {isPrimaryMultiDrag &&
+            Array.from({
+              length: Math.min(5, multiDragState.originalSelection.length - 1),
+            }).map((_, index) => (
+              <StyledDummyCard key={index} offset={index + 1} />
+            ))}
+
+          <StyledBoardCard
+            ref={cardRef}
+            data-selected={isCurrentCardSelected}
+            data-focused={isCurrentCardFocused}
+            data-active={isCurrentCardActive}
+            onMouseLeave={onMouseLeaveBoard}
+            onClick={handleCardClick}
+            isPrimaryMultiDrag={isPrimaryMultiDrag}
           >
-            <RecordBoardCardBody
-              fieldDefinitions={visibleFieldDefinitionsFiltered}
+            <RecordBoardCardHeader
+              isCardExpanded={isCardExpanded}
+              setIsCardExpanded={setIsCardExpanded}
             />
-          </AnimatedEaseInOut>
-        </StyledBoardCard>
+            <AnimatedEaseInOut
+              isOpen={isCardExpanded || !isCompactModeActive}
+              initial={false}
+            >
+              <RecordBoardCardBody
+                fieldDefinitions={visibleFieldDefinitionsFiltered}
+              />
+            </AnimatedEaseInOut>
+          </StyledBoardCard>
+        </StyledCardContainer>
       </InView>
     </StyledBoardCardWrapper>
   );

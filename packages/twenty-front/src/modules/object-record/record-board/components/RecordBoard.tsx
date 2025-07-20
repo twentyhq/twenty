@@ -116,7 +116,8 @@ export const RecordBoard = () => {
       recordBoardId,
     );
 
-  const { multiDragState, startDrag, endDrag } = useMultiDragState();
+  const { multiDragState, startDrag, endDrag } =
+    useMultiDragState(recordBoardId);
 
   const { processDragOperation } = useRecordBoardDragOperations();
 
