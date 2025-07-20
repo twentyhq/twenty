@@ -62,7 +62,7 @@ describe('calculateRecordPositions', () => {
     expect(mockGetDraggedRecordPosition).toHaveBeenCalledWith(2, 3);
   });
 
-  it('should calculate multiple record positions with incremental offsets', () => {
+  it('should calculate multiple record positions with proportional spacing', () => {
     const basePosition = 2.5;
 
     mockGetIndexNeighboursElementsFromArray.mockReturnValue({
@@ -82,9 +82,9 @@ describe('calculateRecordPositions', () => {
     });
 
     expect(result).toEqual({
-      'record-1': basePosition,
-      'record-6': basePosition + 0.0001,
-      'record-7': basePosition + 0.0002,
+      'record-1': 3.125,
+      'record-6': 3.75,
+      'record-7': 4.375,
     });
   });
 
@@ -206,7 +206,7 @@ describe('calculateRecordPositions', () => {
     });
   });
 
-  it('should handle multi-drag with safe increments when after record exists', () => {
+  it('should handle multi-drag with proportional spacing when after record exists', () => {
     const basePosition = 2.5;
     const afterPosition = 5.0;
 
@@ -238,8 +238,39 @@ describe('calculateRecordPositions', () => {
     });
 
     expect(result).toEqual({
-      'record-a': basePosition,
-      'record-b': basePosition + 0.0001,
+      'record-a': 3.3333333333333335,
+      'record-b': 4.166666666666667,
+    });
+  });
+
+  it('should handle multi-drag with default spacing when no after record exists', () => {
+    const basePosition = 5.5;
+
+    mockGetIndexNeighboursElementsFromArray.mockReturnValue({
+      before: 'record-5',
+      after: null,
+    });
+
+    mockGetDraggedRecordPosition.mockReturnValue(basePosition);
+
+    const result = calculateRecordPositions({
+      destinationRecordIds: [
+        'record-1',
+        'record-2',
+        'record-3',
+        'record-4',
+        'record-5',
+      ],
+      recordsToMove: ['record-a', 'record-b'],
+      destinationIndex: 5,
+      sourceGroupId: 'group-1',
+      destinationGroupId: 'group-2',
+      recordPositionData: mockRecordPositionData,
+    });
+
+    expect(result).toEqual({
+      'record-a': 5.833333333333333,
+      'record-b': 6.166666666666667,
     });
   });
 });

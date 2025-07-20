@@ -57,12 +57,12 @@ export const calculateRecordPositions = ({
 
   for (const [index, recordId] of recordsToMove.entries()) {
     if (recordsToMove.length > 1) {
-      const maxIncrement = recordAfter?.position
-        ? (recordAfter.position - basePosition) / (recordsToMove.length + 1)
-        : 0.0001;
+      const availableSpace = recordAfter?.position
+        ? recordAfter.position - basePosition
+        : 1;
 
-      const safeIncrement = Math.min(maxIncrement, 0.0001);
-      positions[recordId] = basePosition + index * safeIncrement;
+      const increment = availableSpace / (recordsToMove.length + 1);
+      positions[recordId] = basePosition + (index + 1) * increment;
     } else {
       positions[recordId] = basePosition;
     }
