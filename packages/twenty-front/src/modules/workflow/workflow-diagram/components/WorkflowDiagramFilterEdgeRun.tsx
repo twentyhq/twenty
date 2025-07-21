@@ -1,5 +1,6 @@
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
+import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramBaseEdge';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useWorkflowVisualizerDiagramContextOrThrow } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
@@ -7,14 +8,8 @@ import {
   WorkflowDiagramEdge,
   WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getStraightPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, EdgeProps, getStraightPath } from '@xyflow/react';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
@@ -42,13 +37,9 @@ const StyledConfiguredFilterContainer = styled.div`
 export const WorkflowDiagramFilterEdgeRun = ({
   sourceY,
   targetY,
-  markerStart,
-  markerEnd,
   data,
 }: WorkflowDiagramFilterEdgeRunProps) => {
   assertFilterEdgeDataOrThrow(data);
-
-  const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getStraightPath({
     sourceX: CREATE_STEP_NODE_WIDTH,
@@ -70,11 +61,9 @@ export const WorkflowDiagramFilterEdgeRun = ({
 
   return (
     <>
-      <BaseEdge
-        markerStart={markerStart}
-        markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
+      <WorkflowRunDiagramBaseEdge
+        edgePath={edgePath}
+        edgeExecutionStatus={data.edgeExecutionStatus}
       />
 
       <EdgeLabelRenderer>

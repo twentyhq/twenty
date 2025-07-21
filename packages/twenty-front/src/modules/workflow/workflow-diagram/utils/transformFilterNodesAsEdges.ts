@@ -63,6 +63,7 @@ export const transformFilterNodesAsEdges = <
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         data: {
+          ...incomingEdge.data,
           edgeType: 'filter',
           stepId: filterNode.id,
           // TODO: Get the filter settings from the filter node
