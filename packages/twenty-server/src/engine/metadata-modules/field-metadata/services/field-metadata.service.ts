@@ -9,13 +9,13 @@ import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -35,6 +35,8 @@ import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
+import { isFieldMetadataTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation-or-morph-relation.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
@@ -357,19 +359,50 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           (fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>)
             .settings?.relationType === RelationType.MANY_TO_ONE;
 
-        if (!isDefined(fieldMetadata.relationTargetFieldMetadata)) {
+        if (
+          !isDefined(fieldMetadata.relationTargetFieldMetadata) ||
+          !isDefined(fieldMetadata.relationTargetFieldMetadataId)
+        ) {
           throw new FieldMetadataException(
             'Target field metadata does not exist',
             FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           );
         }
 
-        await fieldMetadataRepository.delete({
-          id: In([
+        const fieldMetadataIdsToDelete: string[] = [];
+        const isRelationTargetMorphRelation = isFieldMetadataTypeMorphRelation(
+          fieldMetadata.relationTargetFieldMetadata,
+        );
+
+        if (isRelationTargetMorphRelation) {
+          const morphRelationsRelatedToFieldMetadata =
+            await this.getMorphRelationsRelatedToFieldMetadata({
+              fieldMetadataName: fieldMetadata.relationTargetFieldMetadata.name,
+              objectMetadataId:
+                fieldMetadata.relationTargetFieldMetadata.objectMetadataId,
+              workspaceId,
+              fieldMetadataRepository,
+            });
+
+          morphRelationsRelatedToFieldMetadata.forEach((morphRelation) => {
+            fieldMetadataIdsToDelete.push(
+              morphRelation.id,
+              morphRelation.relationTargetFieldMetadataId,
+            );
+          });
+        } else {
+          fieldMetadataIdsToDelete.push(
             fieldMetadata.id,
-            fieldMetadata.relationTargetFieldMetadata.id,
-          ]),
+            fieldMetadata.relationTargetFieldMetadataId,
+          );
+        }
+
+        await fieldMetadataRepository.delete({
+          id: In(fieldMetadataIdsToDelete),
         });
+
+        // TODO @guillim: implement custom migration part
+        console.log('TODO: implement custom migration part');
 
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`delete-${fieldMetadata.name}`),
@@ -394,6 +427,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           ],
           queryRunner,
         );
+      } else if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
+        // we should delete all morph relations sharing the same name and the same source object metadata id
+        // and then delete all the related relations
+        console.log('delete morph relation');
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         await fieldMetadataRepository.delete(fieldMetadata.id);
         const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -709,5 +746,39 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadataMaps,
       },
     );
+  }
+
+  private async getMorphRelationsRelatedToFieldMetadata({
+    fieldMetadataName,
+    objectMetadataId,
+    workspaceId,
+    fieldMetadataRepository,
+  }: {
+    fieldMetadataName: string;
+    objectMetadataId: string;
+    workspaceId: string;
+    fieldMetadataRepository: Repository<FieldMetadataEntity>;
+  }): Promise<
+    FieldMetadataEntity<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[]
+  > {
+    const fieldMetadatas = await fieldMetadataRepository.find({
+      where: {
+        name: fieldMetadataName,
+        objectMetadataId,
+        workspaceId,
+      },
+      relations: ['relationTargetFieldMetadata'],
+    });
+
+    if (!isFieldMetadataTypeRelationOrMorphRelation(fieldMetadatas)) {
+      throw new FieldMetadataException(
+        'At least one field metadata is not a relation or morph relation',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return fieldMetadatas;
   }
 }
