@@ -62,10 +62,6 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    if (!isDefined(workflowRunInfo)) {
-      return;
-    }
-
     const { stepToExecute, steps, stepInfos } = workflowRunInfo;
 
     if (!canExecuteStep({ stepId, steps, stepInfos })) {
@@ -216,7 +212,7 @@ export class WorkflowExecutorWorkspaceService {
         error: `WorkflowRun ${workflowRunId} not found`,
       });
 
-      return;
+      throw new Error(`WorkflowRun ${workflowRunId} not found`);
     }
 
     const steps = workflowRun.state.flow.steps;
@@ -231,7 +227,7 @@ export class WorkflowExecutorWorkspaceService {
         error: 'Step not found',
       });
 
-      return;
+      throw new Error(`Step ${stepId} not found`);
     }
 
     return {
