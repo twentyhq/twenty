@@ -8,7 +8,6 @@ import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticatonPolicy';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -21,15 +20,16 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 export const SettingsProfile = () => {
   const { t } = useLingui();
 
-  const { isEnforced: isTwoFactorAuthenticationEnforced } =
-    useCurrentWorkspaceTwoFactorAuthenticationPolicy();
-
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
 
   const isTwoFactorAuthenticationEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
   );
+
+  const has2FAMethod =
+    currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
+    'VERIFIED';
 
   return (
     <SubMenuTopBarContainer
@@ -62,28 +62,27 @@ export const SettingsProfile = () => {
           <EmailField />
         </Section>
         {isTwoFactorAuthenticationEnabled && (
-            <Section>
-              <UndecoratedLink
-                to={getSettingsPath(
-                  SettingsPath.TwoFactorAuthenticationStrategyConfig,
-                  { twoFactorAuthenticationStrategy: 'TOTP' },
-                )}
-              >
-                <SettingsCard
-                  title={t`Authenticator App`}
-                  Icon={<IconShield />}
-                  Status={
-                    currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']
-                      ?.status === 'VERIFIED' ? (
-                      <Status text={'Active'} color={'turquoise'} />
-                    ) : (
-                      <Status text={'Inactive'} color={'orange'} />
-                    )
-                  }
-                />
-              </UndecoratedLink>
-            </Section>
-          )}
+          <Section>
+            <UndecoratedLink
+              to={getSettingsPath(
+                SettingsPath.TwoFactorAuthenticationStrategyConfig,
+                { twoFactorAuthenticationStrategy: 'TOTP' },
+              )}
+            >
+              <SettingsCard
+                title={t`Authenticator App`}
+                Icon={<IconShield />}
+                Status={
+                  has2FAMethod ? (
+                    <Status text={'Active'} color={'turquoise'} />
+                  ) : (
+                    <Status text={'Setup'} color={'blue'} />
+                  )
+                }
+              />
+            </UndecoratedLink>
+          </Section>
+        )}
         <Section>
           <ChangePassword />
         </Section>

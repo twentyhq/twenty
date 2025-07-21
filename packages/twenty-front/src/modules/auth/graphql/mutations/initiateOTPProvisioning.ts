@@ -15,3 +15,11 @@ export const INITIATE_OTP_PROVISIONING = gql`
     }
   }
 `;
+
+export const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
+  mutation initiateOTPProvisioningForAuthenticatedUser {
+    initiateOTPProvisioningForAuthenticatedUser {
+      uri
+    }
+  }
+`;

@@ -1149,6 +1149,7 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
+  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -3167,6 +3168,11 @@ export type InitiateOtpProvisioningMutationVariables = Exact<{
 
 export type InitiateOtpProvisioningMutation = { __typename?: 'Mutation', initiateOTPProvisioning: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
 
+export type InitiateOtpProvisioningForAuthenticatedUserMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InitiateOtpProvisioningForAuthenticatedUserMutation = { __typename?: 'Mutation', initiateOTPProvisioningForAuthenticatedUser: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
+
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
 }>;
@@ -4905,6 +4911,38 @@ export function useInitiateOtpProvisioningMutation(baseOptions?: Apollo.Mutation
 export type InitiateOtpProvisioningMutationHookResult = ReturnType<typeof useInitiateOtpProvisioningMutation>;
 export type InitiateOtpProvisioningMutationResult = Apollo.MutationResult<InitiateOtpProvisioningMutation>;
 export type InitiateOtpProvisioningMutationOptions = Apollo.BaseMutationOptions<InitiateOtpProvisioningMutation, InitiateOtpProvisioningMutationVariables>;
+export const InitiateOtpProvisioningForAuthenticatedUserDocument = gql`
+    mutation initiateOTPProvisioningForAuthenticatedUser {
+  initiateOTPProvisioningForAuthenticatedUser {
+    uri
+  }
+}
+    `;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationFn = Apollo.MutationFunction<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>;
+
+/**
+ * __useInitiateOtpProvisioningForAuthenticatedUserMutation__
+ *
+ * To run a mutation, you first call `useInitiateOtpProvisioningForAuthenticatedUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInitiateOtpProvisioningForAuthenticatedUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [initiateOtpProvisioningForAuthenticatedUserMutation, { data, loading, error }] = useInitiateOtpProvisioningForAuthenticatedUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useInitiateOtpProvisioningForAuthenticatedUserMutation(baseOptions?: Apollo.MutationHookOptions<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>(InitiateOtpProvisioningForAuthenticatedUserDocument, options);
+      }
+export type InitiateOtpProvisioningForAuthenticatedUserMutationHookResult = ReturnType<typeof useInitiateOtpProvisioningForAuthenticatedUserMutation>;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationResult = Apollo.MutationResult<InitiateOtpProvisioningForAuthenticatedUserMutation>;
+export type InitiateOtpProvisioningForAuthenticatedUserMutationOptions = Apollo.BaseMutationOptions<InitiateOtpProvisioningForAuthenticatedUserMutation, InitiateOtpProvisioningForAuthenticatedUserMutationVariables>;
 export const RenewTokenDocument = gql`
     mutation RenewToken($appToken: String!) {
   renewToken(appToken: $appToken) {

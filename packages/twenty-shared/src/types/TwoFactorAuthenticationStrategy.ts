@@ -1,3 +1,3 @@
 export enum TwoFactorAuthenticationStrategy {
-    TOTP = 'TOTP'
+  TOTP = 'TOTP',
 }

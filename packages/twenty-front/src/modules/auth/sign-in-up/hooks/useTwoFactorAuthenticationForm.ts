@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const otpValidationSchema = z.object({
-  otp: z.string().trim().min(1, 'OTP is required'),
+  otp: z.string().trim().length(6, 'OTP must be exactly 6 digits'),
 });
 
 export type OTPFormValues = z.infer<typeof otpValidationSchema>;

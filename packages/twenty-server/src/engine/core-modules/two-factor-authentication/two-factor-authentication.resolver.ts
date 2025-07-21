@@ -14,7 +14,11 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -31,10 +35,10 @@ import { TwoFactorAuthenticationMethod } from './entities/two-factor-authenticat
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class TwoFactorAuthenticationResolver {
   constructor(
-    private readonly loginTokenService: LoginTokenService,
-    private readonly domainManagerService: DomainManagerService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(TwoFactorAuthenticationMethod, 'core')
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
   ) {}
@@ -83,8 +87,32 @@ export class TwoFactorAuthenticationResolver {
     return { uri };
   }
 
-  @Mutation(() => ResetTwoFactorAuthenticationMethodOutput)
+  @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
   @UseGuards(UserAuthGuard)
+  async initiateOTPProvisioningForAuthenticatedUser(
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
+    const uri =
+      await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
+        user.id,
+        user.email,
+        workspace.id,
+        TwoFactorAuthenticationStrategy.TOTP,
+      );
+
+    if (!isDefined(uri)) {
+      throw new AuthException(
+        'OTP Auth URL missing ',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return { uri };
+  }
+
+  @Mutation(() => ResetTwoFactorAuthenticationMethodOutput)
+  @UseGuards(PublicEndpointGuard)
   async resetTwoFactorAuthenticationMethod(
     @Args()
     resetTwoFactorAuthenticationMethodInput: ResetTwoFactorAuthenticationMethodInput,
@@ -103,12 +131,10 @@ export class TwoFactorAuthenticationResolver {
       ),
     );
 
-    await this.twoFactorAuthenticationMethodRepository.delete({
-      id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
-    });
+    await this.twoFactorAuthenticationMethodRepository.delete(
+      resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+    );
 
-    return {
-      success: true,
-    };
+    return { success: true };
   }
 }

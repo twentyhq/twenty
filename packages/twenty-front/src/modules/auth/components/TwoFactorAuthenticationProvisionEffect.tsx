@@ -12,7 +12,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
@@ -48,14 +48,6 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         setQrCodeState(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
-
-        enqueueSuccessSnackBar({
-          message: t`Two factor authentication provisioning initiated.`,
-          options: {
-            dedupeKey:
-              'two-factor-authentication-provisioning-initiation-dedupe-key',
-          },
-        });
       } catch (error) {
         enqueueErrorSnackBar({
           message: t`Two factor authentication provisioning failed.`,

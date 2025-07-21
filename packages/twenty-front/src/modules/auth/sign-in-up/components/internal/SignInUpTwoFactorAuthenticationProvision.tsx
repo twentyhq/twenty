@@ -1,21 +1,20 @@
-import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
 import { qrCodeState } from '@/auth/states/qrCode';
-import { Loader } from 'twenty-ui/feedback';
-import QRCode from 'react-qr-code';
-import { Trans } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
+import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
+import QRCode from 'react-qr-code';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
   text-align: center;
-  space-y: 5px;
 `;
 
 const StyledTextContainer = styled.div`
@@ -57,10 +56,10 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
       <TwoFactorAuthenticationSetupEffect />
       <StyledForm>
         <StyledTextContainer>
-          <Trans>Use authenticator apps and browser extensions like</Trans>{' '}
-          <Trans>1Password</Trans>,<Trans>Authy</Trans>,{' '}
-          <Trans>Microsoft</Trans>, <Trans>Authenticator</Trans>{' '}
-          <Trans>to generate one-time passwords</Trans>
+          <Trans>
+            Use authenticator apps and browser extensions like 1Password, Authy,
+            Microsoft Authenticator to generate one-time passwords
+          </Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}

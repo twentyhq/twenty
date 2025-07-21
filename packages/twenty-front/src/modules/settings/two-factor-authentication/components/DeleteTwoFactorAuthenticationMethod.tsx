@@ -8,13 +8,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
+import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useResetTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { useParams } from 'react-router-dom';
+import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticatonPolicy';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -24,17 +25,20 @@ export const DeleteTwoFactorAuthentication = () => {
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { origin } = useOrigin();
+  const { signOut, loadCurrentUser } = useAuth();
   const [deleteTwoFactorAuthenticationMethod] =
     useResetTwoFactorAuthenticationMethodMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
-  const { signOut } = useAuth();
   const navigate = useNavigateSettings();
   const twoFactorAuthenticationStrategy =
     useParams().twoFactorAuthenticationStrategy;
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
+
+  const { isEnforced: isTwoFactorAuthenticationEnforced } =
+    useCurrentWorkspaceTwoFactorAuthenticationPolicy();
 
   const reset2FA = async () => {
     if (
@@ -65,20 +69,24 @@ export const DeleteTwoFactorAuthentication = () => {
     });
 
     enqueueSuccessSnackBar({
-      message: t`2FA Method has been reset successfuly.`,
+      message: t`2FA Method has been deleted successfuly.`,
       options: {
         dedupeKey: '2fa-dedupe-key',
       },
     });
 
-    await signOut();
+    if (isTwoFactorAuthenticationEnforced === true) {
+      await signOut();
+    } else {
+      await loadCurrentUser();
+    }
   };
 
   return (
     <>
       <H2Title
-        title={t`Reset Two-Factor Authentication Method`}
-        description={t`After resetting you will be asked to configure it again.`}
+        title={t`Delete Two-Factor Authentication Method`}
+        description={t`Deleting this method will remove it permanently from your account.`}
       />
 
       <Button
@@ -94,11 +102,23 @@ export const DeleteTwoFactorAuthentication = () => {
         modalId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
         title={t`2FA Method Reset`}
         subtitle={
-          <>
-            This action cannot be undone. This will permanently reset your two
-            factor authentication method. <br /> Please type in your email to
-            confirm.
-          </>
+          isTwoFactorAuthenticationEnforced ? (
+            <>
+              This will permanently delete your two factor authentication
+              method.
+              <br />
+              Since 2FA is mandatory in your workspace, you will be logged out
+              after deletion and will be asked to configure it again upon login.{' '}
+              <br />
+              Please type in your email to confirm.
+            </>
+          ) : (
+            <>
+              This action cannot be undone. This will permanently reset your two
+              factor authentication method. <br /> Please type in your email to
+              confirm.
+            </>
+          )
         }
         onConfirmClick={reset2FA}
         confirmButtonText={t`Reset 2FA`}
