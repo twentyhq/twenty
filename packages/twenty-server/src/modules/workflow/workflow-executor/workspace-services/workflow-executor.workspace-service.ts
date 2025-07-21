@@ -219,17 +219,6 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    if (!isDefined(workflowRun?.state)) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: `WorkflowRun ${workflowRunId} doesn't have any state`,
-      });
-
-      return;
-    }
-
     const steps = workflowRun.state.flow.steps;
 
     const stepToExecute = steps.find((step) => step.id === stepId);
