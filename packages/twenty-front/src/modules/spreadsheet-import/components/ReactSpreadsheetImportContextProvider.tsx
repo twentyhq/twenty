@@ -5,16 +5,16 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const RsiContext = createContext({} as any);
 
-type ReactSpreadsheetImportContextProviderProps = {
+type ReactSpreadsheetImportContextProviderProps<T extends string> = {
   children: React.ReactNode;
-  values: SpreadsheetImportDialogOptions;
+  values: SpreadsheetImportDialogOptions<T>;
 };
 
-export const ReactSpreadsheetImportContextProvider = ({
+export const ReactSpreadsheetImportContextProvider = <T extends string>({
   children,
   values,
-}: ReactSpreadsheetImportContextProviderProps) => {
-  if (isUndefinedOrNull(values.spreadsheetImportFields)) {
+}: ReactSpreadsheetImportContextProviderProps<T>) => {
+  if (isUndefinedOrNull(values.fields)) {
     throw new Error('Fields must be provided to spreadsheet-import');
   }
 

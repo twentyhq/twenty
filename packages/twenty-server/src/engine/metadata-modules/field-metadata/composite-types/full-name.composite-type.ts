@@ -10,14 +10,14 @@ export const fullNameCompositeType: CompositeType = {
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
-      isIncludedInUniqueConstraint: false,
+      isIncludedInUniqueConstraint: true,
     },
     {
       name: 'lastName',
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
-      isIncludedInUniqueConstraint: false,
+      isIncludedInUniqueConstraint: true,
     },
   ],
 };

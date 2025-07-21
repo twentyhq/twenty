@@ -1,8 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -139,7 +139,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 LeftIcon={getIcon(field.icon)}
                 text={field.label}
                 contextualText={getFieldMetadataTypeLabel(field.type)}
-                hasSubMenu={hasNestedFields(field)}
+                hasSubMenu={isCompositeFieldType(field.type)}
               />
             ))}
           </DropdownMenuItemsContainer>

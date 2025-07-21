@@ -15,17 +15,17 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const addErrorsAndRunHooks = (
-  data: (ImportedStructuredRow & Partial<ImportedStructuredRowMetadata>)[],
-  fields: SpreadsheetImportFields,
-  rowHook?: SpreadsheetImportRowHook,
-  tableHook?: SpreadsheetImportTableHook,
-): (ImportedStructuredRow & ImportedStructuredRowMetadata)[] => {
+export const addErrorsAndRunHooks = <T extends string>(
+  data: (ImportedStructuredRow<T> & Partial<ImportedStructuredRowMetadata>)[],
+  fields: SpreadsheetImportFields<T>,
+  rowHook?: SpreadsheetImportRowHook<T>,
+  tableHook?: SpreadsheetImportTableHook<T>,
+): (ImportedStructuredRow<T> & ImportedStructuredRowMetadata)[] => {
   const errors: Errors = {};
 
   const addHookError = (
     rowIndex: number,
-    fieldKey: string,
+    fieldKey: T,
     error: SpreadsheetImportInfo,
   ) => {
     errors[rowIndex] = {
@@ -48,7 +48,7 @@ export const addErrorsAndRunHooks = (
     field.fieldValidationDefinitions?.forEach((fieldValidationDefinition) => {
       switch (fieldValidationDefinition.rule) {
         case 'unique': {
-          const values = data.map((entry) => entry[field.key]);
+          const values = data.map((entry) => entry[field.key as T]);
 
           const taken = new Set(); // Set of items used at least once
           const duplicates = new Set(); // Set of items used multiple times
@@ -87,9 +87,9 @@ export const addErrorsAndRunHooks = (
         case 'required': {
           data.forEach((entry, index) => {
             if (
-              entry[field.key] === null ||
-              entry[field.key] === undefined ||
-              entry[field.key] === ''
+              entry[field.key as T] === null ||
+              entry[field.key as T] === undefined ||
+              entry[field.key as T] === ''
             ) {
               errors[index] = {
                 ...errors[index],
@@ -156,17 +156,14 @@ export const addErrorsAndRunHooks = (
     if (!('__index' in value)) {
       value.__index = v4();
     }
-    const newValue = value as ImportedStructuredRow &
+    const newValue = value as ImportedStructuredRow<T> &
       ImportedStructuredRowMetadata;
 
     if (isDefined(errors[index])) {
-      return { ...newValue, __errors: errors[index] } as ImportedStructuredRow &
-        ImportedStructuredRowMetadata;
+      return { ...newValue, __errors: errors[index] };
     }
-
     if (isUndefinedOrNull(errors[index]) && isDefined(value?.__errors)) {
-      return { ...newValue, __errors: null } as ImportedStructuredRow &
-        ImportedStructuredRowMetadata;
+      return { ...newValue, __errors: null };
     }
     return newValue;
   });
