@@ -52,7 +52,7 @@ export class ObjectMetadataEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
-  @Column({ nullable: true,  type: 'varchar' })
+  @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -85,7 +85,7 @@ export class ObjectMetadataEntity {
   @Column({ type: 'jsonb', nullable: true })
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
 
-  @Column({ nullable: true,  type: 'varchar' })
+  @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
