@@ -42,10 +42,18 @@ export const sanitizeRecordInput = ({
         if (
           isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE &&
-          !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where)
+          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
-          return undefined;
+          const relationIdFieldName = `${fieldMetadataItem.name}Id`;
+          const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
+            (field) => field.name === relationIdFieldName,
+          );
+
+          const relationIdFieldValue = recordInput[relationIdFieldName];
+
+          return relationIdFieldMetadataItem
+            ? [relationIdFieldName, relationIdFieldValue ?? null]
+            : undefined;
         }
 
         if (

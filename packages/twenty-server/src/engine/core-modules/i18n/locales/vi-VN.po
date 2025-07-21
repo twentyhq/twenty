@@ -747,8 +747,8 @@ msgstr "Tài khoản Twitter của liên hệ"
 #. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Context"
-msgstr "Bối cảnh"
+#~ msgid "Context"
+#~ msgstr "Bối cảnh"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1424,8 +1424,8 @@ msgstr ""
 
 #. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Json object to provide output of the workflow run"
-msgstr "Đối tượng Json cung cấp kết quả của phiên chạy Workflows"
+#~ msgid "Json object to provide output of the workflow run"
+#~ msgstr "Đối tượng Json cung cấp kết quả của phiên chạy Workflows"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2038,8 +2038,8 @@ msgstr "Tuỳ chọn bí mật được sử dụng để tính chữ ký HMAC c
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Output"
-msgstr "Đầu ra"
+#~ msgid "Output"
+#~ msgstr "Đầu ra"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts

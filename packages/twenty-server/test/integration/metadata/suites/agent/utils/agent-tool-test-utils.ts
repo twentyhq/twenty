@@ -13,6 +13,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -130,7 +131,7 @@ export const createAgentToolTestModule =
       isEditable: true,
     } as RoleEntity;
 
-    const testObjectMetadata = {
+    const testObjectMetadata = getMockObjectMetadataEntity({
       id: 'test-object-id',
       standardId: null,
       dataSourceId: 'test-data-source-id',
@@ -158,7 +159,7 @@ export const createAgentToolTestModule =
       dataSource: {} as any,
       objectPermissions: [],
       fieldPermissions: [],
-    };
+    });
 
     return {
       module,

@@ -11,6 +11,7 @@ import {
   QueryRunner,
   Repository,
 } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -46,6 +47,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -471,9 +473,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       const fieldMetadataIds = objectMetadata.fields.map((field) => field.id);
-      const relationMetadataIds = objectMetadata.fields
-        .map((field) => field.relationTargetFieldMetadata?.id)
-        .filter(isDefined);
+      const relationMetadataIds = objectMetadata.fields.flatMap((field) => {
+        if (
+          isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)
+        ) {
+          return field.relationTargetFieldMetadata.id;
+        }
+
+        return [];
+      });
 
       await fieldMetadataRepository.delete({
         id: In(fieldMetadataIds.concat(relationMetadataIds)),

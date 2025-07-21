@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getUniqueConstraintsFields = <
   K extends {
