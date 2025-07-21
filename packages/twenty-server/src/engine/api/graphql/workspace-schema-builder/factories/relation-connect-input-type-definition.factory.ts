@@ -62,7 +62,10 @@ export class RelationConnectInputTypeDefinitionFactory {
   private generateRelationWhereInputType(
     objectMetadata: ObjectMetadataInterface,
   ): Record<string, GraphQLInputFieldConfig> {
-    const uniqueConstraints = getUniqueConstraintsFields(objectMetadata);
+    const uniqueConstraints = getUniqueConstraintsFields<
+      FieldMetadataEntity,
+      ObjectMetadataInterface
+    >(objectMetadata);
 
     const fields: Record<
       string,
