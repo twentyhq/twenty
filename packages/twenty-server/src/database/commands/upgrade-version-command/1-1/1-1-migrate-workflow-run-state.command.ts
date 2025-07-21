@@ -95,11 +95,12 @@ export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspaces
         ? { where: { startedAt: MoreThan(this.afterDate) } }
         : {};
 
-      const workflowRuns = await workflowRunRepository.find({
+      const workflowRuns = (await workflowRunRepository.find({
         ...findOption,
         skip: offset * this.chunkSize,
         take: this.chunkSize,
-      });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any[]; // We type as any as workflowRun output has been removed since 1.1.0 release
 
       for (const workflowRun of workflowRuns) {
         const output = workflowRun.output;
