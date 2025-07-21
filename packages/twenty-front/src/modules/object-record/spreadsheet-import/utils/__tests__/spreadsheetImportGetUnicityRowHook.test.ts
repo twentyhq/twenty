@@ -79,7 +79,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
 
   it('should return row with error if row is not unique - index on composite field', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
-    const testData: ImportedStructuredRow[] = [
+    const testData: ImportedStructuredRow<string>[] = [
       { 'Link URL (domainName)': 'https://duplicaTe.com' },
       { 'Link URL (domainName)': 'https://duplicate.com' },
       { 'Link URL (domainName)': 'https://other.com' },
@@ -100,7 +100,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should return row with error if row is not unique - index on id', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow[] = [
+    const testData: ImportedStructuredRow<string>[] = [
       { 'Link URL (domainName)': 'test.com', id: '1' },
       { 'Link URL (domainName)': 'test2.com', id: '1' },
       { 'Link URL (domainName)': 'test3.com', id: '3' },
@@ -120,7 +120,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should return row with error if row is not unique - multi fields index', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow[] = [
+    const testData: ImportedStructuredRow<string>[] = [
       { name: 'test', employees: '100', id: '1' },
       { name: 'test', employees: '100', id: '2' },
       { name: 'test', employees: '101', id: '3' },
@@ -143,7 +143,7 @@ describe('spreadsheetImportGetUnicityRowHook', () => {
   it('should not add error if row values are unique', () => {
     const hook = spreadsheetImportGetUnicityRowHook(mockObjectMetadataItem);
 
-    const testData: ImportedStructuredRow[] = [
+    const testData: ImportedStructuredRow<string>[] = [
       {
         name: 'test',
         'Link URL (domainName)': 'test.com',
