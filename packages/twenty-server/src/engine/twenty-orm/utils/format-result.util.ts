@@ -4,9 +4,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -52,7 +52,7 @@ export function formatResult<T>(
 
     const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsById[
       fieldMetadataId
-    ] as FieldMetadataInterface<FieldMetadataType> | undefined;
+    ] as FieldMetadataEntity<FieldMetadataType> | undefined;
 
     const isRelation = fieldMetadata
       ? isFieldMetadataInterfaceOfType(
@@ -204,7 +204,7 @@ export function getCompositeFieldMetadataMap(
 function formatFieldMetadataValue(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  fieldMetadata: FieldMetadataInterface,
+  fieldMetadata: FieldMetadataEntity,
 ) {
   if (
     typeof value === 'string' &&

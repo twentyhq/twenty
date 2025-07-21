@@ -1,27 +1,26 @@
 import {
-  isDefined,
-  isLabelIdentifierFieldMetadataTypes,
+    isDefined,
+    isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 type Validator = {
   validator: (args: {
     fieldMetadataId: string;
-    matchingFieldMetadata?: FieldMetadataEntity | FieldMetadataInterface;
+    matchingFieldMetadata?: FieldMetadataEntity | FieldMetadataEntity;
   }) => boolean;
   label: string;
 };
 
 type ValidateMetadataIdentifierFieldMetadataIdOrThrowArgs = {
   fieldMetadataId: string;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
+  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataEntity[];
   validators: Validator[];
 };
 const validatorRunner = ({
@@ -46,7 +45,7 @@ const validatorRunner = ({
 type ValidateMetadataIdentifierFieldMetadataIdsArgs = {
   labelIdentifierFieldMetadataId: string | undefined;
   imageIdentifierFieldMetadataId: string | undefined;
-  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataInterface[];
+  fieldMetadataItems: FieldMetadataEntity[] | FieldMetadataEntity[];
 };
 export const validateMetadataIdentifierFieldMetadataIds = ({
   imageIdentifierFieldMetadataId,
