@@ -16,10 +16,18 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
+
+    const selectOptions =
+      RestApiBaseHandler.getSelectOptionsFromRestrictedFields({
+        restrictedFields,
+        objectMetadata,
+      });
+
     const recordToDelete = await repository.findOneOrFail({
       where: { id: recordId },
+      select: selectOptions,
     });
 
     await repository.delete(recordId);

@@ -14,7 +14,7 @@ import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadata, repository } =
+    const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const overriddenBody = await this.recordInputTransformerService.process({
@@ -56,6 +56,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
+      restrictedFields,
     });
 
     const record = records[0];

@@ -1,3 +1,5 @@
+import { RestrictedFields } from '@/types/RestrictedFields';
+
 type ObjectMetadataId = string;
 export type ObjectRecordsPermissions = Record<
   ObjectMetadataId,
@@ -6,9 +8,6 @@ export type ObjectRecordsPermissions = Record<
     canUpdate: boolean;
     canSoftDelete: boolean;
     canDestroy: boolean;
-    restrictedFields: Record<
-      string,
-      { canRead?: boolean | null; canUpdate?: boolean | null }
-    >;
+    restrictedFields: RestrictedFields;
   }
 >;
