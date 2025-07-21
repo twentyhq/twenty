@@ -19,10 +19,9 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -99,29 +98,20 @@ export class CoreQueryBuilderFactory {
       );
     }
 
-    const workspaceEntity = standardObjectMetadataDefinitions.find((entity) => {
-      const entityMetadata = metadataArgsStorage.filterEntities(entity);
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
 
-      return entityMetadata?.standardId === objectMetadataItem.standardId;
-    });
-
-    if (workspaceEntity) {
-      const entityMetadata =
-        metadataArgsStorage.filterEntities(workspaceEntity);
-      const workspaceFeatureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-      if (
-        isGatedAndNotEnabled(
-          entityMetadata?.gate,
-          workspaceFeatureFlagsMap,
-          'workspaceApi',
-        )
-      ) {
-        throw new BadRequestException(
-          `object '${parsedObject}' not found. ${parsedObject} is not available via REST API.`,
-        );
-      }
+    // Check if this entity is workspace-gated and should be blocked from workspace API
+    if (
+      shouldExcludeFromWorkspaceApi(
+        objectMetadataItem,
+        standardObjectMetadataDefinitions,
+        workspaceFeatureFlagsMap,
+      )
+    ) {
+      throw new BadRequestException(
+        `object '${parsedObject}' not found. ${parsedObject} is not available via REST API.`,
+      );
     }
 
     return {
