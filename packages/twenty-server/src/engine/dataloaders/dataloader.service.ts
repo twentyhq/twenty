@@ -14,6 +14,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-fieldMetadata-dto.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -211,40 +212,41 @@ export class DataloaderService {
             return [];
           }
 
-          const fields = Object.values(objectMetadata.fieldsById).map(
-            // TODO: fix this as we should merge FieldMetadataEntity and FieldMetadataInterface
-            (fieldMetadata) => {
-              const overridesFieldToCompute = [
-                'icon',
-                'label',
-                'description',
-              ] as const satisfies (keyof FieldMetadataInterface)[];
+          const fields = Object.values(
+            objectMetadata.fieldsById,
+          ).map<FieldMetadataDTO>((fieldMetadata) => {
+            const overridesFieldToCompute = [
+              'icon',
+              'label',
+              'description',
+            ] as const satisfies (keyof FieldMetadataInterface)[];
 
-              const overrides = overridesFieldToCompute.reduce<
-                Partial<
-                  Record<(typeof overridesFieldToCompute)[number], string>
-                >
-              >(
-                (acc, field) => ({
-                  ...acc,
-                  [field]: resolveFieldMetadataStandardOverride(
-                    fieldMetadata,
-                    field,
-                    dataLoaderParams[0].locale,
-                  ),
-                }),
-                {},
-              );
+            const overrides = overridesFieldToCompute.reduce<
+              Partial<Record<(typeof overridesFieldToCompute)[number], string>>
+            >(
+              (acc, field) => ({
+                ...acc,
+                [field]: resolveFieldMetadataStandardOverride(
+                  {
+                    label: fieldMetadata.label,
+                    description: fieldMetadata.description ?? undefined,
+                    icon: fieldMetadata.icon ?? undefined,
+                    isCustom: fieldMetadata.isCustom,
+                    standardOverrides:
+                      fieldMetadata.standardOverrides ?? undefined,
+                  },
+                  field,
+                  dataLoaderParams[0].locale,
+                ),
+              }),
+              {},
+            );
 
-              return {
-                ...fieldMetadata,
-                createdAt: new Date(fieldMetadata.createdAt),
-                updatedAt: new Date(fieldMetadata.updatedAt),
-                workspaceId: workspaceId,
-                ...overrides,
-              };
-            },
-          );
+            return fromFieldMetadataEntityToFieldMetadataDto({
+              ...fieldMetadata,
+              ...overrides,
+            });
+          });
 
           return filterMorphRelationDuplicateFieldsDTO(fields);
         });

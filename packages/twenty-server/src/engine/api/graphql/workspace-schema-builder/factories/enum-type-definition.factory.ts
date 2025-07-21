@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLEnumType } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -54,11 +55,13 @@ export class EnumTypeDefinitionFactory {
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
-    const enumOptions = transformEnumValue(fieldMetadata.options) as Array<
-      FieldMetadataDefaultOption | FieldMetadataComplexOption
-    >;
+    const enumOptions = transformEnumValue(
+      fieldMetadata.options ?? undefined,
+    ) as
+      | Array<FieldMetadataDefaultOption | FieldMetadataComplexOption>
+      | undefined;
 
-    if (!enumOptions) {
+    if (!isDefined(enumOptions)) {
       this.logger.error(
         `Enum options are not defined for ${fieldMetadata.name}`,
         {

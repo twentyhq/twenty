@@ -13,14 +13,19 @@ import {
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
-export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
+export type TsVectorFieldMetadata =
+  FieldMetadataInterface<FieldMetadataType.TS_VECTOR> & {
+    generatedType?: 'STORED' | 'VIRTUAL';
+    asExpression?: string;
+  };
 
+export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
 @Injectable()
 export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsVectorFieldMetadataType> {
   protected readonly logger = new Logger(TsVectorColumnActionFactory.name);
 
   handleCreateAction(
-    fieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    fieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnCreate[] {
     return [
       {
@@ -37,8 +42,8 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
   }
 
   handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    currentFieldMetadata: TsVectorFieldMetadata,
+    alteredFieldMetadata: TsVectorFieldMetadata,
   ): WorkspaceMigrationColumnAlter[] {
     return [
       {
