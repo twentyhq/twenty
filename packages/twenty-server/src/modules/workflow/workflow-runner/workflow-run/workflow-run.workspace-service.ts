@@ -263,6 +263,7 @@ export class WorkflowRunWorkspaceService {
             ...(workflowRunToUpdate.state?.stepInfos[stepOutput.id] || {}),
             result: stepOutput.output?.result,
             error: stepOutput.output?.error,
+            shouldEndWorkflowRun: stepOutput.output?.shouldEndWorkflowRun,
             status: stepStatus,
           },
         },

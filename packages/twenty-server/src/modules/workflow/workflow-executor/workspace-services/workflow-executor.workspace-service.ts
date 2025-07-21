@@ -22,8 +22,8 @@ import {
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-
-const MAX_RETRIES_ON_FAILURE = 3;
+import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
+import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -38,6 +38,7 @@ export class WorkflowExecutorWorkspaceService {
     stepIds,
     workflowRunId,
     workspaceId,
+    shouldComputeWorkflowRunStatus = true,
   }: WorkflowExecutorInput) {
     await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
@@ -48,11 +49,17 @@ export class WorkflowExecutorWorkspaceService {
         });
       }),
     );
+
+    if (shouldComputeWorkflowRunStatus) {
+      await this.computeWorkflowRunStatus({
+        workflowRunId,
+        workspaceId,
+      });
+    }
   }
 
   private async executeFromStep({
     stepId,
-    attemptCount = 1,
     workflowRunId,
     workspaceId,
   }: WorkflowBranchExecutorInput) {
@@ -112,82 +119,94 @@ export class WorkflowExecutorWorkspaceService {
       output: actionOutput,
     };
 
-    if (actionOutput.pendingEvent) {
+    const isPendingEvent = actionOutput.pendingEvent;
+
+    const isSuccess = isDefined(actionOutput.result);
+
+    const shouldEndWorkflowRun = actionOutput.shouldEndWorkflowRun;
+
+    if (isPendingEvent) {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput,
         workspaceId,
         stepStatus: StepStatus.PENDING,
       });
-
-      return;
-    }
-
-    const actionOutputSuccess = isDefined(actionOutput.result);
-
-    const isValidActionOutput =
-      actionOutputSuccess ||
-      stepToExecute.settings.errorHandlingOptions.continueOnFailure.value;
-
-    if (isValidActionOutput) {
+    } else if (shouldEndWorkflowRun) {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput,
         workspaceId,
-        stepStatus: isDefined(actionOutput.result)
-          ? StepStatus.SUCCESS
-          : StepStatus.FAILED,
+        stepStatus: StepStatus.STOPPED,
       });
+    } else if (isSuccess) {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput,
+        workspaceId,
+        stepStatus: StepStatus.SUCCESS,
+      });
+    } else {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput,
+        workspaceId,
+        stepStatus: StepStatus.FAILED,
+      });
+    }
 
-      if (
-        !isDefined(stepToExecute.nextStepIds) ||
-        stepToExecute.nextStepIds.length === 0 ||
-        actionOutput.shouldEndWorkflowRun === true
-      ) {
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: WorkflowRunStatus.COMPLETED,
-        });
+    const shouldExecuteNextStepIds =
+      isSuccess &&
+      !shouldEndWorkflowRun &&
+      isDefined(stepToExecute.nextStepIds) &&
+      stepToExecute.nextStepIds.length > 0;
 
-        return;
-      }
-
+    if (shouldExecuteNextStepIds) {
       await this.executeFromSteps({
-        stepIds: stepToExecute.nextStepIds,
+        stepIds: stepToExecute.nextStepIds as string[], // checked defined in shouldExecuteNextStepIds
+        workflowRunId,
+        workspaceId,
+        shouldComputeWorkflowRunStatus: false,
+      });
+    }
+  }
+
+  private async computeWorkflowRunStatus({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
         workspaceId,
       });
 
+    const stepInfos = workflowRun.state.stepInfos;
+
+    const steps = workflowRun.state.flow.steps;
+
+    if (workflowShouldKeepRunning({ stepInfos, steps })) {
       return;
     }
 
-    if (
-      stepToExecute.settings.errorHandlingOptions.retryOnFailure.value &&
-      attemptCount < MAX_RETRIES_ON_FAILURE
-    ) {
-      await this.executeFromStep({
-        stepId,
-        attemptCount: attemptCount + 1,
+    if (workflowShouldFail({ stepInfos, steps })) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'WorkflowRun failed',
       });
 
       return;
     }
-
-    await this.workflowRunWorkspaceService.saveWorkflowRunState({
-      workflowRunId,
-      stepOutput,
-      workspaceId,
-      stepStatus: StepStatus.FAILED,
-    });
 
     await this.workflowRunWorkspaceService.endWorkflowRun({
       workflowRunId,
       workspaceId,
-      status: WorkflowRunStatus.FAILED,
-      error: stepOutput.output.error,
+      status: WorkflowRunStatus.COMPLETED,
     });
   }
 
