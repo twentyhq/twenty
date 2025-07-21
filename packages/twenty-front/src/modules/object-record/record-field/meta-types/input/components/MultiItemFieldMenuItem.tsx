@@ -10,7 +10,7 @@ import {
   IconBookmarkPlus,
   IconCopy,
   IconPencil,
-  IconTrash
+  IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -20,7 +20,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  onCopy?:()=> void;
+  onCopy?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
@@ -55,10 +55,9 @@ export const MultiItemFieldMenuItem = <T,>({
       // Silently ignore clipboard errors
     }
 
-
-  closeDropdown(dropdownId);
-  onCopy?.();
-};
+    closeDropdown(dropdownId);
+    onCopy?.();
+  };
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
