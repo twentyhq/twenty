@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { i18n } from '@lingui/core';
 import { UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ForbiddenError,
@@ -11,6 +12,7 @@ import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 jest.mock('@lingui/core', () => ({
   i18n: {
@@ -96,14 +98,23 @@ describe('BeforeUpdateOneField', () => {
       },
     };
 
-    const mockField: Partial<FieldMetadataEntity> = {
+    const mockField = getMockFieldMetadataEntity({
+      workspaceId: mockWorkspaceId,
+      objectMetadataId: '20202020-0000-0000-0000-000000000002',
       id: mockFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'oldName',
+      label: 'Old Name',
+      isNullable: true,
       isCustom: true,
-    };
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }) as FieldMetadataEntity;
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
+      .mockResolvedValue(mockField);
 
     const result = await hook.run(
       instance as UpdateOneInputType<UpdateFieldInput>,
@@ -124,14 +135,23 @@ describe('BeforeUpdateOneField', () => {
       },
     };
 
-    const mockField: Partial<FieldMetadataEntity> = {
+    const mockField = getMockFieldMetadataEntity({
+      workspaceId: mockWorkspaceId,
+      objectMetadataId: '20202020-0000-0000-0000-000000000002',
       id: mockFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'oldName',
+      label: 'Old Name',
+      isNullable: true,
       isCustom: false,
-    };
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }) as FieldMetadataEntity;
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
+      .mockResolvedValue(mockField);
 
     await expect(
       hook.run(instance as UpdateOneInputType<UpdateFieldInput>, {
@@ -149,15 +169,24 @@ describe('BeforeUpdateOneField', () => {
       },
     };
 
-    const mockField: Partial<FieldMetadataEntity> = {
+    const mockField = getMockFieldMetadataEntity({
+      workspaceId: mockWorkspaceId,
+      objectMetadataId: '20202020-0000-0000-0000-000000000002',
       id: mockFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'oldName',
+      label: 'Old Name',
+      isNullable: true,
       isCustom: false,
       isActive: true,
-    };
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }) as FieldMetadataEntity;
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
+      .mockResolvedValue(mockField);
 
     const result = await hook.run(
       instance as UpdateOneInputType<UpdateFieldInput>,
@@ -186,18 +215,26 @@ describe('BeforeUpdateOneField', () => {
       },
     };
 
-    const mockField: Partial<FieldMetadataEntity> = {
+    const mockField = getMockFieldMetadataEntity({
+      workspaceId: mockWorkspaceId,
+      objectMetadataId: '20202020-0000-0000-0000-000000000002',
       id: mockFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'oldName',
+      label: 'Old Name',
+      isNullable: true,
       isCustom: false,
       isLabelSyncedWithName: false,
       standardOverrides: {
         label: 'Custom Label',
       },
-    };
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }) as FieldMetadataEntity;
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
+      .mockResolvedValue(mockField);
 
     const result = await hook.run(
       instance as UpdateOneInputType<UpdateFieldInput>,
@@ -228,16 +265,23 @@ describe('BeforeUpdateOneField', () => {
       },
     };
 
-    const mockField: Partial<FieldMetadataEntity> = {
+    const mockField = getMockFieldMetadataEntity({
+      workspaceId: mockWorkspaceId,
+      objectMetadataId: '20202020-0000-0000-0000-000000000002',
       id: mockFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'oldName',
+      label: 'Default Label',
+      isNullable: true,
       isCustom: false,
       isLabelSyncedWithName: false,
-      label: 'Default Label',
-    };
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }) as FieldMetadataEntity;
 
     jest
       .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
-      .mockResolvedValue(mockField as FieldMetadataEntity);
+      .mockResolvedValue(mockField);
 
     const result = await hook.run(
       instance as UpdateOneInputType<UpdateFieldInput>,

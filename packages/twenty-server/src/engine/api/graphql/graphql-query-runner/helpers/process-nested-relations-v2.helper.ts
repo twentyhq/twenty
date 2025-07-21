@@ -20,7 +20,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
@@ -118,7 +118,7 @@ export class ProcessNestedRelationsV2Helper {
       parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
 
     if (
-      !isFieldMetadataInterfaceOfType(
+      !isFieldMetadataEntityOfType(
         sourceFieldMetadata,
         FieldMetadataType.RELATION,
       )

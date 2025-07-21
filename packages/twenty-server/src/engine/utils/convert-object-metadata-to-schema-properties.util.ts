@@ -130,7 +130,7 @@ export const convertObjectMetadataToSchemaProperties = ({
           type: 'array',
           items: {
             type: 'string',
-            enum: field.options.map(
+            enum: (field.options ?? []).map(
               (option: { value: string }) => option.value,
             ),
           },
@@ -139,7 +139,9 @@ export const convertObjectMetadataToSchemaProperties = ({
       case FieldMetadataType.SELECT:
         itemProperty = {
           type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
+          enum: (field.options ?? []).map(
+            (option: { value: string }) => option.value,
+          ),
         };
         break;
       case FieldMetadataType.ARRAY:
@@ -153,7 +155,9 @@ export const convertObjectMetadataToSchemaProperties = ({
       case FieldMetadataType.RATING:
         itemProperty = {
           type: 'string',
-          enum: field.options.map((option: { value: string }) => option.value),
+          enum: (field.options ?? []).map(
+            (option: { value: string }) => option.value,
+          ),
         };
         break;
       case FieldMetadataType.LINKS:
