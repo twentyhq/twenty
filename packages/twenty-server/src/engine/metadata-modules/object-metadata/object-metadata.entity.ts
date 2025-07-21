@@ -52,13 +52,15 @@ export class ObjectMetadataEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true,  type: 'varchar' })
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: ObjectStandardOverridesDTO | null;
 
-  // Is this a foreign key targetTableNameId ?
+  /**
+   * @deprecated
+   */
   @Column({ nullable: false })
   targetTableName: string;
 
@@ -83,7 +85,7 @@ export class ObjectMetadataEntity {
   @Column({ type: 'jsonb', nullable: true })
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[] | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true,  type: 'varchar' })
   shortcut: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
