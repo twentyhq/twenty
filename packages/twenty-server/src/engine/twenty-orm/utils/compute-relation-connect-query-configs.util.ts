@@ -4,6 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -238,7 +239,10 @@ const checkUniqueConstraintFullyPopulated = (
   connectObject: ConnectObject,
   connectFieldName: string,
 ) => {
-  const uniqueConstraintsFields = getUniqueConstraintsFields({
+  const uniqueConstraintsFields = getUniqueConstraintsFields<
+    FieldMetadataEntity,
+    ObjectMetadataInterface
+  >({
     ...objectMetadata,
     fields: Object.values(objectMetadata.fieldsById),
   });
