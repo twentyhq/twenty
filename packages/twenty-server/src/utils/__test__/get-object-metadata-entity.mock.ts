@@ -12,7 +12,7 @@ export type GetMockObjectMetadataEntityOverride =
       >
     >;
 
-export const getMockObjectdMetadataEntity = (
+export const getMockObjectMetadataEntity = (
   overrides: GetMockObjectMetadataEntityOverride,
 ): ObjectMetadataEntity => {
   return {

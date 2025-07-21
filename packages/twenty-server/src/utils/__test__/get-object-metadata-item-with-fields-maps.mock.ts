@@ -1,7 +1,7 @@
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
   GetMockObjectMetadataEntityOverride,
-  getMockObjectdMetadataEntity,
+  getMockObjectMetadataEntity,
 } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 type GetMockObjectMetadataItemWithFielsMapsOverride =
@@ -16,14 +16,14 @@ type GetMockObjectMetadataItemWithFielsMapsOverride =
       >
     >;
 
-export const getMockObjectMetadataItemWithFielsMaps = ({
+export const getMockObjectMetadataItemWithFieldsMaps = ({
   fieldsById,
   fieldIdByJoinColumnName,
   fieldIdByName,
   indexMetadatas,
   ...objectMetadataOverrides
 }: GetMockObjectMetadataItemWithFielsMapsOverride): ObjectMetadataItemWithFieldMaps => {
-  const { fields: _fields, ...objectMetadata } = getMockObjectdMetadataEntity(
+  const { fields: _fields, ...objectMetadata } = getMockObjectMetadataEntity(
     objectMetadataOverrides,
   );
 

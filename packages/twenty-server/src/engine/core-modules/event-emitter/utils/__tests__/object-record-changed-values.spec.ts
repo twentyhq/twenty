@@ -1,7 +1,7 @@
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
-const mockObjectMetadata = getMockObjectMetadataItemWithFielsMaps({
+const mockObjectMetadata = getMockObjectMetadataItemWithFieldsMaps({
   id: '1',
   icon: 'Icon123',
   nameSingular: 'Object',

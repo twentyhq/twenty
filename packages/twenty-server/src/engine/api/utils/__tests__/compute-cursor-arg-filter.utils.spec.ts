@@ -6,11 +6,11 @@ import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-quer
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('computeCursorArgFilter', () => {
   const objectMetadataItemWithFieldMaps =
-    getMockObjectMetadataItemWithFielsMaps({
+    getMockObjectMetadataItemWithFieldsMaps({
       id: 'object-id',
       workspaceId: 'workspace-id',
       nameSingular: 'person',

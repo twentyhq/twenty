@@ -6,13 +6,13 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const objectMetadataId = '20202020-6e2c-42f6-a83c-cc58d776af88';
 
 export const OPPORTUNITY_WITH_FIELDS_MAPS =
-  getMockObjectMetadataItemWithFielsMaps({
+  getMockObjectMetadataItemWithFieldsMaps({
     id: objectMetadataId,
     nameSingular: 'opportunity',
     namePlural: 'opportunities',

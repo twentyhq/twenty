@@ -26,7 +26,6 @@ export type PartialWorkspaceEntity = Pick<
   | 'imageIdentifierFieldMetadataId'
 > & {
   standardId: string;
-  workspaceId: string;
   dataSourceId: string;
   fields: (PartialFieldMetadata | PartialComputedFieldMetadata)[];
 };

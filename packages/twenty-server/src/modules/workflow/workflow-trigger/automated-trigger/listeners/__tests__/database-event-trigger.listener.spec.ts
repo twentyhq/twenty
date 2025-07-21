@@ -6,8 +6,8 @@ import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objec
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { getMockObjectdMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('DatabaseEventTriggerListener', () => {
   let listener: DatabaseEventTriggerListener;
@@ -56,7 +56,7 @@ describe('DatabaseEventTriggerListener', () => {
                 },
               },
               objectMetadataItemWithFieldsMaps:
-                getMockObjectMetadataItemWithFielsMaps({
+                getMockObjectMetadataItemWithFieldsMaps({
                   id: 'test-object-metadata',
                   workspaceId: 'test-workspace',
                   nameSingular: 'testObject',
@@ -99,7 +99,7 @@ describe('DatabaseEventTriggerListener', () => {
       events: [
         {
           recordId: 'test-record',
-          objectMetadata: getMockObjectdMetadataEntity({
+          objectMetadata: getMockObjectMetadataEntity({
             id: 'test-object-metadata',
             workspaceId,
             nameSingular: 'testObject',
