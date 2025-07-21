@@ -53,9 +53,6 @@ export class View {
   @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false, type: 'text' })
-  kanbanFieldMetadataId: string;
-
   @Column({ nullable: false, type: 'int', default: 0 })
   position: number;
 
