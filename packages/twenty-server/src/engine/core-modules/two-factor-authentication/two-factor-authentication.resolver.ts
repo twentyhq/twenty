@@ -21,6 +21,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
@@ -50,9 +51,10 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
-    const { sub: userEmail } = await this.loginTokenService.verifyLoginToken(
-      initiateTwoFactorAuthenticationProvisioningInput.loginToken,
-    );
+    const { sub: userEmail, workspaceId: tokenWorkspaceId } =
+      await this.loginTokenService.verifyLoginToken(
+        initiateTwoFactorAuthenticationProvisioningInput.loginToken,
+      );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -66,6 +68,13 @@ export class TwoFactorAuthenticationResolver {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
+
+    if (tokenWorkspaceId !== workspace.id) {
+      throw new AuthException(
+        'Token is not valid for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const user = await this.userService.getUserByEmail(userEmail);
 
@@ -112,24 +121,38 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => ResetTwoFactorAuthenticationMethodOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async resetTwoFactorAuthenticationMethod(
     @Args()
     resetTwoFactorAuthenticationMethodInput: ResetTwoFactorAuthenticationMethodInput,
-    @Args('origin') origin: string,
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
   ): Promise<ResetTwoFactorAuthenticationMethodOutput> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
+    // First, find the 2FA method to ensure it exists and belongs to the current user
+    const twoFactorMethod =
+      await this.twoFactorAuthenticationMethodRepository.findOne({
+        where: {
+          id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+        },
+        relations: ['userWorkspace'],
+      });
 
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
+    if (!twoFactorMethod) {
+      throw new AuthException(
+        'Two-factor authentication method not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (
+      twoFactorMethod.userWorkspace.userId !== user.id ||
+      twoFactorMethod.userWorkspace.workspaceId !== workspace.id
+    ) {
+      throw new AuthException(
+        'You can only delete your own two-factor authentication methods',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     await this.twoFactorAuthenticationMethodRepository.delete(
       resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,

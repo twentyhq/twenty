@@ -1,20 +1,21 @@
-import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui, Trans } from '@lingui/react/macro';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { AppPath } from '@/types/AppPath';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { getLoginToken } from '@/apollo/utils/getLoginToken';
-import { MainButton } from 'twenty-ui/input';
-import { OTPInput, SlotProps } from 'input-otp';
-import { Controller } from 'react-hook-form';
 import {
   OTPFormValues,
   useTwoFactorAuthenticationForm,
 } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
+import { loginTokenState } from '@/auth/states/loginTokenState';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { AppPath } from '@/types/AppPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { OTPInput, SlotProps } from 'input-otp';
+import { Controller } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
+import { MainButton } from 'twenty-ui/input';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -43,13 +44,13 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-right: 1px solid ${({ theme }) => theme.border.color.medium};
 
-  &:first-child {
+  &:first-of-type {
     border-left: 1px solid ${({ theme }) => theme.border.color.medium};
     border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
   }
 
-  &:last-child {
+  &:last-of-type {
     border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
   }
@@ -172,7 +173,7 @@ export const SignInUpTOTPVerification = () => {
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
-  const loginToken = getLoginToken();
+  const loginToken = useRecoilValue(loginTokenState);
   const { t } = useLingui();
 
   const { form } = useTwoFactorAuthenticationForm();

@@ -2,7 +2,6 @@ import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -24,7 +23,6 @@ export const DeleteTwoFactorAuthentication = () => {
   const { openModal } = useModal();
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const { origin } = useOrigin();
   const { signOut, loadCurrentUser } = useAuth();
   const [deleteTwoFactorAuthenticationMethod] =
     useResetTwoFactorAuthenticationMethodMutation();
@@ -60,7 +58,6 @@ export const DeleteTwoFactorAuthentication = () => {
 
     await deleteTwoFactorAuthenticationMethod({
       variables: {
-        origin,
         twoFactorAuthenticationMethodId:
           currentUserWorkspaceTwoFactorAuthenticationMethods[
             twoFactorAuthenticationStrategy

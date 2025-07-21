@@ -10,7 +10,10 @@ export class TwoFactorAuthentication1752839063082
       `CREATE TYPE "core"."twoFactorAuthenticationMethod_strategy_enum" AS ENUM('TOTP')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."twoFactorAuthenticationMethod" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userWorkspaceId" uuid NOT NULL, "context" jsonb NOT NULL, "strategy" "core"."twoFactorAuthenticationMethod_strategy_enum" NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_c455f6a499e7110fc95e4bea540" PRIMARY KEY ("id"))`,
+      `CREATE TYPE "core"."twoFactorAuthenticationMethod_status_enum" AS ENUM('PENDING', 'VERIFIED')`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "core"."twoFactorAuthenticationMethod" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userWorkspaceId" uuid NOT NULL, "secret" text NOT NULL, "status" "core"."twoFactorAuthenticationMethod_status_enum" NOT NULL, "strategy" "core"."twoFactorAuthenticationMethod_strategy_enum" NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_c455f6a499e7110fc95e4bea540" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_2909f5139c479e4632df03fd5e" ON "core"."twoFactorAuthenticationMethod" ("userWorkspaceId", "strategy") `,
@@ -35,6 +38,9 @@ export class TwoFactorAuthentication1752839063082
     );
     await queryRunner.query(
       `DROP TABLE "core"."twoFactorAuthenticationMethod"`,
+    );
+    await queryRunner.query(
+      `DROP TYPE "core"."twoFactorAuthenticationMethod_status_enum"`,
     );
     await queryRunner.query(
       `DROP TYPE "core"."twoFactorAuthenticationMethod_strategy_enum"`,

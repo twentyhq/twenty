@@ -148,9 +148,7 @@ describe('TwoFactorAuthenticationService', () => {
       const mockWorkspace = {} as Workspace;
       const mockProvider = [
         {
-          context: {
-            status: 'VERIFIED',
-          },
+          status: 'VERIFIED',
         },
       ] as TwoFactorAuthenticationMethod[];
       const expectedError = new AuthException(
@@ -205,10 +203,8 @@ describe('TwoFactorAuthenticationService', () => {
 
       expect(repository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          context: {
-            secret: wrappedSecret,
-            status: 'PENDING',
-          },
+          secret: wrappedSecret,
+          status: 'PENDING',
           strategy: 'mock-strategy',
         }),
       );
@@ -216,9 +212,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if 2FA is already provisioned and verified', async () => {
       const existingMethod = {
-        context: {
-          status: 'VERIFIED',
-        },
+        status: 'VERIFIED',
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
@@ -242,10 +236,8 @@ describe('TwoFactorAuthenticationService', () => {
     const rawSecret = 'RAW_OTP_SECRET';
     const wrappedSecret = 'ENCRYPTED_HEX_STRING';
     const mock2FAMethod = {
-      context: {
-        status: 'PENDING',
-        secret: wrappedSecret,
-      },
+      status: 'PENDING',
+      secret: wrappedSecret,
       userWorkspace: {
         user: mockUser,
       },
@@ -268,16 +260,13 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(totpStrategyMocks.validate).toHaveBeenCalledWith(otpToken, {
-        status: mock2FAMethod.context.status,
+        status: mock2FAMethod.status,
         secret: rawSecret,
       });
 
       expect(repository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          context: expect.objectContaining({
-            status: OTPStatus.VERIFIED,
-            secret: wrappedSecret,
-          }),
+          status: OTPStatus.VERIFIED,
         }),
       );
     });

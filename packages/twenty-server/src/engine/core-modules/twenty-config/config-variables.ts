@@ -9,8 +9,8 @@ import {
   ValidationError,
   validateSync,
 } from 'class-validator';
-import { isDefined } from 'twenty-shared/utils';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -39,7 +39,6 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { KeyWrappingStrategy } from 'src/engine/core-modules/encryption/keys/wrapping/enums/key-wrapping-strategies.enum';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -77,15 +76,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   TWO_FACTOR_AUTHENTICATION_STRATEGY = TwoFactorAuthenticationStrategy.TOTP;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TwoFactorAuthentication,
-    description: 'Specify algorithm to be used for key wrapping.',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(KeyWrappingStrategy),
-  })
-  @IsOptional()
-  KEY_WRAPPING_STRATEGY = KeyWrappingStrategy.AES_256_KEY_WRAP;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,

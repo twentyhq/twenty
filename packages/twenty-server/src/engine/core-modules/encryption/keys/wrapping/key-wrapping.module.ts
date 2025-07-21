@@ -1,15 +1,14 @@
 import { DynamicModule, Global, Provider } from '@nestjs/common';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 
 import { KEY_WRAPPING_STRATEGY } from './key-wrapping.constants';
 import { KeyWrappingService } from './key-wrapping.service';
 
-import { KeyWrappingStrategyInterface } from './strategies/interface/key-wrapping-strategy.interface';
 import { KeyWrappingStrategy } from './enums/key-wrapping-strategies.enum';
-import { Aes256KeyWrapStrategy } from './strategies/aes-key-wrap.strategy';
 import { KeyWrappingModuleAsyncOptions } from './interface/key-wrapping.interface';
+import { Aes256KeyWrapStrategy } from './strategies/aes-key-wrap.strategy';
+import { KeyWrappingStrategyInterface } from './strategies/interface/key-wrapping-strategy.interface';
 
 @Global()
 export class KeyWrappingModule {
@@ -31,7 +30,6 @@ export class KeyWrappingModule {
 
         return strategy;
       },
-      inject: [TwentyConfigService, ...(options.inject || [])],
     };
 
     return {

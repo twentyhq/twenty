@@ -42,13 +42,13 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-right: 1px solid ${({ theme }) => theme.border.color.medium};
 
-  &:first-child {
+  &:first-of-type {
     border-left: 1px solid ${({ theme }) => theme.border.color.medium};
     border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
   }
 
-  &:last-child {
+  &:last-of-type {
     border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
   }

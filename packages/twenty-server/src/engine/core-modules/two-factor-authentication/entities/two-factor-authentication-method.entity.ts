@@ -13,7 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { OTPContext } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
@@ -39,8 +39,15 @@ export class TwoFactorAuthenticationMethod {
   @JoinColumn({ name: 'userWorkspaceId' })
   userWorkspace: Relation<UserWorkspace>;
 
-  @Column({ nullable: false, type: 'jsonb' })
-  context: OTPContext;
+  @Column({ nullable: false, type: 'text' })
+  secret: string;
+
+  @Column({
+    type: 'enum',
+    enum: OTPStatus,
+    nullable: false,
+  })
+  status: OTPStatus;
 
   @Field(() => TwoFactorAuthenticationStrategy)
   @Column({

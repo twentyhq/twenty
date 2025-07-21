@@ -84,7 +84,7 @@ export class TwoFactorAuthenticationService {
         },
       });
 
-    if (existing2FAMethod && existing2FAMethod.context?.status !== 'PENDING') {
+    if (existing2FAMethod && existing2FAMethod.status !== 'PENDING') {
       throw new TwoFactorAuthenticationException(
         'Two factor authentication has already been provisioned. Please delete and try again.',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
@@ -104,10 +104,8 @@ export class TwoFactorAuthenticationService {
     await this.twoFactorAuthenticationMethodRepository.save({
       id: existing2FAMethod?.id,
       userWorkspace: userWorkspace,
-      context: {
-        ...context,
-        secret: wrappedKey,
-      },
+      secret: wrappedKey,
+      status: context.status,
       strategy: twoFactorAuthenticatonStrategyInstance.name,
     });
 
@@ -138,7 +136,7 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    if (!isDefined(userTwoFactorAuthenticationMethod.context)) {
+    if (!isDefined(userTwoFactorAuthenticationMethod.secret)) {
       throw new TwoFactorAuthenticationException(
         'Malformed Two Factor Authentication Method object',
         TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT,
@@ -146,12 +144,12 @@ export class TwoFactorAuthenticationService {
     }
 
     const { unwrappedKey } = await this.keyWrappingService.unwrapKey(
-      Buffer.from(userTwoFactorAuthenticationMethod.context.secret, 'hex'),
+      Buffer.from(userTwoFactorAuthenticationMethod.secret, 'hex'),
       userId + workspaceId + 'otp-secret',
     );
 
     const otpContext = {
-      ...userTwoFactorAuthenticationMethod?.context,
+      status: userTwoFactorAuthenticationMethod.status,
       secret: unwrappedKey,
     };
 
@@ -173,10 +171,7 @@ export class TwoFactorAuthenticationService {
 
     await this.twoFactorAuthenticationMethodRepository.save({
       ...userTwoFactorAuthenticationMethod,
-      context: {
-        ...userTwoFactorAuthenticationMethod.context,
-        status: OTPStatus.VERIFIED,
-      },
+      status: OTPStatus.VERIFIED,
     });
   }
 

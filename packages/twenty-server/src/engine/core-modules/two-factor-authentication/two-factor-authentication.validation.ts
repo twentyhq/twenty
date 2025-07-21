@@ -42,7 +42,7 @@ const isAnyTwoFactorAuthenticationMethodVerified = (
 ) => {
   return (
     twoFactorAuthenticationMethods.filter(
-      (method) => method.context?.status === OTPStatus.VERIFIED,
+      (method) => method.status === OTPStatus.VERIFIED,
     ).length > 0
   );
 };

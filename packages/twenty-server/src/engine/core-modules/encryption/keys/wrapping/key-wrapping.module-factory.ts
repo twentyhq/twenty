@@ -1,16 +1,6 @@
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { DEFAULT_KEY_WRAPPING_STRATEGY } from './key-wrapping.constants';
 
-import { KeyWrappingStrategy } from './enums/key-wrapping-strategies.enum';
-
-export const keyWrappingConfigFactory = (
-  twentyConfigService: TwentyConfigService,
-) => {
-  const algorithm = twentyConfigService.get('KEY_WRAPPING_STRATEGY');
-
-  switch (algorithm) {
-    case KeyWrappingStrategy.AES_256_KEY_WRAP:
-      return { type: KeyWrappingStrategy.AES_256_KEY_WRAP };
-    default:
-      throw new Error(`Unsupported key derivation algorithm: ${algorithm}`);
-  }
+export const keyWrappingConfigFactory = () => {
+  // Always use AES_256_KEY_WRAP as it's the only available strategy
+  return { type: DEFAULT_KEY_WRAPPING_STRATEGY };
 };

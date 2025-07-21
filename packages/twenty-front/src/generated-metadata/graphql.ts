@@ -1488,7 +1488,6 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 
 export type MutationResetTwoFactorAuthenticationMethodArgs = {
-  origin: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['String'];
 };
 
@@ -3189,7 +3188,6 @@ export type ResendEmailVerificationTokenMutationVariables = Exact<{
 export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationTokenOutput', success: boolean } };
 
 export type ResetTwoFactorAuthenticationMethodMutationVariables = Exact<{
-  origin: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['String'];
 }>;
 
@@ -5013,9 +5011,8 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const ResetTwoFactorAuthenticationMethodDocument = gql`
-    mutation resetTwoFactorAuthenticationMethod($origin: String!, $twoFactorAuthenticationMethodId: String!) {
+    mutation resetTwoFactorAuthenticationMethod($twoFactorAuthenticationMethodId: String!) {
   resetTwoFactorAuthenticationMethod(
-    origin: $origin
     twoFactorAuthenticationMethodId: $twoFactorAuthenticationMethodId
   ) {
     success
@@ -5037,7 +5034,6 @@ export type ResetTwoFactorAuthenticationMethodMutationFn = Apollo.MutationFuncti
  * @example
  * const [resetTwoFactorAuthenticationMethodMutation, { data, loading, error }] = useResetTwoFactorAuthenticationMethodMutation({
  *   variables: {
- *      origin: // value for 'origin'
  *      twoFactorAuthenticationMethodId: // value for 'twoFactorAuthenticationMethodId'
  *   },
  * });

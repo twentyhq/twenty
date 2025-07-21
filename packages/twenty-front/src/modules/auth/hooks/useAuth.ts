@@ -376,7 +376,6 @@ export const useAuth = () => {
   const handleSetLoginToken = useCallback(
     (token: AuthToken['token']) => {
       setLoginToken(token);
-      cookieStorage.setItem('loginToken', JSON.stringify(token));
     },
     [setLoginToken],
   );

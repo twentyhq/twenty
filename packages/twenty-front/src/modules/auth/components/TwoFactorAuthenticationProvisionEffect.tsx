@@ -1,4 +1,4 @@
-import { getLoginToken } from '@/apollo/utils/getLoginToken';
+import { loginTokenState } from '@/auth/states/loginTokenState';
 import { qrCodeState } from '@/auth/states/qrCode';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
@@ -6,7 +6,7 @@ import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
@@ -16,7 +16,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
-  const loginToken = getLoginToken();
+  const loginToken = useRecoilValue(loginTokenState);
   const setQrCodeState = useSetRecoilState(qrCodeState);
 
   const { t } = useLingui();

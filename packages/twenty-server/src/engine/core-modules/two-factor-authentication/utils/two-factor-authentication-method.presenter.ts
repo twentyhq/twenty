@@ -10,7 +10,7 @@ export function buildTwoFactorAuthenticationMethodSummary(
 
   return methods.map((method) => ({
     twoFactorAuthenticationMethodId: method.id,
-    status: method.context.status,
+    status: method.status,
     strategy: method.strategy,
   }));
 }
