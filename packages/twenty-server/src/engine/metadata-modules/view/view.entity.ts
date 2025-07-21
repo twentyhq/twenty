@@ -38,7 +38,7 @@ export class View {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'text' })
   name: string;
 
   @Column({ nullable: false, type: 'uuid' })
@@ -47,19 +47,19 @@ export class View {
   @Column({ nullable: false, default: 'table' })
   type: string;
 
-  @Column({ nullable: true })
-  key: string | null;
+  @Column({ nullable: true, type: 'text' })
+  key: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   kanbanFieldMetadataId: string;
 
   @Column({ nullable: false, type: 'int', default: 0 })
   position: number;
 
-  @Column({ nullable: false, default: false })
+  @Column({ nullable: false, default: false, type: 'boolean' })
   isCompact: boolean;
 
   @Column({
