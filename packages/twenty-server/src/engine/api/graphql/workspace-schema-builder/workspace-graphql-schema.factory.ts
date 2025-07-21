@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLSchema } from 'graphql';
 
 import { WorkspaceResolverBuilderMethods } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 
@@ -22,7 +23,7 @@ export class WorkspaceGraphQLSchemaFactory {
   ) {}
 
   async create(
-    objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
     options: WorkspaceBuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
