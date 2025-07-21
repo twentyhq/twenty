@@ -83,9 +83,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           },
           create: {
             many: { disabled: true },
-            guards: [
-              SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL),
-            ],
+            guards: [SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },
