@@ -27,7 +27,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
 
-type CompositeSubFieldConfig<T> = {
+export type CompositeSubFieldConfig<T> = {
   subFieldName: keyof T;
   subFieldLabel: string;
   isImportable: boolean;
@@ -258,7 +258,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .firstName,
         isImportable: true,
         isFilterable: true,
-        isIncludedInUniqueConstraint: true,
+        isIncludedInUniqueConstraint: false,
       },
       {
         subFieldName: 'lastName',
@@ -267,7 +267,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .lastName,
         isImportable: true,
         isFilterable: true,
-        isIncludedInUniqueConstraint: true,
+        isIncludedInUniqueConstraint: false,
       },
     ],
     exampleValues: [

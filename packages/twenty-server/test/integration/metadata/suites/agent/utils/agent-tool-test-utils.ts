@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -72,6 +73,10 @@ export const createAgentToolTestModule =
         {
           provide: ToolService,
           useClass: ToolService,
+        },
+        {
+          provide: ToolAdapterService,
+          useClass: ToolAdapterService,
         },
       ],
     }).compile();
