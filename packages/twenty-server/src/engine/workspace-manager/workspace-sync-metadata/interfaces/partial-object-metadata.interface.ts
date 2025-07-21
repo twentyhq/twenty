@@ -5,17 +5,29 @@ import {
   PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-export type PartialWorkspaceEntity = Omit<
+export type PartialWorkspaceEntity = Pick<
   ObjectMetadataInterface,
-  'id' | 'standardId' | 'fields' | 'isActive'
+  | 'workspaceId'
+  | 'nameSingular'
+  | 'namePlural'
+  | 'labelSingular'
+  | 'labelPlural'
+  | 'description'
+  | 'icon'
+  | 'targetTableName'
+  | 'indexMetadatas'
+  | 'isSystem'
+  | 'isCustom'
+  | 'isRemote'
+  | 'isAuditLogged'
+  | 'isSearchable'
+  | 'duplicateCriteria'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
 > & {
   standardId: string;
-  icon?: string;
-  workspaceId: string;
   dataSourceId: string;
   fields: (PartialFieldMetadata | PartialComputedFieldMetadata)[];
-  labelIdentifierStandardId?: string | null;
-  imageIdentifierStandardId?: string | null;
 };
 
 export type ComputedPartialWorkspaceEntity = Omit<

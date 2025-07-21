@@ -12,7 +12,8 @@ export const generateFakeObjectRecord = ({
   return {
     object: {
       isLeaf: true,
-      icon: objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon,
+      icon:
+        objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon ?? undefined,
       label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
       value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
       nameSingular:
