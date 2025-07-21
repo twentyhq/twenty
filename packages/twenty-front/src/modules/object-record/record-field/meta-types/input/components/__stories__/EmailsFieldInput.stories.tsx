@@ -10,8 +10,11 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { EmailsFieldInput } from '../EmailsFieldInput';
 
@@ -70,43 +73,43 @@ const EmailInputWithContext = ({
       focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: instanceId,
+        instanceId,
       },
     });
   }, [pushFocusItemToFocusStack, instanceId]);
 
   return (
-    <RecordFieldComponentInstanceContext.Provider
-      value={{
-        instanceId: instanceId,
-      }}
-    >
-      <FieldContext.Provider
-        value={{
-          fieldDefinition: {
-            fieldMetadataId: 'emails',
-            label: 'Emails',
-            type: FieldMetadataType.EMAILS,
-            iconName: 'IconMail',
-            metadata: {
-              fieldName: 'emails',
-              placeHolder: 'Email',
-              objectMetadataNameSingular: 'company',
-            },
-          },
-          recordId,
-          isLabelIdentifier: false,
-          isReadOnly: false,
-          useUpdateRecord: () => [updateRecord, { loading: false }],
-        }}
-      >
-        <EmailValueSetterEffect value={value} />
-        <EmailFieldValueGater
-          onCancel={onCancel}
-          onClickOutside={onClickOutside}
-        />
-      </FieldContext.Provider>
-    </RecordFieldComponentInstanceContext.Provider>
+    <I18nProvider i18n={i18n}>
+      <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
+        <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
+          <FieldContext.Provider
+            value={{
+              fieldDefinition: {
+                fieldMetadataId: 'emails',
+                label: 'Emails',
+                type: FieldMetadataType.EMAILS,
+                iconName: 'IconMail',
+                metadata: {
+                  fieldName: 'emails',
+                  placeHolder: 'Email',
+                  objectMetadataNameSingular: 'company',
+                },
+              },
+              recordId,
+              isLabelIdentifier: false,
+              isReadOnly: false,
+              useUpdateRecord: () => [updateRecord, { loading: false }],
+            }}
+          >
+            <EmailValueSetterEffect value={value} />
+            <EmailFieldValueGater
+              onCancel={onCancel}
+              onClickOutside={onClickOutside}
+            />
+          </FieldContext.Provider>
+        </RecordFieldComponentInstanceContext.Provider>
+      </SnackBarComponentInstanceContextProvider>
+    </I18nProvider>
   );
 };
 

@@ -8,13 +8,12 @@ export const useCopyToClipboard = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const copyToClipboard = async (valueAsString: string, message?: string) => {
+  const copyToClipboard = async (valueAsString: string) => {
     try {
       await navigator.clipboard.writeText(valueAsString);
-      
 
       enqueueSuccessSnackBar({
-        message: message || t`Copied to clipboard`,
+        message: t`Copied to clipboard`,
         options: {
           icon: <IconCopy size={theme.icon.size.md} />,
           duration: 2000,
