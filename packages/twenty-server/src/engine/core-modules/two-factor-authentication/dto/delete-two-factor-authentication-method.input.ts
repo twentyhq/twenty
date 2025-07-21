@@ -1,11 +1,11 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @ArgsType()
-export class ResetTwoFactorAuthenticationMethodInput {
+export class DeleteTwoFactorAuthenticationMethodInput {
   @Field(() => String)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   twoFactorAuthenticationMethodId: string;
 }

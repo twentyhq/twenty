@@ -2,7 +2,6 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -26,10 +25,12 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
+import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
+import { DeleteTwoFactorAuthenticationMethodOutput } from './dto/delete-two-factor-authentication-method.output';
 import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
-import { ResetTwoFactorAuthenticationMethodInput } from './dto/reset-two-factor-authentication-method.input';
-import { ResetTwoFactorAuthenticationMethodOutput } from './dto/reset-two-factor-authentication-method.output';
+import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
+import { VerifyTwoFactorAuthenticationMethodOutput } from './dto/verify-two-factor-authentication-method.output';
 import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
 
 @Resolver()
@@ -83,7 +84,6 @@ export class TwoFactorAuthenticationResolver {
         user.id,
         userEmail,
         workspace.id,
-        TwoFactorAuthenticationStrategy.TOTP,
       );
 
     if (!isDefined(uri)) {
@@ -107,7 +107,6 @@ export class TwoFactorAuthenticationResolver {
         user.id,
         user.email,
         workspace.id,
-        TwoFactorAuthenticationStrategy.TOTP,
       );
 
     if (!isDefined(uri)) {
@@ -120,19 +119,19 @@ export class TwoFactorAuthenticationResolver {
     return { uri };
   }
 
-  @Mutation(() => ResetTwoFactorAuthenticationMethodOutput)
+  @Mutation(() => DeleteTwoFactorAuthenticationMethodOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async resetTwoFactorAuthenticationMethod(
+  async deleteTwoFactorAuthenticationMethod(
     @Args()
-    resetTwoFactorAuthenticationMethodInput: ResetTwoFactorAuthenticationMethodInput,
+    deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
-  ): Promise<ResetTwoFactorAuthenticationMethodOutput> {
-    // First, find the 2FA method to ensure it exists and belongs to the current user
+  ): Promise<DeleteTwoFactorAuthenticationMethodOutput> {
+
     const twoFactorMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {
-          id: resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+          id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
         },
         relations: ['userWorkspace'],
       });
@@ -155,9 +154,24 @@ export class TwoFactorAuthenticationResolver {
     }
 
     await this.twoFactorAuthenticationMethodRepository.delete(
-      resetTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+      deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
     );
 
     return { success: true };
+  }
+
+  @Mutation(() => VerifyTwoFactorAuthenticationMethodOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+    @Args()
+    verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+  ): Promise<VerifyTwoFactorAuthenticationMethodOutput> {
+    return await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+      user.id,
+      verifyTwoFactorAuthenticationMethodInput.otp,
+      workspace.id,
+    );
   }
 }

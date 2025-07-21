@@ -21,10 +21,9 @@ import {
 } from './two-factor-authentication.exception';
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
-import { OTPAuthenticationStrategyInterface } from './strategies/otp/interfaces/otp.strategy.interface';
+import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
+import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { OTPStatus } from './strategies/otp/otp.constants';
-import { TOTP_DEFAULT_CONFIGURATION } from './strategies/otp/totp/constants/totp.strategy.constants';
-import { TotpStrategy } from './strategies/otp/totp/totp.strategy';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -64,7 +63,6 @@ export class TwoFactorAuthenticationService {
     userId: string,
     userEmail: string,
     workspaceId: string,
-    twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy = TwoFactorAuthenticationStrategy.TOTP,
   ) {
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
@@ -72,26 +70,22 @@ export class TwoFactorAuthenticationService {
         workspaceId,
       });
 
-    const twoFactorAuthenticatonStrategyInstance = this.getOTPStrategy(
-      twoFactorAuthenticationStrategy,
-    );
-
     const existing2FAMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
         where: {
           userWorkspace: { id: userWorkspace.id },
-          strategy: twoFactorAuthenticatonStrategyInstance.name,
+          strategy: TwoFactorAuthenticationStrategy.TOTP,
         },
       });
 
     if (existing2FAMethod && existing2FAMethod.status !== 'PENDING') {
       throw new TwoFactorAuthenticationException(
-        'Two factor authentication has already been provisioned. Please delete and try again.',
+        'A two factor authentication method has already been set. Please delete it and try again.',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
       );
     }
 
-    const { uri, context } = twoFactorAuthenticatonStrategyInstance.initiate(
+    const { uri, context } = new TotpStrategy(TOTP_DEFAULT_CONFIGURATION).initiate(
       userEmail,
       userWorkspace.workspace.displayName || '',
     );
@@ -106,7 +100,7 @@ export class TwoFactorAuthenticationService {
       userWorkspace: userWorkspace,
       secret: wrappedKey,
       status: context.status,
-      strategy: twoFactorAuthenticatonStrategyInstance.name,
+      strategy: TwoFactorAuthenticationStrategy.TOTP,
     });
 
     return uri;
@@ -153,11 +147,7 @@ export class TwoFactorAuthenticationService {
       secret: unwrappedKey,
     };
 
-    const twoFactorAuthenticationStrategyInstance = this.getOTPStrategy(
-      twoFactorAuthenticationStrategy,
-    );
-
-    const isValid = twoFactorAuthenticationStrategyInstance.validate(
+    const isValid = new TotpStrategy(TOTP_DEFAULT_CONFIGURATION).validate(
       token,
       otpContext,
     );
@@ -175,17 +165,19 @@ export class TwoFactorAuthenticationService {
     });
   }
 
-  getOTPStrategy(
-    otpStrategy: TwoFactorAuthenticationStrategy,
-  ): OTPAuthenticationStrategyInterface {
-    switch (otpStrategy) {
-      case TwoFactorAuthenticationStrategy.TOTP:
-        return new TotpStrategy(TOTP_DEFAULT_CONFIGURATION);
-      default:
-        throw new TwoFactorAuthenticationException(
-          'Unsupported strategy.',
-          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
-        );
-    }
+  async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+    userId: User['id'],
+    token: string,
+    workspaceId: Workspace['id'],
+  ) {
+    await this.validateStrategy(
+      userId,
+      token,
+      workspaceId,
+      TwoFactorAuthenticationStrategy.TOTP,
+    );
+
+    return { success: true };
   }
+
 }

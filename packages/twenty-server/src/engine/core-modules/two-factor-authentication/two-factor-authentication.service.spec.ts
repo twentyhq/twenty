@@ -4,16 +4,16 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { KeyWrappingService } from 'src/engine/core-modules/encryption/keys/wrapping/key-wrapping.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
+    TwoFactorAuthenticationException,
+    TwoFactorAuthenticationExceptionCode,
 } from './two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
@@ -180,7 +180,6 @@ describe('TwoFactorAuthenticationService', () => {
         mockUser.id,
         mockUser.email,
         workspace.id,
-        TwoFactorAuthenticationStrategy.TOTP,
       );
 
       expect(uri).toBe('otpauth://...');
@@ -188,6 +187,13 @@ describe('TwoFactorAuthenticationService', () => {
         Buffer.from(rawSecret),
         mockUser.id + workspace.id + 'otp-secret',
       );
+      expect(repository.save).toHaveBeenCalledWith({
+        id: undefined,
+        userWorkspace: mockUserWorkspace,
+        secret: wrappedSecret,
+        status: 'PENDING',
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      });
 
       expect(
         userWorkspaceService.getUserWorkspaceForUserOrThrow,
@@ -205,7 +211,7 @@ describe('TwoFactorAuthenticationService', () => {
         expect.objectContaining({
           secret: wrappedSecret,
           status: 'PENDING',
-          strategy: 'mock-strategy',
+          strategy: TwoFactorAuthenticationStrategy.TOTP,
         }),
       );
     });
@@ -217,7 +223,7 @@ describe('TwoFactorAuthenticationService', () => {
 
       repository.findOne.mockResolvedValue(existingMethod);
       const expectedError = new TwoFactorAuthenticationException(
-        'Two factor authentication has already been provisioned. Please delete and try again.',
+        'A two factor authentication method has already been set. Please delete it and try again.',
         TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED,
       );
 
@@ -226,7 +232,6 @@ describe('TwoFactorAuthenticationService', () => {
           mockUser.id,
           mockUser.email,
           workspace.id,
-          TwoFactorAuthenticationStrategy.TOTP,
         ),
       ).rejects.toThrow(expectedError);
     });
@@ -305,6 +310,63 @@ describe('TwoFactorAuthenticationService', () => {
           TwoFactorAuthenticationStrategy.TOTP,
         ),
       ).rejects.toThrow(expectedError2);
+    });
+  });
+
+  describe('verifyTwoFactorAuthenticationMethodForAuthenticatedUser', () => {
+    const rawSecret = 'RAW_OTP_SECRET';
+    const wrappedSecret = 'ENCRYPTED_HEX_STRING';
+    const mock2FAMethod = {
+      status: 'PENDING',
+      secret: wrappedSecret,
+      userWorkspace: {
+        user: mockUser,
+      },
+    };
+    const otpToken = '123456';
+
+    it('should successfully verify and return success', async () => {
+      repository.findOne.mockResolvedValue(mock2FAMethod);
+      (keyWrappingService.unwrapKey as jest.Mock).mockResolvedValue({
+        unwrappedKey: rawSecret,
+      });
+
+      totpStrategyMocks.validate.mockReturnValue(true);
+
+      const result = await service.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+        mockUser.id,
+        otpToken,
+        workspace.id,
+      );
+
+      expect(result).toEqual({ success: true });
+      expect(totpStrategyMocks.validate).toHaveBeenCalledWith(otpToken, {
+        status: mock2FAMethod.status,
+        secret: rawSecret,
+      });
+
+      expect(repository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: OTPStatus.VERIFIED,
+        }),
+      );
+    });
+
+    it('should throw if the token is invalid', async () => {
+      repository.findOne.mockResolvedValue(mock2FAMethod);
+      totpStrategyMocks.validate.mockReturnValue(false);
+      const expectedError = new TwoFactorAuthenticationException(
+        'Invalid OTP',
+        TwoFactorAuthenticationExceptionCode.INVALID_OTP,
+      );
+
+      await expect(
+        service.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+          mockUser.id,
+          'wrong-token',
+          workspace.id,
+        ),
+      ).rejects.toThrow(expectedError);
     });
   });
 });

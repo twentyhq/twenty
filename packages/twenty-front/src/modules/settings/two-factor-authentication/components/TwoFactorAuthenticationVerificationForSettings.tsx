@@ -1,11 +1,13 @@
+import { useMutation } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { OTPInput, SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
 
+import { useAuth } from '@/auth/hooks/useAuth';
+import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -149,6 +151,11 @@ export const useTwoFactorVerificationForSettings = () => {
   const navigate = useNavigateSettings();
   const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
+  const { loadCurrentUser } = useAuth();
+
+  const [verifyTwoFactorAuthenticationMethod] = useMutation(
+    VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER,
+  );
 
   const formConfig = useForm<OTPFormValues>({
     mode: 'onChange',
@@ -161,10 +168,13 @@ export const useTwoFactorVerificationForSettings = () => {
   const otpValue = formConfig.watch('otp');
   const canSave = !isSubmitting && otpValue?.length === 6;
 
-  const handleVerificationSuccess = () => {
+  const handleVerificationSuccess = async () => {
     enqueueSuccessSnackBar({
       message: t`Two-factor authentication setup completed successfully!`,
     });
+
+    // Reload current user to refresh 2FA status
+    await loadCurrentUser();
 
     // Navigate back to profile page
     navigate(SettingsPath.ProfilePage);
@@ -174,15 +184,13 @@ export const useTwoFactorVerificationForSettings = () => {
     try {
       setIsLoading(true);
 
-      // For now, simulate success - in reality you'd call a verification endpoint
-      // that verifies the OTP and activates 2FA for the user
-      if (isDefined(values.otp) && values.otp.length === 6) {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        handleVerificationSuccess();
-      } else {
-        throw new Error('Invalid OTP code');
-      }
+      await verifyTwoFactorAuthenticationMethod({
+        variables: {
+          otp: values.otp,
+        },
+      });
+
+      await handleVerificationSuccess();
     } catch (error) {
       enqueueErrorSnackBar({
         message: t`Invalid verification code. Please try again.`,
