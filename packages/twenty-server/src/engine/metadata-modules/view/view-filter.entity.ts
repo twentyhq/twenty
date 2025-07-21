@@ -31,8 +31,8 @@ export class ViewFilter {
   @Column({ nullable: false, default: 'Contains' })
   operand: string;
 
-  @Column({ nullable: false, type: 'text' })
-  value: string;
+  @Column({ nullable: false, type: 'jsonb' })
+  value: JSON;
 
   @Column({ nullable: true, type: 'uuid' })
   viewFilterGroupId?: string | null;
