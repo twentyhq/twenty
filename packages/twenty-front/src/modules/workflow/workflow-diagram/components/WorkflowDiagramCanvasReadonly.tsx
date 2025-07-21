@@ -37,7 +37,6 @@ export const WorkflowDiagramCanvasReadonly = ({
             'empty-trigger': WorkflowDiagramEmptyTrigger,
           }}
           edgeTypes={{
-            blank: WorkflowDiagramBlankEdge,
             'v1-readonly': WorkflowDiagramV1EdgeReadonly,
             'empty-filter-readonly': WorkflowDiagramDefaultEdgeReadonly,
             'filter-readonly': WorkflowDiagramFilterEdgeReadonly,

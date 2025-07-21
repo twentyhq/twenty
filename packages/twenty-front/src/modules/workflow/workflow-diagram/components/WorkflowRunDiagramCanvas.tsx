@@ -1,8 +1,9 @@
 import { WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
-import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
+import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeRun';
+import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeRun';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
-import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
+import { WorkflowDiagramV1EdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramV1EdgeRun';
 import { WorkflowRunDiagramCanvasEffect } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvasEffect';
 import { WorkflowVisualizerDiagramContextProvider } from '@/workflow/workflow-diagram/contexts/WorkflowVisualizerDiagramContext';
 import { useHandleWorkflowRunDiagramCanvasInit } from '@/workflow/workflow-diagram/hooks/useHandleWorkflowRunDiagramCanvasInit';
@@ -37,8 +38,9 @@ export const WorkflowRunDiagramCanvas = ({
             default: WorkflowDiagramStepNodeReadonly,
           }}
           edgeTypes={{
-            default: WorkflowDiagramDefaultEdge,
-            success: WorkflowDiagramSuccessEdge,
+            'v1-run': WorkflowDiagramV1EdgeRun,
+            'empty-filter-run': WorkflowDiagramDefaultEdgeRun,
+            'filter-run': WorkflowDiagramFilterEdgeRun,
           }}
           tagContainerTestId="workflow-run-status"
           tagColor={tagProps.color}

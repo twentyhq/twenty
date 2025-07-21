@@ -1,6 +1,7 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeSuccessConfiguration';
 import {
+  WorkflowDiagramEdgeData,
+  WorkflowDiagramEdgeType,
   WorkflowRunDiagram,
   WorkflowRunDiagramNode,
   WorkflowRunDiagramStepNodeData,
@@ -9,16 +10,18 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowRunStepInfos, StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
   stepInfos,
+  isWorkflowFilteringEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
+  isWorkflowFilteringEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -35,9 +38,12 @@ export const generateWorkflowRunDiagram = ({
       }
     | undefined = undefined;
 
-  const workflowDiagram = transformFilterNodesAsEdges(
-    generateWorkflowDiagram({ trigger, steps }),
-  );
+  const workflowDiagram = generateWorkflowDiagram({
+    trigger,
+    steps,
+    isEditable: false,
+    isWorkflowFilteringEnabled,
+  });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
     workflowDiagram.nodes.filter(isStepNode).map((node) => {
@@ -76,30 +82,32 @@ export const generateWorkflowRunDiagram = ({
     );
 
     if (!isDefined(parentNode)) {
-      return edge;
+      throw new Error('Expected the edge to have a parent node');
     }
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    if (!isDefined(stepInfo)) {
-      return edge;
-    }
+    const edgeType: WorkflowDiagramEdgeType = isWorkflowFilteringEnabled
+      ? 'empty-filter-run'
+      : 'v1-run';
 
-    if (stepInfo.status === 'SUCCESS') {
-      return {
-        ...edge,
-        ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
-      };
-    }
-
-    return edge;
+    return {
+      ...edge,
+      type: edgeType,
+      data: {
+        ...edge.data,
+        edgeType: 'default',
+        edgeExecutionStatus: stepInfo?.status ?? StepStatus.NOT_STARTED,
+      } satisfies WorkflowDiagramEdgeData,
+    };
   });
 
   return {
-    diagram: {
+    diagram: transformFilterNodesAsEdges({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-    },
+      context: 'run',
+    }),
     stepToOpenByDefault,
   };
 };

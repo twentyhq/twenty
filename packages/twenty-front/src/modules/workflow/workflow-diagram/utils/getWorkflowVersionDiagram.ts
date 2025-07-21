@@ -22,13 +22,16 @@ export const getWorkflowVersionDiagram = ({
     return EMPTY_DIAGRAM;
   }
 
-  return transformFilterNodesAsEdges({
-    diagram: generateWorkflowDiagram({
-      trigger: workflowVersion.trigger ?? undefined,
-      steps: workflowVersion.steps ?? [],
-      isWorkflowFilteringEnabled,
-      isEditable,
-    }),
+  const diagram = generateWorkflowDiagram({
+    trigger: workflowVersion.trigger ?? undefined,
+    steps: workflowVersion.steps ?? [],
+    isWorkflowFilteringEnabled,
     isEditable,
+  });
+
+  return transformFilterNodesAsEdges({
+    nodes: diagram.nodes,
+    edges: diagram.edges,
+    context: isEditable ? 'editable' : 'readonly',
   });
 };
