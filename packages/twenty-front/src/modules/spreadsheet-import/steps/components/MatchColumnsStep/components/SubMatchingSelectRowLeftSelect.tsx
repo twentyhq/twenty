@@ -15,13 +15,13 @@ const StyledControlLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export type SubMatchingSelectRowLeftSelectProps = {
-  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
+export type SubMatchingSelectRowLeftSelectProps<T> = {
+  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
 };
 
-export const SubMatchingSelectRowLeftSelect = ({
+export const SubMatchingSelectRowLeftSelect = <T extends string>({
   option,
-}: SubMatchingSelectRowLeftSelectProps) => {
+}: SubMatchingSelectRowLeftSelectProps<T>) => {
   return (
     <SubMatchingSelectControlContainer cursor="default">
       <StyledControlLabel>

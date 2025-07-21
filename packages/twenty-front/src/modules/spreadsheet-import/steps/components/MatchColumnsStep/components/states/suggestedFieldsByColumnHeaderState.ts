@@ -3,5 +3,5 @@ import { createState } from 'twenty-ui/utilities';
 
 export const suggestedFieldsByColumnHeaderState = createState({
   key: 'suggestedFieldsByColumnHeaderState',
-  defaultValue: {} as Record<string, SpreadsheetImportField[]>,
+  defaultValue: {} as Record<string, SpreadsheetImportField<string>[]>,
 });

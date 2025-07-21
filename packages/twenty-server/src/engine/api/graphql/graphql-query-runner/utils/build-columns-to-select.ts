@@ -4,7 +4,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const buildColumnsToSelect = ({
   select,
@@ -57,7 +57,7 @@ const getRequiredRelationColumns = (
     }
 
     if (
-      !isFieldMetadataInterfaceOfType(fieldMetadata, FieldMetadataType.RELATION)
+      !isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
     ) {
       continue;
     }

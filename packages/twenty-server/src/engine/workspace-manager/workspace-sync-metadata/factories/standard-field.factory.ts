@@ -143,8 +143,8 @@ export class StandardFieldFactory {
         icon: workspaceFieldMetadataArgs.icon,
         label: workspaceFieldMetadataArgs.label,
         description: workspaceFieldMetadataArgs.description,
-        defaultValue: workspaceFieldMetadataArgs.defaultValue,
-        options: workspaceFieldMetadataArgs.options,
+        defaultValue: workspaceFieldMetadataArgs.defaultValue ?? null,
+        options: workspaceFieldMetadataArgs.options ?? null,
         settings: workspaceFieldMetadataArgs.settings,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
@@ -155,6 +155,10 @@ export class StandardFieldFactory {
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
+        relationTargetFieldMetadata: null,
+        relationTargetFieldMetadataId: null,
+        relationTargetObjectMetadata: null,
+        relationTargetObjectMetadataId: null,
       },
     ];
   }
@@ -195,6 +199,12 @@ export class StandardFieldFactory {
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
       isLabelSyncedWithName:
         workspaceRelationMetadataArgs.isLabelSyncedWithName,
+      defaultValue: null,
+      options: null,
+      relationTargetFieldMetadata: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadata: null,
+      relationTargetObjectMetadataId: null,
     });
 
     return fieldMetadataCollection;

@@ -8,9 +8,8 @@ import { ImportedRow } from '@/spreadsheet-import/types';
 import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatchedColumnsWithFuse';
 import { useRecoilCallback } from 'recoil';
 
-export const useComputeColumnSuggestionsAndAutoMatch = () => {
-  const { spreadsheetImportFields: fields, autoMapHeaders } =
-    useSpreadsheetImportInternal();
+export const useComputeColumnSuggestionsAndAutoMatch = <T extends string>() => {
+  const { fields, autoMapHeaders } = useSpreadsheetImportInternal<T>();
 
   const computeColumnSuggestionsAndAutoMatch = useRecoilCallback(
     ({ set, snapshot }) =>

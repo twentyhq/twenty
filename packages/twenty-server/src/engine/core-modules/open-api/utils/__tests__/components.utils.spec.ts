@@ -19,7 +19,7 @@ describe('computeSchemaComponents', () => {
     ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
-    "description": undefined,
+    "description": "Object description",
     "example": {
       "fieldCurrency": {
         "amountMicros": 284000000,
@@ -48,10 +48,13 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {
+        "description": "Default field metadata entity description",
         "properties": {
           "source": {
             "enum": [
@@ -70,6 +73,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldAddress": {
+        "description": "Default field metadata entity description",
         "properties": {
           "addressCity": {
             "type": "string",
@@ -99,15 +103,18 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldArray": {
+        "description": "Default field metadata entity description",
         "items": {
           "type": "string",
         },
         "type": "array",
       },
       "fieldBoolean": {
+        "description": "Default field metadata entity description",
         "type": "boolean",
       },
       "fieldCurrency": {
+        "description": "Default field metadata entity description",
         "properties": {
           "amountMicros": {
             "type": "number",
@@ -119,14 +126,17 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldDate": {
+        "description": "Default field metadata entity description",
         "format": "date",
         "type": "string",
       },
       "fieldDateTime": {
+        "description": "Default field metadata entity description",
         "format": "date-time",
         "type": "string",
       },
       "fieldEmails": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalEmails": {
             "items": {
@@ -142,6 +152,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldFullName": {
+        "description": "Default field metadata entity description",
         "properties": {
           "firstName": {
             "type": "string",
@@ -153,6 +164,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldLinks": {
+        "description": "Default field metadata entity description",
         "properties": {
           "primaryLinkLabel": {
             "type": "string",
@@ -180,6 +192,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldMultiSelect": {
+        "description": "Default field metadata entity description",
         "items": {
           "enum": [
             "OPTION_1",
@@ -190,12 +203,15 @@ describe('computeSchemaComponents', () => {
         "type": "array",
       },
       "fieldNumber": {
+        "description": "Default field metadata entity description",
         "type": "integer",
       },
       "fieldNumeric": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldPhones": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalPhones": {
             "items": {
@@ -216,9 +232,11 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldPosition": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldRating": {
+        "description": "Default field metadata entity description",
         "enum": [
           "RATING_1",
           "RATING_2",
@@ -226,6 +244,7 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRawJson": {
+        "description": "Default field metadata entity description",
         "type": "object",
       },
       "fieldRelationId": {
@@ -233,9 +252,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRichText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
+        "description": "Default field metadata entity description",
         "enum": [
           "OPTION_1",
           "OPTION_2",
@@ -243,9 +264,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldUuid": {
+        "description": "Default field metadata entity description",
         "format": "uuid",
         "type": "string",
       },
@@ -256,9 +279,10 @@ describe('computeSchemaComponents', () => {
     "type": "object",
   },
   "ObjectNameForResponse": {
-    "description": undefined,
+    "description": "Object description",
     "properties": {
       "fieldActor": {
+        "description": "Default field metadata entity description",
         "properties": {
           "name": {
             "type": "string",
@@ -284,6 +308,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldAddress": {
+        "description": "Default field metadata entity description",
         "properties": {
           "addressCity": {
             "type": "string",
@@ -313,15 +338,18 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldArray": {
+        "description": "Default field metadata entity description",
         "items": {
           "type": "string",
         },
         "type": "array",
       },
       "fieldBoolean": {
+        "description": "Default field metadata entity description",
         "type": "boolean",
       },
       "fieldCurrency": {
+        "description": "Default field metadata entity description",
         "properties": {
           "amountMicros": {
             "type": "number",
@@ -333,14 +361,17 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldDate": {
+        "description": "Default field metadata entity description",
         "format": "date",
         "type": "string",
       },
       "fieldDateTime": {
+        "description": "Default field metadata entity description",
         "format": "date-time",
         "type": "string",
       },
       "fieldEmails": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalEmails": {
             "items": {
@@ -356,6 +387,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldFullName": {
+        "description": "Default field metadata entity description",
         "properties": {
           "firstName": {
             "type": "string",
@@ -367,6 +399,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldLinks": {
+        "description": "Default field metadata entity description",
         "properties": {
           "primaryLinkLabel": {
             "type": "string",
@@ -394,6 +427,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldMultiSelect": {
+        "description": "Default field metadata entity description",
         "items": {
           "enum": [
             "OPTION_1",
@@ -404,12 +438,15 @@ describe('computeSchemaComponents', () => {
         "type": "array",
       },
       "fieldNumber": {
+        "description": "Default field metadata entity description",
         "type": "integer",
       },
       "fieldNumeric": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldPhones": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalPhones": {
             "items": {
@@ -430,9 +467,11 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldPosition": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldRating": {
+        "description": "Default field metadata entity description",
         "enum": [
           "RATING_1",
           "RATING_2",
@@ -440,9 +479,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRawJson": {
+        "description": "Default field metadata entity description",
         "type": "object",
       },
       "fieldRelation": {
+        "description": "Default field metadata entity description",
         "oneOf": [
           {
             "$ref": "#/components/schemas/RelationTargetObjectForResponse",
@@ -455,9 +496,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRichText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
+        "description": "Default field metadata entity description",
         "enum": [
           "OPTION_1",
           "OPTION_2",
@@ -465,9 +508,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldUuid": {
+        "description": "Default field metadata entity description",
         "format": "uuid",
         "type": "string",
       },
@@ -475,7 +520,7 @@ describe('computeSchemaComponents', () => {
     "type": "object",
   },
   "ObjectNameForUpdate": {
-    "description": undefined,
+    "description": "Object description",
     "example": {
       "fieldCurrency": {
         "amountMicros": 253000000,
@@ -504,10 +549,13 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {
+        "description": "Default field metadata entity description",
         "properties": {
           "source": {
             "enum": [
@@ -526,6 +574,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldAddress": {
+        "description": "Default field metadata entity description",
         "properties": {
           "addressCity": {
             "type": "string",
@@ -555,15 +604,18 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldArray": {
+        "description": "Default field metadata entity description",
         "items": {
           "type": "string",
         },
         "type": "array",
       },
       "fieldBoolean": {
+        "description": "Default field metadata entity description",
         "type": "boolean",
       },
       "fieldCurrency": {
+        "description": "Default field metadata entity description",
         "properties": {
           "amountMicros": {
             "type": "number",
@@ -575,14 +627,17 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldDate": {
+        "description": "Default field metadata entity description",
         "format": "date",
         "type": "string",
       },
       "fieldDateTime": {
+        "description": "Default field metadata entity description",
         "format": "date-time",
         "type": "string",
       },
       "fieldEmails": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalEmails": {
             "items": {
@@ -598,6 +653,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldFullName": {
+        "description": "Default field metadata entity description",
         "properties": {
           "firstName": {
             "type": "string",
@@ -609,6 +665,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldLinks": {
+        "description": "Default field metadata entity description",
         "properties": {
           "primaryLinkLabel": {
             "type": "string",
@@ -636,6 +693,7 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldMultiSelect": {
+        "description": "Default field metadata entity description",
         "items": {
           "enum": [
             "OPTION_1",
@@ -646,12 +704,15 @@ describe('computeSchemaComponents', () => {
         "type": "array",
       },
       "fieldNumber": {
+        "description": "Default field metadata entity description",
         "type": "integer",
       },
       "fieldNumeric": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldPhones": {
+        "description": "Default field metadata entity description",
         "properties": {
           "additionalPhones": {
             "items": {
@@ -672,9 +733,11 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldPosition": {
+        "description": "Default field metadata entity description",
         "type": "number",
       },
       "fieldRating": {
+        "description": "Default field metadata entity description",
         "enum": [
           "RATING_1",
           "RATING_2",
@@ -682,6 +745,7 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRawJson": {
+        "description": "Default field metadata entity description",
         "type": "object",
       },
       "fieldRelationId": {
@@ -689,9 +753,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldRichText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
+        "description": "Default field metadata entity description",
         "enum": [
           "OPTION_1",
           "OPTION_2",
@@ -699,9 +765,11 @@ describe('computeSchemaComponents', () => {
         "type": "string",
       },
       "fieldText": {
+        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldUuid": {
+        "description": "Default field metadata entity description",
         "format": "uuid",
         "type": "string",
       },
