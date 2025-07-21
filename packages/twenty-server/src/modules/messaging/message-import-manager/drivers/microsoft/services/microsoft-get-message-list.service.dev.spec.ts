@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
@@ -17,10 +18,15 @@ import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 // in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
 const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;
-const mockConnectedAccount = {
+const mockConnectedAccount: Pick<
+  ConnectedAccountWorkspaceEntity,
+  'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+> = {
   id: 'connected-account-id',
   provider: ConnectedAccountProvider.MICROSOFT,
   refreshToken: refreshToken,
+  handle: 'test@gmail.com',
+  connectionParameters: {},
 };
 
 xdescribe('Microsoft dev tests : get message list service', () => {
@@ -163,19 +169,21 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   });
 
   it('Should return empty array', async () => {
-    const result = await service.getMessageListForFolders(
-      mockConnectedAccount,
-      messageChannelNoFolders,
-    );
+    const result = await service.getMessageLists({
+      messageChannel: messageChannelNoFolders,
+      connectedAccount: mockConnectedAccount,
+      messageFolders: [],
+    });
 
     expect(result.length).toBe(0);
   });
 
   it('Should return an array of one items', async () => {
-    const result = await service.getMessageListForFolders(
-      mockConnectedAccount,
-      messageChannelMicrosoftOneFolder,
-    );
+    const result = await service.getMessageLists({
+      messageChannel: messageChannelMicrosoftOneFolder,
+      connectedAccount: mockConnectedAccount,
+      messageFolders: [inboxFolder],
+    });
 
     expect(result.length).toBe(1);
     expect(result[0].folderId).toBe(inboxFolder.id);
@@ -183,10 +191,11 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   });
 
   it('Should return an array of two items', async () => {
-    const result = await service.getMessageListForFolders(
-      mockConnectedAccount,
-      messageChannelMicrosoft,
-    );
+    const result = await service.getMessageLists({
+      messageChannel: messageChannelMicrosoft,
+      connectedAccount: mockConnectedAccount,
+      messageFolders: [inboxFolder, sentFolder],
+    });
 
     expect(result.length).toBe(2);
   });

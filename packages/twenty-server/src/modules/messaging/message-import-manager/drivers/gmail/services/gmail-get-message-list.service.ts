@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -14,7 +15,8 @@ import { GmailGetHistoryService } from 'src/modules/messaging/message-import-man
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
-import { GetMessageListResponse } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+import { GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
+import { GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 import { assertNotNull } from 'src/utils/assert';
 
 @Injectable()
@@ -30,7 +32,7 @@ export class GmailGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-  ): Promise<GetMessageListResponse> {
+  ): Promise<GetMessageListsResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
@@ -75,12 +77,15 @@ export class GmailGetMessageListService {
     }
 
     if (messageExternalIds.length === 0) {
-      return {
-        messageExternalIds,
-        nextSyncCursor: '',
-        previousSyncCursor: '',
-        messageExternalIdsToDelete: [],
-      };
+      return [
+        {
+          messageExternalIds,
+          nextSyncCursor: '',
+          previousSyncCursor: '',
+          messageExternalIdsToDelete: [],
+          folderId: undefined,
+        },
+      ];
     }
 
     const firstMessageExternalId = messageExternalIds[0];
@@ -105,33 +110,41 @@ export class GmailGetMessageListService {
       );
     }
 
-    return {
-      messageExternalIds,
-      nextSyncCursor,
-      previousSyncCursor: '',
-      messageExternalIdsToDelete: [],
-    };
+    return [
+      {
+        messageExternalIds,
+        nextSyncCursor,
+        previousSyncCursor: '',
+        messageExternalIdsToDelete: [],
+        folderId: undefined,
+      },
+    ];
   }
 
-  public async getMessageList(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
-    >,
-    syncCursor: string,
-  ): Promise<GetMessageListResponse> {
+  public async getMessageLists({
+    messageChannel,
+    connectedAccount,
+    messageFolders: _messageFolders,
+  }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
+    if (!isDefined(messageChannel.syncCursor)) {
+      return this._getMessageListWithoutCursor(connectedAccount);
+    }
+
     const { history, historyId: nextSyncCursor } =
-      await this.gmailGetHistoryService.getHistory(gmailClient, syncCursor);
+      await this.gmailGetHistoryService.getHistory(
+        gmailClient,
+        messageChannel.syncCursor,
+      );
 
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
     const messageIdsToFilter = await this.getEmailIdsFromExcludedCategories(
       gmailClient,
-      syncCursor,
+      messageChannel.syncCursor,
     );
 
     const messagesAddedFiltered = messagesAdded.filter(
@@ -145,12 +158,15 @@ export class GmailGetMessageListService {
       );
     }
 
-    return {
-      messageExternalIds: messagesAddedFiltered,
-      messageExternalIdsToDelete: messagesDeleted,
-      previousSyncCursor: syncCursor,
-      nextSyncCursor,
-    };
+    return [
+      {
+        messageExternalIds: messagesAddedFiltered,
+        messageExternalIdsToDelete: messagesDeleted,
+        previousSyncCursor: messageChannel.syncCursor,
+        nextSyncCursor,
+        folderId: undefined,
+      },
+    ];
   }
 
   private async getEmailIdsFromExcludedCategories(

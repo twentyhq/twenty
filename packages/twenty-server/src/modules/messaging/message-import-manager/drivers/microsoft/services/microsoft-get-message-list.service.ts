@@ -9,7 +9,6 @@ import { v4 } from 'uuid';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -19,10 +18,11 @@ import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-ma
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
+import { GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
-  GetMessageListForFoldersResponse,
-  GetMessageListResponse,
-} from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+  GetMessageListsResponse,
+  GetOneMessageListResponse,
+} from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
 // Microsoft API limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
@@ -35,16 +35,14 @@ export class MicrosoftGetMessageListService {
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  public async getMessageListForFolders(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
-    >,
-    messageChannel: MessageChannelWorkspaceEntity,
-  ): Promise<GetMessageListForFoldersResponse[]> {
-    const result: GetMessageListForFoldersResponse[] = [];
+  public async getMessageLists({
+    messageChannel,
+    connectedAccount,
+    messageFolders,
+  }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
+    const result: GetMessageListsResponse = [];
 
-    if (messageChannel.messageFolders.length === 0) {
+    if (messageFolders.length === 0) {
       // permanent solution:
       // throw new MessageImportDriverException(
       //   `Message channel ${messageChannel.id} has no message folders`,
@@ -87,7 +85,7 @@ export class MicrosoftGetMessageListService {
       return result;
     }
 
-    for (const folder of messageChannel.messageFolders) {
+    for (const folder of messageFolders) {
       const response = await this.getMessageList(
         connectedAccount,
         folder.syncCursor,
@@ -108,7 +106,7 @@ export class MicrosoftGetMessageListService {
       'provider' | 'refreshToken' | 'id'
     >,
     syncCursor: string,
-  ): Promise<GetMessageListResponse> {
+  ): Promise<GetOneMessageListResponse> {
     // important: otherwise tries to get the full message list
     if (!syncCursor) {
       throw new MessageImportDriverException(
@@ -175,6 +173,7 @@ export class MicrosoftGetMessageListService {
       messageExternalIdsToDelete,
       previousSyncCursor: syncCursor,
       nextSyncCursor: pageIterator.getDeltaLink() || '',
+      folderId: undefined,
     };
   }
 }

@@ -10,17 +10,7 @@ import {
   MessageImportException,
   MessageImportExceptionCode,
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
-
-export type GetMessageListResponse = {
-  messageExternalIds: string[];
-  messageExternalIdsToDelete: string[];
-  previousSyncCursor: string;
-  nextSyncCursor: string;
-};
-
-export type GetMessageListForFoldersResponse = GetMessageListResponse & {
-  folderId: string | undefined;
-};
+import { GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
 @Injectable()
 export class MessagingGetMessageListService {
@@ -32,38 +22,26 @@ export class MessagingGetMessageListService {
 
   public async getMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
-  ): Promise<GetMessageListForFoldersResponse[]> {
+  ): Promise<GetMessageListsResponse> {
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-        return [
-          {
-            ...(await this.gmailGetMessageListService.getMessageList(
-              messageChannel.connectedAccount,
-              messageChannel.syncCursor,
-            )),
-            folderId: undefined,
-          },
-        ];
-      case ConnectedAccountProvider.MICROSOFT:
-        return this.microsoftGetMessageListService.getMessageListForFolders(
-          messageChannel.connectedAccount,
+        return await this.gmailGetMessageListService.getMessageLists({
           messageChannel,
-        );
+          connectedAccount: messageChannel.connectedAccount,
+          messageFolders: messageChannel.messageFolders,
+        });
+      case ConnectedAccountProvider.MICROSOFT:
+        return this.microsoftGetMessageListService.getMessageLists({
+          messageChannel,
+          connectedAccount: messageChannel.connectedAccount,
+          messageFolders: messageChannel.messageFolders,
+        });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
-        const messageList = await this.imapGetMessageListService.getMessageList(
-          messageChannel.connectedAccount,
-          messageChannel.syncCursor,
-        );
-
-        return [
-          {
-            messageExternalIds: messageList.messageExternalIds,
-            messageExternalIdsToDelete: [],
-            previousSyncCursor: messageChannel.syncCursor || '',
-            nextSyncCursor: messageList.nextSyncCursor || '',
-            folderId: undefined,
-          },
-        ];
+        return await this.imapGetMessageListService.getMessageLists({
+          messageChannel,
+          connectedAccount: messageChannel.connectedAccount,
+          messageFolders: messageChannel.messageFolders,
+        });
       }
       default:
         throw new MessageImportException(
