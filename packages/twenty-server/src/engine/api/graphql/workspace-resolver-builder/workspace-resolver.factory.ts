@@ -11,8 +11,8 @@ import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-reso
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -31,8 +31,8 @@ import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
 import { UpdateOneResolverFactory } from './factories/update-one-resolver.factory';
 import { WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
 import {
-  WorkspaceResolverBuilderMethodNames,
-  WorkspaceResolverBuilderMethods,
+    WorkspaceResolverBuilderMethodNames,
+    WorkspaceResolverBuilderMethods,
 } from './interfaces/workspace-resolvers-builder.interface';
 
 @Injectable()
@@ -116,7 +116,7 @@ export class WorkspaceResolverFactory {
           isGatedAndNotEnabled(
             entityMetadata?.gate,
             workspaceFeatureFlagsMap,
-            'graphql',
+            'workspaceApi',
           )
         ) {
           continue;

@@ -10,15 +10,15 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
+    WorkspaceMetadataCacheException,
+    WorkspaceMetadataCacheExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
@@ -102,11 +102,11 @@ export class WorkspaceSchemaFactory {
         const entityMetadata =
           metadataArgsStorage.filterEntities(workspaceEntity);
 
-        // Filter out entities that are GraphQL-gated and not enabled
+        // Filter out entities that are workspace API-gated and not enabled
         return !isGatedAndNotEnabled(
           entityMetadata?.gate,
           workspaceFeatureFlagsMap,
-          'graphql',
+          'workspaceApi',
         );
       });
 
