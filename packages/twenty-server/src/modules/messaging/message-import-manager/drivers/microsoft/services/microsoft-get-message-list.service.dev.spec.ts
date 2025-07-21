@@ -29,6 +29,14 @@ const mockConnectedAccount: Pick<
   connectionParameters: {},
 };
 
+const mockMessageChannel: Pick<
+  MessageChannelWorkspaceEntity,
+  'id' | 'syncCursor'
+> = {
+  id: 'message-channel-id',
+  syncCursor: '', // Should be empty for Microsoft as cursors are stored at the folder level
+};
+
 xdescribe('Microsoft dev tests : get message list service', () => {
   let service: MicrosoftGetMessageListService;
 
@@ -50,12 +58,19 @@ xdescribe('Microsoft dev tests : get message list service', () => {
   });
 
   it('Should fetch and return message list successfully', async () => {
-    const result = await service.getMessageList(
-      mockConnectedAccount,
-      MessageFolderName.INBOX,
-    );
+    const result = await service.getMessageLists({
+      connectedAccount: mockConnectedAccount,
+      messageChannel: mockMessageChannel,
+      messageFolders: [
+        {
+          id: 'inbox-folder-id',
+          name: MessageFolderName.INBOX,
+          syncCursor: 'inbox-sync-cursor',
+        },
+      ],
+    });
 
-    expect(result.messageExternalIds.length).toBeGreaterThan(0);
+    expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
   });
 
   it('Should throw token error', async () => {
@@ -63,38 +78,61 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
       refreshToken: 'invalid-token',
+      handle: 'test@microsoft.com',
+      connectionParameters: {},
     };
 
     await expect(
-      service.getMessageList(
-        mockConnectedAccountUnvalid,
-        MessageFolderName.INBOX,
-      ),
+      service.getMessageLists({
+        connectedAccount: mockConnectedAccountUnvalid,
+        messageChannel: mockMessageChannel,
+        messageFolders: [
+          {
+            id: 'inbox-folder-id',
+            name: MessageFolderName.INBOX,
+            syncCursor: 'inbox-sync-cursor',
+          },
+        ],
+      }),
     ).rejects.toThrowError('Access token is undefined or empty');
   });
 
   // if you need to run this test, you need to manually update the syncCursor to a valid one
   xit('Should fetch and return partial message list successfully', async () => {
-    const result = await service.getMessageList(
-      mockConnectedAccount,
-      syncCursor,
-    );
+    const result = await service.getMessageLists({
+      connectedAccount: mockConnectedAccount,
+      messageChannel: mockMessageChannel,
+      messageFolders: [
+        {
+          id: 'inbox-folder-id',
+          name: MessageFolderName.INBOX,
+          syncCursor: syncCursor,
+        },
+      ],
+    });
 
-    expect(result.nextSyncCursor).toBeTruthy();
+    expect(result[0].nextSyncCursor).toBeTruthy();
   });
 
   it('Should fail partial message if syncCursor is invalid', async () => {
     await expect(
-      service.getMessageList(mockConnectedAccount, 'invalid-syncCursor'),
+      service.getMessageLists({
+        messageChannel: {
+          id: 'message-channel-id',
+          syncCursor: '',
+        },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [
+          {
+            id: 'inbox-folder-id',
+            name: MessageFolderName.INBOX,
+            syncCursor: 'invalid-syncCursor',
+          },
+        ],
+      }),
     ).rejects.toThrowError(
       /Resource not found for the segment|Badly formed content/g,
     );
-  });
-
-  it('Should fail partial message if syncCursor is missing', async () => {
-    await expect(
-      service.getMessageList(mockConnectedAccount, ''),
-    ).rejects.toThrowError(/Missing SyncCursor/g);
   });
 });
 

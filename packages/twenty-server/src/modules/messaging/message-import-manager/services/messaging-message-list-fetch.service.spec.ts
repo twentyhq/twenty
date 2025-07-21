@@ -82,36 +82,37 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: MessagingGetMessageListService,
           useValue: {
-            getMessageList: jest.fn().mockImplementation((messageChannel) => {
-              if (
-                messageChannel.connectedAccount.provider ===
-                ConnectedAccountProvider.GOOGLE
-              ) {
-                return [
-                  {
-                    messageExternalIds: [
-                      'external-id-existing-message-1',
-                      'external-id-google-message-1',
-                      'external-id-google-message-2',
-                    ],
-                    nextSyncCursor: 'new-google-history-id',
-                    folderId: undefined,
-                  },
-                ];
-              } else {
-                return [
-                  {
-                    messageExternalIds: [
-                      'external-id-existing-message-1',
-                      'external-id-new-message-1',
-                      'external-id-new-message-2',
-                    ],
-                    nextSyncCursor: 'new-sync-cursor',
-                    folderId: 'inbox-folder-id',
-                  },
-                ];
-              }
-            }),
+            getMessageLists: jest
+              .fn()
+              .mockImplementation(({ connectedAccount }) => {
+                if (
+                  connectedAccount.provider === ConnectedAccountProvider.GOOGLE
+                ) {
+                  return [
+                    {
+                      messageExternalIds: [
+                        'external-id-existing-message-1',
+                        'external-id-google-message-1',
+                        'external-id-google-message-2',
+                      ],
+                      nextSyncCursor: 'new-google-history-id',
+                      folderId: undefined,
+                    },
+                  ];
+                } else {
+                  return [
+                    {
+                      messageExternalIds: [
+                        'external-id-existing-message-1',
+                        'external-id-new-message-1',
+                        'external-id-new-message-2',
+                      ],
+                      nextSyncCursor: 'new-sync-cursor',
+                      folderId: 'inbox-folder-id',
+                    },
+                  ];
+                }
+              }),
           },
         },
         {
@@ -217,11 +218,7 @@ describe('MessagingMessageListFetchService', () => {
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
-      {
-        messageChannel: mockGoogleMessageChannel,
-        connectedAccount: mockGoogleMessageChannel.connectedAccount,
-        messageFolders: mockGoogleMessageChannel.messageFolders,
-      },
+      mockGoogleMessageChannel,
     );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
