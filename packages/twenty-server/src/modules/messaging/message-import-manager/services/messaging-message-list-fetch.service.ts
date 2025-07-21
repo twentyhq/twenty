@@ -38,12 +38,12 @@ export class MessagingMessageListFetchService {
         [messageChannel.id],
       );
 
-      const fullMessageLists =
-        await this.messagingGetMessageListService.getFullMessageLists(
+      const messageLists =
+        await this.messagingGetMessageListService.getMessageLists(
           messageChannel,
         );
 
-      const isEmptyMailbox = fullMessageLists.some(
+      const isEmptyMailbox = messageLists.some(
         (fullMessageList) => fullMessageList.messageExternalIds.length === 0,
       );
 
@@ -56,9 +56,8 @@ export class MessagingMessageListFetchService {
         return;
       }
 
-      for (const fullMessageList of fullMessageLists) {
-        const { messageExternalIds, nextSyncCursor, folderId } =
-          fullMessageList;
+      for (const messageList of messageLists) {
+        const { messageExternalIds, nextSyncCursor, folderId } = messageList;
 
         const messageChannelMessageAssociationRepository =
           await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(

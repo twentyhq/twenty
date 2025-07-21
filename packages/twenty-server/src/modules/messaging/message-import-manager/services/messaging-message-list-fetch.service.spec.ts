@@ -189,9 +189,9 @@ describe('MessagingFullMessageListFetchService', () => {
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
 
-    expect(
-      messagingGetMessageListService.getFullMessageLists,
-    ).toHaveBeenCalledWith(mockMicrosoftMessageChannel);
+    expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
+      mockMicrosoftMessageChannel,
+    );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
       'messageChannelMessageAssociation',
@@ -218,9 +218,9 @@ describe('MessagingFullMessageListFetchService', () => {
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
 
-    expect(
-      messagingGetMessageListService.getFullMessageLists,
-    ).toHaveBeenCalledWith(mockGoogleMessageChannel);
+    expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
+      mockGoogleMessageChannel,
+    );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
       'messageChannelMessageAssociation',
