@@ -63,10 +63,7 @@ export const generateFields = <
     let generatedField;
 
     const isRelation =
-      isFieldMetadataEntityOfType(
-        fieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
+      isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION) ||
       isFieldMetadataEntityOfType(
         fieldMetadata,
         FieldMetadataType.MORPH_RELATION,

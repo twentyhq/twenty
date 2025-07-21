@@ -136,10 +136,7 @@ export class QueryResultGettersFactory {
       )
       .filter(isDefined)
       .filter((fieldMetadata) =>
-        isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        ),
+        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION),
       );
 
     const relationFieldsProcessedMap = {} as Record<

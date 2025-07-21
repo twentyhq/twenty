@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    GraphQLFieldConfigArgumentMap,
-    GraphQLFieldConfigMap,
-    GraphQLObjectType,
+  GraphQLFieldConfigArgumentMap,
+  GraphQLFieldConfigMap,
+  GraphQLObjectType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 

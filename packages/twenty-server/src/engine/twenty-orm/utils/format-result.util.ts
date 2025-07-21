@@ -54,10 +54,7 @@ export function formatResult<T>(
     ] as FieldMetadataEntity<FieldMetadataType> | undefined;
 
     const isRelation = fieldMetadata
-      ? isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        )
+      ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       : false;
 
     if (!compositePropertyArgs && !isRelation) {
