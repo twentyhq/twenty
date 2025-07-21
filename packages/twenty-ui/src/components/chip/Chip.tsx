@@ -32,7 +32,7 @@ export type ChipProps = {
   variant?: ChipVariant;
   accent?: ChipAccent;
   leftComponent?: ReactNode | null;
-  rightComponent?: (() => ReactNode) | null;
+  rightComponent?: (() => ReactNode) | ReactNode | null;
   className?: string;
 };
 
@@ -155,7 +155,11 @@ export const Chip = ({
       ) : (
         <StyledDiv>Untitled</StyledDiv>
       )}
-      {rightComponent?.()}
+      {rightComponent
+        ? typeof rightComponent === 'function'
+          ? rightComponent()
+          : rightComponent
+        : null}
     </StyledContainer>
   );
 };

@@ -33,6 +33,8 @@ export const LinkAvatarChip = ({
   variant,
   isLabelHidden,
   triggerEvent,
+  rightComponent,
+  leftComponent,
 }: LinkAvatarChipProps) => (
   <LinkChip
     to={to}
@@ -47,16 +49,19 @@ export const LinkAvatarChip = ({
     }
     size={size}
     leftComponent={
-      <AvatarChipsLeftComponent
-        name={name}
-        LeftIcon={LeftIcon}
-        LeftIconColor={LeftIconColor}
-        avatarType={avatarType}
-        avatarUrl={avatarUrl}
-        isIconInverted={isIconInverted}
-        placeholderColorSeed={placeholderColorSeed}
-      />
+      leftComponent ?? (
+        <AvatarChipsLeftComponent
+          name={name}
+          LeftIcon={LeftIcon}
+          LeftIconColor={LeftIconColor}
+          avatarType={avatarType}
+          avatarUrl={avatarUrl}
+          isIconInverted={isIconInverted}
+          placeholderColorSeed={placeholderColorSeed}
+        />
+      )
     }
+    rightComponent={rightComponent}
     className={className}
     maxWidth={maxWidth}
     triggerEvent={triggerEvent}

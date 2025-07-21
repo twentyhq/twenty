@@ -1,10 +1,6 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
-import {
-  IconHistory,
-  IconMessageCirclePlus,
-  IconPlus,
-} from 'twenty-ui/display';
+import { IconHistory, IconMessageCirclePlus } from 'twenty-ui/display';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
@@ -22,6 +18,10 @@ import { Button } from 'twenty-ui/input';
 import { useAgentChat } from '../hooks/useAgentChat';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
+import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -67,12 +67,15 @@ export const AIChatTab = ({
 }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
   const {
     messages,
     isLoading,
     handleSendMessage,
     input,
-    handleSetContext,
     handleInputChange,
     agentStreamingMessage,
     scrollWrapperId,
@@ -138,30 +141,14 @@ export const AIChatTab = ({
                     Icon={IconMessageCirclePlus}
                     onClick={() => createAgentChatThread()}
                   />
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    Icon={IconPlus}
-                    onClick={() =>
-                      handleSetContext([
-                        {
-                          type: 'currentRecords',
-                        },
-                      ])
-                    }
-                  />
                 </>
               )}
               <AgentChatFileUploadButton agentId={agentId} />
-              <Button
-                variant="primary"
-                accent="blue"
-                size="small"
-                hotkeys={input && !isLoading ? ['⏎'] : undefined}
-                disabled={!input || isLoading}
-                title={t`Send`}
-                onClick={handleSendMessage}
-              />
+              {contextStoreCurrentObjectMetadataItemId ? (
+                <SendMessageWithRecordsContextButton agentId={agentId} />
+              ) : (
+                <SendMessageButton agentId={agentId} />
+              )}
             </StyledButtonsContainer>
           </StyledInputArea>
         </>

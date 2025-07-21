@@ -1,33 +1,19 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { FileIcon } from '@/file/components/FileIcon';
-import { formatFileSize } from '@/file/utils/formatFileSize';
+import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconComponent,
-  IconFile,
-  IconFileText,
-  IconFileZip,
-  IconHeadphones,
-  IconPhoto,
-  IconPresentation,
-  IconTable,
-  IconVideo,
-} from 'twenty-ui/display';
 import { File as FileDocument } from '~/generated-metadata/graphql';
 import { AvatarChip, ChipVariant } from 'twenty-ui/components';
-import { AttachmentType } from '@/activities/files/types/Attachment';
+import { IconX } from 'twenty-ui/display';
 
-const IconMapping: { [key in AttachmentType]: IconComponent } = {
-  Archive: IconFileZip,
-  Audio: IconHeadphones,
-  Image: IconPhoto,
-  Presentation: IconPresentation,
-  Spreadsheet: IconTable,
-  TextDocument: IconFileText,
-  Video: IconVideo,
-  Other: IconFile,
-};
+const StyledRemoveIconContainer = styled.div`
+  display: flex;
+  border-left: 1px solid ${({ theme }) => theme.border.color.light};
+
+  svg {
+    cursor: pointer;
+  }
+`;
 
 export const AgentChatFilePreview = ({
   file,
@@ -39,49 +25,25 @@ export const AgentChatFilePreview = ({
   isUploading?: boolean;
 }) => {
   const theme = useTheme();
-
-  const IconColors: { [key in AttachmentType]: string } = {
-    Archive: theme.color.gray,
-    Audio: theme.color.pink,
-    Image: theme.color.yellow,
-    Presentation: theme.color.orange,
-    Spreadsheet: theme.color.turquoise,
-    TextDocument: theme.color.blue,
-    Video: theme.color.purple,
-    Other: theme.color.gray,
-  };
+  const iconColors = useFileTypeColors();
 
   return (
     <AvatarChip
       name={file.name}
       LeftIcon={IconMapping[getFileType(file.name)]}
-      LeftIconBackgroundColor={IconColors[getFileType(file.name)]}
+      LeftIconBackgroundColor={iconColors[getFileType(file.name)]}
       variant={ChipVariant.Static}
+      rightComponent={
+        onRemove ? (
+          <StyledRemoveIconContainer>
+            <IconX
+              size={theme.icon.size.sm}
+              color={theme.font.color.secondary}
+              onClick={onRemove}
+            />
+          </StyledRemoveIconContainer>
+        ) : undefined
+      }
     />
   );
-
-  // return (
-  //   <StyledFileChip key={file.name}>
-  //     <StyledFileIconContainer>
-  //       {isUploading ? (
-  //         <Loader color="yellow" />
-  //       ) : (
-  //         <FileIcon fileType={getFileType(file.name)} />
-  //       )}
-  //     </StyledFileIconContainer>
-  //     <StyledFileInfo>
-  //       <StyledFileName title={file.name}>{file.name}</StyledFileName>
-  //       <StyledFileSize>{formatFileSize(file.size)}</StyledFileSize>
-  //     </StyledFileInfo>
-  //     {onRemove && (
-  //       <StyledRemoveIconContainer>
-  //         <IconX
-  //           size={theme.icon.size.md}
-  //           color={theme.font.color.secondary}
-  //           onClick={onRemove}
-  //         />
-  //       </StyledRemoveIconContainer>
-  //     )}
-  //   </StyledFileChip>
-  // );
 };

@@ -6,4 +6,6 @@ export type AvatarChipsCommonProps = {
   className?: string;
   maxWidth?: number;
   variant?: ChipVariant;
+  rightComponent?: React.ReactNode;
+  leftComponent?: React.ReactNode;
 } & AvatarChipsLeftComponentProps;

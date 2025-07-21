@@ -14,7 +14,7 @@ export const AgentChatMultipleRecordPreview = ({
   totalCount: number;
 }) => {
   const Avatars = records.map((record) => (
-    // @todo move this components to be less specific
+    // @todo move this components to be less specific. (Outside of CommandMenu
     <CommandMenuContextRecordChipAvatars
       objectMetadataItem={objectMetadataItem}
       key={record.id}
@@ -23,7 +23,7 @@ export const AgentChatMultipleRecordPreview = ({
   ));
 
   const recordSelectionContextChip = {
-    // @todo move this utils outside of command menu
+    // @todo move this utils outside of CommandMenu
     text: getSelectedRecordsContextText(
       objectMetadataItem,
       records,
@@ -37,7 +37,7 @@ export const AgentChatMultipleRecordPreview = ({
     <MultipleAvatarChip
       Icons={recordSelectionContextChip.Icons}
       text={recordSelectionContextChip.text}
-      maxWidth={'180px'}
+      maxWidth={180}
     />
   );
 };

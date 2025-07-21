@@ -1,10 +1,7 @@
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { agentChatObjectMetadataAndRecordContextState } from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
 import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
 import styled from '@emotion/styled';
-import { AgentChatMultipleRecordPreview } from './AgentChatMultipleRecordPreview';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -12,7 +9,6 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
 import { useDeleteFileMutation } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { AgentChatContextRecordPreview } from '@/ai/components/internal/AgentChatContextRecordPreview';
 
 const StyledContainer = styled.div`
@@ -92,9 +88,10 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
             isUploading={false}
           />
         ))}
-        {hasCurrentRecordsContext && contextStoreCurrentObjectMetadataItemId && (
-          <AgentChatContextRecordPreview />
-        )}
+        {hasCurrentRecordsContext &&
+          contextStoreCurrentObjectMetadataItemId && (
+            <AgentChatContextRecordPreview />
+          )}
       </StyledPreviewsContainer>
     </StyledContainer>
   );

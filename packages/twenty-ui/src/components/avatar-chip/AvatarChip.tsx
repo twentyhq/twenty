@@ -3,11 +3,14 @@ import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarC
 import { Chip, ChipVariant } from '@ui/components/chip/Chip';
 
 export type AvatarChipProps = AvatarChipsCommonProps;
+
 export const AvatarChip = ({
   name,
   LeftIcon,
   LeftIconColor,
   LeftIconBackgroundColor,
+  rightComponent,
+  leftComponent,
   avatarType,
   avatarUrl,
   className,
@@ -22,17 +25,20 @@ export const AvatarChip = ({
     variant={variant}
     size={size}
     leftComponent={
-      <AvatarChipsLeftComponent
-        name={name}
-        LeftIcon={LeftIcon}
-        LeftIconColor={LeftIconColor}
-        LeftIconBackgroundColor={LeftIconBackgroundColor}
-        avatarType={avatarType}
-        avatarUrl={avatarUrl}
-        isIconInverted={isIconInverted}
-        placeholderColorSeed={placeholderColorSeed}
-      />
+      leftComponent ?? (
+        <AvatarChipsLeftComponent
+          name={name}
+          LeftIcon={LeftIcon}
+          LeftIconColor={LeftIconColor}
+          LeftIconBackgroundColor={LeftIconBackgroundColor}
+          avatarType={avatarType}
+          avatarUrl={avatarUrl}
+          isIconInverted={isIconInverted}
+          placeholderColorSeed={placeholderColorSeed}
+        />
+      )
     }
+    rightComponent={rightComponent}
     clickable={false}
     className={className}
     maxWidth={maxWidth}

@@ -28,15 +28,15 @@ import {
   agentChatObjectMetadataAndRecordContextState,
   AIChatObjectMetadataAndRecordContext,
 } from '@/ai/states/agentChatObjectMetadataAndRecordContextState';
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
 };
 
-export const useAgentChat = (agentId: string) => {
+export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -44,13 +44,7 @@ export const useAgentChat = (agentId: string) => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataItemId ?? '',
-  });
-
-  const { records } = useFindManyRecordsSelectedInContextStore({
-    limit: 10,
-  });
+  const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const agentChatSelectedFiles = useRecoilComponentValueV2(
     agentChatSelectedFilesComponentState,
@@ -152,6 +146,17 @@ export const useAgentChat = (agentId: string) => {
 
     setIsStreaming(true);
 
+    const recordIdsByObjectMetadataNameSingular = [];
+
+    if (isDefined(records) && contextStoreCurrentObjectMetadataItemId) {
+      recordIdsByObjectMetadataNameSingular.push({
+        objectMetadataNameSingular: getObjectMetadataItemById(
+          contextStoreCurrentObjectMetadataItemId,
+        ).nameSingular,
+        recordIds: records.map(({ id }) => id),
+      });
+    }
+
     await apolloClient.query({
       query: STREAM_CHAT_QUERY,
       variables: {
@@ -159,12 +164,8 @@ export const useAgentChat = (agentId: string) => {
           threadId: currentThreadId,
           userMessage: content,
           fileIds: agentChatUploadedFiles.map((file) => file.id),
-          recordIdsByObjectMetadataNameSingular: [
-            {
-              objectMetadataNameSingular: objectMetadataItem.nameSingular,
-              recordIds: records.map(({ id }) => id),
-            },
-          ],
+          recordIdsByObjectMetadataNameSingular:
+            recordIdsByObjectMetadataNameSingular,
         },
       },
       context: {
