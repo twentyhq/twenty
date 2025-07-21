@@ -16,8 +16,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view/enums/view-filter-group-logical-operator';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
-import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 registerEnumType(ViewFilterGroupLogicalOperator, {
   name: 'ViewFilterGroupLogicalOperator',
@@ -34,8 +34,8 @@ export class ViewFilterGroup {
   @Column({ nullable: true, type: 'uuid' })
   parentViewFilterGroupId?: string | null;
 
-  @Column({ nullable: false, default: 'NOT' })
-  logicalOperator: string;
+  @Column({ nullable: false, default: ViewFilterGroupLogicalOperator.NOT })
+  logicalOperator: ViewFilterGroupLogicalOperator;
 
   @Column({ nullable: true, type: 'int' })
   positionInViewFilterGroup?: number | null;
