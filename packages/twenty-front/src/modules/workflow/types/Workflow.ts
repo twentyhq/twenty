@@ -9,7 +9,6 @@ import {
   workflowDatabaseEventTriggerSchema,
   workflowDeleteRecordActionSchema,
   workflowDeleteRecordActionSettingsSchema,
-  workflowExecutorOutputSchema,
   workflowFilterActionSchema,
   workflowFilterActionSettingsSchema,
   workflowFindRecordsActionSchema,
@@ -18,8 +17,6 @@ import {
   workflowFormActionSettingsSchema,
   workflowHttpRequestActionSchema,
   workflowManualTriggerSchema,
-  workflowRunOutputSchema,
-  workflowRunOutputStepsOutputSchema,
   workflowRunSchema,
   workflowRunStateSchema,
   workflowRunStatusSchema,
@@ -142,14 +139,6 @@ export type WorkflowVersion = {
 export type ManualTriggerWorkflowVersion = WorkflowVersion & {
   trigger: WorkflowManualTrigger | null;
 };
-
-export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
-export type WorkflowExecutorOutput = z.infer<
-  typeof workflowExecutorOutputSchema
->;
-export type WorkflowRunOutputStepsOutput = z.infer<
-  typeof workflowRunOutputStepsOutputSchema
->;
 
 export type WorkflowRunStatus = z.infer<typeof workflowRunStatusSchema>;
 
