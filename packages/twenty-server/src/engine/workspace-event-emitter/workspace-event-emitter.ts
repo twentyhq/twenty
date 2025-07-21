@@ -109,6 +109,18 @@ export class WorkspaceEventEmitter {
           return event;
         });
         break;
+      case DatabaseEventAction.DESTROYED:
+        events = entityArray.map((before) => {
+          const event = new ObjectRecordDestroyEvent<T>();
+
+          event.userId = authContext?.user?.id;
+          event.recordId = before.id;
+          event.objectMetadata = { ...objectMetadataItem, fields };
+          event.properties = { before };
+
+          return event;
+        });
+        break;
       default:
         return;
     }
