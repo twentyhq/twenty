@@ -6,14 +6,12 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {
     case 'DATABASE_EVENT':
-      return getTriggerDefaultLabel(trigger);
     case 'CRON':
-      return 'On a schedule';
     case 'WEBHOOK':
-      return 'Webhook';
+      return getTriggerDefaultLabel(trigger);
     case 'MANUAL':
       if (!isDefined(trigger.settings.objectType)) {
-        return 'Manual trigger';
+        return getTriggerDefaultLabel(trigger);
       }
 
       return 'Manual trigger for ' + capitalize(trigger.settings.objectType);
