@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -16,6 +17,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     TypeOrmModule.forFeature([UserWorkspace], 'core'),
     UserRoleModule,
     WorkspacePermissionsCacheModule,
+    ApiKeyModule,
   ],
   providers: [PermissionsService],
   exports: [PermissionsService],

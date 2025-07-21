@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -9,8 +9,10 @@ import {
     ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
@@ -58,7 +60,6 @@ export class ApiKeyRoleService {
       id: Not(newRoleTarget.id),
     });
 
-    // Recompute cache (following user role pattern)
     await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
       workspaceId,
     });
@@ -76,13 +77,11 @@ export class ApiKeyRoleService {
       workspaceId,
     });
 
-    // Recompute cache
     await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
       workspaceId,
     });
   }
 
-  // Main method with caching (following user role pattern)
   async getRoleIdForApiKey(
     apiKeyId: string,
     workspaceId: string,
@@ -95,12 +94,10 @@ export class ApiKeyRoleService {
     return apiKeyRoleMap.data[apiKeyId] || null;
   }
 
-  // Fallback method without caching (for edge cases)
   async getRoleForApiKey(
     apiKeyId: string,
     workspaceId: string,
   ): Promise<RoleEntity | null> {
-    // Try to find explicit role assignment
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: { apiKeyId, workspaceId },
       relations: ['role'],
@@ -110,7 +107,6 @@ export class ApiKeyRoleService {
       return roleTarget.role;
     }
 
-    // Fall back to workspace default role
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -124,7 +120,6 @@ export class ApiKeyRoleService {
     });
   }
 
-  // Trigger cache recomputation after role changes (following user role pattern)
   async recomputeCache(workspaceId: string): Promise<void> {
     await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
       workspaceId,
@@ -173,5 +168,62 @@ export class ApiKeyRoleService {
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
     };
+  }
+
+  public async getRolesByApiKeys({
+    apiKeyIds,
+    workspaceId,
+  }: {
+    apiKeyIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, RoleDTO>> {
+    if (!apiKeyIds.length) {
+      return new Map();
+    }
+
+    const roleTargets = await this.roleTargetsRepository.find({
+      where: {
+        apiKeyId: In(apiKeyIds),
+        workspaceId,
+      },
+      relations: ['role'],
+    });
+
+    const rolesMap = new Map<string, RoleDTO>();
+
+    for (const roleTarget of roleTargets) {
+      if (roleTarget.apiKeyId && roleTarget.role) {
+        rolesMap.set(
+          roleTarget.apiKeyId,
+          fromRoleEntityToRoleDto(roleTarget.role),
+        );
+      }
+    }
+
+    const apiKeysWithoutRoles = apiKeyIds.filter(
+      (apiKeyId) => !rolesMap.has(apiKeyId),
+    );
+
+    if (apiKeysWithoutRoles.length > 0) {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+      });
+
+      if (workspace?.defaultRoleId) {
+        const defaultRole = await this.roleRepository.findOne({
+          where: { id: workspace.defaultRoleId, workspaceId },
+        });
+
+        if (defaultRole) {
+          const defaultRoleDto = fromRoleEntityToRoleDto(defaultRole);
+
+          for (const apiKeyId of apiKeysWithoutRoles) {
+            rolesMap.set(apiKeyId, defaultRoleDto);
+          }
+        }
+      }
+    }
+
+    return rolesMap;
   }
 }

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-    ObjectRecordsPermissions,
-    ObjectRecordsPermissionsByRoleId,
+  ObjectRecordsPermissions,
+  ObjectRecordsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
@@ -326,7 +326,6 @@ export class WorkspacePermissionsCacheService {
     );
   }
 
-  // API Key role caching methods (following user role pattern)
   async recomputeApiKeyRoleMapCache({
     workspaceId,
   }: {

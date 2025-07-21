@@ -104,7 +104,6 @@ export class WorkspacePermissionsCacheStorageService {
     );
   }
 
-  // API Key role map methods (following user pattern)
   async setApiKeyRoleMap(
     workspaceId: string,
     apiKeyRoleMap: Record<string, string>,

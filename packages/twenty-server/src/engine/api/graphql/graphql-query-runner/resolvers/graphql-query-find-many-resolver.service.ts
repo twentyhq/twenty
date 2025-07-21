@@ -4,29 +4,29 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  GraphqlQueryBaseResolverService,
-  GraphqlQueryResolverExecutionArgs,
+    GraphqlQueryBaseResolverService,
+    GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
-  OrderByDirection,
+    ObjectRecord,
+    ObjectRecordFilter,
+    ObjectRecordOrderBy,
+    OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import {
-  getCursor,
-  getPaginationInfo,
+    getCursor,
+    getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 
@@ -158,7 +158,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
-        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        shouldBypassPermissionChecks: false,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

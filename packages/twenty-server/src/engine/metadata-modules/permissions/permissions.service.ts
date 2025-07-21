@@ -1,27 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+} from './permissions.exception';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    @InjectRepository(RoleEntity, 'core')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -119,42 +127,51 @@ export class PermissionsService {
     workspaceId,
     setting,
     isExecutedByApiKey,
+    apiKeyId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     setting: SettingPermissionType;
     isExecutedByApiKey: boolean;
+    apiKeyId?: string;
   }): Promise<boolean> {
-    if (isExecutedByApiKey) {
-      return true;
+    let role: RoleEntity | null = null;
+
+    if (isExecutedByApiKey && apiKeyId) {
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKeyId,
+        workspaceId,
+      );
+
+      if (roleId) {
+        role = await this.roleRepository.findOne({
+          where: { id: roleId, workspaceId },
+          relations: ['settingPermissions'],
+        });
+      }
+    } else if (userWorkspaceId) {
+      const [roleOfUserWorkspace] = await this.userRoleService
+        .getRolesByUserWorkspaces({
+          userWorkspaceIds: [userWorkspaceId],
+          workspaceId,
+        })
+        .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+      role = roleOfUserWorkspace;
     }
 
-    if (!isDefined(userWorkspaceId)) {
+    if (!isDefined(role)) {
       throw new AuthException(
-        'Missing userWorkspaceId or apiKey in authContext',
+        'No role found for user or API key',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
-        workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-    if (!isDefined(roleOfUserWorkspace)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-      );
-    }
-
-    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
+    if (role.canUpdateAllSettings === true) {
       return true;
     }
 
-    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+    const settingPermissions = role.settingPermissions ?? [];
 
     return settingPermissions.some(
       (settingPermission) => settingPermission.setting === setting,

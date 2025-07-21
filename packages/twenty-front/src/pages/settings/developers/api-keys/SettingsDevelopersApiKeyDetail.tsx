@@ -7,6 +7,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
+import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
@@ -78,12 +79,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
     onCompleted: (data) => {
       if (isDefined(data?.apiKey)) {
         setApiKeyName(data.apiKey.name);
+        setSelectedRoleId(data.apiKey.role?.id || null);
       }
     },
   });
 
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
@@ -219,6 +222,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 apiKeyId={apiKey?.id}
                 disabled={isLoading}
                 onNameUpdate={setApiKeyName}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title={t`Role`}
+                description={t`What this API can do: Select a user role to define its permissions.`}
+              />
+              <SettingsDevelopersRoleSelector
+                value={selectedRoleId}
+                onChange={setSelectedRoleId}
+                allowEmpty
+                disabled={isLoading}
               />
             </Section>
             <Section>

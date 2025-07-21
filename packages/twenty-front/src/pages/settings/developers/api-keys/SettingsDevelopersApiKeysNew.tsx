@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -29,9 +30,11 @@ export const SettingsDevelopersApiKeysNew = () => {
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
+    roleId: string | null;
   }>({
     expirationDate: EXPIRATION_DATES[5].value,
     name: '',
+    roleId: null,
   });
 
   const [createApiKey] = useCreateApiKeyMutation();
@@ -54,6 +57,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         input: {
           name: formValues.name,
           expiresAt,
+          roleId: formValues.roleId,
         },
       },
     });
@@ -125,6 +129,22 @@ export const SettingsDevelopersApiKeysNew = () => {
               }));
             }}
             fullWidth
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Role`}
+            description={t`What this API can do: Select a user role to define its permissions.`}
+          />
+          <SettingsDevelopersRoleSelector
+            value={formValues.roleId}
+            onChange={(roleId) => {
+              setFormValues((prevState) => ({
+                ...prevState,
+                roleId,
+              }));
+            }}
+            allowEmpty
           />
         </Section>
         <Section>

@@ -1,10 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
+    IsDateString,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 
 @InputType()
@@ -22,4 +23,9 @@ export class CreateApiKeyDTO {
   @IsOptional()
   @IsDateString()
   revokedAt?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsUUID()
+  roleId?: string;
 }

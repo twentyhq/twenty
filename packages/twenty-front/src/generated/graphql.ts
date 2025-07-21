@@ -470,6 +470,7 @@ export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
+  roleId?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateApprovedAccessDomainInput = {
