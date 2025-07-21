@@ -279,6 +279,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'author',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsSystem()
   authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({

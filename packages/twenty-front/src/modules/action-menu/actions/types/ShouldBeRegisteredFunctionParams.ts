@@ -22,4 +22,7 @@ export type ShouldBeRegisteredFunctionParams = {
   getTargetObjectReadPermission: (
     objectMetadataItemNameSingular: string,
   ) => boolean;
+  getTargetObjectWritePermission: (
+    objectMetadataItemNameSingular: string,
+  ) => boolean;
 };

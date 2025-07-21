@@ -18,11 +18,11 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolverService<
@@ -52,13 +52,17 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       executionArgs.args.filter ?? ({} as ObjectRecordFilter),
     );
 
-    const nonFormattedObjectRecord = await queryBuilder.getOne();
-
-    const objectRecord = formatResult<ObjectRecord>(
-      nonFormattedObjectRecord,
+    const columnsToSelect = buildColumnsToSelect({
+      select: executionArgs.graphqlQuerySelectedFieldsResult.select,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
+    });
+
+    const objectRecord = await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
+      .getOne();
 
     if (!objectRecord) {
       throw new GraphqlQueryRunnerException(
@@ -67,7 +71,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       );
     }
 
-    const objectRecords = [objectRecord];
+    const objectRecords = [objectRecord] as ObjectRecord[];
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -80,6 +84,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
         workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
+        selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
 

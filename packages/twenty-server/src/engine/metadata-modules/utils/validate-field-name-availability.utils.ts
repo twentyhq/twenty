@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -39,14 +40,17 @@ export const validateFieldNameAvailabilityOrThrow = (
 
   if (
     Object.values(objectMetadata.fieldsById).some(
-      (field) => field.name === name,
+      (field) =>
+        field.name === name ||
+        (field.type === FieldMetadataType.RELATION &&
+          `${field.name}Id` === name),
     )
   ) {
     throw new InvalidMetadataException(
-      `Name "${name}" is not available`,
+      `Name "${name}" is not available as it is already used by another field`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
       {
-        userFriendlyMessage: t`This name is not available.`,
+        userFriendlyMessage: t`This name is not available as it is already used by another field`,
       },
     );
   }

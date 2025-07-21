@@ -68,6 +68,7 @@ msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 msgid "· {objectFilterDropdownSearchInput}"
 msgstr ""
 
@@ -1583,6 +1584,12 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
+#. js-lingui-id: M1NpGt
+#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+msgid "Create {targetObjectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -1611,6 +1618,11 @@ msgstr ""
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Create profile"
+msgstr ""
+
+#. js-lingui-id: GPuEIc
+#: src/modules/command-menu/components/CommandMenu.tsx
+msgid "Create Related Record"
 msgstr ""
 
 #. js-lingui-id: RoyYUE
@@ -4726,8 +4738,8 @@ msgstr ""
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-msgid "Please use different names for your source and destination fields"
-msgstr ""
+#~ msgid "Please use different names for your source and destination fields"
+#~ msgstr ""
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -5159,6 +5171,14 @@ msgstr ""
 #. js-lingui-id: pFe0YS
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "Search an object"
+msgstr ""
+
+#. js-lingui-id: S+MGem
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader.tsx
+#: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
+#: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
+msgid "Search any field"
 msgstr ""
 
 #. js-lingui-id: 3UPqHL

@@ -3,9 +3,10 @@ import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { getUniqueConstraintsFields } from 'src/engine/metadata-modules/index-metadata/utils/getUniqueConstraintsFields.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -21,7 +22,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
@@ -101,7 +102,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -125,14 +126,14 @@ const computeRecordToConnectCondition = (
   entity: Record<string, unknown>,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[];
+  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
   const field =
     objectMetadata.fieldsById[objectMetadata.fieldIdByName[connectFieldName]];
 
   if (
-    !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+    !isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
     field.settings?.relationType !== RelationType.MANY_TO_ONE
   ) {
     const objectMetadataNameSingular = objectMetadata.nameSingular;
@@ -238,7 +239,10 @@ const checkUniqueConstraintFullyPopulated = (
   connectObject: ConnectObject,
   connectFieldName: string,
 ) => {
-  const uniqueConstraintsFields = getUniqueConstraintsFields({
+  const uniqueConstraintsFields = getUniqueConstraintsFields<
+    FieldMetadataEntity,
+    ObjectMetadataInterface
+  >({
     ...objectMetadata,
     fields: Object.values(objectMetadata.fieldsById),
   });
@@ -295,7 +299,7 @@ const checkNoRelationFieldConflictOrThrow = (
 };
 
 const computeUniqueConstraintCondition = (
-  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
   connectObject: ConnectObject,
 ): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
@@ -323,7 +327,7 @@ const computeUniqueConstraintCondition = (
 
 const checkUniqueConstraintsAreSameOrThrow = (
   relationConnectQueryConfig: RelationConnectQueryConfig,
-  uniqueConstraintFields: FieldMetadataInterface<FieldMetadataType>[],
+  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
 ) => {
   if (
     !deepEqual(

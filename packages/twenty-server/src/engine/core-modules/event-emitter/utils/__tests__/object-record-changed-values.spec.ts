@@ -1,8 +1,7 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-const mockObjectMetadata: ObjectMetadataInterface = {
+const mockObjectMetadata: ObjectMetadataItemWithFieldMaps = {
   id: '1',
   icon: 'Icon123',
   nameSingular: 'Object',
@@ -12,14 +11,16 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   description: 'Test object metadata',
   targetTableName: 'test_table',
   workspaceId: '1',
-  fields: [],
-  indexMetadatas: [],
+  fieldsById: {},
+  fieldIdByName: {},
   isSystem: false,
   isCustom: false,
   isActive: true,
   isRemote: false,
   isAuditLogged: true,
   isSearchable: true,
+  indexMetadatas: [],
+  fieldIdByJoinColumnName: {},
 };
 
 describe('objectRecordChangedValues', () => {
@@ -38,7 +39,6 @@ describe('objectRecordChangedValues', () => {
     const result = objectRecordChangedValues(
       oldRecord,
       newRecord,
-      ['name'],
       mockObjectMetadata,
     );
 
@@ -60,7 +60,6 @@ describe('objectRecordChangedValues', () => {
     const result = objectRecordChangedValues(
       oldRecord,
       newRecord,
-      [],
       mockObjectMetadata,
     );
 
@@ -82,7 +81,6 @@ describe('objectRecordChangedValues', () => {
     const result = objectRecordChangedValues(
       oldRecord,
       newRecord,
-      ['name', 'value'],
       mockObjectMetadata,
     );
 
@@ -112,7 +110,6 @@ describe('objectRecordChangedValues', () => {
     const result = objectRecordChangedValues(
       oldRecord,
       newRecord,
-      ['name', 'config', 'status'],
       mockObjectMetadata,
     );
 

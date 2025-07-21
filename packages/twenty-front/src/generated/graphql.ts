@@ -696,6 +696,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_ANY_FIELD_SEARCH_ENABLED = 'IS_ANY_FIELD_SEARCH_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -722,6 +723,7 @@ export type Field = {
   isSystem?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
+  morphRelations?: Maybe<Array<Relation>>;
   name: Scalars['String'];
   object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']>;

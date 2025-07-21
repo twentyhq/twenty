@@ -5,7 +5,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
@@ -54,10 +53,6 @@ describe('WorkflowStatusesUpdate', () => {
     findOneOrFail: jest.fn(),
   };
 
-  const mockWorkspaceEventEmitter = {
-    emitDatabaseBatchEvent: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -69,10 +64,6 @@ describe('WorkflowStatusesUpdate', () => {
         {
           provide: ServerlessFunctionService,
           useValue: mockServerlessFunctionService,
-        },
-        {
-          provide: WorkspaceEventEmitter,
-          useValue: mockWorkspaceEventEmitter,
         },
         {
           provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
@@ -125,9 +116,6 @@ describe('WorkflowStatusesUpdate', () => {
 
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
-        expect(
-          mockWorkspaceEventEmitter.emitDatabaseBatchEvent,
-        ).toHaveBeenCalledTimes(0);
       });
 
       it('when no draft yet, update statuses', async () => {
@@ -155,9 +143,6 @@ describe('WorkflowStatusesUpdate', () => {
           { id: '1' },
           { statuses: [WorkflowStatus.DRAFT, WorkflowStatus.ACTIVE] },
         );
-        expect(
-          mockWorkspaceEventEmitter.emitDatabaseBatchEvent,
-        ).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -202,9 +187,6 @@ describe('WorkflowStatusesUpdate', () => {
           mockWorkflowVersionRepository.findOneOrFail,
         ).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
-        expect(
-          mockWorkspaceEventEmitter.emitDatabaseBatchEvent,
-        ).toHaveBeenCalledTimes(0);
       });
 
       test('when WorkflowVersionStatus.DRAFT to WorkflowVersionStatus.ACTIVE, should activate and publish serverless functions', async () => {
@@ -286,9 +268,6 @@ describe('WorkflowStatusesUpdate', () => {
           { id: '1' },
           { statuses: [WorkflowStatus.ACTIVE] },
         );
-        expect(
-          mockWorkspaceEventEmitter.emitDatabaseBatchEvent,
-        ).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -338,9 +317,6 @@ describe('WorkflowStatusesUpdate', () => {
           { id: '1' },
           { statuses: [] },
         );
-        expect(
-          mockWorkspaceEventEmitter.emitDatabaseBatchEvent,
-        ).toHaveBeenCalledTimes(1);
       });
     });
   });
