@@ -54,11 +54,14 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
 };
 
+type AllSettings =
+  FieldMetadataSettingsMapping[keyof FieldMetadataSettingsMapping];
+
 export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultSettings
+    ? null | AllSettings // could be unknown instead of AllSettings ?
     : T extends keyof FieldMetadataSettingsMapping
-      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
+      ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings // | null ?
       : never;

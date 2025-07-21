@@ -15,7 +15,7 @@ export type FieldMetadataOptions<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
+    ? null | (FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]) // should unknown ?
     : T extends keyof FieldMetadataOptionsMapping
-      ? FieldMetadataOptionsMapping[T]
+      ? FieldMetadataOptionsMapping[T] // | null ?
       : never;
