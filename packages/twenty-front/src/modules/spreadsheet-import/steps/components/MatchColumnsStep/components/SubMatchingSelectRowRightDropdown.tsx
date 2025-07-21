@@ -18,34 +18,34 @@ const StyledDropdownContainer = styled.div`
   width: 100%;
 `;
 
-interface SubMatchingSelectRowRightDropdownProps {
-  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
+interface SubMatchingSelectRowRightDropdownProps<T> {
+  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
   column:
-    | SpreadsheetMatchedSelectColumn
-    | SpreadsheetMatchedSelectOptionsColumn;
-  onSubChange: (val: string, index: number, option: string) => void;
+    | SpreadsheetMatchedSelectColumn<T>
+    | SpreadsheetMatchedSelectOptionsColumn<T>;
+  onSubChange: (val: T, index: number, option: string) => void;
   placeholder: string;
   selectedOption?:
-    | SpreadsheetMatchedOptions
-    | Partial<SpreadsheetMatchedOptions>;
+    | SpreadsheetMatchedOptions<T>
+    | Partial<SpreadsheetMatchedOptions<T>>;
 }
 
-export const SubMatchingSelectRowRightDropdown = ({
+export const SubMatchingSelectRowRightDropdown = <T extends string>({
   option,
   column,
   onSubChange,
   placeholder,
-}: SubMatchingSelectRowRightDropdownProps) => {
+}: SubMatchingSelectRowRightDropdownProps<T>) => {
   const dropdownId = `sub-matching-select-dropdown-${option.entry}`;
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
+  const { fields } = useSpreadsheetImportInternal<T>();
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);
 
   const handleSelect = (selectedOption: SelectOption) => {
-    onSubChange(selectedOption.value, column.index, option.entry ?? '');
+    onSubChange(selectedOption.value as T, column.index, option.entry ?? '');
     closeDropdown(dropdownId);
   };
 

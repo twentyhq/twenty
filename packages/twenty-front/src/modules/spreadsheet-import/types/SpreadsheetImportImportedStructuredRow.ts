@@ -1,3 +1,3 @@
-export type ImportedStructuredRow = {
-  [key: string]: string | boolean | undefined;
+export type ImportedStructuredRow<T extends string> = {
+  [key in T]: string | boolean | undefined;
 };

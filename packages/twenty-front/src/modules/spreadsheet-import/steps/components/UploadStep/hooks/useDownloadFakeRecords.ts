@@ -1,6 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
-import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
@@ -59,8 +58,8 @@ export const useDownloadFakeRecords = () => {
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
 
           headerRow.push(
-            ...subFields.map(({ subFieldLabel }) =>
-              getCompositeSubFieldLabelWithFieldLabel(field, subFieldLabel),
+            ...subFields.map(
+              ({ subFieldLabel }) => `${field.label} / ${subFieldLabel}`,
             ),
           );
 
