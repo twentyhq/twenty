@@ -82,38 +82,36 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: MessagingGetMessageListService,
           useValue: {
-            getFullMessageLists: jest
-              .fn()
-              .mockImplementation((messageChannel) => {
-                if (
-                  messageChannel.connectedAccount.provider ===
-                  ConnectedAccountProvider.GOOGLE
-                ) {
-                  return [
-                    {
-                      messageExternalIds: [
-                        'external-id-existing-message-1',
-                        'external-id-google-message-1',
-                        'external-id-google-message-2',
-                      ],
-                      nextSyncCursor: 'new-google-history-id',
-                      folderId: undefined,
-                    },
-                  ];
-                } else {
-                  return [
-                    {
-                      messageExternalIds: [
-                        'external-id-existing-message-1',
-                        'external-id-new-message-1',
-                        'external-id-new-message-2',
-                      ],
-                      nextSyncCursor: 'new-sync-cursor',
-                      folderId: 'inbox-folder-id',
-                    },
-                  ];
-                }
-              }),
+            getMessageList: jest.fn().mockImplementation((messageChannel) => {
+              if (
+                messageChannel.connectedAccount.provider ===
+                ConnectedAccountProvider.GOOGLE
+              ) {
+                return [
+                  {
+                    messageExternalIds: [
+                      'external-id-existing-message-1',
+                      'external-id-google-message-1',
+                      'external-id-google-message-2',
+                    ],
+                    nextSyncCursor: 'new-google-history-id',
+                    folderId: undefined,
+                  },
+                ];
+              } else {
+                return [
+                  {
+                    messageExternalIds: [
+                      'external-id-existing-message-1',
+                      'external-id-new-message-1',
+                      'external-id-new-message-2',
+                    ],
+                    nextSyncCursor: 'new-sync-cursor',
+                    folderId: 'inbox-folder-id',
+                  },
+                ];
+              }
+            }),
           },
         },
         {

@@ -55,7 +55,7 @@ describe('GmailGetMessageListService', () => {
     gmailClientProvider = module.get<GmailClientProvider>(GmailClientProvider);
   });
 
-  describe('getFullMessageList', () => {
+  describe('getMessageList', () => {
     it('should return 0 messageExternalIds when gmail returns 0 messages', async () => {
       const mockGmailClient = {
         users: {

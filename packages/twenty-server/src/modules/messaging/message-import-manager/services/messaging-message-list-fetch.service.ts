@@ -44,7 +44,7 @@ export class MessagingMessageListFetchService {
         );
 
       const isEmptyMailbox = messageLists.some(
-        (fullMessageList) => fullMessageList.messageExternalIds.length === 0,
+        (messageList) => messageList.messageExternalIds.length === 0,
       );
 
       if (isEmptyMailbox) {
