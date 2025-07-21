@@ -328,6 +328,7 @@ export abstract class RestApiBaseHandler {
 
     const restrictedFieldsColumnNames: string[] = restrictedFieldsIds
       .map((fieldId) => fieldMetadataIdToColumnNamesMap.get(fieldId))
+      .filter(isDefined)
       .flat();
 
     const allColumnNames = [...fieldMetadataIdToColumnNamesMap.values()].flat();

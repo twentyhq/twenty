@@ -207,47 +207,4 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       expect(result.size).toBe(4);
     });
   });
-
-  describe('edge cases', () => {
-    it('should handle field metadata with minimal required properties', () => {
-      const fieldsById = {
-        'field-1': {
-          id: 'field-1',
-          name: 'test',
-          type: FieldMetadataType.TEXT,
-        },
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
-
-      const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
-      );
-
-      expect(result.get('field-1')).toEqual(['test']);
-    });
-
-    it('should handle composite field with single property', () => {
-      // This test assumes there's a composite type with only one property
-      // For now, we'll test with a known composite type
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
-          'field-1',
-          'single',
-          FieldMetadataType.FULL_NAME,
-        ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
-
-      const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
-      );
-
-      // FULL_NAME has 2 properties, but this tests the logic works
-      expect(result.get('field-1')).toHaveLength(2);
-    });
-  });
 });

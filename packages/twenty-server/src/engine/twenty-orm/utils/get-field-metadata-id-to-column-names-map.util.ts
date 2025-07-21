@@ -10,7 +10,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 export function getFieldMetadataIdToColumnNamesMap(
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ) {
-  const fieldMetadataToColumnNamesMap = new Map();
+  const fieldMetadataToColumnNamesMap = new Map<string, string[]>();
 
   for (const [fieldMetadataId, fieldMetadata] of Object.entries(
     objectMetadataItemWithFieldMaps.fieldsById,
@@ -31,14 +31,12 @@ export function getFieldMetadataIdToColumnNamesMap(
         );
 
         const existingColumns =
-          fieldMetadataToColumnNamesMap.get(fieldMetadataId) || [];
+          fieldMetadataToColumnNamesMap.get(fieldMetadataId) ?? [];
 
-        fieldMetadataToColumnNamesMap.set(
-          fieldMetadataId,
-          Array.isArray(existingColumns)
-            ? [...existingColumns, columnName]
-            : [columnName],
-        );
+        fieldMetadataToColumnNamesMap.set(fieldMetadataId, [
+          ...existingColumns,
+          columnName,
+        ]);
       });
     } else {
       const columnName = computeColumnName(fieldMetadata);
