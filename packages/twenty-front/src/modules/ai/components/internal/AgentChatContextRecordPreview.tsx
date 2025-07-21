@@ -33,7 +33,7 @@ export const AgentChatContextRecordPreview = ({
       {/*    />*/}
       {/*  ))*/}
       {/*) : (*/}
-      {totalCount !== 0 && (
+      {records.length !== 0 && (
         <AgentChatMultipleRecordPreview
           agentId={agentId}
           objectMetadataItem={objectMetadataItem}
