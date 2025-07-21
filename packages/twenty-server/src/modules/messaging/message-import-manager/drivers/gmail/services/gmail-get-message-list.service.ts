@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { gmail_v1 as gmailV1 } from 'googleapis';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -129,7 +129,7 @@ export class GmailGetMessageListService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
-    if (!isDefined(messageChannel.syncCursor)) {
+    if (!isNonEmptyString(messageChannel.syncCursor)) {
       return this._getMessageListWithoutCursor(connectedAccount);
     }
 

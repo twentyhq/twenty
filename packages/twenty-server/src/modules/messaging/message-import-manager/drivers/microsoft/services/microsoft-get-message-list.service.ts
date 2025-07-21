@@ -5,6 +5,7 @@ import {
   PageIterator,
   PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -70,10 +71,10 @@ export class MicrosoftGetMessageListService {
         syncCursor: messageChannel.syncCursor,
       });
 
-      const response = await this.getMessageList(
-        connectedAccount,
-        messageChannel.syncCursor,
-      );
+      const response = await this.getMessageList(connectedAccount, {
+        name: MessageFolderName.INBOX,
+        syncCursor: messageChannel.syncCursor,
+      });
 
       result.push({
         ...response,
@@ -86,10 +87,7 @@ export class MicrosoftGetMessageListService {
     }
 
     for (const folder of messageFolders) {
-      const response = await this.getMessageList(
-        connectedAccount,
-        folder.syncCursor,
-      );
+      const response = await this.getMessageList(connectedAccount, folder);
 
       result.push({
         ...response,
@@ -105,24 +103,20 @@ export class MicrosoftGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
-    syncCursor: string,
+    messageFolder: Pick<MessageFolderWorkspaceEntity, 'name' | 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
-    // important: otherwise tries to get the full message list
-    if (!syncCursor) {
-      throw new MessageImportDriverException(
-        'Missing SyncCursor',
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
-    }
-
     const messageExternalIds: string[] = [];
     const messageExternalIdsToDelete: string[] = [];
 
     const microsoftClient =
       await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
 
+    const apiUrl = isNonEmptyString(messageFolder.syncCursor)
+      ? messageFolder.syncCursor
+      : `/me/mailfolders/${messageFolder.name}/messages/delta?$select=id`;
+
     const response: PageCollection = await microsoftClient
-      .api(syncCursor)
+      .api(apiUrl)
       .version('beta')
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
@@ -171,7 +165,7 @@ export class MicrosoftGetMessageListService {
     return {
       messageExternalIds,
       messageExternalIdsToDelete,
-      previousSyncCursor: syncCursor,
+      previousSyncCursor: messageFolder.syncCursor,
       nextSyncCursor: pageIterator.getDeltaLink() || '',
       folderId: undefined,
     };

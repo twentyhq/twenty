@@ -217,7 +217,11 @@ describe('MessagingMessageListFetchService', () => {
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
-      mockGoogleMessageChannel,
+      {
+        messageChannel: mockGoogleMessageChannel,
+        connectedAccount: mockGoogleMessageChannel.connectedAccount,
+        messageFolders: mockGoogleMessageChannel.messageFolders,
+      },
     );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
