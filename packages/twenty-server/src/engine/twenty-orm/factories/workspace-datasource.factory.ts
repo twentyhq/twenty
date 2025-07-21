@@ -27,6 +27,7 @@ import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type CacheResult<T, U> = {
   version: T;
@@ -51,6 +52,7 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   private async conditionalDestroyDataSource(
@@ -192,6 +194,7 @@ export class WorkspaceDatasourceFactory {
               workspaceId,
               objectMetadataMaps: cachedObjectMetadataMaps,
               featureFlagsMap: cachedFeatureFlagMap,
+              eventEmitterService: this.workspaceEventEmitter,
             },
             {
               url:

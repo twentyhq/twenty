@@ -20,18 +20,15 @@ describe('MatchParticipantService', () => {
     find: jest.Mock;
     update: jest.Mock;
     createQueryBuilder: jest.Mock;
-    formatResult: jest.Mock;
   };
   let mockCalendarEventParticipantRepository: {
     find: jest.Mock;
     update: jest.Mock;
     createQueryBuilder: jest.Mock;
-    formatResult: jest.Mock;
   };
   let mockPersonRepository: {
     find: jest.Mock;
     createQueryBuilder: jest.Mock;
-    formatResult: jest.Mock;
   };
   let mockWorkspaceMemberRepository: {
     find: jest.Mock;
@@ -53,7 +50,6 @@ describe('MatchParticipantService', () => {
         getMany: jest.fn(),
         withDeleted: jest.fn().mockReturnThis(),
       }),
-      formatResult: jest.fn(),
     };
 
     mockCalendarEventParticipantRepository = {
@@ -68,7 +64,6 @@ describe('MatchParticipantService', () => {
         getMany: jest.fn(),
         withDeleted: jest.fn().mockReturnThis(),
       }),
-      formatResult: jest.fn(),
     };
 
     mockPersonRepository = {
@@ -82,7 +77,6 @@ describe('MatchParticipantService', () => {
         getMany: jest.fn(),
         withDeleted: jest.fn().mockReturnThis(),
       }),
-      formatResult: jest.fn(),
     };
 
     mockWorkspaceMemberRepository = {
@@ -204,7 +198,7 @@ describe('MatchParticipantService', () => {
       };
 
       mockPersonRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
-      mockPersonRepository.formatResult.mockResolvedValue(mockPeople);
+      mockQueryBuilder.getMany.mockResolvedValue(mockPeople);
       mockWorkspaceMemberRepository.find.mockResolvedValue(
         mockWorkspaceMembers,
       );
@@ -316,7 +310,18 @@ describe('MatchParticipantService', () => {
     });
 
     it('should handle participants with no matching people or workspace members', async () => {
-      mockPersonRepository.formatResult.mockResolvedValue([]);
+      const mockQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([]),
+        withDeleted: jest.fn().mockReturnThis(),
+      };
+
+      mockPersonRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      mockQueryBuilder.getMany.mockResolvedValue([]);
       mockWorkspaceMemberRepository.find.mockResolvedValue([]);
 
       await service.matchParticipants({
@@ -545,7 +550,18 @@ describe('MatchParticipantService', () => {
         affected: 1,
       });
       mockMessageParticipantRepository.find.mockResolvedValue([]);
-      mockPersonRepository.formatResult.mockResolvedValue([]);
+      const mockQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([]),
+        withDeleted: jest.fn().mockReturnThis(),
+      };
+
+      mockPersonRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      mockQueryBuilder.getMany.mockResolvedValue([]);
     });
 
     describe('person unmatching', () => {
@@ -590,9 +606,7 @@ describe('MatchParticipantService', () => {
         mockPersonRepository.createQueryBuilder.mockReturnValue(
           mockQueryBuilder,
         );
-        mockPersonRepository.formatResult.mockResolvedValue(
-          mockAlternativePeople,
-        );
+        mockQueryBuilder.getMany.mockResolvedValue(mockAlternativePeople);
 
         const rematchedParticipants = [
           {
@@ -655,7 +669,7 @@ describe('MatchParticipantService', () => {
         mockPersonRepository.createQueryBuilder.mockReturnValue(
           mockQueryBuilder,
         );
-        mockPersonRepository.formatResult.mockResolvedValue([]);
+        mockQueryBuilder.getMany.mockResolvedValue([]);
 
         await service.unmatchParticipants({
           handle: 'test-1@example.com',

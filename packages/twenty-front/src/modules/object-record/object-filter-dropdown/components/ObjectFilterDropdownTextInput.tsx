@@ -42,7 +42,7 @@ export const ObjectFilterDropdownTextInput = () => {
       <DropdownMenuInput
         instanceId="object-filter-dropdown-text-input"
         ref={handleInputRef}
-        value={objectFilterDropdownFilterValue}
+        value={objectFilterDropdownFilterValue ?? ''}
         autoFocus
         type="text"
         placeholder={fieldMetadataItemUsedInDropdown?.label}

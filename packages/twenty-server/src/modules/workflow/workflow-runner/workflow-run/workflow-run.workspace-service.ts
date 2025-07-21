@@ -1,36 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { StepStatus } from 'twenty-shared/workflow';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   StepOutput,
   WorkflowRunState,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -38,9 +32,6 @@ export class WorkflowRunWorkspaceService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -413,76 +404,6 @@ export class WorkflowRunWorkspaceService {
     return workflowRun;
   }
 
-  private async emitWorkflowRunUpdatedEvent({
-    workflowRunBefore,
-    updatedFields,
-  }: {
-    workflowRunBefore: WorkflowRunWorkspaceEntity;
-    updatedFields: string[];
-  }) {
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      return;
-    }
-
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: 'workflowRun',
-        workspaceId,
-      },
-      relations: ['fields'],
-    });
-
-    if (!objectMetadata) {
-      throw new WorkflowRunException(
-        'Object metadata not found',
-        WorkflowRunExceptionCode.FAILURE,
-      );
-    }
-
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowRunAfter = await workflowRunRepository.findOneBy({
-      id: workflowRunBefore.id,
-    });
-
-    if (!workflowRunAfter) {
-      throw new WorkflowRunException(
-        'WorkflowRun not found',
-        WorkflowRunExceptionCode.FAILURE,
-      );
-    }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'workflowRun',
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: workflowRunBefore.id,
-          objectMetadata,
-          properties: {
-            after: workflowRunAfter,
-            before: workflowRunBefore,
-            updatedFields,
-            diff: objectRecordChangedValues(
-              workflowRunBefore,
-              workflowRunAfter,
-              updatedFields,
-              objectMetadata,
-            ),
-          },
-        },
-      ],
-      workspaceId,
-    });
-  }
-
   private getInitState(
     workflowVersion: WorkflowVersionWorkspaceEntity,
   ): WorkflowRunState | undefined {
@@ -538,14 +459,5 @@ export class WorkflowRunWorkspaceService {
     }
 
     await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
-
-    const updatedFields = Object.keys(partialUpdate);
-
-    if (updatedFields.length > 0) {
-      await this.emitWorkflowRunUpdatedEvent({
-        workflowRunBefore: workflowRunToUpdate,
-        updatedFields: updatedFields,
-      });
-    }
   }
 }

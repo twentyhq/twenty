@@ -4,9 +4,8 @@ type NoteDataSeed = {
   id: string;
   position: number;
   title: string;
-  body: string | null;
-  bodyV2Blocknote: string | null;
-  bodyV2Markdown: string | null;
+  bodyV2Blocknote: string
+  bodyV2Markdown: string;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
@@ -17,7 +16,6 @@ export const NOTE_DATA_SEED_COLUMNS: (keyof NoteDataSeed)[] = [
   'id',
   'position',
   'title',
-  'body',
   'bodyV2Blocknote',
   'bodyV2Markdown',
   'createdBySource',
@@ -145,7 +143,6 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
       id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      body: null,
       bodyV2Blocknote: JSON.stringify([
         {
           id: `block-${INDEX}`,
@@ -176,7 +173,6 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
       id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      body: null,
       bodyV2Blocknote: JSON.stringify([
         {
           id: `block-${INDEX}`,

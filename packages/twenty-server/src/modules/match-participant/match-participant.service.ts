@@ -82,11 +82,9 @@ export class MatchParticipantService<
       emails: uniqueParticipantsHandles,
     });
 
-    const rawPeople = await queryBuilder
+    const people = await queryBuilder
       .orderBy('person.createdAt', 'ASC')
       .getMany();
-
-    const people = await personRepository.formatResult(rawPeople);
 
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
@@ -192,11 +190,9 @@ export class MatchParticipantService<
         excludePersonIds: [personId],
       });
 
-      const rawPeople = await queryBuilder
+      const peopleToMatch = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
         .getMany();
-
-      const peopleToMatch = await personRepository.formatResult(rawPeople);
 
       if (peopleToMatch.length > 0) {
         const bestMatch = findPersonByPrimaryOrAdditionalEmail({
