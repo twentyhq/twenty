@@ -10,12 +10,12 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 
 describe('MessagingFullMessageListFetchService', () => {
-  let messagingFullMessageListFetchService: MessagingFullMessageListFetchService;
+  let messagingFullMessageListFetchService: MessagingMessageListFetchService;
   let messagingGetMessageListService: MessagingGetMessageListService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
   let twentyORMManager: TwentyORMManager;
@@ -72,7 +72,7 @@ describe('MessagingFullMessageListFetchService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MessagingFullMessageListFetchService,
+        MessagingMessageListFetchService,
         {
           provide: CacheStorageNamespace.ModuleMessaging,
           useValue: {
@@ -163,8 +163,8 @@ describe('MessagingFullMessageListFetchService', () => {
     }).compile();
 
     messagingFullMessageListFetchService =
-      module.get<MessagingFullMessageListFetchService>(
-        MessagingFullMessageListFetchService,
+      module.get<MessagingMessageListFetchService>(
+        MessagingMessageListFetchService,
       );
     messagingGetMessageListService = module.get<MessagingGetMessageListService>(
       MessagingGetMessageListService,
