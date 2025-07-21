@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateViewTablesInCoreSchema1753102591949
+export class CreateViewTablesInCoreSchema1753104458798
   implements MigrationInterface
 {
-  name = 'CreateViewTablesInCoreSchema1753102591949';
+  name = 'CreateViewTablesInCoreSchema1753104458798';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -13,10 +13,7 @@ export class CreateViewTablesInCoreSchema1753102591949
       `CREATE TABLE "core"."viewField" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fieldMetadataId" uuid NOT NULL, "isVisible" boolean NOT NULL DEFAULT true, "size" integer NOT NULL DEFAULT '0', "position" integer NOT NULL DEFAULT '0', "aggregateOperation" "core"."viewField_aggregateoperation_enum", "viewId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE" UNIQUE ("fieldMetadataId", "viewId"), CONSTRAINT "PK_ba2a5aa5f0bd7ac82788fae921e" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FIELD_VIEW_ID" ON "core"."viewField" ("viewId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FIELD_WORKSPACE_ID" ON "core"."viewField" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID" ON "core"."viewField" ("workspaceId", "viewId") `,
     );
     await queryRunner.query(
       `CREATE TYPE "core"."viewFilterGroup_logicaloperator_enum" AS ENUM('AND', 'OR', 'NOT')`,
@@ -25,10 +22,7 @@ export class CreateViewTablesInCoreSchema1753102591949
       `CREATE TABLE "core"."viewFilterGroup" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "parentViewFilterGroupId" uuid, "logicalOperator" "core"."viewFilterGroup_logicaloperator_enum" NOT NULL DEFAULT 'NOT', "positionInViewFilterGroup" integer, "viewId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_16f55359d609168b826405ed307" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FILTER_GROUP_VIEW_ID" ON "core"."viewFilterGroup" ("viewId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FILTER_GROUP_WORKSPACE_ID" ON "core"."viewFilterGroup" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID" ON "core"."viewFilterGroup" ("workspaceId", "viewId") `,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."viewFilter" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fieldMetadataId" uuid NOT NULL, "operand" character varying NOT NULL DEFAULT 'Contains', "value" jsonb NOT NULL, "viewFilterGroupId" uuid, "positionInViewFilterGroup" integer, "subFieldName" text, "viewId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_09f9ffa2f66263b9eb301460137" PRIMARY KEY ("id"))`,
@@ -37,19 +31,13 @@ export class CreateViewTablesInCoreSchema1753102591949
       `CREATE INDEX "IDX_VIEW_FILTER_FIELD_METADATA_ID" ON "core"."viewFilter" ("fieldMetadataId") `,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FILTER_VIEW_ID" ON "core"."viewFilter" ("viewId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_FILTER_WORKSPACE_ID" ON "core"."viewFilter" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID" ON "core"."viewFilter" ("workspaceId", "viewId") `,
     );
     await queryRunner.query(
       `CREATE TABLE "core"."viewGroup" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fieldMetadataId" uuid NOT NULL, "isVisible" boolean NOT NULL DEFAULT true, "fieldValue" text NOT NULL, "position" integer NOT NULL DEFAULT '0', "viewId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_d2aa8cad01e9d5e99c23f9ccec3" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_GROUP_VIEW_ID" ON "core"."viewGroup" ("viewId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_GROUP_WORKSPACE_ID" ON "core"."viewGroup" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID" ON "core"."viewGroup" ("workspaceId", "viewId") `,
     );
     await queryRunner.query(
       `CREATE TYPE "core"."viewSort_direction_enum" AS ENUM('ASC', 'DESC')`,
@@ -58,10 +46,7 @@ export class CreateViewTablesInCoreSchema1753102591949
       `CREATE TABLE "core"."viewSort" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fieldMetadataId" uuid NOT NULL, "direction" "core"."viewSort_direction_enum" NOT NULL DEFAULT 'ASC', "viewId" uuid NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "IDX_VIEW_SORT_FIELD_METADATA_ID_VIEW_ID_UNIQUE" UNIQUE ("fieldMetadataId", "viewId"), CONSTRAINT "PK_eceb74d297f926313af6463d496" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_SORT_VIEW_ID" ON "core"."viewSort" ("viewId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_SORT_WORKSPACE_ID" ON "core"."viewSort" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID" ON "core"."viewSort" ("workspaceId", "viewId") `,
     );
     await queryRunner.query(
       `CREATE TYPE "core"."view_openrecordin_enum" AS ENUM('SIDE_PANEL', 'RECORD_PAGE')`,
@@ -70,13 +55,10 @@ export class CreateViewTablesInCoreSchema1753102591949
       `CREATE TYPE "core"."view_kanbanaggregateoperation_enum" AS ENUM('MIN', 'MAX', 'AVG', 'SUM', 'COUNT', 'COUNT_UNIQUE_VALUES', 'COUNT_EMPTY', 'COUNT_NOT_EMPTY', 'COUNT_TRUE', 'COUNT_FALSE', 'PERCENTAGE_EMPTY', 'PERCENTAGE_NOT_EMPTY')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."view" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" text NOT NULL, "objectMetadataId" uuid NOT NULL, "type" character varying NOT NULL DEFAULT 'table', "key" text DEFAULT 'INDEX', "icon" text NOT NULL, "position" integer NOT NULL DEFAULT '0', "isCompact" boolean NOT NULL DEFAULT false, "openRecordIn" "core"."view_openrecordin_enum" NOT NULL DEFAULT 'SIDE_PANEL', "kanbanAggregateOperation" "core"."view_kanbanaggregateoperation_enum", "kanbanAggregateOperationFieldMetadataId" uuid, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_86cfb9e426c77d60b900fe2b543" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."view" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" text NOT NULL DEFAULT '', "objectMetadataId" uuid NOT NULL, "type" character varying NOT NULL DEFAULT 'table', "key" text DEFAULT 'INDEX', "icon" text NOT NULL, "position" integer NOT NULL DEFAULT '0', "isCompact" boolean NOT NULL DEFAULT false, "openRecordIn" "core"."view_openrecordin_enum" NOT NULL DEFAULT 'SIDE_PANEL', "kanbanAggregateOperation" "core"."view_kanbanaggregateoperation_enum", "kanbanAggregateOperationFieldMetadataId" uuid, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_86cfb9e426c77d60b900fe2b543" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_OBJECT_METADATA_ID_WORKSPACE_ID" ON "core"."view" ("objectMetadataId", "workspaceId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_VIEW_WORKSPACE_ID" ON "core"."view" ("workspaceId") `,
+      `CREATE INDEX "IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID" ON "core"."view" ("workspaceId", "objectMetadataId") `,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."viewField" ADD CONSTRAINT "FK_96158de54c78944b5340b6f708e" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -147,40 +129,40 @@ export class CreateViewTablesInCoreSchema1753102591949
     await queryRunner.query(
       `ALTER TABLE "core"."viewField" DROP CONSTRAINT "FK_96158de54c78944b5340b6f708e"`,
     );
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_WORKSPACE_ID"`);
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_VIEW_OBJECT_METADATA_ID_WORKSPACE_ID"`,
+      `DROP INDEX "core"."IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID"`,
     );
     await queryRunner.query(`DROP TABLE "core"."view"`);
     await queryRunner.query(
       `DROP TYPE "core"."view_kanbanaggregateoperation_enum"`,
     );
     await queryRunner.query(`DROP TYPE "core"."view_openrecordin_enum"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_SORT_WORKSPACE_ID"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_SORT_VIEW_ID"`);
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID"`,
+    );
     await queryRunner.query(`DROP TABLE "core"."viewSort"`);
     await queryRunner.query(`DROP TYPE "core"."viewSort_direction_enum"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_GROUP_WORKSPACE_ID"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_GROUP_VIEW_ID"`);
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID"`,
+    );
     await queryRunner.query(`DROP TABLE "core"."viewGroup"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_FILTER_WORKSPACE_ID"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_FILTER_VIEW_ID"`);
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID"`,
+    );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_VIEW_FILTER_FIELD_METADATA_ID"`,
     );
     await queryRunner.query(`DROP TABLE "core"."viewFilter"`);
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_VIEW_FILTER_GROUP_WORKSPACE_ID"`,
-    );
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_VIEW_FILTER_GROUP_VIEW_ID"`,
+      `DROP INDEX "core"."IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID"`,
     );
     await queryRunner.query(`DROP TABLE "core"."viewFilterGroup"`);
     await queryRunner.query(
       `DROP TYPE "core"."viewFilterGroup_logicaloperator_enum"`,
     );
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_FIELD_WORKSPACE_ID"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_FIELD_VIEW_ID"`);
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID"`,
+    );
     await queryRunner.query(`DROP TABLE "core"."viewField"`);
     await queryRunner.query(
       `DROP TYPE "core"."viewField_aggregateoperation_enum"`,
