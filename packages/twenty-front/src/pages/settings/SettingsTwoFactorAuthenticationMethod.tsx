@@ -14,9 +14,12 @@ import {
   useTwoFactorVerificationForSettings,
 } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPath } from '@/types/SettingsPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { H2Title } from 'twenty-ui/display';
+import { useTheme } from '@emotion/react';
+import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -39,8 +42,28 @@ const StyledDivider = styled.div`
   margin: ${({ theme }) => theme.spacing(6)} 0;
 `;
 
+const StyledCopySetupKeyLink = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
+`;
+
 export const SettingsTwoFactorAuthenticationMethod = () => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const qrCode = useRecoilValue(qrCodeState);
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
@@ -55,6 +78,27 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
   // Determine if we should show action buttons (when in verification step and 2FA is not set up)
   const shouldShowActionButtons = !has2FAMethod;
+
+  const handleCopySetupKey = async () => {
+    if (!qrCode) return;
+
+    const secret = extractSecretFromOtpUri(qrCode);
+    if (secret !== null) {
+      try {
+        await navigator.clipboard.writeText(secret);
+        enqueueSuccessSnackBar({
+          message: t`Setup key copied to clipboard`,
+          options: {
+            icon: <IconCopy size={theme.icon.size.md} />,
+            duration: 2000,
+          },
+        });
+      } catch (error) {
+        // Fallback for browsers that don't support clipboard API
+        // Error handling without console logging
+      }
+    }
+  };
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -106,6 +150,12 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
               </StyledInstructions>
               <StyledQRCodeContainer>
                 {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
+                {qrCode && (
+                  <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+                    <IconCopy size={theme.icon.size.sm} />
+                    <Trans>Copy Setup Key</Trans>
+                  </StyledCopySetupKeyLink>
+                )}
               </StyledQRCodeContainer>
 
               <StyledDivider />

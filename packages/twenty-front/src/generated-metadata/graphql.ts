@@ -1455,7 +1455,6 @@ export type MutationImpersonateArgs = {
 
 
 export type MutationInitiateOtpProvisioningArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
   loginToken: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -3160,7 +3159,6 @@ export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __ty
 
 export type InitiateOtpProvisioningMutationVariables = Exact<{
   loginToken: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
 }>;
 
@@ -4871,12 +4869,8 @@ export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMuta
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
 export const InitiateOtpProvisioningDocument = gql`
-    mutation initiateOTPProvisioning($loginToken: String!, $captchaToken: String, $origin: String!) {
-  initiateOTPProvisioning(
-    loginToken: $loginToken
-    captchaToken: $captchaToken
-    origin: $origin
-  ) {
+    mutation initiateOTPProvisioning($loginToken: String!, $origin: String!) {
+  initiateOTPProvisioning(loginToken: $loginToken, origin: $origin) {
     uri
   }
 }
@@ -4897,7 +4891,6 @@ export type InitiateOtpProvisioningMutationFn = Apollo.MutationFunction<Initiate
  * const [initiateOtpProvisioningMutation, { data, loading, error }] = useInitiateOtpProvisioningMutation({
  *   variables: {
  *      loginToken: // value for 'loginToken'
- *      captchaToken: // value for 'captchaToken'
  *      origin: // value for 'origin'
  *   },
  * });

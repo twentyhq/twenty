@@ -1386,7 +1386,6 @@ export type MutationImpersonateArgs = {
 
 
 export type MutationInitiateOtpProvisioningArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
   loginToken: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -1419,7 +1418,6 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 
 export type MutationResetTwoFactorAuthenticationMethodArgs = {
-  origin: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['String'];
 };
 

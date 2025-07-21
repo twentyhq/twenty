@@ -4,10 +4,14 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import QRCode from 'react-qr-code';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 
@@ -43,12 +47,54 @@ const StyledForm = styled.div`
   width: 100%;
 `;
 
+const StyledCopySetupKeyLink = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
+`;
+
 export const SignInUpTwoFactorAuthenticationProvisioning = () => {
+  const { t } = useLingui();
+  const theme = useTheme();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const qrCode = useRecoilValue(qrCodeState);
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const handleClick = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
+  };
+
+  const handleCopySetupKey = async () => {
+    if (!qrCode) return;
+
+    const secret = extractSecretFromOtpUri(qrCode);
+    if (secret !== null) {
+      try {
+        await navigator.clipboard.writeText(secret);
+        enqueueSuccessSnackBar({
+          message: t`Setup key copied to clipboard`,
+          options: {
+            icon: <IconCopy size={theme.icon.size.md} />,
+            duration: 2000,
+          },
+        });
+      } catch (error) {
+        // Fallback for browsers that don't support clipboard API
+        // Error handling without console logging
+      }
+    }
   };
 
   return (
@@ -63,6 +109,12 @@ export const SignInUpTwoFactorAuthenticationProvisioning = () => {
         </StyledTextContainer>
         <StyledMainContentContainer>
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
+          {qrCode && (
+            <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+              <IconCopy size={theme.icon.size.sm} />
+              <Trans>Copy Setup Key</Trans>
+            </StyledCopySetupKeyLink>
+          )}
         </StyledMainContentContainer>
         <MainButton
           title={'Next'}

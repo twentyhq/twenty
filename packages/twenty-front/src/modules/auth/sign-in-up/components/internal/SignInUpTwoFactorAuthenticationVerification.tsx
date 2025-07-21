@@ -7,14 +7,19 @@ import {
   useTwoFactorAuthenticationForm,
 } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { loginTokenState } from '@/auth/states/loginTokenState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, SlotProps } from 'input-otp';
 import { Controller } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MainButton } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledMainContentContainer = styled.div`
@@ -167,6 +172,10 @@ const StyledTextContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
+const StyledActionBackLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+`;
+
 export const SignInUpTOTPVerification = () => {
   const { getAuthTokensFromOTP } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -174,6 +183,7 @@ export const SignInUpTOTPVerification = () => {
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
   const loginToken = useRecoilValue(loginTokenState);
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const { t } = useLingui();
 
   const { form } = useTwoFactorAuthenticationForm();
@@ -192,6 +202,10 @@ export const SignInUpTOTPVerification = () => {
     }
 
     await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
+  };
+
+  const handleBack = () => {
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
   };
 
   return (
@@ -245,6 +259,11 @@ export const SignInUpTOTPVerification = () => {
         variant={'primary'}
         fullWidth
       />
+      <StyledActionBackLinkContainer>
+        <ClickToActionLink onClick={handleBack}>
+          <Trans>Back</Trans>
+        </ClickToActionLink>
+      </StyledActionBackLinkContainer>
     </StyledForm>
   );
 };
