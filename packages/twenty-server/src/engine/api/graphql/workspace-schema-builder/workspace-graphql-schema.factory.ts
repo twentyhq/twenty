@@ -11,7 +11,7 @@ import { TypeDefinitionsGenerator } from './type-definitions.generator';
 import { MutationTypeFactory } from './factories/mutation-type.factory';
 import { OrphanedTypesFactory } from './factories/orphaned-types.factory';
 import { QueryTypeFactory } from './factories/query-type.factory';
-import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
+import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 
 @Injectable()
 export class WorkspaceGraphQLSchemaFactory {

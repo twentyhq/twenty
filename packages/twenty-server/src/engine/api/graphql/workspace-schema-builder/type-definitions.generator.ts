@@ -22,7 +22,7 @@ import {
   ObjectTypeDefinitionFactory,
   ObjectTypeDefinitionKind,
 } from './factories/object-type-definition.factory';
-import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
+import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { objectContainsRelationField } from './utils/object-contains-relation-field';
 

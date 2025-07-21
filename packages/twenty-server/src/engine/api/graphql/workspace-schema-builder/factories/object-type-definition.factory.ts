@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { GraphQLObjectType } from 'graphql';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
+import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.utils';
-import { pascalCase } from 'src/utils/pascal-case';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { pascalCase } from 'src/utils/pascal-case';
 
 import { OutputTypeFactory } from './output-type.factory';
 
