@@ -5,7 +5,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const DEFAULT_DEPTH_VALUE = 1;
 
@@ -40,8 +40,8 @@ export const mapFieldMetadataToGraphqlQuery = (
   ].includes(fieldType);
 
   const isRelation =
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
-    isFieldMetadataInterfaceOfType(field, FieldMetadataType.MORPH_RELATION);
+    isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+    isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
 
   if (fieldIsSimpleValue) {
     return field.name;

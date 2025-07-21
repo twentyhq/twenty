@@ -34,7 +34,7 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -160,7 +160,7 @@ export abstract class RestApiBaseHandler {
 
     Object.values(objectMetadata.objectMetadataMapItem.fieldsById).forEach(
       (field) => {
-        if (isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION)) {
+        if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
           if (
             depth === MAX_DEPTH &&
             isDefined(field.relationTargetObjectMetadataId)

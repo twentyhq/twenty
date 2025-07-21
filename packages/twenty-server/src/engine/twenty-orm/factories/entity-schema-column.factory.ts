@@ -18,7 +18,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -39,11 +39,11 @@ export class EntitySchemaColumnFactory {
       const key = fieldMetadata.name;
 
       const isRelation =
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
         ) ||
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         );

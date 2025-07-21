@@ -21,7 +21,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
@@ -132,7 +132,7 @@ const computeRecordToConnectCondition = (
     objectMetadata.fieldsById[objectMetadata.fieldIdByName[connectFieldName]];
 
   if (
-    !isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) ||
+    !isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
     field.settings?.relationType !== RelationType.MANY_TO_ONE
   ) {
     const objectMetadataNameSingular = objectMetadata.nameSingular;

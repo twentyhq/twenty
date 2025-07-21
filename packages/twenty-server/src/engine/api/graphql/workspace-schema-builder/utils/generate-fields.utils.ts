@@ -16,7 +16,7 @@ import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schem
 import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
@@ -63,11 +63,11 @@ export const generateFields = <
     let generatedField;
 
     const isRelation =
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadata,
         FieldMetadataType.RELATION,
       ) ||
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(
         fieldMetadata,
         FieldMetadataType.MORPH_RELATION,
       );
