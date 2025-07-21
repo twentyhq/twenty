@@ -7,7 +7,7 @@ import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -73,7 +73,7 @@ describe('Granular settings permissions', () => {
         mutation UpsertSettingPermissions {
           upsertSettingPermissions(upsertSettingPermissionsInput: {
             roleId: "${customRoleId}"
-            settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}, ${SettingPermissionType.WORKFLOWS}]
+            settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
             id
             setting
@@ -378,11 +378,11 @@ describe('Granular settings permissions', () => {
       expect(customRole.canUpdateAllSettings).toBe(false);
       expect(customRole.settingPermissions).toHaveLength(3);
       expect(
-        customRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.DATA_MODEL);
+        customRole.settingPermissions.map((p: any) => p.permissionFlag),
+      ).toContain(PermissionFlagType.DATA_MODEL);
       expect(
-        customRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.WORKSPACE);
+        customRole.settingPermissions.map((p: any) => p.permissionFlag),
+      ).toContain(PermissionFlagType.WORKSPACE);
     });
   });
 
@@ -394,7 +394,7 @@ describe('Granular settings permissions', () => {
           mutation UpsertSettingPermissions {
             upsertSettingPermissions(upsertSettingPermissionsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}, ${SettingPermissionType.SECURITY}]
+              settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
               id
               setting
@@ -440,8 +440,8 @@ describe('Granular settings permissions', () => {
 
       expect(updatedRole.settingPermissions).toHaveLength(3);
       expect(
-        updatedRole.settingPermissions.map((p: any) => p.setting),
-      ).toContain(SettingPermissionType.SECURITY);
+        updatedRole.settingPermissions.map((p: any) => p.permissionFlag),
+      ).toContain(PermissionFlagType.SECURITY);
     });
 
     it('should allow removing setting permissions from existing role', async () => {
@@ -451,7 +451,7 @@ describe('Granular settings permissions', () => {
           mutation UpsertSettingPermissions {
             upsertSettingPermissions(upsertSettingPermissionsInput: {
               roleId: "${customRoleId}"
-              settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}]
+              settingPermissionKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
               id
               setting
@@ -495,8 +495,8 @@ describe('Granular settings permissions', () => {
 
       expect(updatedRole.settingPermissions).toHaveLength(2);
       expect(
-        updatedRole.settingPermissions.map((p: any) => p.setting),
-      ).not.toContain(SettingPermissionType.SECURITY);
+        updatedRole.settingPermissions.map((p: any) => p.permissionFlag),
+      ).not.toContain(PermissionFlagType.SECURITY);
     });
   });
 });

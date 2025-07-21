@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 @ObjectType('SettingPermission')
 export class SettingPermissionDTO {
@@ -11,5 +11,5 @@ export class SettingPermissionDTO {
   roleId: string;
 
   @Field({ nullable: false })
-  setting: SettingPermissionType;
+  permissionFlag: PermissionFlagType;
 }

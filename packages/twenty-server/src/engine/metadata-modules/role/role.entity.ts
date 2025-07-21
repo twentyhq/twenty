@@ -12,7 +12,7 @@ import {
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/setting-permission/permission-flag.entity';
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
@@ -69,10 +69,10 @@ export class RoleEntity {
   objectPermissions: Relation<ObjectPermissionEntity[]>;
 
   @OneToMany(
-    () => SettingPermissionEntity,
-    (settingPermission: SettingPermissionEntity) => settingPermission.role,
+    () => PermissionFlagEntity,
+    (settingPermission: PermissionFlagEntity) => settingPermission.role,
   )
-  settingPermissions: Relation<SettingPermissionEntity[]>;
+  settingPermissions: Relation<PermissionFlagEntity[]>;
 
   @OneToMany(
     () => FieldPermissionEntity,

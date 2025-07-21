@@ -7,7 +7,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -55,13 +55,13 @@ export class PermissionsService {
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissions = Object.keys(SettingPermissionType).reduce(
+    const settingsPermissions = Object.keys(PermissionFlagType).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]:
           hasPermissionOnSettingFeature ||
           settingPermissions.some(
-            (settingPermission) => settingPermission.setting === feature,
+            (settingPermission) => settingPermission.permissionFlag === feature,
           ),
       }),
       defaultSettingsPermissions,
@@ -102,14 +102,16 @@ export class PermissionsService {
         [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
       },
       settingsPermissions: {
-        [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: false,
-        [SettingPermissionType.WORKSPACE]: false,
-        [SettingPermissionType.WORKSPACE_MEMBERS]: false,
-        [SettingPermissionType.ROLES]: false,
-        [SettingPermissionType.DATA_MODEL]: false,
-        [SettingPermissionType.ADMIN_PANEL]: false,
-        [SettingPermissionType.SECURITY]: false,
-        [SettingPermissionType.WORKFLOWS]: false,
+        [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+        [PermissionFlagType.WORKSPACE]: false,
+        [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+        [PermissionFlagType.ROLES]: false,
+        [PermissionFlagType.DATA_MODEL]: false,
+        [PermissionFlagType.ADMIN_PANEL]: false,
+        [PermissionFlagType.SECURITY]: false,
+        [PermissionFlagType.WORKFLOWS]: false,
+        [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+        [PermissionFlagType.HTTP_TOOL]: false,
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
@@ -122,7 +124,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
-    setting: SettingPermissionType;
+    setting: PermissionFlagType;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {
@@ -157,7 +159,7 @@ export class PermissionsService {
     const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
     return settingPermissions.some(
-      (settingPermission) => settingPermission.setting === setting,
+      (settingPermission) => settingPermission.permissionFlag === setting,
     );
   }
 }

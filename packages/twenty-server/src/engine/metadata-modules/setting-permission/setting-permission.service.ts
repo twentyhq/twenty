@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, In, Repository } from 'typeorm';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -11,13 +11,13 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UpsertSettingPermissionsInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
-import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/setting-permission/permission-flag.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 export class SettingPermissionService {
   constructor(
-    @InjectRepository(SettingPermissionEntity, 'core')
-    private readonly settingPermissionRepository: Repository<SettingPermissionEntity>,
+    @InjectRepository(PermissionFlagEntity, 'core')
+    private readonly settingPermissionRepository: Repository<PermissionFlagEntity>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectDataSource('core')
@@ -31,14 +31,14 @@ export class SettingPermissionService {
   }: {
     workspaceId: string;
     input: UpsertSettingPermissionsInput;
-  }): Promise<SettingPermissionEntity[]> {
+  }): Promise<PermissionFlagEntity[]> {
     await this.validateRoleIsEditableOrThrow({
       roleId: input.roleId,
       workspaceId,
     });
 
     const invalidSettings = input.settingPermissionKeys.filter(
-      (setting) => !Object.values(SettingPermissionType).includes(setting),
+      (setting) => !Object.values(PermissionFlagType).includes(setting),
     );
 
     if (invalidSettings.length > 0) {
@@ -55,7 +55,7 @@ export class SettingPermissionService {
 
     try {
       const existingPermissions = await queryRunner.manager.find(
-        SettingPermissionEntity,
+        PermissionFlagEntity,
         {
           where: {
             roleId: input.roleId,
@@ -64,7 +64,7 @@ export class SettingPermissionService {
         },
       );
       const existingSettings = new Set(
-        existingPermissions.map((p) => p.setting),
+        existingPermissions.map((p) => p.permissionFlag),
       );
       const inputSettings = new Set(input.settingPermissionKeys);
 
@@ -72,32 +72,32 @@ export class SettingPermissionService {
         (setting) => !existingSettings.has(setting),
       );
       const permissionsToRemove = existingPermissions.filter(
-        (permission) => !inputSettings.has(permission.setting),
+        (permission) => !inputSettings.has(permission.permissionFlag),
       );
 
       if (permissionsToRemove.length > 0) {
-        await queryRunner.manager.delete(SettingPermissionEntity, {
+        await queryRunner.manager.delete(PermissionFlagEntity, {
           id: In(permissionsToRemove.map((p) => p.id)),
         });
       }
 
       if (settingsToAdd.length > 0) {
         const newPermissions = settingsToAdd.map((setting) =>
-          queryRunner.manager.create(SettingPermissionEntity, {
+          queryRunner.manager.create(PermissionFlagEntity, {
             workspaceId,
             roleId: input.roleId,
             setting,
           }),
         );
 
-        await queryRunner.manager.save(SettingPermissionEntity, newPermissions);
+        await queryRunner.manager.save(PermissionFlagEntity, newPermissions);
       }
 
       await queryRunner.commitTransaction();
 
-      return queryRunner.manager.find(SettingPermissionEntity, {
+      return queryRunner.manager.find(PermissionFlagEntity, {
         where: { roleId: input.roleId, workspaceId },
-        order: { setting: 'ASC' },
+        order: { permissionFlag: 'ASC' },
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();

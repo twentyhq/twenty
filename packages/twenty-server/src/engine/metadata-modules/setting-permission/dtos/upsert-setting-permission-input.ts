@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsArray, IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
 
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 @InputType()
 export class UpsertSettingPermissionsInput {
@@ -12,7 +12,7 @@ export class UpsertSettingPermissionsInput {
   roleId: string;
 
   @IsArray()
-  @IsEnum(SettingPermissionType, { each: true })
-  @Field(() => [SettingPermissionType])
-  settingPermissionKeys: SettingPermissionType[];
+  @IsEnum(PermissionFlagType, { each: true })
+  @Field(() => [PermissionFlagType])
+  settingPermissionKeys: PermissionFlagType[];
 }
