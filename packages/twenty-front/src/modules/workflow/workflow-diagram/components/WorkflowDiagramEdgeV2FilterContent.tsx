@@ -46,7 +46,7 @@ type WorkflowDiagramEdgeV2FilterContentProps = {
   onDeleteFilter: () => Promise<void>;
   onCreateNode: () => void;
   isEdgeEditable: boolean;
-  name: string;
+  stepName: string;
   runStatus?: WorkflowRunStepStatus;
 };
 
@@ -59,7 +59,7 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   onDeleteFilter,
   onCreateNode,
   isEdgeEditable,
-  name,
+  stepName,
   runStatus,
 }: WorkflowDiagramEdgeV2FilterContentProps) => {
   const { openDropdown } = useOpenDropdown();
@@ -106,7 +106,7 @@ export const WorkflowDiagramEdgeV2FilterContent = ({
   const handleFilterButtonClick = () => {
     openFilterInCommandMenu({
       stepId,
-      stepName: name,
+      stepName,
       stepExecutionStatus: runStatus,
     });
   };

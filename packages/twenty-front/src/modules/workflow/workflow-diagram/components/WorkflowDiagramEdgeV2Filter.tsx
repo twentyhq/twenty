@@ -48,7 +48,7 @@ export const WorkflowDiagramEdgeV2Filter = ({
       nextStepId={nextStepId}
       filterSettings={filterSettings}
       isEdgeEditable={isEdgeEditable}
-      name={name}
+      stepName={name}
       runStatus={runStatus}
       onDeleteFilter={() => {
         if (!isDefined(stepId)) {
