@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -16,16 +18,14 @@ import {
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-recorn-in';
 import { ViewField } from 'src/engine/metadata-modules/view/view-field.entity';
 import { ViewFilterGroup } from 'src/engine/metadata-modules/view/view-filter-group.entity';
 import { ViewFilter } from 'src/engine/metadata-modules/view/view-filter.entity';
 import { ViewGroup } from 'src/engine/metadata-modules/view/view-group.entity';
 import { ViewSort } from 'src/engine/metadata-modules/view/view-sort.entity';
 
-export enum ViewOpenRecordInType {
-  SIDE_PANEL = 'SIDE_PANEL',
-  RECORD_PAGE = 'RECORD_PAGE',
-}
+registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID', ['workspaceId'])
@@ -61,11 +61,11 @@ export class View {
 
   @Column({
     type: 'enum',
-    enum: ViewOpenRecordInType,
+    enum: ViewOpenRecordIn,
     nullable: false,
-    default: ViewOpenRecordInType.SIDE_PANEL,
+    default: ViewOpenRecordIn.SIDE_PANEL,
   })
-  openRecordIn: ViewOpenRecordInType;
+  openRecordIn: ViewOpenRecordIn;
 
   @Column({
     type: 'enum',

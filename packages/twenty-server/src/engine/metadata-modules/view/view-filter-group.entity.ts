@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
@@ -15,12 +17,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { View } from 'src/engine/metadata-modules/view/view.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
-export enum ViewFilterGroupLogicalOperator {
-  AND = 'AND',
-  OR = 'OR',
-  NOT = 'NOT',
-}
+registerEnumType(ViewFilterGroupLogicalOperator, {
+  name: 'ViewFilterGroupLogicalOperator',
+});
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID', ['workspaceId'])
