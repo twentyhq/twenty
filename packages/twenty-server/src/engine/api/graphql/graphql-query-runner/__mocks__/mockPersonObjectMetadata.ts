@@ -2,14 +2,14 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 export const mockPersonObjectMetadataWithFieldMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
-): ObjectMetadataItemWithFieldMaps => ({
+) => (getMockObjectMetadataItemWithFielsMaps({
   id: '',
   icon: 'Icon123',
   standardId: '',
@@ -112,4 +112,4 @@ export const mockPersonObjectMetadataWithFieldMaps = (
       updatedAt: new Date(),
     }) as FieldMetadataEntity,
   },
-});
+}));

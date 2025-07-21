@@ -5,13 +5,13 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const objectMetadataId = '20202020-6e2c-42f6-a83c-cc58d776af88';
 
-export const OPPORTUNITY_WITH_FIELDS_MAPS = {
+export const OPPORTUNITY_WITH_FIELDS_MAPS = getMockObjectMetadataItemWithFielsMaps({
   id: objectMetadataId,
   nameSingular: 'opportunity',
   namePlural: 'opportunities',
@@ -468,4 +468,4 @@ export const OPPORTUNITY_WITH_FIELDS_MAPS = {
     pointOfContactId: '20202020-4f52-4dea-a116-723f9bf7f082',
     companyId: '20202020-fc02-4be2-be1a-e121daf5400d',
   },
-} as const satisfies ObjectMetadataItemWithFieldMaps;
+});

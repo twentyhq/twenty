@@ -1,14 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
+import { getMockObjectMetadataItemWithFielsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 const workspaceId = '20202020-0000-0000-0000-000000000000';
 
-export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMaps[] =
+export const mockObjectMetadataItemsWithFieldMaps =
   [
-    {
+    getMockObjectMetadataItemWithFielsMaps({
       id: '20202020-8dec-43d5-b2ff-6eef05095bec',
       standardId: '',
       nameSingular: 'person',
@@ -54,8 +54,8 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
         name: 'nameFieldMetadataId',
       },
       fieldIdByJoinColumnName: {},
-    },
-    {
+    }),
+    getMockObjectMetadataItemWithFielsMaps({
       id: '20202020-c03c-45d6-a4b0-04afe1357c5c',
       standardId: '',
       nameSingular: 'company',
@@ -118,8 +118,8 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
         domainName: 'domainNameFieldMetadataId',
       },
       fieldIdByJoinColumnName: {},
-    },
-    {
+    }),
+    getMockObjectMetadataItemWithFielsMaps({
       id: '20202020-3d75-4aab-bacd-ee176c5f63ca',
       standardId: '',
       nameSingular: 'regular-custom-object',
@@ -178,8 +178,8 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
         imageIdentifierFieldName: 'imageIdentifierFieldMetadataId',
       },
       fieldIdByJoinColumnName: {},
-    },
-    {
+    }),
+    getMockObjectMetadataItemWithFielsMaps({
       id: '20202020-540c-4397-b872-2a90ea2fb809',
       standardId: '',
       nameSingular: 'non-searchable-object',
@@ -202,5 +202,5 @@ export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMa
       fieldsById: {},
       fieldIdByName: {},
       fieldIdByJoinColumnName: {},
-    },
+    }),
   ];
