@@ -4,10 +4,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -18,7 +18,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -39,11 +39,11 @@ export class EntitySchemaColumnFactory {
       const key = fieldMetadata.name;
 
       const isRelation =
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.RELATION,
         ) ||
-        isFieldMetadataInterfaceOfType(
+        isFieldMetadataEntityOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         );
@@ -113,7 +113,7 @@ export class EntitySchemaColumnFactory {
   }
 
   private createCompositeColumns(
-    fieldMetadata: FieldMetadataInterface,
+    fieldMetadata: FieldMetadataEntity,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
     const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);

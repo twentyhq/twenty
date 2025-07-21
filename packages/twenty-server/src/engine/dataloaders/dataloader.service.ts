@@ -4,14 +4,13 @@ import DataLoader from 'dataloader';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-fieldMetadata-dto.util';
@@ -23,16 +22,13 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
-  fieldMetadata: Pick<
-    FieldMetadataInterface,
-    'type' | 'id' | 'objectMetadataId'
-  >;
+  fieldMetadata: Pick<FieldMetadataEntity, 'type' | 'id' | 'objectMetadataId'>;
 };
 
 export type RelationLoaderPayload = {
   workspaceId: string;
   fieldMetadata: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     | 'type'
     | 'id'
     | 'objectMetadataId'
@@ -44,7 +40,7 @@ export type RelationLoaderPayload = {
 export type MorphRelationLoaderPayload = {
   workspaceId: string;
   fieldMetadata: Pick<
-    FieldMetadataInterface,
+    FieldMetadataEntity,
     | 'type'
     | 'id'
     | 'objectMetadataId'
@@ -219,7 +215,7 @@ export class DataloaderService {
               'icon',
               'label',
               'description',
-            ] as const satisfies (keyof FieldMetadataInterface)[];
+            ] as const satisfies (keyof FieldMetadataEntity)[];
 
             const overrides = overridesFieldToCompute.reduce<
               Partial<Record<(typeof overridesFieldToCompute)[number], string>>

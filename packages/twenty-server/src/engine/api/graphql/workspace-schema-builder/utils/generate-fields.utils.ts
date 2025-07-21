@@ -8,15 +8,15 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
@@ -63,11 +63,8 @@ export const generateFields = <
     let generatedField;
 
     const isRelation =
-      isFieldMetadataInterfaceOfType(
-        fieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
-      isFieldMetadataInterfaceOfType(
+      isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION) ||
+      isFieldMetadataEntityOfType(
         fieldMetadata,
         FieldMetadataType.MORPH_RELATION,
       );
@@ -95,7 +92,7 @@ export const generateFields = <
 };
 
 const getTarget = <T extends FieldMetadataType>(
-  fieldMetadata: FieldMetadataInterface<T>,
+  fieldMetadata: FieldMetadataEntity<T>,
 ) => {
   return isCompositeFieldMetadataType(fieldMetadata.type)
     ? fieldMetadata.type.toString()
@@ -103,7 +100,7 @@ const getTarget = <T extends FieldMetadataType>(
 };
 
 const getTypeFactoryOptions = <T extends FieldMetadataType>(
-  fieldMetadata: FieldMetadataInterface<T>,
+  fieldMetadata: FieldMetadataEntity<T>,
   kind: InputTypeDefinitionKind | ObjectTypeDefinitionKind,
 ) => {
   return isInputTypeDefinitionKind(kind)
@@ -133,7 +130,7 @@ const generateField = <
   options,
   typeFactory,
 }: {
-  fieldMetadata: FieldMetadataInterface;
+  fieldMetadata: FieldMetadataEntity;
   kind: T;
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
@@ -166,7 +163,7 @@ const generateRelationField = <
   options,
   typeFactory,
 }: {
-  fieldMetadata: FieldMetadataInterface<
+  fieldMetadata: FieldMetadataEntity<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >;
   kind: T;

@@ -1,8 +1,7 @@
 import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-
-import { FieldMetadataInterface } from './field-metadata.interface';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export interface ObjectMetadataInterface {
   id: string;
@@ -15,7 +14,7 @@ export interface ObjectMetadataInterface {
   description?: string;
   icon: string;
   targetTableName: string;
-  fields: FieldMetadataInterface[];
+  fields: FieldMetadataEntity[];
   indexMetadatas: IndexMetadataInterface[];
   isSystem: boolean;
   isCustom: boolean;

@@ -1,15 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 // Should get deprecated in favor of the FlatFieldMetadata
 export type PartialFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = Omit<
-  FieldMetadataInterface<T>,
+  FieldMetadataEntity<T>,
   | 'id'
   | 'label'
   | 'description'
